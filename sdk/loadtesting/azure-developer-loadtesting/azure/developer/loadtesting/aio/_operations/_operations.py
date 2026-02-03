@@ -81,9 +81,9 @@ from ..._operations._operations import (
     build_load_test_run_list_metrics_request,
     build_load_test_run_list_test_profile_runs_request,
     build_load_test_run_list_test_runs_request,
-    build_load_test_run_patch_latest_test_run_insights_request,
     build_load_test_run_stop_test_profile_run_request,
     build_load_test_run_stop_test_run_request,
+    build_load_test_run_update_latest_test_run_insights_request,
 )
 from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ..._utils.utils import ClientMixinABC
@@ -4060,8 +4060,9 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         Get all test runs for the given filters.
 
-        :keyword orderby: Sort on the supported fields in (field asc/desc) format. eg: executedDateTime
-         asc. Supported fields - executedDateTime. Default value is None.
+        :keyword orderby: Sort on the supported fields in (field asc/desc) format. eg: createdDateTime
+         asc.
+         Supported fields - createdDateTime, executedDateTime (legacy). Default value is None.
         :paramtype orderby: str
         :keyword search: Prefix based, case sensitive search on searchable fields - description,
          executedUser. For example, to search for a test run, with description 500 VUs,
@@ -4779,7 +4780,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return deserialized  # type: ignore
 
     @overload
-    async def patch_latest_test_run_insights(
+    async def update_latest_test_run_insights(
         self,
         test_run_id: str,
         body: _models.TestRunInsights,
@@ -4805,7 +4806,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         """
 
     @overload
-    async def patch_latest_test_run_insights(
+    async def update_latest_test_run_insights(
         self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestRunInsights:
         """Update the latest insights for the test run.
@@ -4826,7 +4827,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         """
 
     @overload
-    async def patch_latest_test_run_insights(
+    async def update_latest_test_run_insights(
         self, test_run_id: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.TestRunInsights:
         """Update the latest insights for the test run.
@@ -4852,7 +4853,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         params_added_on={"2025-11-01-preview": ["api_version", "content_type", "test_run_id", "accept"]},
         api_versions_list=["2025-11-01-preview"],
     )
-    async def patch_latest_test_run_insights(
+    async def update_latest_test_run_insights(
         self, test_run_id: str, body: Union[_models.TestRunInsights, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.TestRunInsights:
         """Update the latest insights for the test run.
@@ -4890,7 +4891,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_load_test_run_patch_latest_test_run_insights_request(
+        _request = build_load_test_run_update_latest_test_run_insights_request(
             test_run_id=test_run_id,
             content_type=content_type,
             api_version=self._config.api_version,

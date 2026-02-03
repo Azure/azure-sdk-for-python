@@ -255,9 +255,9 @@ class TestLoadTestRunAsync(LoadTestRunClientTestBaseAsync):
 
     @LoadTestRunPreparer()
     @recorded_by_proxy_async
-    async def test_patch_latest_test_run_insights(self, loadtestrun_endpoint):
+    async def test_update_latest_test_run_insights(self, loadtestrun_endpoint):
         client = self.create_async_client(endpoint=loadtestrun_endpoint)
-        response = await client.patch_latest_test_run_insights(
+        response = await client.update_latest_test_run_insights(
             test_run_id="str",
             body={
                 "columns": [{"dataType": "str", "name": "str"}],

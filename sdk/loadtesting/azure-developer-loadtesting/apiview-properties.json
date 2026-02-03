@@ -185,8 +185,8 @@
         "azure.developer.loadtesting.aio.LoadTestRunClient.stop_test_profile_run": "Customizations.TestRunOperations.stopTestProfileRun",
         "azure.developer.loadtesting.LoadTestRunClient.get_latest_test_run_insights": "Customizations.TestRunOperations.getLatestTestRunInsights",
         "azure.developer.loadtesting.aio.LoadTestRunClient.get_latest_test_run_insights": "Customizations.TestRunOperations.getLatestTestRunInsights",
-        "azure.developer.loadtesting.LoadTestRunClient.patch_latest_test_run_insights": "Customizations.TestRunOperations.patchLatestTestRunInsights",
-        "azure.developer.loadtesting.aio.LoadTestRunClient.patch_latest_test_run_insights": "Customizations.TestRunOperations.patchLatestTestRunInsights",
+        "azure.developer.loadtesting.LoadTestRunClient.update_latest_test_run_insights": "Customizations.TestRunOperations.updateLatestTestRunInsights",
+        "azure.developer.loadtesting.aio.LoadTestRunClient.update_latest_test_run_insights": "Customizations.TestRunOperations.updateLatestTestRunInsights",
         "azure.developer.loadtesting.LoadTestRunClient.begin_generate_test_run_insights": "Customizations.TestRunOperations.generateTestRunInsights",
         "azure.developer.loadtesting.aio.LoadTestRunClient.begin_generate_test_run_insights": "Customizations.TestRunOperations.generateTestRunInsights"
     }

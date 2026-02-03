@@ -2614,7 +2614,8 @@ class TestRun(_Model):
     :vartype start_date_time: ~datetime.datetime
     :ivar end_date_time: The test run end DateTime(RFC 3339 literal format).
     :vartype end_date_time: ~datetime.datetime
-    :ivar executed_date_time: Test run initiated time.
+    :ivar executed_date_time: Test run initiated time. This is legacy, new developments should use
+     createdDateTime.
     :vartype executed_date_time: ~datetime.datetime
     :ivar portal_url: Portal url.
     :vartype portal_url: str
@@ -2736,7 +2737,7 @@ class TestRun(_Model):
     executed_date_time: Optional[datetime.datetime] = rest_field(
         name="executedDateTime", visibility=["read"], format="rfc3339"
     )
-    """Test run initiated time."""
+    """Test run initiated time. This is legacy, new developments should use createdDateTime."""
     portal_url: Optional[str] = rest_field(name="portalUrl", visibility=["read"])
     """Portal url."""
     duration: Optional[int] = rest_field(visibility=["read"])

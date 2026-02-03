@@ -254,9 +254,9 @@ class TestLoadTestRun(LoadTestRunClientTestBase):
 
     @LoadTestRunPreparer()
     @recorded_by_proxy
-    def test_patch_latest_test_run_insights(self, loadtestrun_endpoint):
+    def test_update_latest_test_run_insights(self, loadtestrun_endpoint):
         client = self.create_client(endpoint=loadtestrun_endpoint)
-        response = client.patch_latest_test_run_insights(
+        response = client.update_latest_test_run_insights(
             test_run_id="str",
             body={
                 "columns": [{"dataType": "str", "name": "str"}],
