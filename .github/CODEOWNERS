@@ -261,7 +261,7 @@
 # PRLabel: %AI Projects
 /sdk/ai/azure-ai-projects/                                         @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson
 
-# ServiceLabel: %Voice Live %Service Attention
+# ServiceLabel: %Service Attention %Voice Live
 # PRLabel: %Voice Live
 /sdk/ai/azure-ai-voicelive/                                        @amber-yujueWang @rhurey @xitzhang
 
