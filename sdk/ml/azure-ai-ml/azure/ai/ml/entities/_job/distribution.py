@@ -226,4 +226,6 @@ DISTRIBUTION_TYPE_MAP = {
     DistributionType.TENSORFLOW: TensorFlowDistribution,
     DistributionType.PYTORCH: PyTorchDistribution,
     DistributionType.RAY: RayDistribution,
+    # Support legacy alias for backwards compatibility with AML SDK v1.5
+    DistributionType.TORCH_DISTRIBUTED: PyTorchDistribution,
 }
