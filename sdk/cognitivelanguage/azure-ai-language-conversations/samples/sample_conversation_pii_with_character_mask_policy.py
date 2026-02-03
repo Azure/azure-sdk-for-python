@@ -43,11 +43,10 @@ from azure.ai.language.conversations.models import (
     CharacterMaskPolicyType,
     RedactionCharacter,
     ConversationPiiOperationResult,
-    ConversationError,
 )
 
 
-def sample_conversation_pii_with_character_mask_policy():
+def sample_conv_pii_char_mask_policy():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
 
@@ -117,7 +116,7 @@ def sample_conversation_pii_with_character_mask_policy():
             print(f"  Code: {err.code} - {err.message}")
 
     # iterate results and verify redaction
-    for actions_page in paged_actions:
+    for actions_page in paged_actions: # pylint:disable=too-many-nested-blocks
         for action_result in actions_page.task_results or []:
             if isinstance(action_result, ConversationPiiOperationResult):
                 for conversation in action_result.results.conversations or []:
@@ -142,7 +141,7 @@ def sample_conversation_pii_with_character_mask_policy():
 
 
 def main():
-    sample_conversation_pii_with_character_mask_policy()
+    sample_conv_pii_char_mask_policy()
 
 
 if __name__ == "__main__":

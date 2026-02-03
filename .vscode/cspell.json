@@ -915,7 +915,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram", "kwoa" ],
       "caseSensitive": false
     },
     {
