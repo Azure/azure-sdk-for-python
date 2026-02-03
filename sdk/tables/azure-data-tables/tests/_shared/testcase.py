@@ -52,6 +52,13 @@ _ERROR_TYPE_NOT_SUPPORTED = "Type not supported when sending data to the service
 _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 
 
+def _service_unavailable_resp(*args, **kwargs):
+    return SERVICE_UNAVAILABLE_RESP_BODY
+
+def _service_live_resp(*args, **kwargs):
+    return SERVICE_LIVE_RESP_BODY
+
+
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
     :param str scopes: Lets you specify the type of access needed.
@@ -483,11 +490,11 @@ class TableTestCase(object):
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda: SERVICE_UNAVAILABLE_RESP_BODY
+        response.http_response.text = _service_unavailable_resp
 
     @staticmethod
     def override_response_body_with_live_status(response):
-        response.http_response.text = lambda: SERVICE_LIVE_RESP_BODY
+        response.http_response.text = _service_live_resp
 
 
 class ResponseCallback(object):
