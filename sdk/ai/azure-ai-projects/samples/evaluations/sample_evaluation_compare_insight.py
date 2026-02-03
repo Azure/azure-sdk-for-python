@@ -31,8 +31,12 @@ import os
 import time
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.ai.projects.models._enums import OperationState
-from azure.ai.projects.models._models import EvaluationComparisonRequest, Insight
+from azure.ai.projects.models import (
+    FoundryPreviewOptInKeys,
+    OperationState,
+    EvaluationComparisonInsightRequest,
+    Insight,
+)
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
@@ -132,17 +136,20 @@ with (
 
         # Generate comparison insights
         compareInsight = project_client.insights.generate(
-            Insight(
+            insight=Insight(
                 display_name="Comparison of Evaluation Runs",
-                request=EvaluationComparisonRequest(
+                request=EvaluationComparisonInsightRequest(
                     eval_id=eval_object.id, baseline_run_id=eval_run_1.id, treatment_run_ids=[eval_run_2.id]
                 ),
-            )
+            ),
+            foundry_beta=FoundryPreviewOptInKeys.INSIGHTS_V1,
         )
         print(f"Started insight generation (id: {compareInsight.id})")
 
         while compareInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            compareInsight = project_client.insights.get(id=compareInsight.id)
+            compareInsight = project_client.insights.get(
+                id=compareInsight.id, foundry_beta=FoundryPreviewOptInKeys.INSIGHTS_V1
+            )
             print(f"Waiting for insight to be generated...current status: {compareInsight.state}")
             time.sleep(5)
 

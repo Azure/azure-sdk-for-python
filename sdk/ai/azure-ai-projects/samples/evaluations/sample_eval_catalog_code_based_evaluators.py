@@ -26,7 +26,7 @@ USAGE:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
+from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType, FoundryPreviewOptInKeys
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -97,6 +97,7 @@ with (
                 },
             },
         },
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
 
     data_source_config = DataSourceConfigCustom(
@@ -202,6 +203,7 @@ with (
     project_client.evaluators.delete_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
 
     client.evals.delete(eval_id=eval_object.id)

@@ -26,6 +26,7 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    FoundryPreviewOptInKeys,
     EvaluatorVersion,
     EvaluatorCategory,
     PromptBasedEvaluatorDefinition,
@@ -99,6 +100,7 @@ with (
     prompt_evaluator = project_client.evaluators.create_version(
         name="my_custom_evaluator_code_prompt_based",
         evaluator_version=evaluator_version,
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
     pprint(prompt_evaluator)
 
@@ -134,14 +136,15 @@ with (
         ),
     )
     code_evaluator = project_client.evaluators.create_version(
-        name="my_custom_evaluator_code_based", evaluator_version=evaluator_version
+        name="my_custom_evaluator_code_based",
+        evaluator_version=evaluator_version,
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
     pprint(code_evaluator)
 
     print("Get code based evaluator version")
     code_evaluator_latest = project_client.evaluators.get_version(
-        name=code_evaluator.name,
-        version=code_evaluator.version,
+        name=code_evaluator.name, version=code_evaluator.version, foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1
     )
     pprint(code_evaluator_latest)
 
@@ -149,6 +152,7 @@ with (
     prompt_evaluator_latest = project_client.evaluators.get_version(
         name=prompt_evaluator.name,
         version=prompt_evaluator.version,
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
     pprint(prompt_evaluator_latest)
 
@@ -161,6 +165,7 @@ with (
             "display_name": "my_custom_evaluator_updated",
             "description": "Custom evaluator description changed",
         },
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
     pprint(updated_evaluator)
 
@@ -168,21 +173,27 @@ with (
     project_client.evaluators.delete_version(
         name=code_evaluator_latest.name,
         version=code_evaluator_latest.version,
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
 
     project_client.evaluators.delete_version(
         name=prompt_evaluator_latest.name,
         version=prompt_evaluator_latest.version,
+        foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1,
     )
 
     print("Getting list of builtin evaluator versions")
-    evaluators = project_client.evaluators.list_latest_versions(type="builtin")
+    evaluators = project_client.evaluators.list_latest_versions(
+        type="builtin", foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1
+    )
     print("List of builtin evaluator versions")
     for evaluator in evaluators:
         pprint(evaluator)
 
     print("Getting list of custom evaluator versions")
-    evaluators = project_client.evaluators.list_latest_versions(type="custom")
+    evaluators = project_client.evaluators.list_latest_versions(
+        type="custom", foundry_beta=FoundryPreviewOptInKeys.EVALUATIONS_V1
+    )
     print("List of custom evaluator versions")
     for evaluator in evaluators:
         pprint(evaluator)
