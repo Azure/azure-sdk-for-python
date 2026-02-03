@@ -21,38 +21,44 @@ Set these environment variables:
 | Sample | Description |
 |--------|-------------|
 | [sample_evaluations_builtin_with_inline_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data.py) | Basic evaluation with built-in evaluators using inline data |
+| [sample_evaluations_builtin_with_dataset_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_dataset_id.py) | Evaluate using an uploaded dataset |
 | [sample_eval_catalog.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog.py) | Browse and use evaluators from the evaluation catalog |
 
-### Agent Evaluation
+### Agent / Model Evaluation
 
 | Sample | Description |
 |--------|-------------|
-| [sample_agent_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_evaluation.py) | Evaluate an agent's responses |
-| [sample_agent_response_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation.py) | Evaluate agent response quality |
-| [sample_agent_response_evaluation_with_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation_with_function_tool.py) | Evaluate agent with function tools |
-| [sample_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_model_evaluation.py) | Evaluate model responses directly |
-
-### Evaluator Types
-
-| Sample | Description |
-|--------|-------------|
-| [sample_evaluations_graders.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_graders.py) | OpenAI graders: label_model, text_similarity, string_check, score_model |
-| [sample_evaluations_ai_assisted.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_ai_assisted.py) | AI-assisted evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU |
-| [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Code-based evaluators from the catalog |
-| [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Prompt-based evaluators from the catalog |
-
-### Insights & Analysis
-
-| Sample | Description |
-|--------|-------------|
-| [sample_evaluation_compare_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_compare_insight.py) | Compare evaluation runs and generate insights |
-| [sample_evaluation_cluster_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_cluster_insight.py) | Generate cluster insights from evaluation runs |
+| [sample_agent_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_evaluation.py) | Create a response from an agent and evaluate |
+| [sample_agent_response_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation.py) | Evaluate given agent responses |
+| [sample_agent_response_evaluation_with_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation_with_function_tool.py) | Evaluate agent responses with function tools |
+| [sample_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_model_evaluation.py) | Create response from model and evaluate |
 
 ### Red Team Evaluations
 
 | Sample | Description |
 |--------|-------------|
 | [sample_redteam_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_redteam_evaluations.py) | Security and safety evaluations using red team techniques |
+
+### Additional Scenarios
+
+These samples require additional setup or Azure services:
+
+| Sample | Description | Requirements |
+|--------|-------------|--------------|
+| [sample_evaluations_builtin_with_traces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_traces.py) | Evaluate against Application Insights traces | Connected Application Insights on Foundry Project |
+| [sample_scheduled_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_scheduled_evaluations.py) | Schedule recurring evaluations | RBAC setup |
+| [sample_continuous_evaluation_rule.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_continuous_evaluation_rule.py) | Set up continuous evaluation rules | RBAC Setup |
+| [sample_evaluations_score_model_grader_with_image.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_image.py) | Evaluate with image data | Image file |
+| [sample_evaluations_builtin_with_inline_data_oai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data_oai.py) | Use OpenAI client directly | OpenAI SDK |
+
+### Evaluator Types
+
+| Sample | Description |
+|--------|-------------|
+| [sample_evaluations_graders.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_graders.py) | OpenAI graders: label_model, text_similarity, string_check, score_model |
+| [sample_evaluations_ai_assisted.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_ai_assisted.py) | AI-assisted and NLP-based evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU |
+| [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (python) evaluators |
+| [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Custom prompt-based evaluators |
 
 ### Agentic Evaluators
 
@@ -76,30 +82,21 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 | [sample_tool_selection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators/sample_tool_selection.py) | Evaluate tool selection |
 | [sample_generic_agentic_evaluator](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators/sample_generic_agentic_evaluator) | Generic agentic evaluator example |
 
-### Advanced Samples
 
-These samples require additional setup or Azure services:
+### Evaluation Result Insights & Analysis
 
-| Sample | Description | Requirements |
-|--------|-------------|--------------|
-| [sample_evaluations_builtin_with_dataset_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_dataset_id.py) | Use uploaded dataset for evaluation | Azure Blob Storage |
-| [sample_evaluations_builtin_with_traces.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_traces.py) | Evaluate against Application Insights traces | Azure Application Insights |
-| [sample_scheduled_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_scheduled_evaluations.py) | Schedule recurring evaluations | RBAC setup |
-| [sample_continuous_evaluation_rule.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_continuous_evaluation_rule.py) | Set up continuous evaluation rules | Manual RBAC in Azure Portal |
-| [sample_evaluations_score_model_grader_with_image.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_image.py) | Evaluate with image data | Image file |
-| [sample_evaluations_builtin_with_inline_data_oai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data_oai.py) | Use OpenAI client directly | OpenAI SDK |
+| Sample | Description |
+|--------|-------------|
+| [sample_evaluation_compare_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_compare_insight.py) | Compare evaluation runs and generate statistics |
+| [sample_evaluation_cluster_insight.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluation_cluster_insight.py) | Analyze evaluation runs with cluster insights |
 
 ## Running a Sample
 
 ```bash
 # Set environment variables
-export AZURE_AI_PROJECT_ENDPOINT="https://your-account.services.ai.azure.com/api/projects/your-project"
-export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o-mini"
+export AZURE_AI_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
+export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o-mini" # Replace with your model
 
 # Run a sample
 python sample_evaluations_builtin_with_inline_data.py
 ```
-
-## Learn More
-
-- [Azure AI Foundry Documentation](https://learn.microsoft.com/azure/ai-studio/)
