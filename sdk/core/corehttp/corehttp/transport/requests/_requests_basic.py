@@ -180,10 +180,10 @@ class RequestsTransport(HttpTransport):
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
             if "IncompleteRead" in msg:
-                _LOGGER.warning("Incomplete download: %s", err)
+                _LOGGER.warning("Incomplete download.")
                 error = IncompleteReadError(err, error=err)
             else:
-                _LOGGER.warning("Unable to stream download: %s", err)
+                _LOGGER.warning("Unable to stream download.")
                 error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
             error = ServiceRequestError(err, error=err)

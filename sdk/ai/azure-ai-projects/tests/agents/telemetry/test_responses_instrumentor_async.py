@@ -8,6 +8,7 @@ import os
 import json
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import SPAN_NAME_CHAT, SPAN_NAME_INVOKE_AGENT
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
@@ -48,7 +49,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -71,7 +72,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -130,7 +131,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -161,7 +162,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -220,7 +221,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -267,7 +268,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Get the OpenAI client from the project client
@@ -353,7 +354,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -447,7 +448,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -551,7 +552,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             func_tool = FunctionTool(
@@ -639,7 +640,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call) - no content
@@ -739,7 +740,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -766,7 +767,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -835,7 +836,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -870,7 +871,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -939,7 +940,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -966,7 +967,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1037,7 +1038,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1065,7 +1066,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1108,7 +1109,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1135,7 +1136,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1178,7 +1179,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1205,7 +1206,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1248,7 +1249,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1275,7 +1276,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1322,7 +1323,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1354,7 +1355,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1397,7 +1398,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1428,7 +1429,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1471,7 +1472,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1502,7 +1503,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1545,7 +1546,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1576,7 +1577,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1623,7 +1624,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1659,7 +1660,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1702,7 +1703,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1737,7 +1738,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1780,7 +1781,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1815,7 +1816,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1858,7 +1859,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1893,7 +1894,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1940,7 +1941,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -1979,7 +1980,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2022,7 +2023,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2061,7 +2062,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2104,7 +2105,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2143,7 +2144,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2186,7 +2187,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             client = project_client.get_openai_client()
@@ -2225,7 +2226,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2270,7 +2271,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             # Get the OpenAI client from the project client
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Create a conversation
             conversation = await client.conversations.create()
@@ -2305,7 +2306,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2377,7 +2378,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             conversation = await client.conversations.create()
 
@@ -2397,7 +2398,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2457,7 +2458,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             conversation = await client.conversations.create()
 
@@ -2477,7 +2478,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2539,7 +2540,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -2608,7 +2609,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
@@ -2693,7 +2694,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         async with self.create_async_client(operation_group="tracing", **kwargs) as project_client:
             client = project_client.get_openai_client()
-            deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a function tool
             function_tool = FunctionTool(
@@ -2762,7 +2763,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span - should have events with tool call structure but no details
@@ -2833,7 +2834,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             # Create a simple workflow agent
@@ -2877,7 +2878,7 @@ trigger:
 
         # Verify workflow action events
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -2899,30 +2900,38 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items
-        for event in list_workflow_events:
+        # Verify conversation item event content structure - check for workflow items
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # With content recording ON, action_id should be present
-            assert "action_id" in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # With content recording ON, action_id and previous_action_id should be present
+                    assert (
+                        "action_id" in part["content"]
+                    ), "action_id should be present when content recording is enabled"
+                    assert (
+                        "previous_action_id" in part["content"]
+                    ), "previous_action_id should be present when content recording is enabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -2942,7 +2951,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             workflow_yaml = """
@@ -2985,7 +2994,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3007,34 +3016,45 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
             # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            assert (
+                "action_id" not in part["content"]
+            ), "action_id should not be present when content recording is disabled"
+            assert (
+                "previous_action_id" not in part["content"]
+            ), "previous_action_id should not be present when content recording is disabled"
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items (content recording OFF)
-        for event in list_workflow_events:
+        # Verify conversation item event content structure (content recording OFF)
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # action_id and previous_action_id should NOT be present when content recording is off
+                    assert (
+                        "action_id" not in part["content"]
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in part["content"]
+                    ), "previous_action_id should not be present when content recording is disabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -3054,7 +3074,7 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             workflow_yaml = """
@@ -3102,7 +3122,7 @@ trigger:
 
         # Verify workflow action events in streaming mode
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3124,30 +3144,38 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items
-        for event in list_workflow_events:
+        # Verify conversation item event content structure - check for workflow items
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # With content recording ON, action_id should be present
-            assert "action_id" in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # With content recording ON, action_id and previous_action_id should be present
+                    assert (
+                        "action_id" in part["content"]
+                    ), "action_id should be present when content recording is enabled"
+                    assert (
+                        "previous_action_id" in part["content"]
+                    ), "previous_action_id should be present when content recording is enabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -3167,7 +3195,7 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
-        deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         async with project_client:
             workflow_yaml = """
@@ -3215,7 +3243,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3237,31 +3265,191 @@ trigger:
             assert "content" in part
             assert "status" in part["content"]
             # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            assert (
+                "action_id" not in part["content"]
+            ), "action_id should not be present when content recording is disabled"
+            assert (
+                "previous_action_id" not in part["content"]
+            ), "previous_action_id should not be present when content recording is disabled"
 
-        # Verify conversation items listing span also has workflow actions
+        # Verify conversation items listing span
         list_spans = self.exporter.get_spans_by_name("list_conversation_items")
         assert len(list_spans) >= 1
         list_span = list_spans[0]
 
-        # Check for workflow action events in list items span
-        list_workflow_events = [e for e in list_span.events if e.name == "gen_ai.workflow.action"]
-        assert len(list_workflow_events) > 0
+        # Check for conversation item events in list items span
+        list_item_events = [e for e in list_span.events if e.name == "gen_ai.conversation.item"]
+        assert len(list_item_events) > 0
 
-        # Verify workflow event content structure in list items (content recording OFF)
-        for event in list_workflow_events:
+        # Verify conversation item event content structure (content recording OFF)
+        found_workflow_item = False
+        for event in list_item_events:
             content_str = event.attributes.get("gen_ai.event.content", "[]")
             content = json.loads(content_str)
             assert isinstance(content, list)
-            assert len(content) == 1
-            assert content[0]["role"] == "workflow"
-            assert "parts" in content[0]
-            assert len(content[0]["parts"]) == 1
-            part = content[0]["parts"][0]
-            assert part["type"] == "workflow_action"
-            assert "content" in part
-            assert "status" in part["content"]
-            # action_id and previous_action_id should NOT be present when content recording is off
-            assert "action_id" not in part["content"]
-            assert "previous_action_id" not in part["content"]
+            for item in content:
+                if item.get("role") == "workflow":
+                    found_workflow_item = True
+                    assert "parts" in item
+                    assert len(item["parts"]) >= 1
+                    part = item["parts"][0]
+                    assert part["type"] == "workflow_action"
+                    assert "content" in part
+                    assert "status" in part["content"]
+                    # action_id and previous_action_id should NOT be present when content recording is off
+                    assert (
+                        "action_id" not in part["content"]
+                    ), "action_id should not be present when content recording is disabled"
+                    assert (
+                        "previous_action_id" not in part["content"]
+                    ), "previous_action_id should not be present when content recording is disabled"
+        assert found_workflow_item, "Should have found workflow items in conversation items"
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_non_streaming(self, **kwargs):
+        """Test prompt agent with responses API (async non-streaming) and verify agent id in traces."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            # Create a simple prompt agent
+            agent = await project_client.agents.create_version(
+                agent_name="PromptTestAgent",
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="You are a helpful assistant that answers general questions.",
+                ),
+            )
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create response with agent name and id
+            response = await client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                input="What is the capital of France?",
+            )
+
+            assert hasattr(response, "output_text")
+            assert response.output_text is not None
+            assert len(response.output_text) > 0
+
+            # Cleanup
+            await client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+        # Verify traces contain agent name and id
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
+        assert len(spans) >= 1
+
+        # Validate span attributes
+        span = spans[0]
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.agent.name", agent.name),
+            ("gen_ai.agent.id", agent.id),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_streaming(self, **kwargs):
+        """Test prompt agent with responses API (async streaming) and verify agent id in traces."""
+        self.cleanup()
+        os.environ.update(
+            {
+                CONTENT_TRACING_ENV_VARIABLE: "True",
+                "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True",
+            }
+        )
+        self.setup_telemetry()
+
+        project_client = self.create_async_client(operation_group="tracing", **kwargs)
+        deployment_name = kwargs.get("azure_ai_model_deployment_name")
+
+        async with project_client:
+            client = project_client.get_openai_client()
+
+            # Create a simple prompt agent
+            agent = await project_client.agents.create_version(
+                agent_name="PromptTestAgentStreaming",
+                definition=PromptAgentDefinition(
+                    model=deployment_name,
+                    instructions="You are a helpful assistant that answers general questions.",
+                ),
+            )
+
+            # Create a conversation
+            conversation = await client.conversations.create()
+
+            # Create streaming response with agent name and id
+            stream = await client.responses.create(
+                conversation=conversation.id,
+                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                input="What is the capital of France?",
+                stream=True,
+            )
+
+            # Consume the stream
+            accumulated_content = []
+            async for chunk in stream:
+                if hasattr(chunk, "delta") and isinstance(chunk.delta, str):
+                    accumulated_content.append(chunk.delta)
+                elif hasattr(chunk, "output") and chunk.output:
+                    accumulated_content.append(str(chunk.output))
+
+            full_content = "".join(accumulated_content)
+            assert full_content is not None
+            assert len(full_content) > 0
+
+            # Cleanup
+            await client.conversations.delete(conversation_id=conversation.id)
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+
+        # Verify traces contain agent name and id
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
+        assert len(spans) >= 1
+
+        # Validate span attributes
+        span = spans[0]
+        expected_attributes = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.agent.name", agent.name),
+            ("gen_ai.agent.id", agent.id),
+            ("gen_ai.provider.name", "azure.openai"),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True

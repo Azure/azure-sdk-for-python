@@ -42,7 +42,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_recognize_pii_entities_with_redaction_policies():
+def sample_pii_with_redaction_policies():
     # Settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -65,7 +65,6 @@ def sample_recognize_pii_entities_with_redaction_policies():
             redaction_policies=[
                 # Default policy: mask all PII categories (asterisks)
                 EntityMaskPolicyType(policy_name="defaultPolicy", is_default=True),
-
                 # For SSN: only mask characters except first 4 digits
                 CharacterMaskPolicyType(
                     policy_name="ssnMaskPolicy",
@@ -73,7 +72,6 @@ def sample_recognize_pii_entities_with_redaction_policies():
                     unmask_from_end=False,
                     entity_types=["USSocialSecurityNumber"],
                 ),
-
                 # For Person & Email: replace with synthetic data (fake names/emails)
                 SyntheticReplacementPolicyType(
                     policy_name="syntheticPolicy",
@@ -107,7 +105,7 @@ def sample_recognize_pii_entities_with_redaction_policies():
 
 
 def main():
-    sample_recognize_pii_entities_with_redaction_policies()
+    sample_pii_with_redaction_policies()
 
 
 if __name__ == "__main__":

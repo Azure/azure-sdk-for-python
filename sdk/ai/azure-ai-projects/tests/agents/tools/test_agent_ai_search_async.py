@@ -11,7 +11,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    AzureAISearchAgentTool,
+    AzureAISearchTool,
     AzureAISearchToolResource,
     AISearchIndexResource,
     AzureAISearchQueryType,
@@ -125,7 +125,7 @@ class TestAgentAISearchAsync(TestBase):
         """
         Test agent with Azure AI Search capabilities for question answering using async (parallel).
 
-        This test verifies that an agent can be created with AzureAISearchAgentTool,
+        This test verifies that an agent can be created with AzureAISearchTool,
         and handle multiple concurrent requests to search indexed content and provide
         accurate answers to questions based on the search results.
 
@@ -148,7 +148,7 @@ class TestAgentAISearchAsync(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_async_client(operation_group="agents", **kwargs)
@@ -157,14 +157,14 @@ class TestAgentAISearchAsync(TestBase):
             openai_client = project_client.get_openai_client()
 
             # Get AI Search connection and index from environment
-            ai_search_connection_id = kwargs.get("azure_ai_projects_tests_ai_search_project_connection_id")
-            ai_search_index_name = kwargs.get("azure_ai_projects_tests_ai_search_index_name")
+            ai_search_connection_id = kwargs.get("ai_search_project_connection_id")
+            ai_search_index_name = kwargs.get("ai_search_index_name")
 
             if not ai_search_connection_id:
-                pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_PROJECT_CONNECTION_ID environment variable not set")
+                pytest.fail("ai_search_project_connection_id environment variable not set")
 
             if not ai_search_index_name:
-                pytest.fail("AZURE_AI_PROJECTS_TESTS_AI_SEARCH_INDEX_NAME environment variable not set")
+                pytest.fail("ai_search_index_name environment variable not set")
 
             assert isinstance(ai_search_connection_id, str), "ai_search_connection_id must be a string"
             assert isinstance(ai_search_index_name, str), "ai_search_index_name must be a string"
@@ -181,7 +181,7 @@ class TestAgentAISearchAsync(TestBase):
                     Respond with only 'True' or 'False' based on what you find in the search results.
                     If you cannot find clear evidence in the search results, answer 'False'.""",
                     tools=[
-                        AzureAISearchAgentTool(
+                        AzureAISearchTool(
                             azure_ai_search=AzureAISearchToolResource(
                                 indexes=[
                                     AISearchIndexResource(

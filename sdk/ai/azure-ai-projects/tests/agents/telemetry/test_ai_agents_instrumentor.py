@@ -15,7 +15,7 @@ from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitio
 from azure.ai.projects.models import (
     Reasoning,
     FunctionTool,
-    ResponseTextFormatConfigurationText,
+    # ResponseTextFormatConfigurationText,
 )
 from devtools_testutils import (
     recorded_by_proxy,
@@ -194,7 +194,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("azure_ai_model_deployment_name")
             print(f"Using model deployment: {model}")
 
             agent_definition = PromptAgentDefinition(
@@ -288,7 +288,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("azure_ai_model_deployment_name")
             agent_definition = PromptAgentDefinition(
                 # Required parameter
                 model=model,
@@ -516,11 +516,11 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("azure_ai_model_deployment_name")
 
             # Define a JSON schema for structured output
             test_schema = {
@@ -536,7 +536,7 @@ trigger:
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
                     )
@@ -603,11 +603,11 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("azure_ai_model_deployment_name")
 
             test_schema = {
                 "type": "object",
@@ -622,7 +622,7 @@ trigger:
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
                     )
@@ -677,11 +677,11 @@ trigger:
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         with self.create_client(operation_group="tracing", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("azure_ai_model_deployment_name")
 
             test_schema = {
                 "type": "object",
@@ -695,7 +695,7 @@ trigger:
                 model=model,
                 # No instructions provided
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
                     )
@@ -759,11 +759,11 @@ trigger:
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
-        from azure.ai.projects.models import ResponseTextFormatConfigurationJsonSchema
+        from azure.ai.projects.models import TextResponseFormatJsonSchema
 
         with self.create_client(operation_group="agents", **kwargs) as project_client:
 
-            model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+            model = kwargs.get("azure_ai_model_deployment_name")
 
             test_schema = {
                 "type": "object",
@@ -777,7 +777,7 @@ trigger:
                 model=model,
                 # No instructions provided
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
+                    format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
                     )

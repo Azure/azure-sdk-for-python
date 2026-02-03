@@ -103,6 +103,10 @@ AGENT_TYPE_WORKFLOW = "workflow"
 AGENT_TYPE_HOSTED = "hosted"
 AGENT_TYPE_UNKNOWN = "unknown"
 
+# Span name prefixes for responses API operations
+SPAN_NAME_INVOKE_AGENT = "invoke_agent"
+SPAN_NAME_CHAT = "chat"
+
 
 class OperationName(Enum):
     CREATE_AGENT = "create_agent"

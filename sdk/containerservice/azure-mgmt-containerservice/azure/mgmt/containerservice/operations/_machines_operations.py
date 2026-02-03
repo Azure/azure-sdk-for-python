@@ -7,7 +7,8 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Optional, TypeVar
+from io import IOBase
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -17,14 +18,18 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
+    StreamClosedError,
+    StreamConsumedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._configuration import ContainerServiceClientConfiguration
@@ -44,7 +49,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -92,7 +97,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -117,7 +122,7 @@ def build_get_request(
             "agent_pool_name", agent_pool_name, "str", max_length=12, min_length=1, pattern=r"^[a-z][a-z0-9]{0,11}$"
         ),
         "machineName": _SERIALIZER.url(
-            "machine_name", machine_name, "str", pattern=r"^[a-zA-Z0-9][-_a-zA-Z0-9]{0,39}$"
+            "machine_name", machine_name, "str", pattern=r"^[a-z][a-z0-9]{0,11}$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,39}$"
         ),
     }
 
@@ -130,6 +135,67 @@ def build_get_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_create_or_update_request(
+    resource_group_name: str,
+    resource_name: str,
+    agent_pool_name: str,
+    machine_name: str,
+    subscription_id: str,
+    *,
+    if_match: Optional[str] = None,
+    if_none_match: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-02-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/managedClusters/{resourceName}/agentPools/{agentPoolName}/machines/{machineName}",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "resourceName": _SERIALIZER.url(
+            "resource_name",
+            resource_name,
+            "str",
+            max_length=63,
+            min_length=1,
+            pattern=r"^[a-zA-Z0-9]$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,61}[a-zA-Z0-9]$",
+        ),
+        "agentPoolName": _SERIALIZER.url(
+            "agent_pool_name", agent_pool_name, "str", max_length=12, min_length=1, pattern=r"^[a-z][a-z0-9]{0,11}$"
+        ),
+        "machineName": _SERIALIZER.url(
+            "machine_name", machine_name, "str", pattern=r"^[a-z][a-z0-9]{0,11}$|^[a-zA-Z0-9][-_a-zA-Z0-9]{0,39}$"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class MachinesOperations:
@@ -258,7 +324,7 @@ class MachinesOperations:
         :type resource_name: str
         :param agent_pool_name: The name of the agent pool. Required.
         :type agent_pool_name: str
-        :param machine_name: host name of the machine. Required.
+        :param machine_name: Host name of the machine. Required.
         :type machine_name: str
         :return: Machine or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.models.Machine
@@ -311,3 +377,267 @@ class MachinesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_pool_name: str,
+        machine_name: str,
+        parameters: Union[_models.Machine, IO[bytes]],
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "Machine")
+
+        _request = build_create_or_update_request(
+            resource_group_name=resource_group_name,
+            resource_name=resource_name,
+            agent_pool_name=agent_pool_name,
+            machine_name=machine_name,
+            subscription_id=self._config.subscription_id,
+            if_match=if_match,
+            if_none_match=if_none_match,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_pool_name: str,
+        machine_name: str,
+        parameters: _models.Machine,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Machine]:
+        """Creates or updates a machine in the specified agent pool.
+
+        Creates or updates a machine in the specified agent pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_pool_name: The name of the agent pool. Required.
+        :type agent_pool_name: str
+        :param machine_name: Host name of the machine. Required.
+        :type machine_name: str
+        :param parameters: The machine to create or update. Required.
+        :type parameters: ~azure.mgmt.containerservice.models.Machine
+        :param if_match: The request should only proceed if an entity matches this string. Default
+         value is None.
+        :type if_match: str
+        :param if_none_match: The request should only proceed if no entity matches this string. Default
+         value is None.
+        :type if_none_match: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either Machine or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.Machine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_pool_name: str,
+        machine_name: str,
+        parameters: IO[bytes],
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.Machine]:
+        """Creates or updates a machine in the specified agent pool.
+
+        Creates or updates a machine in the specified agent pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_pool_name: The name of the agent pool. Required.
+        :type agent_pool_name: str
+        :param machine_name: Host name of the machine. Required.
+        :type machine_name: str
+        :param parameters: The machine to create or update. Required.
+        :type parameters: IO[bytes]
+        :param if_match: The request should only proceed if an entity matches this string. Default
+         value is None.
+        :type if_match: str
+        :param if_none_match: The request should only proceed if no entity matches this string. Default
+         value is None.
+        :type if_none_match: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns either Machine or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.Machine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        resource_name: str,
+        agent_pool_name: str,
+        machine_name: str,
+        parameters: Union[_models.Machine, IO[bytes]],
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.Machine]:
+        """Creates or updates a machine in the specified agent pool.
+
+        Creates or updates a machine in the specified agent pool.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param resource_name: The name of the managed cluster resource. Required.
+        :type resource_name: str
+        :param agent_pool_name: The name of the agent pool. Required.
+        :type agent_pool_name: str
+        :param machine_name: Host name of the machine. Required.
+        :type machine_name: str
+        :param parameters: The machine to create or update. Is either a Machine type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.containerservice.models.Machine or IO[bytes]
+        :param if_match: The request should only proceed if an entity matches this string. Default
+         value is None.
+        :type if_match: str
+        :param if_none_match: The request should only proceed if no entity matches this string. Default
+         value is None.
+        :type if_none_match: str
+        :return: An instance of LROPoller that returns either Machine or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.containerservice.models.Machine]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Machine] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                resource_name=resource_name,
+                agent_pool_name=agent_pool_name,
+                machine_name=machine_name,
+                parameters=parameters,
+                if_match=if_match,
+                if_none_match=if_none_match,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+            deserialized = self._deserialize("Machine", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.Machine].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.Machine](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

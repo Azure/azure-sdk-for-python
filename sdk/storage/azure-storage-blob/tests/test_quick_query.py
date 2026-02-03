@@ -114,7 +114,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -145,7 +145,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -177,7 +177,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -208,7 +208,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -235,7 +235,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -269,7 +269,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -302,7 +302,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -332,7 +332,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -379,7 +379,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -424,7 +424,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{name: owner}'
@@ -474,7 +474,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{name: owner}'
@@ -526,7 +526,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{name: owner}'
@@ -573,7 +573,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{name: owner}'
@@ -622,7 +622,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{name: owner}'
@@ -657,7 +657,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{name: owner}'
@@ -699,7 +699,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -746,7 +746,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -793,7 +793,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -832,7 +832,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the csv file
@@ -871,7 +871,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
@@ -911,7 +911,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
@@ -951,7 +951,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data1 = b'{\"name\": \"owner\", \"id\": 1}'
@@ -991,7 +991,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         data = b'100,200,300,400\n300,400,500,600\n'
@@ -1036,7 +1036,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
 
         # upload the json file
@@ -1064,7 +1064,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
         expression = "select * from blobstorage where id < 1;"
         expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
@@ -1089,7 +1089,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
         self._setup(bsc)
         expression = "SELECT * from BlobStorage"
 

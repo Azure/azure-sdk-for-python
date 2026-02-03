@@ -41,7 +41,7 @@ class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
         openai_client = project_client.get_openai_client()
 
         # Get the model deployment name from test parameters
-        model_deployment_name = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model_deployment_name = kwargs.get("azure_ai_model_deployment_name")
 
         return openai_client, model_deployment_name
 

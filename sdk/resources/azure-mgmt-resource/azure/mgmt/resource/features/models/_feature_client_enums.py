@@ -10,7 +10,9 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class SubscriptionFeatureRegistrationApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class SubscriptionFeatureRegistrationApprovalType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The feature approval type."""
 
     NOT_SPECIFIED = "NotSpecified"

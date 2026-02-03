@@ -2895,8 +2895,6 @@ class ResultStatistics(_serialization.Model):
 class RuleDefinition(_serialization.Model):
     """Rule definition parameters.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
     :ivar query: Summary rule query.
     :vartype query: str
     :ivar bin_size: Scheduled window in minutes. Allowed values: 20, 30, 60, 120, 180, 360, 720,
@@ -2912,10 +2910,6 @@ class RuleDefinition(_serialization.Model):
     :ivar destination_table: The destination table used for the Summary rule results.
     :vartype destination_table: str
     """
-
-    _validation = {
-        "destination_table": {"readonly": True},
-    }
 
     _attribute_map = {
         "query": {"key": "query", "type": "str"},
@@ -2934,6 +2928,7 @@ class RuleDefinition(_serialization.Model):
         bin_delay: Optional[int] = None,
         bin_start_time: Optional[datetime.datetime] = None,
         time_selector: Optional[Union[str, "_models.TimeSelectorEnum"]] = None,
+        destination_table: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2949,6 +2944,8 @@ class RuleDefinition(_serialization.Model):
         :keyword time_selector: The time cursor used in Summary rules bins processing, e.g.
          TimeGenerated. "TimeGenerated"
         :paramtype time_selector: str or ~azure.mgmt.loganalytics.models.TimeSelectorEnum
+        :keyword destination_table: The destination table used for the Summary rule results.
+        :paramtype destination_table: str
         """
         super().__init__(**kwargs)
         self.query = query
@@ -2956,7 +2953,7 @@ class RuleDefinition(_serialization.Model):
         self.bin_delay = bin_delay
         self.bin_start_time = bin_start_time
         self.time_selector = time_selector
-        self.destination_table: Optional[str] = None
+        self.destination_table = destination_table
 
 
 class SavedSearch(ProxyResource):

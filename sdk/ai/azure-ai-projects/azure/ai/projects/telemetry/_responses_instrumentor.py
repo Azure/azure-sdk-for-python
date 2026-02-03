@@ -24,6 +24,7 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.tracing import AbstractSpan
 from ._utils import (
     ERROR_TYPE,
+    GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_ASSISTANT_MESSAGE_EVENT,
     GEN_AI_CLIENT_OPERATION_DURATION,
@@ -50,6 +51,8 @@ from ._utils import (
     OperationName,
     SERVER_ADDRESS,
     SERVER_PORT,
+    SPAN_NAME_CHAT,
+    SPAN_NAME_INVOKE_AGENT,
     start_span,
 )
 
@@ -1472,6 +1475,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         port: Optional[int] = None,
         model: Optional[str] = None,
         assistant_name: Optional[str] = None,
+        agent_id: Optional[str] = None,
         conversation_id: Optional[str] = None,
         input_text: Optional[str] = None,
         input_raw: Optional[Any] = None,
@@ -1479,11 +1483,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         tools: Optional[List[Dict[str, Any]]] = None,
     ) -> "Optional[AbstractSpan]":
         """Start a span for responses API call."""
-        # Build span name: prefer model, then assistant name, then just operation
-        if model:
-            span_name = f"{OperationName.RESPONSES.value} {model}"
-        elif assistant_name:
-            span_name = f"{OperationName.RESPONSES.value} {assistant_name}"
+        # Build span name: agent case uses "invoke_agent", non-agent case uses "chat"
+        if assistant_name:
+            span_name = f"{SPAN_NAME_INVOKE_AGENT} {assistant_name}"
+        elif model:
+            span_name = f"{SPAN_NAME_CHAT} {model}"
         else:
             span_name = OperationName.RESPONSES.value
 
@@ -1507,6 +1511,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Note: model and server_address are already set by start_span, so we don't need to set them again
             self._set_span_attribute_safe(span, GEN_AI_CONVERSATION_ID, conversation_id)
             self._set_span_attribute_safe(span, GEN_AI_AGENT_NAME, assistant_name)
+            self._set_span_attribute_safe(span, GEN_AI_AGENT_ID, agent_id)
 
             # Set tools attribute if tools are provided
             if tools:
@@ -1611,6 +1616,15 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             agent_info = extra_body.get("agent")
             if agent_info and isinstance(agent_info, dict):
                 return agent_info.get("name")
+        return None
+
+    def _extract_agent_id(self, kwargs: Dict[str, Any]) -> Optional[str]:
+        """Extract agent ID from kwargs."""
+        extra_body = kwargs.get("extra_body")
+        if extra_body and isinstance(extra_body, dict):
+            agent_info = extra_body.get("agent")
+            if agent_info and isinstance(agent_info, dict):
+                return agent_info.get("id")
         return None
 
     def _extract_input_text(self, kwargs: Dict[str, Any]) -> Optional[str]:
@@ -1821,6 +1835,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id = self._extract_conversation_id(kwargs)
         model = self._extract_model(kwargs)
         assistant_name = self._extract_assistant_name(kwargs)
+        agent_id = self._extract_agent_id(kwargs)
         input_text = self._extract_input_text(kwargs)
         input_raw = kwargs.get("input")  # Get the raw input (could be string or list)
         stream = kwargs.get("stream", False)
@@ -1831,6 +1846,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             port=port,
             model=model,
             assistant_name=assistant_name,
+            agent_id=agent_id,
             conversation_id=conversation_id,
             input_text=input_text,
             input_raw=input_raw,
@@ -3984,9 +4000,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Wrap in parts array for semantic convention compliance
             parts: List[Dict[str, Any]] = [{"type": "workflow_action", "content": workflow_details}]
             event_body = [{"role": role, "parts": parts}]
-
-            # Use generic event name for workflow actions
-            event_name = GEN_AI_WORKFLOW_ACTION_EVENT
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "message":
             # Regular message - use content format for consistency

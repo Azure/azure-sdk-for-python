@@ -1,6 +1,17 @@
 # Release History
 
-## 1.31.0 (unreleased)
+## 1.32.0 (unreleased)
+
+### Features Added
+
+### Bugs Fixed
+
+- Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
+
+### Other Changes
+
+
+## 1.31.0 (2025-12-18)
 
 ### Features Added
 

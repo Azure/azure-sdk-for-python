@@ -158,7 +158,7 @@ with (
         if len(eval_run_list.data) > 0 and eval_run_list.data[0].report_url:
             run_report_url = eval_run_list.data[0].report_url
             # Remove the last 2 URL path segments (run/continuousevalrun_xxx)
-            report_url = '/'.join(run_report_url.split('/')[:-2])
+            report_url = "/".join(run_report_url.split("/")[:-2])
             print(f"To check evaluation runs, please open {report_url} from the browser")
             break
 

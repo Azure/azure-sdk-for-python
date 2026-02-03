@@ -33,7 +33,8 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.35.0",
+    "azure-core>=1.36.0",
+    "typing-extensions>=4.11",
     "azure-identity>=1.15.0",
     "openai>=2.8.0",
     "azure-storage-blob>=12.15.0",
@@ -43,7 +44,7 @@ dynamic = [
 ]
 
 [project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects"
+repository = "https://aka.ms/azsdk/azure-ai-projects-v2/python/code"
 
 [tool.setuptools.dynamic]
 version = {attr = "azure.ai.projects._version.VERSION"}

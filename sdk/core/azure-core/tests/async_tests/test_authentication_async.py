@@ -74,7 +74,7 @@ async def test_bearer_policy_authorize_request(http_request):
     assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
     assert fake_credential.get_token.call_count == 1
     assert fake_credential.get_token.call_args[0] == ("scope",)
-    assert fake_credential.get_token.call_args[1] == {"claims": "foo", "enable_cae": True}
+    assert fake_credential.get_token.call_args[1] == {"claims": "foo"}
 
 
 @pytest.mark.asyncio
@@ -132,7 +132,7 @@ async def test_bearer_policy_authorize_request_access_token_info(http_request):
     assert policy._token is expected_token
     assert http_req.headers["Authorization"] == f"Bearer {expected_token.token}"
     assert fake_credential.get_token_info.call_args[0] == ("scope",)
-    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo", "enable_cae": True}}
+    assert fake_credential.get_token_info.call_args[1] == {"options": {"claims": "foo"}}
 
 
 @pytest.mark.asyncio
