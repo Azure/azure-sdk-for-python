@@ -808,6 +808,9 @@ class TestBaseExporter(unittest.TestCase):
     def test_is_sampling_rejection_true(self):
         """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
         self.assertTrue(_is_sampling_rejection("Telemetry sampled out."))
+        self.assertTrue(_is_sampling_rejection("telemetry sampled out."))
+        self.assertTrue(_is_sampling_rejection("TELEMETRY SAMPLED OUT."))
+        self.assertTrue(_is_sampling_rejection("Telemetry Sampled Out."))
 
     def test_is_sampling_rejection_false(self):
         """Test that _is_sampling_rejection returns False for non-sampling messages."""
@@ -818,7 +821,6 @@ class TestBaseExporter(unittest.TestCase):
         self.assertFalse(_is_sampling_rejection(None))
         # Similar messages that don't match exactly should return False
         self.assertFalse(_is_sampling_rejection("Telemetry sampled out"))  # Missing period
-        self.assertFalse(_is_sampling_rejection("telemetry sampled out."))  # Lowercase
         self.assertFalse(_is_sampling_rejection("Sampled out"))
 
     def test_transmission_400(self):

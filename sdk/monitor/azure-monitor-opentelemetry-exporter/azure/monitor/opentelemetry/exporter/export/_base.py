@@ -590,7 +590,7 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     """
     if message is None:
         return False
-    return message == "Telemetry sampled out."
+    return message.lower() == "telemetry sampled out."
 
 
 _MONITOR_DOMAIN_MAPPING = {
