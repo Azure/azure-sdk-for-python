@@ -95,50 +95,51 @@ class AsyncOperationPollingMethod(AsyncPollingMethod):
         return self._latest_response
 
 
+async def _error_from_response(
+    http_response, body: AsyncIterator[bytes]
+) -> HttpResponseError:
+    # decode response based on content-type
+    # cbor when application/cbor or application/concise-problem-details+cbor
+    body_bytes = b"".join([chunk async for chunk in body])
+    if len(body_bytes) > 0 and (
+        http_response.headers.get("Content-Type", "") == "application/cbor"
+        or http_response.headers.get("Content-Type", "")
+        == "application/concise-problem-details+cbor"
+    ):
+        decoded = CBORDecoder(body_bytes).decode()
+        error_title = decoded.get(-1, "Error response received")
+        error_details = decoded.get(-2, None)
+        return HttpResponseError(
+            message=error_title,
+            response=http_response,
+            error=error_details,
+        )
+    if http_response.headers.get("Content-Type", "") == "application/json":
+        return HttpResponseError(
+            message="Error response received",
+            response=http_response,
+            error=json.loads(body_bytes.decode("utf-8")),
+        )
+    return HttpResponseError(
+        message="Error response received",
+        response=http_response,
+    )
+
+
+async def _check_response_status(
+    http_response,
+    body: AsyncIterator[bytes],
+    expected_status_codes: List[int],
+) -> None:
+    if http_response.status_code not in expected_status_codes:
+        raise await _error_from_response(http_response, body)
+
+
 class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
 
     # Patch all the methods to make sure each of them raises an error with the details from the CBOR response.
     # This is needed because the generated code does not decode the CBOR error messages.
     ####################################################################
-
-    async def error_from_response(
-        self, http_response, body: AsyncIterator[bytes]
-    ) -> HttpResponseError:
-        # decode response based on content-type
-        # cbor when application/cbor or application/concise-problem-details+cbor
-        body_bytes = b"".join([chunk async for chunk in body])
-        if len(body_bytes) > 0 and (
-            http_response.headers.get("Content-Type", "") == "application/cbor"
-            or http_response.headers.get("Content-Type", "")
-            == "application/concise-problem-details+cbor"
-        ):
-            decoded = CBORDecoder(body_bytes).decode()
-            error_title = decoded.get(-1, "Error response received")
-            error_details = decoded.get(-2, None)
-            return HttpResponseError(
-                message=error_title,
-                response=http_response,
-                error=error_details,
-            )
-        if http_response.headers.get("Content-Type", "") == "application/json":
-            return HttpResponseError(
-                message="Error response received",
-                response=http_response,
-                error=json.loads(body_bytes.decode("utf-8")),
-            )
-        return HttpResponseError(
-            message="Error response received",
-            response=http_response,
-        )
-
-    async def check_response_status(
-        self,
-        http_response,
-        body: AsyncIterator[bytes],
-        expected_status_codes: List[int],
-    ) -> None:
-        if http_response.status_code not in expected_status_codes:
-            raise await self.error_from_response(http_response, body)
 
     async def get_transparency_config_cbor(self, **kwargs: Any) -> AsyncIterator[bytes]:
         kwargs["cls"] = lambda pipeline, body, headers: [
@@ -148,7 +149,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         resp, iter_body = await super(  # type: ignore
             _CodeTransparencyClientOperationsMixin, self
         ).get_transparency_config_cbor(**kwargs)
-        await self.check_response_status(
+        await _check_response_status(
             resp, iter_body, expected_status_codes=[200]  # type: ignore
         )
         return iter_body  # type: ignore
@@ -161,7 +162,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         resp, iter_body = await super(  # type: ignore
             _CodeTransparencyClientOperationsMixin, self
         ).get_public_keys(**kwargs)
-        await self.check_response_status(
+        await _check_response_status(
             resp, iter_body, expected_status_codes=[200]  # type: ignore
         )
         return iter_body  # type: ignore
@@ -174,7 +175,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         resp, iter_body = await super(  # type: ignore
             _CodeTransparencyClientOperationsMixin, self
         ).create_entry(body, **kwargs)
-        await self.check_response_status(
+        await _check_response_status(
             resp, iter_body, expected_status_codes=[201, 202]  # type: ignore
         )
         return iter_body  # type: ignore
@@ -191,7 +192,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         ).get_operation(
             operation_id, **kwargs
         )  # type: ignore
-        await self.check_response_status(
+        await _check_response_status(
             resp, iter_body, expected_status_codes=[200, 202]  # type: ignore
         )
         return iter_body  # type: ignore
@@ -204,7 +205,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         resp, iter_body = await super(_CodeTransparencyClientOperationsMixin, self).get_entry(  # type: ignore
             entry_id, **kwargs
         )
-        await self.check_response_status(
+        await _check_response_status(
             resp, iter_body, expected_status_codes=[200]  # type: ignore
         )
         return iter_body  # type: ignore
@@ -219,7 +220,7 @@ class _CodeTransparencyClientOperationsMixin(GeneratedOperationsMixin):
         resp, iter_body = await super(  # type: ignore
             _CodeTransparencyClientOperationsMixin, self
         ).get_entry_statement(entry_id, **kwargs)
-        await self.check_response_status(
+        await _check_response_status(
             resp, iter_body, expected_status_codes=[200]  # type: ignore
         )
         return iter_body  # type: ignore
