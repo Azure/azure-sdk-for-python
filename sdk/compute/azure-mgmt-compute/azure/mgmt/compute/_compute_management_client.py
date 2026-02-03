@@ -45,6 +45,8 @@ from .operations import (
     GalleryImagesOperations,
     GalleryInVMAccessControlProfileVersionsOperations,
     GalleryInVMAccessControlProfilesOperations,
+    GalleryScriptVersionsOperations,
+    GalleryScriptsOperations,
     GallerySharingProfileOperations,
     ImagesOperations,
     LogAnalyticsOperations,
@@ -198,6 +200,10 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      GalleryInVMAccessControlProfileVersionsOperations operations
     :vartype gallery_in_vm_access_control_profile_versions:
      azure.mgmt.compute.operations.GalleryInVMAccessControlProfileVersionsOperations
+    :ivar gallery_scripts: GalleryScriptsOperations operations
+    :vartype gallery_scripts: azure.mgmt.compute.operations.GalleryScriptsOperations
+    :ivar gallery_script_versions: GalleryScriptVersionsOperations operations
+    :vartype gallery_script_versions: azure.mgmt.compute.operations.GalleryScriptVersionsOperations
     :ivar gallery_sharing_profile: GallerySharingProfileOperations operations
     :vartype gallery_sharing_profile: azure.mgmt.compute.operations.GallerySharingProfileOperations
     :ivar soft_deleted_resource: SoftDeletedResourceOperations operations
@@ -381,6 +387,10 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.gallery_in_vm_access_control_profile_versions = GalleryInVMAccessControlProfileVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.gallery_scripts = GalleryScriptsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.gallery_script_versions = GalleryScriptVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.gallery_sharing_profile = GallerySharingProfileOperations(

@@ -292,7 +292,16 @@ class BaseExporter:
                     drop_status_code = None
                     drop_envelopes: List[TelemetryItem] = []
                     for error in track_response.errors:
-                        if _is_retryable_code(error.status_code):
+                        # Check for sampling rejection - these should not be retried
+                        # because the server will always reject them based on sampling rules
+                        if _is_sampling_rejection(error.message):
+                            if not self._is_stats_exporter():
+                                logger.info(
+                                    "Data dropped due to ingestion sampling: %s %s.",
+                                    error.message,
+                                    envelopes[error.index] if error.index is not None else "",
+                                )
+                        elif _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
                             if retry_error is None:
                                 retry_error = error
@@ -571,6 +580,22 @@ def _reached_ingestion_code(response_code: Optional[int]) -> bool:
     :rtype: bool
     """
     return response_code in _REACHED_INGESTION_STATUS_CODES
+
+
+def _is_sampling_rejection(message: Optional[str]) -> bool:
+    """Determine if error message indicates ingestion-side sampling rejection.
+
+    When the server rejects telemetry due to ingestion sampling, the error message
+    will be "Telemetry sampled out." These items should not be retried or persisted
+    because the server will always reject them based on sampling rules.
+
+    :param str message: Error message from the server
+    :return: True if the error indicates a sampling rejection
+    :rtype: bool
+    """
+    if message is None:
+        return False
+    return message.lower() == "telemetry sampled out."
 
 
 _MONITOR_DOMAIN_MAPPING = {

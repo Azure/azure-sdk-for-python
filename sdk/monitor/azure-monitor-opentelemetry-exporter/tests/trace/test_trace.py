@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _AZURE_SDK_NAMESPACE_NAME,
     _AZURE_SDK_OPENTELEMETRY_NAME,
     _AZURE_AI_SDK_NAME,
+    _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._generated.exporter._utils.model_base import SdkJSONEncoder
@@ -135,6 +136,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             transmit.return_value = ExportResult.FAILED_RETRYABLE
             storage_mock = mock.Mock()
             exporter.storage.put = storage_mock
+            exporter._connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/;ApplicationId=4321abcd-5678-4efa-8abc-1234567890ab"
             result = exporter.export([test_span])
         self.assertEqual(result, SpanExportResult.FAILURE)
         self.assertEqual(storage_mock.call_count, 1)
@@ -190,7 +192,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._get_otel_resource_envelope"
             ) as resource_patch:  # noqa: E501
                 result = exporter.export([test_span])
-                resource_patch.assert_called_once_with(mock_resource)
+                resource_patch.assert_called_once_with(mock_resource, None)
                 self.assertEqual(result, SpanExportResult.SUCCESS)
                 self.assertEqual(storage_mock.call_count, 1)
 
@@ -223,7 +225,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "azure.monitor.opentelemetry.exporter.AzureMonitorTraceExporter._get_otel_resource_envelope"
             ) as resource_patch:  # noqa: E501
                 result = exporter.export([test_span])
-                resource_patch.assert_called_once_with(mock_resource)
+                resource_patch.assert_called_once_with(mock_resource, None)
                 self.assertEqual(result, SpanExportResult.SUCCESS)
                 self.assertEqual(storage_mock.call_count, 1)
 
@@ -1770,7 +1772,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 mock_get_otel_resource_envelope.return_value = "test_envelope"
                 result = exporter.export([test_span])
                 self.assertEqual(result, SpanExportResult.SUCCESS)
-                mock_get_otel_resource_envelope.assert_called_once_with(test_resource)
+                mock_get_otel_resource_envelope.assert_called_once_with(test_resource, None)
                 envelopes = ["test_envelope", exporter._span_to_envelope(test_span)]
                 transmit.assert_called_once_with(envelopes)
 
@@ -1783,9 +1785,10 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "bool_test_key": False,
                 "float_test_key": 0.5,
                 "sequence_test_key": ["a", "b"],
+                "microsoft.applicationId": "test_app_id",
             }
         )
-        envelope = exporter._get_otel_resource_envelope(test_resource)
+        envelope = exporter._get_otel_resource_envelope(test_resource, "test_app_id")
         metric_name = envelope.name
         self.assertEqual(metric_name, "Microsoft.ApplicationInsights.Metric")
         instrumentation_key = envelope.instrumentation_key
