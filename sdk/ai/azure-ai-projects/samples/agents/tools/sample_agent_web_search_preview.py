@@ -68,7 +68,6 @@ with (
     )
 
     for event in stream_response:
-        print(event)
         if event.type == "response.created":
             print(f"Follow-up response created with ID: {event.response.id}")
         elif event.type == "response.output_text.delta":
