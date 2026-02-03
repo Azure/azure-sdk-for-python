@@ -154,10 +154,12 @@ def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditi
         conditions['source_if_modified_since'] = source_if_modified_since
     if source_if_unmodified_since is not None:
         conditions['source_if_unmodified_since'] = source_if_unmodified_since
-    if source_etag is not None:
-        conditions['source_etag'] = source_etag
-    if source_match_condition is not None:
-        conditions['source_match_condition'] = source_match_condition
+    # Convert source_etag + source_match_condition to source_if_match/source_if_none_match
+    if source_etag is not None and source_match_condition is not None:
+        if source_match_condition == MatchConditions.IfNotModified:
+            conditions['source_if_match'] = source_etag
+        elif source_match_condition == MatchConditions.IfModified:
+            conditions['source_if_none_match'] = source_etag
     if source_if_tags is not None:
         conditions['source_if_tags'] = source_if_tags
     return conditions

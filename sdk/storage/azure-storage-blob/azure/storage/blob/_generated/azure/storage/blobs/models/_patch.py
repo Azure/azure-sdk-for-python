@@ -98,8 +98,8 @@ class SourceModifiedAccessConditions(TypedDict, total=False):
 
     source_if_modified_since: NotRequired[Optional[str]]
     source_if_unmodified_since: NotRequired[Optional[str]]
-    source_etag: NotRequired[Optional[str]]
-    source_match_condition: NotRequired[Optional[str]]
+    source_if_match: NotRequired[Optional[str]]
+    source_if_none_match: NotRequired[Optional[str]]
     source_if_tags: NotRequired[Optional[str]]
 
 
