@@ -200,8 +200,8 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         if not generated:
             return cls()
         return cls(
-            enabled=generated.enabled,
-            days=generated.days,
+            enabled=getattr(generated, 'enabled', None) or False,
+            days=getattr(generated, 'days', None),
         )
 
 
@@ -245,11 +245,11 @@ class BlobAnalyticsLogging(GeneratedLogging):
         if not generated:
             return cls()
         return cls(
-            version=generated.version,
-            delete=generated.delete,
-            read=generated.read,
-            write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            version=getattr(generated, 'version'),
+            delete=getattr(generated, 'delete'),
+            read=getattr(generated, 'read'),
+            write=getattr(generated, 'write'),
+            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retentionPolicy'))  # pylint: disable=protected-access
         )
 
 
@@ -290,10 +290,10 @@ class Metrics(GeneratedMetrics):
         if not generated:
             return cls()
         return cls(
-            version=generated.version,
-            enabled=generated.enabled,
-            include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            version=getattr(generated, 'version', None) or '1.0',
+            enabled=getattr(generated, 'enabled') or False,
+            include_apis=getattr(generated, 'includeApis', None),
+            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retentionPolicy', None))  # pylint: disable=protected-access
         )
 
 
@@ -337,10 +337,10 @@ class StaticWebsite(GeneratedStaticWebsite):
         if not generated:
             return cls()
         return cls(
-            enabled=generated.enabled,
-            index_document=generated.index_document,
-            error_document404_path=generated.error_document404_path,
-            default_index_document_path=generated.default_index_document_path
+            enabled=getattr(generated, 'enabled'),
+            index_document=getattr(generated, 'indexDocument', None),
+            error_document404_path=getattr(generated, 'errorDocument404Path', None),
+            default_index_document_path=getattr(generated, 'defaultIndexDocumentPath', None)
         )
 
 
@@ -415,11 +415,11 @@ class CorsRule(GeneratedCorsRule):
     @classmethod
     def _from_generated(cls, generated):
         return cls(
-            [generated.allowed_origins],
-            [generated.allowed_methods],
-            allowed_headers=[generated.allowed_headers],
-            exposed_headers=[generated.exposed_headers],
-            max_age_in_seconds=generated.max_age_in_seconds,
+            [getattr(generated, 'allowedOrigins')],
+            [getattr(generated, 'allowedMethods')],
+            allowed_headers=[getattr(generated, 'allowedHeaders')],
+            exposed_headers=[getattr(generated, 'exposedHeaders')],
+            max_age_in_seconds=getattr(generated, 'maxAgeInSeconds'),
         )
 
 
