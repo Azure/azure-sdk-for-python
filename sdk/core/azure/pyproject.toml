@@ -7,3 +7,6 @@ pylint = false
 regression = false
 sphinx = false
 black = false
+
+[tool.azure-sdk-conda]
+in_bundle = false

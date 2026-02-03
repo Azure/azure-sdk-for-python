@@ -51,6 +51,8 @@ from ._utils import (
     OperationName,
     SERVER_ADDRESS,
     SERVER_PORT,
+    SPAN_NAME_CHAT,
+    SPAN_NAME_INVOKE_AGENT,
     start_span,
 )
 
@@ -1481,11 +1483,11 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         tools: Optional[List[Dict[str, Any]]] = None,
     ) -> "Optional[AbstractSpan]":
         """Start a span for responses API call."""
-        # Build span name: prefer model, then assistant name, then just operation
-        if model:
-            span_name = f"{OperationName.RESPONSES.value} {model}"
-        elif assistant_name:
-            span_name = f"{OperationName.RESPONSES.value} {assistant_name}"
+        # Build span name: agent case uses "invoke_agent", non-agent case uses "chat"
+        if assistant_name:
+            span_name = f"{SPAN_NAME_INVOKE_AGENT} {assistant_name}"
+        elif model:
+            span_name = f"{SPAN_NAME_CHAT} {model}"
         else:
             span_name = OperationName.RESPONSES.value
 
@@ -3998,9 +4000,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             # Wrap in parts array for semantic convention compliance
             parts: List[Dict[str, Any]] = [{"type": "workflow_action", "content": workflow_details}]
             event_body = [{"role": role, "parts": parts}]
-
-            # Use generic event name for workflow actions
-            event_name = GEN_AI_WORKFLOW_ACTION_EVENT
+            event_name = GEN_AI_CONVERSATION_ITEM_EVENT
 
         elif item_type == "message":
             # Regular message - use content format for consistency
