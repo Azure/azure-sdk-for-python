@@ -10,8 +10,8 @@ trace and exception telemetry to demonstrate the capabilities and collection set
 Live metrics is enabled by default, it can be disabled by setting `enable_live_metrics` to `False`
 """
 import logging
-import requests  # type: ignore[import-untyped] # pylint: disable=networking-import-outside-azure-core-transport
 import time
+import requests  # type: ignore[import-untyped] # pylint: disable=networking-import-outside-azure-core-transport
 
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
