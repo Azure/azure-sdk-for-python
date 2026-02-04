@@ -24,10 +24,10 @@ class PrintMetricExporter(MetricExporter):
         print(f"exported metrics: {metrics_data}")
         return MetricExportResult.SUCCESS
 
-    def shutdown(self, timeout_millis: float = 30000, **kwargs) -> None:  # type: ignore[override]
+    def shutdown(self, timeout_millis: float = 30000, **kwargs) -> None:  # type: ignore[override] 
         return None
 
-    def force_flush(self, timeout_millis: float = 30000, **kwargs) -> bool:  # type: ignore[override]
+    def force_flush(self, timeout_millis: float = 30000, **kwargs) -> bool:  # type: ignore[override] # pylint: disable=unused-argument
         return True
 
 

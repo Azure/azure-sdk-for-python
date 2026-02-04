@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from os import environ
 import os
+import sys
 
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage, CompletionsFinishReason
@@ -25,7 +25,7 @@ try:
 except KeyError:
     print("Missing environment variable 'AZURE_AI_CHAT_ENDPOINT' or 'AZURE_AI_CHAT_KEY'")
     print("Set them before running this sample.")
-    exit()
+    sys.exit()
 
 is_content_tracing_enabled = os.environ["AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"]
 if not is_content_tracing_enabled:
