@@ -5,6 +5,7 @@
 ### Features Added
 
 * Tracing: included agent ID in response generation traces when available.
+* Tracing: Added support for opt-in trace context propagation.
 
 ### Breaking changes
 
