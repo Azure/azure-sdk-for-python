@@ -112,6 +112,7 @@ async def run_check(
         if in_ci():
             env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
         try:
+            logger.info(*cmd)
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 cwd=package,
