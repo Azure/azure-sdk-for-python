@@ -7,12 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, List, overload, IO, cast
+from typing import Union, Optional, Any, List, overload, IO, cast, Literal
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ...models import (
+    FoundryFeaturesOptInKeys,
     MemoryStoreOperationUsage,
     ResponseUsageInputTokensDetails,
     ResponseUsageOutputTokensDetails,
@@ -32,6 +33,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         self,
         name: str,
         *,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str,
         content_type: str = "application/json",
         items: Optional[List[_models.InputItem]] = None,
@@ -43,6 +45,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
         :param name: The name of the memory store to update. Required.
         :type name: str
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -69,7 +77,13 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @overload
     async def begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: JSON,
+        *,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> AsyncUpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -77,6 +91,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         :type name: str
         :param body: Required.
         :type body: JSON
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -89,7 +106,13 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @overload
     async def begin_update_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: IO[bytes],
+        *,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> AsyncUpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -97,6 +120,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         :type name: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -118,6 +144,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
         items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
@@ -130,6 +157,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -160,6 +190,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._update_memories_initial(
+                foundry_features=foundry_features,
                 name=name,
                 body=body,
                 scope=scope,

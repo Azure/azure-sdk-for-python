@@ -144,7 +144,9 @@ with (
 
     print("Get code based evaluator version")
     code_evaluator_latest = project_client.evaluators.get_version(
-        name=code_evaluator.name, version=code_evaluator.version, foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        name=code_evaluator.name,
+        version=code_evaluator.version,
+        foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW,
     )
     pprint(code_evaluator_latest)
 

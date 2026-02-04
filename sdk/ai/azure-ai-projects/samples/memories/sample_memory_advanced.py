@@ -57,7 +57,9 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        project_client.memory_stores.delete(memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW)
+        project_client.memory_stores.delete(
+            memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         print(f"Memory store `{memory_store_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -163,5 +165,7 @@ with (
     print(f"Deleted memories for scope '{scope}'")
 
     # Delete memory store
-    project_client.memory_stores.delete(memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW)
+    project_client.memory_stores.delete(
+        memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+    )
     print(f"Deleted memory store `{memory_store.name}`")
