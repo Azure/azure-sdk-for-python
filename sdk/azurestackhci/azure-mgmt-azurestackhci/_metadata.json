@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2026-02-01",
+  "commit": "2daa450f8eaef939165415ce90178334568eacfd",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCI",
+  "emitterVersion": "0.59.3"
+}
