@@ -99,6 +99,45 @@ def should_verify_package(package_name):
     return package_name not in EXCLUDED_PACKAGES and "nspkg" not in package_name and "-mgmt" not in package_name
 
 
+def has_stable_version_on_pypi(package_name: str) -> bool:
+    """Check if the package has any stable (non-prerelease) version on PyPI."""
+    try:
+        all_versions = retrieve_versions_from_pypi(package_name)
+        stable_versions = [Version(v) for v in all_versions if not Version(v).is_prerelease]
+        return len(stable_versions) > 0
+    except Exception:
+        return False
+
+
+def verify_conda_section(package_dir: str, package_name: str) -> bool:
+    """Verify that packages with stable versions on PyPI have [tool.azure-sdk-conda] section in pyproject.toml."""
+    if not has_stable_version_on_pypi(package_name):
+        logging.info(f"Package {package_name} has no stable version on PyPI, skipping conda section check")
+        return True
+
+    pyproject_path = os.path.join(package_dir, "pyproject.toml")
+    if not os.path.exists(pyproject_path):
+        logging.error(f"Package {package_name} has a stable version on PyPI but is missing pyproject.toml")
+        return False
+
+    try:
+        with open(pyproject_path, "r", encoding="utf-8") as f:
+            content = f.read()
+
+        if "[tool.azure-sdk-conda]" not in content:
+            logging.error(
+                f"Package {package_name} has a stable version on PyPI but is missing "
+                "[tool.azure-sdk-conda] section in pyproject.toml"
+            )
+            return False
+
+        logging.info(f"Package {package_name} has required [tool.azure-sdk-conda] section")
+        return True
+    except Exception as e:
+        logging.error(f"Failed to read pyproject.toml for {package_name}: {e}")
+        return False
+
+
 def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
     """Get prior stable version if it exists, otherwise get prior preview version, else return None."""
     try:
@@ -253,6 +292,14 @@ class verify_whl(Check):
                     logger.info(f"Verified whl for package {package_name}")
                 else:
                     logger.error(f"Failed to verify whl for package {package_name}")
+                    results.append(1)
+
+                # Verify conda section for packages with stable versions on PyPI
+                if not verify_conda_section(package_dir, package_name):
+                    logger.error(f"Failed conda section verification for package {package_name}")
+                    logger.error(
+                        "As part of releasing stable packages to Conda, the pyproject.toml must include a [tool.azure-sdk-conda] section and specify if the package should be released individually or bundled."
+                    )
                     results.append(1)
 
         return max(results) if results else 0
