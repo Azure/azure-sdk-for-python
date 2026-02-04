@@ -104,6 +104,9 @@ class _DownloadResponse:
     def __iter__(self):
         return iter(self._stream)
 
+    def __aiter__(self):
+        return self._stream.__aiter__()
+
 
 def deserialize_blob_stream(
     response: "PipelineResponse",

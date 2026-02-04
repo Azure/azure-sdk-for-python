@@ -280,6 +280,10 @@ async def upload_append_blob(  # pylint: disable=unused-argument
         # Create a copy of kwargs for create() that excludes append-specific conditions
         create_kwargs = {k: v for k, v in kwargs.items() if k not in ('max_size', 'append_position')}
 
+        # Add append_conditions to kwargs for append_block operations
+        if append_conditions:
+            kwargs.update(append_conditions)
+
         try:
             if overwrite:
                 await client.create(
@@ -295,7 +299,6 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 stream=stream,
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
-                append_position_access_conditions=append_conditions,
                 progress_hook=progress_hook,
                 headers=headers,
                 **kwargs))
@@ -323,7 +326,6 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 stream=stream,
                 max_concurrency=max_concurrency,
                 validate_content=validate_content,
-                append_position_access_conditions=append_conditions,
                 progress_hook=progress_hook,
                 headers=headers,
                 **kwargs))

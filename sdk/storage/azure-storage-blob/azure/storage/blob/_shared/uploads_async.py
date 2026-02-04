@@ -371,7 +371,7 @@ class AppendBlobChunkUploader(_ChunkUploader):
             )
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
-            self.request_options["append_position_access_conditions"].append_position = (
+            self.request_options["append_position"] = (
                 self.current_length + chunk_offset
             )
             self.response_headers = await self.service.append_block(
