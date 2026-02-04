@@ -20,47 +20,32 @@ class FoundryCheckpointClient(AsyncContextManager["FoundryCheckpointClient"]):
     This client provides access to checkpoint storage for workflow state persistence,
     enabling checkpoint save, load, list, and delete operations.
 
-    :param endpoint: The fully qualified endpoint for the Azure AI Agents service.
-        Example: "https://<resource-name>.api.azureml.ms"
+    :param endpoint: The fully qualified project endpoint for the Azure AI Foundry service.
+        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
     :type endpoint: str
     :param credential: Credential for authenticating requests to the service.
         Use credentials from azure-identity like DefaultAzureCredential.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param project_id: The project identifier for checkpoint storage.
-    :type project_id: str
     """
 
     def __init__(
         self,
         endpoint: str,
         credential: "AsyncTokenCredential",
-        project_id: str,
     ) -> None:
         """Initialize the asynchronous Azure AI Checkpoint Client.
 
-        :param endpoint: The service endpoint URL.
+        :param endpoint: The project endpoint URL (includes project context).
         :type endpoint: str
         :param credential: Credentials for authenticating requests.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-        :param project_id: The project identifier.
-        :type project_id: str
         """
         config = FoundryCheckpointClientConfiguration(credential)
         self._client: AsyncPipelineClient = AsyncPipelineClient(
             base_url=endpoint, config=config
         )
-        self._project_id = project_id
-        self._sessions = CheckpointSessionOperations(self._client, project_id)
-        self._items = CheckpointItemOperations(self._client, project_id)
-
-    @property
-    def project_id(self) -> str:
-        """Get the project identifier.
-
-        :return: The project identifier.
-        :rtype: str
-        """
-        return self._project_id
+        self._sessions = CheckpointSessionOperations(self._client)
+        self._items = CheckpointItemOperations(self._client)
 
     # Session operations
 

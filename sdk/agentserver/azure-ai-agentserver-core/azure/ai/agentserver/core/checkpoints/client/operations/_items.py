@@ -32,17 +32,6 @@ class CheckpointItemOperations(BaseOperations):
 
     _QUERY_PARAMS: ClassVar[Dict[str, Any]] = {"api-version": _API_VERSION}
 
-    def __init__(self, client: AsyncPipelineClient, project_id: str) -> None:
-        """Initialize checkpoint item operations.
-
-        :param client: The pipeline client.
-        :type client: AsyncPipelineClient
-        :param project_id: The project identifier.
-        :type project_id: str
-        """
-        super().__init__(client)
-        self._project_id = project_id
-
     def _items_path(self, item_id: Optional[str] = None) -> str:
         """Get the API path for item operations.
 
@@ -51,7 +40,7 @@ class CheckpointItemOperations(BaseOperations):
         :return: The API path.
         :rtype: str
         """
-        base = f"/projects/{self._project_id}/checkpoints/items"
+        base = "/checkpoints/items"
         return f"{base}/{item_id}" if item_id else base
 
     def _build_create_batch_request(self, items: List[CheckpointItem]) -> HttpRequest:

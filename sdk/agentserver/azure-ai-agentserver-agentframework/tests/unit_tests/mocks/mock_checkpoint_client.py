@@ -18,24 +18,15 @@ class MockFoundryCheckpointClient:
     Stores checkpoints in memory without making any HTTP calls.
     """
 
-    def __init__(self, project_id: str) -> None:
+    def __init__(self, endpoint: str = "https://mock.endpoint") -> None:
         """Initialize the mock client.
 
-        :param project_id: The project identifier.
-        :type project_id: str
+        :param endpoint: The mock endpoint URL.
+        :type endpoint: str
         """
-        self._project_id = project_id
+        self._endpoint = endpoint
         self._sessions: Dict[str, CheckpointSession] = {}
         self._items: Dict[str, CheckpointItem] = {}
-
-    @property
-    def project_id(self) -> str:
-        """Get the project identifier.
-
-        :return: The project identifier.
-        :rtype: str
-        """
-        return self._project_id
 
     def _item_key(self, item_id: CheckpointItemId) -> str:
         """Generate a unique key for a checkpoint item.

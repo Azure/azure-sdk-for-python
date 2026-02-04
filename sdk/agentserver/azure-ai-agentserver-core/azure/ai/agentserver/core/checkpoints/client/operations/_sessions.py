@@ -30,17 +30,6 @@ class CheckpointSessionOperations(BaseOperations):
 
     _QUERY_PARAMS: ClassVar[Dict[str, Any]] = {"api-version": _API_VERSION}
 
-    def __init__(self, client: AsyncPipelineClient, project_id: str) -> None:
-        """Initialize checkpoint session operations.
-
-        :param client: The pipeline client.
-        :type client: AsyncPipelineClient
-        :param project_id: The project identifier.
-        :type project_id: str
-        """
-        super().__init__(client)
-        self._project_id = project_id
-
     def _session_path(self, session_id: Optional[str] = None) -> str:
         """Get the API path for session operations.
 
@@ -49,7 +38,7 @@ class CheckpointSessionOperations(BaseOperations):
         :return: The API path.
         :rtype: str
         """
-        base = f"/projects/{self._project_id}/checkpoints/sessions"
+        base = "/checkpoints/sessions"
         return f"{base}/{session_id}" if session_id else base
 
     def _build_upsert_request(self, session: CheckpointSession) -> HttpRequest:

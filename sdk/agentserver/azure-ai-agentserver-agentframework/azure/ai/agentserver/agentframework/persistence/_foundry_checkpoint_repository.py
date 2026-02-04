@@ -27,39 +27,34 @@ class FoundryCheckpointRepository(CheckpointRepository):
     Manages checkpoint sessions on the Foundry backend, creating sessions on demand
     and caching storage instances for reuse within the same process.
 
-    :param endpoint: The Foundry service endpoint URL.
-    :type endpoint: str
+    :param project_endpoint: The Azure AI Foundry project endpoint URL.
+        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
+    :type project_endpoint: str
     :param credential: Credential for authentication.
     :type credential: Union[AsyncTokenCredential, TokenCredential]
-    :param project_id: The project identifier.
-    :type project_id: str
     """
 
     def __init__(
         self,
-        endpoint: str,
+        project_endpoint: str,
         credential: Union[AsyncTokenCredential, TokenCredential],
-        project_id: str,
     ) -> None:
         """Initialize the Foundry checkpoint repository.
 
-        :param endpoint: The Foundry service endpoint URL.
-        :type endpoint: str
+        :param project_endpoint: The Azure AI Foundry project endpoint URL.
+        :type project_endpoint: str
         :param credential: Credential for authentication.
         :type credential: Union[AsyncTokenCredential, TokenCredential]
-        :param project_id: The project identifier.
-        :type project_id: str
         """
         # Convert sync credential to async if needed
         if not isinstance(credential, AsyncTokenCredential):
-            from azure.identity import get_bearer_token_provider
             # For now, we require async credentials
             raise TypeError(
                 "FoundryCheckpointRepository requires an AsyncTokenCredential. "
                 "Please use an async credential like DefaultAzureCredential."
             )
 
-        self._client = FoundryCheckpointClient(endpoint, credential, project_id)
+        self._client = FoundryCheckpointClient(project_endpoint, credential)
         self._inventory: Dict[str, CheckpointStorage] = {}
 
     async def get_or_create(
@@ -95,10 +90,7 @@ class FoundryCheckpointRepository(CheckpointRepository):
         :param session_id: The session identifier.
         :type session_id: str
         """
-        session = CheckpointSession(
-            project_id=self._client.project_id,
-            session_id=session_id,
-        )
+        session = CheckpointSession(session_id=session_id)
         await self._client.upsert_session(session)
         logger.debug("Ensured session %s exists on Foundry", session_id)
 

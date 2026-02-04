@@ -51,7 +51,6 @@ class FoundryCheckpointStorage:
         """
         serialized = self._serialize_checkpoint(checkpoint)
         item = CheckpointItem(
-            project_id=self._client.project_id,
             session_id=self._session_id,
             item_id=checkpoint.checkpoint_id,
             data=serialized,

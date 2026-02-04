@@ -50,8 +50,7 @@ def from_agent_framework(
         thread_repository: Optional[AgentThreadRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
         managed_checkpoints: bool = False,
-        foundry_endpoint: Optional[str] = None,
-        project_id: Optional[str] = None,
+        project_endpoint: Optional[str] = None,
     ) -> "AgentFrameworkWorkflowAdapter":
     """
     Create an Agent Framework Workflow Adapter.
@@ -72,10 +71,9 @@ def from_agent_framework(
     :type checkpoint_repository: Optional[CheckpointRepository]
     :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
     :type managed_checkpoints: bool
-    :param foundry_endpoint: The Foundry service endpoint (required if managed_checkpoints=True).
-    :type foundry_endpoint: Optional[str]
-    :param project_id: The project identifier (required if managed_checkpoints=True).
-    :type project_id: Optional[str]
+    :param project_endpoint: The Azure AI Foundry project endpoint (required if managed_checkpoints=True).
+        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
+    :type project_endpoint: Optional[str]
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
     """
@@ -88,8 +86,7 @@ def from_agent_framework(
     thread_repository: Optional[AgentThreadRepository] = None,
     checkpoint_repository: Optional[CheckpointRepository] = None,
     managed_checkpoints: bool = False,
-    foundry_endpoint: Optional[str] = None,
-    project_id: Optional[str] = None,
+    project_endpoint: Optional[str] = None,
 ) -> "AgentFrameworkAgent":
     """
     Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a
@@ -106,10 +103,9 @@ def from_agent_framework(
     :type checkpoint_repository: Optional[CheckpointRepository]
     :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
     :type managed_checkpoints: bool
-    :param foundry_endpoint: The Foundry service endpoint (required if managed_checkpoints=True).
-    :type foundry_endpoint: Optional[str]
-    :param project_id: The project identifier (required if managed_checkpoints=True).
-    :type project_id: Optional[str]
+    :param project_endpoint: The Azure AI Foundry project endpoint (required if managed_checkpoints=True).
+        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
+    :type project_endpoint: Optional[str]
     :return: An instance of AgentFrameworkAgent.
     :rtype: AgentFrameworkAgent
     :raises TypeError: If neither or both of agent and workflow are provided, or if
@@ -119,16 +115,15 @@ def from_agent_framework(
 
     # Handle managed checkpoints
     if managed_checkpoints:
-        if not foundry_endpoint or not project_id:
+        if not project_endpoint:
             raise ValueError(
-                "foundry_endpoint and project_id are required when managed_checkpoints=True"
+                "project_endpoint is required when managed_checkpoints=True"
             )
         if not credentials:
             raise ValueError("credentials are required when managed_checkpoints=True")
         checkpoint_repository = FoundryCheckpointRepository(
-            endpoint=foundry_endpoint,
+            project_endpoint=project_endpoint,
             credential=credentials,
-            project_id=project_id,
         )
 
     if isinstance(agent_or_workflow, WorkflowBuilder):

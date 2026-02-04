@@ -15,12 +15,10 @@ class CheckpointSession:
 
     A session maps to a conversation and groups related checkpoints together.
 
-    :ivar project_id: The project identifier.
     :ivar session_id: The session identifier (maps to conversation_id).
     :ivar metadata: Optional metadata for the session.
     """
 
-    project_id: str
     session_id: str
     metadata: Optional[Dict[str, Any]] = None
 
@@ -45,14 +43,12 @@ class CheckpointItem:
 
     Contains the serialized checkpoint data along with identifiers.
 
-    :ivar project_id: The project identifier.
     :ivar session_id: The session identifier this checkpoint belongs to.
     :ivar item_id: The unique checkpoint item identifier.
     :ivar data: Serialized checkpoint data as bytes.
     :ivar parent_id: Optional parent checkpoint identifier.
     """
 
-    project_id: str
     session_id: str
     item_id: str
     data: bytes
@@ -77,7 +73,6 @@ class CheckpointItem:
 class CheckpointSessionRequest(BaseModel):
     """Request model for creating/updating a checkpoint session."""
 
-    project_id: str = Field(alias="projectId")
     session_id: str = Field(alias="sessionId")
     metadata: Optional[Dict[str, Any]] = None
 
@@ -93,7 +88,6 @@ class CheckpointSessionRequest(BaseModel):
         :rtype: CheckpointSessionRequest
         """
         return cls(
-            project_id=session.project_id,
             session_id=session.session_id,
             metadata=session.metadata,
         )
@@ -102,7 +96,6 @@ class CheckpointSessionRequest(BaseModel):
 class CheckpointSessionResponse(BaseModel):
     """Response model for checkpoint session operations."""
 
-    project_id: str = Field(alias="projectId")
     session_id: str = Field(alias="sessionId")
     metadata: Optional[Dict[str, Any]] = None
     etag: Optional[str] = None
@@ -116,7 +109,6 @@ class CheckpointSessionResponse(BaseModel):
         :rtype: CheckpointSession
         """
         return CheckpointSession(
-            project_id=self.project_id,
             session_id=self.session_id,
             metadata=self.metadata,
         )
@@ -147,7 +139,6 @@ class CheckpointItemIdResponse(BaseModel):
 class CheckpointItemRequest(BaseModel):
     """Request model for creating checkpoint items."""
 
-    project_id: str = Field(alias="projectId")
     session_id: str = Field(alias="sessionId")
     item_id: str = Field(alias="itemId")
     data: str  # Base64-encoded bytes
@@ -167,7 +158,6 @@ class CheckpointItemRequest(BaseModel):
         import base64
 
         return cls(
-            project_id=item.project_id,
             session_id=item.session_id,
             item_id=item.item_id,
             data=base64.b64encode(item.data).decode("utf-8"),
@@ -178,7 +168,6 @@ class CheckpointItemRequest(BaseModel):
 class CheckpointItemResponse(BaseModel):
     """Response model for checkpoint item operations."""
 
-    project_id: str = Field(alias="projectId")
     session_id: str = Field(alias="sessionId")
     item_id: str = Field(alias="itemId")
     data: str  # Base64-encoded bytes
@@ -196,7 +185,6 @@ class CheckpointItemResponse(BaseModel):
         import base64
 
         return CheckpointItem(
-            project_id=self.project_id,
             session_id=self.session_id,
             item_id=self.item_id,
             data=base64.b64decode(self.data),

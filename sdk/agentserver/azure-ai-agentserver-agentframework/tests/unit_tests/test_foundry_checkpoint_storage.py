@@ -15,7 +15,7 @@ from .mocks import MockFoundryCheckpointClient
 @pytest.mark.asyncio
 async def test_save_checkpoint_returns_checkpoint_id() -> None:
     """Test that save_checkpoint returns the checkpoint ID."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     checkpoint = WorkflowCheckpoint(
@@ -32,7 +32,7 @@ async def test_save_checkpoint_returns_checkpoint_id() -> None:
 @pytest.mark.asyncio
 async def test_load_checkpoint_returns_checkpoint() -> None:
     """Test that load_checkpoint returns the checkpoint."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     checkpoint = WorkflowCheckpoint(
@@ -54,7 +54,7 @@ async def test_load_checkpoint_returns_checkpoint() -> None:
 @pytest.mark.asyncio
 async def test_load_checkpoint_returns_none_for_missing() -> None:
     """Test that load_checkpoint returns None for missing checkpoint."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     loaded = await storage.load_checkpoint("nonexistent")
@@ -66,7 +66,7 @@ async def test_load_checkpoint_returns_none_for_missing() -> None:
 @pytest.mark.asyncio
 async def test_list_checkpoint_ids_returns_all_ids() -> None:
     """Test that list_checkpoint_ids returns all checkpoint IDs."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     cp1 = WorkflowCheckpoint(checkpoint_id="cp-1", workflow_id="wf-1")
@@ -86,7 +86,7 @@ async def test_list_checkpoint_ids_returns_all_ids() -> None:
 @pytest.mark.asyncio
 async def test_list_checkpoint_ids_filters_by_workflow() -> None:
     """Test that list_checkpoint_ids filters by workflow_id."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     cp1 = WorkflowCheckpoint(checkpoint_id="cp-1", workflow_id="wf-1")
@@ -106,7 +106,7 @@ async def test_list_checkpoint_ids_filters_by_workflow() -> None:
 @pytest.mark.asyncio
 async def test_list_checkpoints_returns_all_checkpoints() -> None:
     """Test that list_checkpoints returns all checkpoints."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     cp1 = WorkflowCheckpoint(checkpoint_id="cp-1", workflow_id="wf-1")
@@ -126,7 +126,7 @@ async def test_list_checkpoints_returns_all_checkpoints() -> None:
 @pytest.mark.asyncio
 async def test_delete_checkpoint_returns_true_for_existing() -> None:
     """Test that delete_checkpoint returns True for existing checkpoint."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     checkpoint = WorkflowCheckpoint(checkpoint_id="cp-123", workflow_id="wf-1")
@@ -141,7 +141,7 @@ async def test_delete_checkpoint_returns_true_for_existing() -> None:
 @pytest.mark.asyncio
 async def test_delete_checkpoint_returns_false_for_missing() -> None:
     """Test that delete_checkpoint returns False for missing checkpoint."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     deleted = await storage.delete_checkpoint("nonexistent")
@@ -153,7 +153,7 @@ async def test_delete_checkpoint_returns_false_for_missing() -> None:
 @pytest.mark.asyncio
 async def test_delete_checkpoint_removes_from_storage() -> None:
     """Test that delete_checkpoint actually removes the checkpoint."""
-    client = MockFoundryCheckpointClient(project_id="test-project")
+    client = MockFoundryCheckpointClient()
     storage = FoundryCheckpointStorage(client=client, session_id="session-1")
 
     checkpoint = WorkflowCheckpoint(checkpoint_id="cp-123", workflow_id="wf-1")
