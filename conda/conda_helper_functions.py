@@ -4,6 +4,7 @@ Helper functions for updating conda files.
 
 import os
 import glob
+from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 import csv
 import json
@@ -32,14 +33,30 @@ SUPPORT_COL = "Support"
 # =====================================
 
 
+@lru_cache(maxsize=None)
+def _build_package_path_index() -> Dict[str, str]:
+    """
+    Build a one-time index mapping package names to their filesystem paths.
+
+    This scans the sdk/ directory once and caches the result for all subsequent lookups.
+    """
+    all_paths = glob.glob(os.path.join(SDK_DIR, "*", "*"))
+    # Exclude temp directories like .tox, .venv, __pycache__, etc.
+    return {
+        os.path.basename(p): p
+        for p in all_paths
+        if os.path.isdir(p) and not os.path.basename(p).startswith((".", "__"))
+    }
+
+
 def get_package_path(package_name: str) -> Optional[str]:
     """Get the filesystem path of an SDK package given its name."""
-    pattern = os.path.join(SDK_DIR, "**", package_name)
-    matches = glob.glob(pattern, recursive=True)
-    if not matches:
+    path_index = _build_package_path_index()
+    package_path = path_index.get(package_name)
+    if not package_path:
         logger.error(f"Package path not found for package: {package_name}")
         return None
-    return matches[0]
+    return package_path
 
 
 def get_bundle_name(package_name: str) -> Optional[str]:
@@ -81,13 +98,7 @@ def get_bundle_name(package_name: str) -> Optional[str]:
 def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
     """Create a mapping of bundle names to their constituent package names."""
     logger.info("Mapping bundle names to packages...")
-    all_paths = glob.glob(os.path.join(SDK_DIR, "*", "*"))
-    # Exclude temp directories like .tox, .venv, __pycache__, etc.
-    path_lookup = {
-        os.path.basename(p): p
-        for p in all_paths
-        if os.path.isdir(p) and not os.path.basename(p).startswith((".", "__"))
-    }
+    path_lookup = _build_package_path_index()
 
     bundle_map = {}
     for package_name in package_names:
@@ -235,7 +246,9 @@ def is_stable_on_pypi(package_name: str) -> bool:
             parsed_version = Version(latest_version)
 
             if parsed_version.is_prerelease:
-                logger.debug(f"Package {package_name} version {latest_version} is pre-release")
+                logger.debug(
+                    f"Package {package_name} version {latest_version} is pre-release"
+                )
                 return False
 
             logger.debug(f"Package {package_name} version {latest_version} is stable")
