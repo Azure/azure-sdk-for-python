@@ -12,7 +12,14 @@ from collections.abc import MutableMapping
 from typing import Any, Optional
 import json
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.exceptions import map_error, HttpResponseError, ClientAuthenticationError, ResourceNotFoundError, ResourceExistsError, ResourceNotModifiedError
+from azure.core.exceptions import (
+    map_error,
+    HttpResponseError,
+    ClientAuthenticationError,
+    ResourceNotFoundError,
+    ResourceExistsError,
+    ResourceNotModifiedError,
+)
 
 from ... import models as _models
 from ..._utils.model_base import _deserialize, SdkJSONEncoder
@@ -91,7 +98,9 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(_request, stream=False, **kwargs)  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(
+            _request, stream=False, **kwargs
+        )  # pylint: disable=protected-access
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
