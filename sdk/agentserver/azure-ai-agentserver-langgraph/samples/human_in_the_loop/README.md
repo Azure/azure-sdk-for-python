@@ -79,7 +79,7 @@ The agent will respond with an interrupt request:
   "output": [
     {
       "type": "function_call",
-      "name": "__hosted_agent_adapter_interrupt__",
+      "name": "__hosted_agent_adapter_hitl__",
       "call_id": "call_xyz789...",
       "arguments": "{\"question\": \"Where are you located?\"}"
     }
