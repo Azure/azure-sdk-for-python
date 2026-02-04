@@ -152,7 +152,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
 
         self._client = AzureTable(
             self.url,
-            credential=credential,
+            credential=credential or False,
             authentication_policy=auth_policy,
             policies=kwargs.pop("policies", self._policies),
             **kwargs,
