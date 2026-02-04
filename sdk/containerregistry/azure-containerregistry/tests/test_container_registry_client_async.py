@@ -70,9 +70,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             results_per_page = 2
             total_pages = 0
 
-            repository_pages = client.list_repository_names(
-                results_per_page=results_per_page
-            )
+            repository_pages = client.list_repository_names(results_per_page=results_per_page)
 
             prev = None
             async for page in repository_pages.by_page():
@@ -134,9 +132,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_update_repository_properties_kwargs(
-        self, containerregistry_endpoint
-    ):
+    async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
         repo = self.get_resource_name("repo")
         self.import_image(containerregistry_endpoint, repo, ["test"])
         self.sleep(5)
@@ -164,11 +160,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 assert isinstance(artifact.created_on, datetime)
                 assert isinstance(artifact.last_updated_on, datetime)
                 assert artifact.repository_name == HELLO_WORLD
-                assert (
-                    artifact.fully_qualified_reference
-                    in self.create_fully_qualified_reference(
-                        containerregistry_endpoint, HELLO_WORLD, artifact.digest
-                    )
+                assert artifact.fully_qualified_reference in self.create_fully_qualified_reference(
+                    containerregistry_endpoint, HELLO_WORLD, artifact.digest
                 )
                 count += 1
 
@@ -180,9 +173,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             results_per_page = 2
 
-            pages = client.list_manifest_properties(
-                HELLO_WORLD, results_per_page=results_per_page
-            )
+            pages = client.list_manifest_properties(HELLO_WORLD, results_per_page=results_per_page)
             page_count = 0
             async for page in pages.by_page():
                 reg_count = 0
@@ -232,18 +223,13 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             properties = await client.get_manifest_properties(HELLO_WORLD, "latest")
             assert isinstance(properties, ArtifactManifestProperties)
             assert properties.repository_name == HELLO_WORLD
-            assert (
-                properties.fully_qualified_reference
-                in self.create_fully_qualified_reference(
-                    containerregistry_endpoint, HELLO_WORLD, properties.digest
-                )
+            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(
+                containerregistry_endpoint, HELLO_WORLD, properties.digest
             )
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_get_manifest_properties_does_not_exist(
-        self, containerregistry_endpoint
-    ):
+    async def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             manifest = await client.get_manifest_properties(HELLO_WORLD, "latest")
             invalid_digest = manifest.digest[:-10] + "a" * 10
@@ -373,9 +359,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_list_tag_properties_order_descending(
-        self, containerregistry_endpoint
-    ):
+    async def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
@@ -390,9 +374,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_list_tag_properties_order_ascending(
-        self, containerregistry_endpoint
-    ):
+    async def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
@@ -515,18 +497,14 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_set_oci_manifest(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         repo = self.get_resource_name("repo")
-        path = os.path.join(
-            self.get_test_directory(), "data", "oci_artifact", "manifest.json"
-        )
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", "manifest.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_oci_manifest_prerequisites(repo, client)
 
             with open(path, "rb") as manifest_stream:
                 # test set oci manifest in stream format
                 with pytest.raises(HttpResponseError):
-                    await client.set_manifest(
-                        repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST
-                    )
+                    await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
                 manifest_stream.seek(0)
                 digest1 = await client.set_manifest(repo, manifest_stream, tag="v1")
                 manifest_stream.seek(0)
@@ -534,9 +512,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 # test set oci manifest in JSON format
                 manifest_json = json.loads(manifest_stream.read().decode())
                 with pytest.raises(HttpResponseError):
-                    await client.set_manifest(
-                        repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST
-                    )
+                    await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
                 digest2 = await client.set_manifest(repo, manifest_json, tag="v2")
 
             assert digest1 == digest2
@@ -560,9 +536,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_set_oci_manifest_without_spaces(self, containerregistry_endpoint):
         if not is_public_endpoint(containerregistry_endpoint):
-            pytest.skip(
-                "This test is for testing test_set_docker_manifest in playback."
-            )
+            pytest.skip("This test is for testing test_set_docker_manifest in playback.")
 
         repo = self.get_resource_name("repo")
         path = os.path.join(
@@ -577,9 +551,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             with open(path, "rb") as manifest_stream:
                 # test set oci manifest in stream format
                 with pytest.raises(HttpResponseError):
-                    await client.set_manifest(
-                        repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST
-                    )
+                    await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
                 manifest_stream.seek(0)
                 digest = await client.set_manifest(repo, manifest_stream, tag="v1")
 
@@ -601,9 +573,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_set_docker_manifest(self, **kwargs):
         containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         repo = self.get_resource_name("repo")
-        path = os.path.join(
-            self.get_test_directory(), "data", "docker_artifact", "manifest.json"
-        )
+        path = os.path.join(self.get_test_directory(), "data", "docker_artifact", "manifest.json")
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await self.upload_docker_manifest_prerequisites(repo, client)
 
@@ -613,9 +583,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                     # It fails as the default media type is oci image manifest media type
                     await client.set_manifest(repo, manifest_stream, tag="v1")
                 manifest_stream.seek(0)
-                digest1 = await client.set_manifest(
-                    repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST
-                )
+                digest1 = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
                 manifest_stream.seek(0)
 
                 # test set Docker manifest in JSON format
@@ -623,9 +591,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                 with pytest.raises(HttpResponseError):
                     # It fails as the default media type is oci image manifest media type
                     await client.set_manifest(repo, manifest_json, tag="v2")
-                digest2 = await client.set_manifest(
-                    repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST
-                )
+                digest2 = await client.set_manifest(repo, manifest_json, tag="v2", media_type=DOCKER_MANIFEST)
 
             assert digest1 == digest2
 
@@ -648,9 +614,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_set_docker_manifest_without_spaces(self, containerregistry_endpoint):
         if not is_public_endpoint(containerregistry_endpoint):
-            pytest.skip(
-                "This test is for testing test_set_docker_manifest in playback."
-            )
+            pytest.skip("This test is for testing test_set_docker_manifest in playback.")
 
         repo = self.get_resource_name("repo")
         path = os.path.join(
@@ -668,9 +632,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                     # It fails as the default media type is oci image manifest media type
                     await client.set_manifest(repo, manifest_stream, tag="v1")
                 manifest_stream.seek(0)
-                digest = await client.set_manifest(
-                    repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST
-                )
+                digest = await client.set_manifest(repo, manifest_stream, tag="v1", media_type=DOCKER_MANIFEST)
 
             # test get Docker manifest by digest
             response = await client.get_manifest(repo, digest)
@@ -788,9 +750,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority=authority)
 
-        async with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, credential=credential
-        ) as client:
+        async with ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential) as client:
             async for repo in client.list_repository_names():
                 pass
 
@@ -860,9 +820,7 @@ class TestContainerRegistryClientAsyncUnitTests:
     async def test_manifest_digest_validation(self):
         JSON = MutableMapping[str, Any]
 
-        async def send_in_set_manifest(
-            request: PipelineRequest, **kwargs
-        ) -> MyMagicMock:
+        async def send_in_set_manifest(request: PipelineRequest, **kwargs) -> MyMagicMock:
             content_digest = hashlib.sha256(b"hello world").hexdigest()
             return MyMagicMock(
                 status_code=201,
@@ -877,9 +835,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         def json() -> JSON:
             return {"hello": "world"}
 
-        async def send_in_get_manifest(
-            request: PipelineRequest, **kwargs
-        ) -> MyMagicMock:
+        async def send_in_get_manifest(request: PipelineRequest, **kwargs) -> MyMagicMock:
             content_digest = hashlib.sha256(b"hello world").hexdigest()
             content_type = "application/vnd.oci.image.manifest.v1+json"
             return MyMagicMock(
@@ -902,10 +858,7 @@ class TestContainerRegistryClientAsyncUnitTests:
             with pytest.raises(DigestValidationError) as exp:
                 manifest = {"hello": "world"}
                 await client.set_manifest("test-repo", manifest)
-            assert (
-                str(exp.value)
-                == "The server-computed digest does not match the client-computed digest."
-            )
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
 
         async with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint,
@@ -914,23 +867,15 @@ class TestContainerRegistryClientAsyncUnitTests:
             with pytest.raises(DigestValidationError) as exp:
                 digest = hashlib.sha256(b"hello world").hexdigest()
                 await client.get_manifest("test-repo", f"sha256:{digest}")
-            assert (
-                str(exp.value)
-                == "The content of retrieved manifest digest does not match the requested digest."
-            )
+            assert str(exp.value) == "The content of retrieved manifest digest does not match the requested digest."
 
             with pytest.raises(DigestValidationError) as exp:
                 await client.get_manifest("test-repo", "test-tag")
-            assert (
-                str(exp.value)
-                == "The server-computed digest does not match the client-computed digest."
-            )
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
 
     @pytest.mark.asyncio
     async def test_blob_digest_validation(self):
-        async def send_in_upload_blob(
-            request: PipelineRequest, **kwargs
-        ) -> MyMagicMock:
+        async def send_in_upload_blob(request: PipelineRequest, **kwargs) -> MyMagicMock:
             if request.method == "PUT":
                 content_digest = hashlib.sha256(b"hello world").hexdigest()
                 return MyMagicMock(
@@ -950,9 +895,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         async def iter_bytes() -> AsyncIterator[bytes]:
             yield b'{"hello": "world"}'
 
-        async def send_in_download_blob(
-            request: PipelineRequest, **kwargs
-        ) -> MyMagicMock:
+        async def send_in_download_blob(request: PipelineRequest, **kwargs) -> MyMagicMock:
             return MyMagicMock(
                 status_code=206,
                 headers={"Content-Range": "bytes 0-27/28", "Content-Length": "28"},
@@ -967,10 +910,7 @@ class TestContainerRegistryClientAsyncUnitTests:
         ) as client:
             with pytest.raises(DigestValidationError) as exp:
                 await client.upload_blob("test-repo", BytesIO(b'{"hello": "world"}'))
-            assert (
-                str(exp.value)
-                == "The server-computed digest does not match the client-computed digest."
-            )
+            assert str(exp.value) == "The server-computed digest does not match the client-computed digest."
 
         async with ContainerRegistryClient(
             endpoint=self.containerregistry_endpoint,
@@ -981,10 +921,7 @@ class TestContainerRegistryClientAsyncUnitTests:
             with pytest.raises(DigestValidationError) as exp:
                 async for chunk in stream:
                     pass
-            assert (
-                str(exp.value)
-                == "The content of retrieved blob digest does not match the requested digest."
-            )
+            assert str(exp.value) == "The content of retrieved blob digest does not match the requested digest."
 
     @pytest.mark.asyncio
     async def test_deserialize_manifest(self):
@@ -1028,9 +965,7 @@ class TestContainerRegistryClientAsyncUnitTests:
                 if manifest.size_in_bytes == 2199:
                     assert isinstance(manifest.architecture, ArtifactArchitecture)
                     assert manifest.architecture == "amd64"
-                    assert isinstance(
-                        manifest.operating_system, ArtifactOperatingSystem
-                    )
+                    assert isinstance(manifest.operating_system, ArtifactOperatingSystem)
                     assert manifest.operating_system == "linux"
                 if manifest.size_in_bytes == 566:
                     assert isinstance(manifest.architecture, str)

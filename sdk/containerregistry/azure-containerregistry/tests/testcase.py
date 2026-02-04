@@ -41,9 +41,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
             audience = get_audience(authority)
         credential = self.get_credential(authority=authority)
         logger.warning(f"Authority: {authority} \nAuthorization scope: {audience}")
-        return ContainerRegistryClient(
-            endpoint=endpoint, credential=credential, audience=audience, **kwargs
-        )
+        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)

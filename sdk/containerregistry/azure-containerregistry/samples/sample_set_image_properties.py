@@ -46,9 +46,7 @@ class SetImageProperties(object):
         # [START update_manifest_properties]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set permissions on image "library/hello-world:v1"
-            client.update_manifest_properties(
-                "library/hello-world", "v1", can_write=False, can_delete=False
-            )
+            client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
         # [END update_manifest_properties]
 
         # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,

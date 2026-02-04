@@ -45,9 +45,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_list_repository_names_by_page(
-        self, containerregistry_anonregistry_endpoint
-    ):
+    def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
@@ -57,9 +55,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             results_per_page = 2
             total_pages = 0
 
-            repository_pages = client.list_repository_names(
-                results_per_page=results_per_page
-            )
+            repository_pages = client.list_repository_names(results_per_page=results_per_page)
 
             prev = None
             for page in repository_pages.by_page():
@@ -171,9 +167,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_update_repository_properties(
-        self, containerregistry_anonregistry_endpoint
-    ):
+    def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
@@ -181,9 +175,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             properties = client.get_repository_properties(HELLO_WORLD)
 
             with pytest.raises(ClientAuthenticationError):
-                client.update_repository_properties(
-                    HELLO_WORLD, properties, can_delete=True
-                )
+                client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -195,9 +187,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             properties = client.get_tag_properties(HELLO_WORLD, "latest")
 
             with pytest.raises(ClientAuthenticationError):
-                client.update_tag_properties(
-                    HELLO_WORLD, "latest", properties, can_delete=True
-                )
+                client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
 
     @acr_preparer()
     @recorded_by_proxy
@@ -209,17 +199,13 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             properties = client.get_manifest_properties(HELLO_WORLD, "latest")
 
             with pytest.raises(ClientAuthenticationError):
-                client.update_manifest_properties(
-                    HELLO_WORLD, "latest", properties, can_delete=True
-                )
+                client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
 
 
 def test_set_api_version():
     containerregistry_endpoint = "https://fake_url.azurecr.io"
 
-    with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com"
-    ) as client:
+    with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
         assert client._client._config.api_version == "2021-07-01"
 
     with ContainerRegistryClient(

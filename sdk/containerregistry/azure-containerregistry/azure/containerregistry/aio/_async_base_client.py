@@ -36,12 +36,8 @@ class ContainerRegistryBaseClient(object):
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs: Any
-    ) -> None:
-        self._auth_policy = ContainerRegistryChallengePolicy(
-            credential, endpoint, **kwargs
-        )
+    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs: Any) -> None:
+        self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             endpoint=endpoint,
             credential=credential or AsyncAnonymousAccessCredential(),

@@ -12,9 +12,7 @@ from .._models import DigestValidationError
 
 
 class AsyncGetNext(Protocol):
-    def __call__(
-        self, *args: Any, range_header: str
-    ) -> Awaitable[AsyncIterator[bytes]]:
+    def __call__(self, *args: Any, range_header: str) -> Awaitable[AsyncIterator[bytes]]:
         pass
 
 
