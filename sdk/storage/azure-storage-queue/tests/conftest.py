@@ -14,6 +14,7 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
     add_uri_string_sanitizer,
+    add_uri_regex_sanitizer,
     test_proxy,
 )
 
@@ -34,6 +35,6 @@ def add_sanitizers(test_proxy):
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
     add_uri_regex_sanitizer(
-        regex=r"([?&]sktid=)[^&#]+",
-        value=r"\g<1>00000000-0000-0000-0000-000000000000",
+        regex=r"([?&])sktid=[^&#]+",
+        value=r"\g<1>sktid=00000000-0000-0000-0000-000000000000",
     )
