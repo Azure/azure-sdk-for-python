@@ -289,7 +289,7 @@ Discover up-to-date web content with the GA Web Search tool or try the Web Searc
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
 ```python
-tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
+tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
 ```
 
 <!-- END SNIPPET -->
@@ -368,7 +368,7 @@ Call external APIs defined by OpenAPI specifications without additional client-s
 
 ```python
 with open(weather_asset_file_path, "r") as f:
-    openapi_weather = jsonref.loads(f.read())
+    openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
@@ -616,7 +616,7 @@ Call external APIs defined by OpenAPI specifications using project connection au
 
 ```python
 with open(tripadvisor_asset_file_path, "r") as f:
-    openapi_tripadvisor = jsonref.loads(f.read())
+    openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
