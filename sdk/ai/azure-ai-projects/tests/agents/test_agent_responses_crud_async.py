@@ -11,7 +11,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseTextFormatConfigurationJsonSchema,
+    TextResponseFormatJsonSchema,
     PromptAgentDefinitionText,
 )
 
@@ -149,7 +149,7 @@ class TestAgentResponsesCrudAsync(TestBase):
                 definition=PromptAgentDefinition(
                     model=model,
                     text=PromptAgentDefinitionText(
-                        format=ResponseTextFormatConfigurationJsonSchema(
+                        format=TextResponseFormatJsonSchema(
                             name="CalendarEvent", schema=CalendarEvent.model_json_schema()
                         )
                     ),

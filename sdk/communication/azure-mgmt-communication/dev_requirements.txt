@@ -1,6 +1,6 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../notificationhubs/azure-mgmt-notificationhubs
--e ../../identity/azure-identity
--e ../../core/azure-core
--e ../../resources/azure-mgmt-resource
+../../notificationhubs/azure-mgmt-notificationhubs
+../../identity/azure-identity
+../../core/azure-core
+../../resources/azure-mgmt-resource
 aiohttp

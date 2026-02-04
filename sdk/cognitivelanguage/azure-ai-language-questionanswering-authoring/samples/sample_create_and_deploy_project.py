@@ -1,3 +1,9 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 """Sample - Create and deploy a Question Answering authoring project.
 
 This sample demonstrates how to:
@@ -26,7 +32,7 @@ def sample_create_and_deploy_project():
     client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
     with client:
         project_name = "IsaacNewton"
-        project = client.create_project(
+        project = client.create_project( # pylint: disable=no-value-for-parameter
             project_name=project_name,
             options={
                 "description": "Biography of Sir Isaac Newton",
@@ -46,7 +52,7 @@ def sample_create_and_deploy_project():
             if p["projectName"] == project_name:
                 print(f"Found project {p['projectName']}")
 
-        update_sources_poller = client.begin_update_sources(
+        update_sources_poller = client.begin_update_sources( # pylint: disable=no-value-for-parameter
             project_name=project_name,
             sources=[
                 _models.UpdateSourceRecord(

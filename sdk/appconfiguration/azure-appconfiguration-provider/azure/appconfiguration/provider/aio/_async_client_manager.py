@@ -10,6 +10,7 @@ from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError, AzureError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
@@ -166,24 +167,29 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     async def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], **kwargs
     ) -> List[FeatureFlagConfigurationSetting]:
-        loaded_feature_flags = []
+        loaded_feature_flags: List[FeatureFlagConfigurationSetting] = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
-            # Handle None key_filter by converting to empty string
-            key_filter = select.key_filter if select.key_filter is not None else ""
-            feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + key_filter,
-                label_filter=select.label_filter,
-                tags_filter=select.tag_filters,
-                **kwargs,
+            feature_flags: AsyncItemPaged[ConfigurationSetting]
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                snapshot = await self._client.get_snapshot(select.snapshot_name)
+                if snapshot.composition_type != SnapshotComposition.KEY:
+                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
+                feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+            else:
+                # Handle None key_filter by converting to empty string
+                key_filter = select.key_filter if select.key_filter is not None else ""
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+            loaded_feature_flags.extend(
+                [ff async for ff in feature_flags if isinstance(ff, FeatureFlagConfigurationSetting)]
             )
-            async for feature_flag in feature_flags:
-                if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
-                    # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
-                    # mistake, so we should ignore it.
-                    continue
-                loaded_feature_flags.append(feature_flag)
 
         return loaded_feature_flags
 

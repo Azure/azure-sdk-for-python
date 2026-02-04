@@ -2,5 +2,5 @@
 ../../core/azure-core
 ../../mixedreality/azure-mixedreality-authentication
 aiohttp>=3.0
--e ../../identity/azure-identity
+../../identity/azure-identity
 configargparse

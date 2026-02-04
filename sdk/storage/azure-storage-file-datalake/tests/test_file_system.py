@@ -1212,9 +1212,8 @@ class TestFileSystem(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @DataLakePreparer()
-    def test_datalake_user_delegation_oid(self, **kwargs):
+    def test_datalake_cross_tenant_delegation_sas(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
-        data = b"abc123"
 
         token_credential = self.get_credential(DataLakeServiceClient)
         account_url = self.account_url(datalake_storage_account_name, "dfs")
@@ -1225,13 +1224,23 @@ class TestFileSystem(StorageRecordedTestCase):
         directory = file_system.create_directory(directory_name)
         file_name = "file"
         file = directory.create_file(file_name)
+        data = b"abc123"
         file.upload_data(data, length=len(data), overwrite=True)
 
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
-        user_delegation_key = dsc.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        user_delegation_oid = jwt.decode(token.token, options={"verify_signature": False}).get("oid")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegation_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = dsc.get_user_delegation_key(
+            key_start_time=start,
+            key_expiry_time=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
 
         file_system_token = self.generate_sas(
             generate_file_system_sas,
@@ -1242,6 +1251,10 @@ class TestFileSystem(StorageRecordedTestCase):
             expiry=expiry,
             user_delegation_oid=user_delegation_oid,
         )
+
+        assert "sduoid=" + user_delegation_oid in file_system_token
+        assert "skdutid=" + delegated_user_tid in file_system_token
+
         file_system_client = FileSystemClient(
             f"{account_url}?{file_system_token}",
             file_system_name=file_system_name,
@@ -1262,6 +1275,10 @@ class TestFileSystem(StorageRecordedTestCase):
             expiry=expiry,
             user_delegation_oid=user_delegation_oid
         )
+
+        assert "sduoid=" + user_delegation_oid in directory_token
+        assert "skdutid=" + delegated_user_tid in directory_token
+
         directory_client = DataLakeDirectoryClient(
             f"{account_url}?{directory_token}",
             file_system_name=file_system_name,
@@ -1282,6 +1299,10 @@ class TestFileSystem(StorageRecordedTestCase):
             expiry=expiry,
             user_delegation_oid=user_delegation_oid
         )
+
+        assert "sduoid=" + user_delegation_oid in file_token
+        assert "skdutid=" + delegated_user_tid in file_token
+
         file_client = DataLakeFileClient(
             f"{account_url}?{file_token}",
             file_system_name=file_system_name,

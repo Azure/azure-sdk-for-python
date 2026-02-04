@@ -114,16 +114,6 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    # Validate feature flag selectors don't use snapshots
-    feature_flag_selectors = kwargs.get("feature_flag_selectors")
-    if feature_flag_selectors:
-        for selector in feature_flag_selectors:
-            if hasattr(selector, "snapshot_name") and selector.snapshot_name is not None:
-                raise ValueError(
-                    "snapshot_name cannot be used with feature_flag_selectors. "
-                    "Use snapshot_name with regular selects instead to load feature flags from snapshots."
-                )
-
     # Determine Key Vault usage
     uses_key_vault = (
         "keyvault_credential" in kwargs
@@ -230,7 +220,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
-        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
+        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", None)
+        if self._feature_flag_selectors is None:
+            self._feature_flag_selectors = [SettingSelector(key_filter="*")]
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
