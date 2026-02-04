@@ -130,8 +130,6 @@ def verify_conda_section(package_dir: str, package_name: str) -> bool:
                 "[tool.azure-sdk-conda] section in pyproject.toml"
             )
             return False
-
-        logging.info(f"Package {package_name} has required [tool.azure-sdk-conda] section")
         return True
     except Exception as e:
         logging.error(f"Failed to read pyproject.toml for {package_name}: {e}")
@@ -296,7 +294,6 @@ class verify_whl(Check):
 
                 # Verify conda section for packages with stable versions on PyPI
                 if not verify_conda_section(package_dir, package_name):
-                    logger.error(f"Failed conda section verification for package {package_name}")
                     logger.error(
                         "As part of releasing stable packages to Conda, the pyproject.toml must include a [tool.azure-sdk-conda] section and specify if the package should be released individually or bundled."
                     )
