@@ -21,6 +21,19 @@ REM Rename `"items_property": items`, to `"items": items` in search_memories and
 powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
 powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\operations\_operations.py"
 
+REM Fix Sphinx issue (see bug on emitter: https://github.com/microsoft/typespec/issues/9579)
+REM Go to where class "Response" is defined. See the doc string for "output" property (two locations). Remove the blank 2nd line.
+
+REM Fix Shpinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything shoud be aligned including JSON example, like this:
+REM """A list of tool definitions that the model should be allowed to call. For the Responses API, the
+REM  list of tool definitions might look like:
+REM  .. code-block:: json
+REM  [
+REM  { \"type\": \"function\", \"name\": \"get_weather\" },
+REM  { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+REM  { \"type\": \"image_generation\" }
+REM  ]. Required."""
+
 REM Fix type annotations by replacing "_types.Filters" with proper union type to fix Pyright errors
 REM powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace '\"_types\.Filters\"', 'Union[\"_models.ComparisonFilter\", \"_models.CompoundFilter\"]' | Set-Content azure\ai\projects\models\_models.py"
 
