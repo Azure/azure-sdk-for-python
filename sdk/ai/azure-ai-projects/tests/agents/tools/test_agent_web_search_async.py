@@ -5,12 +5,16 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentWebSearchAsync(TestBase):
 
     @servicePreparer()

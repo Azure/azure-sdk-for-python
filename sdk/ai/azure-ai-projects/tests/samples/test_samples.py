@@ -16,6 +16,9 @@ from sample_executor import (
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestSamples(AzureRecordedTestCase):
 
     # To run this test with a specific sample, use:

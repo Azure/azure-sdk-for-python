@@ -6,6 +6,7 @@
 # cSpell:disable
 
 import os
+import pytest
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -13,6 +14,9 @@ from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentFileSearchAsync(TestBase):
 
     @servicePreparer()

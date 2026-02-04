@@ -99,6 +99,9 @@ def checkInputMessageEventContents(content, content_recording_enabled):
         assert found_text, "No text part found in input message event"
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentorWorkflowAsync(TestAiAgentsInstrumentorBase):
     """Async tests for ResponsesInstrumentor with workflow agents."""
 

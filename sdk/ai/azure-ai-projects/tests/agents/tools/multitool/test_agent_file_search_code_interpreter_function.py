@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: File Search + Code Interpreter + Function Tool
 
@@ -26,6 +28,9 @@ from azure.ai.projects.models import (
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentFileSearchCodeInterpreterFunction(TestBase):
     """Tests for agents using File Search + Code Interpreter + Function Tool."""
 

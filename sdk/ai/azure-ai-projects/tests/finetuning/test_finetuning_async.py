@@ -24,6 +24,9 @@ from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient a
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestFineTuningAsync(TestBase):
 
     async def _create_sft_finetuning_job_async(

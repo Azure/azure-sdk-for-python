@@ -26,6 +26,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentorFileSearch(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with File Search tool."""
 

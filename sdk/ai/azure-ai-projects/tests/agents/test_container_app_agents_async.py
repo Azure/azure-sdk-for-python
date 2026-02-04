@@ -14,6 +14,9 @@ from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import AgentReference, ContainerAppAgentDefinition, ProtocolVersionRecord, AgentProtocol
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestContainerAppAgentsAsync(TestBase):
 
     @servicePreparer()

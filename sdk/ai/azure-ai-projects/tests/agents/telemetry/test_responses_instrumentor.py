@@ -45,6 +45,9 @@ TEST_IMAGE_BASE64 = (
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with real endpoints."""
 

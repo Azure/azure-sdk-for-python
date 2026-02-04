@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
+
 """
 Test agents using multiple tools within conversations.
 
@@ -22,6 +24,9 @@ from azure.ai.projects.models import (
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
