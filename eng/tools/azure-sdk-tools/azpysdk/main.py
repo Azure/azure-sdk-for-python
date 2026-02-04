@@ -138,13 +138,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     try:
         result = args.func(args)
-        return int(result or 0)
+        exit_code = int(result or 0)
+        os._exit(exit_code)
     except KeyboardInterrupt:
         logger.error("Interrupted by user")
-        return 130
+        os._exit(130)
     except Exception as exc:  # pragma: no cover - simple top-level error handling
         logger.error(f"Error: {exc}")
-        return 2
+        os._exit(2)
 
 
 if __name__ == "__main__":
