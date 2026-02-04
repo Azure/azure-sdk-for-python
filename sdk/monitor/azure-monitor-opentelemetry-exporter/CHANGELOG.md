@@ -7,6 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix calculation logic for CPU usage %
 
 ### Other Changes
 - Fix Ingestion-Side Sampling Disk Persist Behavior
