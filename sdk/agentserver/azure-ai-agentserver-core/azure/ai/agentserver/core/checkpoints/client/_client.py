@@ -1,0 +1,168 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""Asynchronous client for Azure AI Foundry checkpoint storage API."""
+
+from typing import Any, AsyncContextManager, List, Optional
+
+from azure.core import AsyncPipelineClient
+from azure.core.credentials_async import AsyncTokenCredential
+from azure.core.tracing.decorator_async import distributed_trace_async
+
+from ._configuration import FoundryCheckpointClientConfiguration
+from ._models import CheckpointItem, CheckpointItemId, CheckpointSession
+from .operations import CheckpointItemOperations, CheckpointSessionOperations
+
+
+class FoundryCheckpointClient(AsyncContextManager["FoundryCheckpointClient"]):
+    """Asynchronous client for Azure AI Foundry checkpoint storage API.
+
+    This client provides access to checkpoint storage for workflow state persistence,
+    enabling checkpoint save, load, list, and delete operations.
+
+    :param endpoint: The fully qualified endpoint for the Azure AI Agents service.
+        Example: "https://<resource-name>.api.azureml.ms"
+    :type endpoint: str
+    :param credential: Credential for authenticating requests to the service.
+        Use credentials from azure-identity like DefaultAzureCredential.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param project_id: The project identifier for checkpoint storage.
+    :type project_id: str
+    """
+
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "AsyncTokenCredential",
+        project_id: str,
+    ) -> None:
+        """Initialize the asynchronous Azure AI Checkpoint Client.
+
+        :param endpoint: The service endpoint URL.
+        :type endpoint: str
+        :param credential: Credentials for authenticating requests.
+        :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :param project_id: The project identifier.
+        :type project_id: str
+        """
+        config = FoundryCheckpointClientConfiguration(credential)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(
+            base_url=endpoint, config=config
+        )
+        self._project_id = project_id
+        self._sessions = CheckpointSessionOperations(self._client, project_id)
+        self._items = CheckpointItemOperations(self._client, project_id)
+
+    @property
+    def project_id(self) -> str:
+        """Get the project identifier.
+
+        :return: The project identifier.
+        :rtype: str
+        """
+        return self._project_id
+
+    # Session operations
+
+    @distributed_trace_async
+    async def upsert_session(self, session: CheckpointSession) -> CheckpointSession:
+        """Create or update a checkpoint session.
+
+        :param session: The checkpoint session to upsert.
+        :type session: CheckpointSession
+        :return: The upserted checkpoint session.
+        :rtype: CheckpointSession
+        """
+        return await self._sessions.upsert(session)
+
+    @distributed_trace_async
+    async def read_session(self, session_id: str) -> Optional[CheckpointSession]:
+        """Read a checkpoint session by ID.
+
+        :param session_id: The session identifier.
+        :type session_id: str
+        :return: The checkpoint session if found, None otherwise.
+        :rtype: Optional[CheckpointSession]
+        """
+        return await self._sessions.read(session_id)
+
+    @distributed_trace_async
+    async def delete_session(self, session_id: str) -> None:
+        """Delete a checkpoint session.
+
+        :param session_id: The session identifier.
+        :type session_id: str
+        """
+        await self._sessions.delete(session_id)
+
+    # Item operations
+
+    @distributed_trace_async
+    async def create_items(self, items: List[CheckpointItem]) -> List[CheckpointItem]:
+        """Create checkpoint items in batch.
+
+        :param items: The checkpoint items to create.
+        :type items: List[CheckpointItem]
+        :return: The created checkpoint items.
+        :rtype: List[CheckpointItem]
+        """
+        return await self._items.create_batch(items)
+
+    @distributed_trace_async
+    async def read_item(self, item_id: CheckpointItemId) -> Optional[CheckpointItem]:
+        """Read a checkpoint item by ID.
+
+        :param item_id: The checkpoint item identifier.
+        :type item_id: CheckpointItemId
+        :return: The checkpoint item if found, None otherwise.
+        :rtype: Optional[CheckpointItem]
+        """
+        return await self._items.read(item_id)
+
+    @distributed_trace_async
+    async def delete_item(self, item_id: CheckpointItemId) -> bool:
+        """Delete a checkpoint item.
+
+        :param item_id: The checkpoint item identifier.
+        :type item_id: CheckpointItemId
+        :return: True if the item was deleted, False if not found.
+        :rtype: bool
+        """
+        return await self._items.delete(item_id)
+
+    @distributed_trace_async
+    async def list_item_ids(
+        self, session_id: str, parent_id: Optional[str] = None
+    ) -> List[CheckpointItemId]:
+        """List checkpoint item IDs for a session.
+
+        :param session_id: The session identifier.
+        :type session_id: str
+        :param parent_id: Optional parent item identifier for filtering.
+        :type parent_id: Optional[str]
+        :return: List of checkpoint item identifiers.
+        :rtype: List[CheckpointItemId]
+        """
+        return await self._items.list_ids(session_id, parent_id)
+
+    # Context manager methods
+
+    async def close(self) -> None:
+        """Close the underlying HTTP pipeline."""
+        await self._client.close()
+
+    async def __aenter__(self) -> "FoundryCheckpointClient":
+        """Enter the async context manager.
+
+        :return: The client instance.
+        :rtype: FoundryCheckpointClient
+        """
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details: Any) -> None:
+        """Exit the async context manager.
+
+        :param exc_details: Exception details if an exception occurred.
+        """
+        await self._client.__aexit__(*exc_details)

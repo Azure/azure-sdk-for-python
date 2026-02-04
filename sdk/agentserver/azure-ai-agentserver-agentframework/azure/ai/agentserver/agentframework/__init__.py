@@ -17,7 +17,7 @@ from ._agent_framework import AgentFrameworkAgent
 from ._ai_agent_adapter import AgentFrameworkAIAgentAdapter
 from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
 from ._foundry_tools import FoundryToolsChatMiddleware
-from .persistence import AgentThreadRepository, CheckpointRepository
+from .persistence import AgentThreadRepository, CheckpointRepository, FoundryCheckpointRepository
 
 
 @overload
@@ -49,6 +49,9 @@ def from_agent_framework(
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
         thread_repository: Optional[AgentThreadRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
+        managed_checkpoints: bool = False,
+        foundry_endpoint: Optional[str] = None,
+        project_id: Optional[str] = None,
     ) -> "AgentFrameworkWorkflowAdapter":
     """
     Create an Agent Framework Workflow Adapter.
@@ -67,6 +70,12 @@ def from_agent_framework(
     :type thread_repository: Optional[AgentThreadRepository]
     :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
     :type checkpoint_repository: Optional[CheckpointRepository]
+    :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
+    :type managed_checkpoints: bool
+    :param foundry_endpoint: The Foundry service endpoint (required if managed_checkpoints=True).
+    :type foundry_endpoint: Optional[str]
+    :param project_id: The project identifier (required if managed_checkpoints=True).
+    :type project_id: Optional[str]
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
     """
@@ -77,7 +86,10 @@ def from_agent_framework(
     /,
     credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
     thread_repository: Optional[AgentThreadRepository] = None,
-    checkpoint_repository: Optional[CheckpointRepository] = None
+    checkpoint_repository: Optional[CheckpointRepository] = None,
+    managed_checkpoints: bool = False,
+    foundry_endpoint: Optional[str] = None,
+    project_id: Optional[str] = None,
 ) -> "AgentFrameworkAgent":
     """
     Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a
@@ -92,11 +104,32 @@ def from_agent_framework(
     :type thread_repository: Optional[AgentThreadRepository]
     :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
     :type checkpoint_repository: Optional[CheckpointRepository]
+    :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
+    :type managed_checkpoints: bool
+    :param foundry_endpoint: The Foundry service endpoint (required if managed_checkpoints=True).
+    :type foundry_endpoint: Optional[str]
+    :param project_id: The project identifier (required if managed_checkpoints=True).
+    :type project_id: Optional[str]
     :return: An instance of AgentFrameworkAgent.
     :rtype: AgentFrameworkAgent
     :raises TypeError: If neither or both of agent and workflow are provided, or if
                        the provided types are incorrect.
+    :raises ValueError: If managed_checkpoints=True but required parameters are missing.
     """
+
+    # Handle managed checkpoints
+    if managed_checkpoints:
+        if not foundry_endpoint or not project_id:
+            raise ValueError(
+                "foundry_endpoint and project_id are required when managed_checkpoints=True"
+            )
+        if not credentials:
+            raise ValueError("credentials are required when managed_checkpoints=True")
+        checkpoint_repository = FoundryCheckpointRepository(
+            endpoint=foundry_endpoint,
+            credential=credentials,
+            project_id=project_id,
+        )
 
     if isinstance(agent_or_workflow, WorkflowBuilder):
         return AgentFrameworkWorkflowAdapter(workflow_factory=agent_or_workflow.build,
