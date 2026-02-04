@@ -40,6 +40,7 @@ def _build_client(
     kwargs: Dict[str, Any] = {"default_headers": default_headers}
     return project_client.get_openai_client(**kwargs)
 
+
 class TestResponses(TestBase):
 
     # To run this test:

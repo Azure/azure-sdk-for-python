@@ -421,8 +421,8 @@ from ._models import (  # type: ignore
     WebSearchTool,
     WebSearchToolFilters,
     WeeklyRecurrenceSchedule,
+    WorkflowActionOutputItem,
     WorkflowAgentDefinition,
-    WorkflowPreviewActionOutputItem,
 )
 
 from ._enums import (  # type: ignore
@@ -911,8 +911,8 @@ __all__ = [
     "WebSearchTool",
     "WebSearchToolFilters",
     "WeeklyRecurrenceSchedule",
+    "WorkflowActionOutputItem",
     "WorkflowAgentDefinition",
-    "WorkflowPreviewActionOutputItem",
     "AgentKind",
     "AgentProtocol",
     "AnnotationType",

@@ -201,6 +201,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -224,12 +225,13 @@ class AgentsOperations:
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -255,6 +257,7 @@ class AgentsOperations:
         *,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -268,12 +271,13 @@ class AgentsOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -290,6 +294,7 @@ class AgentsOperations:
         *,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -303,12 +308,13 @@ class AgentsOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -327,6 +333,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition = _Unset,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -351,12 +358,13 @@ class AgentsOperations:
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
@@ -450,6 +458,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -469,12 +478,13 @@ class AgentsOperations:
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -501,6 +511,7 @@ class AgentsOperations:
         *,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -517,12 +528,13 @@ class AgentsOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -540,6 +552,7 @@ class AgentsOperations:
         *,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -556,12 +569,13 @@ class AgentsOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -580,6 +594,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition = _Unset,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -600,12 +615,13 @@ class AgentsOperations:
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
@@ -1238,6 +1254,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -1261,12 +1278,13 @@ class AgentsOperations:
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1293,6 +1311,7 @@ class AgentsOperations:
         *,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -1313,12 +1332,13 @@ class AgentsOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1336,6 +1356,7 @@ class AgentsOperations:
         *,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -1356,12 +1377,13 @@ class AgentsOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1380,6 +1402,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition = _Unset,
         foundry_features: Optional[
             Union[
+                str,
                 Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
                 Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
@@ -1404,12 +1427,13 @@ class AgentsOperations:
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
+         modifying persisted preview resources. Is one of the following types: str,
          Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
          Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
          ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
@@ -1934,7 +1958,7 @@ class AgentsOperations:
         agent_name: str,
         agent_version: str,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW]]] = None,
         kind: Optional[Union[str, _models.ContainerLogKind]] = None,
         replica_name: Optional[str] = None,
         tail: Optional[int] = None,
@@ -1971,8 +1995,10 @@ class AgentsOperations:
         :param agent_version: The version of the agent. Required.
         :type agent_version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. CONTAINER_AGENTS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or
+         ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW
         :keyword kind: console returns container stdout/stderr, system returns container app event
          stream. defaults to console. Known values are: "console" and "system". Default value is None.
         :paramtype kind: str or ~azure.ai.projects.models.ContainerLogKind
@@ -3374,7 +3400,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: _models.EvaluationTaxonomy,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -3385,8 +3411,9 @@ class EvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3401,7 +3428,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: JSON,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -3412,8 +3439,9 @@ class EvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3428,7 +3456,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -3439,8 +3467,9 @@ class EvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3455,7 +3484,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]],
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
@@ -3466,8 +3495,9 @@ class EvaluationTaxonomiesOperations:
          IO[bytes] Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3539,7 +3569,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: _models.EvaluationTaxonomy,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -3550,8 +3580,9 @@ class EvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3566,7 +3597,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: JSON,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -3577,8 +3608,9 @@ class EvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3593,7 +3625,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -3604,8 +3636,9 @@ class EvaluationTaxonomiesOperations:
         :param body: The evaluation taxonomy. Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3620,7 +3653,7 @@ class EvaluationTaxonomiesOperations:
         name: str,
         body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]],
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]]] = None,
         **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
@@ -3631,8 +3664,9 @@ class EvaluationTaxonomiesOperations:
          IO[bytes] Required.
         :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4085,7 +4119,7 @@ class EvaluatorsOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
         **kwargs: Any
@@ -4095,8 +4129,9 @@ class EvaluatorsOperations:
         :param name: The name of the resource. Required.
         :type name: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
          of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
          value is None.
@@ -4190,7 +4225,7 @@ class EvaluatorsOperations:
     def list_latest_versions(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
         limit: Optional[int] = None,
         **kwargs: Any
@@ -4198,8 +4233,9 @@ class EvaluatorsOperations:
         """List the latest version of each evaluator.
 
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
          of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
          value is None.
@@ -4294,7 +4330,7 @@ class EvaluatorsOperations:
         name: str,
         version: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
@@ -4305,8 +4341,9 @@ class EvaluatorsOperations:
         :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
         :type version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4369,7 +4406,7 @@ class EvaluatorsOperations:
         name: str,
         version: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         **kwargs: Any
     ) -> None:
         """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
@@ -4380,8 +4417,9 @@ class EvaluatorsOperations:
         :param version: The version of the EvaluatorVersion to delete. Required.
         :type version: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4432,7 +4470,7 @@ class EvaluatorsOperations:
         name: str,
         evaluator_version: _models.EvaluatorVersion,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4443,8 +4481,9 @@ class EvaluatorsOperations:
         :param evaluator_version: Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4459,7 +4498,7 @@ class EvaluatorsOperations:
         name: str,
         evaluator_version: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4470,8 +4509,9 @@ class EvaluatorsOperations:
         :param evaluator_version: Required.
         :type evaluator_version: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4486,7 +4526,7 @@ class EvaluatorsOperations:
         name: str,
         evaluator_version: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4497,8 +4537,9 @@ class EvaluatorsOperations:
         :param evaluator_version: Required.
         :type evaluator_version: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4513,7 +4554,7 @@ class EvaluatorsOperations:
         name: str,
         evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
@@ -4524,8 +4565,9 @@ class EvaluatorsOperations:
          Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4598,7 +4640,7 @@ class EvaluatorsOperations:
         version: str,
         evaluator_version: _models.EvaluatorVersion,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4611,8 +4653,9 @@ class EvaluatorsOperations:
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4628,7 +4671,7 @@ class EvaluatorsOperations:
         version: str,
         evaluator_version: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4641,8 +4684,9 @@ class EvaluatorsOperations:
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4658,7 +4702,7 @@ class EvaluatorsOperations:
         version: str,
         evaluator_version: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -4671,8 +4715,9 @@ class EvaluatorsOperations:
         :param evaluator_version: Evaluator resource. Required.
         :type evaluator_version: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4688,7 +4733,7 @@ class EvaluatorsOperations:
         version: str,
         evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]],
         **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an existing EvaluatorVersion with the given version id.
@@ -4701,8 +4746,9 @@ class EvaluatorsOperations:
          JSON, IO[bytes] Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5243,7 +5289,7 @@ class InsightsOperations:
         self,
         insight: _models.Insight,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Insight:
@@ -5253,8 +5299,9 @@ class InsightsOperations:
          settings. Required.
         :type insight: ~azure.ai.projects.models.Insight
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5268,7 +5315,7 @@ class InsightsOperations:
         self,
         insight: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Insight:
@@ -5278,8 +5325,9 @@ class InsightsOperations:
          settings. Required.
         :type insight: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5293,7 +5341,7 @@ class InsightsOperations:
         self,
         insight: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.Insight:
@@ -5303,8 +5351,9 @@ class InsightsOperations:
          settings. Required.
         :type insight: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5318,7 +5367,7 @@ class InsightsOperations:
         self,
         insight: Union[_models.Insight, JSON, IO[bytes]],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]],
         **kwargs: Any
     ) -> _models.Insight:
         """Generate Insights.
@@ -5327,8 +5376,9 @@ class InsightsOperations:
          settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
         :type insight: ~azure.ai.projects.models.Insight or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :return: Insight. The Insight is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5592,7 +5642,7 @@ class MemoryStoresOperations:
     async def create(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         name: str,
         definition: _models.MemoryStoreDefinition,
         content_type: str = "application/json",
@@ -5603,8 +5653,9 @@ class MemoryStoresOperations:
         """Create a memory store.
 
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -5627,7 +5678,7 @@ class MemoryStoresOperations:
         self,
         body: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreDetails:
@@ -5636,8 +5687,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5651,7 +5703,7 @@ class MemoryStoresOperations:
         self,
         body: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreDetails:
@@ -5660,8 +5712,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5675,7 +5728,7 @@ class MemoryStoresOperations:
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         name: str = _Unset,
         definition: _models.MemoryStoreDefinition = _Unset,
         description: Optional[str] = None,
@@ -5687,8 +5740,9 @@ class MemoryStoresOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword name: The name of the memory store. Required.
         :paramtype name: str
         :keyword definition: The memory store definition. Required.
@@ -5778,7 +5832,7 @@ class MemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -5789,8 +5843,9 @@ class MemoryStoresOperations:
         :param name: The name of the memory store to update. Required.
         :type name: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5810,7 +5865,7 @@ class MemoryStoresOperations:
         name: str,
         body: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreDetails:
@@ -5821,8 +5876,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5837,7 +5893,7 @@ class MemoryStoresOperations:
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreDetails:
@@ -5848,8 +5904,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5864,7 +5921,7 @@ class MemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
@@ -5876,8 +5933,9 @@ class MemoryStoresOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword description: A human-readable description of the memory store. Default value is None.
         :paramtype description: str
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
@@ -5957,15 +6015,20 @@ class MemoryStoresOperations:
 
     @distributed_trace_async
     async def get(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+        self,
+        name: str,
+        *,
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
+        **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
         :type name: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6029,7 +6092,7 @@ class MemoryStoresOperations:
     def list(
         self,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
@@ -6038,8 +6101,9 @@ class MemoryStoresOperations:
         """List all memory stores.
 
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -6119,15 +6183,20 @@ class MemoryStoresOperations:
 
     @distributed_trace_async
     async def delete(
-        self, name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+        self,
+        name: str,
+        *,
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
+        **kwargs: Any
     ) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
         :type name: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :return: DeleteMemoryStoreResult. The DeleteMemoryStoreResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6192,7 +6261,7 @@ class MemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str,
         content_type: str = "application/json",
         items: Optional[List[_models.InputItem]] = None,
@@ -6205,8 +6274,9 @@ class MemoryStoresOperations:
         :param name: The name of the memory store to search. Required.
         :type name: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -6231,7 +6301,7 @@ class MemoryStoresOperations:
         name: str,
         body: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreSearchResult:
@@ -6242,8 +6312,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6258,7 +6329,7 @@ class MemoryStoresOperations:
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreSearchResult:
@@ -6269,8 +6340,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6285,7 +6357,7 @@ class MemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str = _Unset,
         items: Optional[List[_models.InputItem]] = None,
         previous_search_id: Optional[str] = None,
@@ -6299,8 +6371,9 @@ class MemoryStoresOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -6395,7 +6468,7 @@ class MemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str = _Unset,
         items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
@@ -6481,7 +6554,7 @@ class MemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str,
         content_type: str = "application/json",
         items: Optional[List[_models.InputItem]] = None,
@@ -6495,7 +6568,7 @@ class MemoryStoresOperations:
         name: str,
         body: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
@@ -6505,7 +6578,7 @@ class MemoryStoresOperations:
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
@@ -6516,7 +6589,7 @@ class MemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str = _Unset,
         items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
@@ -6530,8 +6603,9 @@ class MemoryStoresOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -6619,7 +6693,7 @@ class MemoryStoresOperations:
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6629,8 +6703,9 @@ class MemoryStoresOperations:
         :param name: The name of the memory store. Required.
         :type name: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
@@ -6649,7 +6724,7 @@ class MemoryStoresOperations:
         name: str,
         body: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
@@ -6660,8 +6735,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6677,7 +6753,7 @@ class MemoryStoresOperations:
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
@@ -6688,8 +6764,9 @@ class MemoryStoresOperations:
         :param body: Required.
         :type body: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6705,7 +6782,7 @@ class MemoryStoresOperations:
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW]],
         scope: str = _Unset,
         **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
@@ -6716,8 +6793,9 @@ class MemoryStoresOperations:
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
          user ID. Required.
         :paramtype scope: str
@@ -6966,7 +7044,7 @@ class RedTeamsOperations:
         self,
         red_team: _models.RedTeam,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RedTeam:
@@ -6975,8 +7053,9 @@ class RedTeamsOperations:
         :param red_team: Redteam to be run. Required.
         :type red_team: ~azure.ai.projects.models.RedTeam
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6990,7 +7069,7 @@ class RedTeamsOperations:
         self,
         red_team: JSON,
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RedTeam:
@@ -6999,8 +7078,9 @@ class RedTeamsOperations:
         :param red_team: Redteam to be run. Required.
         :type red_team: JSON
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7014,7 +7094,7 @@ class RedTeamsOperations:
         self,
         red_team: IO[bytes],
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]]] = None,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.RedTeam:
@@ -7023,8 +7103,9 @@ class RedTeamsOperations:
         :param red_team: Redteam to be run. Required.
         :type red_team: IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7038,7 +7119,7 @@ class RedTeamsOperations:
         self,
         red_team: Union[_models.RedTeam, JSON, IO[bytes]],
         *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]] = None,
+        foundry_features: Optional[Union[str, Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW]]] = None,
         **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
@@ -7047,8 +7128,9 @@ class RedTeamsOperations:
          Required.
         :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. RED_TEAMS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] type. Default value is None.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.RED_TEAMS_V1_PREVIEW
         :return: RedTeam. The RedTeam is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7475,7 +7557,7 @@ class SchedulesOperations:
         schedule_id: str,
         run_id: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
+        foundry_features: Union[str, Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW]],
         **kwargs: Any
     ) -> _models.ScheduleRun:
         """Get a schedule run by id.
@@ -7485,8 +7567,9 @@ class SchedulesOperations:
         :param run_id: The unique identifier of the schedule run. Required.
         :type run_id: str
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. INSIGHTS_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
+         modifying persisted preview resources. Is either a str type or a
+         Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] type. Required.
+        :paramtype foundry_features: str or str or ~azure.ai.projects.models.INSIGHTS_V1_PREVIEW
         :return: ScheduleRun. The ScheduleRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
