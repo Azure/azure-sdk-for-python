@@ -2060,7 +2060,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             length=length,
             **kwargs)
         try:
-            return cast(Dict[str, Any], self._client.block_blob.stage_block(**options))
+            body = options.pop('body')
+            return cast(Dict[str, Any], self._client.block_blob.stage_block(body, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 

@@ -2112,7 +2112,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             length=length,
             **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.block_blob.stage_block(**options))
+            body = options.pop('body')
+            return cast(Dict[str, Any], await self._client.block_blob.stage_block(body, **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
