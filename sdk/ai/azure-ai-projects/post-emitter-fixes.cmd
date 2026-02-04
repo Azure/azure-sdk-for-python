@@ -34,6 +34,10 @@ REM  { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
 REM  { \"type\": \"image_generation\" }
 REM  ]. Required."""
 
+REM Fix Shipnx issue: docstring of azure.ai.projects.models.WorkflowPreviewActionOutputItem.type:2: WARNING: Duplicate explicit target name: "learn more". [docutils]
+REM Turns out this has nothing to do with doc string of class WorkflowPreviewActionOutputItem. Search for "learn more"
+REM and chage them to "learn more about ..." (e.g. "learn more about content safety").
+
 REM Fix type annotations by replacing "_types.Filters" with proper union type to fix Pyright errors
 REM powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace '\"_types\.Filters\"', 'Union[\"_models.ComparisonFilter\", \"_models.CompoundFilter\"]' | Set-Content azure\ai\projects\models\_models.py"
 

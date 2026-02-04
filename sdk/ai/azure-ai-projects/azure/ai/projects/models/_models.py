@@ -12847,7 +12847,7 @@ class PendingUploadResponse(_Model):
 
 
 class Prompt(_Model):
-    """Reference to a prompt template and its variables. `Learn more
+    """Reference to a prompt template and its variables. `Learn more about reusable prompts
     <https://platform.openai.com/docs/guides/text?api-mode=responses#reusable-prompts>`_.
 
     :ivar id: The unique identifier of the prompt template to use. Required.
@@ -13417,17 +13417,17 @@ class Response(_Model):
     :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse. `Learn more
+     OpenAI detect and prevent abuse. `Learn more about safety identifiers
      <https://platform.openai.com/docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype user: str
     :ivar safety_identifier: A stable identifier used to help detect users of your application that
      may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
      each user. We recommend hashing their username or email address, in order to avoid sending us
-     any identifying information. `Learn more
+     any identifying information. `Learn more about safety identifiers
      <https://platform.openai.com/docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype safety_identifier: str
     :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field. `Learn more
+     cache hit rates. Replaces the ``user`` field. `Learn more about prompt caching
      <https://platform.openai.com/docs/guides/prompt-caching>`_.
     :vartype prompt_cache_key: str
     :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
@@ -13507,17 +13507,17 @@ class Response(_Model):
     """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse. `Learn more
+     OpenAI detect and prevent abuse. `Learn more about safety ididentifiers
      <https://platform.openai.com/docs/guides/safety-best-practices#safety-identifiers>`_."""
     safety_identifier: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A stable identifier used to help detect users of your application that may be violating
      OpenAI's usage policies. The IDs should be a string that uniquely identifies each user. We
      recommend hashing their username or email address, in order to avoid sending us any identifying
-     information. `Learn more
+     information. `Learn more about safety identifiers
      <https://platform.openai.com/docs/guides/safety-best-practices#safety-identifiers>`_."""
     prompt_cache_key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field. `Learn more
+     Replaces the ``user`` field. `Learn more about prompt caching
      <https://platform.openai.com/docs/guides/prompt-caching>`_."""
     service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -16366,7 +16366,7 @@ class ResponseTextDoneEvent(_Model):
 
 class ResponseTextParam(_Model):
     """Configuration options for a text response from the model. Can be plain
-    text or structured JSON data. Learn more:
+    text or structured JSON data. Learn more here:
 
     * [Text inputs and outputs](https://platform.openai.com/docs/guides/text)
     * [Structured Outputs](https://platform.openai.com/docs/guides/structured-outputs).
