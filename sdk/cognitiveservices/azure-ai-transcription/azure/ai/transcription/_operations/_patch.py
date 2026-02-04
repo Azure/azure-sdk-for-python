@@ -100,9 +100,9 @@ class _TranscriptionClientOperationsMixin(_TranscriptionClientOperationsMixinGen
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(
+        pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=False, **kwargs
-        )  # pylint: disable=protected-access
+        )
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
