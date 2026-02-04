@@ -186,7 +186,7 @@ class BaseSampleExecutor:
             if not isinstance(test_var, str):
                 continue
             value = kwargs.pop(test_var, None)
-            if value is not None:
+            if value is not None and isinstance(value, str):
                 self.env_vars[sample_var] = value
 
         # Any remaining ALL_CAPS string kwargs are treated as env vars for the sample.
