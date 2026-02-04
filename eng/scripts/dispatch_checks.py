@@ -79,6 +79,7 @@ async def run_check(
     idx: int,
     total: int,
     proxy_port: int,
+    mark_arg: Optional[str],
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -102,6 +103,8 @@ async def run_check(
     async with semaphore:
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
+        if mark_arg:
+            cmd += ["--mark_arg", mark_arg]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
@@ -182,7 +185,7 @@ def summarize(results: List[CheckResult]) -> int:
     return worst
 
 
-async def run_all_checks(packages, checks, max_parallel, wheel_dir):
+async def run_all_checks(packages, checks, max_parallel, wheel_dir, mark_arg: Optional[str]):
     """Run all checks for all packages concurrently and return the worst exit code.
 
     :param packages: Iterable of package paths to run checks against.
@@ -236,7 +239,11 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir):
     total = len(scheduled)
 
     for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
-        tasks.append(asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port)))
+        tasks.append(
+            asyncio.create_task(
+                run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port, mark_arg)
+            )
+        )
 
     # Handle Ctrl+C gracefully
     pending = set(tasks)
@@ -463,7 +470,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     try:
         if in_ci():
             logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
-        exit_code = asyncio.run(run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir))
+        exit_code = asyncio.run(
+            run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir, args.mark_arg)
+        )
     except KeyboardInterrupt:
         logger.error("Aborted by user.")
         exit_code = 130

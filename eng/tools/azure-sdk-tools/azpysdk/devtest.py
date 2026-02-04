@@ -145,6 +145,11 @@ class devtest(InstallAndTest):
             nargs=argparse.REMAINDER,
             help="Additional arguments forwarded to pytest.",
         )
+        p.add_argument(
+            "--mark_arg",
+            dest="mark_arg",
+            help='Optional pytest marker expression passed as -m "<expr>" (e.g. "cosmosEmulator").',
+        )
 
     def before_pytest(
         self, executable: str, package_dir: str, package_name: str, staging_directory: str, args: argparse.Namespace

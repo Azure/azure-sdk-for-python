@@ -46,6 +46,11 @@ class optional(InstallAndTest):
             help="The target environment. If not provided, all optional environments will be run.",
             required=False,
         )
+        p.add_argument(
+            "--mark_arg",
+            dest="mark_arg",
+            help='Optional pytest marker expression passed as -m "<expr>" (e.g. "cosmosEmulator").',
+        )
 
     def run(self, args: argparse.Namespace) -> int:
         """Run the optional check command."""
@@ -173,6 +178,8 @@ class optional(InstallAndTest):
                 "--ignore=samples",
                 f"--log-cli-level={log_level}",
             ]
+            if getattr(args, "mark_arg", None):
+                pytest_args.extend(["-m", args.mark_arg])
             pytest_args.extend(config.get("additional_pytest_args", []))
 
             logger.info(f"Invoking tests for package {package_name} and optional environment {env_name}")

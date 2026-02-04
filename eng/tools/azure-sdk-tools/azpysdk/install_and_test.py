@@ -222,7 +222,10 @@ class InstallAndTest(Check):
             f"--log-cli-level={log_level}",
         ]
 
-        pytest_args = [*default_args, *self.additional_pytest_args]
+        pytest_args = [*default_args]
+        if getattr(args, "mark_arg", None):
+            pytest_args.extend(["-m", args.mark_arg])
+        pytest_args.extend(self.additional_pytest_args)
 
         if getattr(args, "pytest_args", None):
             pytest_args.extend(args.pytest_args)
