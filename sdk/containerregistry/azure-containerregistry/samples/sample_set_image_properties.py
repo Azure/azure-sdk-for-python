@@ -18,7 +18,7 @@ USAGE:
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
-    
+
     This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
@@ -27,6 +27,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
@@ -45,7 +46,9 @@ class SetImageProperties(object):
         # [START update_manifest_properties]
         with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Set permissions on image "library/hello-world:v1"
-            client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
+            client.update_manifest_properties(
+                "library/hello-world", "v1", can_write=False, can_delete=False
+            )
         # [END update_manifest_properties]
 
         # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,

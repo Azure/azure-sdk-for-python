@@ -209,8 +209,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         skip_quote=True,
                     ),
                 }
-                url = self._client._client.format_url( # pylint: disable=protected-access
-                    url, **path_format_arguments
+                url = (
+                    self._client._client.format_url(  # pylint: disable=protected-access
+                        url, **path_format_arguments
+                    )
                 )  # pylint: disable=protected-access
                 # Construct parameters
                 query_parameters: Dict[str, Any] = {}
@@ -241,8 +243,10 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                         skip_quote=True,
                     ),
                 }
-                url = self._client._client.format_url(  # pylint: disable=protected-access
-                    url, **path_format_arguments
+                url = (
+                    self._client._client.format_url(  # pylint: disable=protected-access
+                        url, **path_format_arguments
+                    )
                 )  # pylint: disable=protected-access
                 request = self._client._client.get(  # pylint: disable=protected-access
                     url, query_parameters, header_parameters

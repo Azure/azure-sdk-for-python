@@ -18,6 +18,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT - The URL of your Container Registry account for anonymous access
 """
+
 import asyncio
 import os
 import json
@@ -47,10 +48,14 @@ class SetGetImageAsync(object):
         )
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
-            layer_digest, layer_size = await client.upload_blob(repository_name, sample_layer)
+            layer_digest, layer_size = await client.upload_blob(
+                repository_name, sample_layer
+            )
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
-            config_digest, config_size = await client.upload_blob(repository_name, config)
+            config_digest, config_size = await client.upload_blob(
+                repository_name, config
+            )
             print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
@@ -73,7 +78,9 @@ class SetGetImageAsync(object):
             }
 
             # Set the image
-            manifest_digest = await client.set_manifest(repository_name, oci_manifest, tag="latest")
+            manifest_digest = await client.set_manifest(
+                repository_name, oci_manifest, tag="latest"
+            )
             print(f"Uploaded manifest: digest - {manifest_digest}")
 
             # Get the image
@@ -86,23 +93,31 @@ class SetGetImageAsync(object):
                 # Remove the "sha256:" prefix from digest
                 layer_file_name = layer["digest"].split(":")[1]
                 try:
-                    stream = await client.download_blob(repository_name, layer["digest"])
+                    stream = await client.download_blob(
+                        repository_name, layer["digest"]
+                    )
                     with open(layer_file_name, "wb") as layer_file:
                         async for chunk in stream:
                             layer_file.write(chunk)
                 except DigestValidationError:
-                    print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
+                    print(
+                        f"Downloaded layer digest value did not match. Deleting file {layer_file_name}."
+                    )
                     os.remove(layer_file_name)
                 print(f"Got layer: {layer_file_name}")
             # Download and write out the config
             config_file_name = "config.json"
             try:
-                stream = await client.download_blob(repository_name, received_manifest["config"]["digest"])
+                stream = await client.download_blob(
+                    repository_name, received_manifest["config"]["digest"]
+                )
                 with open(config_file_name, "wb") as config_file:
                     async for chunk in stream:
                         config_file.write(chunk)
             except DigestValidationError:
-                print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
+                print(
+                    f"Downloaded config digest value did not match. Deleting file {config_file_name}."
+                )
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
 
@@ -110,7 +125,9 @@ class SetGetImageAsync(object):
             for layer in received_manifest["layers"]:
                 await client.delete_blob(repository_name, layer["digest"])
             # Delete the config
-            await client.delete_blob(repository_name, received_manifest["config"]["digest"])
+            await client.delete_blob(
+                repository_name, received_manifest["config"]["digest"]
+            )
 
             # Delete the image
             await client.delete_manifest(repository_name, get_manifest_result.digest)
@@ -120,11 +137,15 @@ class SetGetImageAsync(object):
         async with ContainerRegistryClient(self.endpoint, self.credential) as client:
             # Upload a layer
             sample_layer = BytesIO(b"Sample layer")
-            layer_digest, layer_size = await client.upload_blob(repository_name, sample_layer)
+            layer_digest, layer_size = await client.upload_blob(
+                repository_name, sample_layer
+            )
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
             config = BytesIO(json.dumps({"sample config": "content"}).encode())
-            config_digest, config_size = await client.upload_blob(repository_name, config)
+            config_digest, config_size = await client.upload_blob(
+                repository_name, config
+            )
             print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
             # create a Docker image object in Docker v2 Manifest format
             docker_manifest = {
@@ -145,7 +166,10 @@ class SetGetImageAsync(object):
             }
             # Set the image with one custom media type
             await client.set_manifest(
-                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+                repository_name,
+                docker_manifest,
+                tag="sample",
+                media_type=str(docker_manifest["mediaType"]),
             )
 
             # Get the image

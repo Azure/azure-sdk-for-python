@@ -31,7 +31,12 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.model_base import (
+    Model as _Model,
+    SdkJSONEncoder,
+    _deserialize,
+    _failsafe_deserialize,
+)
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
@@ -69,7 +74,9 @@ from .._configuration import ContainerRegistryClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+ClsType = Optional[
+    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]
+]
 
 
 class ContainerRegistryOperations:
@@ -84,10 +91,18 @@ class ContainerRegistryOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: ContainerRegistryClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
     async def check_docker_v2_support(self, **kwargs: Any) -> None:
@@ -116,19 +131,25 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -178,13 +199,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -195,7 +220,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -295,7 +322,11 @@ class ContainerRegistryOperations:
 
     @distributed_trace_async
     async def create_manifest(
-        self, name: str, reference: str, payload: Union[_models.Manifest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        reference: str,
+        payload: Union[_models.Manifest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> None:
         """Put the manifest identified by ``name`` and ``reference`` where ``reference`` can be
         a tag or digest.
@@ -322,10 +353,14 @@ class ContainerRegistryOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/vnd.docker.distribution.manifest.v2+json"
+        content_type = (
+            content_type or "application/vnd.docker.distribution.manifest.v2+json"
+        )
         _content = None
         if isinstance(payload, (IOBase, bytes)):
             _content = payload
@@ -342,19 +377,25 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -362,8 +403,12 @@ class ContainerRegistryOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Content-Length"] = self._deserialize(
+            "int", response.headers.get("Content-Length")
+        )
         response_headers["Docker-Content-Digest"] = self._deserialize(
             "str", response.headers.get("Docker-Content-Digest")
         )
@@ -405,19 +450,25 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -467,10 +518,15 @@ class ContainerRegistryOperations:
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             else:
                 # make call to next link with the client's api-version
@@ -478,19 +534,28 @@ class ContainerRegistryOperations:
                 _next_request_params = case_insensitive_dict(
                     {
                         key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                        for key, value in urllib.parse.parse_qs(
+                            _parsed_next_link.query
+                        ).items()
                     }
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                        "self._config.endpoint",
+                        self._config.endpoint,
+                        "str",
+                        skip_quote=True,
                     ),
                 }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+                _request.url = self._client.format_url(
+                    _request.url, **path_format_arguments
+                )
 
             return _request
 
@@ -505,13 +570,19 @@ class ContainerRegistryOperations:
             _request = prepare_request(next_link)
 
             _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+            pipeline_response: PipelineResponse = (
+                await self._client._pipeline.run(  # pylint: disable=protected-access
+                    _request, stream=_stream, **kwargs
+                )
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                map_error(
+                    status_code=response.status_code,
+                    response=response,
+                    error_map=error_map,
+                )
                 error = _failsafe_deserialize(
                     _models.AcrErrors,
                     response,
@@ -523,7 +594,9 @@ class ContainerRegistryOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_properties(self, name: str, **kwargs: Any) -> _models.ContainerRepositoryProperties:
+    async def get_properties(
+        self, name: str, **kwargs: Any
+    ) -> _models.ContainerRepositoryProperties:
         """Get repository attributes.
 
         :param name: Name of the image (including the namespace). Required.
@@ -553,13 +626,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -570,7 +647,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -580,7 +659,9 @@ class ContainerRegistryOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ContainerRepositoryProperties, response.json())
+            deserialized = _deserialize(
+                _models.ContainerRepositoryProperties, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -617,19 +698,25 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -666,7 +753,12 @@ class ContainerRegistryOperations:
 
     @overload
     async def update_properties(
-        self, name: str, value: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        value: Optional[JSON] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ContainerRepositoryProperties:
         """Update the attribute identified by ``name`` where ``reference`` is the name of the
         repository.
@@ -686,7 +778,12 @@ class ContainerRegistryOperations:
 
     @overload
     async def update_properties(
-        self, name: str, value: Optional[IO[bytes]] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        value: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ContainerRepositoryProperties:
         """Update the attribute identified by ``name`` where ``reference`` is the name of the
         repository.
@@ -708,7 +805,9 @@ class ContainerRegistryOperations:
     async def update_properties(
         self,
         name: str,
-        value: Optional[Union[_models.RepositoryWriteableProperties, JSON, IO[bytes]]] = None,
+        value: Optional[
+            Union[_models.RepositoryWriteableProperties, JSON, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.ContainerRepositoryProperties:
         """Update the attribute identified by ``name`` where ``reference`` is the name of the
@@ -736,7 +835,9 @@ class ContainerRegistryOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         content_type = content_type if value else None
         cls: ClsType[_models.ContainerRepositoryProperties] = kwargs.pop("cls", None)
 
@@ -759,13 +860,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -776,7 +881,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -786,7 +893,9 @@ class ContainerRegistryOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ContainerRepositoryProperties, response.json())
+            deserialized = _deserialize(
+                _models.ContainerRepositoryProperties, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -846,13 +955,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -863,7 +976,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -871,7 +986,9 @@ class ContainerRegistryOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
+        response_headers["Link"] = self._deserialize(
+            "str", response.headers.get("Link")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -884,7 +1001,9 @@ class ContainerRegistryOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_tag_properties(self, name: str, reference: str, **kwargs: Any) -> _models.ArtifactTagProperties:
+    async def get_tag_properties(
+        self, name: str, reference: str, **kwargs: Any
+    ) -> _models.ArtifactTagProperties:
         """Get tag attributes by tag.
 
         :param name: Name of the image (including the namespace). Required.
@@ -916,13 +1035,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -933,7 +1056,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1061,7 +1186,9 @@ class ContainerRegistryOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         content_type = content_type if value else None
         cls: ClsType[_models.ArtifactTagProperties] = kwargs.pop("cls", None)
 
@@ -1085,13 +1212,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1102,7 +1233,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1152,19 +1285,25 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1223,13 +1362,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1240,7 +1383,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1248,7 +1393,9 @@ class ContainerRegistryOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Link"] = self._deserialize("str", response.headers.get("Link"))
+        response_headers["Link"] = self._deserialize(
+            "str", response.headers.get("Link")
+        )
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -1296,13 +1443,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1313,7 +1464,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1323,7 +1476,9 @@ class ContainerRegistryOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ArtifactManifestProperties, response.json())
+            deserialized = _deserialize(
+                _models.ArtifactManifestProperties, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1416,7 +1571,9 @@ class ContainerRegistryOperations:
         self,
         name: str,
         digest: str,
-        value: Optional[Union[_models.ManifestWriteableProperties, JSON, IO[bytes]]] = None,
+        value: Optional[
+            Union[_models.ManifestWriteableProperties, JSON, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.ArtifactManifestProperties:
         """Update properties of a manifest.
@@ -1445,7 +1602,9 @@ class ContainerRegistryOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", None)
+        )
         content_type = content_type if value else None
         cls: ClsType[_models.ArtifactManifestProperties] = kwargs.pop("cls", None)
 
@@ -1469,13 +1628,17 @@ class ContainerRegistryOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1486,7 +1649,9 @@ class ContainerRegistryOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1496,7 +1661,9 @@ class ContainerRegistryOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.ArtifactManifestProperties, response.json())
+            deserialized = _deserialize(
+                _models.ArtifactManifestProperties, response.json()
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1516,13 +1683,23 @@ class ContainerRegistryBlobOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: ContainerRegistryClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @distributed_trace_async
-    async def get_blob(self, name: str, digest: str, **kwargs: Any) -> Optional[AsyncIterator[bytes]]:
+    async def get_blob(
+        self, name: str, digest: str, **kwargs: Any
+    ) -> Optional[AsyncIterator[bytes]]:
         """Retrieve the blob from the registry identified by digest.
 
         :param name: Name of the image (including the namespace). Required.
@@ -1554,13 +1731,17 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -1571,7 +1752,9 @@ class ContainerRegistryBlobOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1581,13 +1764,17 @@ class ContainerRegistryBlobOperations:
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Content-Length"] = self._deserialize(
+                "int", response.headers.get("Content-Length")
+            )
             response_headers["Docker-Content-Digest"] = self._deserialize(
                 "str", response.headers.get("Docker-Content-Digest")
             )
 
         if response.status_code == 307:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
 
         deserialized = response.iter_bytes()
 
@@ -1629,19 +1816,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 307]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1650,13 +1843,17 @@ class ContainerRegistryBlobOperations:
 
         response_headers = {}
         if response.status_code == 200:
-            response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+            response_headers["Content-Length"] = self._deserialize(
+                "int", response.headers.get("Content-Length")
+            )
             response_headers["Docker-Content-Digest"] = self._deserialize(
                 "str", response.headers.get("Docker-Content-Digest")
             )
 
         if response.status_code == 307:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Location"] = self._deserialize(
+                "str", response.headers.get("Location")
+            )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1695,19 +1892,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1723,7 +1926,9 @@ class ContainerRegistryBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def mount_blob(self, name: str, *, from_parameter: str, mount: str, **kwargs: Any) -> None:
+    async def mount_blob(
+        self, name: str, *, from_parameter: str, mount: str, **kwargs: Any
+    ) -> None:
         """Mount a blob identified by the ``mount`` parameter from another repository.
 
         :param name: Name of the image (including the namespace). Required.
@@ -1758,19 +1963,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1778,8 +1989,12 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Docker-Upload-UUID"] = self._deserialize(
+            "str", response.headers.get("Docker-Upload-UUID")
+        )
         response_headers["Docker-Content-Digest"] = self._deserialize(
             "str", response.headers.get("Docker-Content-Digest")
         )
@@ -1820,19 +2035,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1840,14 +2061,20 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
-        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+        response_headers["Range"] = self._deserialize(
+            "str", response.headers.get("Range")
+        )
+        response_headers["Docker-Upload-UUID"] = self._deserialize(
+            "str", response.headers.get("Docker-Upload-UUID")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def upload_chunk(self, next_blob_uuid_link: str, value: bytes, **kwargs: Any) -> None:
+    async def upload_chunk(
+        self, next_blob_uuid_link: str, value: bytes, **kwargs: Any
+    ) -> None:
         """Upload a stream of data without completing the upload.
 
         :param next_blob_uuid_link: Link acquired from upload start or previous chunk. Note, do not
@@ -1871,7 +2098,9 @@ class ContainerRegistryBlobOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = value
@@ -1885,19 +2114,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1905,16 +2140,27 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
-        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Range"] = self._deserialize(
+            "str", response.headers.get("Range")
+        )
+        response_headers["Docker-Upload-UUID"] = self._deserialize(
+            "str", response.headers.get("Docker-Upload-UUID")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     async def complete_upload(
-        self, next_blob_uuid_link: str, value: Optional[bytes] = None, *, digest: str, **kwargs: Any
+        self,
+        next_blob_uuid_link: str,
+        value: Optional[bytes] = None,
+        *,
+        digest: str,
+        **kwargs: Any
     ) -> None:
         """Complete the upload, providing all the data in the body, if necessary. A
         request without a body will just complete the upload with previously uploaded
@@ -1961,19 +2207,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -1981,8 +2233,12 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Range"] = self._deserialize(
+            "str", response.headers.get("Range")
+        )
         response_headers["Docker-Content-Digest"] = self._deserialize(
             "str", response.headers.get("Docker-Content-Digest")
         )
@@ -2023,19 +2279,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -2075,19 +2337,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -2095,15 +2363,23 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Range"] = self._deserialize("str", response.headers.get("Range"))
-        response_headers["Docker-Upload-UUID"] = self._deserialize("str", response.headers.get("Docker-Upload-UUID"))
+        response_headers["Location"] = self._deserialize(
+            "str", response.headers.get("Location")
+        )
+        response_headers["Range"] = self._deserialize(
+            "str", response.headers.get("Range")
+        )
+        response_headers["Docker-Upload-UUID"] = self._deserialize(
+            "str", response.headers.get("Docker-Upload-UUID")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def get_chunk(self, name: str, digest: str, *, range: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def get_chunk(
+        self, name: str, digest: str, *, range: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
         """Retrieve the blob from the registry identified by ``digest``. This endpoint may
         also support RFC7233 compliant range requests. Support can be detected by
         issuing a HEAD request. If the header ``Accept-Range: bytes`` is returned, range
@@ -2142,13 +2418,17 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2159,7 +2439,9 @@ class ContainerRegistryBlobOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -2167,8 +2449,12 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+        response_headers["Content-Length"] = self._deserialize(
+            "int", response.headers.get("Content-Length")
+        )
+        response_headers["Content-Range"] = self._deserialize(
+            "str", response.headers.get("Content-Range")
+        )
 
         deserialized = response.iter_bytes()
 
@@ -2178,7 +2464,9 @@ class ContainerRegistryBlobOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def check_chunk_exists(self, name: str, digest: str, *, range: str, **kwargs: Any) -> bool:
+    async def check_chunk_exists(
+        self, name: str, digest: str, *, range: str, **kwargs: Any
+    ) -> bool:
         """Same as GET, except only the headers are returned.
 
         :param name: Name of the image (including the namespace). Required.
@@ -2214,19 +2502,25 @@ class ContainerRegistryBlobOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -2234,8 +2528,12 @@ class ContainerRegistryBlobOperations:
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+        response_headers["Content-Length"] = self._deserialize(
+            "int", response.headers.get("Content-Length")
+        )
+        response_headers["Content-Range"] = self._deserialize(
+            "str", response.headers.get("Content-Range")
+        )
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -2254,10 +2552,18 @@ class AuthenticationOperations:
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerRegistryClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        self._client: AsyncPipelineClient = (
+            input_args.pop(0) if input_args else kwargs.pop("client")
+        )
+        self._config: ContainerRegistryClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = (
+            input_args.pop(0) if input_args else kwargs.pop("serializer")
+        )
+        self._deserialize: Deserializer = (
+            input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        )
 
     @overload
     async def exchange_aad_access_token_for_acr_refresh_token(  # pylint: disable=name-too-long
@@ -2313,7 +2619,13 @@ class AuthenticationOperations:
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = []
-        _data_fields: list[str] = ["grantType", "service", "tenant", "refreshToken", "accessToken"]
+        _data_fields: list[str] = [
+            "grantType",
+            "service",
+            "tenant",
+            "refreshToken",
+            "accessToken",
+        ]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_authentication_exchange_aad_access_token_for_acr_refresh_token_request(
@@ -2322,13 +2634,17 @@ class AuthenticationOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2339,7 +2655,9 @@ class AuthenticationOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -2410,7 +2728,13 @@ class AuthenticationOperations:
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = []
-        _data_fields: list[str] = ["grantType", "service", "tenant", "refreshToken", "accessToken"]
+        _data_fields: list[str] = [
+            "grantType",
+            "service",
+            "tenant",
+            "refreshToken",
+            "accessToken",
+        ]
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_authentication_exchange_acr_refresh_token_for_acr_access_token_request(
@@ -2419,13 +2743,17 @@ class AuthenticationOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2436,7 +2764,9 @@ class AuthenticationOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,
@@ -2490,13 +2820,17 @@ class AuthenticationOperations:
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "endpoint": self._serialize.url(
+                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+            ),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
+        pipeline_response: PipelineResponse = (
+            await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
         )
 
         response = pipeline_response.http_response
@@ -2507,7 +2841,9 @@ class AuthenticationOperations:
                     await response.read()  # Load the body in memory and close the socket
                 except (StreamConsumedError, StreamClosedError):
                     pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            map_error(
+                status_code=response.status_code, response=response, error_map=error_map
+            )
             error = _failsafe_deserialize(
                 _models.AcrErrors,
                 response,

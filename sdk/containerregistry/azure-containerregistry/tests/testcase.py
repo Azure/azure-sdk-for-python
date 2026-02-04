@@ -12,7 +12,11 @@ from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential
 
-from devtools_testutils import AzureRecordedTestCase, FakeTokenCredential, get_credential
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    FakeTokenCredential,
+    get_credential,
+)
 
 logger = logging.getLogger()
 
@@ -37,7 +41,9 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
             audience = get_audience(authority)
         credential = self.get_credential(authority=authority)
         logger.warning(f"Authority: {authority} \nAuthorization scope: {audience}")
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
+        return ContainerRegistryClient(
+            endpoint=endpoint, credential=credential, audience=audience, **kwargs
+        )
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)

@@ -4,7 +4,9 @@
 # ------------------------------------
 from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry.aio import ContainerRegistryClient as AsyncContainerRegistryClient
+from azure.containerregistry.aio import (
+    ContainerRegistryClient as AsyncContainerRegistryClient,
+)
 
 
 class ListRepositoriesTest(PerfStressTest):
@@ -13,8 +15,12 @@ class ListRepositoriesTest(PerfStressTest):
 
         endpoint = self.get_from_env("CONTAINERREGISTRY_ANONREGISTRY_ENDPOINT")
         audience = "https://management.azure.com"
-        self.anon_client = ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience)
-        self.async_anon_client = AsyncContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience)
+        self.anon_client = ContainerRegistryClient(
+            endpoint=endpoint, credential=None, audience=audience
+        )
+        self.async_anon_client = AsyncContainerRegistryClient(
+            endpoint=endpoint, credential=None, audience=audience
+        )
 
     async def close(self):
         await self.async_anon_client.close()

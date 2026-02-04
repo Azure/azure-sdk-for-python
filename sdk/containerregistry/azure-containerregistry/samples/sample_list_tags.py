@@ -28,6 +28,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
@@ -43,7 +44,9 @@ class ListTags(object):
         load_registry(endpoint)
         # [START list_tags_anonymous]
         with ContainerRegistryClient(endpoint) as anon_client:
-            manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
+            manifest = anon_client.get_manifest_properties(
+                "library/hello-world", "latest"
+            )
             if manifest.tags:
                 print(f"Tags of {manifest.repository_name}: ")
                 # Iterate through all the tags

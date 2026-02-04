@@ -18,6 +18,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of your Container Registry account
 """
+
 import os
 import json
 from io import BytesIO
@@ -52,7 +53,9 @@ class SetGetImage(object):
             layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
             print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
             # Upload a config
-            config_digest, config_size = client.upload_blob(self.repository_name, config)
+            config_digest, config_size = client.upload_blob(
+                self.repository_name, config
+            )
             print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
             # Create an oci image with config and layer info
             oci_manifest = {
@@ -74,7 +77,9 @@ class SetGetImage(object):
                 ],
             }
             # Set the image with tag "latest"
-            manifest_digest = client.set_manifest(self.repository_name, oci_manifest, tag="latest")
+            manifest_digest = client.set_manifest(
+                self.repository_name, oci_manifest, tag="latest"
+            )
             print(f"Uploaded manifest: digest - {manifest_digest}")
         # [END upload_blob_and_manifest]
 
@@ -96,18 +101,24 @@ class SetGetImage(object):
                         for chunk in stream:
                             layer_file.write(chunk)
                 except DigestValidationError:
-                    print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
+                    print(
+                        f"Downloaded layer digest value did not match. Deleting file {layer_file_name}."
+                    )
                     os.remove(layer_file_name)
                 print(f"Got layer: {layer_file_name}")
             # Download and write out the config
             config_file_name = "config.json"
             try:
-                stream = client.download_blob(self.repository_name, received_manifest["config"]["digest"])
+                stream = client.download_blob(
+                    self.repository_name, received_manifest["config"]["digest"]
+                )
                 with open(config_file_name, "wb") as config_file:
                     for chunk in stream:
                         config_file.write(chunk)
             except DigestValidationError:
-                print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
+                print(
+                    f"Downloaded config digest value did not match. Deleting file {config_file_name}."
+                )
                 os.remove(config_file_name)
             print(f"Got config: {config_file_name}")
         # [END download_blob_and_manifest]
@@ -121,7 +132,9 @@ class SetGetImage(object):
             for layer in received_manifest["layers"]:
                 client.delete_blob(self.repository_name, layer["digest"])
             # Delete the config
-            client.delete_blob(self.repository_name, received_manifest["config"]["digest"])
+            client.delete_blob(
+                self.repository_name, received_manifest["config"]["digest"]
+            )
         # [END delete_blob]
 
     def delete_oci_image(self):
@@ -168,7 +181,10 @@ class SetGetImage(object):
             }
             # Set the image with one custom media type
             client.set_manifest(
-                repository_name, docker_manifest, tag="sample", media_type=str(docker_manifest["mediaType"])
+                repository_name,
+                docker_manifest,
+                tag="sample",
+                media_type=str(docker_manifest["mediaType"]),
             )
 
             # Get the image

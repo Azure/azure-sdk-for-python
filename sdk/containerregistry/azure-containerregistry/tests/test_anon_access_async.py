@@ -28,7 +28,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             repositories = client.list_repository_names()
@@ -46,17 +48,23 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_list_repository_names_by_page(self, containerregistry_anonregistry_endpoint):
+    async def test_list_repository_names_by_page(
+        self, containerregistry_anonregistry_endpoint
+    ):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             results_per_page = 2
             total_pages = 0
 
-            repository_pages = client.list_repository_names(results_per_page=results_per_page)
+            repository_pages = client.list_repository_names(
+                results_per_page=results_per_page
+            )
 
             prev = None
             async for page in repository_pages.by_page():
@@ -73,11 +81,15 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_get_repository_properties(self, containerregistry_anonregistry_endpoint):
+    async def test_get_repository_properties(
+        self, containerregistry_anonregistry_endpoint
+    ):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             properties = await client.get_repository_properties(HELLO_WORLD)
@@ -87,11 +99,15 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_list_manifest_properties(self, containerregistry_anonregistry_endpoint):
+    async def test_list_manifest_properties(
+        self, containerregistry_anonregistry_endpoint
+    ):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             count = 0
@@ -102,14 +118,20 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_get_manifest_properties(self, containerregistry_anonregistry_endpoint):
+    async def test_get_manifest_properties(
+        self, containerregistry_anonregistry_endpoint
+    ):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
-            registry_artifact = await client.get_manifest_properties(HELLO_WORLD, "latest")
+            registry_artifact = await client.get_manifest_properties(
+                HELLO_WORLD, "latest"
+            )
 
             assert isinstance(registry_artifact, ArtifactManifestProperties)
             assert "latest" in registry_artifact.tags
@@ -121,7 +143,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             count = 0
@@ -136,7 +160,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
@@ -148,7 +174,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
@@ -160,7 +188,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             assert client._credential is None
 
             with pytest.raises(ClientAuthenticationError):
@@ -168,15 +198,21 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_update_repository_properties(self, containerregistry_anonregistry_endpoint):
+    async def test_update_repository_properties(
+        self, containerregistry_anonregistry_endpoint
+    ):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             properties = await client.get_repository_properties(HELLO_WORLD)
 
             with pytest.raises(ClientAuthenticationError):
-                await client.update_repository_properties(HELLO_WORLD, properties, can_delete=True)
+                await client.update_repository_properties(
+                    HELLO_WORLD, properties, can_delete=True
+                )
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -184,39 +220,55 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             properties = await client.get_tag_properties(HELLO_WORLD, "latest")
 
             with pytest.raises(ClientAuthenticationError):
-                await client.update_tag_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+                await client.update_tag_properties(
+                    HELLO_WORLD, "latest", properties, can_delete=True
+                )
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_update_manifest_properties(self, containerregistry_anonregistry_endpoint):
+    async def test_update_manifest_properties(
+        self, containerregistry_anonregistry_endpoint
+    ):
         if not is_public_endpoint(containerregistry_anonregistry_endpoint):
             pytest.skip("Not a public endpoint")
 
-        async with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+        async with self.create_anon_client(
+            containerregistry_anonregistry_endpoint
+        ) as client:
             properties = await client.get_manifest_properties(HELLO_WORLD, "latest")
 
             with pytest.raises(ClientAuthenticationError):
-                await client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+                await client.update_manifest_properties(
+                    HELLO_WORLD, "latest", properties, can_delete=True
+                )
 
 
 @pytest.mark.asyncio
 async def test_set_api_version():
     containerregistry_endpoint = "https://fake_url.azurecr.io"
 
-    async with ContainerRegistryClient(endpoint=containerregistry_endpoint, audience="https://microsoft.com") as client:
+    async with ContainerRegistryClient(
+        endpoint=containerregistry_endpoint, audience="https://microsoft.com"
+    ) as client:
         assert client._client._config.api_version == "2021-07-01"
 
     async with ContainerRegistryClient(
-        endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version="2019-08-15-preview"
+        endpoint=containerregistry_endpoint,
+        audience="https://microsoft.com",
+        api_version="2019-08-15-preview",
     ) as client:
         assert client._client._config.api_version == "2019-08-15-preview"
 
     with pytest.raises(ValueError):
         async with ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, audience="https://microsoft.com", api_version="2019-08-15"
+            endpoint=containerregistry_endpoint,
+            audience="https://microsoft.com",
+            api_version="2019-08-15",
         ) as client:
             pass

@@ -12,7 +12,12 @@ from azure.core.credentials import AccessToken
 from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
 from azure.identity import AzureAuthorityHosts
 
-from testcase import ContainerRegistryTestClass, get_audience, get_authority, get_credential
+from testcase import (
+    ContainerRegistryTestClass,
+    get_audience,
+    get_authority,
+    get_credential,
+)
 
 logger = logging.getLogger()
 
@@ -41,12 +46,16 @@ class AsyncContainerRegistryTestClass(ContainerRegistryTestClass):
         if not audience:
             audience = get_audience(authority)
         credential = self.get_credential(authority=authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=credential, audience=audience, **kwargs)
+        return ContainerRegistryClient(
+            endpoint=endpoint, credential=credential, audience=audience, **kwargs
+        )
 
     def create_anon_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
         audience = get_audience(authority)
-        return ContainerRegistryClient(endpoint=endpoint, credential=None, audience=audience, **kwargs)
+        return ContainerRegistryClient(
+            endpoint=endpoint, credential=None, audience=audience, **kwargs
+        )
 
     async def upload_oci_manifest_prerequisites(self, repo, client):
         layer = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
