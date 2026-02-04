@@ -29,7 +29,7 @@ USAGE:
 import os
 import jsonref
 from dotenv import load_dotenv
-
+from typing import Any, cast
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -56,7 +56,7 @@ with (
 
     # [START tool_declaration]
     with open(tripadvisor_asset_file_path, "r") as f:
-        openapi_tripadvisor = jsonref.loads(f.read())
+        openapi_tripadvisor =  cast(dict[str, Any], jsonref.loads(f.read()))
 
     tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
