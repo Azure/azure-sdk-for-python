@@ -128,7 +128,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 span1 = spans[0]
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -216,7 +215,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 # Validate second response span (approval response)
                 span2 = spans[1]
                 expected_attributes_2 = [
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -459,7 +457,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 span1 = spans[0]
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -542,7 +539,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 # Validate second response span (approval response)
                 span2 = spans[1]
                 expected_attributes_2 = [
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -789,7 +785,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -866,7 +861,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 assert response_id_2 is not None
 
                 expected_attributes_2 = [
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
@@ -1070,7 +1064,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
 
                 expected_attributes_1 = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
                     ("server.address", ""),
@@ -1145,7 +1138,6 @@ class TestResponsesInstrumentorMCPAsync(TestAiAgentsInstrumentorBase):
                 assert response_id_2 is not None
 
                 expected_attributes_2 = [
-                    ("az.namespace", "Microsoft.CognitiveServices"),
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
                     ("gen_ai.provider.name", "azure.openai"),
