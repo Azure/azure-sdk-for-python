@@ -1,5 +1,4 @@
 import argparse
-import logging
 import os
 import sys
 import glob
@@ -77,7 +76,7 @@ def verify_whl_root_directory(
     non_azure_folders = [d for d in root_folders if d != expected_top_level_module and not d.endswith(".dist-info")]
 
     if non_azure_folders:
-        logging.error(
+        logger.error(
             "whl has following incorrect directory at root level [%s]",
             non_azure_folders,
         )
@@ -112,12 +111,12 @@ def has_stable_version_on_pypi(package_name: str) -> bool:
 def verify_conda_section(package_dir: str, package_name: str) -> bool:
     """Verify that packages with stable versions on PyPI have [tool.azure-sdk-conda] section in pyproject.toml."""
     if not has_stable_version_on_pypi(package_name):
-        logging.info(f"Package {package_name} has no stable version on PyPI, skipping conda section check")
+        logger.info(f"Package {package_name} has no stable version on PyPI, skipping conda section check")
         return True
 
     pyproject_path = os.path.join(package_dir, "pyproject.toml")
     if not os.path.exists(pyproject_path):
-        logging.error(f"Package {package_name} has a stable version on PyPI but is missing pyproject.toml")
+        logger.error(f"Package {package_name} has a stable version on PyPI but is missing pyproject.toml")
         return False
 
     try:
@@ -125,14 +124,14 @@ def verify_conda_section(package_dir: str, package_name: str) -> bool:
             content = f.read()
 
         if "[tool.azure-sdk-conda]" not in content:
-            logging.error(
+            logger.error(
                 f"Package {package_name} has a stable version on PyPI but is missing "
                 "[tool.azure-sdk-conda] section in pyproject.toml"
             )
             return False
         return True
     except Exception as e:
-        logging.error(f"Failed to read pyproject.toml for {package_name}: {e}")
+        logger.error(f"Failed to read pyproject.toml for {package_name}: {e}")
         return False
 
 
@@ -216,7 +215,7 @@ def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metada
     repo_urls = ["homepage", "repository"]
     current_keys_lower = {k.lower() for k in current_metadata.keys()}
     if not any(key in current_keys_lower for key in repo_urls):
-        logging.error(f"Current metadata must contain at least one of: {repo_urls}")
+        logger.error(f"Current metadata must contain at least one of: {repo_urls}")
         return False
 
     if not prior_metadata:
@@ -229,7 +228,7 @@ def verify_metadata_compatibility(current_metadata: Dict[str, Any], prior_metada
     is_compatible = prior_keys_filtered.issubset(current_keys)
     if not is_compatible:
         missing_keys = prior_keys_filtered - current_keys
-        logging.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
+        logger.error("Metadata compatibility failed. Missing keys: %s", missing_keys)
     return is_compatible
 
 
