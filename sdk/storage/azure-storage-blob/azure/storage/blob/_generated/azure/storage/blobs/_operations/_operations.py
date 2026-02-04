@@ -895,7 +895,7 @@ def build_blob_download_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
+        _headers["Range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if range_get_content_md5 is not None:
@@ -2264,7 +2264,7 @@ def build_page_blob_clear_pages_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
-    _headers["Range"] = _SERIALIZER.header("range", range, "str")
+    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if encryption_key is not None:
