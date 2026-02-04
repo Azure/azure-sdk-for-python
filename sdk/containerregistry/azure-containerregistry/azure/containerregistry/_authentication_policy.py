@@ -19,15 +19,19 @@ from ._helpers import _enforce_https
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential: Optional[TokenCredential], endpoint: str, **kwargs: Any) -> None:
+    def __init__(
+        self, credential: Optional[TokenCredential], endpoint: str, **kwargs: Any
+    ) -> None:
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client: Union[AnonymousACRExchangeClient, ACRExchangeClient] = AnonymousACRExchangeClient(
-                endpoint, **kwargs
-            )
+            self._exchange_client: Union[
+                AnonymousACRExchangeClient, ACRExchangeClient
+            ] = AnonymousACRExchangeClient(endpoint, **kwargs)
         else:
-            self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
+            self._exchange_client = ACRExchangeClient(
+                endpoint, self._credential, **kwargs
+            )
 
     def on_request(self, request: PipelineRequest) -> None:
         """Called before the policy sends a request.
@@ -56,7 +60,9 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         if response.http_response.status_code == 401:
             challenge = response.http_response.headers.get("WWW-Authenticate")
             if challenge and self.on_challenge(request, response, challenge):
-                if request.http_request.body and hasattr(request.http_request.body, "read"):
+                if request.http_request.body and hasattr(
+                    request.http_request.body, "read"
+                ):
                     try:
                         # attempt to rewind the body to the initial position
                         request.http_request.body.seek(0, SEEK_SET)
@@ -68,7 +74,9 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
 
         return response
 
-    def on_challenge(self, request: PipelineRequest, response: PipelineResponse, challenge: str) -> bool:
+    def on_challenge(
+        self, request: PipelineRequest, response: PipelineResponse, challenge: str
+    ) -> bool:
         """Authorize request according to an authentication challenge
         This method is called when the resource provider responds 401 with a WWW-Authenticate header.
 
