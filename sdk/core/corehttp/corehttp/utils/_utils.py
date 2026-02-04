@@ -169,9 +169,10 @@ def get_file_items(files: "FilesType") -> Sequence[Tuple[str, "FileType"]]:
 
 def get_running_async_lock() -> AsyncContextManager:
     """Get a lock instance from the async library that the current context is running under.
+
     :return: An instance of the running async library's Lock class.
     :rtype: AsyncContextManager
-    :raises: RuntimeError if the current context is not running under an async library.
+    :raises RuntimeError: if the current context is not running under an async library.
     """
 
     try:
