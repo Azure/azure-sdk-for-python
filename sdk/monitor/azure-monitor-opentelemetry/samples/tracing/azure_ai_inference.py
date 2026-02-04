@@ -30,7 +30,7 @@ except KeyError:
 is_content_tracing_enabled = os.environ["AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED"]
 if not is_content_tracing_enabled:
     print(
-        "Content tracing is disabled. Set 'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to 'true' to record prompts and completions." # pylint: disable=line-too-long
+        "Content tracing is disabled. Set 'AZURE_TRACING_GEN_AI_CONTENT_RECORDING_ENABLED' to 'true' to record prompts and completions."  # pylint: disable=line-too-long
     )
 
 tracer = trace.get_tracer(__name__)

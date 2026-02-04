@@ -16,6 +16,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
     _ATTACH_SUCCESS_CONFIGURATOR,
 )
 
+
 # pylint: disable=unused-argument
 @patch.dict("os.environ", {}, clear=True)
 class TestConfigurator(TestCase):

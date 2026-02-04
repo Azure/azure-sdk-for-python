@@ -13,12 +13,13 @@ from azure.monitor.opentelemetry import _utils
 
 TEST_VALUE = "TEST_VALUE"
 TEST_IKEY = "1234abcd-ab12-34cd-ab12-a23456abcdef"
-TEST_CONN_STR = f"InstrumentationKey={TEST_IKEY};IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/" # pylint: disable=line-too-long
+TEST_CONN_STR = f"InstrumentationKey={TEST_IKEY};IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/"  # pylint: disable=line-too-long
 
 
 def clear_env_var(env_var):
     if env_var in environ:
         del environ[env_var]
+
 
 # pylint: disable=unused-argument
 class TestUtils(TestCase):

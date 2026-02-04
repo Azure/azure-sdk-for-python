@@ -14,4 +14,4 @@ def index(_request):
 
 # Exceptions that are raised within the request are automatically captured
 def exception(_request):
-    raise Exception("Exception was raised.") # pylint: disable=broad-exception-raised
+    raise Exception("Exception was raised.")  # pylint: disable=broad-exception-raised

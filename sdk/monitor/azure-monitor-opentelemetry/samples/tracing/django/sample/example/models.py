@@ -4,6 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from django.db import models # pylint: disable=unused-import
+from django.db import models  # pylint: disable=unused-import
 
 # Create your models here.

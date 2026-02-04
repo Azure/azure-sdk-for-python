@@ -9,6 +9,7 @@ from opentelemetry.sdk.trace import SpanProcessor
 from opentelemetry.trace import get_tracer, SpanContext, SpanKind, TraceFlags
 from azure.monitor.opentelemetry import configure_azure_monitor
 
+
 # Define a custom processor to filter your spans
 # pylint: disable=protected-access
 class SpanFilteringProcessor(SpanProcessor):

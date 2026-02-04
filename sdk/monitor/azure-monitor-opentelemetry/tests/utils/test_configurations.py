@@ -59,6 +59,7 @@ TEST_MERGED_RESOURCE = Resource(
     {"test.attributes.1": "test_value_1", "test.attributes.2": "test_value_4", "test.attributes.3": "test_value_3"}
 )
 
+
 # pylint: disable=too-many-public-methods, unused-argument
 class TestConfigurations(TestCase):
     @patch.dict("os.environ", {}, clear=True)

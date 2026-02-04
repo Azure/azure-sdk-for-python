@@ -9,6 +9,7 @@ An example to show an application using Opentelemetry tracing api and sdk with a
 Credential. Credentials are used for Azure Active Directory/EntraId Authentication. 
 """
 from opentelemetry import trace
+
 # You will need to install azure-identity
 from azure.identity import ManagedIdentityCredential
 from azure.monitor.opentelemetry import configure_azure_monitor

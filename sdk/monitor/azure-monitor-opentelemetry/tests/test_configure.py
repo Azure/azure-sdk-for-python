@@ -30,6 +30,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_
 
 TEST_RESOURCE = Resource({"foo": "bar"})
 
+
 # pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
     @patch(

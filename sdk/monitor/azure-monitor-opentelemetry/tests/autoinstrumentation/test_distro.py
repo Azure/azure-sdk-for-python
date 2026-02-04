@@ -15,6 +15,7 @@ from azure.monitor.opentelemetry._autoinstrumentation.distro import (
 )
 from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _ATTACH_FAILURE_DISTRO, _ATTACH_SUCCESS_DISTRO
 
+
 # pylint: disable=unused-argument
 class TestDistro(TestCase):
     @patch.dict("os.environ", {}, clear=True)

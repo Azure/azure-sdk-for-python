@@ -22,7 +22,7 @@ with tracer.start_as_current_span("Request parent span") as span:
         req = request.Request("https://www.example.org/", method="GET")
         with request.urlopen(req) as _:
             logger.warning("Request sent")
-    except Exception as ex: # pylint: disable=broad-exception-caught
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         # If an exception occurs, this can be manually recorded on the parent span
         span.set_attribute("status", "exception")
         span.record_exception(ex)

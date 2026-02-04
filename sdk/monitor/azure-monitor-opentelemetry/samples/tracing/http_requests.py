@@ -24,7 +24,7 @@ with tracer.start_as_current_span("Request parent span") as span:
         # This request will not be tracked due to the excluded_urls configuration
         response = requests.get("http://example.com", timeout=5)
         logger.warning("Request sent")
-    except Exception as ex: # pylint: disable=broad-exception-caught
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         # If an exception occurs, this can be manually recorded on the parent span
         span.set_attribute("status", "exception")
         span.record_exception(ex)

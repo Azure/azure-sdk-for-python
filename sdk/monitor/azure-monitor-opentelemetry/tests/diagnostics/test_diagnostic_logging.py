@@ -204,7 +204,9 @@ class TestDiagnosticLogger:
         # Mock makedirs to raise FileExistsError (this should be handled gracefully)
         with patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging.makedirs") as mock_makedirs, patch(
             "azure.monitor.opentelemetry._diagnostics.diagnostic_logging.exists", return_value=False
-        ), patch("azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger") as mock_logger: # pylint: disable=unused-variable
+        ), patch(
+            "azure.monitor.opentelemetry._diagnostics.diagnostic_logging._logger"
+        ) as mock_logger:  # pylint: disable=unused-variable
             mock_makedirs.side_effect = FileExistsError("Directory already exists")
             # Attempt to log, which will trigger initialization
             diagnostic_logger.AzureDiagnosticLogging.info(MESSAGE1, "4200")
