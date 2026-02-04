@@ -37,13 +37,13 @@ def _build_client(
     return project_client.get_openai_client(**kwargs)
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestResponsesAsync(TestBase):
 
     # To run this test:
     # pytest tests\responses\test_responses_async.py::TestResponsesAsync::test_responses_async -s
+    @pytest.mark.skip(
+        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+    )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
     async def test_responses_async(self, **kwargs):

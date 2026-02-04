@@ -40,14 +40,13 @@ def _build_client(
     kwargs: Dict[str, Any] = {"default_headers": default_headers}
     return project_client.get_openai_client(**kwargs)
 
-
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestResponses(TestBase):
 
     # To run this test:
     # pytest tests\responses\test_responses.py::TestResponses::test_responses -s
+    @pytest.mark.skip(
+        reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+    )
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_responses(self, **kwargs):
