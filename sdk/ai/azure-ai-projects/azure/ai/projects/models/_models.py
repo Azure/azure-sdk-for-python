@@ -13507,7 +13507,7 @@ class Response(_Model):
     """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse. `Learn more about safety ididentifiers
+     OpenAI detect and prevent abuse. `Learn more about safety identifiers
      <https://platform.openai.com/docs/guides/safety-best-practices#safety-identifiers>`_."""
     safety_identifier: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A stable identifier used to help detect users of your application that may be violating

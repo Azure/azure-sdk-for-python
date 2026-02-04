@@ -24,7 +24,7 @@ powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -
 REM Fix Sphinx issue (see bug on emitter: https://github.com/microsoft/typespec/issues/9579)
 REM Go to where class "Response" is defined. See the doc string for "output" property (two locations). Remove the blank 2nd line.
 
-REM Fix Shpinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything shoud be aligned including JSON example, like this:
+REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything should be aligned including JSON example, like this:
 REM """A list of tool definitions that the model should be allowed to call. For the Responses API, the
 REM  list of tool definitions might look like:
 REM  .. code-block:: json
@@ -34,9 +34,9 @@ REM  { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
 REM  { \"type\": \"image_generation\" }
 REM  ]. Required."""
 
-REM Fix Shipnx issue: docstring of azure.ai.projects.models.WorkflowPreviewActionOutputItem.type:2: WARNING: Duplicate explicit target name: "learn more". [docutils]
+REM Fix Sphinx issue: docstring of azure.ai.projects.models.WorkflowPreviewActionOutputItem.type:2: WARNING: Duplicate explicit target name: "learn more". [docutils]
 REM Turns out this has nothing to do with doc string of class WorkflowPreviewActionOutputItem. Search for "learn more"
-REM and chage them to "learn more about ..." (e.g. "learn more about content safety").
+REM and change them to "learn more about ..." (e.g. "learn more about content safety").
 
 REM Fix type annotations by replacing "_types.Filters" with proper union type to fix Pyright errors
 REM powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace '\"_types\.Filters\"', 'Union[\"_models.ComparisonFilter\", \"_models.CompoundFilter\"]' | Set-Content azure\ai\projects\models\_models.py"
