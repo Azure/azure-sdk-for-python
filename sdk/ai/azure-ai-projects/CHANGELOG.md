@@ -23,7 +23,7 @@
 * Other class renames:
   * Rename class `ItemParam` to `InputItem`.
   * Rename class `PromptAgentDefinitionText` to `PromptAgentDefinitionTextOptions`
-  * Rnname class `EvaluationComparisonRequest` to `InsightRequest`
+  * Rename class `EvaluationComparisonRequest` to `InsightRequest`
 * Tracing: workflow actions in conversation item listings are now emitted as "gen_ai.conversation.item" events (with role="workflow") instead of "gen_ai.workflow.action" events in the list_conversation_items span.
 * Tracing: response generation span names changed from "responses {model_name}" to "chat {model_name}" for model calls and from "responses {agent_name}" to "invoke_agent {agent_name}" for agent calls.
 

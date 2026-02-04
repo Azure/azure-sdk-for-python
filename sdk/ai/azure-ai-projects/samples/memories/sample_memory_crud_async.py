@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import FoundryPreviewOptInKeys, MemoryStoreDefaultDefinition
+from azure.ai.projects.models import FoundryFeaturesOptInKeys, MemoryStoreDefaultDefinition
 
 load_dotenv()
 
@@ -52,7 +52,7 @@ async def main() -> None:
         memory_store_name = "my_memory_store"
         try:
             await project_client.memory_stores.delete(
-                memory_store_name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+                memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
             )
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
@@ -67,13 +67,13 @@ async def main() -> None:
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
-            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
+            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
         # Get Memory Store
         get_store = await project_client.memory_stores.get(
-            memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Retrieved: {get_store.name} ({get_store.id}): {get_store.description}")
 
@@ -81,14 +81,14 @@ async def main() -> None:
         updated_store = await project_client.memory_stores.update(
             name=memory_store.name,
             description="Updated description",
-            foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
+            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
 
         # List Memory Store
         memory_stores = []
         async for store in project_client.memory_stores.list(
-            limit=10, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+            limit=10, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         ):
             memory_stores.append(store)
         print(f"Found {len(memory_stores)} memory stores")
@@ -97,7 +97,7 @@ async def main() -> None:
 
         # Delete Memory Store
         delete_response = await project_client.memory_stores.delete(
-            memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Deleted: {delete_response.deleted}")
 

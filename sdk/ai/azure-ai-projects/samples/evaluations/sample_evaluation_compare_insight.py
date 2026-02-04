@@ -32,7 +32,7 @@ import time
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models import (
-    FoundryPreviewOptInKeys,
+    FoundryFeaturesOptInKeys,
     OperationState,
     EvaluationComparisonInsightRequest,
     Insight,
@@ -142,13 +142,13 @@ with (
                     eval_id=eval_object.id, baseline_run_id=eval_run_1.id, treatment_run_ids=[eval_run_2.id]
                 ),
             ),
-            foundry_beta=FoundryPreviewOptInKeys.INSIGHTS_V1,
+            foundry_features=FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW,
         )
         print(f"Started insight generation (id: {compareInsight.id})")
 
         while compareInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
             compareInsight = project_client.insights.get(
-                id=compareInsight.id, foundry_beta=FoundryPreviewOptInKeys.INSIGHTS_V1
+                id=compareInsight.id, foundry_features=FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
             )
             print(f"Waiting for insight to be generated...current status: {compareInsight.state}")
             time.sleep(5)

@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    FoundryPreviewOptInKeys,
+    FoundryFeaturesOptInKeys,
     ItemResourceType,
     PromptAgentDefinition,
     WorkflowAgentDefinition,
@@ -139,7 +139,7 @@ trigger:
     workflow = project_client.agents.create_version(
         agent_name="student-teacher-workflow",
         definition=WorkflowAgentDefinition(workflow=workflow_yaml),
-        foundry_beta=FoundryPreviewOptInKeys.WORKFLOW_AGENTS_V1,
+        foundry_features=FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW,
     )
 
     print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")

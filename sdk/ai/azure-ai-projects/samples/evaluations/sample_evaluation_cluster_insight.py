@@ -33,7 +33,7 @@ from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models import (
-    FoundryPreviewOptInKeys,
+    FoundryFeaturesOptInKeys,
     OperationState,
     EvaluationRunClusterInsightRequest,
     Insight,
@@ -132,14 +132,14 @@ with (
                     model_configuration=InsightModelConfiguration(model_deployment_name=model_deployment_name),
                 ),
             ),
-            foundry_beta=FoundryPreviewOptInKeys.INSIGHTS_V1,
+            foundry_features=FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW,
         )
         print(f"Started insight generation (id: {clusterInsight.id})")
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
             print(f"Waiting for insight to be generated...")
             clusterInsight = project_client.insights.get(
-                id=clusterInsight.id, foundry_beta=FoundryPreviewOptInKeys.INSIGHTS_V1
+                id=clusterInsight.id, foundry_features=FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
             )
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)

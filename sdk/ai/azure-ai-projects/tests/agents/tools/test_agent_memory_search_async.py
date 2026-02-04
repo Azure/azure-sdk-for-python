@@ -12,7 +12,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport, is_live, is_live_and_not_recording
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
-    FoundryPreviewOptInKeys,
+    FoundryFeaturesOptInKeys,
     MemoryStoreDefaultDefinition,
     MemorySearchPreviewTool,
     PromptAgentDefinition,
@@ -58,7 +58,7 @@ class TestAgentMemorySearchAsync(TestBase):
             if is_live_and_not_recording():
                 try:
                     await project_client.memory_stores.delete(
-                        memory_store_name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+                        memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
                     )
                     print(f"Memory store `{memory_store_name}` deleted")
                 except ResourceNotFoundError:
@@ -75,7 +75,7 @@ class TestAgentMemorySearchAsync(TestBase):
                     name=memory_store_name,
                     description="Test memory store for agent conversations",
                     definition=definition,
-                    foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1,
+                    foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
                 )
                 print(f"\nMemory store created: {memory_store.name} (id: {memory_store.id})")
                 assert memory_store.name == memory_store_name
@@ -186,7 +186,7 @@ class TestAgentMemorySearchAsync(TestBase):
                 if memory_store:
                     try:
                         await project_client.memory_stores.delete(
-                            memory_store.name, foundry_beta=FoundryPreviewOptInKeys.MEMORY_STORES_V1
+                            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
                         )
                         print("Memory store deleted")
                     except Exception as e:
