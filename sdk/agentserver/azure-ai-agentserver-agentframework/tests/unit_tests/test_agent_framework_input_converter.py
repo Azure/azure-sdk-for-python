@@ -39,6 +39,18 @@ async def test_transform_implicit_user_message_with_string(converter: AgentFrame
 
 @pytest.mark.unit
 @pytest.mark.asyncio
+async def test_transform_message_with_role(converter: AgentFrameworkInputConverter) -> None:
+	payload = [{"role": "assistant", "content": "How are you?"}]
+
+	result = await converter.transform_input(payload)
+
+	assert isinstance(result, ChatMessage)
+	assert result.role == ChatRole.ASSISTANT
+	assert result.text == "How are you?"
+
+
+@pytest.mark.unit
+@pytest.mark.asyncio
 async def test_transform_implicit_user_message_with_input_text_list(converter: AgentFrameworkInputConverter) -> None:
 	payload = [
 		{
