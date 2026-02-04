@@ -1450,7 +1450,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             premium_page_blob_tier=premium_page_blob_tier,
             **kwargs)
         try:
-            return cast(Dict[str, Any], self._client.page_blob.create(size=size,
+            return cast(Dict[str, Any], self._client.page_blob.create(
             metadata=metadata,
             **options,
             **kwargs))
