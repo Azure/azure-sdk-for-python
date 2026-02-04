@@ -82,6 +82,7 @@ __all__ = [
 _projects_traces_enabled: bool = False
 _trace_agents_content: bool = False
 _trace_context_propagation_enabled: bool = False
+_trace_context_baggage_propagation_enabled: bool = False
 
 
 def _inject_trace_context_sync(request):
@@ -96,8 +97,14 @@ def _inject_trace_context_sync(request):
         carrier = dict(request.headers)
         propagate.inject(carrier)
         for key, value in carrier.items():
-            if key.lower() in ("traceparent", "tracestate", "baggage"):
-                if key.lower() not in [h.lower() for h in request.headers.keys()]:
+            key_lower = key.lower()
+            # Always include traceparent and tracestate
+            # Only include baggage if explicitly enabled
+            if key_lower in ("traceparent", "tracestate"):
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
+                    request.headers[key] = value
+            elif key_lower == "baggage" and _trace_context_baggage_propagation_enabled:
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
                     request.headers[key] = value
     except Exception as e:  # pylint: disable=broad-exception-caught
         logger.debug("Failed to inject trace context: %s", e)
@@ -115,8 +122,14 @@ async def _inject_trace_context_async(request):
         carrier = dict(request.headers)
         propagate.inject(carrier)
         for key, value in carrier.items():
-            if key.lower() in ("traceparent", "tracestate", "baggage"):
-                if key.lower() not in [h.lower() for h in request.headers.keys()]:
+            key_lower = key.lower()
+            # Always include traceparent and tracestate
+            # Only include baggage if explicitly enabled
+            if key_lower in ("traceparent", "tracestate"):
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
+                    request.headers[key] = value
+            elif key_lower == "baggage" and _trace_context_baggage_propagation_enabled:
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
                     request.headers[key] = value
     except Exception as e:  # pylint: disable=broad-exception-caught
         logger.debug("Failed to inject trace context: %s", e)
@@ -184,7 +197,10 @@ class AIProjectInstrumentor:
         self._responses_impl = _ResponsesInstrumentorPreview()
 
     def instrument(
-        self, enable_content_recording: Optional[bool] = None, enable_trace_context_propagation: Optional[bool] = None
+        self,
+        enable_content_recording: Optional[bool] = None,
+        enable_trace_context_propagation: Optional[bool] = None,
+        enable_baggage_propagation: Optional[bool] = None,
     ) -> None:
         """
         Enable trace instrumentation for AIProjectClient.
@@ -203,17 +219,23 @@ class AIProjectInstrumentor:
           called without uninstrument being called in between the instrument calls.
         :type enable_content_recording: bool, optional
         :param enable_trace_context_propagation: Whether to enable automatic trace context propagation
-          to OpenAI SDK HTTP requests. When enabled, traceparent headers will be injected into
-          requests made by OpenAI clients obtained via get_openai_client(), allowing server-side
+          to OpenAI SDK HTTP requests. When enabled, traceparent and tracestate headers will be injected
+          into requests made by OpenAI clients obtained via get_openai_client(), allowing server-side
           spans to be correlated with client-side spans. `True` will enable it, `False` will
           disable it. If no value is provided, then the value read from environment variable
           AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION is used. If the environment
           variable is not found, then the value will default to `False`.
-          Note: Trace context may include trace IDs and baggage that will be sent to Azure OpenAI.
         :type enable_trace_context_propagation: bool, optional
+        :param enable_baggage_propagation: Whether to include baggage headers in trace context propagation.
+          Only applies when enable_trace_context_propagation is True. `True` will enable baggage propagation,
+          `False` will disable it. If no value is provided, then the value read from environment variable
+          AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the environment
+          variable is not found, then the value will default to `False`.
+          Note: Baggage may contain sensitive application data.
+        :type enable_baggage_propagation: bool, optional
 
         """
-        self._impl.instrument(enable_content_recording, enable_trace_context_propagation)
+        self._impl.instrument(enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation)
         self._responses_impl.instrument(enable_content_recording)
 
     def uninstrument(self) -> None:
@@ -259,7 +281,10 @@ class _AIAgentsInstrumentorPreview:
         return str(s).lower() == "true"
 
     def instrument(
-        self, enable_content_recording: Optional[bool] = None, enable_trace_context_propagation: Optional[bool] = None
+        self,
+        enable_content_recording: Optional[bool] = None,
+        enable_trace_context_propagation: Optional[bool] = None,
+        enable_baggage_propagation: Optional[bool] = None,
     ):
         """
         Enable trace instrumentation for AI Agents.
@@ -282,6 +307,12 @@ class _AIAgentsInstrumentorPreview:
           value read from environment variable AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION
           is used. If the environment variable is not found, then the value will default to `False`.
         :type enable_trace_context_propagation: bool, optional
+        :param enable_baggage_propagation: Whether to include baggage in trace context propagation.
+          Only applies when enable_trace_context_propagation is True. `True` will enable it, `False`
+          will disable it. If no value is provided, then the value read from environment variable
+          AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the
+          environment variable is not found, then the value will default to `False`.
+        :type enable_baggage_propagation: bool, optional
 
         """
         if enable_content_recording is None:
@@ -293,13 +324,20 @@ class _AIAgentsInstrumentorPreview:
             var_value = os.environ.get("AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION")
             enable_trace_context_propagation = self._str_to_bool(var_value)
 
+        if enable_baggage_propagation is None:
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE")
+            enable_baggage_propagation = self._str_to_bool(var_value)
+
         if not self.is_instrumented():
-            self._instrument_projects(enable_content_recording, enable_trace_context_propagation)
+            self._instrument_projects(
+                enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation
+            )
         else:
             self._set_enable_content_recording(enable_content_recording=enable_content_recording)
             self._set_enable_trace_context_propagation(
                 enable_trace_context_propagation=enable_trace_context_propagation
             )
+            self._set_enable_baggage_propagation(enable_baggage_propagation=enable_baggage_propagation)
 
     def uninstrument(self):
         """
@@ -1336,7 +1374,10 @@ class _AIAgentsInstrumentorPreview:
         yield from self._generate_api_and_injector(self._project_api_list())
 
     def _instrument_projects(
-        self, enable_content_tracing: bool = False, enable_trace_context_propagation: bool = False
+        self,
+        enable_content_tracing: bool = False,
+        enable_trace_context_propagation: bool = False,
+        enable_baggage_propagation: bool = False,
     ):
         """This function modifies the methods of the Projects API classes to
         inject logic before calling the original methods.
@@ -1348,17 +1389,21 @@ class _AIAgentsInstrumentorPreview:
         :type enable_content_tracing: bool
         :param enable_trace_context_propagation: Whether to enable automatic trace context propagation.
         :type enable_trace_context_propagation: bool
+        :param enable_baggage_propagation: Whether to include baggage in trace context propagation.
+        :type enable_baggage_propagation: bool
         """
         # pylint: disable=W0603
         global _projects_traces_enabled
         global _trace_agents_content
         global _trace_context_propagation_enabled
+        global _trace_context_baggage_propagation_enabled
         if _projects_traces_enabled:
             raise RuntimeError("Traces already started for AI Agents")
 
         _projects_traces_enabled = True
         _trace_agents_content = enable_content_tracing
         _trace_context_propagation_enabled = enable_trace_context_propagation
+        _trace_context_baggage_propagation_enabled = enable_baggage_propagation
         for (
             api,
             method,
@@ -1378,8 +1423,10 @@ class _AIAgentsInstrumentorPreview:
         global _projects_traces_enabled
         global _trace_agents_content
         global _trace_context_propagation_enabled
+        global _trace_context_baggage_propagation_enabled
         _trace_agents_content = False
         _trace_context_propagation_enabled = False
+        _trace_context_baggage_propagation_enabled = False
         for api, method, _, _, _ in self._available_projects_apis_and_injectors():
             if hasattr(getattr(api, method), "_original"):
                 setattr(api, method, getattr(getattr(api, method), "_original"))
@@ -1422,6 +1469,15 @@ class _AIAgentsInstrumentorPreview:
         """
         global _trace_context_propagation_enabled  # pylint: disable=W0603
         _trace_context_propagation_enabled = enable_trace_context_propagation
+
+    def _set_enable_baggage_propagation(self, enable_baggage_propagation: bool = False) -> None:
+        """This function sets the baggage propagation value.
+
+        :param enable_baggage_propagation: Indicates whether baggage should be included in trace context propagation.
+        :type enable_baggage_propagation: bool
+        """
+        global _trace_context_baggage_propagation_enabled  # pylint: disable=W0603
+        _trace_context_baggage_propagation_enabled = enable_baggage_propagation
 
     def record_error(self, span, exc):
         # Set the span status to error
