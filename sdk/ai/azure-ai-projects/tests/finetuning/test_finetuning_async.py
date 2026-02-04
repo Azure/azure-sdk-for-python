@@ -33,24 +33,32 @@ from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties
 def _pass_create_args_async(fn):
     async def _wrapper(test_class, job_type, model_type, training_type, **kwargs):
         await fn(test_class, job_type, model_type, training_type, **kwargs)
+
     return _wrapper
 
 
 def _pass_cancel_args_async(fn):
     async def _wrapper(test_class, job_type, model_type, training_type, expected_method_type, **kwargs):
         await fn(test_class, job_type, model_type, training_type, expected_method_type, **kwargs)
+
     return _wrapper
 
 
 def _pass_deploy_args_async(fn):
-    async def _wrapper(test_class, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs):
-        await fn(test_class, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs)
+    async def _wrapper(
+        test_class, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+    ):
+        await fn(
+            test_class, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+        )
+
     return _wrapper
 
 
 def _pass_retrieve_args_async(fn):
     async def _wrapper(test_class, job_type, expected_method_type, **kwargs):
         await fn(test_class, job_type, expected_method_type, **kwargs)
+
     return _wrapper
 
 
@@ -406,18 +414,21 @@ class TestFineTuningAsync(TestBase):
                     f"[{test_prefix}] Successfully completed deployment and inference test for job: {completed_job_id}"
                 )
 
-    @pytest.mark.parametrize("job_type,model_type,training_type", [
-        (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
-        (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-        (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
-        (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-        (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
-        (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-        (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
-        (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
-        (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-        (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
-    ])
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+        ],
+    )
     @servicePreparer()
     @_pass_create_args_async
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -431,11 +442,14 @@ class TestFineTuningAsync(TestBase):
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
-    @pytest.mark.parametrize("job_type,expected_method_type", [
-        (SFT_JOB_TYPE, SUPERVISED_METHOD_TYPE),
-        (DPO_JOB_TYPE, DPO_METHOD_TYPE),
-        (RFT_JOB_TYPE, REINFORCEMENT_METHOD_TYPE),
-    ])
+    @pytest.mark.parametrize(
+        "job_type,expected_method_type",
+        [
+            (SFT_JOB_TYPE, SUPERVISED_METHOD_TYPE),
+            (DPO_JOB_TYPE, DPO_METHOD_TYPE),
+            (RFT_JOB_TYPE, REINFORCEMENT_METHOD_TYPE),
+        ],
+    )
     @servicePreparer()
     @_pass_retrieve_args_async
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -504,18 +518,21 @@ class TestFineTuningAsync(TestBase):
                 print(f"[test_finetuning_list] Validated job {job.id} with status {job.status}")
             print(f"[test_finetuning_list] Successfully validated list functionality with {len(jobs_list)} jobs")
 
-    @pytest.mark.parametrize("job_type,model_type,training_type,expected_method_type", [
-        (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
-        (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
-        (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
-        (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
-        (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, DPO_METHOD_TYPE),
-        (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, DPO_METHOD_TYPE),
-        (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, DPO_METHOD_TYPE),
-        (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
-        (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
-        (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
-    ])
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type,expected_method_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, DPO_METHOD_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, DPO_METHOD_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, DPO_METHOD_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, REINFORCEMENT_METHOD_TYPE),
+        ],
+    )
     @servicePreparer()
     @_pass_cancel_args_async
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
@@ -670,16 +687,45 @@ class TestFineTuningAsync(TestBase):
                 f"[test_finetuning_list_checkpoints] Successfully validated {len(checkpoints_list)} checkpoints for job: {completed_job_id}"
             )
 
-    @pytest.mark.parametrize("job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content", [
-        ("completed_oai_model_sft_fine_tuning_job_id", "OpenAI", 50, "test_deploy_infer_oai_sft", "Who invented the telephone?"),
-        ("completed_oai_model_rft_fine_tuning_job_id", "OpenAI", 50, "test_deploy_infer_oai_rft", "Target: 85 Numbers: [20, 4, 15, 10]. Find a mathematical expression using all numbers exactly once to reach the target."),
-        ("completed_oai_model_dpo_fine_tuning_job_id", "OpenAI", 50, "test_deploy_infer_oai_dpo", "Explain machine learning in simple terms."),
-        ("completed_oss_model_sft_fine_tuning_job_id", "Mistral AI", 50, "test_deploy_infer_oss_sft", "Who invented the telephone?"),
-    ])
+    @pytest.mark.parametrize(
+        "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
+        [
+            (
+                "completed_oai_model_sft_fine_tuning_job_id",
+                "OpenAI",
+                50,
+                "test_deploy_infer_oai_sft",
+                "Who invented the telephone?",
+            ),
+            (
+                "completed_oai_model_rft_fine_tuning_job_id",
+                "OpenAI",
+                50,
+                "test_deploy_infer_oai_rft",
+                "Target: 85 Numbers: [20, 4, 15, 10]. Find a mathematical expression using all numbers exactly once to reach the target.",
+            ),
+            (
+                "completed_oai_model_dpo_fine_tuning_job_id",
+                "OpenAI",
+                50,
+                "test_deploy_infer_oai_dpo",
+                "Explain machine learning in simple terms.",
+            ),
+            (
+                "completed_oss_model_sft_fine_tuning_job_id",
+                "Mistral AI",
+                50,
+                "test_deploy_infer_oss_sft",
+                "Who invented the telephone?",
+            ),
+        ],
+    )
     @servicePreparer()
     @_pass_deploy_args_async
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_deploy_and_infer_job_async(self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs):
+    async def test_deploy_and_infer_job_async(
+        self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+    ):
         completed_job_id = kwargs.get(job_id_env_var)
         await self._test_deploy_and_infer_helper_async(
             completed_job_id,
