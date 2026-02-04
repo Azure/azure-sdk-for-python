@@ -149,10 +149,18 @@ from azure.ai.transcription.models import TranscriptionContent, TranscriptionOpt
 
 # Get configuration from environment variables
 endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+# We recommend using role-based access control (RBAC) for production scenarios
+api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+if api_key:
+    credential = AzureKeyCredential(api_key)
+else:
+    from azure.identity import DefaultAzureCredential
+
+    credential = DefaultAzureCredential()
 
 # Create the transcription client
-client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
 # Path to your audio file
 import pathlib
@@ -197,10 +205,18 @@ from azure.ai.transcription.models import TranscriptionOptions
 
 # Get configuration from environment variables
 endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+# We recommend using role-based access control (RBAC) for production scenarios
+api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+if api_key:
+    credential = AzureKeyCredential(api_key)
+else:
+    from azure.identity import DefaultAzureCredential
+
+    credential = DefaultAzureCredential()
 
 # Create the transcription client
-client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
 # URL to your audio file (must be publicly accessible)
 audio_url = "https://example.com/path/to/audio.wav"
@@ -238,10 +254,18 @@ from azure.ai.transcription.models import (
 
 # Get configuration from environment variables
 endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+# We recommend using role-based access control (RBAC) for production scenarios
+api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+if api_key:
+    credential = AzureKeyCredential(api_key)
+else:
+    from azure.identity import DefaultAzureCredential
+
+    credential = DefaultAzureCredential()
 
 # Create the transcription client
-client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
 # Path to your audio file
 audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
@@ -279,10 +303,18 @@ from azure.ai.transcription.models import TranscriptionContent, TranscriptionOpt
 
 # Get configuration from environment variables
 endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+# We recommend using role-based access control (RBAC) for production scenarios
+api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+if api_key:
+    credential = AzureKeyCredential(api_key)
+else:
+    from azure.identity.aio import DefaultAzureCredential
+
+    credential = DefaultAzureCredential()
 
 # Create the transcription client
-async with TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as client:
+async with TranscriptionClient(endpoint=endpoint, credential=credential) as client:
     # Path to your audio file
     import pathlib
 

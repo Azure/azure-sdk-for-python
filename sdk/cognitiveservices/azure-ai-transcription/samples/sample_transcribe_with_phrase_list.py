@@ -46,10 +46,18 @@ def sample_transcribe_with_phrase_list():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
     # Path to your audio file with domain-specific terminology
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"

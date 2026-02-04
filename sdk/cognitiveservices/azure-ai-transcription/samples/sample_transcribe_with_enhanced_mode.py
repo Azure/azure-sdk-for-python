@@ -68,10 +68,18 @@ def sample_transcribe_with_enhanced_mode():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
     # Path to your audio file
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
@@ -113,10 +121,18 @@ def sample_translate_with_enhanced_mode():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
     # Path to your audio file (e.g., Chinese audio)
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "sample-howstheweather-cn.wav"
@@ -162,10 +178,18 @@ def sample_enhanced_mode_with_prompts():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
     # Path to your audio file
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "sample-whatstheweatherlike-en.mp3"
@@ -214,10 +238,18 @@ def sample_enhanced_mode_with_diarization():
 
     # Get configuration from environment variables
     endpoint = os.environ["AZURE_SPEECH_ENDPOINT"]
-    api_key = os.environ["AZURE_SPEECH_API_KEY"]
+
+    # We recommend using role-based access control (RBAC) for production scenarios
+    api_key = os.environ.get("AZURE_SPEECH_API_KEY")
+    if api_key:
+        credential = AzureKeyCredential(api_key)
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
 
     # Create the transcription client
-    client = TranscriptionClient(endpoint=endpoint, credential=AzureKeyCredential(api_key))
+    client = TranscriptionClient(endpoint=endpoint, credential=credential)
 
     # Path to your audio file (e.g., a meeting recording)
     audio_file_path = pathlib.Path(__file__).parent / "assets" / "audio.wav"
