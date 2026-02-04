@@ -448,23 +448,23 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator."""
 
 
-class FoundryPreviewOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FoundryPreviewOptInKeys."""
+class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FoundryFeaturesOptInKeys."""
 
-    CONTAINER_AGENTS_V1 = "ContainerAgents=v1"
-    """CONTAINER_AGENTS_V1."""
-    HOSTED_AGENTS_V1 = "HostedAgents=v1"
-    """HOSTED_AGENTS_V1."""
-    WORKFLOW_AGENTS_V1 = "WorkflowAgents=v1"
-    """WORKFLOW_AGENTS_V1."""
-    EVALUATIONS_V1 = "Evaluations=v1"
-    """EVALUATIONS_V1."""
-    RED_TEAMS_V1 = "RedTeams=v1"
-    """RED_TEAMS_V1."""
-    INSIGHTS_V1 = "Insights=v1"
-    """INSIGHTS_V1."""
-    MEMORY_STORES_V1 = "MemoryStores=v1"
-    """MEMORY_STORES_V1."""
+    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
+    """CONTAINER_AGENTS_V1_PREVIEW."""
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
+    """EVALUATIONS_V1_PREVIEW."""
+    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+    """RED_TEAMS_V1_PREVIEW."""
+    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
+    """INSIGHTS_V1_PREVIEW."""
+    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+    """MEMORY_STORES_V1_PREVIEW."""
 
 
 class FunctionAndCustomToolCallOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -687,8 +687,8 @@ class ItemResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OAUTH_CONSENT_REQUEST."""
     MEMORY_SEARCH_CALL = "memory_search_call"
     """MEMORY_SEARCH_CALL."""
-    WORKFLOW_PREVIEW_ACTION = "workflow_preview_action"
-    """WORKFLOW_PREVIEW_ACTION."""
+    WORKFLOW_ACTION = "workflow_action"
+    """WORKFLOW_ACTION."""
 
 
 class LocalShellCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -801,6 +801,55 @@ class OutputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """REASONING_TEXT."""
 
 
+class OutputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OutputItemType."""
+
+    OUTPUT_MESSAGE = "output_message"
+    """OUTPUT_MESSAGE."""
+    FILE_SEARCH_CALL = "file_search_call"
+    """FILE_SEARCH_CALL."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    WEB_SEARCH_CALL = "web_search_call"
+    """WEB_SEARCH_CALL."""
+    COMPUTER_CALL = "computer_call"
+    """COMPUTER_CALL."""
+    REASONING = "reasoning"
+    """REASONING."""
+    COMPACTION = "compaction"
+    """COMPACTION."""
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    """IMAGE_GENERATION_CALL."""
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    """CODE_INTERPRETER_CALL."""
+    LOCAL_SHELL_CALL = "local_shell_call"
+    """LOCAL_SHELL_CALL."""
+    SHELL_CALL = "shell_call"
+    """SHELL_CALL."""
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    """SHELL_CALL_OUTPUT."""
+    APPLY_PATCH_CALL = "apply_patch_call"
+    """APPLY_PATCH_CALL."""
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
+    """APPLY_PATCH_CALL_OUTPUT."""
+    MCP_CALL = "mcp_call"
+    """MCP_CALL."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    STRUCTURED_OUTPUTS = "structured_outputs"
+    """STRUCTURED_OUTPUTS."""
+    OAUTH_CONSENT_REQUEST = "oauth_consent_request"
+    """OAUTH_CONSENT_REQUEST."""
+    MEMORY_SEARCH_CALL = "memory_search_call"
+    """MEMORY_SEARCH_CALL."""
+    WORKFLOW_ACTION = "workflow_action"
+    """WORKFLOW_ACTION."""
+
+
 class OutputMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of OutputMessageContentType."""
 
@@ -848,6 +897,47 @@ class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Weekly recurrence pattern."""
     MONTHLY = "Monthly"
     """Monthly recurrence pattern."""
+
+
+class ResponseErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The error code for the response."""
+
+    SERVER_ERROR = "server_error"
+    """SERVER_ERROR."""
+    RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
+    """RATE_LIMIT_EXCEEDED."""
+    INVALID_PROMPT = "invalid_prompt"
+    """INVALID_PROMPT."""
+    VECTOR_STORE_TIMEOUT = "vector_store_timeout"
+    """VECTOR_STORE_TIMEOUT."""
+    INVALID_IMAGE = "invalid_image"
+    """INVALID_IMAGE."""
+    INVALID_IMAGE_FORMAT = "invalid_image_format"
+    """INVALID_IMAGE_FORMAT."""
+    INVALID_BASE64_IMAGE = "invalid_base64_image"
+    """INVALID_BASE64_IMAGE."""
+    INVALID_IMAGE_URL = "invalid_image_url"
+    """INVALID_IMAGE_URL."""
+    IMAGE_TOO_LARGE = "image_too_large"
+    """IMAGE_TOO_LARGE."""
+    IMAGE_TOO_SMALL = "image_too_small"
+    """IMAGE_TOO_SMALL."""
+    IMAGE_PARSE_ERROR = "image_parse_error"
+    """IMAGE_PARSE_ERROR."""
+    IMAGE_CONTENT_POLICY_VIOLATION = "image_content_policy_violation"
+    """IMAGE_CONTENT_POLICY_VIOLATION."""
+    INVALID_IMAGE_MODE = "invalid_image_mode"
+    """INVALID_IMAGE_MODE."""
+    IMAGE_FILE_TOO_LARGE = "image_file_too_large"
+    """IMAGE_FILE_TOO_LARGE."""
+    UNSUPPORTED_IMAGE_MEDIA_TYPE = "unsupported_image_media_type"
+    """UNSUPPORTED_IMAGE_MEDIA_TYPE."""
+    EMPTY_IMAGE_FILE = "empty_image_file"
+    """EMPTY_IMAGE_FILE."""
+    FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image"
+    """FAILED_TO_DOWNLOAD_IMAGE."""
+    IMAGE_FILE_NOT_FOUND = "image_file_not_found"
+    """IMAGE_FILE_NOT_FOUND."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -926,6 +1016,17 @@ class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
     """JSON_SCHEMA."""
     JSON_OBJECT = "json_object"
     """JSON_OBJECT."""
+
+
+class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tool choice mode."""
+
+    NONE = "none"
+    """NONE."""
+    AUTO = "auto"
+    """AUTO."""
+    REQUIRED = "required"
+    """REQUIRED."""
 
 
 class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
