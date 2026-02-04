@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Any
+from typing import Optional
+
+from .id_generator.foundry_id_generator import FoundryIdGenerator
+from .id_generator.id_generator import IdGenerator
 from ...logger import get_logger
 from ...models import CreateResponse
 from ...models.projects import AgentId, AgentReference, ResponseConversation1
-from .id_generator.foundry_id_generator import FoundryIdGenerator
-from .id_generator.id_generator import IdGenerator
-from ...tools import UserInfo
 
 logger = get_logger()
 
@@ -16,15 +16,13 @@ class AgentRunContext:
     """
     :meta private:
     """
-    def __init__(self, payload: dict, **kwargs: Any) -> None:
+    def __init__(self, payload: dict) -> None:
         self._raw_payload = payload
         self._request = _deserialize_create_response(payload)
         self._id_generator = FoundryIdGenerator.from_request(payload)
         self._response_id = self._id_generator.response_id
         self._conversation_id = self._id_generator.conversation_id
         self._stream = self.request.get("stream", False)
-        self._user_info = kwargs.get("user_info", None)
-        self._agent_tools = kwargs.get("agent_tools", [])
 
     @property
     def raw_payload(self) -> dict:
@@ -43,7 +41,7 @@ class AgentRunContext:
         return self._response_id
 
     @property
-    def conversation_id(self) -> str:
+    def conversation_id(self) -> Optional[str]:
         return self._conversation_id
 
     @property
@@ -66,18 +64,6 @@ class AgentRunContext:
         if not self._conversation_id:
             return None  # type: ignore
         return ResponseConversation1(id=self._conversation_id)
-
-    def get_tools(self) -> list:
-        # request tools take precedence over agent tools
-        # TODO: remove this method
-        request_tools = self.request.get("tools", [])
-        if not request_tools:
-            return self._agent_tools
-        return request_tools
-
-    def get_user_info(self) -> UserInfo:
-        # TODO: remove this method
-        return self._user_info
 
 
 def _deserialize_create_response(payload: dict) -> CreateResponse:

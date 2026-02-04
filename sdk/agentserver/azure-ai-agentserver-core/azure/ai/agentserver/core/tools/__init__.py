@@ -32,7 +32,7 @@ from .runtime._catalog import (
 from .runtime._facade import FoundryToolFacade, FoundryToolLike, ensure_foundry_tool
 from .runtime._invoker import FoundryToolInvoker, DefaultFoundryToolInvoker
 from .runtime._resolver import FoundryToolInvocationResolver, DefaultFoundryToolInvocationResolver
-from .runtime._runtime import FoundryToolRuntime, DefaultFoundryToolRuntime
+from .runtime._runtime import create_tool_runtime, FoundryToolRuntime, DefaultFoundryToolRuntime
 from .runtime._starlette import UserInfoContextMiddleware
 from .runtime._user import UserProvider, ContextVarUserProvider
 
@@ -71,6 +71,7 @@ __all__ = [
     "FoundryToolInvocationResolver",
     "DefaultFoundryToolInvocationResolver",
     # Runtime
+    "create_tool_runtime",
     "FoundryToolRuntime",
     "DefaultFoundryToolRuntime",
     # Starlette

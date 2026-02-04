@@ -28,16 +28,16 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 
 from ._context import AgentServerContext
-from ..models import projects as project_models
-from ..constants import Constants
-from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
-from ..models import (
-    Response as OpenAIResponse,
-    ResponseStreamEvent,
+from ._response_metadata import (
+    attach_foundry_metadata_to_response,
+    build_foundry_agents_metadata_headers,
+    try_attach_foundry_metadata_to_event,
 )
 from .common.agent_run_context import AgentRunContext
-
-from ..tools import DefaultFoundryToolRuntime, UserInfoContextMiddleware
+from ..constants import Constants
+from ..logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint, request_context
+from ..models import Response as OpenAIResponse, ResponseStreamEvent, projects as project_models
+from ..tools import UserInfoContextMiddleware, create_tool_runtime
 from ..utils._credential import AsyncTokenCredentialAdapter
 
 logger = get_logger()
@@ -100,9 +100,7 @@ class FoundryCBAgent:
                  project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
         project_endpoint = get_project_endpoint() or project_endpoint
-        if not project_endpoint:
-            raise ValueError("Project endpoint is required.")
-        AgentServerContext(DefaultFoundryToolRuntime(project_endpoint, self.credentials))
+        AgentServerContext(create_tool_runtime(project_endpoint, self.credentials))
 
         async def runs_endpoint(request):
             # Set up tracing context and span
@@ -131,11 +129,14 @@ class FoundryCBAgent:
                     result = resp if not ex else project_models.ResponseError(
                         code=project_models.ResponseErrorCode.SERVER_ERROR,
                         message=_format_error(ex))
-                    return JSONResponse(result.as_dict())
+                    if not ex:
+                        attach_foundry_metadata_to_response(result)
+                    return JSONResponse(result.as_dict(), headers=self.create_response_headers())
 
                 async def gen_async(ex):
                     ctx = TraceContextTextMapPropagator().extract(carrier=context_carrier)
-                    token = otel_context.attach(ctx)
+                    prev_ctx = otel_context.get_current()
+                    otel_context.attach(ctx)
                     seq = 0
                     try:
                         if ex:
@@ -147,6 +148,7 @@ class FoundryCBAgent:
                                 # Keep-alive signal
                                 yield _keep_alive_comment()
                             else:
+                                try_attach_foundry_metadata_to_event(event)
                                 seq += 1
                                 yield _event_to_sse_chunk(event)
                         logger.info("End of processing CreateResponse request.")
@@ -161,9 +163,13 @@ class FoundryCBAgent:
                                 message=_format_error(ex),
                                 param="")
                             yield _event_to_sse_chunk(err)
-                        otel_context.detach(token)
+                        otel_context.attach(prev_ctx)
 
-                return StreamingResponse(gen_async(ex), media_type="text/event-stream")
+                return StreamingResponse(
+                    gen_async(ex),
+                    media_type="text/event-stream",
+                    headers=self.create_response_headers(),
+                )
 
         async def liveness_endpoint(request):
             result = await self.agent_liveness(request)
@@ -403,6 +409,11 @@ class FoundryCBAgent:
         processor = BatchSpanProcessor(exporter_instance)
         provider.add_span_processor(processor)
         logger.info(f"Tracing setup with OTLP exporter: {endpoint}")
+
+    def create_response_headers(self) -> dict[str, str]:
+        headers = {}
+        headers.update(build_foundry_agents_metadata_headers())
+        return headers
 
 
 def _event_to_sse_chunk(event: ResponseStreamEvent) -> str:

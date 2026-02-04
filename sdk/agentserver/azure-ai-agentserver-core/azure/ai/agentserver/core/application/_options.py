@@ -20,7 +20,7 @@ class AgentServerOptions(TypedDict):
     project_endpoint: NotRequired[str]
     credential: NotRequired[Union[AsyncTokenCredential, TokenCredential]]
     http: NotRequired["HttpServerOptions"]
-    toos: NotRequired["ToolsOptions"]
+    tools: NotRequired["ToolsOptions"]
 
 
 class HttpServerOptions(TypedDict):

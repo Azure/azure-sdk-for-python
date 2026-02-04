@@ -128,15 +128,15 @@ async def test_list_tools_uses_catalog_and_converts(monkeypatch: pytest.MonkeyPa
 	)
 
 	client = FoundryToolClient(tools=allowed)
-	funcs = await client.list_tools()
+	functions = await client.list_tools()
 
 	catalog_list.assert_awaited_once()
 	args, _kwargs = catalog_list.await_args
 	assert args[0] == list(allowed)
 
-	assert len(funcs) == 1
-	assert isinstance(funcs[0], AIFunction)
-	assert funcs[0].name == "allowed_tool"
+	assert len(functions) == 1
+	assert isinstance(functions[0], AIFunction)
+	assert functions[0].name == "allowed_tool"
 
 
 @pytest.mark.unit

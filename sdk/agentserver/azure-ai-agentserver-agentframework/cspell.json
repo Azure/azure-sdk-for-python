@@ -7,7 +7,9 @@
       "pysort",
       "redef",
       "aifunction",
-      "ainvoke"
+      "ainvoke",
+      "hitl",
+      "HITL"
     ],
     "ignorePaths": [
       "*.csv",

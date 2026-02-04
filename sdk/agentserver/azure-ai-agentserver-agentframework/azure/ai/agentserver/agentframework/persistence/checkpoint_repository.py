@@ -18,11 +18,11 @@ class CheckpointRepository(ABC):
     :meta private:
     """
     @abstractmethod
-    async def get_or_create(self, conversation_id: str) -> Optional[CheckpointStorage]:
+    async def get_or_create(self, conversation_id: Optional[str]) -> Optional[CheckpointStorage]:
         """Retrieve or create a checkpoint storage by conversation ID.
 
         :param conversation_id: The unique identifier for the checkpoint.
-        :type conversation_id: str
+        :type conversation_id: Optional[str]
         :return: The CheckpointStorage if found or created, None otherwise.
         :rtype: Optional[CheckpointStorage]
         """
@@ -33,14 +33,16 @@ class InMemoryCheckpointRepository(CheckpointRepository):
     def __init__(self) -> None:
         self._inventory: dict[str, CheckpointStorage] = {}
 
-    async def get_or_create(self, conversation_id: str) -> Optional[CheckpointStorage]:
+    async def get_or_create(self, conversation_id: Optional[str]) -> Optional[CheckpointStorage]:
         """Retrieve or create a checkpoint storage by conversation ID.
 
         :param conversation_id: The unique identifier for the checkpoint.
-        :type conversation_id: str
+        :type conversation_id: Optional[str]
         :return: The CheckpointStorage if found or created, None otherwise.
         :rtype: Optional[CheckpointStorage]
         """
+        if not conversation_id:
+            return None
         if conversation_id not in self._inventory:
             self._inventory[conversation_id] = InMemoryCheckpointStorage()
         return self._inventory[conversation_id]
@@ -53,14 +55,16 @@ class FileCheckpointRepository(CheckpointRepository):
         self._inventory: dict[str, CheckpointStorage] = {}
         os.makedirs(self._storage_path, exist_ok=True)
 
-    async def get_or_create(self, conversation_id: str) -> Optional[CheckpointStorage]:
+    async def get_or_create(self, conversation_id: Optional[str]) -> Optional[CheckpointStorage]:
         """Retrieve or create a checkpoint storage by conversation ID.
 
         :param conversation_id: The unique identifier for the checkpoint.
-        :type conversation_id: str
+        :type conversation_id: Optional[str]
         :return: The CheckpointStorage if found or created, None otherwise.
         :rtype: Optional[CheckpointStorage]
         """
+        if not conversation_id:
+            return None
         if conversation_id not in self._inventory:
             self._inventory[conversation_id] = FileCheckpointStorage(self._get_dir_path(conversation_id))
         return self._inventory[conversation_id]
