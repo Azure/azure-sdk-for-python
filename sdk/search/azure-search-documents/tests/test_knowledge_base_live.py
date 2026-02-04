@@ -15,12 +15,17 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
     KnowledgeSourceReference,
+    SearchField,
+    SearchFieldDataType,
+    SearchIndex,
+    SearchIndexKnowledgeSource,
+    SearchIndexKnowledgeSourceParameters,
     SearchServiceStatistics,
+    SemanticConfiguration,
+    SemanticField,
+    SemanticPrioritizedFields,
+    SemanticSearch,
     ServiceIndexersRuntime,
-    WebKnowledgeSource,
-    WebKnowledgeSourceDomain,
-    WebKnowledgeSourceDomains,
-    WebKnowledgeSourceParameters,
 )
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -30,12 +35,14 @@ class _TestContext:
     def __init__(
         self,
         index_client: SearchIndexClient,
+        index_name: str,
         source_name: str,
-        created_source: WebKnowledgeSource,
+        created_source: SearchIndexKnowledgeSource,
         base_name: str,
         created_base: KnowledgeBase,
     ) -> None:
         self.index_client = index_client
+        self.index_name = index_name
         self.source_name = source_name
         self.created_source = created_source
         self.base_name = base_name
@@ -47,20 +54,37 @@ class TestKnowledgeBaseLive(AzureRecordedTestCase):
         credential = get_credential()
         index_client = SearchIndexClient(endpoint, credential, retry_backoff_factor=60)
 
+        index_name = self.get_resource_name("kbidx")
         source_name = self.get_resource_name("ksrc")
         base_name = self.get_resource_name("kb")
-        create_source = WebKnowledgeSource(
+
+        # Create a search index with semantic configuration (required for SearchIndexKnowledgeSource)
+        index = SearchIndex(
+            name=index_name,
+            fields=[
+                SearchField(name="id", type=SearchFieldDataType.String, key=True),
+                SearchField(name="content", type=SearchFieldDataType.String, searchable=True),
+            ],
+            semantic_search=SemanticSearch(
+                default_configuration_name="default",
+                configurations=[
+                    SemanticConfiguration(
+                        name="default",
+                        prioritized_fields=SemanticPrioritizedFields(
+                            content_fields=[SemanticField(field_name="content")]
+                        ),
+                    )
+                ],
+            ),
+        )
+        index_client.create_index(index)
+
+        # Create knowledge source pointing to the index
+        create_source = SearchIndexKnowledgeSource(
             name=source_name,
             description="knowledge base dependent source",
-            web_parameters=WebKnowledgeSourceParameters(
-                domains=WebKnowledgeSourceDomains(
-                    allowed_domains=[
-                        WebKnowledgeSourceDomain(
-                            address="https://learn.microsoft.com",
-                            include_subpages=True,
-                        )
-                    ]
-                )
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(
+                search_index_name=index_name
             ),
         )
         created_source = index_client.create_knowledge_source(create_source)
@@ -71,7 +95,7 @@ class TestKnowledgeBaseLive(AzureRecordedTestCase):
             knowledge_sources=[KnowledgeSourceReference(name=source_name)],
         )
         created_base = index_client.create_knowledge_base(create_base)
-        return _TestContext(index_client, source_name, created_source, base_name, created_base)
+        return _TestContext(index_client, index_name, source_name, created_source, base_name, created_base)
 
     def _cleanup(self, ctx: "_TestContext") -> None:
         try:
@@ -87,6 +111,10 @@ class TestKnowledgeBaseLive(AzureRecordedTestCase):
                     ctx.created_source,
                     match_condition=MatchConditions.IfNotModified,
                 )
+            except HttpResponseError:
+                pass
+            try:
+                ctx.index_client.delete_index(ctx.index_name)
             except HttpResponseError:
                 pass
         finally:

@@ -16,10 +16,15 @@ from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
     KnowledgeSourceReference,
-    WebKnowledgeSource,
-    WebKnowledgeSourceDomain,
-    WebKnowledgeSourceDomains,
-    WebKnowledgeSourceParameters,
+    SearchField,
+    SearchFieldDataType,
+    SearchIndex,
+    SearchIndexKnowledgeSource,
+    SearchIndexKnowledgeSourceParameters,
+    SemanticConfiguration,
+    SemanticField,
+    SemanticPrioritizedFields,
+    SemanticSearch,
 )
 from azure.search.documents.knowledgebases.models import (
     KnowledgeRetrievalMediumReasoningEffort,
@@ -33,12 +38,14 @@ class _AsyncTestContext:
     def __init__(
         self,
         index_client: SearchIndexClient,
+        index_name: str,
         source_name: str,
-        created_source: WebKnowledgeSource,
+        created_source: SearchIndexKnowledgeSource,
         base_name: str,
         created_base: KnowledgeBase,
     ) -> None:
         self.index_client = index_client
+        self.index_name = index_name
         self.source_name = source_name
         self.created_source = created_source
         self.base_name = base_name
@@ -50,21 +57,8 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
         credential = get_credential(is_async=True)
         index_client = SearchIndexClient(endpoint, credential, retry_backoff_factor=60)
 
+        index_name = self.get_resource_name("cfgidx")
         source_name = self.get_resource_name("cfgks")
-        create_source = WebKnowledgeSource(
-            name=source_name,
-            description="configuration source",
-            web_parameters=WebKnowledgeSourceParameters(
-                domains=WebKnowledgeSourceDomains(
-                    allowed_domains=[
-                        WebKnowledgeSourceDomain(
-                            address="https://learn.microsoft.com",
-                            include_subpages=True,
-                        )
-                    ]
-                )
-            ),
-        )
         base_name = self.get_resource_name("cfgkb")
 
         # best-effort cleanup in case a previous run failed before teardown
@@ -76,7 +70,40 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
             await index_client.delete_knowledge_source(source_name)
         except HttpResponseError:
             pass
+        try:
+            await index_client.delete_index(index_name)
+        except HttpResponseError:
+            pass
 
+        # Create a search index with semantic configuration (required for SearchIndexKnowledgeSource)
+        index = SearchIndex(
+            name=index_name,
+            fields=[
+                SearchField(name="id", type=SearchFieldDataType.String, key=True),
+                SearchField(name="content", type=SearchFieldDataType.String, searchable=True),
+            ],
+            semantic_search=SemanticSearch(
+                default_configuration_name="default",
+                configurations=[
+                    SemanticConfiguration(
+                        name="default",
+                        prioritized_fields=SemanticPrioritizedFields(
+                            content_fields=[SemanticField(field_name="content")]
+                        ),
+                    )
+                ],
+            ),
+        )
+        await index_client.create_index(index)
+
+        # Create knowledge source pointing to the index
+        create_source = SearchIndexKnowledgeSource(
+            name=source_name,
+            description="configuration source",
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(
+                search_index_name=index_name
+            ),
+        )
         created_source = await index_client.create_knowledge_source(create_source)
 
         create_base = KnowledgeBase(
@@ -94,9 +121,13 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
                 await index_client.delete_knowledge_source(created_source)
             except HttpResponseError:
                 pass
+            try:
+                await index_client.delete_index(index_name)
+            except HttpResponseError:
+                pass
             raise
 
-        return _AsyncTestContext(index_client, source_name, created_source, base_name, created_base)
+        return _AsyncTestContext(index_client, index_name, source_name, created_source, base_name, created_base)
 
     async def _cleanup(self, ctx: "_AsyncTestContext") -> None:
         try:
@@ -112,6 +143,10 @@ class TestKnowledgeBaseConfigurationLiveAsync(AzureRecordedTestCase):
                     ctx.created_source,
                     match_condition=MatchConditions.IfNotModified,
                 )
+            except HttpResponseError:
+                pass
+            try:
+                await ctx.index_client.delete_index(ctx.index_name)
             except HttpResponseError:
                 pass
         finally:

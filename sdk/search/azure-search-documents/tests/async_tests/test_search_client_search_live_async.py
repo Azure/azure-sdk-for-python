@@ -173,13 +173,17 @@ class TestClientTestAsync(AzureRecordedTestCase):
 
     async def _test_autocomplete(self, client):
         results = await client.autocomplete(search_text="mot", suggester_name="sg")
-        assert any(d.get("text") == "motel" for d in results)
-        assert any(d.get("query_plus_text") == "motel" for d in results)
+        assert any(d.text == "motel" for d in results)
+        assert any(d.query_plus_text == "motel" for d in results)
 
     async def _test_suggest(self, client):
         results = await client.suggest(search_text="mot", suggester_name="sg")
-        assert {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."} in results
-        assert {"hotelId": "9", "text": "Secret Point Motel"} in results
+        result = results[0]
+        assert result["hotelId"] == "2"
+        assert result.text == "Cheapest hotel in town. Infact, a motel."
+        result = results[1]
+        assert result["hotelId"] == "9"
+        assert result.text == "Secret Point Motel"
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")

@@ -11,9 +11,13 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import TYPE_CHECKING, Any, Dict, List, Mapping, Optional, Union, overload
 from ._models import SearchField as _SearchField
 from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSourceConnection
+from ._models import KnowledgeBase as _KnowledgeBase
 from ._enums import (
     LexicalAnalyzerName,
     SearchFieldDataType as _SearchFieldDataType,
+)
+from ...knowledgebases.models import (
+    KnowledgeRetrievalReasoningEffort,
 )
 
 if TYPE_CHECKING:
@@ -120,6 +124,20 @@ class SearchIndexerDataSourceConnection(_SearchIndexerDataSourceConnection):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
+class KnowledgeBase(_KnowledgeBase):
+    """Represents a knowledge base definition.
+
+    This class adds proper deserialization of the retrieval_reasoning_effort field
+    which uses discriminated polymorphism from the knowledgebases models.
+    """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # Properly deserialize retrieval_reasoning_effort if it's a dict
+        effort = self.retrieval_reasoning_effort
+        if effort is not None and isinstance(effort, dict):
+            self.retrieval_reasoning_effort = KnowledgeRetrievalReasoningEffort._deserialize(effort, [])
 
 def _collection_helper(typ: Any) -> str:
     """Helper function to create a collection type string.
@@ -406,6 +424,7 @@ def ComplexField(
 
 
 __all__: list[str] = [
+    "KnowledgeBase",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",

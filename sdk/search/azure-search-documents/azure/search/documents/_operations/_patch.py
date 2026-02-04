@@ -64,7 +64,7 @@ def _unpack_continuation_token(token: bytes) -> tuple:
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
     next_page_parameters = unpacked_token["nextPageParameters"]
-    next_page_request = _models.SearchRequest(**next_page_parameters)
+    next_page_request = _models.SearchRequest._deserialize(next_page_parameters, [])
     return next_link, next_page_request
 
 

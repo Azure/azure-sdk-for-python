@@ -47,7 +47,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
     def __init__(self, *, actions: Optional[List[IndexAction]] = None) -> None:
         super().__init__(actions=actions if actions is not None else [])
-        self._actions: List[IndexAction] = actions if actions is not None else []
+        self._actions: List[IndexAction] = self["value"]
 
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
