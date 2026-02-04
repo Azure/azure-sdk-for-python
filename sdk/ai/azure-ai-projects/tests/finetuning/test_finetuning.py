@@ -428,7 +428,6 @@ class TestFineTuning(TestBase):
         (DPO_JOB_TYPE, DPO_METHOD_TYPE),
         (RFT_JOB_TYPE, REINFORCEMENT_METHOD_TYPE),
     ])
-    @servicePreparer()
     @_pass_retrieve_args
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_retrieve_job(self, job_type, expected_method_type, **kwargs):
