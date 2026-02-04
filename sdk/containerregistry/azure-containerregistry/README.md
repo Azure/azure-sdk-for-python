@@ -100,9 +100,7 @@ Iterate through the collection of tags in the repository with anonymous access.
 
 ```python
 with ContainerRegistryClient(endpoint) as anon_client:
-    manifest = anon_client.get_manifest_properties(
-        "library/hello-world", "latest"
-    )
+    manifest = anon_client.get_manifest_properties("library/hello-world", "latest")
     if manifest.tags:
         print(f"Tags of {manifest.repository_name}: ")
         # Iterate through all the tags
@@ -121,9 +119,7 @@ Set properties of an artifact.
 ```python
 with ContainerRegistryClient(self.endpoint, self.credential) as client:
     # Set permissions on image "library/hello-world:v1"
-    client.update_manifest_properties(
-        "library/hello-world", "v1", can_write=False, can_delete=False
-    )
+    client.update_manifest_properties("library/hello-world", "v1", can_write=False, can_delete=False)
 ```
 
 <!-- END SNIPPET -->
@@ -146,9 +142,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
             manifest_count += 1
             if manifest_count > 3:
                 # Make sure will have the permission to delete the manifest later
-                client.update_manifest_properties(
-                    repository, manifest.digest, can_write=True, can_delete=True
-                )
+                client.update_manifest_properties(repository, manifest.digest, can_write=True, can_delete=True)
                 print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
@@ -176,9 +170,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
     layer_digest, layer_size = client.upload_blob(self.repository_name, layer)
     print(f"Uploaded layer: digest - {layer_digest}, size - {layer_size}")
     # Upload a config
-    config_digest, config_size = client.upload_blob(
-        self.repository_name, config
-    )
+    config_digest, config_size = client.upload_blob(self.repository_name, config)
     print(f"Uploaded config: digest - {config_digest}, size - {config_size}")
     # Create an oci image with config and layer info
     oci_manifest = {
@@ -200,9 +192,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
         ],
     }
     # Set the image with tag "latest"
-    manifest_digest = client.set_manifest(
-        self.repository_name, oci_manifest, tag="latest"
-    )
+    manifest_digest = client.set_manifest(self.repository_name, oci_manifest, tag="latest")
     print(f"Uploaded manifest: digest - {manifest_digest}")
 ```
 
@@ -231,24 +221,18 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
                 for chunk in stream:
                     layer_file.write(chunk)
         except DigestValidationError:
-            print(
-                f"Downloaded layer digest value did not match. Deleting file {layer_file_name}."
-            )
+            print(f"Downloaded layer digest value did not match. Deleting file {layer_file_name}.")
             os.remove(layer_file_name)
         print(f"Got layer: {layer_file_name}")
     # Download and write out the config
     config_file_name = "config.json"
     try:
-        stream = client.download_blob(
-            self.repository_name, received_manifest["config"]["digest"]
-        )
+        stream = client.download_blob(self.repository_name, received_manifest["config"]["digest"])
         with open(config_file_name, "wb") as config_file:
             for chunk in stream:
                 config_file.write(chunk)
     except DigestValidationError:
-        print(
-            f"Downloaded config digest value did not match. Deleting file {config_file_name}."
-        )
+        print(f"Downloaded config digest value did not match. Deleting file {config_file_name}.")
         os.remove(config_file_name)
     print(f"Got config: {config_file_name}")
 ```
@@ -280,9 +264,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
     for layer in received_manifest["layers"]:
         client.delete_blob(self.repository_name, layer["digest"])
     # Delete the config
-    client.delete_blob(
-        self.repository_name, received_manifest["config"]["digest"]
-    )
+    client.delete_blob(self.repository_name, received_manifest["config"]["digest"])
 ```
 
 <!-- END SNIPPET -->
