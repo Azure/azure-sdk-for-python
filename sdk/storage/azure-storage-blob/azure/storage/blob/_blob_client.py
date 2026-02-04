@@ -1451,9 +1451,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs)
         try:
             return cast(Dict[str, Any], self._client.page_blob.create(size=size,
-            content_settings=content_settings,
             metadata=metadata,
-            premium_page_blob_tier=premium_page_blob_tier,
             **options,
             **kwargs))
         except HttpResponseError as error:

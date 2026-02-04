@@ -549,7 +549,7 @@ def _create_page_blob_options(
 
     options = {
         'content_length': 0,
-        'blob_content_length': size,
+        'size': size,
         'blob_sequence_number': sequence_number,
         'timeout': kwargs.pop('timeout', None),
         'blob_tags_string': blob_tags_string,
@@ -1046,7 +1046,7 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
-        'blob_content_length': size,
+        'size': size,
         'timeout': kwargs.pop('timeout', None),
         'cls': return_response_headers}
     if access_conditions:
