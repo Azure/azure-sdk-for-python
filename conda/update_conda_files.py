@@ -450,7 +450,7 @@ def get_package_metadata(
     else:
         home_url = f"https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/{service_dir}/{package_name}"
 
-    summary = f"Microsoft Azure {package_name.replace('azure-', '').replace('-', ' ').title()} Client Library for Python"
+    summary = f"Microsoft Azure {service_dir.replace('-', ' ').title()} Client Library for Python"
 
     conda_url = f"https://aka.ms/azsdk/conda/releases/{service_dir}"
     description = (
