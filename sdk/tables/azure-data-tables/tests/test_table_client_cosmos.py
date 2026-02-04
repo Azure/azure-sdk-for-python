@@ -135,7 +135,7 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 if error.error_code != "MethodNotAllowed":
                     raise
             with pytest.raises(ValueError) as error:
-                client.create_entity({"PartitionKey": "foo", "RowKey": "foo"})
+                client.create_entity({"PartitionKey": "foo", "RowKey": "foo"}, content_type="application/json;odata=nometadata")
             assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             with pytest.raises(ValueError) as error:
                 client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
