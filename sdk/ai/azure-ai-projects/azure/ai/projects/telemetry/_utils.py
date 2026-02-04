@@ -123,7 +123,7 @@ _use_message_events = False
 
 def _get_use_message_events() -> bool:
     """Get the current message tracing mode (events vs attributes). Internal use only.
-    
+
     :return: True if using events, False if using attributes
     :rtype: bool
     """

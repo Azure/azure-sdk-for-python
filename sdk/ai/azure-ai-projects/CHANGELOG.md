@@ -25,6 +25,7 @@
 * Tracing: response generation span names changed from "responses {model_name}" to "chat {model_name}" for model calls and from "responses {agent_name}" to "invoke_agent {agent_name}" for agent calls.
 * Tracing: response generation operation names changed from "responses" to "chat" for model calls and from "responses" to "invoke_agent" for agent calls.
 * Tracing: response generation uses gen_ai.input.messages and gen_ai.output.messages attributes directly under the span instead of events.
+* Tracing: agent creation uses gen_ai.system.instructions attribute directly under the span instead of an event.
 
 ## 2.0.0b3 (2026-01-06)
 

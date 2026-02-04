@@ -27,9 +27,11 @@ from ._utils import (
     GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_EVENT_CONTENT,
+    GEN_AI_INPUT_MESSAGES,
     GEN_AI_MESSAGE_ID,
     GEN_AI_MESSAGE_STATUS,
     GEN_AI_OPERATION_NAME,
+    GEN_AI_OUTPUT_MESSAGES,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_THREAD_ID,
@@ -53,6 +55,7 @@ from ._utils import (
     ERROR_MESSAGE,
     OperationName,
     start_span,
+    _get_use_message_events,
 )
 from ._responses_instrumentor import _ResponsesInstrumentorPreview
 
@@ -423,30 +426,52 @@ class _AIAgentsInstrumentorPreview:
             # No metadata, use content array directly as the event data
             event_data = content_array if isinstance(content_array, list) else {}
 
-        attributes = self._create_event_attributes(
-            thread_id=thread_id,
-            agent_id=agent_id,
-            thread_run_id=thread_run_id,
-            message_id=message_id,
-            message_status=message_status,
-            usage=usage,
-        )
-        # Store as JSON - either array or object depending on metadata
-        if not metadata and content_array:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-        else:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_data, ensure_ascii=False)
+        use_events = _get_use_message_events()
 
-        event_name = None
-        if role == "user":
-            event_name = "gen_ai.input.message"
-        elif role == "system":
-            event_name = "gen_ai.system_instruction"
-        else:
-            event_name = "gen_ai.input.message"
+        if use_events:
+            # Use events for message tracing
+            attributes = self._create_event_attributes(
+                thread_id=thread_id,
+                agent_id=agent_id,
+                thread_run_id=thread_run_id,
+                message_id=message_id,
+                message_status=message_status,
+                usage=usage,
+            )
+            # Store as JSON - either array or object depending on metadata
+            if not metadata and content_array:
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+            else:
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_data, ensure_ascii=False)
 
-        # span.span_instance.add_event(name=f"gen_ai.{role}.message", attributes=attributes)
-        span.span_instance.add_event(name=event_name, attributes=attributes)
+            event_name = None
+            if role == "user":
+                event_name = "gen_ai.input.message"
+            elif role == "system":
+                event_name = "gen_ai.system_instruction"
+            else:
+                event_name = "gen_ai.input.message"
+
+            span.span_instance.add_event(name=event_name, attributes=attributes)
+        else:
+            # Use attributes for message tracing
+            # Prepare message content as JSON
+            message_json = json.dumps(
+                [{"role": role, "parts": content_array}] if content_array else [{"role": role}], ensure_ascii=False
+            )
+
+            # Determine which attribute to use based on role
+            if role == "user":
+                attribute_name = GEN_AI_INPUT_MESSAGES
+            elif role == "assistant":
+                attribute_name = GEN_AI_OUTPUT_MESSAGES
+            else:
+                # Default to input messages for other roles (including system)
+                attribute_name = GEN_AI_INPUT_MESSAGES
+
+            # Set the attribute on the span
+            if span and span.span_instance.is_recording:
+                span.add_attribute(attribute_name, message_json)
 
     def _get_field(self, obj: Any, field: str) -> Any:
         if not obj:
@@ -502,10 +527,23 @@ class _AIAgentsInstrumentorPreview:
 
                 content_array.append({"type": "response_schema", "content": schema_str})
 
-        attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-        span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
+        use_events = _get_use_message_events()
+
+        if use_events:
+            # Use events for instructions tracing
+            attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+            span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
+        else:
+            # Use attributes for instructions tracing
+            # System instructions use the same attribute name as the event
+            message_json = json.dumps(
+                [{"role": "system", "parts": content_array}] if content_array else [{"role": "system"}],
+                ensure_ascii=False,
+            )
+            if span and span.span_instance.is_recording:
+                span.add_attribute(GEN_AI_SYSTEM_MESSAGE, message_json)
 
     def _status_to_string(self, status: Any) -> str:
         return status.value if hasattr(status, "value") else status
