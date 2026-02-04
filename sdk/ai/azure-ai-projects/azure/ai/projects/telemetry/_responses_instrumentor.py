@@ -59,6 +59,7 @@ from ._utils import (
     SPAN_NAME_INVOKE_AGENT,
     _get_use_message_events,
     start_span,
+    RESPONSES_PROVIDER,
 )
 
 
@@ -85,9 +86,6 @@ __all__ = [
 _responses_traces_enabled: bool = False
 _trace_responses_content: bool = False
 _trace_binary_data: bool = False
-
-# Azure OpenAI system identifier for traces
-AZURE_OPENAI_SYSTEM = "azure.openai"
 
 # Metrics instruments
 _operation_duration_histogram = None
@@ -242,7 +240,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         attributes = {
             GEN_AI_OPERATION_NAME: operation_name,
-            GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
+            GEN_AI_PROVIDER_NAME: RESPONSES_PROVIDER,
         }
 
         if server_address:
@@ -275,7 +273,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         attributes = {
             GEN_AI_OPERATION_NAME: operation_name,
-            GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
+            GEN_AI_PROVIDER_NAME: RESPONSES_PROVIDER,
             GEN_AI_TOKEN_TYPE: token_type,
         }
 
@@ -531,7 +529,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,  # pylint: disable=unused-argument
         message_role: Optional[str] = None,
     ) -> Dict[str, Any]:
-        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM}
+        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: RESPONSES_PROVIDER}
         # Removed conversation_id from event attributes as requested - it's redundant
         # if conversation_id:
         #     attrs[GEN_AI_CONVERSATION_ID] = conversation_id
@@ -844,7 +842,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
                 # Create event attributes
                 event_attributes = {
-                    GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
+                    GEN_AI_PROVIDER_NAME: RESPONSES_PROVIDER,
                 }
 
                 # Build workflow action details object
@@ -1584,7 +1582,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             port=port,
             span_name=span_name,
             model=model,
-            gen_ai_provider=AZURE_OPENAI_SYSTEM,
+            gen_ai_provider=RESPONSES_PROVIDER,
         )
 
         if span and span.span_instance.is_recording:
@@ -3353,7 +3351,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             server_address=server_address,
             port=port,
             span_name=OperationName.CREATE_CONVERSATION.value,
-            gen_ai_provider=AZURE_OPENAI_SYSTEM,
+            gen_ai_provider=RESPONSES_PROVIDER,
         )
 
         if span and span.span_instance.is_recording:
@@ -3551,7 +3549,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             server_address=server_address,
             port=port,
             span_name=OperationName.LIST_CONVERSATION_ITEMS.value,
-            gen_ai_provider=AZURE_OPENAI_SYSTEM,
+            gen_ai_provider=RESPONSES_PROVIDER,
         )
 
         if span and span.span_instance.is_recording:
@@ -4200,7 +4198,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         # Create event attributes
         event_attributes = {
-            GEN_AI_PROVIDER_NAME: AZURE_OPENAI_SYSTEM,
+            GEN_AI_PROVIDER_NAME: RESPONSES_PROVIDER,
             GEN_AI_CONVERSATION_ITEM_ID: item_id,
         }
 

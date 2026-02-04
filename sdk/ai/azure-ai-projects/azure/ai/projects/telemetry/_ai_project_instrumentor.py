@@ -21,7 +21,7 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 from ._utils import (
-    AZURE_AI_AGENTS_PROVIDER,
+    AGENTS_PROVIDER,
     ERROR_TYPE,
     GEN_AI_AGENT_DESCRIPTION,
     GEN_AI_AGENT_ID,
@@ -377,7 +377,7 @@ class _AIAgentsInstrumentorPreview:
         run_step_last_error: Optional[Any] = None,
         usage: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER}
+        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AGENTS_PROVIDER}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 

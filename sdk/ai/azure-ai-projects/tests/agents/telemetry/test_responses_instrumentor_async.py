@@ -14,6 +14,7 @@ from azure.ai.projects.telemetry._utils import (
     SPAN_NAME_CHAT,
     SPAN_NAME_INVOKE_AGENT,
     _set_use_message_events,
+    RESPONSES_PROVIDER,
 )
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
@@ -89,7 +90,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -113,7 +114,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "user",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
                     },
@@ -121,7 +122,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                     },
@@ -203,7 +204,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -227,7 +228,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "user",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
                     },
@@ -235,7 +236,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                     },
@@ -298,7 +299,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "create_conversation"),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
         ]
@@ -357,7 +358,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "list_conversation_items"),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
         ]
@@ -369,7 +370,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.conversation.item",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     "gen_ai.conversation.item.id": "*",
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}]}]',
                 },
@@ -377,7 +378,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.conversation.item",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     "gen_ai.conversation.item.id": "*",
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -514,7 +515,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -538,7 +539,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "user",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
                     },
@@ -546,7 +547,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                     },
@@ -561,7 +562,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -586,7 +587,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "tool",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
                     },
@@ -594,7 +595,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                     },
@@ -739,7 +740,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -763,7 +764,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "user",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                     },
@@ -771,7 +772,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                     },
@@ -786,7 +787,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -811,7 +812,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "tool",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                     },
@@ -819,7 +820,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
-                        "gen_ai.provider.name": "azure.openai",
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
                         # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                     },
@@ -898,7 +899,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -914,7 +915,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -922,7 +923,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a haiku about Python"}]}]',
                 },
@@ -930,7 +931,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1003,7 +1004,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -1019,7 +1020,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -1027,7 +1028,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a haiku about Python"}]}]',
                 },
@@ -1035,7 +1036,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1100,7 +1101,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -1116,7 +1117,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -1124,7 +1125,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -1132,7 +1133,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1199,7 +1200,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1207,7 +1208,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1269,7 +1270,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1277,7 +1278,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1339,7 +1340,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
@@ -1347,7 +1348,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1409,7 +1410,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1417,7 +1418,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1488,7 +1489,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1496,7 +1497,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1562,7 +1563,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1570,7 +1571,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1636,7 +1637,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
@@ -1644,7 +1645,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1710,7 +1711,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1718,7 +1719,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1793,7 +1794,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1801,7 +1802,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1871,7 +1872,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1879,7 +1880,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1949,7 +1950,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
@@ -1957,7 +1958,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2027,7 +2028,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -2035,7 +2036,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2113,7 +2114,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -2121,7 +2122,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2195,7 +2196,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -2203,7 +2204,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2277,7 +2278,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
@@ -2285,7 +2286,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2359,7 +2360,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -2367,7 +2368,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2439,7 +2440,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2455,7 +2456,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2463,7 +2464,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2471,7 +2472,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2532,7 +2533,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2548,7 +2549,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short haiku about testing"}]}]',
                 },
@@ -2556,7 +2557,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2612,7 +2613,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2628,7 +2629,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2636,7 +2637,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2744,7 +2745,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2760,7 +2761,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Boston?"}]}]',
                 },
@@ -2768,7 +2769,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
@@ -2783,7 +2784,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
                 },
@@ -2791,7 +2792,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2898,7 +2899,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2906,7 +2907,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
@@ -2921,7 +2922,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
@@ -2929,7 +2930,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -3490,7 +3491,7 @@ trigger:
             ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -3569,7 +3570,7 @@ trigger:
             ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),

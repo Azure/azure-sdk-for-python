@@ -13,6 +13,7 @@ from azure.ai.projects.telemetry._utils import (
     OPERATION_NAME_INVOKE_AGENT,
     SPAN_NAME_INVOKE_AGENT,
     _set_use_message_events,
+    RESPONSES_PROVIDER,
 )
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
@@ -266,7 +267,7 @@ trigger:
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", workflow.name),
@@ -427,7 +428,7 @@ trigger:
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", workflow.name),
@@ -597,7 +598,7 @@ trigger:
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", workflow.name),
@@ -763,7 +764,7 @@ trigger:
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
                     ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", workflow.name),

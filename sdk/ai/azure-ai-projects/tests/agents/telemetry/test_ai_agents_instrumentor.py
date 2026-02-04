@@ -51,7 +51,7 @@ from azure.ai.projects.telemetry._utils import (
     GEN_AI_AGENT_WORKFLOW_EVENT,
     GEN_AI_CONVERSATION_ITEM_TYPE,
     AZURE_AI_AGENTS_SYSTEM,
-    AZURE_AI_AGENTS_PROVIDER,
+    AGENTS_PROVIDER,
     AGENT_TYPE_PROMPT,
     AGENT_TYPE_WORKFLOW,
     _set_use_message_events,
@@ -221,7 +221,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER),
             (GEN_AI_OPERATION_NAME, "create_agent"),
             (SERVER_ADDRESS, ""),
             (GEN_AI_REQUEST_MODEL, model),
@@ -261,7 +261,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": GEN_AI_SYSTEM_INSTRUCTION_EVENT,
                     "attributes": {
-                        GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER,
+                        GEN_AI_PROVIDER_NAME: AGENTS_PROVIDER,
                         GEN_AI_EVENT_CONTENT: '[{"type": "text", "content": "You are a helpful AI assistant. Be polite and provide accurate information."}]',
                     },
                 }
@@ -338,7 +338,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER),
             (GEN_AI_OPERATION_NAME, "create_agent"),
             (SERVER_ADDRESS, ""),
             (GEN_AI_REQUEST_MODEL, model),
@@ -366,7 +366,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                 {
                     "name": GEN_AI_SYSTEM_INSTRUCTION_EVENT,
                     "attributes": {
-                        GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER,
+                        GEN_AI_PROVIDER_NAME: AGENTS_PROVIDER,
                         GEN_AI_EVENT_CONTENT: "[]",
                     },
                 }
@@ -451,7 +451,7 @@ trigger:
         assert len(spans) == 1
         span = spans[0]
         expected_attributes = [
-            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER),
             (GEN_AI_OPERATION_NAME, "create_agent"),
             (SERVER_ADDRESS, ""),
             (GEN_AI_AGENT_NAME, "test-workflow-agent"),
@@ -575,7 +575,7 @@ trigger:
         span = spans[0]
 
         expected_attributes = [
-            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER),
             (GEN_AI_OPERATION_NAME, "create_agent"),
             (SERVER_ADDRESS, ""),
             (GEN_AI_REQUEST_MODEL, model),
@@ -759,7 +759,7 @@ trigger:
         span = spans[0]
 
         expected_attributes = [
-            (GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS_PROVIDER),
+            (GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER),
             (GEN_AI_OPERATION_NAME, "create_agent"),
             (SERVER_ADDRESS, ""),
             (GEN_AI_REQUEST_MODEL, model),

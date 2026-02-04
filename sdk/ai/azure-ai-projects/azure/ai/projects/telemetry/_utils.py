@@ -101,7 +101,8 @@ GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
 
 # Constant attribute values
 AZURE_AI_AGENTS_SYSTEM = "az.ai.agents"
-AZURE_AI_AGENTS_PROVIDER = "azure.ai.agents"
+AGENTS_PROVIDER = "microsoft.foundry"
+RESPONSES_PROVIDER = "microsoft.foundry"
 AGENT_TYPE_PROMPT = "prompt"
 AGENT_TYPE_WORKFLOW = "workflow"
 AGENT_TYPE_HOSTED = "hosted"
@@ -176,7 +177,7 @@ def start_span(
     reasoning_summary: Optional[str] = None,
     structured_inputs: Optional[str] = None,
     gen_ai_system: Optional[str] = None,
-    gen_ai_provider: Optional[str] = AZURE_AI_AGENTS,
+    gen_ai_provider: Optional[str] = AGENTS_PROVIDER,
     kind: SpanKind = SpanKind.CLIENT,
 ) -> "Optional[AbstractSpan]":
     global _span_impl_type  # pylint: disable=global-statement
@@ -197,7 +198,7 @@ def start_span(
 
     if span and span.span_instance.is_recording:
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
-        span.add_attribute(GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS)
+        span.add_attribute(GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER)
 
         if gen_ai_provider:
             span.add_attribute(GEN_AI_PROVIDER_NAME, gen_ai_provider)
