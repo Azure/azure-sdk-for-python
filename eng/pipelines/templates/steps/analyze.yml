@@ -29,7 +29,7 @@ steps:
     displayName: 'Set Tox Environment Skips'
     condition: succeededOrFailed()
     inputs:
-      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      scriptPath: 'eng/scripts/set_checks.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
