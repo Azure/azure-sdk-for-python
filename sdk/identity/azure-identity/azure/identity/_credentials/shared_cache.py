@@ -185,9 +185,10 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
 
         account = self._get_account(self._username, self._tenant_id, is_cae=is_cae)
 
-        token = self._get_cached_access_token(scopes, account, is_cae=is_cae)
-        if token:
-            return token
+        if not claims:
+            token = self._get_cached_access_token(scopes, account, is_cae=is_cae)
+            if token:
+                return token
 
         # try each refresh token, returning the first access token acquired
         for refresh_token in self._get_refresh_tokens(account, is_cae=is_cae):

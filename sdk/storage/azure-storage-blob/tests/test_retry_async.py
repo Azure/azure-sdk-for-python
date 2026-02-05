@@ -6,6 +6,7 @@
 import asyncio
 import functools
 import pytest
+from typing import NamedTuple
 from unittest import mock
 
 from aiohttp.client_exceptions import ServerTimeoutError
@@ -50,7 +51,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         if connection_string:
             service = service_class.from_connection_string(connection_string, **kwargs)
         else:
-            service = service_class(self.account_url(account, "blob"), credential=key, **kwargs)
+            service = service_class(self.account_url(account, "blob"), credential=key.secret, **kwargs)
         return service
 
     # --Test Cases --------------------------------------------
@@ -535,7 +536,8 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
     @BlobPreparer()
     async def test_invalid_storage_account_key(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = "a"
+        # secret attribute necessary for credential parameter because of hidden environment variables from loader
+        storage_account_key = NamedTuple("StorageAccountKey", [("secret", str)])("a")
 
         # Arrange
         blob_client = self._create_storage_service(

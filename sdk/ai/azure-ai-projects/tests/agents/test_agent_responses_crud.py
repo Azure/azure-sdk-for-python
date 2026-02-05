@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseTextFormatConfigurationJsonSchema,
+    TextResponseFormatJsonSchema,
     PromptAgentDefinitionText,
 )
 
@@ -47,7 +47,7 @@ class TestAgentResponsesCrud(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -159,7 +159,7 @@ class TestAgentResponsesCrud(TestBase):
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_agent_responses_with_structured_output(self, **kwargs):
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -176,9 +176,7 @@ class TestAgentResponsesCrud(TestBase):
             definition=PromptAgentDefinition(
                 model=model,
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
-                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
-                    )
+                    format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
                     You are a helpful assistant that extracts calendar event information from the input user messages,

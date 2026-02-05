@@ -60,7 +60,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -76,7 +76,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -95,7 +95,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -112,7 +112,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
 
         # Act
@@ -137,7 +137,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         metadata = {'hello': 'world', 'number': '42'}
 
@@ -156,7 +156,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -172,7 +172,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
         new_name = self._get_container_reference(prefix="newcontainer")
@@ -195,7 +195,7 @@ class TestStorageContainer(StorageRecordedTestCase):
     @BlobPreparer()
     def test_rename_container_with_container_client(
             self, storage_account_name, storage_account_key):
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
         new_name = self._get_container_reference(prefix="newcontainer")
@@ -222,7 +222,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name = self._get_container_reference(prefix="old")
         new_name = self._get_container_reference(prefix="new")
         container = bsc.get_container_client(old_name)
@@ -241,7 +241,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = u'啊齄丂狛狜'
 
         container = bsc.get_container_client(container_name)
@@ -256,7 +256,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -277,7 +277,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         # Act
         containers = list(bsc.list_containers(include_system=True))
@@ -295,7 +295,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -314,7 +314,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         resp = container.set_container_metadata(metadata)
@@ -339,7 +339,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
         start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
@@ -367,7 +367,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         prefix = 'listcontainersync'
         container_names = []
         for i in range(0, 4):
@@ -399,13 +399,13 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         sas_token = self.generate_sas(
             generate_account_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(list=True),
             expiry=datetime.utcnow() + timedelta(hours=3)
@@ -428,7 +428,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '43'}
         container = self._create_container(bsc)
 
@@ -444,7 +444,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '43'}
         container = self._create_container(bsc)
         lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -462,7 +462,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
@@ -478,7 +478,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = self._create_container(bsc)
         container.set_container_metadata(metadata)
@@ -495,7 +495,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = self._create_container(bsc)
         container.set_container_metadata(metadata)
@@ -513,7 +513,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         container1 = self._create_container(bsc, prefix="container1")
         container2_name = self._get_container_reference(prefix="container2")
@@ -528,7 +528,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = self._create_container(bsc)
         container.set_container_metadata(metadata)
@@ -549,7 +549,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         metadata = {'hello': 'world', 'number': '42'}
         container = self._create_container(bsc)
         container.set_container_metadata(metadata)
@@ -572,7 +572,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -589,7 +589,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -607,7 +607,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -637,7 +637,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -663,7 +663,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease_id = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
@@ -691,7 +691,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -708,7 +708,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -726,7 +726,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         identifier = {'empty': None}
 
@@ -746,7 +746,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -772,7 +772,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         identifiers = {i: None for i in range(2)}
 
@@ -794,7 +794,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
@@ -823,7 +823,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._create_container(bsc)
 
         # Act
@@ -842,7 +842,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -857,7 +857,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
         self.sleep(10)
@@ -880,7 +880,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -898,7 +898,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         lease.release()
@@ -915,7 +915,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -933,7 +933,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -949,7 +949,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -965,7 +965,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -988,7 +988,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         # Act
@@ -1003,7 +1003,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         container = bsc.get_container_client(container_name)
 
@@ -1023,7 +1023,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         lease = container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
 
@@ -1043,7 +1043,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # TODO: container soft delete should enabled by SRP call or use ARM, so make this test as playback only.
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_client = self._create_container(bsc)
 
         # Act
@@ -1075,7 +1075,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True, container=True),
             AccountSasPermissions(read=True, write=True, list=True, delete=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -1106,7 +1106,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1126,7 +1126,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1143,7 +1143,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1162,7 +1162,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1179,7 +1179,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob1').upload_blob(data)
@@ -1204,7 +1204,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         blob_name = "dir1/dir2/file\uFFFF.blob"
         container = self._create_container(bsc, prefix="cont1")
         data = b'hello world'
@@ -1224,7 +1224,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = bsc.get_container_client('orp-source')
         data = b'hello world'
         b_c = container.get_blob_client('blob1')
@@ -1250,7 +1250,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1276,7 +1276,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob_a1').upload_blob(data)
@@ -1298,7 +1298,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob_a1').upload_blob(data)
@@ -1322,7 +1322,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1348,7 +1348,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(
@@ -1380,7 +1380,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         content_settings = ContentSettings(
@@ -1418,7 +1418,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -1443,7 +1443,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob1').upload_blob(data, metadata={'status': 'original'})
@@ -1483,7 +1483,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1508,7 +1508,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc, 'testfind')
 
         data = b'hello world'
@@ -1544,7 +1544,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
 
         data = b'hello world'
@@ -1562,7 +1562,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             generate_container_sas,
             container.account_name,
             container.container_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=ContainerSasPermissions(filter_by_tags=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -1587,7 +1587,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1617,7 +1617,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -1650,7 +1650,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1692,7 +1692,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -1728,13 +1728,13 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
         sas_token = self.generate_sas(
             generate_container_sas,
             storage_account_name,
             container_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
         )
@@ -1771,7 +1771,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -1817,7 +1817,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -1870,7 +1870,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -1901,7 +1901,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc, prefix="test")
         data = b'hello world'
 
@@ -1941,7 +1941,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
@@ -1996,7 +1996,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         container.upload_blob("blob1", "hello world")
         container.upload_blob("blob2", "hello world")
@@ -2060,7 +2060,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         blob_storage_account_name = kwargs.pop("storage_account_name")
         blob_storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key.secret)
         container = self._create_container(bsc)
         tier = StandardBlobTier.Cool
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -2121,7 +2121,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1)
@@ -2180,7 +2180,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
@@ -2233,7 +2233,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -2263,7 +2263,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -2289,7 +2289,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
 
@@ -2308,7 +2308,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         blob1 = container.get_blob_client('blob1')
@@ -2342,7 +2342,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         blob_name  = 'blob1'
         data = b'hello world'
@@ -2373,7 +2373,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         web_container = "$web"
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         # create the web container in case it does not exist yet
         container = bsc.get_container_client(web_container)
@@ -2459,7 +2459,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         blob_name = self.get_resource_name("blob")
@@ -2477,7 +2477,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -2505,7 +2505,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=512)
         container = self._create_container(bsc)
@@ -2534,7 +2534,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
@@ -2574,7 +2574,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=38,
                                 max_chunk_get_size=38)
         container = self._create_container(bsc, prefix="cont")
@@ -2598,7 +2598,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=1024,
                                 max_chunk_get_size=666)
         container = self._create_container(bsc)
@@ -2627,7 +2627,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key,
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
                                 max_single_get_size=215,
                                 max_chunk_get_size=512)
         container = self._create_container(bsc)
@@ -2656,7 +2656,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
         data = b'hello world'
 
@@ -2682,7 +2682,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container: ContainerClient = self._create_container(bsc)
         data = b'hello world'
 
@@ -2711,7 +2711,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key)
+        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key.secret)
         cc.exists()
 
         # Act
@@ -2760,7 +2760,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('blob1').upload_blob(data)
@@ -2784,7 +2784,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = self._create_container(bsc)
         data = b'hello world'
         container.get_blob_client('a/blob1').upload_blob(data)

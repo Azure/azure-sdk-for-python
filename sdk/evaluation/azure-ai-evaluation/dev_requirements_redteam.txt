@@ -14,4 +14,4 @@ azure-ai-inference>=1.0.0b4
 azure-ai-projects<=1.0.0b10
 aiohttp
 filelock
--e ../azure-ai-evaluation[redteam]
+../azure-ai-evaluation[redteam]

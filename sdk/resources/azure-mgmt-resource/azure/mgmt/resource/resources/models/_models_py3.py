@@ -8,7 +8,8 @@
 # --------------------------------------------------------------------------
 
 from collections.abc import MutableMapping
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+import datetime
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -54,7 +55,7 @@ class Alias(_serialization.Model):
         self,
         *,
         name: Optional[str] = None,
-        paths: Optional[List["_models.AliasPath"]] = None,
+        paths: Optional[list["_models.AliasPath"]] = None,
         type: Optional[Union[str, "_models.AliasType"]] = None,
         default_path: Optional[str] = None,
         default_pattern: Optional["_models.AliasPattern"] = None,
@@ -113,7 +114,7 @@ class AliasPath(_serialization.Model):
         self,
         *,
         path: Optional[str] = None,
-        api_versions: Optional[List[str]] = None,
+        api_versions: Optional[list[str]] = None,
         pattern: Optional["_models.AliasPattern"] = None,
         **kwargs: Any
     ) -> None:
@@ -297,8 +298,8 @@ class ErrorResponse(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorResponse"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorResponse"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ExportTemplateRequest(_serialization.Model):
@@ -325,7 +326,7 @@ class ExportTemplateRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        resources: Optional[List[str]] = None,
+        resources: Optional[list[str]] = None,
         options: Optional[str] = None,
         output_format: Optional[Union[str, "_models.ExportTemplateOutputFormat"]] = None,
         **kwargs: Any
@@ -420,7 +421,7 @@ class Resource(_serialization.Model):
         *,
         location: Optional[str] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -498,7 +499,7 @@ class GenericResource(Resource):
         *,
         location: Optional[str] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         plan: Optional["_models.Plan"] = None,
         properties: Optional[JSON] = None,
         kind: Optional[str] = None,
@@ -609,7 +610,7 @@ class GenericResourceExpanded(GenericResource):
         *,
         location: Optional[str] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         plan: Optional["_models.Plan"] = None,
         properties: Optional[JSON] = None,
         kind: Optional[str] = None,
@@ -729,7 +730,7 @@ class Identity(_serialization.Model):
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.IdentityUserAssignedIdentitiesValue"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.IdentityUserAssignedIdentitiesValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -867,7 +868,7 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of Microsoft.Resources operations.
@@ -903,10 +904,10 @@ class Permission(_serialization.Model):
     def __init__(
         self,
         *,
-        actions: Optional[List[str]] = None,
-        not_actions: Optional[List[str]] = None,
-        data_actions: Optional[List[str]] = None,
-        not_data_actions: Optional[List[str]] = None,
+        actions: Optional[list[str]] = None,
+        not_actions: Optional[list[str]] = None,
+        data_actions: Optional[list[str]] = None,
+        not_data_actions: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1036,7 +1037,7 @@ class Provider(_serialization.Model):
         self.namespace = namespace
         self.registration_state: Optional[str] = None
         self.registration_policy: Optional[str] = None
-        self.resource_types: Optional[List["_models.ProviderResourceType"]] = None
+        self.resource_types: Optional[list["_models.ProviderResourceType"]] = None
         self.provider_authorization_consent_state = provider_authorization_consent_state
 
 
@@ -1083,7 +1084,7 @@ class ProviderExtendedLocation(_serialization.Model):
         *,
         location: Optional[str] = None,
         type: Optional[str] = None,
-        extended_locations: Optional[List[str]] = None,
+        extended_locations: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1120,7 +1121,7 @@ class ProviderListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Provider"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Provider"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of resource providers.
         :paramtype value: list[~azure.mgmt.resource.resources.models.Provider]
@@ -1200,7 +1201,7 @@ class ProviderPermissionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ProviderPermission"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ProviderPermission"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of provider permissions.
         :paramtype value: list[~azure.mgmt.resource.resources.models.ProviderPermission]
@@ -1284,13 +1285,13 @@ class ProviderResourceType(_serialization.Model):
         self,
         *,
         resource_type: Optional[str] = None,
-        locations: Optional[List[str]] = None,
-        location_mappings: Optional[List["_models.ProviderExtendedLocation"]] = None,
-        aliases: Optional[List["_models.Alias"]] = None,
-        api_versions: Optional[List[str]] = None,
-        zone_mappings: Optional[List["_models.ZoneMapping"]] = None,
+        locations: Optional[list[str]] = None,
+        location_mappings: Optional[list["_models.ProviderExtendedLocation"]] = None,
+        aliases: Optional[list["_models.Alias"]] = None,
+        api_versions: Optional[list[str]] = None,
+        zone_mappings: Optional[list["_models.ZoneMapping"]] = None,
         capabilities: Optional[str] = None,
-        properties: Optional[Dict[str, str]] = None,
+        properties: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1320,7 +1321,7 @@ class ProviderResourceType(_serialization.Model):
         self.api_versions = api_versions
         self.default_api_version: Optional[str] = None
         self.zone_mappings = zone_mappings
-        self.api_profiles: Optional[List["_models.ApiProfile"]] = None
+        self.api_profiles: Optional[list["_models.ApiProfile"]] = None
         self.capabilities = capabilities
         self.properties = properties
 
@@ -1345,7 +1346,7 @@ class ProviderResourceTypeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ProviderResourceType"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ProviderResourceType"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of resource types.
         :paramtype value: list[~azure.mgmt.resource.resources.models.ProviderResourceType]
@@ -1402,7 +1403,7 @@ class ResourceGroup(_serialization.Model):
         location: str,
         properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1511,7 +1512,7 @@ class ResourceGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ResourceGroup"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ResourceGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of resource groups.
         :paramtype value: list[~azure.mgmt.resource.resources.models.ResourceGroup]
@@ -1547,7 +1548,7 @@ class ResourceGroupPatchable(_serialization.Model):
         name: Optional[str] = None,
         properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1610,7 +1611,7 @@ class ResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.GenericResourceExpanded"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.GenericResourceExpanded"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of resources.
         :paramtype value: list[~azure.mgmt.resource.resources.models.GenericResourceExpanded]
@@ -1688,7 +1689,7 @@ class ResourcesMoveInfo(_serialization.Model):
     }
 
     def __init__(
-        self, *, resources: Optional[List[str]] = None, target_resource_group: Optional[str] = None, **kwargs: Any
+        self, *, resources: Optional[list[str]] = None, target_resource_group: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword resources: The IDs of the resources.
@@ -1730,8 +1731,8 @@ class RoleDefinition(_serialization.Model):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         is_service_role: Optional[bool] = None,
-        permissions: Optional[List["_models.Permission"]] = None,
-        scopes: Optional[List[str]] = None,
+        permissions: Optional[list["_models.Permission"]] = None,
+        scopes: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1892,7 +1893,7 @@ class TagDetails(_serialization.Model):
         *,
         tag_name: Optional[str] = None,
         count: Optional["_models.TagCount"] = None,
-        values: Optional[List["_models.TagValue"]] = None,
+        values: Optional[list["_models.TagValue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1922,7 +1923,7 @@ class Tags(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Dictionary of :code:`<string>`.
         :paramtype tags: dict[str, str]
@@ -1951,7 +1952,7 @@ class TagsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.TagDetails"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.TagDetails"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: An array of tags.
         :paramtype value: list[~azure.mgmt.resource.resources.models.TagDetails]
@@ -2090,7 +2091,7 @@ class ZoneMapping(_serialization.Model):
         "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, zones: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: Optional[str] = None, zones: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The location of the zone mapping.
         :paramtype location: str

@@ -93,8 +93,8 @@ class EvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SELF_HARM = "self_harm"
     SEXUAL = "sexual"
     PROTECTED_MATERIAL = "protected_material"
-    XPIA = "xpia"
-    GROUNDEDNESS = "generic_groundedness"
+    XPIA = "indirect_attack"
+    GROUNDEDNESS = "groundedness"
     CODE_VULNERABILITY = "code_vulnerability"
     UNGROUNDED_ATTRIBUTES = "ungrounded_attributes"
     SENSITIVE_DATA_LEAKAGE = "sensitive_data_leakage"
@@ -108,7 +108,7 @@ class _InternalEvaluationMetrics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     enum over time.
     """
 
-    ECI = "eci"
+    ECI = "election_critical_information"
 
 
 # Mapping of evaluation metrics to their scoring patterns

@@ -150,7 +150,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_crud.py
                 :start-after: [START get_index]
                 :end-before: [END get_index]
                 :language: python
@@ -196,7 +196,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_crud.py
                 :start-after: [START delete_index]
                 :end-before: [END delete_index]
                 :language: python
@@ -224,7 +224,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_crud.py
                 :start-after: [START create_index]
                 :end-before: [END create_index]
                 :language: python
@@ -267,7 +267,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_crud.py
                 :start-after: [START update_index]
                 :end-before: [END update_index]
                 :language: python
@@ -302,7 +302,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_analyze_text.py
+            .. literalinclude:: ../samples/sample_index_analyze_text.py
                 :start-after: [START simple_analyze_text]
                 :end-before: [END simple_analyze_text]
                 :language: python
@@ -331,7 +331,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+            .. literalinclude:: ../samples/sample_index_synonym_map_crud.py
                 :start-after: [START get_synonym_maps]
                 :end-before: [END get_synonym_maps]
                 :language: python
@@ -373,7 +373,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+            .. literalinclude:: ../samples/sample_index_synonym_map_crud.py
                 :start-after: [START get_synonym_map]
                 :end-before: [END get_synonym_map]
                 :language: python
@@ -404,7 +404,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+            .. literalinclude:: ../samples/sample_index_synonym_map_crud.py
                 :start-after: [START delete_synonym_map]
                 :end-before: [END delete_synonym_map]
                 :language: python
@@ -432,7 +432,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_synonym_map_operations.py
+            .. literalinclude:: ../samples/sample_index_synonym_map_crud.py
                 :start-after: [START create_synonym_map]
                 :end-before: [END create_synonym_map]
                 :language: python
@@ -565,7 +565,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_alias_crud.py
                 :start-after: [START delete_alias]
                 :end-before: [END delete_alias]
                 :language: python
@@ -593,7 +593,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_alias_crud.py
                 :start-after: [START create_alias]
                 :end-before: [END create_alias]
                 :language: python
@@ -625,7 +625,7 @@ class SearchIndexClient(HeadersMixin):  # pylint:disable=too-many-public-methods
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_index_alias_crud_operations.py
+            .. literalinclude:: ../samples/sample_index_alias_crud.py
                 :start-after: [START update_alias]
                 :end-before: [END update_alias]
                 :language: python

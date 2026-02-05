@@ -24,7 +24,9 @@ from azure.ai.evaluation._evaluate._evaluate import (
 )  # TODO: uncomment when app insights checked in
 from azure.ai.evaluation._model_configurations import EvaluationResult
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._model_configurations import (
     AzureOpenAIModelConfiguration,
@@ -59,7 +61,11 @@ from pyrit.memory import CentralMemory, SQLiteMemory
 from pyrit.prompt_target import PromptChatTarget
 
 # Local imports - constants and utilities
-from ._utils.constants import TASK_STATUS, MAX_SAMPLING_ITERATIONS_MULTIPLIER, RISK_TO_NUM_SUBTYPE_MAP
+from ._utils.constants import (
+    TASK_STATUS,
+    MAX_SAMPLING_ITERATIONS_MULTIPLIER,
+    RISK_TO_NUM_SUBTYPE_MAP,
+)
 from ._utils.logging_utils import (
     setup_logger,
     log_section_header,
@@ -127,6 +133,7 @@ class RedTeam:
         language: SupportedLanguages = SupportedLanguages.English,
         output_dir=".",
         attack_success_thresholds: Optional[Dict[RiskCategory, int]] = None,
+        **kwargs,
     ):
         """Initialize a new Red Team agent for AI model evaluation.
 
@@ -163,6 +170,7 @@ class RedTeam:
         self.output_dir = output_dir
         self.language = language
         self._one_dp_project = is_onedp_project(azure_ai_project)
+        self._use_legacy_endpoint = kwargs.get("_use_legacy_endpoint", False)
 
         # Configure attack success thresholds
         self.attack_success_thresholds = self._configure_attack_success_thresholds(attack_success_thresholds)
@@ -204,7 +212,8 @@ class RedTeam:
 
         # Initialize RAI client
         self.generated_rai_client = GeneratedRAIClient(
-            azure_ai_project=self.azure_ai_project, token_manager=self.token_manager.credential
+            azure_ai_project=self.azure_ai_project,
+            token_manager=self.token_manager.credential,
         )
 
         # Initialize a cache for attack objectives by risk category and strategy
@@ -288,6 +297,7 @@ class RedTeam:
             retry_config=retry_config,
             scan_output_dir=self.scan_output_dir,
             red_team=self,
+            _use_legacy_endpoint=self._use_legacy_endpoint,
         )
 
         # Initialize evaluation processor
@@ -300,6 +310,7 @@ class RedTeam:
             scan_session_id=self.scan_session_id,
             scan_output_dir=self.scan_output_dir,
             taxonomy_risk_categories=getattr(self, "taxonomy_risk_categories", None),
+            _use_legacy_endpoint=self._use_legacy_endpoint,
         )
 
         # Initialize MLflow integration
@@ -383,7 +394,12 @@ class RedTeam:
             if custom_objectives:
                 # Use custom objectives for this risk category
                 return await self._get_custom_attack_objectives(
-                    risk_cat_value, num_objectives, num_objectives_with_subtypes, strategy, current_key, is_agent_target
+                    risk_cat_value,
+                    num_objectives,
+                    num_objectives_with_subtypes,
+                    strategy,
+                    current_key,
+                    is_agent_target,
                 )
             else:
                 # No custom objectives for this risk category, but risk_categories was specified
@@ -571,7 +587,13 @@ class RedTeam:
                         self.prompt_to_risk_subtype[content] = risk_subtype
 
         # Store in cache and return
-        self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
+        self._cache_attack_objectives(
+            current_key,
+            risk_cat_value,
+            strategy,
+            selected_prompts,
+            selected_cat_objectives,
+        )
         return selected_prompts
 
     async def _get_rai_attack_objectives(
@@ -677,12 +699,22 @@ class RedTeam:
 
         # Filter and select objectives using num_objectives_with_subtypes
         selected_cat_objectives = self._filter_and_select_objectives(
-            objectives_response, strategy, baseline_objectives_exist, baseline_key, num_objectives_with_subtypes
+            objectives_response,
+            strategy,
+            baseline_objectives_exist,
+            baseline_key,
+            num_objectives_with_subtypes,
         )
 
         # Extract content and cache
         selected_prompts = self._extract_objective_content(selected_cat_objectives)
-        self._cache_attack_objectives(current_key, risk_cat_value, strategy, selected_prompts, selected_cat_objectives)
+        self._cache_attack_objectives(
+            current_key,
+            risk_cat_value,
+            strategy,
+            selected_prompts,
+            selected_cat_objectives,
+        )
 
         return selected_prompts
 
@@ -817,7 +849,11 @@ class RedTeam:
 
                         # Build the contexts list: XPIA context + any baseline contexts with agent fields
                         contexts = [
-                            {"content": formatted_context, "context_type": context_type, "tool_name": tool_name}
+                            {
+                                "content": formatted_context,
+                                "context_type": context_type,
+                                "tool_name": tool_name,
+                            }
                         ]
 
                         # Add baseline contexts with agent fields as separate context entries
@@ -1359,10 +1395,13 @@ class RedTeam:
 
             # Fetch attack objectives
             all_objectives = await self._fetch_all_objectives(
-                flattened_attack_strategies, application_scenario, is_agent_target, client_id
+                flattened_attack_strategies,
+                application_scenario,
+                is_agent_target,
+                client_id,
             )
 
-            chat_target = get_chat_target(target)
+            chat_target = get_chat_target(target, credential=self.credential)
             self.chat_target = chat_target
 
             # Execute attacks - use Foundry if orchestrator is not available
@@ -1488,7 +1527,10 @@ class RedTeam:
 
         # Calculate and log num_objectives_with_subtypes once globally
         num_objectives = self.attack_objective_generator.num_objectives
-        max_num_subtypes = max((RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories), default=0)
+        max_num_subtypes = max(
+            (RISK_TO_NUM_SUBTYPE_MAP.get(rc, 0) for rc in self.risk_categories),
+            default=0,
+        )
         num_objectives_with_subtypes = max(num_objectives, max_num_subtypes)
 
         if num_objectives_with_subtypes != num_objectives:
@@ -1601,7 +1643,11 @@ class RedTeam:
         progress_bar.close()
 
     async def _process_orchestrator_tasks(
-        self, orchestrator_tasks: List, parallel_execution: bool, max_parallel_tasks: int, timeout: int
+        self,
+        orchestrator_tasks: List,
+        parallel_execution: bool,
+        max_parallel_tasks: int,
+        timeout: int,
     ):
         """Process orchestrator tasks either in parallel or sequentially."""
         if parallel_execution and orchestrator_tasks:
@@ -1919,7 +1965,12 @@ class RedTeam:
             progress_bar.update(1)
 
     async def _finalize_results(
-        self, skip_upload: bool, skip_evals: bool, eval_run, output_path: str, scan_name: str
+        self,
+        skip_upload: bool,
+        skip_evals: bool,
+        eval_run,
+        output_path: str,
+        scan_name: str,
     ) -> RedTeamResult:
         """Process and finalize scan results."""
         log_section_header(self.logger, "Processing results")

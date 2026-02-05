@@ -51,10 +51,15 @@ def del_outdated_generated_files(tsp: str):
         content = yaml.safe_load(file_in)
     # tspconfig.yaml example: https://github.com/Azure/azure-rest-api-specs/pull/29080/files
     typespec_python_config = content.get("options", {}).get("@azure-tools/typespec-python", {})
-    service_dir = typespec_python_config.get("service-dir") or content.get("parameters", {}).get("service-dir", {}).get(
-        "default", ""
-    )
-    package_dir = typespec_python_config.get("emitter-output-dir", "").split("/")[-1]
+    emitter_output_dir = typespec_python_config.get("emitter-output-dir", "")
+    emitter_output_dir_parts = emitter_output_dir.split("/")
+    if "service-dir" in emitter_output_dir:
+        service_dir = typespec_python_config.get("service-dir") or content.get("parameters", {}).get(
+            "service-dir", {}
+        ).get("default", "")
+    else:
+        service_dir = emitter_output_dir_parts[-2] if len(emitter_output_dir_parts) >= 2 else ""
+    package_dir = emitter_output_dir_parts[-1]
     if not service_dir or not package_dir:
         _LOGGER.info(f"do not find service-dir or emitter-output-dir in tspconfig.yaml: {tspconfig}")
         return

@@ -20,7 +20,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterToolAuto,
+    CodeInterpreterContainerAuto,
     FunctionTool,
 )
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
@@ -41,7 +41,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         3. Function Tool: Agent saves the computed results
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -104,7 +104,7 @@ Please analyze this data for the quarterly review.
                 instructions="You are a data analyst. Use file search to find data files, code interpreter to calculate statistics, and ALWAYS save your analysis using the save_analysis function.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                     func_tool,
                 ],
             ),
