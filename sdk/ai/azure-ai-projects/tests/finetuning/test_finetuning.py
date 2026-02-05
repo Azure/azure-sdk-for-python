@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import os
 import pytest
 import time
 from pathlib import Path
@@ -424,7 +425,10 @@ class TestFineTuning(TestBase):
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
-    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="live only test",
+    )
     @pytest.mark.parametrize(
         "job_type,model_type,training_type",
         [
@@ -499,7 +503,10 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
-    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="live only test",
+    )
     @servicePreparer()
     @pytest.mark.parametrize(
         "job_type,expected_method_type",
@@ -580,7 +587,10 @@ class TestFineTuning(TestBase):
     def test_cancel_job(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         self._test_cancel_job_helper(job_type, model_type, training_type, expected_method_type, **kwargs)
 
-    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="live only test",
+    )
     @pytest.mark.parametrize(
         "job_type,model_type,training_type,expected_method_type",
         [
@@ -767,7 +777,10 @@ class TestFineTuning(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
+    @pytest.mark.skipif(
+        not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
+        reason="live only test",
+    )
     @pytest.mark.parametrize(
         "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
         [
