@@ -167,7 +167,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        return AzureBlobStorage(self.url, self.credential, version=self._api_version, pipeline=self._pipeline)
+        return AzureBlobStorage(self.url, credential=self._raw_credential, version=self._api_version, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
