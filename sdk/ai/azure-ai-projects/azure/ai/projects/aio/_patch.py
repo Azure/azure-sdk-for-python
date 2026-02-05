@@ -9,6 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
+import httpx
 from typing import List, Any
 from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -106,8 +107,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :return: An authenticated AsyncOpenAI client
         :rtype: ~openai.AsyncOpenAI
 
-        :raises ~azure.core.exceptions.ModuleNotFoundError: if the ``openai`` package
-         is not installed.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -118,107 +117,14 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             base_url,
         )
 
-        http_client = None
-
         kwargs = kwargs.copy() if kwargs else {}
 
-        if self._console_logging_enabled:
-            try:
-                import httpx
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError("Failed to import httpx. Please install it using 'pip install httpx'") from e
-
-            class OpenAILoggingTransport(httpx.AsyncHTTPTransport):
-
-                def _sanitize_auth_header(self, headers):
-                    """Sanitize authorization header by redacting sensitive information.
-
-                    :param headers: Dictionary of HTTP headers to sanitize
-                    :type headers: dict
-                    """
-
-                    if "authorization" in headers:
-                        auth_value = headers["authorization"]
-                        if len(auth_value) >= 7:
-                            headers["authorization"] = auth_value[:7] + "<REDACTED>"
-                        else:
-                            headers["authorization"] = "<ERROR>"
-
-                async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
-                    """
-                    Log HTTP request and response details to console, in a nicely formatted way,
-                    for OpenAI / Azure OpenAI clients.
-
-                    :param request: The HTTP request to handle and log
-                    :type request: httpx.Request
-
-                    :return: The HTTP response received
-                    :rtype: httpx.Response
-                    """
-
-                    print(f"\n==> Request:\n{request.method} {request.url}")
-                    headers = dict(request.headers)
-                    self._sanitize_auth_header(headers)
-                    print("Headers:")
-                    for key, value in sorted(headers.items()):
-                        print(f"  {key}: {value}")
-
-                    self._log_request_body(request)
-
-                    response = await super().handle_async_request(request)
-
-                    print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
-                    print("Headers:")
-                    for key, value in sorted(dict(response.headers).items()):
-                        print(f"  {key}: {value}")
-
-                    content = await response.aread()
-                    if content is None or content == b"":
-                        print("Body: [No content]")
-                    else:
-                        try:
-                            print(f"Body:\n {content.decode('utf-8')}")
-                        except Exception:  # pylint: disable=broad-exception-caught
-                            print(f"Body (raw):\n  {content!r}")
-                    print("\n")
-
-                    return response
-
-                def _log_request_body(self, request: httpx.Request) -> None:
-                    """Log request body content safely, handling binary data and streaming content.
-
-                    :param request: The HTTP request object containing the body to log
-                    :type request: httpx.Request
-                    """
-
-                    # Check content-type header to identify file uploads
-                    content_type = request.headers.get("content-type", "").lower()
-                    if "multipart/form-data" in content_type:
-                        print("Body: [Multipart form data - file upload, not logged]")
-                        return
-
-                    # Safely check if content exists without accessing it
-                    if not hasattr(request, "content"):
-                        print("Body: [No content attribute]")
-                        return
-
-                    # Very careful content access - wrap in try-catch immediately
-                    try:
-                        content = request.content
-                    except Exception as access_error:  # pylint: disable=broad-exception-caught
-                        print(f"Body: [Cannot access content: {access_error}]")
-                        return
-
-                    if content is None or content == b"":
-                        print("Body: [No content]")
-                        return
-
-                    try:
-                        print(f"Body:\n  {content.decode('utf-8')}")
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        print(f"Body (raw):\n  {content!r}")
-
+        if "http_client" in kwargs:
+            http_client = kwargs.pop("http_client")
+        elif self._console_logging_enabled:
             http_client = httpx.AsyncClient(transport=OpenAILoggingTransport())
+        else:
+            http_client = None
 
         default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
 
@@ -254,6 +160,107 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         client = _create_openai_client(default_headers=default_headers, **kwargs)
 
         return client
+
+
+class OpenAILoggingTransport(httpx.AsyncHTTPTransport):
+    """Custom HTTP async transport that logs OpenAI API requests and responses to the console.
+
+    This transport wraps httpx.AsyncHTTPTransport to intercept all HTTP traffic and print
+    detailed request/response information for debugging purposes. It automatically
+    redacts sensitive authorization headers and handles various content types including
+    multipart form data (file uploads).
+
+    Used internally by AIProjectClient when console logging is enabled via the
+    AZURE_AI_PROJECTS_CONSOLE_LOGGING environment variable.
+    """
+
+    def _sanitize_auth_header(self, headers):
+        """Sanitize authorization header by redacting sensitive information.
+
+        :param headers: Dictionary of HTTP headers to sanitize
+        :type headers: dict
+        """
+
+        if "authorization" in headers:
+            auth_value = headers["authorization"]
+            if len(auth_value) >= 7:
+                headers["authorization"] = auth_value[:7] + "<REDACTED>"
+            else:
+                headers["authorization"] = "<ERROR>"
+
+    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+        """
+        Log HTTP request and response details to console, in a nicely formatted way,
+        for OpenAI / Azure OpenAI clients.
+
+        :param request: The HTTP request to handle and log
+        :type request: httpx.Request
+
+        :return: The HTTP response received
+        :rtype: httpx.Response
+        """
+
+        print(f"\n==> Request:\n{request.method} {request.url}")
+        headers = dict(request.headers)
+        self._sanitize_auth_header(headers)
+        print("Headers:")
+        for key, value in sorted(headers.items()):
+            print(f"  {key}: {value}")
+
+        self._log_request_body(request)
+
+        response = await super().handle_async_request(request)
+
+        print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
+        print("Headers:")
+        for key, value in sorted(dict(response.headers).items()):
+            print(f"  {key}: {value}")
+
+        content = await response.aread()
+        if content is None or content == b"":
+            print("Body: [No content]")
+        else:
+            try:
+                print(f"Body:\n {content.decode('utf-8')}")
+            except Exception:  # pylint: disable=broad-exception-caught
+                print(f"Body (raw):\n  {content!r}")
+        print("\n")
+
+        return response
+
+    def _log_request_body(self, request: httpx.Request) -> None:
+        """Log request body content safely, handling binary data and streaming content.
+
+        :param request: The HTTP request object containing the body to log
+        :type request: httpx.Request
+        """
+
+        # Check content-type header to identify file uploads
+        content_type = request.headers.get("content-type", "").lower()
+        if "multipart/form-data" in content_type:
+            print("Body: [Multipart form data - file upload, not logged]")
+            return
+
+        # Safely check if content exists without accessing it
+        if not hasattr(request, "content"):
+            print("Body: [No content attribute]")
+            return
+
+        # Very careful content access - wrap in try-catch immediately
+        try:
+            content = request.content
+        except Exception as access_error:  # pylint: disable=broad-exception-caught
+            print(f"Body: [Cannot access content: {access_error}]")
+            return
+
+        if content is None or content == b"":
+            print("Body: [No content]")
+            return
+
+        try:
+            print(f"Body:\n  {content.decode('utf-8')}")
+        except Exception:  # pylint: disable=broad-exception-caught
+            print(f"Body (raw):\n  {content!r}")
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level
