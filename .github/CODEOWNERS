@@ -228,8 +228,8 @@
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
 
-# ServiceLabel: %Data Factory
-# PRLabel: %Data Factory
+# ServiceLabel: %Data Lake
+# PRLabel: %Data Lake
 /sdk/datalake/                                                       @ro-joowan
 
 # ServiceLabel: %Data Migration
