@@ -46,6 +46,14 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         super().__init__(credentials, thread_repository)
         self._workflow_factory = workflow_factory
 
+        # Validate mutual exclusion of managed_checkpoints and checkpoint_repository
+        if managed_checkpoints and checkpoint_repository is not None:
+            raise ValueError(
+                "Cannot use both managed_checkpoints=True and checkpoint_repository. "
+                "Use managed_checkpoints=True for Azure AI Foundry managed storage, "
+                "or provide your own checkpoint_repository, but not both."
+            )
+
         # Handle managed checkpoints
         if managed_checkpoints:
             resolved_endpoint = get_project_endpoint() or project_endpoint

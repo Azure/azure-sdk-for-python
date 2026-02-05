@@ -116,14 +116,6 @@ def from_agent_framework(
                        or if both managed_checkpoints=True and checkpoint_repository are provided.
     """
 
-    # Validate mutual exclusion of managed_checkpoints and checkpoint_repository
-    if managed_checkpoints and checkpoint_repository is not None:
-        raise ValueError(
-            "Cannot use both managed_checkpoints=True and checkpoint_repository. "
-            "Use managed_checkpoints=True for Azure AI Foundry managed storage, "
-            "or provide your own checkpoint_repository, but not both."
-        )
-
     if isinstance(agent_or_workflow, WorkflowBuilder):
         return AgentFrameworkWorkflowAdapter(
             workflow_factory=agent_or_workflow.build,
