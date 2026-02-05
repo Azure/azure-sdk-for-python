@@ -7,12 +7,13 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
 
+from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
 from ._operations import (
     _AppendBlobClientOperationsMixin,
     _BlobClientOperationsMixin,
@@ -25,6 +26,37 @@ from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+
+class BlobClientConfiguration(GeneratedBlobClientConfiguration):
+    """Configuration for BlobClient that allows optional credentials.
+
+    This class overrides the generated configuration to allow None credentials
+    for anonymous access to public blobs.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Can be None for
+     anonymous access.
+    :type credential: ~azure.core.credentials.TokenCredential or None
+    :keyword version: Specifies the version of the operation to use for this request.
+    :paramtype version: str
+    """
+
+    def __init__(self, url: str, credential: Optional["TokenCredential"] = None, **kwargs: Any) -> None:
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+
+        version: str = kwargs.pop("version", "2026-04-06")
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        from ._version import VERSION
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
 
 
 class _ServiceOperationsWrapper(_ServiceClientOperationsMixin):
@@ -104,14 +136,11 @@ class AzureBlobStorage:
     def __init__(
         self,
         url: str,
-        credential: "TokenCredential",
+        credential: Optional["TokenCredential"] = None,
         *,
-        base_url: str = None,  # type: ignore
         pipeline: Any = None,
         **kwargs: Any
     ) -> None:
-        from ._configuration import BlobClientConfiguration
-
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
@@ -162,7 +191,7 @@ class AzureBlobStorage:
         self._client.__exit__(*exc_details)
 
 
-__all__: list[str] = ["AzureBlobStorage"]
+__all__: list[str] = ["AzureBlobStorage", "BlobClientConfiguration"]
 
 
 def patch_sdk():
