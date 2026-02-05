@@ -96,11 +96,17 @@ def get_bundle_name(package_name: str) -> Optional[str]:
     return None
 
 
-def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
-    """Create a mapping of bundle names to their constituent package names."""
+def map_bundle_to_packages(
+    package_names: List[str],
+) -> Tuple[Dict[str, List[str]], List[str]]:
+    """Create a mapping of bundle names to their constituent package names.
+
+    :return: Tuple of (bundle_map, failed_packages) where failed_packages are packages that threw exceptions.
+    """
     logger.info("Mapping bundle names to packages...")
 
     bundle_map = {}
+    failed_packages = []
     for package_name in package_names:
         logger.debug(f"Processing package for bundle mapping: {package_name}")
         try:
@@ -110,9 +116,10 @@ def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
                 bundle_map.setdefault(bundle_name, []).append(package_name)
         except Exception as e:
             logger.error(f"Failed to get bundle name for {package_name}: {e}")
+            failed_packages.append(package_name)
             continue
 
-    return bundle_map
+    return bundle_map, failed_packages
 
 
 # =====================================

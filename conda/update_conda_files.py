@@ -1040,7 +1040,9 @@ if __name__ == "__main__":
 
     # pre-process bundled data packages to minimize file writes for new data plane packages,
     # and release logs (mgmt packages are always bundled together)
-    bundle_map = map_bundle_to_packages([pkg.get(PACKAGE_COL, "") for pkg in data_pkgs])
+    bundle_map, bundle_failed_pkgs = map_bundle_to_packages(
+        [pkg.get(PACKAGE_COL, "") for pkg in data_pkgs]
+    )
     logger.info(
         f"Identified {len(bundle_map)} release bundles from package data: {bundle_map}"
     )
@@ -1099,6 +1101,13 @@ if __name__ == "__main__":
             "\nThe following management plane packages may require manual adjustments in azure-mgmt release log:"
         )
         for pkg_name in mgmt_plane_release_log_results:
+            print(f"- {pkg_name}")
+
+    if bundle_failed_pkgs:
+        print(
+            "\nThe following packages errored when constructing bundle map, they may need a [tool.azure-sdk-conda] section in their pyproject.toml for proper release grouping, and may have been improperly individually processed."
+        )
+        for pkg_name in bundle_failed_pkgs:
             print(f"- {pkg_name}")
 
     if len(new_data_plane_names) > 0:
