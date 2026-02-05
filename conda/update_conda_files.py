@@ -429,7 +429,7 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
 
 
 def get_package_metadata(
-    package_name: str, package_path: Optional[str], is_bundle: bool = False
+    package_name: str, package_path: str, is_bundle: bool = False
 ) -> Tuple[str, str, str]:
     """Extract package metadata for about section in meta.yaml.
 
@@ -437,10 +437,7 @@ def get_package_metadata(
     :param package_path: The filesystem path to the package.
     :param is_bundle: Whether this is a release bundle (affects URL structure).
     """
-    if package_path:
-        service_dir = os.path.basename(os.path.dirname(package_path))
-    else:
-        service_dir = package_name.replace("azure-", "")
+    service_dir = os.path.basename(os.path.dirname(package_path))
 
     # For bundles, URL points to service directory; for individual packages, include package name
     if is_bundle:
@@ -498,12 +495,25 @@ def generate_data_plane_meta_yaml(
         pkg_imports = list(set(pkg_imports))  # deduplicate
 
         package_path = get_package_path(bundle_map[bundle_name][0])
+
+        if not package_path:
+            logger.error(
+                f"Could not find package path for {bundle_name} to extract metadata, skipping meta.yaml generation"
+            )
+            return ""
+
         home_url, summary, description = get_package_metadata(
             bundle_name, package_path, is_bundle=True
         )
     else:
         logger.info(f"Generating meta.yaml for package {package_name}")
         package_path = get_package_path(package_name)
+
+        if not package_path:
+            logger.error(
+                f"Could not find package path for {package_name} to extract metadata, skipping meta.yaml generation"
+            )
+            return ""
         parsed_setup = ParsedSetup.from_path(package_path)
 
         host_reqs, run_reqs = get_package_requirements(parsed_setup)
@@ -598,6 +608,13 @@ def add_new_data_plane_packages(
         except Exception as e:
             logger.error(
                 f"Failed to generate meta.yaml content for {package_name} and skipping, error: {e}"
+            )
+            result.append(package_name)
+            continue
+
+        if not meta_yml:
+            logger.error(
+                f"Meta.yaml content for {package_name} is empty, skipping file creation"
             )
             result.append(package_name)
             continue

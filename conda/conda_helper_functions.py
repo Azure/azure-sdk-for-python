@@ -56,7 +56,7 @@ def get_package_path(package_name: str) -> Optional[str]:
     path_index = _build_package_path_index()
     package_path = path_index.get(package_name)
     if not package_path:
-        logger.error(f"Package path not found for package: {package_name}")
+        logger.warning(f"Package path not found for package: {package_name}")
         return None
     return package_path
 
