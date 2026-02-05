@@ -1495,17 +1495,16 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        # options = _create_page_blob_options( # TODO: do we need?
-        #     size=size,
-        #     content_settings=content_settings,
-        #     metadata=metadata,
-        #     premium_page_blob_tier=premium_page_blob_tier,
-        #     **kwargs)
-        try:
-            return cast(Dict[str, Any], await self._client.page_blob.create(  size=size,
+        options = _create_page_blob_options( # TODO: do we need?
+            size=size,
             content_settings=content_settings,
             metadata=metadata,
             premium_page_blob_tier=premium_page_blob_tier,
+            **kwargs)
+        try:
+            return cast(Dict[str, Any], await self._client.page_blob.create(
+            metadata=metadata,
+            **options,
             **kwargs))
         except HttpResponseError as error:
             process_storage_error(error)
