@@ -1,5 +1,9 @@
 # Release History
 
+## 24.1.0 (2026-02-04)
+
+change log generation failed!!! You need to write it manually!!!
+
 ## 25.0.0b1 (2025-07-16)
 
 ### Breaking Changes
