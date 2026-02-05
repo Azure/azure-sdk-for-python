@@ -446,8 +446,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         Expands snapshot references in configuration settings to their actual settings.
 
         :param configuration_settings: List of configuration settings that may contain snapshot references.
+        :type configuration_settings: List[~azure.appconfiguration.ConfigurationSetting]
         :param client: The configuration client used to resolve snapshot references.
+        :type client: ~azure.appconfiguration.provider.aio.ConfigurationClient
         :return: List of configuration settings with snapshot references expanded.
+        :rtype: List[~azure.appconfiguration.ConfigurationSetting]
         """
         expanded_settings: List[ConfigurationSetting] = []
 

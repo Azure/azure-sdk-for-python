@@ -137,9 +137,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
-        configuration_settings = []
+        configuration_settings: List[ConfigurationSetting] = []
         for select in selects:
-            configurations = []
+            configurations: List[ConfigurationSetting] = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 snapshot = self._client.get_snapshot(select.snapshot_name)
@@ -287,11 +287,12 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             # Parse the snapshot reference
             snapshot_name = SnapshotReferenceParser.parse(setting)
 
+            snapshot = self._client.get_snapshot(snapshot_name)
+            if snapshot.composition_type != SnapshotComposition.KEY:
+                raise ValueError(f"Snapshot '{snapshot_name}' is not a key snapshot.")
+
             # Create a selector for the snapshot
             snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
-
-            if snapshot.composition_type != SnapshotComposition.KEY:
-                raise ValueError(f"Snapshot '{snapshot_selector.snapshot_name}' is not a key snapshot.")
 
             # Use existing load_configuration_settings to load from snapshot
             configurations = self.load_configuration_settings([snapshot_selector], **kwargs)
