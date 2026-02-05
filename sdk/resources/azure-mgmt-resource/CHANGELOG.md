@@ -6,16 +6,8 @@
 
   - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
   - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need to change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
-  - The `subscriptions` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-subscriptions`
-  - The `features` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-features`
-  - The `links` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-links`
-  - The `locks` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-locks`
-  - The `policy` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-policy`
-  - The `managedapplications` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-managedapplications`
-  - The `databoundaries` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-databoundaries`
-  - The `changes` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-changes`
-  - The `privatelinks` module has been separated from the `azure-mgmt-resource` package into independent package `azure-mgmt-resource-privatelinks`
-  - For separated modules, if you previously imported them using statements like `from azure.mgmt.resource import SubscriptionClient`, you'll need to update your code to `from azure.mgmt.resource.subscriptions import SubscriptionClient`. If you were already using the fully qualified import path, no changes are required. This applies to all separated modules: `subscriptions`, `features`, `links`, `locks`, `policy`, `managedapplications`, `databoundaries`, `changes`, and `privatelinks`.
+  - The following modules have been separated from `azure-mgmt-resource` into independent packages: `subscriptions`, `features`, `links`, `locks`, `policy`, `managedapplications`, `databoundaries`, `changes`, and `privatelinks`. Each module is now available as `azure-mgmt-resource-{module}`.
+  - For separated modules, if you previously imported them using statements like `from azure.mgmt.resource import SubscriptionClient`, you'll need to update your code to `from azure.mgmt.resource.subscriptions import SubscriptionClient`. If you were already using the fully qualified import path, no changes are required.
 
 ## 25.0.0b1 (2025-07-16)
 
