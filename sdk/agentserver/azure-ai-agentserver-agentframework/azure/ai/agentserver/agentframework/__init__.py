@@ -11,7 +11,6 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 
 from azure.ai.agentserver.core.application import PackageMetadata, set_current_app  # pylint: disable=import-error,no-name-in-module
-from azure.ai.agentserver.core.logger import get_project_endpoint  # pylint: disable=import-error,no-name-in-module
 
 from ._version import VERSION
 from ._agent_framework import AgentFrameworkAgent
@@ -116,32 +115,24 @@ def from_agent_framework(
     :raises ValueError: If managed_checkpoints=True but required parameters are missing.
     """
 
-    # Handle managed checkpoints
-    if managed_checkpoints:
-        # Try to get project_endpoint from environment variable if not provided
-        resolved_endpoint = get_project_endpoint() or project_endpoint
-        if not resolved_endpoint:
-            raise ValueError(
-                "project_endpoint is required when managed_checkpoints=True. "
-                "Set AZURE_AI_PROJECT_ENDPOINT environment variable or pass project_endpoint parameter."
-            )
-        if not credentials:
-            raise ValueError("credentials are required when managed_checkpoints=True")
-        checkpoint_repository = FoundryCheckpointRepository(
-            project_endpoint=resolved_endpoint,
-            credential=credentials,
-        )
-
     if isinstance(agent_or_workflow, WorkflowBuilder):
-        return AgentFrameworkWorkflowAdapter(workflow_factory=agent_or_workflow.build,
-                                            credentials=credentials,
-                                            thread_repository=thread_repository,
-                                            checkpoint_repository=checkpoint_repository)
+        return AgentFrameworkWorkflowAdapter(
+            workflow_factory=agent_or_workflow.build,
+            credentials=credentials,
+            thread_repository=thread_repository,
+            checkpoint_repository=checkpoint_repository,
+            managed_checkpoints=managed_checkpoints,
+            project_endpoint=project_endpoint,
+        )
     if isinstance(agent_or_workflow, Callable):  # type: ignore
-        return AgentFrameworkWorkflowAdapter(workflow_factory=agent_or_workflow,
-                                            credentials=credentials,
-                                            thread_repository=thread_repository,
-                                            checkpoint_repository=checkpoint_repository)
+        return AgentFrameworkWorkflowAdapter(
+            workflow_factory=agent_or_workflow,
+            credentials=credentials,
+            thread_repository=thread_repository,
+            checkpoint_repository=checkpoint_repository,
+            managed_checkpoints=managed_checkpoints,
+            project_endpoint=project_endpoint,
+        )
     # raise TypeError("workflow must be a WorkflowBuilder or callable returning a Workflow")
 
     if isinstance(agent_or_workflow, (AgentProtocol, BaseAgent)):
