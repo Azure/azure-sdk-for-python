@@ -1,10 +1,6 @@
 # Release History
 
-## 1.0.0b48 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.0.0b48 (2026-02-05)
 
 ### Bugs Fixed
 - Fix CPU usage calculation logic for live metrics
