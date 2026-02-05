@@ -2,4 +2,5 @@
 ../../core/azure-core
 ../../identity/azure-identity
 ../../core/azure-mgmt-core
+../../logic/azure-mgmt-logic
 aiohttp
