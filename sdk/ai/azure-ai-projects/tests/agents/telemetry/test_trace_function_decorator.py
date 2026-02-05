@@ -271,9 +271,10 @@ class TestTraceFunctionDecorator:
         assert span.attributes is not None
         assert "code.function.parameter.items" in span.attributes
         assert "code.function.return.value" in span.attributes
-        
+
         # Convert the string back to a set for comparison
         import ast
+
         items_str = span.attributes["code.function.parameter.items"]
         assert isinstance(items_str, str)
         items_value = ast.literal_eval(items_str)

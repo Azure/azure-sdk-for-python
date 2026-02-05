@@ -9,7 +9,8 @@ from typing import Any, Callable, Optional, Dict
 try:
     # pylint: disable = no-name-in-module
     from opentelemetry import trace as opentelemetry_trace
-    tracer = opentelemetry_trace.get_tracer(__name__)  # type: ignore[attr-defined]
+
+    _tracer = opentelemetry_trace.get_tracer(__name__)  # type: ignore[attr-defined]
     _tracing_library_available = True
 except ModuleNotFoundError:
     _tracing_library_available = False
@@ -135,8 +136,6 @@ def sanitize_parameters(func, *args, **kwargs) -> Dict[str, Any]:
     :return: A dictionary of sanitized parameters.
     :rtype: Dict[str, Any]
     """
-    import inspect
-
     params = inspect.signature(func).parameters
     sanitized_params = {}
 
@@ -144,12 +143,9 @@ def sanitize_parameters(func, *args, **kwargs) -> Dict[str, Any]:
         if i < len(args):
             # Use positional argument if provided
             value = args[i]
-        elif name in kwargs:
-            # Use keyword argument if provided
-            value = kwargs[name]
         else:
-            # Fall back to default value
-            value = param.default
+            # Use keyword argument if provided, otherwise fall back to default value
+            value = kwargs.get(name, param.default)
 
         sanitized_value = sanitize_for_attributes(value)
         # Check if the collection has nested collections
