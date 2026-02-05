@@ -400,7 +400,7 @@ def get_package_requirements(parsed: ParsedSetup) -> tuple[list[str], list[str]]
     run_requirements = set(["python"])
 
     # reqs commonly seen in existing meta.yaml files that aren't always in setup.py or pyproject.toml
-    for essential_req in ["azure-identity", "azure-core", "aiohttp"]:
+    for essential_req in ["azure-core", "aiohttp"]:
         req_name = format_requirement(essential_req)
         host_requirements.add(req_name)
         run_requirements.add(req_name)
