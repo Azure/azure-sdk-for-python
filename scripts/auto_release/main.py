@@ -329,9 +329,11 @@ class CodegenTestPR:
         pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv("USR_NAME"), self.new_branch)
         pr_base = "main"
-        pr_body = "{} \n{} \n After PR merged, trigger [release pipeline]({}) to release".format(
-            self.issue_link, self.test_result, self.release_pipeline_link
-        )
+        pr_body = "PR for release issue {}".format(self.issue_link)
+        if self.release_pipeline_link:
+            pr_body += " \n After PR merged, trigger [release pipeline]({}) to release".format(
+                self.release_pipeline_link
+            )
         if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
         pr_body += "\n\n (Just to record: this PR was created by this [pipeline]({}))".format(
