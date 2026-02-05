@@ -78,6 +78,7 @@ class CodegenTestPR:
         self.target_date = os.getenv("TARGET_DATE", "")
         self.test_folder = os.getenv("TEST_FOLDER", "")
         self.issue_owner = os.getenv("ISSUE_OWNER", "")
+        self.enable_swagger = os.getenv("ENABLE_SWAGGER", "").lower() == "true"
 
         self.package_name = ""  # 'dns' of 'sdk/compute/azure-mgmt-dns'
         self.whole_package_name = ""  # 'azure-mgmt-dns'
@@ -133,6 +134,9 @@ class CodegenTestPR:
 
     @property
     def from_swagger(self) -> bool:
+        # When ENABLE_SWAGGER is true, prioritize readme.md instead of tspconfig.yaml
+        if self.enable_swagger:
+            return True
         return "readme.md" in self.spec_readme
 
     def generate_code(self):

@@ -94,6 +94,7 @@ jobs:
         export TARGET_DATE=$(TARGET_DATE)
         export TEST_FOLDER=$(TEST_FOLDER)
         export ISSUE_OWNER=$(ISSUE_OWNER)
+        export ENABLE_SWAGGER=$(ENABLE_SWAGGER)
 
         # install azure-sdk-tools
         python -m pip install $root_path/eng/tools/azure-sdk-tools[build,ghtools,sdkgenerator]
