@@ -36,10 +36,10 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
-    ResponsesUserMessageItemParam,
 )
 
 load_dotenv()
@@ -81,10 +81,8 @@ with (
     # You can also use "{{$userId}}" to take the oid of the request authentication header
     scope = "user_123"
 
-    # Add memories to the memory store
-    user_message = ResponsesUserMessageItemParam(
-        content="I prefer dark roast coffee and usually drink it in the morning"
-    )
+    # Add a memory to the memory store
+    user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
     update_poller = project_client.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
@@ -101,7 +99,7 @@ with (
         )
 
     # Retrieve memories from the memory store
-    query_message = ResponsesUserMessageItemParam(content="What are my coffee preferences?")
+    query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
     search_response = project_client.memory_stores.search_memories(
         name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
     )

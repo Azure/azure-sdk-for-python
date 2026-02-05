@@ -52,6 +52,8 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for retry modes."""
+
     # pylint: disable=enum-must-be-uppercase
     Exponential = "exponential"
     Fixed = "fixed"
@@ -104,7 +106,7 @@ class RetryPolicyBase:
             "read": options.pop("retry_read", self.read_retries),
             "status": options.pop("retry_status", self.status_retries),
             "backoff": options.pop("retry_backoff_factor", self.backoff_factor),
-            "max_backoff": options.pop("retry_backoff_max", self.BACKOFF_MAX),
+            "max_backoff": options.pop("retry_backoff_max", self.backoff_max),
             "methods": options.pop("retry_on_methods", self._method_whitelist),
             "timeout": options.pop("timeout", self.timeout),
             "history": [],
@@ -394,28 +396,21 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HttpRequest, HttpResponse]):
 
     :keyword int retry_total: Total number of retries to allow. Takes precedence over other counts.
      Default value is 10.
-
     :keyword int retry_connect: How many connection-related errors to retry on.
      These are errors raised before the request is sent to the remote server,
      which we assume has not triggered the server to process the request. Default value is 3.
-
     :keyword int retry_read: How many times to retry on read errors.
      These errors are raised after the request was sent to the server, so the
      request may have side-effects. Default value is 3.
-
     :keyword int retry_status: How many times to retry on bad status codes. Default value is 3.
-
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
      In fixed mode, retry policy will always sleep for {backoff factor}.
      In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
-
     :keyword int retry_backoff_max: The maximum back off time. Default value is 120 seconds (2 minutes).
-
     :keyword RetryMode retry_mode: Fixed or exponential delay between attemps, default is exponential.
-
     :keyword int timeout: Timeout setting for the operation in seconds, default is 604800s (7 days).
     """
 
@@ -481,10 +476,10 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy[HttpRequest, HttpResponse]):
 
         :param request: The PipelineRequest object
         :type request: ~corehttp.runtime.pipeline.PipelineRequest
-        :return: Returns the PipelineResponse or raises error if maximum retries exceeded.
+        :return: The PipelineResponse.
         :rtype: ~corehttp.runtime.pipeline.PipelineResponse
-        :raises: ~corehttp.exceptions.BaseError if maximum retries exceeded.
-        :raises: ~corehttp.exceptions.ClientAuthenticationError if authentication
+        :raises ~corehttp.exceptions.BaseError: if maximum retries exceeded.
+        :raises ~corehttp.exceptions.ClientAuthenticationError: if authentication fails.
         """
         retry_active = True
         response = None

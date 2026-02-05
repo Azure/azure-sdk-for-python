@@ -8,7 +8,7 @@
 DESCRIPTION:
     These samples demonstrate usage of various classes and methods used in Red Team
     functionality within the azure-ai-evaluation library.
-    
+
 USAGE:
     python red_team_samples.py
 
