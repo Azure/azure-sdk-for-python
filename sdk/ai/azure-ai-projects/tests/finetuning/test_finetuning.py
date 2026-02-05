@@ -407,15 +407,8 @@ class TestFineTuning(TestBase):
         "job_type,model_type,training_type",
         [
             (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
-            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
-            (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
             (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
-            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
             (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE),
-            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
-            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
         ],
     )
     @servicePreparer()
@@ -431,13 +424,37 @@ class TestFineTuning(TestBase):
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
+    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type",
+        [
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+            (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (DPO_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE),
+            (RFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE),
+        ],
+    )
+    @servicePreparer()
+    @_pass_create_args
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_create_job_live_extended(self, job_type, model_type, training_type, **kwargs):
+        if job_type == SFT_JOB_TYPE:
+            self._test_sft_create_job_helper(model_type, training_type, **kwargs)
+        elif job_type == DPO_JOB_TYPE:
+            self._test_dpo_create_job_helper(model_type, training_type, **kwargs)
+        elif job_type == RFT_JOB_TYPE:
+            self._test_rft_create_job_helper(model_type, training_type, **kwargs)
+        else:
+            raise ValueError(f"Unsupported job type: {job_type}")
+
     @servicePreparer()
     @pytest.mark.parametrize(
         "job_type,expected_method_type",
         [
             (SFT_JOB_TYPE, SUPERVISED_METHOD_TYPE),
-            (DPO_JOB_TYPE, DPO_METHOD_TYPE),
-            (RFT_JOB_TYPE, REINFORCEMENT_METHOD_TYPE),
         ],
     )
     @_pass_retrieve_args
@@ -482,6 +499,57 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
+    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @servicePreparer()
+    @pytest.mark.parametrize(
+        "job_type,expected_method_type",
+        [
+            (DPO_JOB_TYPE, DPO_METHOD_TYPE),
+            (RFT_JOB_TYPE, REINFORCEMENT_METHOD_TYPE),
+        ],
+    )
+    @_pass_retrieve_args
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_retrieve_job_live_extended(self, job_type, expected_method_type, **kwargs):
+        with self.create_client(**kwargs) as project_client:
+            with project_client.get_openai_client() as openai_client:
+
+                train_file, validation_file = self._upload_test_files(openai_client, job_type)
+
+                if job_type == SFT_JOB_TYPE:
+                    fine_tuning_job = self._create_sft_finetuning_job(
+                        openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                    )
+                elif job_type == DPO_JOB_TYPE:
+                    fine_tuning_job = self._create_dpo_finetuning_job(
+                        openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                    )
+                elif job_type == RFT_JOB_TYPE:
+                    fine_tuning_job = self._create_rft_finetuning_job(
+                        openai_client, train_file.id, validation_file.id, STANDARD_TRAINING_TYPE, OPENAI_MODEL_TYPE
+                    )
+
+                print(f"[test_finetuning_retrieve_{job_type}_live] Created job: {fine_tuning_job.id}")
+
+                retrieved_job = openai_client.fine_tuning.jobs.retrieve(fine_tuning_job.id)
+                print(f"[test_finetuning_retrieve_{job_type}_live] Retrieved job: {retrieved_job.id}")
+
+                TestBase.validate_fine_tuning_job(retrieved_job, expected_job_id=fine_tuning_job.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.training_file, train_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.validation_file, validation_file.id)
+                TestBase.assert_equal_or_not_none(retrieved_job.trainingType.lower(), STANDARD_TRAINING_TYPE.lower())
+                assert retrieved_job.method is not None, f"Method should not be None for {job_type} job"
+                TestBase.assert_equal_or_not_none(retrieved_job.method.type, expected_method_type)
+                assert (
+                    self.test_finetuning_params[job_type][OPENAI_MODEL_TYPE]["model_name"] in retrieved_job.model
+                ), f"Expected model name {self.test_finetuning_params[job_type][OPENAI_MODEL_TYPE]['model_name']} not found in {retrieved_job.model}"
+
+                openai_client.fine_tuning.jobs.cancel(fine_tuning_job.id)
+                print(f"[test_finetuning_retrieve_{job_type}_live] Cancelled job: {fine_tuning_job.id}")
+
+                self._cleanup_test_file(openai_client, train_file.id)
+                self._cleanup_test_file(openai_client, validation_file.id)
+
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_finetuning_list_jobs(self, **kwargs):
@@ -504,6 +572,18 @@ class TestFineTuning(TestBase):
         "job_type,model_type,training_type,expected_method_type",
         [
             (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
+        ],
+    )
+    @servicePreparer()
+    @_pass_cancel_args
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_cancel_job(self, job_type, model_type, training_type, expected_method_type, **kwargs):
+        self._test_cancel_job_helper(job_type, model_type, training_type, expected_method_type, **kwargs)
+
+    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.parametrize(
+        "job_type,model_type,training_type,expected_method_type",
+        [
             (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
             (SFT_JOB_TYPE, OPENAI_MODEL_TYPE, DEVELOPER_TIER_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
             (SFT_JOB_TYPE, OSS_MODEL_TYPE, GLOBAL_STANDARD_TRAINING_TYPE, SUPERVISED_METHOD_TYPE),
@@ -518,7 +598,7 @@ class TestFineTuning(TestBase):
     @servicePreparer()
     @_pass_cancel_args
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_cancel_job(self, job_type, model_type, training_type, expected_method_type, **kwargs):
+    def test_cancel_job_live_extended(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         self._test_cancel_job_helper(job_type, model_type, training_type, expected_method_type, **kwargs)
 
     @servicePreparer()
@@ -669,6 +749,28 @@ class TestFineTuning(TestBase):
                 "test_deploy_infer_oai_sft",
                 "Who invented the telephone?",
             ),
+        ],
+    )
+    @servicePreparer()
+    @_pass_deploy_args
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_deploy_and_infer_job(
+        self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
+    ):
+        completed_job_id = kwargs.get(job_id_env_var)
+        self._test_deploy_and_infer_helper(
+            completed_job_id,
+            deployment_format,
+            deployment_capacity,
+            test_prefix,
+            inference_content,
+            **kwargs,
+        )
+
+    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.parametrize(
+        "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
+        [
             (
                 "completed_oai_model_rft_fine_tuning_job_id",
                 "OpenAI",
@@ -695,7 +797,7 @@ class TestFineTuning(TestBase):
     @servicePreparer()
     @_pass_deploy_args
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_deploy_and_infer_job(
+    def test_deploy_and_infer_job_live_extended(
         self, job_id_env_var, deployment_format, deployment_capacity, test_prefix, inference_content, **kwargs
     ):
         completed_job_id = kwargs.get(job_id_env_var)
