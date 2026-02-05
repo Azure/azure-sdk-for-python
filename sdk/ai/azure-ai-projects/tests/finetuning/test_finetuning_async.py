@@ -23,7 +23,7 @@ from test_base import (
     OSS_MODEL_TYPE,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import is_live, RecordedTransport
+from devtools_testutils import is_live, RecordedTransport, is_live_and_not_recording
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient as CognitiveServicesManagementClientAsync
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
@@ -435,7 +435,7 @@ class TestFineTuningAsync(TestBase):
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_type,model_type,training_type",
         [
@@ -512,7 +512,7 @@ class TestFineTuningAsync(TestBase):
             await self._cleanup_test_file_async(openai_client, train_file.id)
             await self._cleanup_test_file_async(openai_client, validation_file.id)
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_type,expected_method_type",
         [
@@ -600,7 +600,7 @@ class TestFineTuningAsync(TestBase):
     async def test_cancel_job_async(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         await self._test_cancel_job_helper_async(job_type, model_type, training_type, expected_method_type, **kwargs)
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_type,model_type,training_type,expected_method_type",
         [
@@ -799,7 +799,7 @@ class TestFineTuningAsync(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
         [

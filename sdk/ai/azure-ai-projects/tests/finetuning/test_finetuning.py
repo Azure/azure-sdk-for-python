@@ -22,7 +22,7 @@ from test_base import (
     OPENAI_MODEL_TYPE,
     OSS_MODEL_TYPE,
 )
-from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live
+from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live, is_live_and_not_recording
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.models import Deployment, DeploymentProperties, DeploymentModel, Sku
 
@@ -424,7 +424,7 @@ class TestFineTuning(TestBase):
         else:
             raise ValueError(f"Unsupported job type: {job_type}")
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_type,model_type,training_type",
         [
@@ -499,7 +499,7 @@ class TestFineTuning(TestBase):
                 self._cleanup_test_file(openai_client, train_file.id)
                 self._cleanup_test_file(openai_client, validation_file.id)
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @servicePreparer()
     @pytest.mark.parametrize(
         "job_type,expected_method_type",
@@ -580,7 +580,7 @@ class TestFineTuning(TestBase):
     def test_cancel_job(self, job_type, model_type, training_type, expected_method_type, **kwargs):
         self._test_cancel_job_helper(job_type, model_type, training_type, expected_method_type, **kwargs)
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_type,model_type,training_type,expected_method_type",
         [
@@ -767,7 +767,7 @@ class TestFineTuning(TestBase):
             **kwargs,
         )
 
-    @pytest.mark.skipif(not is_live(), reason="live only test")
+    @pytest.mark.skipif(not is_live_and_not_recording(), reason="live only test")
     @pytest.mark.parametrize(
         "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
         [
