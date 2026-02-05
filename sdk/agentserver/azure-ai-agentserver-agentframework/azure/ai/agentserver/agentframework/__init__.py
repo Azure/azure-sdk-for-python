@@ -11,6 +11,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 
 from azure.ai.agentserver.core.application import PackageMetadata, set_current_app  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core.logger import get_project_endpoint  # pylint: disable=import-error,no-name-in-module
 
 from ._version import VERSION
 from ._agent_framework import AgentFrameworkAgent
@@ -71,7 +72,8 @@ def from_agent_framework(
     :type checkpoint_repository: Optional[CheckpointRepository]
     :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
     :type managed_checkpoints: bool
-    :param project_endpoint: The Azure AI Foundry project endpoint (required if managed_checkpoints=True).
+    :param project_endpoint: The Azure AI Foundry project endpoint. If not provided,
+        will be read from AZURE_AI_PROJECT_ENDPOINT environment variable.
         Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
     :type project_endpoint: Optional[str]
     :return: An instance of AgentFrameworkWorkflowAdapter.
@@ -103,7 +105,8 @@ def from_agent_framework(
     :type checkpoint_repository: Optional[CheckpointRepository]
     :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
     :type managed_checkpoints: bool
-    :param project_endpoint: The Azure AI Foundry project endpoint (required if managed_checkpoints=True).
+    :param project_endpoint: The Azure AI Foundry project endpoint. If not provided,
+        will be read from AZURE_AI_PROJECT_ENDPOINT environment variable.
         Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
     :type project_endpoint: Optional[str]
     :return: An instance of AgentFrameworkAgent.
@@ -115,14 +118,17 @@ def from_agent_framework(
 
     # Handle managed checkpoints
     if managed_checkpoints:
-        if not project_endpoint:
+        # Try to get project_endpoint from environment variable if not provided
+        resolved_endpoint = get_project_endpoint() or project_endpoint
+        if not resolved_endpoint:
             raise ValueError(
-                "project_endpoint is required when managed_checkpoints=True"
+                "project_endpoint is required when managed_checkpoints=True. "
+                "Set AZURE_AI_PROJECT_ENDPOINT environment variable or pass project_endpoint parameter."
             )
         if not credentials:
             raise ValueError("credentials are required when managed_checkpoints=True")
         checkpoint_repository = FoundryCheckpointRepository(
-            project_endpoint=project_endpoint,
+            project_endpoint=resolved_endpoint,
             credential=credentials,
         )
 

@@ -3,28 +3,31 @@
 # ---------------------------------------------------------
 """Unit tests for from_agent_framework with managed checkpoints."""
 
+import os
 import pytest
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import Mock, AsyncMock, patch
 
 from azure.core.credentials_async import AsyncTokenCredential
 
 
 @pytest.mark.unit
 def test_managed_checkpoints_requires_project_endpoint() -> None:
-    """Test that managed_checkpoints=True requires project_endpoint."""
+    """Test that managed_checkpoints=True requires project_endpoint when env var not set."""
     from azure.ai.agentserver.agentframework import from_agent_framework
     from agent_framework import WorkflowBuilder
 
     builder = WorkflowBuilder()
     mock_credential = Mock(spec=AsyncTokenCredential)
 
-    with pytest.raises(ValueError) as exc_info:
-        from_agent_framework(
-            builder,
-            credentials=mock_credential,
-            managed_checkpoints=True,
-            project_endpoint=None,
-        )
+    # Ensure environment variable is not set
+    with patch.dict(os.environ, {}, clear=True):
+        with pytest.raises(ValueError) as exc_info:
+            from_agent_framework(
+                builder,
+                credentials=mock_credential,
+                managed_checkpoints=True,
+                project_endpoint=None,
+            )
 
     assert "project_endpoint" in str(exc_info.value)
 
