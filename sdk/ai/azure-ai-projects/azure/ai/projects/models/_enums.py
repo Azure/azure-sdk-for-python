@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,15 +45,6 @@ class AnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FILE_PATH."""
 
 
-class ApplyPatchCallOutputStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ApplyPatchCallOutputStatus."""
-
-    COMPLETED = "completed"
-    """COMPLETED."""
-    FAILED = "failed"
-    """FAILED."""
-
-
 class ApplyPatchCallOutputStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Apply patch call output status."""
 
@@ -64,15 +54,6 @@ class ApplyPatchCallOutputStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMe
     """FAILED."""
 
 
-class ApplyPatchCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ApplyPatchCallStatus."""
-
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
-    COMPLETED = "completed"
-    """COMPLETED."""
-
-
 class ApplyPatchCallStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Apply patch call status."""
 
@@ -80,17 +61,6 @@ class ApplyPatchCallStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IN_PROGRESS."""
     COMPLETED = "completed"
     """COMPLETED."""
-
-
-class ApplyPatchFileOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ApplyPatchFileOperationType."""
-
-    CREATE_FILE = "create_file"
-    """CREATE_FILE."""
-    DELETE_FILE = "delete_file"
-    """DELETE_FILE."""
-    UPDATE_FILE = "update_file"
-    """UPDATE_FILE."""
 
 
 class ApplyPatchOperationParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -266,15 +236,6 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom Keys."""
     REMOTE_TOOL = "RemoteTool_Preview"
     """Remote tool."""
-
-
-class ContainerLogKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of logs to stream from a container."""
-
-    CONSOLE = "console"
-    """Console logs from the container."""
-    SYSTEM = "system"
-    """System logs from the container."""
 
 
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -509,15 +470,6 @@ class FunctionShellCallOutputOutcomeParamType(str, Enum, metaclass=CaseInsensiti
     """EXIT."""
 
 
-class FunctionShellCallOutputOutcomeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FunctionShellCallOutputOutcomeType."""
-
-    TIMEOUT = "timeout"
-    """TIMEOUT."""
-    EXIT = "exit"
-    """EXIT."""
-
-
 class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of GrammarSyntax1."""
 
@@ -638,70 +590,6 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class ItemResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ItemResourceType."""
-
-    MESSAGE = "message"
-    """MESSAGE."""
-    OUTPUT_MESSAGE = "output_message"
-    """OUTPUT_MESSAGE."""
-    FILE_SEARCH_CALL = "file_search_call"
-    """FILE_SEARCH_CALL."""
-    COMPUTER_CALL = "computer_call"
-    """COMPUTER_CALL."""
-    COMPUTER_CALL_OUTPUT = "computer_call_output"
-    """COMPUTER_CALL_OUTPUT."""
-    WEB_SEARCH_CALL = "web_search_call"
-    """WEB_SEARCH_CALL."""
-    FUNCTION_CALL = "function_call"
-    """FUNCTION_CALL."""
-    FUNCTION_CALL_OUTPUT = "function_call_output"
-    """FUNCTION_CALL_OUTPUT."""
-    IMAGE_GENERATION_CALL = "image_generation_call"
-    """IMAGE_GENERATION_CALL."""
-    CODE_INTERPRETER_CALL = "code_interpreter_call"
-    """CODE_INTERPRETER_CALL."""
-    LOCAL_SHELL_CALL = "local_shell_call"
-    """LOCAL_SHELL_CALL."""
-    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
-    """LOCAL_SHELL_CALL_OUTPUT."""
-    SHELL_CALL = "shell_call"
-    """SHELL_CALL."""
-    SHELL_CALL_OUTPUT = "shell_call_output"
-    """SHELL_CALL_OUTPUT."""
-    APPLY_PATCH_CALL = "apply_patch_call"
-    """APPLY_PATCH_CALL."""
-    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
-    """APPLY_PATCH_CALL_OUTPUT."""
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    """MCP_LIST_TOOLS."""
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    """MCP_APPROVAL_REQUEST."""
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    """MCP_APPROVAL_RESPONSE."""
-    MCP_CALL = "mcp_call"
-    """MCP_CALL."""
-    STRUCTURED_OUTPUTS = "structured_outputs"
-    """STRUCTURED_OUTPUTS."""
-    OAUTH_CONSENT_REQUEST = "oauth_consent_request"
-    """OAUTH_CONSENT_REQUEST."""
-    MEMORY_SEARCH_CALL = "memory_search_call"
-    """MEMORY_SEARCH_CALL."""
-    WORKFLOW_ACTION = "workflow_action"
-    """WORKFLOW_ACTION."""
-
-
-class LocalShellCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of LocalShellCallStatus."""
-
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
-    COMPLETED = "completed"
-    """COMPLETED."""
-    INCOMPLETE = "incomplete"
-    """INCOMPLETE."""
-
-
 class MCPToolCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of MCPToolCallStatus."""
 
@@ -790,66 +678,6 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
-class OutputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of OutputContentType."""
-
-    OUTPUT_TEXT = "output_text"
-    """OUTPUT_TEXT."""
-    REFUSAL = "refusal"
-    """REFUSAL."""
-    REASONING_TEXT = "reasoning_text"
-    """REASONING_TEXT."""
-
-
-class OutputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of OutputItemType."""
-
-    OUTPUT_MESSAGE = "output_message"
-    """OUTPUT_MESSAGE."""
-    FILE_SEARCH_CALL = "file_search_call"
-    """FILE_SEARCH_CALL."""
-    FUNCTION_CALL = "function_call"
-    """FUNCTION_CALL."""
-    WEB_SEARCH_CALL = "web_search_call"
-    """WEB_SEARCH_CALL."""
-    COMPUTER_CALL = "computer_call"
-    """COMPUTER_CALL."""
-    REASONING = "reasoning"
-    """REASONING."""
-    COMPACTION = "compaction"
-    """COMPACTION."""
-    IMAGE_GENERATION_CALL = "image_generation_call"
-    """IMAGE_GENERATION_CALL."""
-    CODE_INTERPRETER_CALL = "code_interpreter_call"
-    """CODE_INTERPRETER_CALL."""
-    LOCAL_SHELL_CALL = "local_shell_call"
-    """LOCAL_SHELL_CALL."""
-    SHELL_CALL = "shell_call"
-    """SHELL_CALL."""
-    SHELL_CALL_OUTPUT = "shell_call_output"
-    """SHELL_CALL_OUTPUT."""
-    APPLY_PATCH_CALL = "apply_patch_call"
-    """APPLY_PATCH_CALL."""
-    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
-    """APPLY_PATCH_CALL_OUTPUT."""
-    MCP_CALL = "mcp_call"
-    """MCP_CALL."""
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    """MCP_LIST_TOOLS."""
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    """MCP_APPROVAL_REQUEST."""
-    CUSTOM_TOOL_CALL = "custom_tool_call"
-    """CUSTOM_TOOL_CALL."""
-    STRUCTURED_OUTPUTS = "structured_outputs"
-    """STRUCTURED_OUTPUTS."""
-    OAUTH_CONSENT_REQUEST = "oauth_consent_request"
-    """OAUTH_CONSENT_REQUEST."""
-    MEMORY_SEARCH_CALL = "memory_search_call"
-    """MEMORY_SEARCH_CALL."""
-    WORKFLOW_ACTION = "workflow_action"
-    """WORKFLOW_ACTION."""
-
-
 class OutputMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of OutputMessageContentType."""
 
@@ -897,47 +725,6 @@ class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Weekly recurrence pattern."""
     MONTHLY = "Monthly"
     """Monthly recurrence pattern."""
-
-
-class ResponseErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The error code for the response."""
-
-    SERVER_ERROR = "server_error"
-    """SERVER_ERROR."""
-    RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
-    """RATE_LIMIT_EXCEEDED."""
-    INVALID_PROMPT = "invalid_prompt"
-    """INVALID_PROMPT."""
-    VECTOR_STORE_TIMEOUT = "vector_store_timeout"
-    """VECTOR_STORE_TIMEOUT."""
-    INVALID_IMAGE = "invalid_image"
-    """INVALID_IMAGE."""
-    INVALID_IMAGE_FORMAT = "invalid_image_format"
-    """INVALID_IMAGE_FORMAT."""
-    INVALID_BASE64_IMAGE = "invalid_base64_image"
-    """INVALID_BASE64_IMAGE."""
-    INVALID_IMAGE_URL = "invalid_image_url"
-    """INVALID_IMAGE_URL."""
-    IMAGE_TOO_LARGE = "image_too_large"
-    """IMAGE_TOO_LARGE."""
-    IMAGE_TOO_SMALL = "image_too_small"
-    """IMAGE_TOO_SMALL."""
-    IMAGE_PARSE_ERROR = "image_parse_error"
-    """IMAGE_PARSE_ERROR."""
-    IMAGE_CONTENT_POLICY_VIOLATION = "image_content_policy_violation"
-    """IMAGE_CONTENT_POLICY_VIOLATION."""
-    INVALID_IMAGE_MODE = "invalid_image_mode"
-    """INVALID_IMAGE_MODE."""
-    IMAGE_FILE_TOO_LARGE = "image_file_too_large"
-    """IMAGE_FILE_TOO_LARGE."""
-    UNSUPPORTED_IMAGE_MEDIA_TYPE = "unsupported_image_media_type"
-    """UNSUPPORTED_IMAGE_MEDIA_TYPE."""
-    EMPTY_IMAGE_FILE = "empty_image_file"
-    """EMPTY_IMAGE_FILE."""
-    FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image"
-    """FAILED_TO_DOWNLOAD_IMAGE."""
-    IMAGE_FILE_NOT_FOUND = "image_file_not_found"
-    """IMAGE_FILE_NOT_FOUND."""
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1016,17 +803,6 @@ class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEn
     """JSON_SCHEMA."""
     JSON_OBJECT = "json_object"
     """JSON_OBJECT."""
-
-
-class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Tool choice mode."""
-
-    NONE = "none"
-    """NONE."""
-    AUTO = "auto"
-    """AUTO."""
-    REQUIRED = "required"
-    """REQUIRED."""
 
 
 class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
