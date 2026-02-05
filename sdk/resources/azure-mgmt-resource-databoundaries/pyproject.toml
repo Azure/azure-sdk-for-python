@@ -84,4 +84,5 @@ need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
 exclude_folders = ""
+no_sub = true
 title = "DataBoundaryMgmtClient"
