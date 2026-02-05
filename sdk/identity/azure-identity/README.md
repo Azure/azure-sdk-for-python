@@ -136,7 +136,7 @@ Not all credentials require this configuration. Credentials that authenticate th
 | Credential                                           | Usage                                                                                                                   | Reference                                                                                |
 |------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
 | [`EnvironmentCredential`][environment_cred_ref]      | Authenticates a service principal or user via credential information specified in environment variables.                |                                                                                          |
-| [`ManagedIdentityCredential`][managed_id_cred_ref]   | Authenticates the managed identity of an Azure resource.                                                                | [user-assigned managed identity][uami_doc]  [system-assigned managed identity][sami_doc] |
+| [`ManagedIdentityCredential`][managed_id_cred_ref]   | Authenticates the managed identity of an Azure resource.                                                                | [user-assigned managed identity][uami_doc]<br>[system-assigned managed identity][sami_doc] |
 | [`WorkloadIdentityCredential`][workload_id_cred_ref] | Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes. |                                                                                          |
 
 ### Authenticate service principals
