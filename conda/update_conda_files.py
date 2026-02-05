@@ -9,7 +9,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from ci_tools.logging import logger, configure_logging
 from ci_tools.parsing import ParsedSetup
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 from conda_helper_functions import (
     parse_csv,
     separate_packages_by_type,
@@ -65,7 +65,7 @@ def quoted_presenter(dumper, data):
 
 def update_conda_version(
     target_release_date: Optional[datetime] = None,
-) -> Tuple[datetime, str]:
+) -> tuple[datetime, str]:
     """Update the AZURESDK_CONDA_VERSION in conda_env.yml and return the old and new versions.
 
     Args:
@@ -111,11 +111,11 @@ class IndentDumper(yaml.SafeDumper):
 
 
 def update_conda_sdk_client_yml(
-    package_dict: Dict[str, Dict[str, str]],
-    packages_to_update: List[str],
-    new_data_plane_packages: List[str],
-    new_mgmt_plane_packages: List[str],
-) -> List[str]:
+    package_dict: dict[str, dict[str, str]],
+    packages_to_update: list[str],
+    new_data_plane_packages: list[str],
+    new_mgmt_plane_packages: list[str],
+) -> list[str]:
     """
     Update outdated package versions and add new entries in conda-sdk-client.yml file
 
@@ -358,8 +358,8 @@ def update_conda_sdk_client_yml(
 
 
 def determine_service_info(
-    pkg: Dict[str, str], bundle_name: Optional[str]
-) -> Tuple[str, str]:
+    pkg: dict[str, str], bundle_name: Optional[str]
+) -> tuple[str, str]:
     """
     Returns the common root and service name for the given package.
 
@@ -394,7 +394,7 @@ def format_requirement(req: str) -> str:
     return req
 
 
-def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]:
+def get_package_requirements(parsed: ParsedSetup) -> tuple[list[str], list[str]]:
     """Retrieve the host and run requirements for a data plane package meta.yaml."""
     host_requirements = set(["pip", "python"])
     run_requirements = set(["python"])
@@ -423,7 +423,7 @@ def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]
 
 def get_package_metadata(
     package_name: str, package_path: str, is_bundle: bool = False
-) -> Tuple[str, str, str]:
+) -> tuple[str, str, str]:
     """Extract package metadata for about section in meta.yaml.
 
     :param package_name: The name of the package or bundle.
@@ -451,7 +451,7 @@ def get_package_metadata(
 
 
 def generate_data_plane_meta_yaml(
-    bundle_map: Dict[str, List[str]],
+    bundle_map: dict[str, list[str]],
     package_name: str,
     bundle_name: Optional[str],
 ) -> str:
@@ -564,9 +564,9 @@ extra:
 
 
 def add_new_data_plane_packages(
-    bundle_map: Dict[str, List[str]],
-    new_data_plane_names: List[str],
-) -> List[str]:
+    bundle_map: dict[str, list[str]],
+    new_data_plane_names: list[str],
+) -> list[str]:
     """Create meta.yaml files for new data plane packages and add import tests."""
     if len(new_data_plane_names) == 0:
         return []
@@ -628,7 +628,7 @@ def add_new_data_plane_packages(
 # =====================================
 
 
-def add_new_mgmt_plane_packages(new_mgmt_plane_names: List[str]) -> List[str]:
+def add_new_mgmt_plane_packages(new_mgmt_plane_names: list[str]) -> list[str]:
     """Update azure-mgmt/meta.yaml with new management libraries, and add import tests."""
     if len(new_mgmt_plane_names) == 0:
         return []
@@ -704,11 +704,11 @@ def add_new_mgmt_plane_packages(new_mgmt_plane_names: List[str]) -> List[str]:
 
 
 def update_data_plane_release_logs(
-    package_dict: Dict,
-    bundle_map: Dict[str, List[str]],
-    new_data_plane_names: List[str],
+    package_dict: dict,
+    bundle_map: dict[str, list[str]],
+    new_data_plane_names: list[str],
     release_date: str,
-) -> List[str]:
+) -> list[str]:
     """
     Add and update release logs for data plane conda packages. Release log includes versions of all packages for the release
     """
@@ -872,10 +872,10 @@ def update_data_plane_release_logs(
 
 
 def update_mgmt_plane_release_log(
-    package_dict: Dict,
-    all_mgmt_plane_names: List[str],
+    package_dict: dict,
+    all_mgmt_plane_names: list[str],
     release_date: str,
-) -> List[str]:
+) -> list[str]:
     """
     Update azure-mgmt release log.
     """

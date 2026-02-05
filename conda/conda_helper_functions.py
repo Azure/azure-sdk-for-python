@@ -5,9 +5,8 @@ Helper functions for updating conda files.
 import os
 import glob
 from functools import lru_cache
-from typing import Dict, List, Optional, Tuple
+from typing import Optional
 import csv
-import json
 from ci_tools.logging import logger
 import urllib.request
 from datetime import datetime
@@ -36,7 +35,7 @@ SUPPORT_COL = "Support"
 
 
 @lru_cache(maxsize=None)
-def _build_package_path_index() -> Dict[str, str]:
+def _build_package_path_index() -> dict[str, str]:
     """
     Build a one-time index mapping package names to their filesystem paths.
 
@@ -97,8 +96,8 @@ def get_bundle_name(package_name: str) -> Optional[str]:
 
 
 def map_bundle_to_packages(
-    package_names: List[str],
-) -> Tuple[Dict[str, List[str]], List[str]]:
+    package_names: list[str],
+) -> tuple[dict[str, list[str]], list[str]]:
     """Create a mapping of bundle names to their constituent package names.
 
     :return: Tuple of (bundle_map, failed_packages) where failed_packages are packages that threw exceptions.
@@ -127,7 +126,7 @@ def map_bundle_to_packages(
 # =====================================
 
 
-def parse_csv() -> List[Dict[str, str]]:
+def parse_csv() -> list[dict[str, str]]:
     """Download and parse the Azure SDK Python packages CSV file."""
     try:
         logger.info(f"Downloading CSV from {AZURE_SDK_CSV_URL}")
@@ -148,7 +147,7 @@ def parse_csv() -> List[Dict[str, str]]:
         return []
 
 
-def is_mgmt_package(pkg: Dict[str, str]) -> bool:
+def is_mgmt_package(pkg: dict[str, str]) -> bool:
     pkg_name = pkg.get(PACKAGE_COL, "")
     _type = pkg.get(TYPE_COL, "")
     if _type == "mgmt":
@@ -162,8 +161,8 @@ def is_mgmt_package(pkg: Dict[str, str]) -> bool:
 
 
 def separate_packages_by_type(
-    packages: List[Dict[str, str]],
-) -> Tuple[List[Dict[str, str]], List[Dict[str, str]]]:
+    packages: list[dict[str, str]],
+) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     """Separate packages into data plane and management plane libraries."""
     data_plane_packages = []
     mgmt_plane_packages = []
@@ -182,7 +181,7 @@ def separate_packages_by_type(
 
 
 def package_needs_update(
-    package_row: Dict[str, str], prev_release_date: str, is_new=False
+    package_row: dict[str, str], prev_release_date: str, is_new=False
 ) -> bool:
     """
     Check if the package is new or needs version update (i.e., FirstGADate or LatestGADate is after the last release).
@@ -253,7 +252,7 @@ def is_stable_on_pypi(package_name: str) -> bool:
 
 def get_package_data_from_pypi(
     package_name: str,
-) -> Tuple[Optional[str], Optional[str]]:
+) -> tuple[Optional[str], Optional[str]]:
     """Fetch the latest version and download URI for a package from PyPI."""
     try:
         client = PyPIClient()
@@ -277,7 +276,7 @@ def get_package_data_from_pypi(
     return None, None
 
 
-def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int]]:
+def build_package_index(conda_artifacts: list[dict]) -> dict[str, tuple[int, int]]:
     """Build an index of package name -> (artifact_idx, checkout_idx) for fast lookups in conda-sdk-client.yml."""
     package_index = {}
 
@@ -290,7 +289,7 @@ def build_package_index(conda_artifacts: List[Dict]) -> Dict[str, Tuple[int, int
     return package_index
 
 
-def get_valid_package_imports(package_name: str) -> List[str]:
+def get_valid_package_imports(package_name: str) -> list[str]:
     """
     Inspect the package's actual module structure and return only valid imports.
 
