@@ -299,6 +299,9 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             # Create a selector for the snapshot
             snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
 
+            if snapshot.composition_type != SnapshotComposition.KEY:
+                raise ValueError(f"Snapshot '{snapshot_selector.snapshot_name}' is not a key snapshot.")
+
             # Use existing load_configuration_settings to load from snapshot
             configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
 

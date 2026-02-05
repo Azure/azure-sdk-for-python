@@ -7,7 +7,7 @@
 import pytest
 from azure.appconfiguration import ConfigurationSetting
 from azure.appconfiguration.provider._snapshot_reference_parser import SnapshotReferenceParser
-from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE
+from azure.appconfiguration.provider._constants import SNAPSHOT_REF_CONTENT_TYPE, SNAPSHOT_REFERENCE_TAG
 from azure.appconfiguration.provider._request_tracing_context import _RequestTracingContext
 
 
@@ -190,4 +190,4 @@ class TestRequestTracingContextIntegration:
         correlation_header = headers["Correlation-Context"]
 
         # Should contain snapshot reference tag
-        assert "SnapshotRef" in correlation_header
+        assert SNAPSHOT_REFERENCE_TAG in correlation_header

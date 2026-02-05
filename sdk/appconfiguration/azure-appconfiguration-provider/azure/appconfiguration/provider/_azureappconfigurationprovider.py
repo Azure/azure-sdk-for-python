@@ -423,10 +423,16 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _process_configurations(
+    def _expand_snapshot_references(
         self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
-    ) -> Dict[str, Any]:
+    ) -> List[ConfigurationSetting]:
+        """
+        Expands snapshot references in configuration settings to their actual settings.
 
+        :param configuration_settings: List of configuration settings that may contain snapshot references.
+        :param client: The configuration client used to resolve snapshot references.
+        :return: List of configuration settings with snapshot references expanded.
+        """
         expanded_settings: List[ConfigurationSetting] = []
 
         for setting in configuration_settings:
@@ -439,8 +445,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     # Resolve the snapshot reference to actual settings
                     snapshot_settings = client.resolve_snapshot_reference(setting)
 
-                    # Recursively process the resolved snapshot settings to handle feature flags,
-                    # configuration mapping
                     snapshot_configuration_list = list(snapshot_settings.values())
                     expanded_settings.extend(snapshot_configuration_list)
                 except (ValueError, AzureError) as e:
@@ -453,6 +457,14 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     # Continue processing other settings even if snapshot resolution fails
             else:
                 expanded_settings.append(setting)
+
+        return expanded_settings
+
+    def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> Dict[str, Any]:
+
+        expanded_settings = self._expand_snapshot_references(configuration_settings, client)
 
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).

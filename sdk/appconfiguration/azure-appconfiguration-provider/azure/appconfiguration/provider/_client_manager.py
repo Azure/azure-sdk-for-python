@@ -146,7 +146,6 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 if snapshot.composition_type != SnapshotComposition.KEY:
                     raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
-                configuration_settings.extend(configurations)
             else:
                 # Use traditional filtering when not loading from a snapshot
                 configurations = self._client.list_configuration_settings(
@@ -155,10 +154,10 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-                # Feature flags are ignored when loaded by Selects, as they are selected from `feature_flag_selectors`
-                configuration_settings.extend(
-                    config for config in configurations if not isinstance(config, FeatureFlagConfigurationSetting)
-                )
+            # Feature flags are ignored when loaded by Selects, as they are selected from `feature_flag_selectors`
+            configuration_settings.extend(
+                config for config in configurations if not isinstance(config, FeatureFlagConfigurationSetting)
+            )
         return configuration_settings
 
     @distributed_trace
@@ -290,6 +289,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
             # Create a selector for the snapshot
             snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+            if snapshot.composition_type != SnapshotComposition.KEY:
+                raise ValueError(f"Snapshot '{snapshot_selector.snapshot_name}' is not a key snapshot.")
 
             # Use existing load_configuration_settings to load from snapshot
             configurations = self.load_configuration_settings([snapshot_selector], **kwargs)
