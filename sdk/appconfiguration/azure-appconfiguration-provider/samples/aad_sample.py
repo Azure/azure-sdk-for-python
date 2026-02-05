@@ -25,7 +25,15 @@ print(config["message"])
 
 # Connection to Azure App Configuration using SettingSelector
 selects = [SettingSelector(key_filter="message*")]
-config = load(endpoint=endpoint, credential=credential, selects=selects, **kwargs)
+config = load(
+    endpoint=endpoint,
+    credential=credential,
+    selects=selects,
+    feature_flag_enabled=True,
+    feature_flag_selectors=None,
+    **kwargs
+)
 
 print("message found: " + str("message" in config))
 print("test.message found: " + str("test.message" in config))
+print("feature_flag_enabled found: " + str(config.get("feature_management")))

@@ -8,6 +8,14 @@ import os
 import json
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_CHAT,
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_CHAT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+    RESPONSES_PROVIDER,
+)
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
@@ -31,12 +39,14 @@ _utils._span_impl_type = settings.tracing_implementation()
 class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with real endpoints (async)."""
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_non_streaming_with_content_recording(self, **kwargs):
-        """Test asynchronous non-streaming responses with content recording enabled."""
+    async def _test_async_non_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous non-streaming responses with content recording.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -71,16 +81,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -88,37 +98,61 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events (only in events mode)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "user",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_streaming_with_content_recording(self, **kwargs):
-        """Test asynchronous streaming responses with content recording enabled."""
+    async def test_async_non_streaming_with_content_recording_events(self, **kwargs):
+        """Test asynchronous non-streaming responses with content recording enabled (event-based messages)."""
+        await self._test_async_non_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_non_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test asynchronous non-streaming responses with content recording enabled (attribute-based messages)."""
+        await self._test_async_non_streaming_with_content_recording_impl(False, **kwargs)
+
+    async def _test_async_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous streaming responses with content recording.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -161,16 +195,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -178,30 +212,52 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events (should include assistant message for streaming)
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events (only in events mode)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "user",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_streaming_with_content_recording_events(self, **kwargs):
+        """Test asynchronous streaming responses with content recording enabled (event-based messages)."""
+        await self._test_async_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test asynchronous streaming responses with content recording enabled (attribute-based messages)."""
+        await self._test_async_streaming_with_content_recording_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -243,7 +299,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "create_conversation"),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
         ]
@@ -256,6 +312,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_list_conversation_items_with_content_recording(self, **kwargs):
         """Test asynchronous list_conversation_items with content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -301,7 +358,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "list_conversation_items"),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
         ]
@@ -313,7 +370,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.conversation.item",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     "gen_ai.conversation.item.id": "*",
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}]}]',
                 },
@@ -321,7 +378,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.conversation.item",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     "gen_ai.conversation.item.id": "*",
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -330,14 +387,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_function_tool_with_content_recording_streaming(self, **kwargs):
-        """Test asynchronous function tool usage with content recording enabled (streaming)."""
+    async def _test_async_function_tool_with_content_recording_streaming_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous function tool usage with content recording (streaming).
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+        """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -447,16 +506,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -464,38 +523,46 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes_1.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span - user message and assistant tool call
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+        # Check events for first span - user message and assistant tool call (only in events mode)
+        if use_events:
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "user",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
 
         # Validate second span (tool output + final response)
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -503,39 +570,64 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            # Span2 has both input messages (tool output) and output messages (assistant response)
+            expected_attributes_2.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
         assert attributes_match == True
 
-        # Check events for second span - tool output and assistant response
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+        # Check events for second span - tool output and assistant response (only in events mode)
+        if use_events:
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "tool",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
 
-    @pytest.mark.usefixtures("instrument_without_content")
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_function_tool_without_content_recording_streaming(self, **kwargs):
-        """Test asynchronous function tool usage without content recording (streaming)."""
+    async def test_async_function_tool_with_content_recording_streaming_events(self, **kwargs):
+        """Test asynchronous function tool usage with content recording enabled (streaming, event-based messages)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_with_content_recording_streaming_attributes(self, **kwargs):
+        """Test asynchronous function tool usage with content recording enabled (streaming, attribute-based messages)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(False, **kwargs)
+
+    async def _test_async_function_tool_without_content_recording_streaming_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous function tool usage without content recording (streaming).
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+        """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -639,16 +731,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call) - no content
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -656,38 +748,46 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes_1.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span - tool call ID included but no function details, role and finish_reason included
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+        # Check events for first span - tool call ID included but no function details (only in events mode)
+        if use_events:
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "user",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
 
         # Validate second span (tool output + final response) - no content
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -695,30 +795,53 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            # Span2 has both input messages (tool output) and output messages (assistant response)
+            expected_attributes_2.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
         assert attributes_match == True
 
-        # Check events for second span - should include parts with tool output metadata (type, id) but no output field
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
+        # Check events for second span - tool output metadata and response (only in events mode)
+        if use_events:
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "tool",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_events(self, **kwargs):
+        """Test asynchronous function tool usage without content recording (streaming, event-based messages)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
+        """Test asynchronous function tool usage without content recording (streaming, attribute-based messages)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -726,6 +849,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -766,16 +890,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -791,7 +915,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -799,7 +923,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a haiku about Python"}]}]',
                 },
@@ -807,7 +931,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -822,6 +946,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -870,16 +995,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -895,7 +1020,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -903,7 +1028,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a haiku about Python"}]}]',
                 },
@@ -911,7 +1036,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -926,6 +1051,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -966,16 +1092,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -991,7 +1117,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -999,7 +1125,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -1007,7 +1133,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1065,7 +1191,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1074,7 +1200,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1082,7 +1208,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1135,7 +1261,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1144,7 +1270,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1152,7 +1278,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1205,7 +1331,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1214,7 +1340,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
@@ -1222,7 +1348,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1275,7 +1401,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1284,7 +1410,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1292,7 +1418,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1354,7 +1480,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1363,7 +1489,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1371,7 +1497,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1428,7 +1554,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1437,7 +1563,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1445,7 +1571,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1502,7 +1628,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1511,7 +1637,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
@@ -1519,7 +1645,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1576,7 +1702,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1585,7 +1711,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1593,7 +1719,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1659,7 +1785,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1668,7 +1794,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1676,7 +1802,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1737,7 +1863,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1746,7 +1872,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1754,7 +1880,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1815,7 +1941,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1824,7 +1950,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
@@ -1832,7 +1958,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1893,7 +2019,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1902,7 +2028,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1910,7 +2036,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1979,7 +2105,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1988,7 +2114,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1996,7 +2122,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2061,7 +2187,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2070,7 +2196,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -2078,7 +2204,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2143,7 +2269,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2152,7 +2278,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
@@ -2160,7 +2286,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2225,7 +2351,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2234,7 +2360,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -2242,7 +2368,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2305,16 +2431,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2330,7 +2456,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2338,7 +2464,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2346,7 +2472,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2365,6 +2491,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_responses_stream_method_with_content_recording(self, **kwargs):
         """Test async responses.stream() method with content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2397,16 +2524,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2422,7 +2549,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short haiku about testing"}]}]',
                 },
@@ -2430,7 +2557,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2477,16 +2604,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2502,7 +2629,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2510,7 +2637,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2527,6 +2654,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2608,16 +2736,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2633,7 +2761,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Boston?"}]}]',
                 },
@@ -2641,7 +2769,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
                 },
@@ -2656,7 +2784,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
                 },
@@ -2664,7 +2792,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2762,7 +2890,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span - should have events with tool call structure but no details
@@ -2771,7 +2899,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2779,7 +2907,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
                 },
@@ -2794,7 +2922,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "tool",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
                 },
@@ -2802,7 +2930,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2877,7 +3005,7 @@ trigger:
 
         # Verify workflow action events
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -2993,7 +3121,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3121,7 +3249,7 @@ trigger:
 
         # Verify workflow action events in streaming mode
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3242,7 +3370,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3353,17 +3481,17 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -3432,17 +3560,17 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
