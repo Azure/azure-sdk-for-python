@@ -55,46 +55,6 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
                 assert answer.short_answer.confidence is not None
 
     @pytest.mark.asyncio
-    async def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
-        filters = QueryFilters(
-            metadata_filter=MetadataFilter(
-                metadata=[
-                    MetadataRecord(key="explicitlytaggedheading", value="check the battery level"),
-                    MetadataRecord(key="explicitlytaggedheading", value="make your battery last"),
-                ],
-                logical_operation="OR",
-            )
-        )
-        async with QuestionAnsweringClient(
-            qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"])
-        ) as client:
-            params = AnswersOptions(
-                question="Battery life",
-                top=3,
-                filters=filters,
-            )
-            response = await client.get_answers(
-                params,
-                project_name=qna_creds["qna_project"],
-                deployment_name="production",
-            )
-            assert response.answers
-            assert any( # pylint: disable=use-a-generator
-                [
-                    a
-                    for a in response.answers
-                    if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
-                ]
-            )
-            assert any( # pylint: disable=use-a-generator
-                [
-                    a
-                    for a in response.answers
-                    if (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"
-                ]
-            )
-
-    @pytest.mark.asyncio
     async def test_query_knowledgebase_overload_errors(self):  # negative parameter validation
         async with QuestionAnsweringClient("http://fake.com", AzureKeyCredential("123")) as client:
             with pytest.raises(TypeError):

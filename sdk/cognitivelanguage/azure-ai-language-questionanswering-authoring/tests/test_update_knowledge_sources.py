@@ -9,36 +9,37 @@ from azure.ai.language.questionanswering.authoring import models as _models
 
 
 class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
-    def test_add_source(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
+    def test_add_chitchat(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
         AuthoringTestHelper.create_test_project(client, project_name=project_name)
-        source_display_name = "MicrosoftFAQ"
-        update_source_ops = [
-            _models.UpdateSourceRecord(
+        question = "Hello"
+        answer = "Hi! How can I help you today?"
+        update_qna_ops = [
+            _models.UpdateQnaRecord(
                 {
                     "op": "add",
                     "value": {
-                        "displayName": source_display_name,
-                        "source": "https://www.microsoft.com/en-in/software-download/faq",
-                        "sourceUri": "https://www.microsoft.com/en-in/software-download/faq",
-                        "sourceKind": "url",
-                        "contentStructureKind": "unstructured",
-                        "refresh": False,
+                        "id": 0,
+                        "answer": answer,
+                        "questions": [question],
                     },
                 }
             )
         ]
-        poller = client.begin_update_sources( # pylint: disable=no-value-for-parameter
+        poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
             project_name=project_name,
-            sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
+            qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
             content_type="application/json",
             polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
         )
         poller.result()
-        assert any(s.get("displayName") == source_display_name for s in client.list_sources(project_name=project_name))
+        assert any(
+            (q.get("answer") == answer and question in q.get("questions", []))
+            for q in client.list_qnas(project_name=project_name)
+        )
 
     def test_add_qna(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
