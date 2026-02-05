@@ -46,11 +46,8 @@ extends:
             Write-Host "Running red team tests with dev_requirements_redteam.txt..."
             $packageDir = "$(Build.SourcesDirectory)/sdk/evaluation/azure-ai-evaluation"
 
-            # Install redteam requirements
+            # Install redteam requirements (includes azure-ai-evaluation[redteam])
             python -m pip install -r "$packageDir/dev_requirements_redteam.txt"
-
-            # Install the package with redteam extra
-            python -m pip install -e "$packageDir[redteam]"
 
             # Run redteam unit tests
             Write-Host "Running red team unit tests..."
