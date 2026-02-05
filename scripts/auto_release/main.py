@@ -334,9 +334,9 @@ class CodegenTestPR:
         )
         if self.has_multi_packages:
             pr_body += f"\nBuildTargetingString\n  {self.whole_package_name}\nSkip.CreateApiReview"
-            pr_body += "\n\n (Just to record: this PR was created by this [pipeline]({}))".format(
-                self.triggered_pipeline_link
-            )
+        pr_body += "\n\n (Just to record: this PR was created by this [pipeline]({}))".format(
+            self.triggered_pipeline_link
+        )
         res_create = api.pulls.create(pr_title, pr_head, pr_base, pr_body)
 
         # Add issue link on PR
