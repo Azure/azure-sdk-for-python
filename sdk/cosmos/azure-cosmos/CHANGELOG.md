@@ -8,7 +8,7 @@
 
 #### Bugs Fixed
 * Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
-* Fixed async client crash (`AttributeError: 'NoneType' object has no attribute '_WritableLocations'`) during region discovery when `database_account` was `None`. See [PR 44939](https://github.com/Azure/azure-sdk-for-python/pull/44939)
+* Fixed crash in sync and async clients when `force_refresh_on_startup` was set to `None`, which could surface as `AttributeError: 'NoneType' object has no attribute '_WritableLocations'` during region discovery when `database_account` was `None`. See [PR 44939](https://github.com/Azure/azure-sdk-for-python/pull/44939)
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
