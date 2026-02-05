@@ -31,3 +31,9 @@ class mindependency(DependencyCheck):
             nargs=argparse.REMAINDER,
             help="Additional arguments forwarded to pytest.",
         )
+        parser.add_argument(
+            "--mark_arg",
+            dest="mark_arg",
+            help='Optional pytest marker expression passed as -m "<expr>" (e.g. "cosmosEmulator").',
+        )
+
