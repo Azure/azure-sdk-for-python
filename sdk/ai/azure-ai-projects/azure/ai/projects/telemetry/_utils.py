@@ -91,13 +91,18 @@ GEN_AI_CONVERSATION_ITEM_EVENT = "gen_ai.conversation.item"
 GEN_AI_SYSTEM_INSTRUCTION_EVENT = "gen_ai.system.instructions"
 GEN_AI_AGENT_WORKFLOW_EVENT = "gen_ai.agent.workflow"
 
+# Attribute names for messages (when USE_MESSAGE_EVENTS = False)
+GEN_AI_INPUT_MESSAGES = "gen_ai.input.messages"
+GEN_AI_OUTPUT_MESSAGES = "gen_ai.output.messages"
+
 # Metric names
 GEN_AI_CLIENT_OPERATION_DURATION = "gen_ai.client.operation.duration"
 GEN_AI_CLIENT_TOKEN_USAGE = "gen_ai.client.token.usage"
 
 # Constant attribute values
 AZURE_AI_AGENTS_SYSTEM = "az.ai.agents"
-AZURE_AI_AGENTS_PROVIDER = "azure.ai.agents"
+AGENTS_PROVIDER = "microsoft.foundry"
+RESPONSES_PROVIDER = "microsoft.foundry"
 AGENT_TYPE_PROMPT = "prompt"
 AGENT_TYPE_WORKFLOW = "workflow"
 AGENT_TYPE_HOSTED = "hosted"
@@ -106,6 +111,35 @@ AGENT_TYPE_UNKNOWN = "unknown"
 # Span name prefixes for responses API operations
 SPAN_NAME_INVOKE_AGENT = "invoke_agent"
 SPAN_NAME_CHAT = "chat"
+
+# Operation names for gen_ai.operation.name attribute
+OPERATION_NAME_INVOKE_AGENT = "invoke_agent"
+OPERATION_NAME_CHAT = "chat"
+
+# Configuration: Controls whether input/output messages are emitted as events or attributes
+# Can be set at runtime for testing purposes (internal use only)
+# Set to True for event-based, False for attribute-based (default)
+_use_message_events = False
+
+
+def _get_use_message_events() -> bool:
+    """Get the current message tracing mode (events vs attributes). Internal use only.
+
+    :return: True if using events, False if using attributes
+    :rtype: bool
+    """
+    return _use_message_events
+
+
+def _set_use_message_events(use_events: bool) -> None:
+    """
+    Set the message tracing mode at runtime. Internal use only.
+
+    :param use_events: True to use events (default), False to use attributes
+    :type use_events: bool
+    """
+    global _use_message_events  # pylint: disable=global-statement
+    _use_message_events = use_events
 
 
 class OperationName(Enum):
@@ -143,7 +177,7 @@ def start_span(
     reasoning_summary: Optional[str] = None,
     structured_inputs: Optional[str] = None,
     gen_ai_system: Optional[str] = None,
-    gen_ai_provider: Optional[str] = AZURE_AI_AGENTS,
+    gen_ai_provider: Optional[str] = AGENTS_PROVIDER,
     kind: SpanKind = SpanKind.CLIENT,
 ) -> "Optional[AbstractSpan]":
     global _span_impl_type  # pylint: disable=global-statement
@@ -164,7 +198,7 @@ def start_span(
 
     if span and span.span_instance.is_recording:
         span.add_attribute(AZ_NAMESPACE, AZ_NAMESPACE_VALUE)
-        span.add_attribute(GEN_AI_PROVIDER_NAME, AZURE_AI_AGENTS)
+        span.add_attribute(GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER)
 
         if gen_ai_provider:
             span.add_attribute(GEN_AI_PROVIDER_NAME, gen_ai_provider)
