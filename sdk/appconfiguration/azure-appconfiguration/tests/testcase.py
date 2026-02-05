@@ -22,9 +22,9 @@ from consts import (
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
-    def create_aad_client(self, appconfiguration_endpoint_string):
+    def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient)
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
 
     def create_client(self, appconfiguration_connection_string):
         return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
@@ -63,6 +63,15 @@ class AppConfigTestCase(AzureRecordedTestCase):
 
     def tear_down(self):
         if self.client is not None:
+            # Archive all ready snapshots
+            snapshots = self.client.list_snapshots(status=["ready"])
+            for snapshot in snapshots:
+                try:
+                    self.client.archive_snapshot(name=snapshot.name)
+                except Exception:
+                    pass
+
+            # Delete all configuration settings
             config_settings = self.client.list_configuration_settings()
             for config_setting in config_settings:
                 self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)

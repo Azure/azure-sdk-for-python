@@ -57,7 +57,12 @@ if __name__ == "__main__":
             )
             exit(0)
 
+    exit_code = 0
+
+    # Run pylint on main package
     try:
+        main_pylint_targets = [os.path.join(args.target_package, top_level_module)]
+        
         check_call(
             [
                 sys.executable,
@@ -65,18 +70,74 @@ if __name__ == "__main__":
                 "pylint",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
-                os.path.join(args.target_package, top_level_module),
-            ]
+            ] + main_pylint_targets
         )
     except CalledProcessError as e:
         logging.error(
-            "{} exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
+            "{} main package exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
         )
+        exit_code = max(exit_code, e.returncode)
+        
+    # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
+    if args.next:
+        logging.info("Running with --next flag, checking for tests and samples directories")
+        tests_dir = os.path.join(args.target_package, "tests")
+        samples_dir = os.path.join(args.target_package, "samples")
+        
+        logging.info(f"Checking tests directory: {tests_dir}")
+        logging.info(f"Tests directory exists: {os.path.exists(tests_dir)}")
+        
+        # Run tests with test_pylintrc
+        if os.path.exists(tests_dir):
+            try:
+                test_rcfile = os.path.join(root_dir, "eng/test_pylintrc")
+                logging.info(f"Running pylint on tests with config: {test_rcfile}")
+                check_call(
+                    [
+                        sys.executable,
+                        "-m",
+                        "pylint",
+                        "--rcfile={}".format(test_rcfile),
+                        "--output-format=parseable",
+                        tests_dir
+                    ]
+                )
+            except CalledProcessError as e:
+                logging.error(
+                    "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
+                )
+                exit_code = max(exit_code, e.returncode)
+            
+        # Run samples with samples_pylintrc
+        logging.info(f"Checking samples directory: {samples_dir}")
+        logging.info(f"Samples directory exists: {os.path.exists(samples_dir)}")
+        if os.path.exists(samples_dir):
+            try:
+                samples_rcfile = os.path.join(root_dir, "eng/samples_pylintrc")
+                logging.info(f"Running pylint on samples with config: {samples_rcfile}")
+                check_call(
+                    [
+                        sys.executable,
+                        "-m",
+                        "pylint",
+                        "--rcfile={}".format(samples_rcfile),
+                        "--output-format=parseable",
+                        samples_dir
+                    ]
+                )
+            except CalledProcessError as e:
+                logging.error(
+                    "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
+                )
+                exit_code = max(exit_code, e.returncode)
+    else:
+        logging.info("Not running with --next flag, skipping tests and samples")
+
+    if exit_code > 0:
         if args.next and in_ci():
             from gh_tools.vnext_issue_creator import create_vnext_issue
             create_vnext_issue(pkg_dir, "pylint")
-
-        exit(1)
+        exit(exit_code)
 
     if args.next and in_ci():
         from gh_tools.vnext_issue_creator import close_vnext_issue

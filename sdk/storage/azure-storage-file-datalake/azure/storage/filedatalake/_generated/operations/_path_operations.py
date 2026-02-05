@@ -37,7 +37,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
+def build_create_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     request_id_parameter: Optional[str] = None,
@@ -176,7 +176,7 @@ def build_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_update_request(
+def build_update_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     action: Union[str, _models.PathUpdateAction],
@@ -653,7 +653,7 @@ def build_set_access_control_recursive_request(  # pylint: disable=name-too-long
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_flush_data_request(
+def build_flush_data_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     timeout: Optional[int] = None,
@@ -754,7 +754,7 @@ def build_flush_data_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_append_data_request(
+def build_append_data_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     content: IO[bytes],
@@ -946,7 +946,7 @@ class PathOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -1206,7 +1206,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def update(
+    def update(  # pylint: disable=too-many-locals
         self,
         action: Union[str, _models.PathUpdateAction],
         mode: Union[str, _models.PathSetAccessControlRecursiveMode],
@@ -2340,7 +2340,7 @@ class PathOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def flush_data(  # pylint: disable=inconsistent-return-statements
+    def flush_data(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         position: Optional[int] = None,
@@ -2539,7 +2539,7 @@ class PathOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def append_data(  # pylint: disable=inconsistent-return-statements
+    def append_data(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         body: IO[bytes],
         position: Optional[int] = None,

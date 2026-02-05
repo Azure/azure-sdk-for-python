@@ -597,7 +597,6 @@ class _PerformanceCountersManager(metaclass=Singleton):
                 try:
                     # Note: ProcessIORate may not be available on all platforms
                     if metric_class == ProcessIORate and not _IO_AVAILABLE:
-                        _logger.warning("Process I/O Rate performance counter is not available on this platform.")
                         continue
                     performance_counter = metric_class(self._meter)
                     self._performance_counters.append(performance_counter)

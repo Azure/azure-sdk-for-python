@@ -7,12 +7,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from collections.abc import MutableMapping
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class ChangeAttributes(_serialization.Model):
@@ -134,7 +136,7 @@ class ChangeProperties(_serialization.Model):
         self,
         *,
         change_attributes: Optional["_models.ChangeAttributes"] = None,
-        changes: Optional[Dict[str, "_models.ChangeBase"]] = None,
+        changes: Optional[dict[str, "_models.ChangeBase"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -170,7 +172,7 @@ class ChangeResourceListResult(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.ChangeResourceResult"]] = None,
+        value: Optional[list["_models.ChangeResourceResult"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -325,8 +327,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):

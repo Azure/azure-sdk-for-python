@@ -81,7 +81,7 @@ class TestConfigurations(TestCase):
                     "enabled": False,
                 }
             },
-            enable_live_metrics=True,
+            enable_live_metrics=False,
             enable_performance_counters=False,
             views=["test_view"],
             logger_name="test_logger",
@@ -117,7 +117,7 @@ class TestConfigurations(TestCase):
             },
         )
         self.assertEqual(configurations["storage_directory"], "test_directory")
-        self.assertEqual(configurations["enable_live_metrics"], True)
+        self.assertEqual(configurations["enable_live_metrics"], False)
         self.assertEqual(configurations["enable_performance_counters"], False)
         self.assertEqual(configurations["views"], ["test_view"])
         self.assertEqual(configurations["logger_name"], "test_logger")
@@ -151,10 +151,10 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["traces_per_second"], 5.0)
         self.assertTrue("credential" not in configurations)
         self.assertTrue("storage_directory" not in configurations)
-        self.assertEqual(configurations["enable_live_metrics"], False)
+        self.assertEqual(configurations["enable_live_metrics"], True)
         self.assertEqual(configurations["enable_performance_counters"], True)
         self.assertEqual(configurations["logger_name"], "")
         self.assertEqual(configurations["span_processors"], [])
@@ -199,7 +199,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["traces_per_second"], 5.0)
 
     @patch.dict(
         "os.environ",
@@ -214,6 +214,26 @@ class TestConfigurations(TestCase):
     )
     @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
     def test_get_configurations_env_vars_validation(self, resource_create_mock):
+        configurations = _get_configurations()
+        self.assertTrue("connection_string" not in configurations)
+        self.assertEqual(configurations["disable_logging"], False)
+        self.assertEqual(configurations["disable_metrics"], False)
+        self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(configurations["sampling_ratio"], 1.0)
+
+    @patch.dict(
+        "os.environ",
+        {
+            OTEL_TRACES_SAMPLER: "microsoft.fixed.percentage",
+            OTEL_TRACES_SAMPLER_ARG: "10.45",
+            OTEL_TRACES_EXPORTER: "False",
+            OTEL_LOGS_EXPORTER: "no",
+            OTEL_METRICS_EXPORTER: "True",
+        },
+        clear=True,
+    )
+    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
+    def test_get_configurations_env_vars_validation_check_backward_compatibility(self, resource_create_mock):
         configurations = _get_configurations()
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["disable_logging"], False)
@@ -507,7 +527,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["traces_per_second"], 5.0)
 
     @patch.dict(
         "os.environ",
@@ -545,7 +565,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "custom_resource_detector")
         resource_create_mock.assert_called_once_with()
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["traces_per_second"], 5.0)
 
     @patch.dict(
         "os.environ",
@@ -834,7 +854,7 @@ class TestConfigurations(TestCase):
 
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_ratio"], 1.0)
+        self.assertEqual(configurations["traces_per_second"], 5.0)
 
     # Tests for the _get_sampler_from_name function
     def test_get_sampler_from_name_always_on_off(self):

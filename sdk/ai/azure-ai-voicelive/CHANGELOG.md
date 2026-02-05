@@ -1,34 +1,36 @@
 # Release History
 
-## 1.2.0 (2025-12-10)
+## 1.2.0b3 (2026-02-02)
 
 ### Features Added
 
-- **MCP (Model Context Protocol) Support**: Added comprehensive support for Model Context Protocol integration:
-  - `MCPServer` tool type for defining MCP server configurations with authorization, headers, and approval requirements
-  - `MCPTool` model for representing MCP tool definitions with input schemas and annotations
-  - `MCPApprovalType` enum for controlling approval workflows (`never`, `always`, or tool-specific)
-  - New item types: `MCPApprovalResponseRequestItem`, `ResponseMCPApprovalRequestItem`, `ResponseMCPApprovalResponseItem`, `ResponseMCPCallItem`, and `ResponseMCPListToolItem`
-  - New server events: `ServerEventMcpListToolsInProgress`, `ServerEventMcpListToolsCompleted`, `ServerEventMcpListToolsFailed`, `ServerEventResponseMcpCallArgumentsDelta`, `ServerEventResponseMcpCallArgumentsDone`, `ServerEventResponseMcpCallInProgress`, `ServerEventResponseMcpCallCompleted`, and `ServerEventResponseMcpCallFailed`
-  - Client event `MCP_APPROVAL_RESPONSE` for responding to approval requests
-  - Enhanced `ItemType` enum with MCP-related types: `mcp_list_tools`, `mcp_call`, `mcp_approval_request`, and `mcp_approval_response`
-- **Enhanced Avatar Configuration**: Expanded avatar functionality with new configuration options:
-  - Added `AvatarConfigTypes` enum with support for `video-avatar` and `photo-avatar` types
-  - Added `PhotoAvatarBaseModes` enum for photo avatar base models (e.g., `vasa-1`)
-  - Added `AvatarOutputProtocol` enum for avatar streaming protocols (`webrtc`, `websocket`)
-  - Enhanced `AvatarConfig` model with new properties: `type`, `model`, and `output_protocol`
-- **Image Content Support**: Added support for image inputs in conversations:
-  - New `RequestImageContentPart` model for including images in requests
-  - New `RequestImageContentPartDetail` enum for controlling image detail levels (`auto`, `low`, `high`)
-  - Added `INPUT_IMAGE` to `ContentPartType` enum
-  - Enhanced token details models (`InputTokenDetails`, `CachedTokenDetails`) with `image_tokens` tracking
-- **Enhanced OpenAI Voices**: Added new OpenAI voice options:
-  - Added `marin` and `cedar` voices to `OpenAIVoiceName` enum
-- **Extended Azure Personal Voice Configuration**: Enhanced `AzurePersonalVoice` with additional customization options:
-  - Added support for custom lexicon via `custom_lexicon_url`
-  - Added `prefer_locales` for locale preferences
-  - Added `locale`, `style`, `pitch`, `rate`, and `volume` properties for fine-tuned voice control
-- **Pre-generated Assistant Messages**: Added support for pre-generated assistant messages in `ResponseCreateParams` via the `pre_generated_assistant_message` property
+- **Support for Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values (e.g., `turn_detection=None` now correctly sends `"turn_detection": null` in the WebSocket message)
+- **Filler Response Configuration**: Added support for filler response generation during latency or tool calls:
+  - `BasicFillerResponseConfig` for static filler texts that are randomly selected
+  - `LlmFillerResponseConfig` for LLM-generated context-aware filler responses
+  - `FillerTrigger` enum with `latency` and `tool` triggers
+  - `filler_response` field in `RequestSession` and `ResponseSession`
+- **Foundry Agent Integration**: Added support for Azure AI Foundry agents:
+  - `FoundryAgentTool` for defining Foundry agent configurations
+  - `ResponseFoundryAgentCallItem` for Foundry agent call responses
+  - `FoundryAgentContextType` enum for context management (`no_context`, `agent_context`)
+  - Server events for Foundry agent call lifecycle: `ServerEventResponseFoundryAgentCallArgumentsDelta`, `ServerEventResponseFoundryAgentCallArgumentsDone`, `ServerEventResponseFoundryAgentCallInProgress`, `ServerEventResponseFoundryAgentCallCompleted`, `ServerEventResponseFoundryAgentCallFailed`
+- **Reasoning Effort Control**: Added `reasoning_effort` field to `RequestSession`, `ResponseSession`, and `ResponseCreateParams` for controlling reasoning models effort levels with `ReasoningEffort` enum (`none`, `minimal`, `low`, `medium`, `high`, `xhigh`)
+- **Response Metadata**: Added `metadata` field to `Response` and `ResponseCreateParams` for attaching up to 16 key-value pairs (max 64 chars for keys, 512 chars for values)
+- **Array Encoding Support**: Enhanced serialization to support pipe, space, comma, and newline-delimited array encoding formats
+- **Custom Text Normalization**: Added `custom_text_normalization_url` field to `AzureStandardVoice`, `AzureCustomVoice`, and `AzurePersonalVoice` for custom text normalization configurations
+- **Avatar Scene Configuration**: Added `Scene` model for controlling avatar's zoom level, position (x/y), rotation (x/y/z pitch/yaw/roll), and movement amplitude in the video frame
+- **Enhanced Avatar Configuration**: Added `scene` and `output_audit_audio` fields to `AvatarConfig` for scene control and audit audio forwarding via WebSocket
+
+### Other Changes
+
+- **Dependency Update**: Updated minimum `azure-core` version from 1.36.0 to 1.37.0
+- **Security Enhancement**: Removed `eval()` usage in serialization utilities, replaced with explicit type checking for improved security
+- **Serialization Improvements**: Enhanced model_base deserialization for mutable types and array-encoded strings
+
+### Bug Fixes
+
+- **Audio Format Values**: Fixed `OutputAudioFormat` enum values to use underscore format (`pcm16_8000hz`, `pcm16_16000hz`) instead of hyphenated format for consistency with wire protocol and backward compatibility
 
 ## 1.2.0b2 (2025-11-20)
 
