@@ -438,7 +438,7 @@ class TestFineTuningAsync(TestBase):
 
     @pytest.mark.skipif(
         not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
-        reason="live only test",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @pytest.mark.parametrize(
         "job_type,model_type,training_type",
@@ -518,7 +518,7 @@ class TestFineTuningAsync(TestBase):
 
     @pytest.mark.skipif(
         not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
-        reason="live only test",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @pytest.mark.parametrize(
         "job_type,expected_method_type",
@@ -609,7 +609,7 @@ class TestFineTuningAsync(TestBase):
 
     @pytest.mark.skipif(
         not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
-        reason="live only test",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @pytest.mark.parametrize(
         "job_type,model_type,training_type,expected_method_type",
@@ -811,7 +811,7 @@ class TestFineTuningAsync(TestBase):
 
     @pytest.mark.skipif(
         not is_live_and_not_recording() or os.getenv("RUN_EXTENDED_FINE_TUNING_LIVE_TESTS", "false").lower() != "true",
-        reason="live only test",
+        reason="Skipped extended FT live tests. Those only run live, without recordings, when RUN_EXTENDED_FINE_TUNING_LIVE_TESTS=true",
     )
     @pytest.mark.parametrize(
         "job_id_env_var,deployment_format,deployment_capacity,test_prefix,inference_content",
