@@ -49,32 +49,7 @@ def test_query_parameters_with_special_characters():
     original_url = "?filter=name%20eq%20%27test%27&select=*"
     expected_url = "?filter=name%20eq%20%27test%27&select=%2A"
 
-    request = HttpRequest("GET", original_url)
-    pipeline_request = PipelineRequest(request, None)
-
-    query_param_policy = QueryParamPolicy()
-
-    # Create a mock next policy
-    class MockNext:
-        def __init__(self):
-            self.captured_url = None
-
-        def send(self, request):
-            self.captured_url = request.http_request.url
-
-    mock_next = MockNext()
-    query_param_policy.next = mock_next
-
-    query_param_policy.send(pipeline_request)
-
-    # Note: URL encoding may change the format slightly, but the query params should still be sorted
-    assert mock_next.captured_url is not None, "No URL was captured by the mock policy."
-    assert "filter=" in mock_next.captured_url
-    assert "select=" in mock_next.captured_url
-    # The params should be in alphabetical order
-    filter_pos = mock_next.captured_url.index("filter=")
-    select_pos = mock_next.captured_url.index("select=")
-    assert filter_pos < select_pos, "Parameters should be sorted alphabetically"
+    run_query_param_policy_test(original_url, expected_url)
 
 
 def test_no_query_parameters():

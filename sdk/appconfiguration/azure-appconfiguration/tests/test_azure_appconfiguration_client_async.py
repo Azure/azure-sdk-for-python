@@ -1158,73 +1158,72 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disabl
     async def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
-            self.client = client
-            # prepare 200 configuration settings
-            for i in range(200):
-                await client.set_configuration_setting(
-                    ConfigurationSetting(
-                        key=f"async_sample_key_{str(i)}",
-                        label=f"async_sample_label_{str(i)}",
-                    )
-                )
-            # there will have 2 pages while listing, there are 100 configuration settings per page.
-
-            # get page etags
-            match_conditions = []
-            items = client.list_configuration_settings(
-                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
-            )
-            iterator = items.by_page()
-            async for _ in iterator:
-                etag = iterator.etag
-                match_conditions.append(etag)
-
-            # monitor page updates without changes - only changed pages will be yielded
-            items = client.list_configuration_settings(
-                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
-            )
-            iterator = items.by_page(match_conditions=match_conditions)
-            changed_pages = [page async for page in iterator]
-            # No pages should be yielded since nothing changed
-            assert len(changed_pages) == 0
-
-            # do some changes
-            await client.set_configuration_setting(
+        await self.set_up(appconfiguration_connection_string)
+        # prepare 200 configuration settings
+        for i in range(200):
+            await self.client.set_configuration_setting(
                 ConfigurationSetting(
-                    key="async_sample_key_201",
-                    label="async_sample_label_202",
+                    key=f"async_sample_key_{str(i)}",
+                    label=f"async_sample_label_{str(i)}",
                 )
             )
-            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+        # there will have 2 pages while listing, there are 100 configuration settings per page.
 
-            # get page etags after updates
-            new_match_conditions = []
-            items = client.list_configuration_settings(
-                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        # get page etags
+        match_conditions = []
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page()
+        async for _ in iterator:
+            etag = iterator.etag
+            match_conditions.append(etag)
+
+        # monitor page updates without changes - only changed pages will be yielded
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page(match_conditions=match_conditions)
+        changed_pages = [page async for page in iterator]
+        # No pages should be yielded since nothing changed
+        assert len(changed_pages) == 0
+
+        # do some changes
+        await self.client.set_configuration_setting(
+            ConfigurationSetting(
+                key="async_sample_key_201",
+                label="async_sample_label_202",
             )
-            iterator = items.by_page()
-            async for _ in iterator:
-                etag = iterator.etag
-                new_match_conditions.append(etag)
+        )
+        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
-            assert match_conditions[0] == new_match_conditions[0]
-            assert match_conditions[1] != new_match_conditions[1]
-            assert match_conditions[2] != new_match_conditions[2]
-            assert len(new_match_conditions) == 3
+        # get page etags after updates
+        new_match_conditions = []
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page()
+        async for _ in iterator:
+            etag = iterator.etag
+            new_match_conditions.append(etag)
 
-            # monitor pages after updates - only changed pages will be yielded
-            items = client.list_configuration_settings(
-                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
-            )
-            iterator = items.by_page(match_conditions=new_match_conditions)
-            changed_pages = [page async for page in iterator]
+        assert match_conditions[0] == new_match_conditions[0]
+        assert match_conditions[1] != new_match_conditions[1]
+        assert match_conditions[2] != new_match_conditions[2]
+        assert len(new_match_conditions) == 3
 
-            # Should yield 0 pages
-            assert len(changed_pages) == 0
+        # monitor pages after updates - only changed pages will be yielded
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page(match_conditions=new_match_conditions)
+        changed_pages = [page async for page in iterator]
 
-            # clean up
-            await self.tear_down()
+        # Should yield 0 pages
+        assert len(changed_pages) == 0
+
+        # clean up
+        await self.tear_down()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
