@@ -94,3 +94,55 @@ def test_managed_checkpoints_requires_async_credential() -> None:
         )
 
     assert "AsyncTokenCredential" in str(exc_info.value)
+
+
+@pytest.mark.unit
+def test_managed_checkpoints_preserves_user_compile_parameters() -> None:
+    """Test that managed_checkpoints=True preserves user's original compile parameters."""
+    from azure.ai.agentserver.langgraph import from_langgraph
+    from azure.ai.agentserver.langgraph.checkpointer import FoundryCheckpointSaver
+    from langgraph.graph import StateGraph
+    from langgraph.checkpoint.memory import InMemorySaver
+    from typing_extensions import TypedDict
+
+    # Create a graph with multiple nodes
+    class State(TypedDict):
+        messages: list
+
+    builder = StateGraph(State)
+    builder.add_node("node1", lambda x: x)
+    builder.add_node("node2", lambda x: x)
+    builder.add_edge("node1", "node2")
+    builder.set_entry_point("node1")
+    builder.set_finish_point("node2")
+
+    # Compile with various user parameters
+    original_graph = builder.compile(
+        checkpointer=InMemorySaver(),
+        interrupt_before=["node1"],
+        interrupt_after=["node2"],
+        debug=True,
+    )
+
+    # Verify original parameters
+    assert type(original_graph.checkpointer).__name__ == "InMemorySaver"
+    assert original_graph.interrupt_before_nodes == ["node1"]
+    assert original_graph.interrupt_after_nodes == ["node2"]
+    assert original_graph.debug is True
+
+    # Apply managed_checkpoints
+    mock_credential = Mock(spec=AsyncTokenCredential)
+
+    with patch("azure.ai.agentserver.langgraph.get_project_endpoint", return_value="https://mock.endpoint"):
+        adapter = from_langgraph(
+            original_graph,
+            credentials=mock_credential,
+            managed_checkpoints=True,
+        )
+
+    # Verify new graph preserves user parameters but replaces checkpointer
+    new_graph = adapter._graph
+    assert isinstance(new_graph.checkpointer, FoundryCheckpointSaver)
+    assert new_graph.interrupt_before_nodes == ["node1"]
+    assert new_graph.interrupt_after_nodes == ["node2"]
+    assert new_graph.debug is True

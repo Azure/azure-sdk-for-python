@@ -37,7 +37,7 @@ def from_langgraph(
     :param converter: Custom response converter.
     :type converter: Optional[ResponseAPIConverter]
     :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
-        When enabled, the graph will be re-compiled with FoundryCheckpointSaver.
+        When enabled, the graph's checkpointer will be replaced with FoundryCheckpointSaver.
     :type managed_checkpoints: bool
     :param project_endpoint: The Azure AI Foundry project endpoint. If not provided,
         will be read from AZURE_AI_PROJECT_ENDPOINT environment variable.
@@ -72,8 +72,9 @@ def from_langgraph(
         client = FoundryCheckpointClient(resolved_endpoint, credentials)
         checkpointer = FoundryCheckpointSaver(client)
 
-        # Re-compile the graph with the managed checkpointer
-        agent = agent.builder.compile(checkpointer=checkpointer)
+        # Validate and replace the checkpointer directly (preserves all other compile parameters)
+        from langgraph.types import ensure_valid_checkpointer
+        agent.checkpointer = ensure_valid_checkpointer(checkpointer)
 
     return LangGraphAdapter(agent, credentials=credentials, converter=converter)
 
