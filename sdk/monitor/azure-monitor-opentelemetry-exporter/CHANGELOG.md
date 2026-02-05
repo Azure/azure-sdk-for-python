@@ -1,6 +1,20 @@
 # Release History
 
-## 1.0.0b47 (Unreleased)
+## 1.0.0b48 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fix CPU usage calculation logic for live metrics
+  ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
+
+### Other Changes
+- Fix Ingestion-Side Sampling Disk Persist Behavior
+  ([#44980](https://github.com/Azure/azure-sdk-for-python/pull/44980))
+
+## 1.0.0b47 (2026-02-03)
 
 ### Features Added
 - Rename metric names for customer sdk stats and set it on by default
@@ -9,8 +23,6 @@
   ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
 - Add support for user id and authId
   ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
-
-### Breaking Changes
 
 ### Bugs Fixed
 - Add custom metric mapping for customer sdkstats metric names to preserve casing
