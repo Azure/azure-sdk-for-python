@@ -396,18 +396,11 @@ def format_requirement(req: str) -> str:
 
 def get_package_requirements(parsed: ParsedSetup) -> Tuple[List[str], List[str]]:
     """Retrieve the host and run requirements for a data plane package meta.yaml."""
-    host_requirements = set(["pip"])
-    run_requirements = set()
+    host_requirements = set(["pip", "python"])
+    run_requirements = set(["python"])
 
     # reqs commonly seen in existing meta.yaml files that aren't always in setup.py or pyproject.toml
-    for essential_req in [
-        "azure-identity",
-        "azure-core",
-        "python",
-        "aiohttp",
-        "requests-oauthlib >=0.5.0",
-        "cryptography",
-    ]:
+    for essential_req in ["azure-identity", "azure-core", "aiohttp"]:
         req_name = format_requirement(essential_req)
         host_requirements.add(req_name)
         run_requirements.add(req_name)
