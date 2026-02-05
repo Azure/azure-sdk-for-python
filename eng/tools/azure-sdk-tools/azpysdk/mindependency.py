@@ -36,4 +36,3 @@ class mindependency(DependencyCheck):
             dest="mark_arg",
             help='Optional pytest marker expression passed as -m "<expr>" (e.g. "cosmosEmulator").',
         )
-

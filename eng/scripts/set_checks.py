@@ -29,6 +29,8 @@ def resolve_devops_variable(var_value: str) -> List[str]:
             return []
         else:
             return [tox_env.strip() for tox_env in var_value.split(",") if tox_env.strip()]
+    else:
+        raise ValueError("Provided variable value is empty or None")
 
 
 def set_devops_value(resolved_set: List[str]) -> None:
@@ -65,13 +67,13 @@ def process_ci_skips(glob_string: str, service: str) -> None:
             set_ci_variable(f"Skip.{check[0].upper()}{check[1:]}", "true")
             output_ci_warning(
                 f"All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
-                "set_tox_environment.py",
+                "set_checks.py",
             )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="This script is used to resolve a set of arguments (that correspond to devops runtime variables) and determine which tox environments should be run for the current job. "
+        description="This script is used to resolve a set of arguments (that correspond to devops runtime variables) and determine which checks should be run for the current job. "
         + "When running against a specific service directory, attempts to find entire analysis steps that can be skipped. EG if pylint is disabled for every package in a given service directory, that "
         + "step should never actually run."
     )

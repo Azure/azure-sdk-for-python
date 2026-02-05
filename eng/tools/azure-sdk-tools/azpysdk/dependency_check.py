@@ -195,6 +195,9 @@ class DependencyCheck(Check):
 
         pytest_args = list(default_args)
 
+        if getattr(args, "mark_arg", None):
+            pytest_args.extend(["-m", args.mark_arg])
+
         if getattr(args, "pytest_args", None):
             pytest_args.extend(args.pytest_args)
 

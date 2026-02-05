@@ -22,10 +22,10 @@ import subprocess
 from urllib.parse import urlparse
 from urllib3.exceptions import SSLError
 
-from ci_tools.variables import in_ci  #
+from ci_tools.variables import in_ci
 
 from .config import PROXY_URL
-from .fake_credentials import FAKE_ACCESS_TOKEN, FAKE_ID, SERVICEBUS_FAKE_SAS, SANITIZED
+from .fake_credentials import SANITIZED
 from .helpers import get_http_client, is_live_and_not_recording
 from .sanitizers import (
     add_batch_sanitizers,

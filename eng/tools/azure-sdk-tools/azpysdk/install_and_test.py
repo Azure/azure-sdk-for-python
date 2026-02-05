@@ -66,13 +66,6 @@ class InstallAndTest(Check):
                 results.append(install_result)
                 continue
 
-            try:
-                self.before_pytest(executable, package_dir, package_name, staging_directory, args)
-            except CalledProcessError as exc:
-                logger.error(f"Pre-pytest hook failed for {package_name}: {exc}")
-                results.append(exc.returncode or 1)
-                continue
-
             pytest_args = self._build_pytest_args(package_dir, args)
             pytest_result = self.run_pytest(executable, staging_directory, package_dir, package_name, pytest_args)
             if pytest_result != 0:
@@ -107,13 +100,7 @@ class InstallAndTest(Check):
         return 0
 
     def run_pytest(
-        self,
-        executable: str,
-        staging_directory: str,
-        package_dir: str,
-        package_name: str,
-        pytest_args: List[str],
-        cwd: Optional[str] = None,
+        self, executable: str, staging_directory: str, package_dir: str, package_name: str, pytest_args: List[str]
     ) -> int:
         pytest_command = ["-m", "pytest", *pytest_args]
 
@@ -147,7 +134,6 @@ class InstallAndTest(Check):
             self._install_common_requirements(executable, package_dir)
             if self.should_install_dev_requirements():
                 self.install_dev_reqs(executable, args, package_dir)
-            self.after_dependencies_installed(executable, package_dir, staging_directory, args)
         except CalledProcessError as exc:
             logger.error(f"Failed to prepare dependencies for {package_name}: {exc}")
             return exc.returncode or 1
@@ -180,18 +166,6 @@ class InstallAndTest(Check):
 
     def should_install_dev_requirements(self) -> bool:
         return True
-
-    def after_dependencies_installed(
-        self, executable: str, package_dir: str, staging_directory: str, args: argparse.Namespace
-    ) -> None:
-        del executable, package_dir, staging_directory, args
-        return None
-
-    def before_pytest(
-        self, executable: str, package_dir: str, package_name: str, staging_directory: str, args: argparse.Namespace
-    ) -> None:
-        del executable, package_dir, package_name, staging_directory, args
-        return None
 
     def _install_common_requirements(self, executable: str, package_dir: str) -> None:
         install_into_venv(executable, PACKAGING_REQUIREMENTS, package_dir)

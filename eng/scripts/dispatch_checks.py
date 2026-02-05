@@ -5,13 +5,10 @@ import sys
 import time
 import signal
 import shutil
-import shlex
 import subprocess
-import urllib.request
 from dataclasses import dataclass
 from typing import IO, List, Optional
 
-from azpysdk.proxy_ports import get_proxy_port_for_check
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
@@ -112,7 +109,7 @@ async def run_check(
         if in_ci():
             env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
         try:
-            logger.info(*cmd)
+            logger.info(" ".join(cmd))
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
                 cwd=package,
@@ -241,9 +238,7 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir, mark_arg: Op
 
     for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
         tasks.append(
-            asyncio.create_task(
-                run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port, mark_arg)
-            )
+            asyncio.create_task(run_check(semaphore, package, check, base_args, idx, total or 1, proxy_port, mark_arg))
         )
 
     # Handle Ctrl+C gracefully
