@@ -981,11 +981,15 @@ def _deserialize_with_callable(
                 return float(value.text) if value.text else None
             if deserializer is bool:
                 return value.text == "true" if value.text else None
+            if deserializer in _DESERIALIZE_MAPPING.values() or deserializer in _DESERIALIZE_MAPPING_WITHFORMAT.values():
+                return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value.text) if value.text else None
         if deserializer is None:
             return value
         if deserializer in [int, float, bool]:
             return deserializer(value)
         if isinstance(deserializer, CaseInsensitiveEnumMeta):
+            if isinstance(value, ET.Element):
+                value = value.text
             try:
                 return deserializer(value)
             except ValueError:
@@ -1036,7 +1040,9 @@ def _failsafe_deserialize_xml(
 ) -> typing.Any:
     try:
         return _deserialize_xml(deserializer, response.text())
-    except DeserializationError:
+    except (ET.ParseError, DeserializationError):
+        if response.headers.get("Content-Type", "").split(";")[0].strip() == "application/json":
+            return _failsafe_deserialize(deserializer, response)
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
         )

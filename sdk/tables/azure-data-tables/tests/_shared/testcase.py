@@ -4,6 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import base64
 from typing import Callable, Dict, Optional, Union, Any, Mapping, Type, Tuple
 from urllib.parse import quote
 from base64 import b64encode
@@ -65,7 +66,7 @@ class FakeTokenCredential(object):
     """
 
     def __init__(self):
-        self.token = AccessToken("YOU SHALL NOT PASS", 0)
+        self.token = AccessToken(base64.b64encode(b"YOU SHALL NOT PASS"), 0)
 
     def get_token(self, *args, **kwargs):
         return self.token

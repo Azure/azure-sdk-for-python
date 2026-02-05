@@ -134,8 +134,13 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                 # Delete table returns a MethodNotAllowed for tablename == "\"
                 if error.error_code != "MethodNotAllowed":
                     raise
-            with pytest.raises(ValueError) as error:
-                client.create_entity({"PartitionKey": "foo", "RowKey": "foo"}, content_type="application/json;odata=nometadata")
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.create_entity({"PartitionKey": "foo", "RowKey": "foo"})
+            except ResourceNotFoundError:
+                # Create entity returns a ResourceNotFound for tablename == "- "
+                if invalid_name != "- ":
+                    raise
             assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             with pytest.raises(ValueError) as error:
                 client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
