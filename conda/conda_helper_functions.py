@@ -294,24 +294,28 @@ def get_valid_package_imports(package_name: str) -> List[str]:
     """
     Inspect the package's actual module structure and return only valid imports.
 
-    This avoids assuming all packages have .aio, .aio.operations, .models, and .operations
-    submodules, since not all packages have the same structure.
-
     :param package_name: The name of the package (e.g., "azure-mgmt-advisor" or "azure-eventgrid").
     :return: List of valid module names for import (e.g., ["azure.eventgrid", "azure.eventgrid.aio"]).
     """
-    module_name = package_name.replace("-", ".")
-    imports = [module_name]
-
     package_path = get_package_path(package_name)
     if not package_path:
         logger.warning(
-            f"Could not find package path for {package_name}, using base import only"
+            f"Could not find package path for {package_name} to determine imports, using fallback"
         )
-        return imports
+        return [package_name.replace("-", ".")]
+    else:
+        parsed = ParsedSetup.from_path(package_path)
+        if not parsed or not parsed.namespace:
+            logger.warning(
+                f"Could not parse namespace for {package_name}, using fallback"
+            )
+            module_name = package_name.replace("-", ".")
+        else:
+            module_name = parsed.namespace
+
+    imports = [module_name]
 
     # Construct the path to the actual module directory
-    # e.g., azure-mgmt-advisor -> azure/mgmt/advisor
     module_parts = module_name.split(".")
     module_dir = os.path.join(package_path, *module_parts)
 
