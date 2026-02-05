@@ -9,6 +9,8 @@ from .checkpoint_repository import (
     InMemoryCheckpointRepository,
     FileCheckpointRepository,
 )
+from ._foundry_checkpoint_storage import FoundryCheckpointStorage
+from ._foundry_checkpoint_repository import FoundryCheckpointRepository
 
 __all__ = [
     "AgentThreadRepository",
@@ -18,4 +20,6 @@ __all__ = [
     "CheckpointRepository",
     "InMemoryCheckpointRepository",
     "FileCheckpointRepository",
+    "FoundryCheckpointStorage",
+    "FoundryCheckpointRepository",
 ]
