@@ -13,6 +13,8 @@ import urllib.request
 from datetime import datetime
 from ci_tools.parsing import ParsedSetup
 from packaging.version import Version
+from pypi_tools.pypi import PyPIClient, retrieve_versions_from_pypi
+
 
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SDK_DIR = os.path.join(ROOT_DIR, "sdk")
@@ -83,7 +85,6 @@ def get_bundle_name(package_name: str) -> Optional[str]:
                 f"Stable release package {package_name} needs a conda config"
             )
 
-        # beta or alpha package are not released
         logger.warning(
             f"No conda config found for package {package_name}, which may be a pre-release"
         )
@@ -231,28 +232,25 @@ def package_needs_update(
 
 def is_stable_on_pypi(package_name: str) -> bool:
     """
-    Check if a package has a stable (GA) release on PyPI.
-
-    Uses PEP 440 version parsing to determine if the latest version is a pre-release.
+    Check if a package has any stable (GA) release on PyPI.
 
     :param package_name: The name of the package to check.
-    :return: True if the latest PyPI version is stable, False otherwise.
+    :return: True if any stable version exists on PyPI, False otherwise.
     """
-    pypi_url = f"https://pypi.org/pypi/{package_name}/json"
     try:
-        with urllib.request.urlopen(pypi_url, timeout=10) as response:
-            data = json.loads(response.read().decode("utf-8"))
-            latest_version = data["info"]["version"]
-            parsed_version = Version(latest_version)
+        versions = retrieve_versions_from_pypi(package_name)
+        if not versions:
+            logger.warning(f"No versions found on PyPI for {package_name}")
+            return False
 
-            if parsed_version.is_prerelease:
-                logger.debug(
-                    f"Package {package_name} version {latest_version} is pre-release"
-                )
-                return False
+        # Check if any version is stable (not a prerelease)
+        for v in versions:
+            if not Version(v).is_prerelease:
+                logger.debug(f"Package {package_name} has stable version {v}")
+                return True
 
-            logger.debug(f"Package {package_name} version {latest_version} is stable")
-            return True
+        logger.debug(f"Package {package_name} has no stable versions")
+        return False
 
     except Exception as e:
         logger.warning(f"Failed to check PyPI for {package_name}: {e}")
@@ -263,25 +261,22 @@ def get_package_data_from_pypi(
     package_name: str,
 ) -> Tuple[Optional[str], Optional[str]]:
     """Fetch the latest version and download URI for a package from PyPI."""
-    pypi_url = f"https://pypi.org/pypi/{package_name}/json"
     try:
-        with urllib.request.urlopen(pypi_url, timeout=10) as response:
-            data = json.loads(response.read().decode("utf-8"))
+        client = PyPIClient()
+        data = client.project(package_name)
 
-            # Get the latest version
-            latest_version = data["info"]["version"]
-            if latest_version in data["releases"] and data["releases"][latest_version]:
-                # Get the source distribution (sdist) if available
-                files = data["releases"][latest_version]
-                source_dist = next(
-                    (f for f in files if f["packagetype"] == "sdist"), None
+        # Get the latest version
+        latest_version = data["info"]["version"]
+        if latest_version in data["releases"] and data["releases"][latest_version]:
+            # Get the source distribution (sdist) if available
+            files = data["releases"][latest_version]
+            source_dist = next((f for f in files if f["packagetype"] == "sdist"), None)
+            if source_dist:
+                download_url = source_dist["url"]
+                logger.info(
+                    f"Found download URL for {package_name}=={latest_version}: {download_url}"
                 )
-                if source_dist:
-                    download_url = source_dist["url"]
-                    logger.info(
-                        f"Found download URL for {package_name}=={latest_version}: {download_url}"
-                    )
-                    return latest_version, download_url
+                return latest_version, download_url
 
     except Exception as e:
         logger.error(f"Failed to fetch download URI from PyPI for {package_name}: {e}")
