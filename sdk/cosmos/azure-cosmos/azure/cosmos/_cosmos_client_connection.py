@@ -3202,6 +3202,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type response_hook: Callable[[Mapping[str, Any], dict[str, Any]], None]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
+        :param response_headers_list: Optional list to capture response headers from each page fetch.
+        :type response_headers_list: Optional[list[CaseInsensitiveDict]]
         :returns: A list of the queried resources.
         :rtype: list
         :raises SystemError: If the query compatibility mode is undefined.
