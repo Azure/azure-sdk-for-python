@@ -23,29 +23,9 @@ pip install azure-identity
 - An [Azure subscription](https://azure.microsoft.com/free/python)
 - Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
-### Authenticate during local development
+### Authenticate the client
 
-When debugging and executing code locally, it's typical for developers to use their own accounts for authenticating calls to Azure services. The Azure Identity library supports authenticating through developer tools to simplify local development.
-
-#### Authenticate via the Azure CLI
-
-`DefaultAzureCredential` and `AzureCliCredential` can authenticate as the user signed in to the [Azure CLI][azure_cli]. To sign in to the Azure CLI, run `az login`. On a system with a default web browser, the Azure CLI launches the browser to authenticate a user.
-
-When no default browser is available, `az login` uses the device code authentication flow. This flow can also be selected manually by running `az login --use-device-code`.
-
-#### Authenticate via the Azure Developer CLI
-
-Developers coding outside of an IDE can also use the [Azure Developer CLI][azure_developer_cli] to authenticate. Applications using `DefaultAzureCredential` or `AzureDeveloperCliCredential` can then use this account to authenticate calls in their application when running locally.
-
-To authenticate with the [Azure Developer CLI][azure_developer_cli], run the command `azd auth login`. For users running on a system with a default web browser, the Azure Developer CLI launches the browser to authenticate the user.
-
-For systems without a default web browser, the `azd auth login --use-device-code` command uses the device code authentication flow.
-
-#### Authenticate via Azure PowerShell
-
-Developers coding outside of an IDE can also use [Azure PowerShell][azure_powershell] to authenticate. Applications using `DefaultAzureCredential` or `AzurePowerShellCredential` can then use this account to authenticate calls in their application when running locally.
-
-To authenticate with Azure PowerShell, run the `Connect-AzAccount` cmdlet. By default, like the Azure CLI, `Connect-AzAccount` launches the default web browser to authenticate the user. For systems without a default web browser, the `Connect-AzAccount` uses the device code authentication flow. The user can also force Azure PowerShell to use the device code flow rather than launching a browser by specifying the `-UseDeviceAuthentication` argument.
+When debugging and executing code locally, it's typical for a developer to use their own account for authenticating calls to Azure services. There are several developer tools that can be used to perform this authentication in your development environment. For more information, see [Authentication during local development](https://learn.microsoft.com/azure/developer/python/sdk/authentication/overview#authentication-during-local-development).
 
 ## Key concepts
 
@@ -69,52 +49,8 @@ This allows for trying all of the developer credentials on your machine while ha
 
 The following examples are provided:
 
-- [Authenticate with DefaultAzureCredential](#authenticate-with-defaultazurecredential "Authenticate with DefaultAzureCredential")
 - [Define a custom authentication flow with ChainedTokenCredential](#define-a-custom-authentication-flow-with-chainedtokencredential "Define a custom authentication flow with ChainedTokenCredential")
 - [Async credentials](#async-credentials "Async credentials")
-
-### Authenticate with `DefaultAzureCredential`
-
-More details on configuring your environment to use `DefaultAzureCredential` can be found in the class's [reference documentation][default_cred_ref].
-
-This example demonstrates authenticating the `BlobServiceClient` from the [azure-storage-blob][azure_storage_blob] library using `DefaultAzureCredential`.
-
-```python
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient
-
-default_credential = DefaultAzureCredential()
-
-client = BlobServiceClient(account_url, credential=default_credential)
-```
-
-#### Enable interactive authentication with `DefaultAzureCredential`
-
-By default, interactive authentication is disabled in `DefaultAzureCredential` and can be enabled with a keyword argument:
-
-```python
-DefaultAzureCredential(exclude_interactive_browser_credential=False)
-```
-
-When enabled, `DefaultAzureCredential` falls back to interactively authenticating via the system's default web browser when no other credential is available.
-
-#### Specify a user-assigned managed identity with `DefaultAzureCredential`
-
-Many Azure hosts allow the assignment of a user-assigned managed identity. To configure `DefaultAzureCredential` to authenticate a user-assigned managed identity, use the `managed_identity_client_id` keyword argument:
-
-```python
-DefaultAzureCredential(managed_identity_client_id=client_id)
-```
-
-Alternatively, set the environment variable `AZURE_CLIENT_ID` to the identity's client ID.
-
-#### Authenticate Using Visual Studio Code with `DefaultAzureCredential`
-
-To authenticate using Visual Studio Code, ensure you have signed in through the **Azure Resources** extension. The signed-in user is then picked up automatically by `DefaultAzureCredential`. Currently, this is only supported on Windows and WSL. To use this method of authentication, ensure the following prerequisites are met:
-
-- [Azure Resources Extension](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureresourcegroups) is installed in Visual Studio Code.
-- You are signed in using the `Azure: Sign In` command in VS Code.
-- You have the [`azure-identity-broker`][azure_identity_broker] package installed.
 
 ### Define a custom authentication flow with `ChainedTokenCredential`
 
@@ -152,7 +88,7 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 
 ## Managed identity support
 
-[Managed identity authentication](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) is supported via either `DefaultAzureCredential` or `ManagedIdentityCredential` directly for the following Azure services:
+[Managed identity authentication](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/overview) is supported either indirectly via `DefaultAzureCredential` or directly via  `ManagedIdentityCredential` for the following Azure services:
 
 - [Azure App Service and Azure Functions](https://learn.microsoft.com/azure/app-service/overview-managed-identity?tabs=python)
 - [Azure Arc](https://learn.microsoft.com/azure/azure-arc/servers/managed-identity-authentication)
@@ -161,57 +97,6 @@ client = SecretClient("https://my-vault.vault.azure.net", default_credential)
 - [Azure Service Fabric](https://learn.microsoft.com/azure/service-fabric/concepts-managed-identity)
 - [Azure Virtual Machines](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token)
 - [Azure Virtual Machines Scale Sets](https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/qs-configure-powershell-windows-vmss)
-
-### Examples
-
-These examples demonstrate authenticating `SecretClient` from the [`azure-keyvault-secrets`](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-secrets) library with `ManagedIdentityCredential`.
-
-
-#### Authenticate with a user-assigned managed identity
-
-To authenticate with a user-assigned managed identity, you must specify one of the following IDs for the managed identity.
-
-##### Client ID
-
-```python
-from azure.identity import ManagedIdentityCredential
-from azure.keyvault.secrets import SecretClient
-
-credential = ManagedIdentityCredential(client_id="managed_identity_client_id")
-client = SecretClient("https://my-vault.vault.azure.net", credential)
-```
-
-##### Resource ID
-
-```python
-from azure.identity import ManagedIdentityCredential
-from azure.keyvault.secrets import SecretClient
-
-resource_id = "/subscriptions/<id>/resourceGroups/<rg>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/<mi-name>"
-
-credential = ManagedIdentityCredential(identity_config={"resource_id": resource_id})
-client = SecretClient("https://my-vault.vault.azure.net", credential)
-```
-
-##### Object ID
-
-```python
-from azure.identity import ManagedIdentityCredential
-from azure.keyvault.secrets import SecretClient
-
-credential = ManagedIdentityCredential(identity_config={"object_id": "managed_identity_object_id"})
-client = SecretClient("https://my-vault.vault.azure.net", credential)
-```
-
-#### Authenticate with a system-assigned managed identity
-
-```python
-from azure.identity import ManagedIdentityCredential
-from azure.keyvault.secrets import SecretClient
-
-credential = ManagedIdentityCredential()
-client = SecretClient("https://my-vault.vault.azure.net", credential)
-```
 
 ## Cloud configuration
 
@@ -241,45 +126,45 @@ Not all credentials require this configuration. Credentials that authenticate th
 
 ### Credential chains
 
-|Credential|Usage
-|-|-
-|[`DefaultAzureCredential`][default_cred_ref]| Provides a simplified authentication experience to quickly start developing applications run in Azure.
-|[`ChainedTokenCredential`][chain_cred_ref]| Allows users to define custom authentication flows composing multiple credentials.
+| Credential                                   | Usage                                                                                                  | Reference                                       |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------|-------------------------------------------------|
+| [`DefaultAzureCredential`][default_cred_ref] | Provides a simplified authentication experience to quickly start developing applications run in Azure. | [DefaultAzureCredential overview][dac_overview] |
+| [`ChainedTokenCredential`][chain_cred_ref]   | Allows users to define custom authentication flows composing multiple credentials.                     | [ChainedTokenCredential overview][ctc_overview] |
 
 ### Authenticate Azure-hosted applications
 
-|Credential|Usage
-|-|-
-|[`EnvironmentCredential`][environment_cred_ref]| Authenticates a service principal or user via credential information specified in environment variables.
-|[`ManagedIdentityCredential`][managed_id_cred_ref]| Authenticates the managed identity of an Azure resource.
-|[`WorkloadIdentityCredential`][workload_id_cred_ref]| Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes.
+| Credential                                           | Usage                                                                                                                   | Reference                                                                                |
+|------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| [`EnvironmentCredential`][environment_cred_ref]      | Authenticates a service principal or user via credential information specified in environment variables.                |                                                                                          |
+| [`ManagedIdentityCredential`][managed_id_cred_ref]   | Authenticates the managed identity of an Azure resource.                                                                | [user-assigned managed identity][uami_doc]  [system-assigned managed identity][sami_doc] |
+| [`WorkloadIdentityCredential`][workload_id_cred_ref] | Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/aks/workload-identity-overview) on Kubernetes. |                                                                                          |
 
 ### Authenticate service principals
 
-|Credential|Usage|Reference
-|-|-|-
-|[`AzurePipelinesCredential`][az_pipelines_cred_ref]| Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines. |
-|[`CertificateCredential`][cert_cred_ref]| Authenticates a service principal using a certificate. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
-|[`ClientAssertionCredential`][client_assertion_cred_ref]| Authenticates a service principal using a signed client assertion. |
-|[`ClientSecretCredential`][client_secret_cred_ref]| Authenticates a service principal using a secret. | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals)
+| Credential                                               | Usage                                                                                                                                                                | Reference                                                                                                                  |
+|----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| [`AzurePipelinesCredential`][az_pipelines_cred_ref]      | Supports [Microsoft Entra Workload ID](https://learn.microsoft.com/azure/devops/pipelines/release/configure-workload-identity?view=azure-devops) on Azure Pipelines. |                                                                                                                            |
+| [`CertificateCredential`][cert_cred_ref]                 | Authenticates a service principal using a certificate.                                                                                                               | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals) |
+| [`ClientAssertionCredential`][client_assertion_cred_ref] | Authenticates a service principal using a signed client assertion.                                                                                                   |                                                                                                                            |
+| [`ClientSecretCredential`][client_secret_cred_ref]       | Authenticates a service principal using a secret.                                                                                                                    | [Service principal authentication](https://learn.microsoft.com/entra/identity-platform/app-objects-and-service-principals) |
 
 ### Authenticate users
 
-|Credential|Usage| Reference | Notes
-|-|-|-|-
-|[`AuthorizationCodeCredential`][auth_code_cred_ref]| Authenticates a user with a previously obtained authorization code. | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)|
-|[`DeviceCodeCredential`][device_code_cred_ref]| Interactively authenticates a user on devices with limited UI. | [Device code authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-device-code)|
-|[`InteractiveBrowserCredential`][interactive_cred_ref]| Interactively authenticates a user with the default system browser. | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)| `InteractiveBrowserCredential` doesn't support GitHub Codespaces. As a workaround, use [`DeviceCodeCredential`][device_code_cred_ref].
-|[`OnBehalfOfCredential`][obo_cred_ref]| Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow)|
+| Credential                                             | Usage                                                                             | Reference                                                                                                      | Notes                                                                                                                                  |
+|--------------------------------------------------------|-----------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| [`AuthorizationCodeCredential`][auth_code_cred_ref]    | Authenticates a user with a previously obtained authorization code.               | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)     |                                                                                                                                        |
+| [`DeviceCodeCredential`][device_code_cred_ref]         | Interactively authenticates a user on devices with limited UI.                    | [Device code authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-device-code)        |                                                                                                                                        |
+| [`InteractiveBrowserCredential`][interactive_cred_ref] | Interactively authenticates a user with the default system browser.               | [OAuth2 authentication code](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-auth-code-flow)     | `InteractiveBrowserCredential` doesn't support GitHub Codespaces. As a workaround, use [`DeviceCodeCredential`][device_code_cred_ref]. |
+| [`OnBehalfOfCredential`][obo_cred_ref]                 | Propagates the delegated user identity and permissions through the request chain. | [On-behalf-of authentication](https://learn.microsoft.com/entra/identity-platform/v2-oauth2-on-behalf-of-flow) |                                                                                                                                        |
 
 ### Authenticate via development tools
 
-|Credential|Usage|Reference
-|-|-|-
-|[`AzureCliCredential`][cli_cred_ref]| Authenticates in a development environment with the Azure CLI. | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)
-|[`AzureDeveloperCliCredential`][azd_cli_cred_ref]| Authenticates in a development environment with the Azure Developer CLI. | [Azure Developer CLI Reference](https://learn.microsoft.com/azure/developer/azure-developer-cli/reference)
-|[`AzurePowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
-|[`VisualStudioCodeCredential`][vsc_cred_ref]| Authenticates in a development environment with Visual Studio Code. |
+| Credential                                         | Usage                                                                    | Reference                                                                                                  |
+|----------------------------------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------|
+| [`AzureCliCredential`][cli_cred_ref]               | Authenticates in a development environment with the Azure CLI.           | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)                   |
+| [`AzureDeveloperCliCredential`][azd_cli_cred_ref]  | Authenticates in a development environment with the Azure Developer CLI. | [Azure Developer CLI Reference](https://learn.microsoft.com/azure/developer/azure-developer-cli/reference) |
+| [`AzurePowerShellCredential`][powershell_cred_ref] | Authenticates in a development environment with the Azure PowerShell.    | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)       |
+| [`VisualStudioCodeCredential`][vsc_cred_ref]       | Authenticates in a development environment with Visual Studio Code.      |                                                                                                            |
 
 ## Environment variables
 
@@ -288,21 +173,21 @@ variables:
 
 ### Service principal with secret
 
-|Variable name|Value
-|-|-
-|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application
-|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant
-|`AZURE_CLIENT_SECRET`|one of the application's client secrets
+| Variable name         | Value                                          |
+|-----------------------|------------------------------------------------|
+| `AZURE_CLIENT_ID`     | ID of a Microsoft Entra application            |
+| `AZURE_TENANT_ID`     | ID of the application's Microsoft Entra tenant |
+| `AZURE_CLIENT_SECRET` | one of the application's client secrets        |
 
 ### Service principal with certificate
 
-|Variable name|Value|Required
-|-|-|-
-|`AZURE_CLIENT_ID`|ID of a Microsoft Entra application|X
-|`AZURE_TENANT_ID`|ID of the application's Microsoft Entra tenant|X
-|`AZURE_CLIENT_CERTIFICATE_PATH`|path to a PEM or PKCS12 certificate file including private key|X
-|`AZURE_CLIENT_CERTIFICATE_PASSWORD`|password of the certificate file, if any|
-|`AZURE_CLIENT_SEND_CERTIFICATE_CHAIN`|If `True`, the credential sends the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) authentication. Defaults to False. There's a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication isn't supported.|
+| Variable name                         | Value                                                                                                                                                      | Required                                                                                                                                                                   |
+|---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `AZURE_CLIENT_ID`                     | ID of a Microsoft Entra application                                                                                                                        | X                                                                                                                                                                          |
+| `AZURE_TENANT_ID`                     | ID of the application's Microsoft Entra tenant                                                                                                             | X                                                                                                                                                                          |
+| `AZURE_CLIENT_CERTIFICATE_PATH`       | path to a PEM or PKCS12 certificate file including private key                                                                                             | X                                                                                                                                                                          |
+| `AZURE_CLIENT_CERTIFICATE_PASSWORD`   | password of the certificate file, if any                                                                                                                   |                                                                                                                                                                            |
+| `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN` | If `True`, the credential sends the public certificate chain in the x5c header of each token request's JWT. This is required for Subject Name/Issuer (SNI) | authentication. Defaults to False. There's a [known limitation](https://github.com/Azure/azure-sdk-for-python/issues/13349) that async SNI authentication isn't supported. |
 
 Configuration is attempted in the preceding order. For example, if values for a client secret and certificate are both present, the client secret is used.
 
@@ -376,14 +261,10 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
 [az_pipelines_cred_ref]: https://aka.ms/azsdk/python/identity/azurepipelinescredential
 [azd_cli_cred_ref]: https://aka.ms/azsdk/python/identity/azuredeveloperclicredential
-[azure_cli]: https://learn.microsoft.com/cli/azure
-[azure_developer_cli]:https://aka.ms/azure-dev
-[azure_powershell]: https://learn.microsoft.com/powershell/azure
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [azure_identity_broker]: https://pypi.org/project/azure-identity-broker
 [azure_identity_broker_readme]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity-broker
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
-[azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
 [cae]: https://learn.microsoft.com/entra/identity/conditional-access/concept-continuous-access-evaluation
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
@@ -403,7 +284,9 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 [ref_docs]: https://aka.ms/azsdk/python/identity/docs
 [ref_docs_aio]: https://aka.ms/azsdk/python/identity/aio/docs
 [token_cred_ref]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python
+[sami_doc]: https://learn.microsoft.com/azure/developer/python/sdk/authentication/system-assigned-managed-identity
 [supports_token_info_ref]: https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.supportstokeninfo?view=azure-python
 [troubleshooting_guide]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md
+[uami_doc]: https://learn.microsoft.com/azure/developer/python/sdk/authentication/user-assigned-managed-identity
 [vsc_cred_ref]: https://aka.ms/azsdk/python/identity/vscodecredential
 [workload_id_cred_ref]: https://aka.ms/azsdk/python/identity/workloadidentitycredential
