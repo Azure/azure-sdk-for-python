@@ -733,7 +733,8 @@ def update_data_plane_release_logs(
                 if version:
                     pkg_updates.append(f"- {pkg_name}-{version}")
                 else:
-                    logger.warning(
+                    # shouldn't happen, but fallback
+                    logger.error(
                         f"Package {pkg_name} in group {curr_service_name} is missing version info, it may be deprecated. Skipping in release log update"
                     )
                     result.append(pkg_name)
@@ -742,7 +743,7 @@ def update_data_plane_release_logs(
             if curr_service_name in PACKAGES_WITH_DOWNLOAD_URI:
                 version = PACKAGES_WITH_DOWNLOAD_URI[curr_service_name]
                 if not version:
-                    logger.warning(
+                    logger.error(
                         f"Package {curr_service_name} with download_uri is missing version info, it may be deprecated. Skipping in release log update"
                     )
                     result.append(curr_service_name)
@@ -754,7 +755,7 @@ def update_data_plane_release_logs(
             if version:
                 pkg_updates.append(f"- {curr_service_name}-{version}")
             else:
-                logger.warning(
+                logger.error(
                     f"Package {curr_service_name} is missing version info, it may be deprecated. Skipping in release log update"
                 )
                 result.append(curr_service_name)
