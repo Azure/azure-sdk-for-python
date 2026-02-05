@@ -99,31 +99,18 @@ def get_bundle_name(package_name: str) -> Optional[str]:
 def map_bundle_to_packages(package_names: List[str]) -> Dict[str, List[str]]:
     """Create a mapping of bundle names to their constituent package names."""
     logger.info("Mapping bundle names to packages...")
-    path_lookup = _build_package_path_index()
 
     bundle_map = {}
     for package_name in package_names:
         logger.debug(f"Processing package for bundle mapping: {package_name}")
-        package_path = path_lookup.get(package_name)
-        if not package_path:
-            logger.warning(f"Package path not found for {package_name}")
+        try:
+            bundle_name = get_bundle_name(package_name)
+            if bundle_name:
+                logger.debug(f"Bundle name for package {package_name}: {bundle_name}")
+                bundle_map.setdefault(bundle_name, []).append(package_name)
+        except Exception as e:
+            logger.error(f"Failed to get bundle name for {package_name}: {e}")
             continue
-
-        # Skip directories without pyproject.toml
-        if not os.path.exists(os.path.join(package_path, "pyproject.toml")):
-            logger.warning(f"Skipping {package_name}: no pyproject.toml found")
-            continue
-
-        parsed = ParsedSetup.from_path(package_path)
-        if not parsed:
-            logger.error(f"Failed to parse setup for package {package_name}")
-            continue
-
-        conda_config = parsed.get_conda_config()
-        if conda_config and "bundle_name" in conda_config:
-            bundle_name = conda_config["bundle_name"]
-            logger.debug(f"Bundle name for package {package_name}: {bundle_name}")
-            bundle_map.setdefault(bundle_name, []).append(package_name)
 
     return bundle_map
 

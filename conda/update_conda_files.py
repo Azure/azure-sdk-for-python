@@ -1038,9 +1038,9 @@ if __name__ == "__main__":
         package_dict, outdated_package_names, new_data_plane_names, new_mgmt_plane_names
     )
 
-    # pre-process bundled packages to minimize file writes for new data plane packages,
-    # and release logs
-    bundle_map = map_bundle_to_packages(list(package_dict.keys()))
+    # pre-process bundled data packages to minimize file writes for new data plane packages,
+    # and release logs (mgmt packages are always bundled together)
+    bundle_map = map_bundle_to_packages([pkg.get(PACKAGE_COL, "") for pkg in data_pkgs])
     logger.info(
         f"Identified {len(bundle_map)} release bundles from package data: {bundle_map}"
     )
