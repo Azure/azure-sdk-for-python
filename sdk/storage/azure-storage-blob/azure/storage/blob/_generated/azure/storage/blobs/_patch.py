@@ -54,6 +54,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         self.version = version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
         from ._version import VERSION
+
         kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -134,12 +135,7 @@ class AzureBlobStorage:
     """
 
     def __init__(
-        self,
-        url: str,
-        credential: Optional["TokenCredential"] = None,
-        *,
-        pipeline: Any = None,
-        **kwargs: Any
+        self, url: str, credential: Optional["TokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
