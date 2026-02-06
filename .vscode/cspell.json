@@ -1897,6 +1897,15 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-codetransparency/**",
+      "words": [
+        "cose",
+        "Cose",
+        "SCITT",
+        "PKIX"
+      ]
+    },
+    {
       "filename": "sdk/confidentialledger/azure-confidentialledger/**",
       "words": [
         "mrenclave",
