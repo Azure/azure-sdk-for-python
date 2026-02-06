@@ -26,7 +26,7 @@ steps:
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: PythonScript@0
-    displayName: 'Set Tox Environment Skips'
+    displayName: 'Set Checks Environment Skips'
     condition: succeededOrFailed()
     inputs:
       scriptPath: 'eng/scripts/set_checks.py'

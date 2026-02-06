@@ -51,6 +51,7 @@ RECORDING_STOP_URL = "{}/record/stop".format(PROXY_URL())
 PLAYBACK_START_URL = "{}/playback/start".format(PROXY_URL())
 PLAYBACK_STOP_URL = "{}/playback/stop".format(PROXY_URL())
 
+
 class RecordedTransport(str, Enum):
     """Enum for specifying which transports to record in the test proxy."""
 

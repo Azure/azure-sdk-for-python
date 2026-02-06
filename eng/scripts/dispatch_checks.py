@@ -6,6 +6,7 @@ import time
 import signal
 import shutil
 import subprocess
+import re
 from dataclasses import dataclass
 from typing import IO, List, Optional
 
@@ -15,6 +16,7 @@ from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
 from devtools_testutils.proxy_startup import prepare_local_tool
+from packaging.requirements import Requirement
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 ISOLATE_DIRS_TO_CLEAN: List[str] = []
@@ -66,6 +68,45 @@ def _normalize_newlines(text: str) -> str:
 
 def _checks_require_recording_restore(checks: List[str]) -> bool:
     return any(check in INSTALL_AND_TEST_CHECKS for check in checks)
+
+
+def _compare_req_to_injected_reqs(parsed_req, injected_packages: List[str]) -> bool:
+    if parsed_req is None:
+        return False
+    return any(parsed_req.name in req for req in injected_packages)
+
+
+def _inject_custom_reqs(req_file: str, injected_packages: str, package_dir: str) -> None:
+    req_lines = []
+    injected_list = [p for p in re.split(r"[\s,]", injected_packages) if p]
+
+    if not injected_list:
+        return
+
+    logger.info(f"Adding custom packages to requirements for {package_dir}")
+    with open(req_file, "r") as handle:
+        for line in handle:
+            logger.info(f"Attempting to parse {line}")
+            try:
+                parsed_req = Requirement(line.strip())
+            except Exception as exc:
+                logger.error(exc)
+                parsed_req = None
+            req_lines.append((line, parsed_req))
+
+    if req_lines:
+        all_adjustments = injected_list + [
+            line_tuple[0].strip()
+            for line_tuple in req_lines
+            if line_tuple[0].strip() and not _compare_req_to_injected_reqs(line_tuple[1], injected_list)
+        ]
+    else:
+        all_adjustments = injected_list
+
+    logger.info(f"Generated Custom Reqs: {req_lines}")
+
+    with open(req_file, "w") as handle:
+        handle.write("\n".join(all_adjustments))
 
 
 async def run_check(
@@ -183,7 +224,7 @@ def summarize(results: List[CheckResult]) -> int:
     return worst
 
 
-async def run_all_checks(packages, checks, max_parallel, wheel_dir, mark_arg: Optional[str]):
+async def run_all_checks(packages, checks, max_parallel, wheel_dir, mark_arg: Optional[str], injected_packages: str):
     """Run all checks for all packages concurrently and return the worst exit code.
 
     :param packages: Iterable of package paths to run checks against.
@@ -214,16 +255,19 @@ async def run_all_checks(packages, checks, max_parallel, wheel_dir, mark_arg: Op
         logger.info("Replacing relative requirements in eng/dependency_tools.txt with prebuilt wheels.")
         replace_dev_reqs(dependency_tools_path, root_dir, wheel_dir)
 
-        for pkg in packages:
-            destination_dev_req = os.path.join(pkg, "dev_requirements.txt")
+    for pkg in packages:
+        destination_dev_req = os.path.join(pkg, "dev_requirements.txt")
 
-            logger.info(f"Replacing dev requirements w/ path {destination_dev_req}")
-            if not os.path.exists(destination_dev_req):
-                logger.info("No dev_requirements present.")
-                with open(destination_dev_req, "w+") as file:
-                    file.write("\n")
+        logger.info(f"Replacing dev requirements w/ path {destination_dev_req}")
+        if not os.path.exists(destination_dev_req):
+            logger.info("No dev_requirements present.")
+            with open(destination_dev_req, "w+") as file:
+                file.write("\n")
 
+        if in_ci():
             replace_dev_reqs(destination_dev_req, pkg, wheel_dir)
+
+        _inject_custom_reqs(destination_dev_req, injected_packages, pkg)
 
     next_proxy_port = BASE_PROXY_PORT
     for package, check in combos:
@@ -467,7 +511,14 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         if in_ci():
             logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
         exit_code = asyncio.run(
-            run_all_checks(targeted_packages, checks, args.max_parallel, temp_wheel_dir, args.mark_arg)
+            run_all_checks(
+                targeted_packages,
+                checks,
+                args.max_parallel,
+                temp_wheel_dir,
+                args.mark_arg,
+                args.injected_packages,
+            )
         )
     except KeyboardInterrupt:
         logger.error("Aborted by user.")

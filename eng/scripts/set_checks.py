@@ -30,7 +30,7 @@ def resolve_devops_variable(var_value: str) -> List[str]:
         else:
             return [tox_env.strip() for tox_env in var_value.split(",") if tox_env.strip()]
     else:
-        raise ValueError("Provided variable value is empty or None")
+        return []
 
 
 def set_devops_value(resolved_set: List[str]) -> None:

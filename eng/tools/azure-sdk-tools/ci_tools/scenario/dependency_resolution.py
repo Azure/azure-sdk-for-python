@@ -245,7 +245,9 @@ def process_requirement(req: str, dependency_type: str, orig_pkg_name: str) -> s
     # prepass filter before choosing a latest or minimum, eliminate prerelease versions if they are not allowed based on the specifier
     if not allows_prereleases:
         versions = [v for v in versions if not Version(v).is_prerelease]
-        logger.info(f"Filtered out pre-release versions for {pkg_name} based on specifier. Remaining versions: {versions}")
+        logger.info(
+            f"Filtered out pre-release versions for {pkg_name} based on specifier. Remaining versions: {versions}"
+        )
 
     versions = process_bounded_versions(orig_pkg_name, pkg_name, versions)
 
