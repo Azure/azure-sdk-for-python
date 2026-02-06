@@ -272,8 +272,20 @@ class SchemaProperty(BaseModel):
         keyword; it is *not* “this property is required in a parent object”.)
     """
 
-    type: SchemaType
+    type: Optional[SchemaType] = None
+    """The schema node type (e.g., ``string``, ``object``, ``array``). May be ``None``
+    if the upstream tool manifest supplies an empty or unrecognised type string."""
     description: Optional[str] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _coerce_empty_type(cls, data: Any) -> Any:
+        """Coerce an empty ``type`` string to ``None`` so that properties with
+        invalid or missing type information are still deserialised instead of
+        raising a validation error."""
+        if isinstance(data, dict) and data.get("type") == "":
+            data = {**data, "type": None}
+        return data
     items: Optional["SchemaProperty"] = None
     properties: Optional[Mapping[str, "SchemaProperty"]] = None
     default: Any = None
