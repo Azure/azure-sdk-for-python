@@ -404,6 +404,10 @@ __all__: list[str] = [
     "SearchIndexingBufferedSender",
 ]  # Add all objects you want publicly available to users at this package level
 
+# Set __module__ so Sphinx documents these under the public namespace,
+# avoiding duplicate/ambiguous cross-reference warnings.
+SearchClient.__module__ = "azure.search.documents.aio"
+
 
 def patch_sdk():
     """Do not remove from this file.
