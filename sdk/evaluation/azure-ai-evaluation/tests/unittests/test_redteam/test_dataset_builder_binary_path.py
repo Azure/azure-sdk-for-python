@@ -8,13 +8,12 @@ These tests verify the new binary_path-based context storage introduced
 to store all context (except tool_call) as files.
 """
 
-import atexit
 import os
 import pytest
 import tempfile
 import uuid
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Optional
 from unittest.mock import MagicMock, patch
 
 
@@ -27,7 +26,9 @@ class MockSeedGroup:
 
 
 class MockSeedObjective:
-    def __init__(self, value="", prompt_group_id=None, metadata=None, harm_categories=None):
+    def __init__(
+        self, value="", prompt_group_id=None, metadata=None, harm_categories=None
+    ):
         self.value = value
         self.prompt_group_id = prompt_group_id
         self.metadata = metadata or {}
@@ -35,7 +36,15 @@ class MockSeedObjective:
 
 
 class MockSeedPrompt:
-    def __init__(self, value="", data_type="text", prompt_group_id=None, metadata=None, role="user", sequence=0):
+    def __init__(
+        self,
+        value="",
+        data_type="text",
+        prompt_group_id=None,
+        metadata=None,
+        role="user",
+        sequence=0,
+    ):
         self.value = value
         self.data_type = data_type
         self.prompt_group_id = prompt_group_id
@@ -63,9 +72,6 @@ def mock_format_content_by_modality(text, modality):
 class DatasetConfigurationBuilder:
     """Copy of the DatasetConfigurationBuilder for isolated testing."""
 
-    _temp_files: ClassVar[Set[str]] = set()
-    _cleanup_registered: ClassVar[bool] = False
-
     _EXTENSION_MAP: ClassVar[Dict[str, str]] = {
         "email": ".eml",
         "document": ".txt",
@@ -80,6 +86,9 @@ class DatasetConfigurationBuilder:
         self.risk_category = risk_category
         self.is_indirect_attack = is_indirect_attack
         self.seed_groups: List[MockSeedGroup] = []
+        self._temp_dir = tempfile.TemporaryDirectory(
+            prefix=f"pyrit_foundry_{risk_category}_"
+        )
 
     def add_objective_with_context(
         self,
@@ -103,7 +112,9 @@ class DatasetConfigurationBuilder:
         seeds.append(objective)
 
         if self.is_indirect_attack and context_items:
-            seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
+            seeds.extend(
+                self._create_xpia_prompts(objective_content, context_items, group_uuid)
+            )
         elif context_items:
             seeds.extend(self._create_context_prompts(context_items, group_uuid))
 
@@ -122,7 +133,7 @@ class DatasetConfigurationBuilder:
         return self._EXTENSION_MAP.get(context_type.lower(), ".bin")
 
     def _get_context_file_directory(self) -> Path:
-        base_dir = Path(tempfile.gettempdir()) / "pyrit_foundry_context_test"
+        base_dir = Path(self._temp_dir.name)
         base_dir.mkdir(parents=True, exist_ok=True)
         return base_dir
 
@@ -135,28 +146,13 @@ class DatasetConfigurationBuilder:
 
         file_path.write_text(content, encoding="utf-8")
 
-        DatasetConfigurationBuilder._temp_files.add(str(file_path))
-        self._register_cleanup()
-
         return str(file_path)
 
-    def _register_cleanup(self) -> None:
-        if not DatasetConfigurationBuilder._cleanup_registered:
-            atexit.register(DatasetConfigurationBuilder._cleanup_all_files)
-            DatasetConfigurationBuilder._cleanup_registered = True
-
-    @classmethod
-    def _cleanup_all_files(cls) -> None:
-        for file_path in cls._temp_files.copy():
-            try:
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                cls._temp_files.discard(file_path)
-            except Exception:
-                pass
-
     def cleanup(self) -> None:
-        DatasetConfigurationBuilder._cleanup_all_files()
+        try:
+            self._temp_dir.cleanup()
+        except Exception:
+            pass
 
     def _create_context_prompts(
         self,
@@ -226,8 +222,14 @@ class DatasetConfigurationBuilder:
             )
 
             if data_type == "binary_path":
-                attack_vehicle_value = self._create_context_file(injected_content, context_type)
-                original_value = self._create_context_file(content, context_type) if content else None
+                attack_vehicle_value = self._create_context_file(
+                    injected_content, context_type
+                )
+                original_value = (
+                    self._create_context_file(content, context_type)
+                    if content
+                    else None
+                )
             else:
                 attack_vehicle_value = injected_content
                 original_value = content
@@ -277,7 +279,9 @@ class DatasetConfigurationBuilder:
         context_type = context_type.lower() if context_type else "text"
 
         try:
-            formatted_attack = mock_format_content_by_modality(attack_string, context_type)
+            formatted_attack = mock_format_content_by_modality(
+                attack_string, context_type
+            )
         except Exception:
             formatted_attack = attack_string
 
@@ -319,30 +323,45 @@ class DatasetConfigurationBuilder:
 # =============================================================================
 @pytest.fixture(autouse=True)
 def cleanup_temp_files():
-    """Clean up temp files after each test."""
+    """No-op fixture — each builder now manages its own temp directory."""
     yield
-    DatasetConfigurationBuilder._cleanup_all_files()
 
 
 @pytest.fixture
 def builder():
     """Create a fresh DatasetConfigurationBuilder for each test."""
-    return DatasetConfigurationBuilder(risk_category="violence", is_indirect_attack=False)
+    return DatasetConfigurationBuilder(
+        risk_category="violence", is_indirect_attack=False
+    )
 
 
 @pytest.fixture
 def indirect_builder():
     """Create a DatasetConfigurationBuilder for indirect attacks."""
-    return DatasetConfigurationBuilder(risk_category="violence", is_indirect_attack=True)
+    return DatasetConfigurationBuilder(
+        risk_category="violence", is_indirect_attack=True
+    )
 
 
 @pytest.fixture
 def sample_context_items():
     """Sample context items for testing."""
     return [
-        {"content": "Email body content here", "context_type": "email", "tool_name": "email_reader"},
-        {"content": "<html><body>Page</body></html>", "context_type": "html", "tool_name": "browser"},
-        {"content": "def main(): pass", "context_type": "code", "tool_name": "code_reader"},
+        {
+            "content": "Email body content here",
+            "context_type": "email",
+            "tool_name": "email_reader",
+        },
+        {
+            "content": "<html><body>Page</body></html>",
+            "context_type": "html",
+            "tool_name": "browser",
+        },
+        {
+            "content": "def main(): pass",
+            "context_type": "code",
+            "tool_name": "code_reader",
+        },
     ]
 
 
@@ -473,13 +492,14 @@ class TestFileCreation:
         assert file_path.endswith(".html")
 
     def test_files_tracked_for_cleanup(self, builder):
-        """Test that created files are tracked for cleanup."""
-        initial_count = len(DatasetConfigurationBuilder._temp_files)
+        """Test that created files are in the builder's temp directory."""
+        file1 = builder._create_context_file("content1", "email")
+        file2 = builder._create_context_file("content2", "code")
 
-        builder._create_context_file("content1", "email")
-        builder._create_context_file("content2", "code")
-
-        assert len(DatasetConfigurationBuilder._temp_files) >= initial_count + 2
+        assert os.path.exists(file1)
+        assert os.path.exists(file2)
+        assert builder._temp_dir.name in file1
+        assert builder._temp_dir.name in file2
 
     def test_unique_filenames(self, builder):
         """Test that each file gets a unique filename."""
@@ -514,13 +534,14 @@ class TestCleanup:
         assert not os.path.exists(file_path)
 
     def test_cleanup_clears_tracking_set(self, builder):
-        """Test that cleanup clears the tracking set."""
-        builder._create_context_file("content", "email")
-        builder._create_context_file("content", "code")
+        """Test that cleanup removes the temp directory and all files."""
+        file1 = builder._create_context_file("content", "email")
+        file2 = builder._create_context_file("content", "code")
+        temp_dir = builder._temp_dir.name
 
         builder.cleanup()
 
-        assert len(DatasetConfigurationBuilder._temp_files) == 0
+        assert not os.path.exists(temp_dir)
 
     def test_cleanup_handles_already_deleted_files(self, builder):
         """Test that cleanup handles files that were already deleted."""
@@ -528,6 +549,35 @@ class TestCleanup:
         os.remove(file_path)
 
         builder.cleanup()
+
+    def test_cleanup_does_not_affect_other_builders(self):
+        """Test that cleanup of one builder does not affect another builder's files."""
+        builder_a = DatasetConfigurationBuilder(risk_category="violence")
+        builder_b = DatasetConfigurationBuilder(risk_category="hate_unfairness")
+
+        file_a = builder_a._create_context_file("content A", "email")
+        file_b = builder_b._create_context_file("content B", "email")
+
+        assert os.path.exists(file_a)
+        assert os.path.exists(file_b)
+
+        # Cleaning up builder_a should NOT delete builder_b's file
+        builder_a.cleanup()
+
+        assert not os.path.exists(file_a)
+        assert os.path.exists(file_b)
+
+        builder_b.cleanup()
+
+    def test_builder_temp_dirs_are_isolated(self):
+        """Test that each builder has its own temporary directory."""
+        builder_a = DatasetConfigurationBuilder(risk_category="violence")
+        builder_b = DatasetConfigurationBuilder(risk_category="sexual")
+
+        assert builder_a._temp_dir.name != builder_b._temp_dir.name
+
+        builder_a.cleanup()
+        builder_b.cleanup()
 
 
 # =============================================================================
@@ -556,7 +606,9 @@ class TestContextPromptCreation:
                 content = f.read()
                 assert any(item["content"] in content for item in sample_context_items)
 
-    def test_metadata_includes_original_content_length(self, builder, sample_context_items):
+    def test_metadata_includes_original_content_length(
+        self, builder, sample_context_items
+    ):
         """Test that metadata includes original content length."""
         group_uuid = uuid.uuid4()
         prompts = builder._create_context_prompts(sample_context_items, group_uuid)
@@ -566,7 +618,13 @@ class TestContextPromptCreation:
 
     def test_tool_call_stored_inline(self, builder):
         """Test that tool_call context is stored inline, not as file."""
-        context_items = [{"content": "Tool output here", "context_type": "tool_call", "tool_name": "my_tool"}]
+        context_items = [
+            {
+                "content": "Tool output here",
+                "context_type": "tool_call",
+                "tool_name": "my_tool",
+            }
+        ]
         group_uuid = uuid.uuid4()
         prompts = builder._create_context_prompts(context_items, group_uuid)
 
@@ -593,7 +651,9 @@ class TestContextPromptCreation:
 class TestXPIAPromptCreation:
     """Test the _create_xpia_prompts method."""
 
-    def test_creates_attack_vehicle_as_file(self, indirect_builder, sample_context_items):
+    def test_creates_attack_vehicle_as_file(
+        self, indirect_builder, sample_context_items
+    ):
         """Test that XPIA attack vehicle is stored as file."""
         group_uuid = uuid.uuid4()
         prompts = indirect_builder._create_xpia_prompts(
@@ -607,7 +667,9 @@ class TestXPIAPromptCreation:
             assert av.data_type == "binary_path"
             assert os.path.exists(av.value)
 
-    def test_creates_original_context_as_file(self, indirect_builder, sample_context_items):
+    def test_creates_original_context_as_file(
+        self, indirect_builder, sample_context_items
+    ):
         """Test that original context is stored as file."""
         group_uuid = uuid.uuid4()
         prompts = indirect_builder._create_xpia_prompts(
@@ -660,10 +722,10 @@ class TestXPIAPromptCreation:
 class TestFullBuildFlow:
     """Test the full build flow with binary_path."""
 
-    def test_add_objective_with_context_creates_files(self, builder, sample_context_items):
+    def test_add_objective_with_context_creates_files(
+        self, builder, sample_context_items
+    ):
         """Test that add_objective_with_context creates files for context."""
-        initial_file_count = len(DatasetConfigurationBuilder._temp_files)
-
         builder.add_objective_with_context(
             objective_content="Test objective",
             objective_id=str(uuid.uuid4()),
@@ -671,7 +733,10 @@ class TestFullBuildFlow:
             metadata={"risk_subtype": "test"},
         )
 
-        assert len(DatasetConfigurationBuilder._temp_files) >= initial_file_count + 3
+        # Check files were created in builder's temp directory
+        temp_dir = Path(builder._temp_dir.name)
+        created_files = list(temp_dir.iterdir())
+        assert len(created_files) >= 3
 
     def test_build_returns_valid_configuration(self, builder, sample_context_items):
         """Test that build() returns valid DatasetConfiguration."""
@@ -685,7 +750,9 @@ class TestFullBuildFlow:
         assert hasattr(config, "get_all_seed_groups")
         assert len(config.get_all_seed_groups()) == 1
 
-    def test_indirect_attack_with_context_creates_files(self, indirect_builder, sample_context_items):
+    def test_indirect_attack_with_context_creates_files(
+        self, indirect_builder, sample_context_items
+    ):
         """Test that indirect attack creates files for attack vehicles."""
         indirect_builder.add_objective_with_context(
             objective_content="Hidden attack",
@@ -694,7 +761,10 @@ class TestFullBuildFlow:
             metadata={"risk_subtype": "xpia"},
         )
 
-        assert len(DatasetConfigurationBuilder._temp_files) > 0
+        # Check files were created in builder's temp directory
+        temp_dir = Path(indirect_builder._temp_dir.name)
+        created_files = list(temp_dir.iterdir())
+        assert len(created_files) > 0
 
     def test_len_method(self, builder):
         """Test that __len__ returns correct count."""
@@ -722,8 +792,16 @@ class TestContextMetadataStorage:
 
         builder = RealBuilder(risk_category="violence", is_indirect_attack=False)
         context_items = [
-            {"content": "Email body content", "context_type": "email", "tool_name": "email_reader"},
-            {"content": "Document content", "context_type": "document", "tool_name": "doc_reader"},
+            {
+                "content": "Email body content",
+                "context_type": "email",
+                "tool_name": "email_reader",
+            },
+            {
+                "content": "Document content",
+                "context_type": "document",
+                "tool_name": "doc_reader",
+            },
         ]
 
         builder.add_objective_with_context(
@@ -752,7 +830,11 @@ class TestContextMetadataStorage:
 
         builder = RealBuilder(risk_category="violence", is_indirect_attack=True)
         context_items = [
-            {"content": "Email body content", "context_type": "email", "tool_name": "email_reader"},
+            {
+                "content": "Email body content",
+                "context_type": "email",
+                "tool_name": "email_reader",
+            },
         ]
 
         builder.add_objective_with_context(

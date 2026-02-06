@@ -61,6 +61,7 @@ class FoundryExecutionManager:
         self._scenarios: Dict[str, ScenarioOrchestrator] = {}
         self._dataset_configs: Dict[str, Any] = {}
         self._result_processors: Dict[str, FoundryResultProcessor] = {}
+        self._builders: List[DatasetConfigurationBuilder] = []
 
     async def execute_attacks(
         self,
@@ -83,12 +84,18 @@ class FoundryExecutionManager:
         :rtype: Dict[str, Any]
         """
         # Filter strategies for Foundry (exclude special handling strategies)
-        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(
+            attack_strategies
+        )
         mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
 
         # Check if Baseline was requested (it's in special_strategies)
         include_baseline = any(
-            s == AttackStrategy.Baseline if not isinstance(s, list) else AttackStrategy.Baseline in s
+            (
+                s == AttackStrategy.Baseline
+                if not isinstance(s, list)
+                else AttackStrategy.Baseline in s
+            )
             for s in attack_strategies
         )
 
@@ -106,7 +113,9 @@ class FoundryExecutionManager:
             )
             # Filter out multi-turn strategies
             mapped_strategies = [
-                s for s in mapped_strategies if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
+                s
+                for s in mapped_strategies
+                if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
             ]
 
         # Check if we need XPIA handling
@@ -114,91 +123,101 @@ class FoundryExecutionManager:
 
         red_team_info: Dict[str, Dict[str, Any]] = {}
 
-        # Process each risk category
-        for risk_category in risk_categories:
-            risk_value = risk_category.value
-            objectives = objectives_by_risk.get(risk_value, [])
+        try:
+            # Process each risk category
+            for risk_category in risk_categories:
+                risk_value = risk_category.value
+                objectives = objectives_by_risk.get(risk_value, [])
 
-            if not objectives:
-                self.logger.info(f"No objectives for {risk_value}, skipping")
-                continue
+                if not objectives:
+                    self.logger.info(f"No objectives for {risk_value}, skipping")
+                    continue
 
-            self.logger.info(f"Processing {len(objectives)} objectives for {risk_value}")
-
-            # Build dataset configuration
-            dataset_config = self._build_dataset_config(
-                risk_category=risk_value,
-                objectives=objectives,
-                is_indirect_attack=has_indirect,
-            )
-            self._dataset_configs[risk_value] = dataset_config
-
-            # Create scorer for this risk category
-            scorer = RAIServiceScorer(
-                credential=self.credential,
-                azure_ai_project=self.azure_ai_project,
-                risk_category=risk_category,
-                logger=self.logger,
-                dataset_config=dataset_config,
-            )
-
-            # Create scenario orchestrator
-            orchestrator = ScenarioOrchestrator(
-                risk_category=risk_value,
-                objective_target=objective_target,
-                rai_scorer=scorer,
-                logger=self.logger,
-                adversarial_chat_target=self.adversarial_chat_target,
-            )
-            self._scenarios[risk_value] = orchestrator
-
-            # Execute attacks
-            try:
-                await orchestrator.execute(
-                    dataset_config=dataset_config,
-                    strategies=mapped_strategies,
-                    include_baseline=include_baseline,
+                self.logger.info(
+                    f"Processing {len(objectives)} objectives for {risk_value}"
                 )
-            except Exception as e:
-                self.logger.error(f"Error executing attacks for {risk_value}: {e}")
-                # Use "Foundry" as fallback strategy name to match expected structure
-                if "Foundry" not in red_team_info:
-                    red_team_info["Foundry"] = {}
-                red_team_info["Foundry"][risk_value] = {
-                    "data_file": "",
-                    "status": "failed",
-                    "error": str(e),
-                    "asr": 0.0,
-                }
-                continue
 
-            # Process results
-            result_processor = FoundryResultProcessor(
-                scenario=orchestrator,
-                dataset_config=dataset_config,
-                risk_category=risk_value,
-            )
-            self._result_processors[risk_value] = result_processor
+                # Build dataset configuration
+                dataset_config = self._build_dataset_config(
+                    risk_category=risk_value,
+                    objectives=objectives,
+                    is_indirect_attack=has_indirect,
+                )
+                self._dataset_configs[risk_value] = dataset_config
 
-            # Generate JSONL output
-            output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
-            result_processor.to_jsonl(output_path)
+                # Create scorer for this risk category
+                scorer = RAIServiceScorer(
+                    credential=self.credential,
+                    azure_ai_project=self.azure_ai_project,
+                    risk_category=risk_category,
+                    logger=self.logger,
+                    dataset_config=dataset_config,
+                )
 
-            # Get summary stats
-            stats = result_processor.get_summary_stats()
+                # Create scenario orchestrator
+                orchestrator = ScenarioOrchestrator(
+                    risk_category=risk_value,
+                    objective_target=objective_target,
+                    rai_scorer=scorer,
+                    logger=self.logger,
+                    adversarial_chat_target=self.adversarial_chat_target,
+                )
+                self._scenarios[risk_value] = orchestrator
 
-            # Build red_team_info entry for this risk category
-            # Group results by strategy for compatibility with existing structure
-            strategy_results = self._group_results_by_strategy(
-                orchestrator=orchestrator,
-                risk_value=risk_value,
-                output_path=output_path,
-            )
+                # Execute attacks
+                try:
+                    await orchestrator.execute(
+                        dataset_config=dataset_config,
+                        strategies=mapped_strategies,
+                        include_baseline=include_baseline,
+                    )
+                except Exception as e:
+                    self.logger.error(f"Error executing attacks for {risk_value}: {e}")
+                    # Use "Foundry" as fallback strategy name to match expected structure
+                    if "Foundry" not in red_team_info:
+                        red_team_info["Foundry"] = {}
+                    red_team_info["Foundry"][risk_value] = {
+                        "data_file": "",
+                        "status": "failed",
+                        "error": str(e),
+                        "asr": 0.0,
+                    }
+                    continue
 
-            for strategy_name, strategy_data in strategy_results.items():
-                if strategy_name not in red_team_info:
-                    red_team_info[strategy_name] = {}
-                red_team_info[strategy_name][risk_value] = strategy_data
+                # Process results
+                result_processor = FoundryResultProcessor(
+                    scenario=orchestrator,
+                    dataset_config=dataset_config,
+                    risk_category=risk_value,
+                )
+                self._result_processors[risk_value] = result_processor
+
+                # Generate JSONL output
+                output_path = os.path.join(
+                    self.output_dir, f"{risk_value}_results.jsonl"
+                )
+                result_processor.to_jsonl(output_path)
+
+                # Get summary stats
+                stats = result_processor.get_summary_stats()
+
+                # Build red_team_info entry for this risk category
+                # Group results by strategy for compatibility with existing structure
+                strategy_results = self._group_results_by_strategy(
+                    orchestrator=orchestrator,
+                    risk_value=risk_value,
+                    output_path=output_path,
+                )
+
+                for strategy_name, strategy_data in strategy_results.items():
+                    if strategy_name not in red_team_info:
+                        red_team_info[strategy_name] = {}
+                    red_team_info[strategy_name][risk_value] = strategy_data
+        finally:
+            # Clean up all builder temp directories
+            for builder in self._builders:
+                builder.cleanup()
+            self._builders.clear()
 
         return red_team_info
 
@@ -223,6 +242,7 @@ class FoundryExecutionManager:
             risk_category=risk_category,
             is_indirect_attack=is_indirect_attack,
         )
+        self._builders.append(builder)
 
         for obj in objectives:
             # Extract objective content

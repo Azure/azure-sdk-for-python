@@ -3,12 +3,10 @@
 # ---------------------------------------------------------
 """DatasetConfigurationBuilder for transforming RAI service responses into PyRIT data structures."""
 
-import atexit
-import os
 import tempfile
 import uuid
 from pathlib import Path
-from typing import Any, ClassVar, Dict, List, Optional, Set
+from typing import Any, ClassVar, Dict, List, Optional
 
 from pyrit.models import PromptDataType, SeedGroup, SeedObjective, SeedPrompt
 from pyrit.scenario import DatasetConfiguration
@@ -31,10 +29,6 @@ class DatasetConfigurationBuilder:
     Context data (except tool_call) is stored as files using binary_path data type
     for proper handling of multimodal content.
     """
-
-    # Class-level tracking for temp files
-    _temp_files: ClassVar[Set[str]] = set()
-    _cleanup_registered: ClassVar[bool] = False
 
     # Extension mapping for context types
     _EXTENSION_MAP: ClassVar[Dict[str, str]] = {
@@ -59,6 +53,9 @@ class DatasetConfigurationBuilder:
         self.risk_category = risk_category
         self.is_indirect_attack = is_indirect_attack
         self.seed_groups: List[SeedGroup] = []
+        self._temp_dir = tempfile.TemporaryDirectory(
+            prefix=f"pyrit_foundry_{risk_category}_"
+        )
 
     def add_objective_with_context(
         self,
@@ -102,7 +99,9 @@ class DatasetConfigurationBuilder:
         # 2. Handle prompt creation based on strategy type
         if self.is_indirect_attack and context_items:
             # XPIA: Create separate SeedPrompt with injected attack string
-            seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
+            seeds.extend(
+                self._create_xpia_prompts(objective_content, context_items, group_uuid)
+            )
         # Note: For standard attacks, context is stored in objective metadata (above)
         # rather than as separate SeedPrompts, because PyRIT's converters don't support
         # non-text data types and we don't want context to be sent through converters.
@@ -141,26 +140,21 @@ class DatasetConfigurationBuilder:
     def _get_context_file_directory(self) -> Path:
         """Get the directory for storing context files.
 
-        Uses PyRIT's DB_DATA_PATH if available, otherwise system temp.
+        Uses this builder's instance-level temporary directory for isolation.
 
         :return: Path to the context file directory
         :rtype: Path
         """
-        try:
-            from pyrit.common.path import DB_DATA_PATH
-
-            base_dir = Path(DB_DATA_PATH) / "seed-prompt-entries" / "binaries"
-        except ImportError:
-            base_dir = Path(tempfile.gettempdir()) / "pyrit_foundry_context"
-
+        base_dir = Path(self._temp_dir.name)
         base_dir.mkdir(parents=True, exist_ok=True)
         return base_dir
 
     def _create_context_file(self, content: str, context_type: str) -> str:
         """Create a file for context content and return its path.
 
-        The file is created in PyRIT's data directory (or system temp) and
-        tracked for cleanup.
+        The file is created in this builder's temporary directory, ensuring
+        instance-level isolation. Files are cleaned up when cleanup() is called
+        or when the builder is garbage collected.
 
         :param content: The context content to write
         :type content: str
@@ -179,32 +173,18 @@ class DatasetConfigurationBuilder:
         # Write content to file
         file_path.write_text(content, encoding="utf-8")
 
-        # Track for cleanup
-        DatasetConfigurationBuilder._temp_files.add(str(file_path))
-        self._register_cleanup()
-
         return str(file_path)
 
-    def _register_cleanup(self) -> None:
-        """Register atexit handler for cleanup (once only)."""
-        if not DatasetConfigurationBuilder._cleanup_registered:
-            atexit.register(DatasetConfigurationBuilder._cleanup_all_files)
-            DatasetConfigurationBuilder._cleanup_registered = True
-
-    @classmethod
-    def _cleanup_all_files(cls) -> None:
-        """Clean up all tracked temp files."""
-        for file_path in cls._temp_files.copy():
-            try:
-                if os.path.exists(file_path):
-                    os.remove(file_path)
-                cls._temp_files.discard(file_path)
-            except Exception:
-                pass  # Best effort cleanup
-
     def cleanup(self) -> None:
-        """Explicitly clean up temp files created by this builder."""
-        DatasetConfigurationBuilder._cleanup_all_files()
+        """Explicitly clean up temp files created by this builder.
+
+        Removes the entire temporary directory and all files within it.
+        Only affects files created by this specific builder instance.
+        """
+        try:
+            self._temp_dir.cleanup()
+        except Exception:
+            pass  # Best effort cleanup
 
     def _create_context_prompts(
         self,
@@ -307,8 +287,14 @@ class DatasetConfigurationBuilder:
 
             # For binary_path, write content to files and use paths as values
             if data_type == "binary_path":
-                attack_vehicle_value = self._create_context_file(injected_content, context_type)
-                original_value = self._create_context_file(content, context_type) if content else None
+                attack_vehicle_value = self._create_context_file(
+                    injected_content, context_type
+                )
+                original_value = (
+                    self._create_context_file(content, context_type)
+                    if content
+                    else None
+                )
             else:
                 attack_vehicle_value = injected_content
                 original_value = content
