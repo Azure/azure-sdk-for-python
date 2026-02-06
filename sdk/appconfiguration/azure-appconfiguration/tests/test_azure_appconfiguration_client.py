@@ -239,11 +239,8 @@ class TestAppConfigurationClient(AppConfigTestCase):  # pylint: disable=too-many
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
-        assert (
-            str(ex.value)
-            == """
-            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
-            """
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -253,11 +250,9 @@ class TestAppConfigurationClient(AppConfigTestCase):  # pylint: disable=too-many
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
-        assert (
-            str(ex.value)
-            == """
-            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
-            """
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument"
+            " 'label_filter'"
         )
 
         self.tear_down()
@@ -1223,7 +1218,7 @@ class TestAppConfigurationClientUnitTest:
         with pytest.raises(TypeError):
             _ = FeatureFlagConfigurationSetting("blah", value="blah")
         with pytest.raises(TypeError):
-            _ = SecretReferenceConfigurationSetting("blah", "blah")
+            _ = SecretReferenceConfigurationSetting("blah", value="blah")  # pylint: disable=no-value-for-parameter
 
     def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, HttpTransport

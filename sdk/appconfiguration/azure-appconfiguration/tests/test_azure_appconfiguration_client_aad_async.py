@@ -235,12 +235,10 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
-        assert (
-            str(ex.value)
-            == """
-            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
-            """
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
+
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", key_filter="MyKey")
         assert (
@@ -249,11 +247,8 @@ class TestAppConfigurationClientAADAsync(AsyncAppConfigTestCase):  # pylint: dis
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
-        assert (
-            str(ex.value)
-            == """
-            AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'
-            """
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
 
         await self.tear_down()
