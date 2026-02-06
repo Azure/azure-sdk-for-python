@@ -48,9 +48,7 @@ async def create_data_source_connection_async():
         container=container,
     )
     async with indexer_client:
-        result = await indexer_client.create_data_source_connection(
-            data_source_connection
-        )
+        result = await indexer_client.create_data_source_connection(data_source_connection)
     print(f"Created: data source '{result.name}'")
     # [END create_data_source_connection_async]
 
@@ -77,9 +75,7 @@ async def get_data_source_connection_async():
     indexer_client = SearchIndexerClient(service_endpoint, AzureKeyCredential(key))
 
     async with indexer_client:
-        result = await indexer_client.get_data_source_connection(
-            data_source_connection_name
-        )
+        result = await indexer_client.get_data_source_connection(data_source_connection_name)
     print(f"Retrieved: data source '{result.name}'")
     return result
     # [END get_data_source_connection_async]
