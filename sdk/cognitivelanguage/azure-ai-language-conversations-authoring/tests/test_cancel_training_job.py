@@ -27,7 +27,7 @@ class TestConversationsCancelTrainingSync(TestConversations):
         client = self.create_client(authoring_endpoint, authoring_key)
 
         project_client = client.get_project_client("Test-data-labels")
-        job_id = "e39f6ec0-9ba9-426b-989d-3e0804bdcd1c_639034272000000000"
+        job_id = "4867cb16-0d8b-4528-b097-c6c0ef4f507b_639059328000000000"
 
         poller = project_client.project.begin_cancel_training_job(
             job_id=job_id,
