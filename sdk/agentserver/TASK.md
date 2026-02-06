@@ -4,6 +4,11 @@
 
 ## Done
 
+- [x] 2026-02-06 — Add README files for Foundry checkpoint samples
+  - Files: `azure-ai-agentserver-agentframework/samples/workflow_with_foundry_checkpoints/README.md`,
+    `azure-ai-agentserver-langgraph/samples/simple_agent_with_foundry_checkpointer/README.md`
+  - Updated setup/run/request docs, added missing LangGraph sample README, and corrected `.env` setup guidance.
+
 - [x] 2026-02-04 — Implement managed checkpoints feature
   - Files: core/checkpoints/ (new), agentframework/persistence/_foundry_checkpoint_*.py (new),
     agentframework/__init__.py (modified)
