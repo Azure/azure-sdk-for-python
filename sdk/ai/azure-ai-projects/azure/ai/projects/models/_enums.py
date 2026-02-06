@@ -23,6 +23,21 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORKFLOW."""
 
 
+class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentObjectType."""
+
+    AGENT = "agent"
+    """AGENT."""
+    AGENT_VERSION = "agent.version"
+    """AGENT_VERSION."""
+    AGENT_DELETED = "agent.deleted"
+    """AGENT_DELETED."""
+    AGENT_VERSION_DELETED = "agent.version.deleted"
+    """AGENT_VERSION_DELETED."""
+    AGENT_CONTAINER = "agent.container"
+    """AGENT_CONTAINER."""
+
+
 class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentProtocol."""
 
@@ -630,6 +645,17 @@ class MemoryStoreKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "default"
     """The default memory store implementation."""
+
+
+class MemoryStoreObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MemoryStoreObjectType."""
+
+    MEMORY_STORE = "memory_store"
+    """MEMORY_STORE."""
+    MEMORY_STORE_DELETED = "memory_store.deleted"
+    """MEMORY_STORE_DELETED."""
+    MEMORY_STORE_SCOPE_DELETED = "memory_store.scope.deleted"
+    """MEMORY_STORE_SCOPE_DELETED."""
 
 
 class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -14,6 +14,7 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
     AgentKind,
+    AgentObjectType,
     AnnotationType,
     ApplyPatchOperationParamType,
     ComputerActionType,
@@ -32,6 +33,7 @@ from ._enums import (
     InsightType,
     MemoryItemKind,
     MemoryStoreKind,
+    MemoryStoreObjectType,
     OpenApiAuthType,
     OutputMessageContentType,
     PendingUploadType,
@@ -328,8 +330,8 @@ class AgentDefinition(_Model):
 class AgentDetails(_Model):
     """AgentDetails.
 
-    :ivar object: The object type, which is always 'agent'. Required. Default value is "agent".
-    :vartype object: str
+    :ivar object: The object type, which is always 'agent'. Required. AGENT.
+    :vartype object: str or ~azure.ai.projects.models.AGENT
     :ivar id: The unique identifier of the agent. Required.
     :vartype id: str
     :ivar name: The name of the agent. Required.
@@ -338,8 +340,8 @@ class AgentDetails(_Model):
     :vartype versions: ~azure.ai.projects.models.AgentObjectVersions
     """
 
-    object: Literal["agent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always 'agent'. Required. Default value is \"agent\"."""
+    object: Literal[AgentObjectType.AGENT] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The object type, which is always 'agent'. Required. AGENT."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the agent. Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -351,6 +353,7 @@ class AgentDetails(_Model):
     def __init__(
         self,
         *,
+        object: Literal[AgentObjectType.AGENT],
         id: str,  # pylint: disable=redefined-builtin
         name: str,
         versions: "_models.AgentObjectVersions",
@@ -365,7 +368,6 @@ class AgentDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["agent"] = "agent"
 
 
 class BaseCredentials(_Model):
@@ -458,44 +460,6 @@ class AgentObjectVersions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentReference(_Model):
-    """AgentReference.
-
-    :ivar type: Required. Default value is "agent_reference".
-    :vartype type: str
-    :ivar name: The name of the agent. Required.
-    :vartype name: str
-    :ivar version: The version identifier of the agent.
-    :vartype version: str
-    """
-
-    type: Literal["agent_reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is \"agent_reference\"."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the agent. Required."""
-    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The version identifier of the agent."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        version: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["agent_reference"] = "agent_reference"
-
-
 class EvaluationTaxonomyInput(_Model):
     """Input configuration for the evaluation taxonomy.
 
@@ -579,9 +543,8 @@ class AgentVersionDetails(_Model):
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters. Required.
     :vartype metadata: dict[str, str]
-    :ivar object: The object type, which is always 'agent.version'. Required. Default value is
-     "agent.version".
-    :vartype object: str
+    :ivar object: The object type, which is always 'agent.version'. Required. AGENT_VERSION.
+    :vartype object: str or ~azure.ai.projects.models.AGENT_VERSION
     :ivar id: The unique identifier of the agent version. Required.
     :vartype id: str
     :ivar name: The name of the agent. Name can be used to retrieve/update/delete the agent.
@@ -605,8 +568,10 @@ class AgentVersionDetails(_Model):
      
      Keys are strings with a maximum length of 64 characters. Values are strings
      with a maximum length of 512 characters. Required."""
-    object: Literal["agent.version"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always 'agent.version'. Required. Default value is \"agent.version\"."""
+    object: Literal[AgentObjectType.AGENT_VERSION] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type, which is always 'agent.version'. Required. AGENT_VERSION."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the agent version. Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -628,6 +593,7 @@ class AgentVersionDetails(_Model):
         self,
         *,
         metadata: dict[str, str],
+        object: Literal[AgentObjectType.AGENT_VERSION],
         id: str,  # pylint: disable=redefined-builtin
         name: str,
         version: str,
@@ -645,7 +611,6 @@ class AgentVersionDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["agent.version"] = "agent.version"
 
 
 class AISearchIndexResource(_Model):
@@ -3561,17 +3526,18 @@ class DatasetVersion(_Model):
 class DeleteAgentResponse(_Model):
     """A deleted agent Object.
 
-    :ivar object: The object type. Always 'agent.deleted'. Required. Default value is
-     "agent.deleted".
-    :vartype object: str
+    :ivar object: The object type. Always 'agent.deleted'. Required. AGENT_DELETED.
+    :vartype object: str or ~azure.ai.projects.models.AGENT_DELETED
     :ivar name: The name of the agent. Required.
     :vartype name: str
     :ivar deleted: Whether the agent was successfully deleted. Required.
     :vartype deleted: bool
     """
 
-    object: Literal["agent.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type. Always 'agent.deleted'. Required. Default value is \"agent.deleted\"."""
+    object: Literal[AgentObjectType.AGENT_DELETED] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type. Always 'agent.deleted'. Required. AGENT_DELETED."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the agent. Required."""
     deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3581,6 +3547,7 @@ class DeleteAgentResponse(_Model):
     def __init__(
         self,
         *,
+        object: Literal[AgentObjectType.AGENT_DELETED],
         name: str,
         deleted: bool,
     ) -> None: ...
@@ -3594,15 +3561,13 @@ class DeleteAgentResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["agent.deleted"] = "agent.deleted"
 
 
 class DeleteAgentVersionResponse(_Model):
     """A deleted agent version Object.
 
-    :ivar object: The object type. Always 'agent.deleted'. Required. Default value is
-     "agent.version.deleted".
-    :vartype object: str
+    :ivar object: The object type. Always 'agent.version.deleted'. Required. AGENT_VERSION_DELETED.
+    :vartype object: str or ~azure.ai.projects.models.AGENT_VERSION_DELETED
     :ivar name: The name of the agent. Required.
     :vartype name: str
     :ivar version: The version identifier of the agent. Required.
@@ -3611,8 +3576,10 @@ class DeleteAgentVersionResponse(_Model):
     :vartype deleted: bool
     """
 
-    object: Literal["agent.version.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type. Always 'agent.deleted'. Required. Default value is \"agent.version.deleted\"."""
+    object: Literal[AgentObjectType.AGENT_VERSION_DELETED] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type. Always 'agent.version.deleted'. Required. AGENT_VERSION_DELETED."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the agent. Required."""
     version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3624,6 +3591,7 @@ class DeleteAgentVersionResponse(_Model):
     def __init__(
         self,
         *,
+        object: Literal[AgentObjectType.AGENT_VERSION_DELETED],
         name: str,
         version: str,
         deleted: bool,
@@ -3638,24 +3606,23 @@ class DeleteAgentVersionResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["agent.version.deleted"] = "agent.version.deleted"
 
 
 class DeleteMemoryStoreResult(_Model):
     """DeleteMemoryStoreResult.
 
-    :ivar object: The object type. Always 'memory_store.deleted'. Required. Default value is
-     "memory_store.deleted".
-    :vartype object: str
+    :ivar object: The object type. Always 'memory_store.deleted'. Required. MEMORY_STORE_DELETED.
+    :vartype object: str or ~azure.ai.projects.models.MEMORY_STORE_DELETED
     :ivar name: The name of the memory store. Required.
     :vartype name: str
     :ivar deleted: Whether the memory store was successfully deleted. Required.
     :vartype deleted: bool
     """
 
-    object: Literal["memory_store.deleted"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type. Always 'memory_store.deleted'. Required. Default value is
-     \"memory_store.deleted\"."""
+    object: Literal[MemoryStoreObjectType.MEMORY_STORE_DELETED] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type. Always 'memory_store.deleted'. Required. MEMORY_STORE_DELETED."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the memory store. Required."""
     deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3665,6 +3632,7 @@ class DeleteMemoryStoreResult(_Model):
     def __init__(
         self,
         *,
+        object: Literal[MemoryStoreObjectType.MEMORY_STORE_DELETED],
         name: str,
         deleted: bool,
     ) -> None: ...
@@ -3678,7 +3646,6 @@ class DeleteMemoryStoreResult(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["memory_store.deleted"] = "memory_store.deleted"
 
 
 class Deployment(_Model):
@@ -8580,9 +8547,9 @@ class MemoryStoreDefaultOptions(_Model):
 class MemoryStoreDeleteScopeResult(_Model):
     """Response for deleting memories from a scope.
 
-    :ivar object: The object type. Always 'memory_store.scope.deleted'. Required. Default value is
-     "memory_store.scope.deleted".
-    :vartype object: str
+    :ivar object: The object type. Always 'memory_store.scope.deleted'. Required.
+     MEMORY_STORE_SCOPE_DELETED.
+    :vartype object: str or ~azure.ai.projects.models.MEMORY_STORE_SCOPE_DELETED
     :ivar name: The name of the memory store. Required.
     :vartype name: str
     :ivar scope: The scope from which memories were deleted. Required.
@@ -8591,11 +8558,10 @@ class MemoryStoreDeleteScopeResult(_Model):
     :vartype deleted: bool
     """
 
-    object: Literal["memory_store.scope.deleted"] = rest_field(
+    object: Literal[MemoryStoreObjectType.MEMORY_STORE_SCOPE_DELETED] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The object type. Always 'memory_store.scope.deleted'. Required. Default value is
-     \"memory_store.scope.deleted\"."""
+    """The object type. Always 'memory_store.scope.deleted'. Required. MEMORY_STORE_SCOPE_DELETED."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the memory store. Required."""
     scope: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8607,6 +8573,7 @@ class MemoryStoreDeleteScopeResult(_Model):
     def __init__(
         self,
         *,
+        object: Literal[MemoryStoreObjectType.MEMORY_STORE_SCOPE_DELETED],
         name: str,
         scope: str,
         deleted: bool,
@@ -8621,15 +8588,13 @@ class MemoryStoreDeleteScopeResult(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["memory_store.scope.deleted"] = "memory_store.scope.deleted"
 
 
 class MemoryStoreDetails(_Model):
     """A memory store that can store and retrieve user memories.
 
-    :ivar object: The object type, which is always 'memory_store'. Required. Default value is
-     "memory_store".
-    :vartype object: str
+    :ivar object: The object type, which is always 'memory_store'. Required. MEMORY_STORE.
+    :vartype object: str or ~azure.ai.projects.models.MEMORY_STORE
     :ivar id: The unique identifier of the memory store. Required.
     :vartype id: str
     :ivar created_at: The Unix timestamp (seconds) when the memory store was created. Required.
@@ -8647,8 +8612,10 @@ class MemoryStoreDetails(_Model):
     :vartype definition: ~azure.ai.projects.models.MemoryStoreDefinition
     """
 
-    object: Literal["memory_store"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The object type, which is always 'memory_store'. Required. Default value is \"memory_store\"."""
+    object: Literal[MemoryStoreObjectType.MEMORY_STORE] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The object type, which is always 'memory_store'. Required. MEMORY_STORE."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the memory store. Required."""
     created_at: datetime.datetime = rest_field(
@@ -8672,6 +8639,7 @@ class MemoryStoreDetails(_Model):
     def __init__(
         self,
         *,
+        object: Literal[MemoryStoreObjectType.MEMORY_STORE],
         id: str,  # pylint: disable=redefined-builtin
         created_at: datetime.datetime,
         updated_at: datetime.datetime,
@@ -8690,7 +8658,6 @@ class MemoryStoreDetails(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.object: Literal["memory_store"] = "memory_store"
 
 
 class MemoryStoreOperationUsage(_Model):
@@ -11123,10 +11090,11 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      list of tool definitions might look like:
      .. code-block:: json
      [
-     { \"type\": \"function\", \"name\": \"get_weather\" },
-     { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
-     { \"type\": \"image_generation\" }
+     { "type": "function", "name": "get_weather" },
+     { "type": "mcp", "server_label": "deepwiki" },
+     { "type": "image_generation" }
      ]. Required."""
+
 
     @overload
     def __init__(

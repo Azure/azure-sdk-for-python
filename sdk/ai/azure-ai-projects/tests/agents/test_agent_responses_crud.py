@@ -141,7 +141,7 @@ class TestAgentResponsesCrud(TestBase):
 
         # response = openai_client.responses.create(
         #     conversation=conversation.id,
-        #     extra_body={"agent": AgentReference(name=agent.name).as_dict()}
+        #     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}}
         # )
         # print(f"Response id: {response.id}, output text: {response.output_text}")
 

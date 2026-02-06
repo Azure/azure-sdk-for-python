@@ -4657,7 +4657,6 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         """Test workflow agent with non-streaming and content recording enabled."""
         from azure.ai.projects.models import (
             WorkflowAgentDefinition,
-            AgentReference,
             PromptAgentDefinition,
         )
 
@@ -4774,7 +4773,7 @@ trigger:
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="1 + 1 = ?",
                 stream=False,
             )
@@ -4858,7 +4857,7 @@ trigger:
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_non_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with non-streaming and content recording disabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -4894,7 +4893,7 @@ trigger:
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -4974,7 +4973,6 @@ trigger:
         """Test workflow agent with streaming and content recording enabled."""
         from azure.ai.projects.models import (
             WorkflowAgentDefinition,
-            AgentReference,
             PromptAgentDefinition,
         )
 
@@ -5091,7 +5089,7 @@ trigger:
 
             stream = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="1 + 1 = ?",
                 stream=True,
             )
@@ -5178,7 +5176,7 @@ trigger:
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_workflow_agent_streaming_without_content_recording(self, **kwargs):
         """Test workflow agent with streaming and content recording disabled."""
-        from azure.ai.projects.models import WorkflowAgentDefinition, AgentReference
+        from azure.ai.projects.models import WorkflowAgentDefinition
 
         self.cleanup()
         os.environ.update(
@@ -5214,7 +5212,7 @@ trigger:
 
             stream = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": AgentReference(name=workflow_agent.name).as_dict()},
+                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )

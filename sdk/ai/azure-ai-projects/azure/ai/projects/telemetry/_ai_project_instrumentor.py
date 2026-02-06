@@ -706,7 +706,7 @@ class _AIAgentsInstrumentorPreview:
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         _tools: Optional[List[Tool]] = None,
-        _tool_resources: Optional[Any] = None, # TODO: Used to be: _tool_resources: Optional[ItemResource] = None,
+        _tool_resources: Optional[Any] = None,  # TODO: Used to be: _tool_resources: Optional[ItemResource] = None,
         # _toolset: Optional["ToolSet"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,

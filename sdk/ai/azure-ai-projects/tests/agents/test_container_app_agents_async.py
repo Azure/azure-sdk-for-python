@@ -11,7 +11,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 
 # from azure.ai.projects.models import ResponsesUserMessageItemParam
-from azure.ai.projects.models import AgentReference, ContainerAppAgentDefinition, ProtocolVersionRecord, AgentProtocol
+from azure.ai.projects.models import ContainerAppAgentDefinition, ProtocolVersionRecord, AgentProtocol
 
 
 @pytest.mark.skip(
@@ -52,7 +52,7 @@ class TestContainerAppAgentsAsync(TestBase):
             try:
                 response = await openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": AgentReference(name=agent_version.name).as_dict()},
+                    extra_body={"agent": {"name": agent_version.name, "type": "agent_reference"}},
                 )
                 print(f"Response id: {response.id}, output text: {response.output_text}")
                 assert "5280" in response.output_text or "5,280" in response.output_text

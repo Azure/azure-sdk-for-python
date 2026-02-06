@@ -9,7 +9,7 @@ from test_base import TestBase  # , servicePreparer
 import pytest
 
 # from devtools_testutils import recorded_by_proxy
-# from azure.ai.projects.models import AgentReference, PromptAgentDefinition
+# from azure.ai.projects.models import PromptAgentDefinition
 
 
 @pytest.mark.skip(reason="Not yet implemented")

@@ -62,6 +62,7 @@ def _pass_retrieve_args_async(fn):
 
     return _wrapper
 
+
 @pytest.mark.skip(
     reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
 )
