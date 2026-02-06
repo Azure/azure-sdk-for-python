@@ -49,8 +49,6 @@ def from_agent_framework(
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
         thread_repository: Optional[AgentThreadRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
-        managed_checkpoints: bool = False,
-        project_endpoint: Optional[str] = None,
     ) -> "AgentFrameworkWorkflowAdapter":
     """
     Create an Agent Framework Workflow Adapter.
@@ -68,13 +66,9 @@ def from_agent_framework(
     :param thread_repository: Optional thread repository for agent thread management.
     :type thread_repository: Optional[AgentThreadRepository]
     :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
+        Use ``InMemoryCheckpointRepository``, ``FileCheckpointRepository``, or
+        ``FoundryCheckpointRepository`` for Azure AI Foundry managed storage.
     :type checkpoint_repository: Optional[CheckpointRepository]
-    :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
-    :type managed_checkpoints: bool
-    :param project_endpoint: The Azure AI Foundry project endpoint. If not provided,
-        will be read from AZURE_AI_PROJECT_ENDPOINT environment variable.
-        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
-    :type project_endpoint: Optional[str]
     :return: An instance of AgentFrameworkWorkflowAdapter.
     :rtype: AgentFrameworkWorkflowAdapter
     """
@@ -86,8 +80,6 @@ def from_agent_framework(
     credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
     thread_repository: Optional[AgentThreadRepository] = None,
     checkpoint_repository: Optional[CheckpointRepository] = None,
-    managed_checkpoints: bool = False,
-    project_endpoint: Optional[str] = None,
 ) -> "AgentFrameworkAgent":
     """
     Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a
@@ -101,19 +93,13 @@ def from_agent_framework(
     :param thread_repository: Optional thread repository for agent thread management.
     :type thread_repository: Optional[AgentThreadRepository]
     :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
+        Use ``InMemoryCheckpointRepository``, ``FileCheckpointRepository``, or
+        ``FoundryCheckpointRepository`` for Azure AI Foundry managed storage.
     :type checkpoint_repository: Optional[CheckpointRepository]
-    :param managed_checkpoints: If True, use Azure AI Foundry managed checkpoint storage.
-    :type managed_checkpoints: bool
-    :param project_endpoint: The Azure AI Foundry project endpoint. If not provided,
-        will be read from AZURE_AI_PROJECT_ENDPOINT environment variable.
-        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
-    :type project_endpoint: Optional[str]
     :return: An instance of AgentFrameworkAgent.
     :rtype: AgentFrameworkAgent
     :raises TypeError: If neither or both of agent and workflow are provided, or if
                        the provided types are incorrect.
-    :raises ValueError: If managed_checkpoints=True but required parameters are missing,
-                       or if both managed_checkpoints=True and checkpoint_repository are provided.
     """
 
     if isinstance(agent_or_workflow, WorkflowBuilder):
@@ -122,8 +108,6 @@ def from_agent_framework(
             credentials=credentials,
             thread_repository=thread_repository,
             checkpoint_repository=checkpoint_repository,
-            managed_checkpoints=managed_checkpoints,
-            project_endpoint=project_endpoint,
         )
     if isinstance(agent_or_workflow, Callable):  # type: ignore
         return AgentFrameworkWorkflowAdapter(
@@ -131,8 +115,6 @@ def from_agent_framework(
             credentials=credentials,
             thread_repository=thread_repository,
             checkpoint_repository=checkpoint_repository,
-            managed_checkpoints=managed_checkpoints,
-            project_endpoint=project_endpoint,
         )
     # raise TypeError("workflow must be a WorkflowBuilder or callable returning a Workflow")
 
