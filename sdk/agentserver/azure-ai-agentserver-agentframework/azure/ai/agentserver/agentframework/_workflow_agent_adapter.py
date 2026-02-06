@@ -16,7 +16,7 @@ from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.agentserver.core import AgentRunContext
-from azure.ai.agentserver.core.logger import get_logger, get_project_endpoint
+from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
@@ -28,7 +28,7 @@ from .models.agent_framework_input_converters import AgentFrameworkInputConverte
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from .persistence import AgentThreadRepository, CheckpointRepository, FoundryCheckpointRepository
+from .persistence import AgentThreadRepository, CheckpointRepository
 
 logger = get_logger()
 
@@ -40,35 +40,9 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
         thread_repository: Optional[AgentThreadRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
-        managed_checkpoints: bool = False,
-        project_endpoint: Optional[str] = None,
     ) -> None:
         super().__init__(credentials, thread_repository)
         self._workflow_factory = workflow_factory
-
-        # Validate mutual exclusion of managed_checkpoints and checkpoint_repository
-        if managed_checkpoints and checkpoint_repository is not None:
-            raise ValueError(
-                "Cannot use both managed_checkpoints=True and checkpoint_repository. "
-                "Use managed_checkpoints=True for Azure AI Foundry managed storage, "
-                "or provide your own checkpoint_repository, but not both."
-            )
-
-        # Handle managed checkpoints
-        if managed_checkpoints:
-            resolved_endpoint = get_project_endpoint() or project_endpoint
-            if not resolved_endpoint:
-                raise ValueError(
-                    "project_endpoint is required when managed_checkpoints=True. "
-                    "Set AZURE_AI_PROJECT_ENDPOINT environment variable or pass project_endpoint parameter."
-                )
-            if not credentials:
-                raise ValueError("credentials are required when managed_checkpoints=True")
-            checkpoint_repository = FoundryCheckpointRepository(
-                project_endpoint=resolved_endpoint,
-                credential=credentials,
-            )
-
         self._checkpoint_repository = checkpoint_repository
 
     async def agent_run(  # pylint: disable=too-many-statements
