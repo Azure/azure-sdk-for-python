@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2026-02-06)
+## 1.0.0b2 (2026-02-06)
 
 ### Features Added
 
@@ -25,34 +25,30 @@
   - Added enum `PolicyTokenResult`
   - Added model `ProxyResource`
   - Added model `Resource`
-  - Added model `PolicyTokensOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed client operation group `PolicyClient.policy_exemptions`
-  - Deleted or renamed client operation group `PolicyClient.variables`
-  - Deleted or renamed client operation group `PolicyClient.variable_values`
-  - Model `ErrorResponse` deleted or renamed its instance variable `code`
-  - Model `ErrorResponse` deleted or renamed its instance variable `message`
-  - Model `ErrorResponse` deleted or renamed its instance variable `target`
-  - Model `ErrorResponse` deleted or renamed its instance variable `details`
-  - Model `ErrorResponse` deleted or renamed its instance variable `additional_info`
-  - Method `PolicyAssignmentListResult.__init__` removed default value `None` from its parameter `value`
-  - Method `PolicyDefinitionListResult.__init__` removed default value `None` from its parameter `value`
-  - Method `PolicyDefinitionVersionListResult.__init__` removed default value `None` from its parameter `value`
-  - Method `PolicySetDefinitionListResult.__init__` removed default value `None` from its parameter `value`
-  - Method `PolicySetDefinitionVersionListResult.__init__` removed default value `None` from its parameter `value`
-  - Deleted or renamed model `AssignmentScopeValidation`
-  - Deleted or renamed model `ExemptionCategory`
-  - Deleted or renamed model `PolicyExemption`
-  - Deleted or renamed model `PolicyExemptionUpdate`
-  - Deleted or renamed model `PolicyVariableColumn`
-  - Deleted or renamed model `PolicyVariableValueColumnValue`
-  - Deleted or renamed model `Variable`
-  - Deleted or renamed model `VariableValue`
-  - Deleted or renamed model `PolicyExemptionsOperations`
-  - Deleted or renamed model `VariableValuesOperations`
-  - Deleted or renamed model `VariablesOperations`
+  - Deleted client operation group `PolicyClient.policy_exemptions`
+  - Deleted client operation group `PolicyClient.variables`
+  - Deleted client operation group `PolicyClient.variable_values`
+  - Model `ErrorResponse` deleted its instance variable `code`
+  - Model `ErrorResponse` deleted its instance variable `message`
+  - Model `ErrorResponse` deleted its instance variable `target`
+  - Model `ErrorResponse` deleted its instance variable `details`
+  - Model `ErrorResponse` deleted its instance variable `additional_info`
+  - Property `value` of model `PolicyAssignmentListResult` is required
+  - Property `value` of model `PolicyDefinitionListResult` is required
+  - Property `value` of model `PolicyDefinitionVersionListResult` is required
+  - Property `value` of model `PolicySetDefinitionListResult` is required
+  - Property `value` of model `PolicySetDefinitionVersionListResult` is required
+  - Deleted model `AssignmentScopeValidation`
+  - Deleted model `ExemptionCategory`
+  - Deleted model `PolicyExemption`
+  - Deleted model `PolicyExemptionUpdate`
+  - Deleted model `PolicyVariableColumn`
+  - Deleted model `PolicyVariableValueColumnValue`
+  - Deleted model `Variable`
+  - Deleted model `VariableValue`
 
 ## 1.0.0b1 (2026-02-04)
 
