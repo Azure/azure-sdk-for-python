@@ -9,8 +9,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import os
 import logging
-import httpx
 from typing import List, Any
+import httpx
 from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
