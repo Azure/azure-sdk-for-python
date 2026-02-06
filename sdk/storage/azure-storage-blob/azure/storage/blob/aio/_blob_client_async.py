@@ -1504,8 +1504,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         try:
             return cast(Dict[str, Any], await self._client.page_blob.create(
             metadata=metadata,
-            **options,
-            **kwargs))
+            **options))
         except HttpResponseError as error:
             process_storage_error(error)
 

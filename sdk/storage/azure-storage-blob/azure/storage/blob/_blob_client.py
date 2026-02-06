@@ -1452,8 +1452,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             return cast(Dict[str, Any], self._client.page_blob.create(
             metadata=metadata,
-            **options,
-            **kwargs))
+            **options))
         except HttpResponseError as error:
             process_storage_error(error)
 
