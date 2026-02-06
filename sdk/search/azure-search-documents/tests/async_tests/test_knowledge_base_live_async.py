@@ -84,9 +84,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
         create_source = SearchIndexKnowledgeSource(
             name=source_name,
             description="knowledge base dependent source",
-            search_index_parameters=SearchIndexKnowledgeSourceParameters(
-                search_index_name=index_name
-            ),
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
         )
         created_source = await index_client.create_knowledge_source(create_source)
 

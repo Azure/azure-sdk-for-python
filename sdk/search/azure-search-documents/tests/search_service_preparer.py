@@ -172,18 +172,22 @@ def search_decorator(*, schema, index_batch):
             return trimmed_kwargs
 
         if inspect.iscoroutinefunction(func):
+
             @functools.wraps(func)
             async def async_wrapper(*args, **kwargs):
                 test = args[0]
                 trimmed_kwargs = _prepare_test(test, kwargs)
                 return await func(*args, **trimmed_kwargs)
+
             return async_wrapper
         else:
+
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
                 test = args[0]
                 trimmed_kwargs = _prepare_test(test, kwargs)
                 return func(*args, **trimmed_kwargs)
+
             return wrapper
 
     return decorator
