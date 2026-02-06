@@ -6,25 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.redhatopenshift.aio import AzureRedHatOpenShiftClient
+from azure.mgmt.redhatopenshift import AzureRedHatOpenShiftClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
-from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestAzureRedHatOpenShiftOperationsAsync(AzureMgmtRecordedTestCase):
+class TestAzureRedHatOpenShiftPlatformWorkloadIdentityRoleSetOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(AzureRedHatOpenShiftClient, is_async=True)
+        self.client = self.create_mgmt_client(AzureRedHatOpenShiftClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_operations_list(self, resource_group):
-        response = self.client.operations.list(
+    @recorded_by_proxy
+    def test_platform_workload_identity_role_set_get(self, resource_group):
+        response = self.client.platform_workload_identity_role_set.get(
+            location="str",
+            open_shift_minor_version="str",
             api_version="2025-07-25",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...
