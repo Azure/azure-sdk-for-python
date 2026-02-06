@@ -3,7 +3,31 @@
 ## 2.0.0b4 (Unreleased)
 
 ### Features Added
+
 * Tracing: included agent ID in response generation traces when available.
+* Tracing: Added support for opt-in trace context propagation.
+
+### Breaking changes
+
+* To align with OpenAI naming conventions, use "Tool" suffix for class names describing Azure tools that are generally available (stable release):
+  * Rename class `AzureAISearchAgentTool` to `AzureAISearchTool`.
+  * Rename class `AzureFunctionAgentTool` to `AzureFunctionTool`.
+  * Rename class `BingGroundingAgentTool` to `BingGroundingTool`.
+  * Rename class `OpenApiAgentTool` to OpenApiTool`.
+* To align with OpenAI naming conventions, use "PreviewTool" suffix for class names descirbing Azure tools in preview:
+  * Rename class `A2ATool` to `A2APreviewTool`.
+  * Rename class `BingCustomSearchAgentTool` to `BingCustomSearchPreviewTool`.
+  * Rename class `BrowserAutomationAgentTool` to `BrowserAutomationPreviewTool`.
+  * Rename class `MemorySearchTool` to `MemorySearchPreviewTool`.
+  * Rename class `MicrosoftFabricAgentTool` to `MicrosoftFabricPreviewTool`.
+  * Rename class `SharepointAgentTool` to `SharepointPreviewTool`.
+* Rename class `ItemParam` to `InputItem`.
+* Tracing: workflow actions in conversation item listings are now emitted as "gen_ai.conversation.item" events (with role="workflow") instead of "gen_ai.workflow.action" events in the list_conversation_items span.
+* Tracing: response generation span names changed from "responses {model_name}" to "chat {model_name}" for model calls and from "responses {agent_name}" to "invoke_agent {agent_name}" for agent calls.
+* Tracing: response generation operation names changed from "responses" to "chat" for model calls and from "responses" to "invoke_agent" for agent calls.
+* Tracing: response generation uses gen_ai.input.messages and gen_ai.output.messages attributes directly under the span instead of events.
+* Tracing: agent creation uses gen_ai.system.instructions attribute directly under the span instead of an event.
+* Tracing: "gen_ai.provider.name" attribute value changed to "microsoft.foundry".
 
 ## 2.0.0b3 (2026-01-06)
 

@@ -32,6 +32,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _DEFAULT_LOG_MESSAGE,
+    _APPLICATION_ID_RESOURCE_KEY,
 )
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._utils import (
@@ -128,7 +129,7 @@ class TestAzureLogExporter(unittest.TestCase):
                 body=None,
                 attributes={"test": "attribute"},
             ),
-            resource=Resource.create(attributes={"asd": "test_resource"}),
+            resource=Resource.create(attributes={"asd": "test_resource", "microsoft.applicationId": "app_id"}),
             instrumentation_scope=InstrumentationScope("test_name"),
         )
         cls._log_data_complex_body = _logs.ReadWriteLogRecord(
@@ -470,6 +471,7 @@ class TestAzureLogExporter(unittest.TestCase):
         self.assertEqual(envelope.name, "Microsoft.ApplicationInsights.Message")
         self.assertEqual(envelope.data.base_type, "MessageData")
         self.assertEqual(envelope.data.base_data.message, _DEFAULT_LOG_MESSAGE)
+        self.assertEqual(envelope.data.base_data.properties.get(_APPLICATION_ID_RESOURCE_KEY), None)
 
     def test_log_to_envelope_log_empty(self):
         exporter = self._exporter
@@ -783,7 +785,6 @@ class TestAzureLogExporterUtils(unittest.TestCase):
         for sev_num in SeverityNumber:
             num = sev_num.value
             level = _get_severity_level(sev_num)
-            print(num)
             if num in range(0, 9):
                 self.assertEqual(level, 0)
             elif num in range(9, 13):

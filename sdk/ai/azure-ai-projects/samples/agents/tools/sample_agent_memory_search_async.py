@@ -42,7 +42,7 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -94,7 +94,7 @@ async def main() -> None:
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
                 tools=[
-                    MemorySearchTool(
+                    MemorySearchPreviewTool(
                         memory_store_name=memory_store.name,
                         scope=scope,
                         update_delay=1,  # Wait 1 second of inactivity before updating memories
