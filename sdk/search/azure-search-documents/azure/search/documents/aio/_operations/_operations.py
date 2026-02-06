@@ -111,7 +111,7 @@ class _SearchClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(int, response.json())
+            deserialized = _deserialize(int, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

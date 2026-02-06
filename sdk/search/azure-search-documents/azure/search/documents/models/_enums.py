@@ -321,7 +321,7 @@ class ScoringStatistics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOCAL = "local"
     """The scoring statistics will be calculated locally for lower latency."""
-    GLOBAL = "global"
+    GLOBALEnum = "global"
     """The scoring statistics will be calculated globally for more consistent scoring."""
 
 

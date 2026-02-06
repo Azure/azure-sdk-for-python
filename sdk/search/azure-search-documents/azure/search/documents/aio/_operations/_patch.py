@@ -263,9 +263,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
-                :start-after: [START delete_document]
-                :end-before: [END delete_document]
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+                :start-after: [START delete_document_async]
+                :end-before: [END delete_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Delete documents from an index
@@ -291,9 +291,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
-                :start-after: [START merge_document]
-                :end-before: [END merge_document]
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+                :start-after: [START merge_document_async]
+                :end-before: [END merge_document_async]
                 :language: python
                 :dedent: 4
                 :caption: Merge documents in an index
@@ -315,15 +315,6 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :type documents: list[dict]
         :return: List of IndexingResult
         :rtype: list[~azure.search.documents.models.IndexingResult]
-
-        .. admonition:: Example:
-
-            .. literalinclude:: ../samples/async_samples/sample_crud_operations_async.py
-                :start-after: [START merge_or_upload_document]
-                :end-before: [END merge_or_upload_document]
-                :language: python
-                :dedent: 4
-                :caption: Merge or upload documents to an index
         """
         batch = _models.IndexDocumentsBatch()
         batch.add_merge_or_upload_actions(documents)

@@ -64,7 +64,7 @@ def _unpack_continuation_token(token: bytes) -> tuple:
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
     next_page_parameters = unpacked_token["nextPageParameters"]
-    next_page_request = _models.SearchRequest._deserialize(next_page_parameters, [])
+    next_page_request = _models.SearchRequest._deserialize(next_page_parameters, [])  # pylint: disable=protected-access
     return next_link, next_page_request
 
 
@@ -428,7 +428,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START upload_document]
                 :end-before: [END upload_document]
                 :language: python
@@ -456,7 +456,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START delete_document]
                 :end-before: [END delete_document]
                 :language: python
@@ -484,7 +484,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START merge_document]
                 :end-before: [END merge_document]
                 :language: python
@@ -511,7 +511,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_crud_operations.py
+            .. literalinclude:: ../samples/sample_documents_crud.py
                 :start-after: [START merge_or_upload_document]
                 :end-before: [END merge_or_upload_document]
                 :language: python
@@ -711,7 +711,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_simple_query.py
+            .. literalinclude:: ../samples/sample_query_simple.py
                 :start-after: [START simple_query]
                 :end-before: [END simple_query]
                 :language: python
@@ -720,7 +720,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_filter_query.py
+            .. literalinclude:: ../samples/sample_query_filter.py
                 :start-after: [START filter_query]
                 :end-before: [END filter_query]
                 :language: python
@@ -729,7 +729,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_facet_query.py
+            .. literalinclude:: ../samples/sample_query_facets.py
                 :start-after: [START facet_query]
                 :end-before: [END facet_query]
                 :language: python
@@ -838,7 +838,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_autocomplete.py
+            .. literalinclude:: ../samples/sample_query_autocomplete.py
                 :start-after: [START autocomplete_query]
                 :end-before: [END autocomplete_query]
                 :language: python
@@ -917,9 +917,9 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_suggestions.py
-                :start-after: [START suggest]
-                :end-before: [END suggest]
+            .. literalinclude:: ../samples/sample_query_suggestions.py
+                :start-after: [START suggest_query]
+                :end-before: [END suggest_query]
                 :language: python
                 :dedent: 4
                 :caption: Get search suggestions.

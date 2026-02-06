@@ -139,6 +139,7 @@ class KnowledgeBase(_KnowledgeBase):
         if effort is not None and isinstance(effort, dict):
             self.retrieval_reasoning_effort = KnowledgeRetrievalReasoningEffort._deserialize(effort, [])
 
+
 def _collection_helper(typ: Any) -> str:
     """Helper function to create a collection type string.
 

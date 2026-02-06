@@ -48,6 +48,7 @@ DEFAULT_VERSION = ApiVersion.V2025_11_01_PREVIEW
 
 class SearchClient(_SearchClient):
     """SearchClient.
+
     :param endpoint: Service host. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Is either a key

@@ -693,9 +693,9 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_indexers_operations.py
-                :start-after: [START list_indexer]
-                :end-before: [END list_indexer]
+            .. literalinclude:: ../samples/sample_indexer_crud.py
+                :start-after: [START list_indexers]
+                :end-before: [END list_indexers]
                 :language: python
                 :dedent: 4
                 :caption: List all the SearchIndexers

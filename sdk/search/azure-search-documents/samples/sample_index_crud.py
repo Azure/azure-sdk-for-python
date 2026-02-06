@@ -127,6 +127,19 @@ def update_index():
     # [END update_index]
 
 
+def list_index_names():
+    # [START list_index_names]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
+
+    print("Listing all index names:")
+    for name in index_client.list_index_names():
+        print(f"  - {name}")
+    # [END list_index_names]
+
+
 def delete_index():
     # [START delete_index]
     from azure.core.credentials import AzureKeyCredential
@@ -141,5 +154,6 @@ def delete_index():
 if __name__ == "__main__":
     create_index()
     get_index()
+    list_index_names()
     update_index()
     delete_index()
