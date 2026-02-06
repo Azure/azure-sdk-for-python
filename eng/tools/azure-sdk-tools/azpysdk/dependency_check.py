@@ -110,12 +110,13 @@ class DependencyCheck(Check):
                 continue
 
             pytest_args = self._build_pytest_args(package_dir, args)
-            pytest_command = ["-m", "pytest", *pytest_args]
+            pytest_command = ["pytest", *pytest_args]
             pytest_result = self.run_venv_command(
                 executable,
                 pytest_command,
-                cwd=staging_directory,
+                cwd=package_dir,
                 immediately_dump=True,
+                append_executable=False,
             )
 
             if pytest_result.returncode != 0:
@@ -173,34 +174,8 @@ class DependencyCheck(Check):
         return True
 
     def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
-        log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
-        junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
-
-        default_args = [
-            f"{package_dir}",
-            "-rsfE",
-            f"--junitxml={junit_path}",
-            "--verbose",
-            "--cov-branch",
-            "--durations=10",
-            "--ignore=azure",
-            "--ignore=.tox",
-            "--ignore-glob=.venv*",
-            "--ignore=build",
-            "--ignore=.eggs",
-            "--ignore=samples",
-            f"--log-cli-level={log_level}",
-            "--no-cov",
-        ]
-
-        pytest_args = list(default_args)
-
-        if getattr(args, "mark_arg", None):
-            pytest_args.extend(["-m", args.mark_arg])
-
-        if getattr(args, "pytest_args", None):
-            pytest_args.extend(args.pytest_args)
-
-        pytest_args.append(package_dir)
-
-        return pytest_args
+        return self._build_pytest_args_base(
+            package_dir,
+            args,
+            extra_args=["--no-cov"],
+        )

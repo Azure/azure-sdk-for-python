@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import shutil
 import os
+import sys
 from typing import Sequence, Optional
 
 from .import_all import import_all
@@ -138,14 +139,14 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     try:
         result = args.func(args)
-        exit_code = int(result or 0)
-        os._exit(exit_code)
+        print(f"{args.command} check completed with exit code {result}")
+        return int(result or 0)
     except KeyboardInterrupt:
         logger.error("Interrupted by user")
-        os._exit(130)
+        return 130
     except Exception as exc:  # pragma: no cover - simple top-level error handling
         logger.error(f"Error: {exc}")
-        os._exit(2)
+        return 2
 
 
 if __name__ == "__main__":

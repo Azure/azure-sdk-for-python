@@ -102,10 +102,13 @@ class InstallAndTest(Check):
     def run_pytest(
         self, executable: str, staging_directory: str, package_dir: str, package_name: str, pytest_args: List[str]
     ) -> int:
-        pytest_command = ["-m", "pytest", *pytest_args]
+        pytest_command = ["pytest", *pytest_args]
 
         environment = os.environ.copy()
         environment.update({"PYTHONPYCACHEPREFIX": staging_directory})
+
+        logger.info(f"Running pytest for {package_name} with command: {pytest_command}")
+        logger.debug(f"with environment vars: {environment}")
 
         pytest_result = self.run_venv_command(
             executable,
@@ -113,6 +116,7 @@ class InstallAndTest(Check):
             cwd=package_dir,
             immediately_dump=True,
             additional_environment_settings=environment,
+            append_executable=False,
         )
         if pytest_result.returncode != 0:
             if pytest_result.returncode == 5 and is_error_code_5_allowed(package_dir, package_name):
@@ -176,34 +180,10 @@ class InstallAndTest(Check):
             logger.warning(f"Test tools requirements file not found at {TEST_TOOLS_REQUIREMENTS}.")
 
     def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
-        log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
-        junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
-
-        default_args = [
-            f"{package_dir}",
-            "-rsfE",
-            f"--junitxml={junit_path}",
-            "--verbose",
-            "--cov-branch",
-            "--durations=10",
-            "--ignore=azure",
-            "--ignore=.tox",
-            "--ignore-glob=**/.venv*",
-            "--ignore-glob=**/.venv*/**",
-            "--ignore=build",
-            "--ignore=.eggs",
-            "--ignore=samples",
-            f"--log-cli-level={log_level}",
-        ]
-
-        pytest_args = [*default_args]
-        if getattr(args, "mark_arg", None):
-            pytest_args.extend(["-m", args.mark_arg])
-        pytest_args.extend(self.additional_pytest_args)
-
-        if getattr(args, "pytest_args", None):
-            pytest_args.extend(args.pytest_args)
-
-        pytest_args.append(package_dir)
-
-        return pytest_args
+        return self._build_pytest_args_base(
+            package_dir,
+            args,
+            ignore_globs=["**/.venv*", "**/.venv*/**"],
+            extra_args=self.additional_pytest_args,
+            test_target=package_dir,
+        )

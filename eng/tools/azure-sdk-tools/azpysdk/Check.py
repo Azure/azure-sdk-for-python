@@ -265,14 +265,16 @@ class Check(abc.ABC):
             logger.error(e.stdout)
             logger.error(e.stderr)
 
-    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
-        """
-        Builds the pytest arguments used for the given package directory.
-
-        :param package_dir: The package directory to build pytest args for.
-        :param args: The argparse.Namespace object containing command-line arguments.
-        :return: A list of pytest arguments.
-        """
+    def _build_pytest_args_base(
+        self,
+        package_dir: str,
+        args: argparse.Namespace,
+        *,
+        ignore_globs: Optional[List[str]] = None,
+        extra_args: Optional[List[str]] = None,
+        test_target: Optional[str] = None,
+    ) -> List[str]:
+        """Build common pytest args for a package directory."""
         log_level = os.getenv("PYTEST_LOG_LEVEL", "51")
         junit_path = os.path.join(package_dir, f"test-junit-{args.command}.xml")
 
@@ -284,13 +286,30 @@ class Check(abc.ABC):
             "--durations=10",
             "--ignore=azure",
             "--ignore=.tox",
-            "--ignore-glob=.venv*",
             "--ignore=build",
             "--ignore=.eggs",
             "--ignore=samples",
             f"--log-cli-level={log_level}",
         ]
 
-        additional = args.pytest_args if args.pytest_args else []
+        for glob in ignore_globs or [".venv*"]:
+            default_args.append(f"--ignore-glob={glob}")
 
-        return [*default_args, *additional, package_dir]
+        pytest_args = [*default_args]
+
+        if extra_args:
+            pytest_args.extend(extra_args)
+
+        if getattr(args, "mark_arg", None):
+            pytest_args.extend(["-m", args.mark_arg])
+
+        if getattr(args, "pytest_args", None):
+            pytest_args.extend(args.pytest_args)
+
+        pytest_args.append(test_target or ".")
+
+        return pytest_args
+
+    def _build_pytest_args(self, package_dir: str, args: argparse.Namespace) -> List[str]:
+        """Build pytest args for a package directory."""
+        return self._build_pytest_args_base(package_dir, args)
