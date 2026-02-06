@@ -234,9 +234,18 @@ def process_requirement(req: str, dependency_type: str, orig_pkg_name: str) -> s
         )
         return ""
 
+    # if the specifier includes preview versions, then we can resolve preview versions
+    # otherwise, we should filter them out
+    allows_prereleases = spec is not None and spec.prereleases is True
+
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logger.info("Versions available on PyPI for %s: %s", pkg_name, versions)
+
+    # prepass filter before choosing a latest or minimum, eliminate prerelease versions if they are not allowed based on the specifier
+    if not allows_prereleases:
+        versions = [v for v in versions if not Version(v).is_prerelease]
+        logger.info(f"Filtered out pre-release versions for {pkg_name} based on specifier. Remaining versions: {versions}")
 
     versions = process_bounded_versions(orig_pkg_name, pkg_name, versions)
 
