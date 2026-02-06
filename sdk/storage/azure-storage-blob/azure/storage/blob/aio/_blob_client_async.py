@@ -1307,7 +1307,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         try:
             return cast(
                 Dict[str, Union[str, datetime]],
-                await self._client.blob.set_metadata(metadata=metadata, **options))
+                await self._client.blob.set_metadata(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1503,7 +1503,6 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             **kwargs)
         try:
             return cast(Dict[str, Any], await self._client.page_blob.create(
-            metadata=metadata,
             **options))
         except HttpResponseError as error:
             process_storage_error(error)

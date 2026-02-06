@@ -1260,7 +1260,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return cast(Dict[str, Union[str, datetime]], self._client.blob.set_metadata(metadata=metadata, **options))
+            return cast(Dict[str, Union[str, datetime]], self._client.blob.set_metadata(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1451,7 +1451,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs)
         try:
             return cast(Dict[str, Any], self._client.page_blob.create(
-            metadata=metadata,
             **options))
         except HttpResponseError as error:
             process_storage_error(error)

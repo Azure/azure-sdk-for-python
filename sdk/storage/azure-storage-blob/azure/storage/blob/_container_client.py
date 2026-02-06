@@ -630,7 +630,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         timeout = kwargs.pop('timeout', None)
         try:
             return self._client.container.set_metadata( # type: ignore
-                metadata=metadata,
                 timeout=timeout,
                 **access_conditions,
                 **mod_conditions,

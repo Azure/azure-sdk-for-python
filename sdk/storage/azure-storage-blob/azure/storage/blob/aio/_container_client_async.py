@@ -618,7 +618,6 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         timeout = kwargs.pop('timeout', None)
         try:
             return await self._client.container.set_metadata(  # type: ignore
-                metadata=metadata,
                 timeout=timeout,
                 **access_conditions,
                 **mod_conditions,
