@@ -19,14 +19,13 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAuthoringClient:
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))
 
-@pytest.mark.playback_test_only
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
     def test_delete_project(self, authoring_endpoint, authoring_key):
         client = self.create_client(authoring_endpoint, authoring_key)
 
-        project_name = "MyImportTextProjectRaw0723"
+        project_name = "MyTextProject0902"
 
         # Act: begin delete (LRO)
         poller = client.begin_delete_project(project_name)
