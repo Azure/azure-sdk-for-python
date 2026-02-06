@@ -71,6 +71,10 @@ class FoundryToolClient:
         # Build field definitions for the Pydantic model
         field_definitions: Dict[str, Any] = {}
         for field_name, field_info in properties.items():
+            if field_info.type is None:
+                logger.warning("Skipping field '%s' in tool '%s': unknown or empty schema type.",
+                               field_name, foundry_tool.name)
+                continue
             field_type = field_info.type.py_type
             field_description = field_info.description or ""
             is_required = field_name in required_fields
