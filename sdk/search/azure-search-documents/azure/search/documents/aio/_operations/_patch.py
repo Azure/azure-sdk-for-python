@@ -315,6 +315,15 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :type documents: list[dict]
         :return: List of IndexingResult
         :rtype: list[~azure.search.documents.models.IndexingResult]
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_documents_crud_async.py
+                :start-after: [START merge_or_upload_document_async]
+                :end-before: [END merge_or_upload_document_async]
+                :language: python
+                :dedent: 4
+                :caption: Merge or upload documents to an index
         """
         batch = _models.IndexDocumentsBatch()
         batch.add_merge_or_upload_actions(documents)

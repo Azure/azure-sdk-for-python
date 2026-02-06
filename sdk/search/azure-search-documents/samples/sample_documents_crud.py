@@ -101,6 +101,21 @@ def delete_document():
     # [END delete_document]
 
 
+def merge_or_upload_document():
+    # [START merge_or_upload_document]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents import SearchClient
+
+    search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
+
+    result = search_client.merge_or_upload_documents(
+        documents=[{"HotelId": "100", "HotelName": "Azure Sanctuary & Spa"}]
+    )
+
+    print(f"Merge or upload: document 100 (succeeded={result[0].succeeded})")
+    # [END merge_or_upload_document]
+
+
 if __name__ == "__main__":
     upload_document()
     merge_document()
