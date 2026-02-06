@@ -19,10 +19,11 @@
         "exporter.models.TelemetryItem": "AzureMonitorExporter.TelemetryEnvelope",
         "exporter.models.TrackResponse": "AzureMonitorExporter.TrackResponse",
         "exporter.models.Versions": "AzureMonitorExporter.Versions",
+        "exporter.models.MonitorDomainKind": "AzureMonitorExporter.DomainKind",
         "exporter.models.SeverityLevel": "AzureMonitorExporter.SeverityLevel",
         "exporter.models.DataPointType": "AzureMonitorExporter.DataPointType",
         "exporter.models.ContextTagKeys": "AzureMonitorExporter.ContextTagKeys",
-        "exporter.AzureMonitorExporterClient.track": "AzureMonitorExporter.track",
-        "exporter.aio.AzureMonitorExporterClient.track": "AzureMonitorExporter.track"
+        "exporter.AzureMonitorClient.track": "AzureMonitorExporter.track",
+        "exporter.aio.AzureMonitorClient.track": "AzureMonitorExporter.track"
     }
 }

@@ -36,6 +36,7 @@ from ._models import (  # type: ignore
 from ._enums import (  # type: ignore
     ContextTagKeys,
     DataPointType,
+    MonitorDomainKind,
     SeverityLevel,
     Versions,
 )
@@ -63,6 +64,7 @@ __all__ = [
     "TrackResponse",
     "ContextTagKeys",
     "DataPointType",
+    "MonitorDomainKind",
     "SeverityLevel",
     "Versions",
 ]

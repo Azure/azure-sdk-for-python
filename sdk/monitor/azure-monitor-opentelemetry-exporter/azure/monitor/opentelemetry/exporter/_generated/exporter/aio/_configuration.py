@@ -16,8 +16,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureMonitorExporterClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for AzureMonitorExporterClient.
+class AzureMonitorClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for AzureMonitorClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

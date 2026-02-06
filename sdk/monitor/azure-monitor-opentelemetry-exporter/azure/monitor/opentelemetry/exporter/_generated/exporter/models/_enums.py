@@ -80,6 +80,29 @@ class DataPointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregated value."""
 
 
+class MonitorDomainKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifies the specific telemetry data type."""
+
+    AVAILABILITY_DATA = "AvailabilityData"
+    """AvailabilityData type."""
+    EVENT_DATA = "EventData"
+    """EventData type."""
+    EXCEPTION_DATA = "ExceptionData"
+    """ExceptionData type."""
+    MESSAGE_DATA = "MessageData"
+    """MessageData type."""
+    METRICS_DATA = "MetricsData"
+    """MetricsData type."""
+    PAGE_VIEW_DATA = "PageViewData"
+    """PageViewData type."""
+    PAGE_VIEW_PERF_DATA = "PageViewPerfData"
+    """PageViewPerfData type."""
+    REMOTE_DEPENDENCY_DATA = "RemoteDependencyData"
+    """RemoteDependencyData type."""
+    REQUEST_DATA = "RequestData"
+    """RequestData type."""
+
+
 class SeverityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the level of severity for the event."""
 

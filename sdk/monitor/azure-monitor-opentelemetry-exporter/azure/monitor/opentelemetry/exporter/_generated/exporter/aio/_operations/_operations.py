@@ -28,18 +28,18 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._operations._operations import build_azure_monitor_exporter_track_request
+from ..._operations._operations import build_azure_monitor_track_request
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC
-from .._configuration import AzureMonitorExporterClientConfiguration
+from .._configuration import AzureMonitorClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _AzureMonitorExporterClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AzureMonitorExporterClientConfiguration]
+class _AzureMonitorClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AzureMonitorClientConfiguration]
 ):
 
     @overload
@@ -132,7 +132,7 @@ class _AzureMonitorExporterClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_azure_monitor_exporter_track_request(
+        _request = build_azure_monitor_track_request(
             content_type=content_type,
             content=_content,
             headers=_headers,

@@ -1805,6 +1805,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "bool_test_key": "False",
             "float_test_key": "0.5",
             "sequence_test_key": "('a', 'b')",
+            "microsoft.applicationId": "test_app_id",
         }
         self.assertEqual(resource_attributes, expected_attributes)
         metrics = metrics_data.metrics
@@ -1819,7 +1820,7 @@ class TestAzureTraceExporter(unittest.TestCase):
                 "num": 1,
             }
         )
-        envelope = exporter._get_otel_resource_envelope(test_resource)
+        envelope = exporter._get_otel_resource_envelope(test_resource, None)
 
         # Ensure the envelope can be JSON serialized with the generated encoder
         serialized = json.dumps(envelope, cls=SdkJSONEncoder, exclude_readonly=True)

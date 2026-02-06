@@ -27,7 +27,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
-from .._configuration import AzureMonitorExporterClientConfiguration
+from .._configuration import AzureMonitorClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Serializer
 from .._utils.utils import ClientMixinABC
@@ -40,7 +40,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_azure_monitor_exporter_track_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_azure_monitor_track_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
@@ -57,8 +57,8 @@ def build_azure_monitor_exporter_track_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class _AzureMonitorExporterClientOperationsMixin(
-    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AzureMonitorExporterClientConfiguration]
+class _AzureMonitorClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], AzureMonitorClientConfiguration]
 ):
 
     @overload
@@ -149,7 +149,7 @@ class _AzureMonitorExporterClientOperationsMixin(
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_azure_monitor_exporter_track_request(
+        _request = build_azure_monitor_track_request(
             content_type=content_type,
             content=_content,
             headers=_headers,

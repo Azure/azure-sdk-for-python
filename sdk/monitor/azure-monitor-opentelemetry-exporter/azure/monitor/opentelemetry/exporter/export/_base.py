@@ -20,9 +20,9 @@ from azure.core.pipeline.policies import (
     RequestIdPolicy,
 )
 from azure.identity import ManagedIdentityCredential
-from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorExporterClient
+from azure.monitor.opentelemetry.exporter._generated.exporter import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.exporter._configuration import (
-    AzureMonitorExporterClientConfiguration,
+    AzureMonitorClientConfiguration,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     MessageData,
@@ -152,7 +152,7 @@ class BaseExporter:
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
 
-        config = AzureMonitorExporterClientConfiguration(self._endpoint, **kwargs)
+        config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
             RequestIdPolicy(**kwargs),
             config.headers_policy,
@@ -170,7 +170,7 @@ class BaseExporter:
             config.http_logging_policy or HttpLoggingPolicy(**kwargs),
         ]
 
-        self.client: AzureMonitorExporterClient = AzureMonitorExporterClient(
+        self.client: AzureMonitorClient = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs
         )
         # TODO: Uncomment configuration changes once testing is completed

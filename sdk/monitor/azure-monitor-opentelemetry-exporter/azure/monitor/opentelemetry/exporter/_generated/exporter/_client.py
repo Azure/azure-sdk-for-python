@@ -14,15 +14,15 @@ from azure.core import PipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import AzureMonitorExporterClientConfiguration
-from ._operations import _AzureMonitorExporterClientOperationsMixin
+from ._configuration import AzureMonitorClientConfiguration
+from ._operations import _AzureMonitorClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AzureMonitorExporterClient(_AzureMonitorExporterClientOperationsMixin):
+class AzureMonitorClient(_AzureMonitorClientOperationsMixin):
     """OpenTelemetry Exporter for Azure Monitor.
 
     :param credential: Credential used to authenticate requests to the service. Default value is
@@ -44,7 +44,7 @@ class AzureMonitorExporterClient(_AzureMonitorExporterClientOperationsMixin):
         **kwargs: Any
     ) -> None:
         _endpoint = "{host}/{apiVersion}"
-        self._config = AzureMonitorExporterClientConfiguration(host=host, credential=credential, **kwargs)
+        self._config = AzureMonitorClientConfiguration(host=host, credential=credential, **kwargs)
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:
