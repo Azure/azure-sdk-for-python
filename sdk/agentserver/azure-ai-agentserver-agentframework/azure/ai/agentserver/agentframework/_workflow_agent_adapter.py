@@ -56,7 +56,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
 
         # Handle managed checkpoints
         if managed_checkpoints:
-            resolved_endpoint = get_project_endpoint() or project_endpoint
+            resolved_endpoint = get_project_endpoint(logger=logger) or project_endpoint
             if not resolved_endpoint:
                 raise ValueError(
                     "project_endpoint is required when managed_checkpoints=True. "
