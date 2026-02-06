@@ -459,6 +459,8 @@ class AgentFrameworkOutputStreamingConverter:
             "created_at": self._response_created_at,
             "conversation": self._context.get_conversation_object(),
         }
-        if status == "completed" and self._completed_output_items:
+
+        # set output even if _completed_output_items is empty, never leave the output as null
+        if status == "completed":
             response_data["output"] = self._completed_output_items
         return OpenAIResponse(response_data)
