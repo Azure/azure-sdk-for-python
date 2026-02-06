@@ -122,7 +122,6 @@ class apistub(Check):
                 cross_language_mapping_path = os.path.abspath(cross_language_mapping_path)
 
             cmds = ["-m", "apistub", "--pkg-path", pkg_path]
-            # cmds = ["-m", "apistub", "--verbose", "--pkg-path", pkg_path]
 
             if out_token_path:
                 cmds.extend(["--out-path", out_token_path])
