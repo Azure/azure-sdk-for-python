@@ -449,6 +449,7 @@
     "toxenv",
     "tzname",
     "tzutc",
+    "uami",
     "uamqp",
     "uksouth",
     "ukwest",

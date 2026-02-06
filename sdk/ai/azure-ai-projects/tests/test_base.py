@@ -81,6 +81,15 @@ STANDARD_TRAINING_TYPE: Final[str] = "Standard"
 GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
 DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
 
+# Method type constants
+SUPERVISED_METHOD_TYPE: Final[str] = "supervised"
+DPO_METHOD_TYPE: Final[str] = "dpo"
+REINFORCEMENT_METHOD_TYPE: Final[str] = "reinforcement"
+
+# Model type constants
+OPENAI_MODEL_TYPE: Final[str] = "openai"
+OSS_MODEL_TYPE: Final[str] = "oss"
+
 
 def patched_open_crlf_to_lf(*args, **kwargs):
     """
