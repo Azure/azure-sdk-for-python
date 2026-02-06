@@ -72,7 +72,7 @@ setup(
         "azure-core>=1.31.0",
         "nltk>=3.9.1",
         "azure-storage-blob>=12.19.0",
-        "httpx>=0.27.2",
+        "httpx>=0.27.2,<1",
         # Dependencies added since Promptflow will soon be made optional
         'pandas>=2.1.2,<3.0.0;python_version<"3.13"',
         'pandas>=2.2.3,<3.0.0;python_version=="3.13"',
