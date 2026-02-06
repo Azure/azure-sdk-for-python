@@ -4,20 +4,29 @@
 """Unit tests for FoundryCheckpointSaver."""
 
 import pytest
+from unittest.mock import Mock
+
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from azure.ai.agentserver.langgraph.checkpointer import FoundryCheckpointSaver
+from azure.ai.agentserver.langgraph.checkpointer._foundry_checkpoint_saver import (
+    BaseCheckpointSaver,
+)
 from azure.ai.agentserver.langgraph.checkpointer._item_id import make_item_id
 
 from ..mocks import MockFoundryCheckpointClient
 
 
 class TestableFoundryCheckpointSaver(FoundryCheckpointSaver):
-    """Testable version that accepts a mock client."""
+    """Testable version that accepts a mock client directly (bypasses credential check)."""
 
     def __init__(self, client: MockFoundryCheckpointClient) -> None:
-        """Initialize with a mock client (bypass credential requirements)."""
-        # Initialize parent with None serde to use default
-        super().__init__(client=client)  # type: ignore[arg-type]
+        """Initialize with a mock client."""
+        # Skip FoundryCheckpointSaver.__init__ and call BaseCheckpointSaver directly
+        BaseCheckpointSaver.__init__(self, serde=None)
+        self._client = client  # type: ignore[assignment]
+        self._session_cache: set[str] = set()
 
 
 @pytest.mark.unit
@@ -404,3 +413,29 @@ async def test_aget_tuple_returns_parent_config() -> None:
     assert result is not None
     assert result.parent_config is not None
     assert result.parent_config["configurable"]["checkpoint_id"] == "cp-001"
+
+
+@pytest.mark.unit
+def test_constructor_requires_async_credential() -> None:
+    """Test that FoundryCheckpointSaver raises TypeError for sync credentials."""
+    mock_credential = Mock(spec=TokenCredential)
+
+    with pytest.raises(TypeError, match="AsyncTokenCredential"):
+        FoundryCheckpointSaver(
+            project_endpoint="https://test.services.ai.azure.com/api/projects/test",
+            credential=mock_credential,
+        )
+
+
+@pytest.mark.unit
+def test_constructor_accepts_async_credential() -> None:
+    """Test that FoundryCheckpointSaver accepts AsyncTokenCredential."""
+    mock_credential = Mock(spec=AsyncTokenCredential)
+
+    saver = FoundryCheckpointSaver(
+        project_endpoint="https://test.services.ai.azure.com/api/projects/test",
+        credential=mock_credential,
+    )
+
+    assert saver is not None
+    assert saver._client is not None

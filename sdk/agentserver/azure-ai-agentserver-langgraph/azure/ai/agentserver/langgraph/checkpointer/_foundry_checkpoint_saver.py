@@ -8,6 +8,8 @@ from contextlib import AbstractAsyncContextManager
 from types import TracebackType
 from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.base import (
     BaseCheckpointSaver,
@@ -42,22 +44,23 @@ class FoundryCheckpointSaver(
     This saver only supports async operations. Sync methods will raise
     NotImplementedError.
 
-    :param client: The Foundry checkpoint client.
-    :type client: FoundryCheckpointClient
+    :param project_endpoint: The Azure AI Foundry project endpoint URL.
+        Example: "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
+    :type project_endpoint: str
+    :param credential: Credential for authentication. Must be an async credential.
+    :type credential: Union[AsyncTokenCredential, TokenCredential]
     :param serde: Optional serializer protocol. Defaults to JsonPlusSerializer.
     :type serde: Optional[SerializerProtocol]
 
     Example::
 
-        from azure.ai.agentserver.core.checkpoints import FoundryCheckpointClient
         from azure.ai.agentserver.langgraph.checkpointer import FoundryCheckpointSaver
         from azure.identity.aio import DefaultAzureCredential
 
-        client = FoundryCheckpointClient(
-            endpoint="https://myresource.services.ai.azure.com/api/projects/my-project",
+        saver = FoundryCheckpointSaver(
+            project_endpoint="https://myresource.services.ai.azure.com/api/projects/my-project",
             credential=DefaultAzureCredential(),
         )
-        saver = FoundryCheckpointSaver(client)
 
         # Use with LangGraph
         graph = builder.compile(checkpointer=saver)
@@ -65,19 +68,28 @@ class FoundryCheckpointSaver(
 
     def __init__(
         self,
-        client: FoundryCheckpointClient,
+        project_endpoint: str,
+        credential: Union[AsyncTokenCredential, TokenCredential],
         *,
         serde: Optional[SerializerProtocol] = None,
     ) -> None:
         """Initialize the Foundry checkpoint saver.
 
-        :param client: The Foundry checkpoint client.
-        :type client: FoundryCheckpointClient
+        :param project_endpoint: The Azure AI Foundry project endpoint URL.
+        :type project_endpoint: str
+        :param credential: Credential for authentication. Must be an async credential.
+        :type credential: Union[AsyncTokenCredential, TokenCredential]
         :param serde: Optional serializer protocol.
         :type serde: Optional[SerializerProtocol]
+        :raises TypeError: If credential is not an AsyncTokenCredential.
         """
         super().__init__(serde=serde)
-        self._client = client
+        if not isinstance(credential, AsyncTokenCredential):
+            raise TypeError(
+                "FoundryCheckpointSaver requires an AsyncTokenCredential. "
+                "Please use an async credential like DefaultAzureCredential from azure.identity.aio."
+            )
+        self._client = FoundryCheckpointClient(project_endpoint, credential)
         self._session_cache: set[str] = set()
 
     async def __aenter__(self) -> "FoundryCheckpointSaver":
