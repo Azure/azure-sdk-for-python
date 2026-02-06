@@ -8792,10 +8792,6 @@ class DataDisk(_Model):
     :vartype disk_size_gb: int
     :ivar managed_disk: The managed disk parameters.
     :vartype managed_disk: ~azure.batch.models.ManagedDisk
-    :ivar storage_account_type: The storage Account type to be used for the data disk. If omitted,
-     the default is "standard_lrs". Known values are: "standard_lrs", "premium_lrs", and
-     "standardssd_lrs".
-    :vartype storage_account_type: str or ~azure.batch.models.StorageAccountType
     """
 
     logical_unit_number: int = rest_field(name="lun", visibility=["read", "create", "update", "delete", "query"])
@@ -8816,11 +8812,6 @@ class DataDisk(_Model):
         name="managedDisk", visibility=["read", "create", "update", "delete", "query"]
     )
     """The managed disk parameters."""
-    storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = rest_field(
-        name="storageAccountType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The storage Account type to be used for the data disk. If omitted, the default is
-     \"standard_lrs\". Known values are: \"standard_lrs\", \"premium_lrs\", and \"standardssd_lrs\"."""
 
     @overload
     def __init__(
@@ -8830,7 +8821,6 @@ class DataDisk(_Model):
         disk_size_gb: int,
         caching: Optional[Union[str, "_models.CachingType"]] = None,
         managed_disk: Optional["_models.ManagedDisk"] = None,
-        storage_account_type: Optional[Union[str, "_models.StorageAccountType"]] = None,
     ) -> None: ...
 
     @overload
