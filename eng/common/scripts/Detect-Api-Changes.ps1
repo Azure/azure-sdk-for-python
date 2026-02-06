@@ -57,6 +57,13 @@ function Submit-Request($filePath, $packageInfo)
         $query.Add('codeFile', $reviewFileName)
         # Pass only relative path in package artifact directory when code file is also present
         $query.Add('filePath', (Split-Path -Leaf $filePath))
+
+        $metadataFileFullName = Join-Path -Path $ArtifactPath $packageName "typespec-metadata.json"
+        if (Test-Path $metadataFileFullName)
+        {
+            $query.Add('metadataFile', "typespec-metadata.json")
+            LogInfo "Found TypeSpec metadata file: typespec-metadata.json"
+        }
     }
     else
     {
