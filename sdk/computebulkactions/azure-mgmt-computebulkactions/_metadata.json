@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2026-02-01-preview",
+  "commit": "1fce3d8fcfd7da372b2e98fcc75ede56b9ddf6c6",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/computebulkactions/ComputeBulkActions.Management",
+  "emitterVersion": "0.60.0"
+}
