@@ -22,7 +22,7 @@ from ._operations import (
 )
 
 if TYPE_CHECKING:
-    from ....aio import SearchClient
+    import azure.search.documents.aio
 
 
 class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
@@ -429,7 +429,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             **kwargs,
         )
 
-    def get_search_client(self, index_name: str, **kwargs: Any) -> "SearchClient":
+    def get_search_client(self, index_name: str, **kwargs: Any) -> "azure.search.documents.aio.SearchClient":
         """Return a client to perform operations on Search.
 
         :param index_name: The name of the index. Required.

@@ -412,10 +412,6 @@ __all__: list[str] = [
     "IndexDocumentsBatch",
 ]  # Add all objects you want publicly available to users at this package level
 
-# Set __module__ so Sphinx documents these under the public namespace,
-# avoiding duplicate/ambiguous cross-reference warnings.
-SearchClient.__module__ = "azure.search.documents"
-
 
 def patch_sdk():
     """Do not remove from this file.

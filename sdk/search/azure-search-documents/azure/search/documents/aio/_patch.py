@@ -298,7 +298,7 @@ class SearchIndexingBufferedSender:
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: IndexDocumentsBatch
+        :type batch: ~azure.search.documents.models.IndexDocumentsBatch
         :return: Indexing result of each action in the batch.
         :rtype: list[IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
@@ -403,10 +403,6 @@ __all__: list[str] = [
     "AsyncSearchItemPaged",
     "SearchIndexingBufferedSender",
 ]  # Add all objects you want publicly available to users at this package level
-
-# Set __module__ so Sphinx documents these under the public namespace,
-# avoiding duplicate/ambiguous cross-reference warnings.
-SearchClient.__module__ = "azure.search.documents.aio"
 
 
 def patch_sdk():

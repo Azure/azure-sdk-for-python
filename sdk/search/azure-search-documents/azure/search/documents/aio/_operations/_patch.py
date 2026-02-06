@@ -185,7 +185,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         """Specify a document operations to perform as a batch.
 
         :param batch: A batch of document operations to perform.
-        :type batch: IndexDocumentsBatch
+        :type batch: ~azure.search.documents.models.IndexDocumentsBatch
         :return: List of IndexingResult
         :rtype:  list[IndexingResult]
 
