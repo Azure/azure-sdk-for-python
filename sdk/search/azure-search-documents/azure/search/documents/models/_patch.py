@@ -198,6 +198,10 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         return new_actions
 
 
+# Set __module__ so Sphinx documents IndexDocumentsBatch under the public namespace,
+# avoiding duplicate object description warnings.
+IndexDocumentsBatch.__module__ = "azure.search.documents"
+
 __all__: list[str] = [
     "IndexDocumentsBatch",
 ]  # Add all objects you want publicly available to users at this package level
