@@ -4,6 +4,8 @@
 from collections import defaultdict
 from typing import Any, Dict, Iterable, List, Optional, Tuple, Union, overload
 
+import logging
+
 from langchain_core.tools import BaseTool, StructuredTool
 from pydantic import BaseModel, Field, create_model
 
@@ -128,6 +130,10 @@ class FoundryLangChainToolResolver:
         field_definitions: Dict[str, Any] = {}
         required_fields = input_schema.required or set()
         for prop_name, prop in input_schema.properties.items():
+            if prop.type is None:
+                logging.getLogger(__name__).warning(
+                    "Skipping field '%s' in tool '%s': unknown or empty schema type.", prop_name, tool_name)
+                continue
             py_type = prop.type.py_type
             default = ... if prop_name in required_fields else None
             field_definitions[prop_name] = (py_type, Field(default, description=prop.description))
