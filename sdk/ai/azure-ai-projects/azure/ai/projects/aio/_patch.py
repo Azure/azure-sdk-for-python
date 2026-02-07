@@ -98,9 +98,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         Keyword arguments are passed to the AsyncOpenAI client constructor.
 
         The AsyncOpenAI client constructor is called with:
-
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
-        * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the AIProjectClient constructor, with scope "https://ai.azure.com/.default".
+        Can be overridden by passing ``base_url`` as a keyword argument.
+        * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
+        AIProjectClient constructor, with scope "https://ai.azure.com/.default".
+        Can be overridden by passing ``api_key`` as a keyword argument.
 
         .. note:: The packages ``openai`` and ``azure.identity`` must be installed prior to calling this method.
 
@@ -110,14 +112,27 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
+        kwargs = kwargs.copy() if kwargs else {}
+
+        # Allow caller to override base_url
+        if "base_url" in kwargs:
+            base_url = kwargs.pop("base_url")
+        else:
+            base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
             base_url,
         )
 
-        kwargs = kwargs.copy() if kwargs else {}
+        # Allow caller to override api_key, otherwise use token provider
+        if "api_key" in kwargs:
+            api_key = kwargs.pop("api_key")
+        else:
+            api_key = get_bearer_token_provider(
+                self._config.credential,  # pylint: disable=protected-access
+                "https://ai.azure.com/.default",
+            )
 
         if "http_client" in kwargs:
             http_client = kwargs.pop("http_client")
@@ -132,11 +147,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         def _create_openai_client(**kwargs) -> AsyncOpenAI:
             return AsyncOpenAI(
-                # See https://learn.microsoft.com/python/api/azure-identity/azure.identity?view=azure-python#azure-identity-get-bearer-token-provider # pylint: disable=line-too-long
-                api_key=get_bearer_token_provider(
-                    self._config.credential,  # pylint: disable=protected-access
-                    "https://ai.azure.com/.default",
-                ),
+                api_key=api_key,
                 base_url=base_url,
                 http_client=http_client,
                 **kwargs,
