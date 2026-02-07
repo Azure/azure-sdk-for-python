@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
-from typing import Any, AsyncIterable, AsyncIterator, Dict, List, Optional, Union
+from typing import Any, AsyncIterable, AsyncIterator, Dict, List, Optional, Set, Union
 
-from langchain_core.messages import AnyMessage
+from langchain_core.messages import AIMessage, AnyMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.types import Command, StateSnapshot, StreamMode
@@ -224,45 +224,52 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         :return: List of LangGraph messages converted from historical items.
         :rtype: List[AnyMessage]
         """
-        endpoint = get_project_endpoint()
+        endpoint = get_project_endpoint(logger=logger)
         if not endpoint:
             logger.warning("No project endpoint configured, cannot fetch historical items")
             return []
 
         try:
             # Import here to avoid circular imports and make dependency optional
-            from azure.ai.projects.aio import AIProjectClient
-            from azure.identity.aio import DefaultAzureCredential
+            import os
+            from openai import AsyncOpenAI
+            from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
-            logger.debug(f"Creating AIProjectClient for endpoint: {endpoint}")
+            logger.debug(f"Creating AsyncOpenAI client for endpoint: {endpoint}/openai")
 
-            async with DefaultAzureCredential() as credential:
-                async with AIProjectClient(endpoint=endpoint, credential=credential) as client:
-                    openai_client = client.agents.get_openai_client()
-                    async with openai_client:
-                        items = []
-                        item_list = await openai_client.conversations.items.list(conversation_id)
-                        for item in item_list:
-                            items.append(item)
+            credential = DefaultAzureCredential()
+            token_provider = get_bearer_token_provider(credential, "https://ai.azure.com/.default")
+            openai_client = AsyncOpenAI(
+                base_url=f"{endpoint}/openai",
+                api_key=token_provider,
+                default_query = {"api-version": "2025-11-15-preview"},
+            )
+            items = []
+            async for item in openai_client.conversations.items.list(conversation_id):
+                items.append(item)
+            items.reverse()
 
-                        logger.info(f"Fetched {len(items)} historical items from conversation {conversation_id}")
+            logger.info(f"Fetched {len(items)} historical items from conversation {conversation_id}")
 
-                        # Convert items to LangGraph messages
-                        messages = []
-                        for item in items:
-                            item_dict = item.model_dump() if hasattr(item, 'model_dump') else dict(item)
-                            message = convert_item_resource_to_message(item_dict)
-                            if message is not None:
-                                messages.append(message)
+            # Convert items to LangGraph messages
+            messages = []
+            for item in items:
+                item_dict = item.model_dump() if hasattr(item, 'model_dump') else dict(item)
+                message = convert_item_resource_to_message(item_dict)
+                if message is not None:
+                    messages.append(message)
 
-                        logger.debug(f"Converted {len(messages)} items to LangGraph messages")
-                        return messages
+            # Filter out incomplete tool call sequences
+            messages = self._filter_incomplete_tool_calls(messages)
+
+            logger.debug(f"Converted {len(messages)} items to LangGraph messages")
+            return messages
 
         except ImportError as e:
-            logger.warning(f"AIProjectClient not available, cannot fetch historical items: {e}")
+            logger.warning(f"OpenAI or Azure Identity not available, cannot fetch historical items: {e}", exc_info=True)
             return []
         except Exception as e:
-            logger.warning(f"Failed to fetch historical items for conversation {conversation_id}: {e}")
+            logger.warning(f"Failed to fetch historical items for conversation {conversation_id}: {e}", exc_info=True)
             return []
 
     def _merge_messages_without_duplicates(
@@ -338,3 +345,58 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             return state
         logger.debug(f"No checkpointer configured for graph, skipping checkpoint lookup")
         return None
+
+    def _filter_incomplete_tool_calls(self, messages: List[AnyMessage]) -> List[AnyMessage]:
+        """
+        Filter out incomplete tool call sequences and reorder messages so that
+        ToolMessages immediately follow their corresponding AIMessage with tool_calls.
+
+        :param messages: List of messages to filter and reorder.
+        :type messages: List[AnyMessage]
+
+        :return: Filtered and reordered list of messages.
+        :rtype: List[AnyMessage]
+        """
+        # Build a map of tool_call_id -> ToolMessage
+        tool_responses: Dict[str, ToolMessage] = {}
+        for msg in messages:
+            if isinstance(msg, ToolMessage) and hasattr(msg, 'tool_call_id'):
+                tool_responses[msg.tool_call_id] = msg
+
+        # Build result list, placing ToolMessages right after their AIMessage
+        result: List[AnyMessage] = []
+        used_tool_call_ids: Set[str] = set()
+        removed_count = 0
+
+        for msg in messages:
+            if isinstance(msg, ToolMessage):
+                # Skip ToolMessages here; they'll be added after their AIMessage
+                continue
+
+            if isinstance(msg, AIMessage) and hasattr(msg, 'tool_calls') and msg.tool_calls:
+                # Check if all tool_calls have responses
+                tool_call_ids = []
+                for tc in msg.tool_calls:
+                    tc_id = tc.get('id') if isinstance(tc, dict) else getattr(tc, 'id', None)
+                    if tc_id:
+                        tool_call_ids.append(tc_id)
+
+                all_responded = all(tc_id in tool_responses for tc_id in tool_call_ids)
+                if not all_responded:
+                    removed_count += 1
+                    logger.debug("Removing AIMessage with incomplete tool_calls")
+                    continue
+
+                # Add the AIMessage, then immediately add its ToolMessages
+                result.append(msg)
+                for tc_id in tool_call_ids:
+                    if tc_id in tool_responses and tc_id not in used_tool_call_ids:
+                        result.append(tool_responses[tc_id])
+                        used_tool_call_ids.add(tc_id)
+            else:
+                result.append(msg)
+
+        if removed_count > 0:
+            logger.info(f"Filtered {removed_count} messages with incomplete tool call sequences")
+
+        return result
