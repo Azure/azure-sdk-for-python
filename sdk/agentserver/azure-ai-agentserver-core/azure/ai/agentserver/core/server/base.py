@@ -235,6 +235,24 @@ class FoundryCBAgent:
         """Check if conversation items should be stored based on request's store parameter."""
         return context.request.get("store", False) and context.conversation_id and self._project_endpoint
 
+    def _items_are_equal(self, item1: dict, item2: dict) -> bool:
+        """Compare two conversation items for equality based on type and content."""
+        if item1.get("type") != item2.get("type"):
+            return False
+        if item1.get("role") != item2.get("role"):
+            return False
+        # Compare content - handle both string and structured content
+        content1 = item1.get("content")
+        content2 = item2.get("content")
+        if isinstance(content1, str) and isinstance(content2, str):
+            return content1 == content2
+        if isinstance(content1, list) and isinstance(content2, list):
+            # For structured content, compare text parts
+            text1 = "".join(p.get("text", "") for p in content1 if isinstance(p, dict))
+            text2 = "".join(p.get("text", "") for p in content2 if isinstance(p, dict))
+            return text1 == text2
+        return content1 == content2
+
     async def _create_openai_client(self):
         """Create an AsyncOpenAI client for conversation operations."""
         from openai import AsyncOpenAI
@@ -277,6 +295,31 @@ class FoundryCBAgent:
                 return
 
             openai_client = await self._create_openai_client()
+
+            # Check for duplicates by comparing the last N historical items with current N items
+            try:
+                historical_items = []
+                async for item in openai_client.conversations.items.list(conversation_id):
+                    historical_items.append(item)
+                # API returns items in reverse order (newest first), so reverse to get chronological order
+                historical_items.reverse()
+
+                n = len(items_to_save)
+                if len(historical_items) >= n:
+                    # Get last N historical items (in chronological order)
+                    last_n_historical = historical_items[-n:]
+                    # Compare as a whole - all N items must match in order
+                    all_match = True
+                    for i in range(n):
+                        hist_dict = last_n_historical[i].model_dump() if hasattr(last_n_historical[i], 'model_dump') else dict(last_n_historical[i])
+                        if not self._items_are_equal(hist_dict, items_to_save[i]):
+                            all_match = False
+                            break
+                    if all_match:
+                        logger.debug(f"All {n} input items already exist in conversation {conversation_id}, skipping save")
+                        return
+            except Exception as e:
+                logger.debug(f"Could not check for duplicates: {e}")
 
             await openai_client.conversations.items.create(
                 conversation_id=conversation_id,

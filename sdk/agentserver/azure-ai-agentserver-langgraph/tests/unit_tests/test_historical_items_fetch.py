@@ -328,3 +328,81 @@ class TestFilterIncompleteToolCalls:
         result = converter._filter_incomplete_tool_calls([])
 
         assert result == []
+
+
+@pytest.mark.unit
+class TestFetchHistoricalItems:
+    """Tests for the _fetch_historical_items method using AsyncOpenAI."""
+
+    @pytest.mark.asyncio
+    async def test_fetch_returns_empty_when_no_endpoint(self):
+        """Test that fetch returns empty list when no project endpoint is configured."""
+        converter = _create_converter()
+
+        with patch(
+            "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_project_endpoint",
+            return_value=None,
+        ):
+            result = await converter._fetch_historical_items("conv_123")
+            assert result == []
+
+    @pytest.mark.asyncio
+    async def test_fetch_returns_empty_on_import_error(self):
+        """Test that fetch returns empty list when openai is not available."""
+        converter = _create_converter()
+
+        with patch(
+            "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_project_endpoint",
+            return_value="https://test.endpoint.com",
+        ):
+            with patch.dict("sys.modules", {"openai": None}):
+                # This should handle ImportError gracefully
+                result = await converter._fetch_historical_items("conv_123")
+                assert result == []
+
+    @pytest.mark.asyncio
+    async def test_fetch_converts_items_to_messages(self):
+        """Test that fetched items are converted to LangGraph messages."""
+        converter = _create_converter()
+
+        # Create mock items
+        mock_item = MagicMock()
+        mock_item.model_dump = MagicMock(return_value={
+            "type": "message",
+            "role": "user",
+            "content": [{"type": "input_text", "text": "Hello"}],
+        })
+
+        async def mock_list(*args, **kwargs):
+            yield mock_item
+
+        mock_client = MagicMock()
+        mock_client.conversations.items.list = mock_list
+
+        with patch(
+            "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_project_endpoint",
+            return_value="https://test.endpoint.com",
+        ):
+            with patch(
+                "azure.ai.agentserver.langgraph.models.response_api_default_converter.AsyncOpenAI",
+                return_value=mock_client,
+            ):
+                with patch(
+                    "azure.ai.agentserver.langgraph.models.response_api_default_converter.DefaultAzureCredential",
+                ) as mock_cred:
+                    mock_cred_instance = MagicMock()
+                    mock_cred.return_value = mock_cred_instance
+                    mock_cred_instance.__aenter__ = AsyncMock(return_value=mock_cred_instance)
+                    mock_cred_instance.__aexit__ = AsyncMock(return_value=None)
+
+                    with patch(
+                        "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_bearer_token_provider",
+                    ) as mock_token_provider:
+                        mock_token_fn = AsyncMock(return_value="test_token")
+                        mock_token_provider.return_value = mock_token_fn
+
+                        result = await converter._fetch_historical_items("conv_123")
+
+                        assert len(result) == 1
+                        assert isinstance(result[0], HumanMessage)
+                        assert result[0].content == "Hello"
