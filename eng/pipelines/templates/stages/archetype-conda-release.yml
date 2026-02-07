@@ -34,8 +34,6 @@ stages:
             runOnce:
               deploy:
                 steps:
-                  - checkout: self
-
                   - task: UsePythonVersion@0
                     inputs:
                       versionSpec: '3.12'
