@@ -111,26 +111,30 @@ class TestConvertItemResourceToMessage:
         assert result.content == ""
 
 
+def _create_converter():
+    """Helper to create a ResponseAPIDefaultConverter with mocked graph."""
+    from azure.ai.agentserver.langgraph.models.response_api_default_converter import (
+        ResponseAPIDefaultConverter,
+    )
+
+    mock_graph = MagicMock()
+    mock_graph.builder.state_schema.__annotations__ = {"messages": list}
+    mock_graph.checkpointer = None
+
+    with patch(
+        "azure.ai.agentserver.langgraph.models.utils.is_state_schema_valid",
+        return_value=True,
+    ):
+        return ResponseAPIDefaultConverter(graph=mock_graph)
+
+
 @pytest.mark.unit
 class TestMergeMessagesWithoutDuplicates:
     """Tests for the merge logic in ResponseAPIDefaultConverter."""
 
     def test_merge_no_duplicates(self):
         """Test merging when there are no duplicates."""
-        from azure.ai.agentserver.langgraph.models.response_api_default_converter import (
-            ResponseAPIDefaultConverter,
-        )
-
-        # Create a minimal mock graph with valid schema
-        mock_graph = MagicMock()
-        mock_graph.builder.state_schema.__annotations__ = {"messages": list}
-        mock_graph.checkpointer = None
-
-        with patch(
-            "azure.ai.agentserver.langgraph.models.utils.is_state_schema_valid",
-            return_value=True,
-        ):
-            converter = ResponseAPIDefaultConverter(graph=mock_graph)
+        converter = _create_converter()
 
         historical = [
             HumanMessage(content="Historical message 1"),
@@ -149,19 +153,7 @@ class TestMergeMessagesWithoutDuplicates:
 
     def test_merge_with_duplicates(self):
         """Test merging filters out duplicate messages."""
-        from azure.ai.agentserver.langgraph.models.response_api_default_converter import (
-            ResponseAPIDefaultConverter,
-        )
-
-        mock_graph = MagicMock()
-        mock_graph.builder.state_schema.__annotations__ = {"messages": list}
-        mock_graph.checkpointer = None
-
-        with patch(
-            "azure.ai.agentserver.langgraph.models.utils.is_state_schema_valid",
-            return_value=True,
-        ):
-            converter = ResponseAPIDefaultConverter(graph=mock_graph)
+        converter = _create_converter()
 
         historical = [
             HumanMessage(content="Duplicate message"),
@@ -179,19 +171,7 @@ class TestMergeMessagesWithoutDuplicates:
 
     def test_merge_empty_historical(self):
         """Test merging when historical messages are empty."""
-        from azure.ai.agentserver.langgraph.models.response_api_default_converter import (
-            ResponseAPIDefaultConverter,
-        )
-
-        mock_graph = MagicMock()
-        mock_graph.builder.state_schema.__annotations__ = {"messages": list}
-        mock_graph.checkpointer = None
-
-        with patch(
-            "azure.ai.agentserver.langgraph.models.utils.is_state_schema_valid",
-            return_value=True,
-        ):
-            converter = ResponseAPIDefaultConverter(graph=mock_graph)
+        converter = _create_converter()
 
         historical = []
         current = [
@@ -205,19 +185,7 @@ class TestMergeMessagesWithoutDuplicates:
 
     def test_merge_different_types_not_duplicates(self):
         """Test that messages with same content but different types are not considered duplicates."""
-        from azure.ai.agentserver.langgraph.models.response_api_default_converter import (
-            ResponseAPIDefaultConverter,
-        )
-
-        mock_graph = MagicMock()
-        mock_graph.builder.state_schema.__annotations__ = {"messages": list}
-        mock_graph.checkpointer = None
-
-        with patch(
-            "azure.ai.agentserver.langgraph.models.utils.is_state_schema_valid",
-            return_value=True,
-        ):
-            converter = ResponseAPIDefaultConverter(graph=mock_graph)
+        converter = _create_converter()
 
         historical = [
             SystemMessage(content="Same content"),  # System message
@@ -230,3 +198,133 @@ class TestMergeMessagesWithoutDuplicates:
 
         # Both should be kept because types are different
         assert len(result) == 2
+
+
+@pytest.mark.unit
+class TestFilterIncompleteToolCalls:
+    """Tests for the _filter_incomplete_tool_calls method."""
+
+    def test_filter_complete_tool_call_sequence(self):
+        """Test that complete tool call sequences are preserved and reordered correctly."""
+        converter = _create_converter()
+
+        messages = [
+            HumanMessage(content="What's the weather?"),
+            AIMessage(content="", tool_calls=[{"id": "call_1", "name": "get_weather", "args": {}}]),
+            ToolMessage(content="Sunny", tool_call_id="call_1"),
+            AIMessage(content="The weather is sunny."),
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        assert len(result) == 4
+        assert isinstance(result[0], HumanMessage)
+        assert isinstance(result[1], AIMessage)
+        assert result[1].tool_calls is not None
+        assert isinstance(result[2], ToolMessage)
+        assert isinstance(result[3], AIMessage)
+
+    def test_filter_incomplete_tool_call_removed(self):
+        """Test that AIMessage with tool_calls without responses is removed."""
+        converter = _create_converter()
+
+        messages = [
+            HumanMessage(content="What's the weather?"),
+            AIMessage(content="", tool_calls=[{"id": "call_1", "name": "get_weather", "args": {}}]),
+            # Missing ToolMessage for call_1
+            AIMessage(content="Let me try again."),
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        assert len(result) == 2
+        assert isinstance(result[0], HumanMessage)
+        assert isinstance(result[1], AIMessage)
+        assert result[1].content == "Let me try again."
+
+    def test_filter_reorders_tool_messages_after_ai_message(self):
+        """Test that ToolMessages are placed immediately after their AIMessage."""
+        converter = _create_converter()
+
+        # Simulate out-of-order messages (tool response before tool call)
+        messages = [
+            HumanMessage(content="Query"),
+            ToolMessage(content="Result", tool_call_id="call_1"),  # Out of order
+            AIMessage(content="", tool_calls=[{"id": "call_1", "name": "search", "args": {}}]),
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        assert len(result) == 3
+        assert isinstance(result[0], HumanMessage)
+        assert isinstance(result[1], AIMessage)
+        assert result[1].tool_calls is not None
+        assert isinstance(result[2], ToolMessage)
+        assert result[2].tool_call_id == "call_1"
+
+    def test_filter_multiple_tool_calls_in_one_message(self):
+        """Test handling of multiple tool calls in a single AIMessage."""
+        converter = _create_converter()
+
+        messages = [
+            AIMessage(content="", tool_calls=[
+                {"id": "call_1", "name": "tool_a", "args": {}},
+                {"id": "call_2", "name": "tool_b", "args": {}},
+            ]),
+            ToolMessage(content="Result A", tool_call_id="call_1"),
+            ToolMessage(content="Result B", tool_call_id="call_2"),
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        assert len(result) == 3
+        assert isinstance(result[0], AIMessage)
+        assert isinstance(result[1], ToolMessage)
+        assert result[1].tool_call_id == "call_1"
+        assert isinstance(result[2], ToolMessage)
+        assert result[2].tool_call_id == "call_2"
+
+    def test_filter_partial_tool_calls_removed(self):
+        """Test that AIMessage with multiple tool_calls is removed if any response is missing."""
+        converter = _create_converter()
+
+        messages = [
+            AIMessage(content="", tool_calls=[
+                {"id": "call_1", "name": "tool_a", "args": {}},
+                {"id": "call_2", "name": "tool_b", "args": {}},
+            ]),
+            ToolMessage(content="Result A", tool_call_id="call_1"),
+            # Missing ToolMessage for call_2
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        # The AIMessage should be removed because call_2 has no response
+        assert len(result) == 0
+
+    def test_filter_no_tool_calls_unchanged(self):
+        """Test that messages without tool calls pass through unchanged."""
+        converter = _create_converter()
+
+        messages = [
+            HumanMessage(content="Hello"),
+            AIMessage(content="Hi there!"),
+            HumanMessage(content="How are you?"),
+            AIMessage(content="I'm doing well."),
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        assert len(result) == 4
+        assert result[0].content == "Hello"
+        assert result[1].content == "Hi there!"
+        assert result[2].content == "How are you?"
+        assert result[3].content == "I'm doing well."
+
+    def test_filter_empty_messages(self):
+        """Test filtering an empty message list."""
+        converter = _create_converter()
+
+        result = converter._filter_incomplete_tool_calls([])
+
+        assert result == []
