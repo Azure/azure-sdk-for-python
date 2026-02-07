@@ -99,8 +99,8 @@ class FoundryCBAgent:
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
                  project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
-        project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        AgentServerContext(create_tool_runtime(project_endpoint, self.credentials))
+        self._project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
+        AgentServerContext(create_tool_runtime(self._project_endpoint, self.credentials))
 
         async def runs_endpoint(request):
             # Set up tracing context and span
@@ -113,6 +113,11 @@ class FoundryCBAgent:
             ):
                 try:
                     logger.info("Start processing CreateResponse request.")
+
+                    # Save input to conversation if store=True
+                    if self._should_store(context):
+                        logger.debug("Storing input to conversation.")
+                        await self._save_input_to_conversation(context)
 
                     context_carrier = {}
                     TraceContextTextMapPropagator().inject(context_carrier)
@@ -131,6 +136,10 @@ class FoundryCBAgent:
                         message=_format_error(ex))
                     if not ex:
                         attach_foundry_metadata_to_response(result)
+                        # Save output to conversation if store=True
+                        if self._should_store(context):
+                            logger.debug("Storing output to conversation.")
+                            await self._save_output_to_conversation(context, result)
                     return JSONResponse(result.as_dict(), headers=self.create_response_headers())
 
                 async def gen_async(ex):
@@ -138,6 +147,7 @@ class FoundryCBAgent:
                     prev_ctx = otel_context.get_current()
                     otel_context.attach(ctx)
                     seq = 0
+                    output_events = []  # Collect events for saving to conversation
                     try:
                         if ex:
                             return
@@ -150,8 +160,13 @@ class FoundryCBAgent:
                             else:
                                 try_attach_foundry_metadata_to_event(event)
                                 seq += 1
+                                output_events.append(event)
                                 yield _event_to_sse_chunk(event)
                         logger.info("End of processing CreateResponse request.")
+                        # Save output to conversation if store=True
+                        if self._should_store(context):
+                            logger.debug("Storing output to conversation.")
+                            await self._save_output_events_to_conversation(context, output_events)
                     except Exception as e:  # noqa: BLE001
                         logger.error("Error in async generator: %s", e, exc_info=True)
                         ex = e
@@ -215,6 +230,117 @@ class FoundryCBAgent:
                         uv_logger.propagate = False
 
         self.tracer = None
+
+    def _should_store(self, context: AgentRunContext) -> bool:
+        """Check if conversation items should be stored based on request's store parameter."""
+        return context.request.get("store", False) and context.conversation_id and self._project_endpoint
+
+    async def _create_openai_client(self):
+        """Create an AsyncOpenAI client for conversation operations."""
+        from openai import AsyncOpenAI
+        from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
+
+        credential = DefaultAzureCredential()
+        token_provider = get_bearer_token_provider(credential, "https://ai.azure.com/.default")
+        token = await token_provider()
+        return AsyncOpenAI(
+            base_url=f"{self._project_endpoint}/openai",
+            api_key=token,
+            default_query = {"api-version": "2025-11-15-preview"},
+        )
+
+    async def _save_input_to_conversation(self, context: AgentRunContext) -> None:
+        """Save input items to the conversation."""
+        try:
+            conversation_id = context.conversation_id
+            input_items = context.request.get("input", [])
+            if not input_items:
+                return
+
+            # Handle string input as a single item
+            if isinstance(input_items, str):
+                input_items = [input_items]
+
+            # Convert input items to the format expected by the API
+            items_to_save = []
+            for item in input_items:
+                if isinstance(item, str):
+                    items_to_save.append({"type": "message", "role": "user", "content": item})
+                elif isinstance(item, dict):
+                    items_to_save.append(item)
+                elif hasattr(item, 'as_dict'):
+                    items_to_save.append(item.as_dict())
+                else:
+                    items_to_save.append({"type": "message", "role": "user", "content": str(item)})
+
+            if not items_to_save:
+                return
+
+            openai_client = await self._create_openai_client()
+
+            await openai_client.conversations.items.create(
+                conversation_id=conversation_id,
+                items=items_to_save,
+            )
+            logger.debug(f"Saved {len(items_to_save)} input items to conversation {conversation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save input items to conversation: {e}", exc_info=True)
+
+    async def _save_output_to_conversation(self, context: AgentRunContext, response: project_models.Response) -> None:
+        """Save output items from a non-streaming response to the conversation."""
+        try:
+            conversation_id = context.conversation_id
+            output_items = response.get("output", [])
+            if not output_items:
+                return
+
+            # Convert output items to the format expected by the API
+            items_to_save = []
+            for item in output_items:
+                if isinstance(item, dict):
+                    items_to_save.append(item)
+                elif hasattr(item, 'as_dict'):
+                    items_to_save.append(item.as_dict())
+                else:
+                    items_to_save.append(dict(item))
+
+            openai_client = await self._create_openai_client()
+            await openai_client.conversations.items.create(
+                conversation_id=conversation_id,
+                items=items_to_save,
+            )
+            logger.debug(f"Saved {len(items_to_save)} output items to conversation {conversation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
+
+    async def _save_output_events_to_conversation(self, context: AgentRunContext, events: list) -> None:
+        """Save output items from streaming events to the conversation."""
+        try:
+            conversation_id = context.conversation_id
+            # Extract completed items from ResponseOutputItemDoneEvent
+            items_to_save = []
+            for event in events:
+                if hasattr(event, 'type') and event.type == 'response.output_item.done':
+                    item = getattr(event, 'item', None)
+                    if item:
+                        if isinstance(item, dict):
+                            items_to_save.append(item)
+                        elif hasattr(item, 'as_dict'):
+                            items_to_save.append(item.as_dict())
+                        else:
+                            items_to_save.append(dict(item))
+
+            if not items_to_save:
+                return
+
+            openai_client = await self._create_openai_client()
+            await openai_client.conversations.items.create(
+                conversation_id=conversation_id,
+                items=items_to_save,
+            )
+            logger.debug(f"Saved {len(items_to_save)} output items to conversation {conversation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
 
     @abstractmethod
     async def agent_run(

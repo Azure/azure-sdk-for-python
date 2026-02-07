@@ -280,7 +280,8 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
     ) -> List[AnyMessage]:
         """
         Merge historical messages with current messages, filtering out duplicates.
-        Duplicates are identified by matching message type and content.
+        Only considers it a duplicate if the last N historical messages match
+        exactly with the N current messages as a whole sequence.
 
         :param historical_messages: Messages fetched from historical conversation items.
         :type historical_messages: List[AnyMessage]
@@ -292,36 +293,57 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         :return: Merged list with historical messages prepended, duplicates removed.
         :rtype: List[AnyMessage]
         """
-        # Build a set of (type, content) tuples for current messages for fast lookup
-        current_signatures = set()
-        for msg in current_messages:
-            content = msg.content if hasattr(msg, 'content') else ""
-            # Normalize content for comparison
-            if isinstance(content, list):
-                content = str(content)
-            current_signatures.add((type(msg).__name__, content))
+        if not current_messages or not historical_messages:
+            merged = list(historical_messages) + list(current_messages)
+            logger.info(
+                f"Merged {len(historical_messages)} historical items with {len(current_messages)} "
+                f"current items for conversation {conversation_id}"
+            )
+            return merged
 
-        # Filter historical messages to exclude duplicates
-        unique_historical = []
-        duplicate_count = 0
-        for msg in historical_messages:
-            content = msg.content if hasattr(msg, 'content') else ""
-            if isinstance(content, list):
-                content = str(content)
-            signature = (type(msg).__name__, content)
+        n = len(current_messages)
+        filtered_historical = list(historical_messages)
 
-            if signature not in current_signatures:
-                unique_historical.append(msg)
-            else:
-                duplicate_count += 1
+        # Only check for duplicates if we have at least N historical messages
+        if len(filtered_historical) >= n:
+            last_n_historical = filtered_historical[-n:]
 
-        if duplicate_count > 0:
-            logger.info(f"Filtered {duplicate_count} duplicate items from historical items")
+            # Check if all N messages match in order
+            all_match = True
+            for i in range(n):
+                hist_msg = last_n_historical[i]
+                curr_msg = current_messages[i]
 
-        # Prepend unique historical messages to current messages
-        merged = unique_historical + list(current_messages)
+                hist_type = type(hist_msg).__name__
+                curr_type = type(curr_msg).__name__
+                hist_content = self._normalize_content(hist_msg.content if hasattr(hist_msg, 'content') else "")
+                curr_content = self._normalize_content(curr_msg.content if hasattr(curr_msg, 'content') else "")
+
+                logger.debug(
+                    f"Comparing message {i}: historical({hist_type}, '{hist_content}') "
+                    f"vs current({curr_type}, '{curr_content}')"
+                )
+
+                # Compare type and content
+                if hist_type != curr_type:
+                    logger.debug(f"Message {i} type mismatch: {hist_type} != {curr_type}")
+                    all_match = False
+                    break
+
+                if hist_content != curr_content:
+                    logger.debug(f"Message {i} content mismatch")
+                    all_match = False
+                    break
+
+            if all_match:
+                # Remove the last N historical messages (they're duplicates)
+                filtered_historical = filtered_historical[:-n]
+                logger.info(f"Filtered {n} duplicate items from end of historical items")
+
+        # Prepend historical messages to current messages
+        merged = filtered_historical + list(current_messages)
         logger.info(
-            f"Merged {len(unique_historical)} historical items with {len(current_messages)} "
+            f"Merged {len(filtered_historical)} historical items with {len(current_messages)} "
             f"current items for conversation {conversation_id}"
         )
 
@@ -400,3 +422,29 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             logger.info(f"Filtered {removed_count} messages with incomplete tool call sequences")
 
         return result
+
+    def _normalize_content(self, content: Any) -> str:
+        """
+        Normalize message content to a string for comparison.
+        Handles both plain strings and structured content lists.
+
+        :param content: The message content (string or list of content items).
+        :type content: Any
+
+        :return: Normalized string content.
+        :rtype: str
+        """
+        if isinstance(content, str):
+            return content
+        if isinstance(content, list):
+            # Extract text from structured content items
+            text_parts = []
+            for item in content:
+                if isinstance(item, dict):
+                    # Handle {'type': 'text', 'text': '...'} format
+                    if item.get("type") in ("text", "input_text", "output_text"):
+                        text_parts.append(item.get("text", ""))
+                elif isinstance(item, str):
+                    text_parts.append(item)
+            return "".join(text_parts)
+        return str(content) if content else ""
