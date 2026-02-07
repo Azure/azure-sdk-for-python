@@ -1,4 +1,4 @@
 directory: specification/cdn/resource-manager/Microsoft.Cdn/EdgeActions
-commit: 24f1ecdc02b2dc41b0dff65d28bdd861cffa4fdb
+commit: 24902354a88f1ca5349ea3049edae370599c8e57
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

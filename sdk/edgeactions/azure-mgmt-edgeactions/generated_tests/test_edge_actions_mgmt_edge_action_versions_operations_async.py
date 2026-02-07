@@ -130,6 +130,7 @@ class TestEdgeActionsMgmtEdgeActionVersionsOperationsAsync(AzureMgmtRecordedTest
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
                 version="str",
+                content_type="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -144,6 +145,7 @@ class TestEdgeActionsMgmtEdgeActionVersionsOperationsAsync(AzureMgmtRecordedTest
                 resource_group_name=resource_group.name,
                 edge_action_name="str",
                 version="str",
+                content_type="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -654,7 +654,7 @@ class EdgeActionsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -1542,7 +1542,7 @@ class EdgeActionVersionsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -1992,9 +1992,10 @@ class EdgeActionVersionsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/json"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_edge_action_versions_get_version_code_request(
@@ -2002,6 +2003,7 @@ class EdgeActionVersionsOperations:
             edge_action_name=edge_action_name,
             version=version,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2046,7 +2048,7 @@ class EdgeActionVersionsOperations:
     async def begin_get_version_code(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.VersionCode]:
-        """A long-running resource action.
+        """Get the version code for the edge action version.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2060,9 +2062,10 @@ class EdgeActionVersionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.edgeactions.models.VersionCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/json"))
         cls: ClsType[_models.VersionCode] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2072,6 +2075,7 @@ class EdgeActionVersionsOperations:
                 resource_group_name=resource_group_name,
                 edge_action_name=edge_action_name,
                 version=version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2125,9 +2129,10 @@ class EdgeActionVersionsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/json"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_edge_action_versions_swap_default_request(
@@ -2135,6 +2140,7 @@ class EdgeActionVersionsOperations:
             edge_action_name=edge_action_name,
             version=version,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2179,7 +2185,7 @@ class EdgeActionVersionsOperations:
     async def begin_swap_default(
         self, resource_group_name: str, edge_action_name: str, version: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """A long-running resource action.
+        """Swap the default version for the edge action.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -2192,9 +2198,10 @@ class EdgeActionVersionsOperations:
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("content-type", "application/json"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2204,6 +2211,7 @@ class EdgeActionVersionsOperations:
                 resource_group_name=resource_group_name,
                 edge_action_name=edge_action_name,
                 version=version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -2874,7 +2882,7 @@ class EdgeActionExecutionFiltersOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202, 204]:
+        if response.status_code not in [200, 202, 204]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
