@@ -11095,7 +11095,6 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      { "type": "image_generation" }
      ]. Required."""
 
-
     @overload
     def __init__(
         self,

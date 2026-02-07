@@ -32,15 +32,15 @@ def patch_openai(monkeypatch):
     monkeypatch.setattr("azure.ai.projects.aio._patch.get_bearer_token_provider", lambda *_, **__: "token-provider")
 
 
-@pytest.mark.skipif(
-    os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true",
-    reason="Test skipped because AZURE_AI_PROJECTS_CONSOLE_LOGGING is set to 'true'",
-)
-class TestResponsesWithHttpClientOverrideAsync:
+class TestGetOpenAIClientWithOverridesAsync:
     """Tests for custom http_client override in async get_openai_client()."""
 
+    @pytest.mark.skipif(
+        os.environ.get("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "false").lower() == "true",
+        reason="Test skipped because AZURE_AI_PROJECTS_CONSOLE_LOGGING is set to 'true'",
+    )
     @pytest.mark.asyncio
-    async def test_custom_http_client_is_used(self):
+    async def test_http_client_override_async(self):
         """
         Test that a custom http_client passed to get_openai_client() is actually used
         by the returned AsyncOpenAI client when making API calls.
@@ -106,3 +106,35 @@ class TestResponsesWithHttpClientOverrideAsync:
         # Verify we got a valid response
         assert response.id == "resp_test_123"
         assert response.output_text == "This is a test response from the mock."
+
+    @pytest.mark.asyncio
+    async def test_api_key_and_base_url_overrides_async(self):
+        """
+        Test that api_key and base_url passed to get_openai_client() are used
+        by the returned AsyncOpenAI client instead of the default values.
+        """
+        # Define custom values
+        custom_api_key = "my-custom-api-key"
+        custom_base_url = "https://my.custom.endpoint.com/path1/path2"
+
+        # Create the AIProjectClient using async with pattern
+        async with AIProjectClient(
+            endpoint="https://example.com/api/projects/test",
+            credential=DummyAsyncTokenCredential(),
+        ) as project_client:
+
+            # Get an AsyncOpenAI client with custom api_key and base_url
+            async with project_client.get_openai_client(
+                api_key=custom_api_key,
+                base_url=custom_base_url,
+            ) as openai_client:
+
+                # Verify the custom api_key was used
+                assert (
+                    openai_client.api_key == custom_api_key
+                ), f"Expected api_key '{custom_api_key}', got '{openai_client.api_key}'"
+
+                # Verify the custom base_url was used
+                assert (
+                    str(openai_client.base_url) == custom_base_url + "/"
+                ), f"Expected base_url '{custom_base_url}/', got '{openai_client.base_url}'"
