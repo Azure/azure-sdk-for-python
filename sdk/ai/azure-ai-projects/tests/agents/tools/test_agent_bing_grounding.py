@@ -19,10 +19,6 @@ from azure.ai.projects.models import (
 class TestAgentBingGrounding(TestBase):
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
     def test_agent_bing_grounding(self, **kwargs):
         """
         Test agent with Bing grounding capabilities.
@@ -133,10 +129,6 @@ class TestAgentBingGrounding(TestBase):
             print("Agent deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
     def test_agent_bing_grounding_multiple_queries(self, **kwargs):
         """
         Test agent with Bing grounding for multiple queries.

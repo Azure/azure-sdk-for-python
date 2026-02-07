@@ -17,6 +17,8 @@ from azure.ai.projects.models import (
     OpenApiTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
+    OpenApiProjectConnectionAuthDetails,
+    OpenApiProjectConnectionSecurityScheme,
 )
 
 
@@ -100,7 +102,75 @@ class TestAgentOpenApiAsync(TestBase):
     # To run this test:
     # pytest tests/agents/tools/test_agent_openapi_async.py::TestAgentOpenApiAsync::test_agent_openapi_with_auth_async -s
     @servicePreparer()
-    @pytest.mark.skip(reason="Add test here once we have a Foundry Project with a connection with auth credentials")
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_openapi_with_auth_async(self, **kwargs):
-        pass
+        model = kwargs.get("azure_ai_model_deployment_name")
+        project_connection_id = kwargs.get("openapi_project_connection_id")
+
+        if not project_connection_id:
+            pytest.fail("openapi_project_connection_id environment variable not set")
+
+        async with (
+            self.create_async_client(operation_group="agents", **kwargs) as project_client,
+            project_client.get_openai_client() as openai_client,
+        ):
+            tripadvisor_asset_file_path = os.path.abspath(
+                os.path.join(os.path.dirname(__file__), "../../../samples/agents/assets/tripadvisor_openapi.json")
+            )
+
+            assert os.path.exists(
+                tripadvisor_asset_file_path
+            ), f"OpenAPI spec file not found at: {tripadvisor_asset_file_path}"
+            print(f"Using OpenAPI spec file: {tripadvisor_asset_file_path}")
+
+            with open(tripadvisor_asset_file_path, "r") as f:
+                openapi_tripadvisor = jsonref.loads(f.read())
+
+            tool = OpenApiTool(
+                openapi=OpenApiFunctionDefinition(
+                    name="tripadvisor",
+                    spec=openapi_tripadvisor,
+                    description="Trip Advisor API to get travel information",
+                    auth=OpenApiProjectConnectionAuthDetails(
+                        security_scheme=OpenApiProjectConnectionSecurityScheme(
+                            project_connection_id=project_connection_id
+                        )
+                    ),
+                )
+            )
+
+            agent_name = "MyAgent200"
+
+            agent = await project_client.agents.create_version(
+                agent_name=agent_name,
+                definition=PromptAgentDefinition(
+                    model=model,
+                    instructions="You are a helpful assistant that uses the OpenAPI tool.",
+                    tools=[tool],
+                ),
+                description="Agent for testing OpenAPI tool with project connection auth.",
+            )
+            self._validate_agent_version(agent, expected_name=agent_name)
+
+            print("\nAsking agent to recommend hotels using OpenAPI tool...")
+
+            response = await openai_client.responses.create(
+                input="Recommend me 5 top hotels in paris, France",
+                tool_choice="required",
+                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            )
+            self.validate_response(response)
+
+            response_text = response.output_text
+            print(f"\nAgent's response: {response_text[:300]}...")
+
+            assert len(response_text) > 30, "Expected a substantial response from the agent."
+            response_lower = response_text.lower()
+            assert any(
+                keyword in response_lower for keyword in ["hotel", "paris", "travel", "accommodation"]
+            ), f"Expected hotel or Paris travel info in response, got: {response_text[:200]}"
+
+            print("\n✓ Agent successfully used OpenAPI tool with project connection auth")
+
+            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Agent deleted")

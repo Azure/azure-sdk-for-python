@@ -75,7 +75,7 @@ with (
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],            
             instructions="You are a helpful assistant.",
             tools=[tool],
         ),
@@ -84,6 +84,7 @@ with (
 
     response = openai_client.responses.create(
         input="Recommend me 5 top hotels in paris, France",
+        tool_choice="required",
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
     )
     # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.

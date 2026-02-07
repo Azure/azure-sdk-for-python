@@ -149,10 +149,6 @@ class TestAgentMCP(TestBase):
             print("Agent deleted")
 
     @servicePreparer()
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
     def test_agent_mcp_with_project_connection(self, **kwargs):
         """
         Test agent with MCP tool using a project connection for authentication.

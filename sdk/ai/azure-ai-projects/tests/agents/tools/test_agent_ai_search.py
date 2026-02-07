@@ -16,8 +16,12 @@ from azure.ai.projects.models import (
     AzureAISearchQueryType,
 )
 
-# The tests in this file rely on an existing Azure AI Search project connection that has been populated with the following document:
-# https://arxiv.org/pdf/2508.03680
+# The tests in this file rely on an existing Azure AI Search project connection that has been populated with
+# markdown product info documents (item_numbers 1-9) from the get-started-with-ai-agents sample repo, e.g.:
+#   c:\repo\get-started-with-ai-agents\src\files\product_info_6.md
+#   c:\repo\get-started-with-ai-agents\src\files\product_info_7.md
+#   c:\repo\get-started-with-ai-agents\src\files\product_info_8.md
+#   c:\repo\get-started-with-ai-agents\src\files\product_info_9.md
 
 
 class TestAgentAISearch(TestBase):
@@ -25,33 +29,28 @@ class TestAgentAISearch(TestBase):
     # Test questions with expected answers
     TEST_QUESTIONS = [
         {
-            "question": "Agent Lightning's unified data interface and MDP formulation are designed to separate task-specific agent design from learning-based policy optimization.",
+            "question": "The EcoFire Camping Stove weighs 4 lbs and is constructed from stainless steel.",
             "answer": True,
         },
         {
-            "question": "LightningRL optimizes multi-call agent trajectories mainly by masking out non-LLM tokens in long trajectories, without decomposing them into transitions.",
+            "question": "The EcoFire Camping Stove ships with an integrated automatic ignition system so you do not need a lighter.",
             "answer": False,
         },
         {
-            "question": "The Training–Agent Disaggregation architecture uses an Agent Lightning Server (with an OpenAI-like API) and a Client so that agents can run their own tool/code logic without being co-located with the GPU training framework.",
+            "question": "The CozyNights Sleeping Bag is a 3-season polyester bag with a hood and stuff sack.",
             "answer": True,
         },
         {
-            "question": "In the text-to-SQL experiment, the authors used LangChain to build a 3-agent workflow on the Spider dataset, but only trained 2 of those agents (the SQL-writing and rewriting agents).",
-            "answer": True,
-        },
-        {
-            "question": "The math QA task in the experiments was implemented with LangChain and used a SQL executor as its external tool.",
+            "question": "The Alpine Explorer Tent is a 2-person, 4-season tent.",
             "answer": False,
+        },
+        {
+            "question": "The SummitClimber Backpack has a 60-liter capacity and includes an integrated rain cover.",
+            "answer": True,
         },
     ]
 
     @servicePreparer()
-    @pytest.mark.skip(reason="Slow sequential sync test - covered by faster parallel async test")
-    @pytest.mark.skipif(
-        condition=(not is_live_and_not_recording()),
-        reason="Skipped because we cannot record network calls with OpenAI client",
-    )
     def test_agent_ai_search_question_answering(self, **kwargs):
         """
         Test agent with Azure AI Search capabilities for question answering.
