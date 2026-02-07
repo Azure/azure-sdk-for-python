@@ -98,7 +98,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         Keyword arguments are passed to the AsyncOpenAI client constructor.
 
         The AsyncOpenAI client constructor is called with:
-
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
         Can be overridden by passing ``base_url`` as a keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
