@@ -93,7 +93,7 @@ if __name__ == "__main__":
         "-o",
         "--override",
         dest="override_set",
-        help='If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(Run.ToxCustomEnvs). EG: "whl,sdist".',
+        help='If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(ChecksOverride). EG: "whl,sdist".',
     )
 
     parser.add_argument(

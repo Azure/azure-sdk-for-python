@@ -55,7 +55,7 @@ steps:
       scriptPath: 'eng/scripts/set_checks.py'
       arguments: >-
         --unsupported="$(UnsupportedToxEnvironments)"
-        --override="$(Run.ToxCustomEnvs)"
+        --override="$(ChecksOverride)"
         --team-project="$(System.TeamProject)"
 
   - ${{ parameters.BeforeTestSteps }}

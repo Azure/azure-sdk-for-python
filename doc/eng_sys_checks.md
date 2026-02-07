@@ -66,7 +66,7 @@ All build definitions allow choice at queue time as to which checks actually run
 
 1. Find your target service `internal` build.
 2. Click `Run New`.
-3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `Run.ToxCustomEnvs`. The value should be a comma separated list of checks that you want to run in the test phase.
+3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
 This is an example setting of that narrows the default set from `whl, sdist, depends, latestdependency, mindependency`.
