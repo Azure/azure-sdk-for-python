@@ -6,7 +6,7 @@ import json
 import time
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.identity._internal.managed_identity_client import ManagedIdentityClient
 import pytest
 
