@@ -14,7 +14,7 @@ from msal import TokenCache
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
 from .utils import get_default_authority, normalize_authority, resolve_tenant

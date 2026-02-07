@@ -19,6 +19,7 @@
 
 - Bumped minimum dependency on `msal` to `>=1.31.0`.
 - Added debug logging of access token cache hits in several credentials to improve troubleshooting of token cache behavior. ([#44963](https://github.com/Azure/azure-sdk-for-python/pull/44963))
+- Replace instances of `azure.core.pipeline.transport.HttpRequest` with `azure.core.rest.HttpRequest`. ([#44993](https://github.com/Azure/azure-sdk-for-python/pull/44993))
 
 ## 1.26.0b1 (2025-11-07)
 

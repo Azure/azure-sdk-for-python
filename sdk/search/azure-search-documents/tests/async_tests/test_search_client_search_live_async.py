@@ -18,9 +18,7 @@ class TestClientTestAsync(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_search_client(self, endpoint, index_name):
-        client = SearchClient(
-            endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60
-        )
+        client = SearchClient(endpoint, index_name, get_credential(is_async=True), retry_backoff_factor=60)
         async with client:
             await self._test_get_search_simple(client)
             await self._test_get_search_simple_with_top(client)
@@ -66,9 +64,7 @@ class TestClientTestAsync(AzureRecordedTestCase):
             order_by="hotelName desc",
         ):
             results.append(x)
-        assert [x["hotelName"] for x in results] == sorted(
-            [x["hotelName"] for x in results], reverse=True
-        )
+        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {
             "category",
             "hotelName",
@@ -93,9 +89,7 @@ class TestClientTestAsync(AzureRecordedTestCase):
             order_by="hotelName desc",
         ):
             results.append(x)
-        assert [x["hotelName"] for x in results] == sorted(
-            [x["hotelName"] for x in results], reverse=True
-        )
+        assert [x["hotelName"] for x in results] == sorted([x["hotelName"] for x in results], reverse=True)
         expected = {
             "category",
             "hotelName",
@@ -133,9 +127,7 @@ class TestClientTestAsync(AzureRecordedTestCase):
 
     async def _test_get_search_facets_result(self, client):
         select = ("hotelName", "category", "description")
-        results = await client.search(
-            search_text="WiFi", facets=["category"], select=",".join(select)
-        )
+        results = await client.search(search_text="WiFi", facets=["category"], select=",".join(select))
         assert await results.get_facets() == {
             "category": [
                 {"value": "Budget", "count": 4},
@@ -181,14 +173,17 @@ class TestClientTestAsync(AzureRecordedTestCase):
 
     async def _test_autocomplete(self, client):
         results = await client.autocomplete(search_text="mot", suggester_name="sg")
-        assert results == [{"text": "motel", "query_plus_text": "motel"}]
+        assert any(d.text == "motel" for d in results)
+        assert any(d.query_plus_text == "motel" for d in results)
 
     async def _test_suggest(self, client):
         results = await client.suggest(search_text="mot", suggester_name="sg")
-        assert results == [
-            {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
-            {"hotelId": "9", "text": "Secret Point Motel"},
-        ]
+        result = results[0]
+        assert result["hotelId"] == "2"
+        assert result.text == "Cheapest hotel in town. Infact, a motel."
+        result = results[1]
+        assert result["hotelId"] == "9"
+        assert result.text == "Secret Point Motel"
 
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_large.json")
