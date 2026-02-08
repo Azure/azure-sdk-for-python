@@ -29,6 +29,7 @@
 
 ### Features Added
 
+- Add Browser SDK loader feature ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 - In double-instrumentation scenarios, surface in the log stream instead of just in diagnostic logs.
   ([#44682](https://github.com/Azure/azure-sdk-for-python/pull/44682))
 
