@@ -46,3 +46,6 @@ REM powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -repl
 
 echo Now do these additional changes manually, if you want the "Generate docs" job to succeed in PR pipeline
 REM Remove `generate_summary` from class `Reasoning`. It's deprecated but causes two types of errors. Consider removing it from TypeSpec.
+
+echo Finishing by running 'black' tool to format code. 
+black --config ../../../eng/black-pyproject.toml .
