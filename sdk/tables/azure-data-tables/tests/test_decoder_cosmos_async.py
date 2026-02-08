@@ -21,6 +21,7 @@ from async_preparers import cosmos_decorator_async
 from test_decoder import _clean
 
 from azure.core.pipeline.policies import HttpLoggingPolicy
+
 HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("x-ms-substatus")
 HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("x-ms-date")
 HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("DataServiceVersion")

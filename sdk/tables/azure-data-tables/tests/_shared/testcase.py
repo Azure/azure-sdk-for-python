@@ -56,6 +56,7 @@ _ERROR_VALUE_TOO_LARGE = "{0} is too large to be cast to type {1}."
 def _service_unavailable_resp(*args, **kwargs):
     return SERVICE_UNAVAILABLE_RESP_BODY
 
+
 def _service_live_resp(*args, **kwargs):
     return SERVICE_LIVE_RESP_BODY
 

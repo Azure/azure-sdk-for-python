@@ -20,7 +20,7 @@ import typing
 import enum
 import email.utils
 from datetime import datetime, date, time, timedelta, timezone
-from json import JSONEncoder, decoder
+from json import JSONEncoder
 import xml.etree.ElementTree as ET
 from collections.abc import MutableMapping
 from typing_extensions import Self
@@ -1027,7 +1027,7 @@ def _failsafe_deserialize(
 ) -> typing.Any:
     try:
         return _deserialize(deserializer, response.json(), module, rf, format)
-    except (decoder.JSONDecodeError, DeserializationError):
+    except Exception:  # pylint: disable=broad-except
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
         )
@@ -1040,9 +1040,7 @@ def _failsafe_deserialize_xml(
 ) -> typing.Any:
     try:
         return _deserialize_xml(deserializer, response.text())
-    except (ET.ParseError, DeserializationError):
-        if response.headers.get("Content-Type", "").split(";")[0].strip() == "application/json":
-            return _failsafe_deserialize(deserializer, response)
+    except Exception:  # pylint: disable=broad-except
         _LOGGER.warning(
             "Ran into a deserialization error. Ignoring since this is failsafe deserialization", exc_info=True
         )

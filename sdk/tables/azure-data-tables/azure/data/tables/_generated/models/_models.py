@@ -411,9 +411,9 @@ class SignedIdentifier(_Model):
 
 
 class SignedIdentifiers(_Model):
-    """The set signed identifiers request.
+    """Table signed identifiers.
 
-    :ivar identifiers: Represents an array of signed identifiers. Required.
+    :ivar identifiers: An array of signed identifiers. Required.
     :vartype identifiers: ~azure.data.tables._generated.models.SignedIdentifier
     """
 
@@ -427,7 +427,7 @@ class SignedIdentifiers(_Model):
             "unwrapped": True,
         },
     )
-    """Represents an array of signed identifiers. Required."""
+    """An array of signed identifiers. Required."""
 
     _xml = {"attribute": False, "name": "SignedIdentifiers", "text": False, "unwrapped": False}
 

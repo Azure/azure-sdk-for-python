@@ -23,8 +23,10 @@ SERVICE_LIVE_RESP_BODY = (
     "></StorageServiceStats> "
 )
 
+
 def _service_unavailable_resp(*args, **kwargs):
     return SERVICE_UNAVAILABLE_RESP_BODY
+
 
 def _service_live_resp(*args, **kwargs):
     return SERVICE_LIVE_RESP_BODY
