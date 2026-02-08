@@ -205,27 +205,15 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             logger.info(f"No historical items found for conversation {conversation_id}")
             return current_input
 
-        # Log message types for debugging
-        hist_types = [type(m).__name__ for m in historical_messages]
-        logger.debug(f"Historical message types: {hist_types}")
-
         # Merge historical messages with current input, avoiding duplicates
         current_messages = current_input.get("messages", [])
-        curr_types = [type(m).__name__ for m in current_messages]
-        logger.debug(f"Current message types: {curr_types}")
-
         merged_messages = self._merge_messages_without_duplicates(
             historical_messages, current_messages, conversation_id
         )
 
         # Filter again after merge to catch any incomplete tool call sequences
         # that may result from the deduplication removing ToolMessages
-        logger.debug(f"Running filter on {len(merged_messages)} merged messages")
         merged_messages = self._filter_incomplete_tool_calls(merged_messages)
-        
-        final_types = [type(m).__name__ for m in merged_messages]
-        logger.debug(f"Final message types after filter: {final_types}")
-        
         current_input["messages"] = merged_messages
 
         return current_input
@@ -269,24 +257,15 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
 
             # Convert items to LangGraph messages
             messages = []
-            skipped_types = []
             for item in items:
                 item_dict = item.model_dump() if hasattr(item, 'model_dump') else dict(item)
                 message = convert_item_resource_to_message(item_dict)
                 if message is not None:
                     messages.append(message)
-                else:
-                    skipped_types.append(item_dict.get('type', 'unknown'))
-
-            if skipped_types:
-                logger.info(f"Skipped {len(skipped_types)} items with unsupported types: {skipped_types}")
-
-            logger.debug(f"Converted {len(messages)} items before filtering")
 
             # Filter out incomplete tool call sequences
             messages = self._filter_incomplete_tool_calls(messages)
 
-            logger.debug(f"After filtering: {len(messages)} items to LangGraph messages")
             return messages
 
         except ImportError as e:
@@ -408,15 +387,12 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         for msg in messages:
             if isinstance(msg, ToolMessage) and hasattr(msg, 'tool_call_id'):
                 tool_responses[msg.tool_call_id] = msg
-                logger.debug(f"Found ToolMessage with tool_call_id: {msg.tool_call_id}")
-
-        logger.debug(f"Total unique tool_call_ids with responses: {len(tool_responses)}, ids: {list(tool_responses.keys())}")
 
         # Build result list, placing ToolMessages right after their AIMessage
         result: List[AnyMessage] = []
         removed_count = 0
 
-        for i, msg in enumerate(messages):
+        for msg in messages:
             if isinstance(msg, ToolMessage):
                 # Skip ToolMessages here; they'll be added after their AIMessage
                 continue
@@ -429,12 +405,8 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                     if tc_id:
                         tool_call_ids.append(tc_id)
 
-                logger.debug(f"Message[{i}] AIMessage has tool_call_ids: {tool_call_ids}")
-
                 all_responded = all(tc_id in tool_responses for tc_id in tool_call_ids)
                 if not all_responded:
-                    missing_ids = [tc_id for tc_id in tool_call_ids if tc_id not in tool_responses]
-                    logger.info(f"Removing AIMessage[{i}] with incomplete tool_calls, missing responses for: {missing_ids}")
                     removed_count += 1
                     continue
 
@@ -451,7 +423,6 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         if removed_count > 0:
             logger.info(f"Filtered {removed_count} messages with incomplete tool call sequences")
 
-        logger.debug(f"Filter result: {len(messages)} messages -> {len(result)} messages")
         return result
 
     def _normalize_content(self, content: Any) -> str:
