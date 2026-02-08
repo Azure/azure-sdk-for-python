@@ -238,7 +238,7 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
@@ -254,7 +254,7 @@ class TestToolSelectionEvaluator:
 
         key = _ToolSelectionEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert f"{key}_reason" in result
 
