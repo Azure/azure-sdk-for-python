@@ -18,7 +18,7 @@ class TestTranscriptionClientManagement(TranscriptionClientTestBase):
         with self.create_client(endpoint=transcription_endpoint) as client:
             audio_url = transcription_test_audio_url
             result = client.transcribe_from_url(audio_url)
-            
+
             assert result is not None
             assert result.combined_phrases is not None
             assert len(result.combined_phrases) > 0
@@ -28,11 +28,11 @@ class TestTranscriptionClientManagement(TranscriptionClientTestBase):
     def test_client_close(self, transcription_endpoint, transcription_test_audio_url):
         """Test explicit client close."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
         result = client.transcribe_from_url(audio_url)
-        
+
         assert result is not None
-        
+
         # Explicitly close the client
         client.close()
