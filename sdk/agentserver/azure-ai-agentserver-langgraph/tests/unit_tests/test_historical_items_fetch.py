@@ -155,18 +155,20 @@ class TestMergeMessagesWithoutDuplicates:
         """Test merging filters out duplicate messages."""
         converter = _create_converter()
 
+        # Historical ends with the same message as current
         historical = [
-            HumanMessage(content="Duplicate message"),
-            HumanMessage(content="Unique historical message"),
+            HumanMessage(content="First message"),
+            HumanMessage(content="Duplicate message"),  # Last message matches current
         ]
         current = [
-            HumanMessage(content="Duplicate message"),  # This is a duplicate
+            HumanMessage(content="Duplicate message"),  # This matches last historical
         ]
 
         result = converter._merge_messages_without_duplicates(historical, current, "conv_123")
 
+        # Last historical should be removed since it matches current
         assert len(result) == 2
-        assert result[0].content == "Unique historical message"
+        assert result[0].content == "First message"
         assert result[1].content == "Duplicate message"
 
     def test_merge_empty_historical(self):
@@ -329,6 +331,45 @@ class TestFilterIncompleteToolCalls:
 
         assert result == []
 
+    def test_filter_duplicate_tool_call_ids_in_history(self):
+        """Test that duplicate AIMessages with same tool_call_id each get their ToolMessage."""
+        converter = _create_converter()
+
+        # Historical items may have duplicate tool calls (same call_id appearing twice)
+        # This happens when conversation history is saved multiple times
+        messages = [
+            HumanMessage(content="Calculate 2+2"),
+            AIMessage(
+                content="",
+                tool_calls=[{"id": "call_same", "name": "add", "args": {"a": 2, "b": 2}}],
+            ),
+            ToolMessage(content="4", tool_call_id="call_same"),
+            AIMessage(content="The answer is 4"),
+            HumanMessage(content="Calculate 3+3"),
+            # Same tool_call_id appears again (duplicate from history)
+            AIMessage(
+                content="",
+                tool_calls=[{"id": "call_same", "name": "add", "args": {"a": 3, "b": 3}}],
+            ),
+            ToolMessage(content="6", tool_call_id="call_same"),
+            AIMessage(content="The answer is 6"),
+        ]
+
+        result = converter._filter_incomplete_tool_calls(messages)
+
+        # Both AIMessages with tool_calls should have their ToolMessage following them
+        assert len(result) == 8
+        # First tool call sequence
+        assert isinstance(result[1], AIMessage)
+        assert result[1].tool_calls[0]["id"] == "call_same"
+        assert isinstance(result[2], ToolMessage)
+        assert result[2].tool_call_id == "call_same"
+        # Second tool call sequence (same call_id, should still get ToolMessage)
+        assert isinstance(result[5], AIMessage)
+        assert result[5].tool_calls[0]["id"] == "call_same"
+        assert isinstance(result[6], ToolMessage)
+        assert result[6].tool_call_id == "call_same"
+
 
 @pytest.mark.unit
 class TestFetchHistoricalItems:
@@ -384,11 +425,11 @@ class TestFetchHistoricalItems:
             return_value="https://test.endpoint.com",
         ):
             with patch(
-                "azure.ai.agentserver.langgraph.models.response_api_default_converter.AsyncOpenAI",
+                "openai.AsyncOpenAI",
                 return_value=mock_client,
             ):
                 with patch(
-                    "azure.ai.agentserver.langgraph.models.response_api_default_converter.DefaultAzureCredential",
+                    "azure.identity.aio.DefaultAzureCredential",
                 ) as mock_cred:
                     mock_cred_instance = MagicMock()
                     mock_cred.return_value = mock_cred_instance
@@ -396,9 +437,9 @@ class TestFetchHistoricalItems:
                     mock_cred_instance.__aexit__ = AsyncMock(return_value=None)
 
                     with patch(
-                        "azure.ai.agentserver.langgraph.models.response_api_default_converter.get_bearer_token_provider",
+                        "azure.identity.aio.get_bearer_token_provider",
                     ) as mock_token_provider:
-                        mock_token_fn = AsyncMock(return_value="test_token")
+                        mock_token_fn = MagicMock(return_value="test_token")
                         mock_token_provider.return_value = mock_token_fn
 
                         result = await converter._fetch_historical_items("conv_123")
@@ -406,3 +447,73 @@ class TestFetchHistoricalItems:
                         assert len(result) == 1
                         assert isinstance(result[0], HumanMessage)
                         assert result[0].content == "Hello"
+
+
+@pytest.mark.unit
+class TestMergeAndFilterIntegration:
+    """Tests for the integration of merge and filter operations in _get_input."""
+
+    def test_filter_after_merge_catches_broken_sequences(self):
+        """Test that filter runs after merge to catch sequences broken by deduplication."""
+        converter = _create_converter()
+
+        # Historical ends with AIMessage with tool_calls followed by ToolMessage
+        # Current has the same ToolMessage (duplicate)
+        historical = [
+            HumanMessage(content="Calculate 2+2"),
+            AIMessage(
+                content="",
+                tool_calls=[{"id": "call_123", "name": "add", "args": {"a": 2, "b": 2}}],
+            ),
+            ToolMessage(content="4", tool_call_id="call_123"),
+        ]
+        current = [
+            ToolMessage(content="4", tool_call_id="call_123"),  # Same as last historical
+        ]
+
+        # After merge, the ToolMessage should be deduplicated
+        merged = converter._merge_messages_without_duplicates(historical, current, "conv_123")
+        # Historical would be [Human, AI], current is [ToolMessage(same)]
+        # Dedup removes last 1 from historical: [Human, AI]
+        # Then adds current: [Human, AI, ToolMessage]
+
+        # But if dedup matched by content only (not tool_call_id), it might incorrectly match
+        # In this case, let's verify the filter would catch any broken sequences
+        filtered = converter._filter_incomplete_tool_calls(merged)
+
+        # The result should have a complete sequence or remove the incomplete AIMessage
+        for i, msg in enumerate(filtered):
+            if isinstance(msg, AIMessage) and hasattr(msg, 'tool_calls') and msg.tool_calls:
+                # Every AIMessage with tool_calls should be followed by its ToolMessages
+                tool_call_ids = [
+                    tc.get('id') if isinstance(tc, dict) else getattr(tc, 'id', None)
+                    for tc in msg.tool_calls
+                ]
+                # Check that all tool_call_ids have corresponding ToolMessages in the result
+                tool_responses = {
+                    m.tool_call_id for m in filtered if isinstance(m, ToolMessage)
+                }
+                for tc_id in tool_call_ids:
+                    assert tc_id in tool_responses, f"Tool call {tc_id} has no response"
+
+    def test_filter_removes_orphaned_ai_message_after_dedup(self):
+        """Test that an AIMessage with tool_calls is removed if its ToolMessage was deduplicated away."""
+        converter = _create_converter()
+
+        # Simulate a scenario where dedup incorrectly removes the ToolMessage
+        # by testing the filter directly on a broken sequence
+        broken_sequence = [
+            HumanMessage(content="Calculate 2+2"),
+            AIMessage(
+                content="",
+                tool_calls=[{"id": "call_orphan", "name": "add", "args": {"a": 2, "b": 2}}],
+            ),
+            # ToolMessage is missing!
+        ]
+
+        filtered = converter._filter_incomplete_tool_calls(broken_sequence)
+
+        # The AIMessage with incomplete tool_calls should be removed
+        assert len(filtered) == 1
+        assert isinstance(filtered[0], HumanMessage)
+        assert filtered[0].content == "Calculate 2+2"

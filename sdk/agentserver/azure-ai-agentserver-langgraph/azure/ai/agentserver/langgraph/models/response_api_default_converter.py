@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable
-from typing import Any, AsyncIterable, AsyncIterator, Dict, List, Optional, Set, Union
+from typing import Any, AsyncIterable, AsyncIterator, Dict, List, Optional, Union
 
 from langchain_core.messages import AIMessage, AnyMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
@@ -188,7 +188,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         current_input = converter.convert()
 
         # Check if checkpoint exists
-        has_checkpoint = prev_state is not None and prev_state.values is not None
+        has_checkpoint = prev_state is not None and prev_state.values is not None and len(prev_state.values) > 0
         if has_checkpoint:
             logger.info(f"Checkpoint found for conversation {conversation_id}, using existing state")
             return current_input
@@ -205,11 +205,27 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             logger.info(f"No historical items found for conversation {conversation_id}")
             return current_input
 
+        # Log message types for debugging
+        hist_types = [type(m).__name__ for m in historical_messages]
+        logger.debug(f"Historical message types: {hist_types}")
+
         # Merge historical messages with current input, avoiding duplicates
         current_messages = current_input.get("messages", [])
+        curr_types = [type(m).__name__ for m in current_messages]
+        logger.debug(f"Current message types: {curr_types}")
+
         merged_messages = self._merge_messages_without_duplicates(
             historical_messages, current_messages, conversation_id
         )
+
+        # Filter again after merge to catch any incomplete tool call sequences
+        # that may result from the deduplication removing ToolMessages
+        logger.debug(f"Running filter on {len(merged_messages)} merged messages")
+        merged_messages = self._filter_incomplete_tool_calls(merged_messages)
+        
+        final_types = [type(m).__name__ for m in merged_messages]
+        logger.debug(f"Final message types after filter: {final_types}")
+        
         current_input["messages"] = merged_messages
 
         return current_input
@@ -253,16 +269,24 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
 
             # Convert items to LangGraph messages
             messages = []
+            skipped_types = []
             for item in items:
                 item_dict = item.model_dump() if hasattr(item, 'model_dump') else dict(item)
                 message = convert_item_resource_to_message(item_dict)
                 if message is not None:
                     messages.append(message)
+                else:
+                    skipped_types.append(item_dict.get('type', 'unknown'))
+
+            if skipped_types:
+                logger.info(f"Skipped {len(skipped_types)} items with unsupported types: {skipped_types}")
+
+            logger.debug(f"Converted {len(messages)} items before filtering")
 
             # Filter out incomplete tool call sequences
             messages = self._filter_incomplete_tool_calls(messages)
 
-            logger.debug(f"Converted {len(messages)} items to LangGraph messages")
+            logger.debug(f"After filtering: {len(messages)} items to LangGraph messages")
             return messages
 
         except ImportError as e:
@@ -384,13 +408,15 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         for msg in messages:
             if isinstance(msg, ToolMessage) and hasattr(msg, 'tool_call_id'):
                 tool_responses[msg.tool_call_id] = msg
+                logger.debug(f"Found ToolMessage with tool_call_id: {msg.tool_call_id}")
+
+        logger.debug(f"Total unique tool_call_ids with responses: {len(tool_responses)}, ids: {list(tool_responses.keys())}")
 
         # Build result list, placing ToolMessages right after their AIMessage
         result: List[AnyMessage] = []
-        used_tool_call_ids: Set[str] = set()
         removed_count = 0
 
-        for msg in messages:
+        for i, msg in enumerate(messages):
             if isinstance(msg, ToolMessage):
                 # Skip ToolMessages here; they'll be added after their AIMessage
                 continue
@@ -403,24 +429,29 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
                     if tc_id:
                         tool_call_ids.append(tc_id)
 
+                logger.debug(f"Message[{i}] AIMessage has tool_call_ids: {tool_call_ids}")
+
                 all_responded = all(tc_id in tool_responses for tc_id in tool_call_ids)
                 if not all_responded:
+                    missing_ids = [tc_id for tc_id in tool_call_ids if tc_id not in tool_responses]
+                    logger.info(f"Removing AIMessage[{i}] with incomplete tool_calls, missing responses for: {missing_ids}")
                     removed_count += 1
-                    logger.debug("Removing AIMessage with incomplete tool_calls")
                     continue
 
                 # Add the AIMessage, then immediately add its ToolMessages
+                # Note: We add ToolMessages after EACH AIMessage that needs them,
+                # even if the same tool_call_id appears multiple times (duplicates in history)
                 result.append(msg)
                 for tc_id in tool_call_ids:
-                    if tc_id in tool_responses and tc_id not in used_tool_call_ids:
+                    if tc_id in tool_responses:
                         result.append(tool_responses[tc_id])
-                        used_tool_call_ids.add(tc_id)
             else:
                 result.append(msg)
 
         if removed_count > 0:
             logger.info(f"Filtered {removed_count} messages with incomplete tool call sequences")
 
+        logger.debug(f"Filter result: {len(messages)} messages -> {len(result)} messages")
         return result
 
     def _normalize_content(self, content: Any) -> str:
