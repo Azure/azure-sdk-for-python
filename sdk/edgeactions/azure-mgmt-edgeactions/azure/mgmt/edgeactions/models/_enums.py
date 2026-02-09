@@ -27,29 +27,29 @@ class EdgeActionIsDefaultVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether this is the default version."""
 
     TRUE = "True"
-    """This is the default version"""
+    """This is the default version."""
     FALSE = "False"
-    """This is not the default version"""
+    """This is not the default version."""
 
 
 class EdgeActionVersionDeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The deployment type for edge action versions."""
 
     ZIP = "zip"
-    """ZIP file deployment"""
+    """ZIP file deployment."""
     FILE = "file"
-    """Single file deployment"""
+    """Single file deployment."""
     OTHERS = "others"
-    """Other deployment types"""
+    """Other deployment types."""
 
 
 class EdgeActionVersionValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The validation status for edge action versions."""
 
     SUCCEEDED = "Succeeded"
-    """Validation succeeded"""
+    """Validation succeeded."""
     FAILED = "Failed"
-    """Validation failed"""
+    """Validation failed."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -62,6 +62,6 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
     """Resource creation was canceled."""
     PROVISIONING = "Provisioning"
-    """Initial provisioning in progress"""
+    """Initial provisioning in progress."""
     UPGRADING = "Upgrading"
-    """Upgrade in progress"""
+    """Upgrade in progress."""
