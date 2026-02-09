@@ -196,6 +196,8 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
         else:
             raise ValueError(f"Invalid value for whence: {whence}")
 
+        if position < 0:
+            raise ValueError(f"Cannot seek to negative position: {position}")
         if position > self.tell():
             raise UnsupportedOperation("This stream only supports seeking backwards.")
 
@@ -379,7 +381,7 @@ class StructuredMessageEncodeStream(IOBase):  # pylint: disable=too-many-instanc
             self._segment_crc64s.setdefault(self._current_segment_number, 0)
 
 
-class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attributes
+class StructuredMessageDecodeStream(IOBase):  # pylint: disable=too-many-instance-attributes
 
     message_version: int
     """The version of the structured message."""
@@ -405,6 +407,19 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
             raise ValueError("Content not long enough to contain a valid message header.")
 
         self._inner_stream = inner_stream
+        
+        # Validate that inner stream is positioned at the start of the structured message
+        try:
+            initial_position = self._inner_stream.tell()
+            if initial_position != 0:
+                raise ValueError(
+                    f"Inner stream must be positioned at the start of the structured message. "
+                    f"Current position is {initial_position}, expected 0."
+                )
+        except (AttributeError, UnsupportedOperation, OSError):
+            # Stream doesn't support tell(), assume it's at the correct position
+            pass
+        
         self._message_offset = 0
         self._message_crc64 = 0
 
@@ -412,6 +427,7 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
         self._segment_crc64 = 0
         self._segment_content_length = 0
         self._segment_content_offset = 0
+        super().__init__()
 
     @property
     def _segment_header_length(self) -> int:
@@ -429,8 +445,21 @@ class StructuredMessageDecodeStream:  # pylint: disable=too-many-instance-attrib
     def _end_of_segment_content(self) -> bool:
         return self._segment_content_offset == self._segment_content_length
 
+    def close(self) -> None:
+        self._inner_stream.close()
+        super().close()
+
+    def readable(self) -> bool:
+        return True
+
+    def seekable(self) -> bool:
+        return False
+
     def read(self, size: int = -1) -> bytes:
-        if size == 0:
+        if self.closed:
+            raise ValueError("Stream is closed")
+
+        if size == 0 or self._message_offset >= self.message_length:
             return b''
         if size < 0:
             size = sys.maxsize
