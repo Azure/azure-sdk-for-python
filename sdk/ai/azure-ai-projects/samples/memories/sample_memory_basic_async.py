@@ -60,7 +60,7 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.beta.memory_stores.delete(
+            await project_client.memory_stores.delete(
                 memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
             )
             print(f"Memory store `{memory_store_name}` deleted")
@@ -75,7 +75,7 @@ async def main() -> None:
                 user_profile_enabled=True, chat_summary_enabled=True
             ),  # Note: This line will not be needed once the service is fixed to use correct defaults
         )
-        memory_store = await project_client.beta.memory_stores.create(
+        memory_store = await project_client.memory_stores.create(
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
@@ -94,7 +94,7 @@ async def main() -> None:
         user_message = EasyInputMessage(
             role="user", content="I prefer dark roast coffee and usually drink it in the morning"
         )
-        update_poller = await project_client.beta.memory_stores.begin_update_memories(
+        update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
             items=[user_message],  # Pass conversation items that you want to add to memory
@@ -112,7 +112,7 @@ async def main() -> None:
 
         # Retrieve memories from the memory store
         query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
-        search_response = await project_client.beta.memory_stores.search_memories(
+        search_response = await project_client.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
             items=[query_message],
@@ -124,13 +124,13 @@ async def main() -> None:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Delete memories for a specific scope
-        await project_client.beta.memory_stores.delete_scope(
+        await project_client.memory_stores.delete_scope(
             name=memory_store.name, scope=scope, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Deleted memories for scope '{scope}'")
 
         # Delete memory store
-        await project_client.beta.memory_stores.delete(
+        await project_client.memory_stores.delete(
             memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Deleted memory store `{memory_store.name}`")

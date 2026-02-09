@@ -42,7 +42,7 @@ class TestAgentMemorySearch(TestBase):
         Action REST API Route                                Client Method
         ------+---------------------------------------------+-----------------------------------
         # Setup:
-        POST   /memory_stores                                project_client.beta.memory_stores.create()
+        POST   /memory_stores                                project_client.memory_stores.create()
         POST   /agents/{agent_name}/versions                 project_client.agents.create_version()
         POST   /conversations                                openai_client.conversations.create()
 
@@ -52,7 +52,7 @@ class TestAgentMemorySearch(TestBase):
         # Teardown:
         DELETE /conversations/{conversation_id}              openai_client.conversations.delete()
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
-        DELETE /memory_stores/{memory_store_name}            project_client.beta.memory_stores.delete()
+        DELETE /memory_stores/{memory_store_name}            project_client.memory_stores.delete()
         """
 
         model = kwargs.get("azure_ai_model_deployment_name")
@@ -86,7 +86,7 @@ class TestAgentMemorySearch(TestBase):
             # in live mode so we don't get logs of this call in test recordings.
             if is_live_and_not_recording():
                 try:
-                    project_client.beta.memory_stores.delete(
+                    project_client.memory_stores.delete(
                         memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
                     )
                     print(f"Memory store `{memory_store_name}` deleted")
@@ -100,7 +100,7 @@ class TestAgentMemorySearch(TestBase):
                     embedding_model=embedding_model,
                     options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True),
                 )
-                memory_store = project_client.beta.memory_stores.create(
+                memory_store = project_client.memory_stores.create(
                     name=memory_store_name,
                     description="Test memory store for agent conversations",
                     definition=definition,
@@ -214,7 +214,7 @@ class TestAgentMemorySearch(TestBase):
 
                 if memory_store:
                     try:
-                        project_client.beta.memory_stores.delete(
+                        project_client.memory_stores.delete(
                             memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
                         )
                         print("Memory store deleted")

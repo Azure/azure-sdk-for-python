@@ -123,7 +123,7 @@ with (
         print("\n✓ Evaluation run completed successfully!")
         print(f"Evaluation run result counts: {eval_run.result_counts}")
 
-        clusterInsight = project_client.beta.insights.generate(
+        clusterInsight = project_client.insights.generate(
             insight=Insight(
                 display_name="Cluster analysis",
                 request=EvaluationRunClusterInsightRequest(
@@ -138,7 +138,7 @@ with (
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
             print(f"Waiting for insight to be generated...")
-            clusterInsight = project_client.beta.insights.get(
+            clusterInsight = project_client.insights.get(
                 id=clusterInsight.id, foundry_features=FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
             )
             print(f"Insight status: {clusterInsight.state}")

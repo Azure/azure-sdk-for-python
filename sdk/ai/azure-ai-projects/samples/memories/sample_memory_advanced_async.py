@@ -61,7 +61,7 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.beta.memory_stores.delete(
+            await project_client.memory_stores.delete(
                 memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
             )
             print(f"Memory store `{memory_store_name}` deleted")
@@ -79,7 +79,7 @@ async def main() -> None:
             embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
             options=options,
         )
-        memory_store = await project_client.beta.memory_stores.create(
+        memory_store = await project_client.memory_stores.create(
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
@@ -95,7 +95,7 @@ async def main() -> None:
         user_message = EasyInputMessage(
             role="user", content="I prefer dark roast coffee and usually drink it in the morning"
         )
-        update_poller = await project_client.beta.memory_stores.begin_update_memories(
+        update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
             items=[user_message],  # Pass conversation items that you want to add to memory
@@ -108,7 +108,7 @@ async def main() -> None:
 
         # Extend the previous update with another update and more messages
         new_message = EasyInputMessage(role="user", content="I also like cappuccinos in the afternoon")
-        new_update_poller = await project_client.beta.memory_stores.begin_update_memories(
+        new_update_poller = await project_client.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
             items=[new_message],
@@ -136,7 +136,7 @@ async def main() -> None:
 
         # Retrieve memories from the memory store
         query_message = EasyInputMessage(role="user", content="What are my morning coffee preferences?")
-        search_response = await project_client.beta.memory_stores.search_memories(
+        search_response = await project_client.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
             items=[query_message],
@@ -152,7 +152,7 @@ async def main() -> None:
             role="assistant", content="You previously indicated a preference for dark roast coffee in the morning."
         )
         followup_query = EasyInputMessage(role="user", content="What about afternoon?")
-        followup_search_response = await project_client.beta.memory_stores.search_memories(
+        followup_search_response = await project_client.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
             items=[agent_message, followup_query],
@@ -165,13 +165,13 @@ async def main() -> None:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Delete memories for the current scope
-        await project_client.beta.memory_stores.delete_scope(
+        await project_client.memory_stores.delete_scope(
             name=memory_store.name, scope=scope, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Deleted memories for scope '{scope}'")
 
         # Delete memory store
-        await project_client.beta.memory_stores.delete(
+        await project_client.memory_stores.delete(
             memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Deleted memory store `{memory_store.name}`")

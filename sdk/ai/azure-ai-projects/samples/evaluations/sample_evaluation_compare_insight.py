@@ -135,7 +135,7 @@ with (
         print("\n✓ Both evaluation runs completed successfully!")
 
         # Generate comparison insights
-        compareInsight = project_client.beta.insights.generate(
+        compareInsight = project_client.insights.generate(
             insight=Insight(
                 display_name="Comparison of Evaluation Runs",
                 request=EvaluationComparisonInsightRequest(
@@ -147,7 +147,7 @@ with (
         print(f"Started insight generation (id: {compareInsight.id})")
 
         while compareInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            compareInsight = project_client.beta.insights.get(
+            compareInsight = project_client.insights.get(
                 id=compareInsight.id, foundry_features=FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
             )
             print(f"Waiting for insight to be generated...current status: {compareInsight.state}")
