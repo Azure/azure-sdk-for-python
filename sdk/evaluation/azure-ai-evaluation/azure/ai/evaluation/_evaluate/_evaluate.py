@@ -336,6 +336,35 @@ def _get_token_count_columns_to_exclude(df: pd.DataFrame) -> List[str]:
     return token_count_cols
 
 
+def _exclude_not_applicable_from_aggregation(df: pd.DataFrame) -> pd.DataFrame:
+    """Exclude not-applicable results from aggregation by setting their scores to None.
+
+    When evaluators return "Not applicable:" in the reason field, the corresponding
+    score should be excluded from mean calculations to avoid skewing results.
+
+    :param df: The dataframe of evaluation results.
+    :type df: ~pandas.DataFrame
+    :return: The dataframe with not-applicable scores set to None.
+    :rtype: ~pandas.DataFrame
+    """
+    # Find all reason columns
+    reason_cols = [col for col in df.columns if col.endswith("_reason")]
+
+    for reason_col in reason_cols:
+        # Get the base metric name by removing "_reason" suffix
+        metric_name = reason_col[: -len("_reason")]
+
+        # Check if the corresponding score column exists
+        if metric_name in df.columns:
+            # Create a mask for rows where reason starts with "Not applicable:"
+            not_applicable_mask = df[reason_col].astype(str).str.startswith("Not applicable:")
+
+            # Set the score to None for not-applicable rows
+            df.loc[not_applicable_mask, metric_name] = None
+
+    return df
+
+
 def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dict[str, float]:
     """Aggregate metrics from the evaluation results.
     On top of naively calculating the mean of most metrics, this function also identifies certain columns
@@ -383,6 +412,10 @@ def _aggregate_metrics(df: pd.DataFrame, evaluators: Dict[str, Callable]) -> Dic
 
     # Convert "not applicable" strings to None to allow proper numeric aggregation
     df = df.replace(EvaluatorBase._NOT_APPLICABLE_RESULT, None)
+
+    # Exclude not-applicable results from aggregation by setting their scores to None
+    # These are identified by reason columns containing "Not applicable:" prefix
+    df = _exclude_not_applicable_from_aggregation(df)
 
     # NOTE: nan/None values don't count as as booleans, so boolean columns with
     # nan/None values won't have a mean produced from them.

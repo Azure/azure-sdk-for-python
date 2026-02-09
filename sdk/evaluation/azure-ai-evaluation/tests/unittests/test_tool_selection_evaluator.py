@@ -219,7 +219,7 @@ class TestToolSelectionEvaluator:
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
 
-    def test_evaluate_tool_selection_fail_no_tools_selected(self, mock_model_config):
+    def test_evaluate_tool_selection_not_applicable(self, mock_model_config):
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
 
