@@ -4,7 +4,9 @@
 # ------------------------------------
 from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry.aio import ContainerRegistryClient as AsyncContainerRegistryClient
+from azure.containerregistry.aio import (
+    ContainerRegistryClient as AsyncContainerRegistryClient,
+)
 
 
 class ListArtifactsTest(PerfStressTest):
