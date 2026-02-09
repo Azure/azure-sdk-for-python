@@ -1,6 +1,38 @@
 # Release History
 
-## 1.0.0b1 (2026-02-05)
+## 1.0.0b1 (2026-02-09)
+
+### Features Added
+
+  - Client `ContainerRegistryTasksMgmtClient` added method `send_request`
+  - Model `AgentPoolUpdateParameters` added property `properties`
+  - Model `EncodedTaskRunRequest` added property `values_property`
+  - Model `EncodedTaskStep` added property `values_property`
+  - Model `EncodedTaskStepUpdateParameters` added property `values_property`
+  - Model `FileTaskRunRequest` added property `values_property`
+  - Model `FileTaskStep` added property `values_property`
+  - Model `FileTaskStepUpdateParameters` added property `values_property`
+  - Model `OverrideTaskStepProperties` added property `values_property`
+  - Model `TaskRunUpdateParameters` added property `properties`
+  - Model `TaskUpdateParameters` added property `properties`
+  - Added model `AgentPoolPropertiesUpdateParameters`
+  - Added model `TaskPropertiesUpdateParameters`
+  - Added model `TaskRunPropertiesUpdateParameters`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `EncodedTaskRunRequest` renamed its instance variable `values` to `values_property`
+  - Model `EncodedTaskStep` renamed its instance variable `values` to `values_property`
+  - Model `EncodedTaskStepUpdateParameters` renamed its instance variable `values` to `values_property`
+  - Model `FileTaskRunRequest` renamed its instance variable `values` to `values_property`
+  - Model `FileTaskStep` renamed its instance variable `values` to `values_property`
+  - Model `FileTaskStepUpdateParameters` renamed its instance variable `values` to `values_property`
+  - Model `OverrideTaskStepProperties` renamed its instance variable `values` to `values_property`
+  - Model `AgentPoolUpdateParameters` moved instance variable `count` under property `properties`
+  - Model `TaskRunUpdateParameters` moved instance variables `run_request` and `force_update_tag` under property `properties`
+  - Model `TaskUpdateParameters` moved instance variables `status`, `platform`, `agent_configuration`, `agent_pool_name`, `timeout`, `step`, `trigger`, `credentials` and `log_template` under property `properties`
 
 ### Other Changes
 
