@@ -223,7 +223,7 @@ class TestToolSelectionEvaluator:
         evaluator = _ToolSelectionEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=tool_selection_flow_side_effect)
 
-        query = "What's the weather like today?"
+        query = "What's the weather like today in Seattle?"
         tool_calls = []
         tool_definitions = [
             {
