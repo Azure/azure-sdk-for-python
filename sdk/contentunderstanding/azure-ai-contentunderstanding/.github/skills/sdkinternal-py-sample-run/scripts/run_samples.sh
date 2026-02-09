@@ -4,12 +4,18 @@
 # ===============================
 # This script runs all sync and async samples for azure-ai-contentunderstanding
 # and logs the output to a timestamped log file.
+# Optionally, pass a sample name to run only that sample.
+#
+# Usage:
+#   ./run_all_samples.sh                    # Run all samples
+#   ./run_all_samples.sh sample_analyze.py  # Run a single sample
 
 set -e
 
 # ===============================
 # Settings
 # ===============================
+SINGLE_SAMPLE="${1:-}"
 VENV_PY="${VENV_PY:-python}"
 CURRENT_DIR="$(pwd)"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -81,42 +87,81 @@ if [[ -z "$SAMPLES_PARENT" || ! -d "$SAMPLES_PARENT" ]]; then
 fi
 
 # ===============================
-# Run each sample
+# Helper function to run a sample
+# ===============================
+run_sample() {
+    local sample_path="$1"
+    local sample_type="$2"
+    local sample_name="$(basename "$sample_path")"
+    
+    echo "---------------------------------------------" | tee -a "$LOG_FILE"
+    echo "Running sample ($sample_type): $sample_name" | tee -a "$LOG_FILE"
+    echo "---------------------------------------------" | tee -a "$LOG_FILE"
+    
+    $VENV_PY "$sample_path" 2>&1 | tee -a "$LOG_FILE" || true
+    
+    echo "" | tee -a "$LOG_FILE"
+}
+
+# ===============================
+# Run samples
 # ===============================
 cd "$SAMPLES_PARENT"
 
-# Run sync samples located at the samples root (so `sample_files/...` resolves)
-for sample in ./*.py; do
-    if [[ -f "$sample" ]]; then
-        sample_name="$(basename "$sample")"
-        echo "---------------------------------------------" | tee -a "$LOG_FILE"
-        echo "Running sample (sync): $sample_name" | tee -a "$LOG_FILE"
-        echo "---------------------------------------------" | tee -a "$LOG_FILE"
-        
-        $VENV_PY "./$sample_name" 2>&1 | tee -a "$LOG_FILE" || true
-        
-        echo "" | tee -a "$LOG_FILE"
+if [[ -n "$SINGLE_SAMPLE" ]]; then
+    # Run a single sample
+    SAMPLE_FOUND=false
+    
+    # Check in sync samples directory
+    if [[ -f "./$SINGLE_SAMPLE" ]]; then
+        run_sample "./$SINGLE_SAMPLE" "sync"
+        SAMPLE_FOUND=true
+    # Check in async samples directory
+    elif [[ -f "./$SAMPLES_SUB/$SINGLE_SAMPLE" ]]; then
+        run_sample "./$SAMPLES_SUB/$SINGLE_SAMPLE" "async"
+        SAMPLE_FOUND=true
     fi
-done
-
-# Run async samples in the `async_samples` subfolder
-if [[ -d "$SAMPLES_SUB" ]]; then
-    for sample in "$SAMPLES_SUB"/*.py; do
+    
+    if [[ "$SAMPLE_FOUND" == "false" ]]; then
+        echo "ERROR: Sample '$SINGLE_SAMPLE' not found." | tee -a "$LOG_FILE"
+        echo "Searched in:" | tee -a "$LOG_FILE"
+        echo "  - $SAMPLES_PARENT/" | tee -a "$LOG_FILE"
+        echo "  - $SAMPLES_PARENT/$SAMPLES_SUB/" | tee -a "$LOG_FILE"
+        echo "" | tee -a "$LOG_FILE"
+        echo "Available samples:" | tee -a "$LOG_FILE"
+        echo "  Sync:" | tee -a "$LOG_FILE"
+        for s in ./*.py; do [[ -f "$s" ]] && echo "    $(basename "$s")" | tee -a "$LOG_FILE"; done
+        if [[ -d "$SAMPLES_SUB" ]]; then
+            echo "  Async:" | tee -a "$LOG_FILE"
+            for s in "$SAMPLES_SUB"/*.py; do [[ -f "$s" ]] && echo "    $(basename "$s")" | tee -a "$LOG_FILE"; done
+        fi
+        cd "$CURRENT_DIR"
+        exit 1
+    fi
+else
+    # Run all samples
+    # Run sync samples located at the samples root (so `sample_files/...` resolves)
+    for sample in ./*.py; do
         if [[ -f "$sample" ]]; then
-            sample_name="$(basename "$sample")"
-            echo "---------------------------------------------" | tee -a "$LOG_FILE"
-            echo "Running sample (async): $sample_name" | tee -a "$LOG_FILE"
-            echo "---------------------------------------------" | tee -a "$LOG_FILE"
-            
-            # Run the script from the samples parent directory so relative sample_files paths resolve
-            $VENV_PY "./$SAMPLES_SUB/$sample_name" 2>&1 | tee -a "$LOG_FILE" || true
-            
-            echo "" | tee -a "$LOG_FILE"
+            run_sample "$sample" "sync"
         fi
     done
+
+    # Run async samples in the `async_samples` subfolder
+    if [[ -d "$SAMPLES_SUB" ]]; then
+        for sample in "$SAMPLES_SUB"/*.py; do
+            if [[ -f "$sample" ]]; then
+                run_sample "$sample" "async"
+            fi
+        done
+    fi
 fi
 
 cd "$CURRENT_DIR"
 
 echo "=============================================" | tee -a "$LOG_FILE"
-echo "All samples finished. Log saved to $LOG_FILE." | tee -a "$LOG_FILE"
+if [[ -n "$SINGLE_SAMPLE" ]]; then
+    echo "Sample finished. Log saved to $LOG_FILE." | tee -a "$LOG_FILE"
+else
+    echo "All samples finished. Log saved to $LOG_FILE." | tee -a "$LOG_FILE"
+fi

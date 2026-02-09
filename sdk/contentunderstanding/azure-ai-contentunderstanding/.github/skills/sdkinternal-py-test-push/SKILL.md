@@ -1,5 +1,5 @@
 ---
-name: sdkinternal-py-test-push-recordings
+name: sdkinternal-py-test-push
 description: "Push test recordings to the azure-sdk-assets repository after recording tests."
 ---
 
@@ -132,14 +132,14 @@ This skill includes a script that handles pre-flight checks, git configuration v
 ### Script Location
 
 ```bash
-sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/sdkinternal-py-test-push-recordings/scripts/push_recordings.sh
+sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/sdkinternal-py-test-push/scripts/push_recordings.sh
 ```
 
 ### Script Usage
 
 ```bash
 # From script directory:
-# sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/sdkinternal-py-test-push-recordings/scripts/
+# sdk/contentunderstanding/azure-ai-contentunderstanding/.github/skills/sdkinternal-py-test-push/scripts/
 
 # Push recordings
 ./push_recordings.sh
@@ -290,7 +290,7 @@ https://github.com/Azure/azure-sdk-assets/tree/python/contentunderstanding/azure
 ## Related Skills
 
 - `sdkinternal-py-sdk-pre-pr-check` - Run all CI checks before creating a PR
-- `sdkinternal-py-env-setup-venv` - Set up virtual environment for development
+- `sdkinternal-py-setup` - Set up virtual environment for development
 
 ## Documentation
 

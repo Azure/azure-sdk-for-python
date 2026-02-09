@@ -1,11 +1,11 @@
 ---
-name: sdkinternal-py-sample-run-all-samples
-description: "Run all samples (sync and async) for the azure-ai-contentunderstanding SDK. Use when you need to verify samples work correctly after SDK changes."
+name: sdkinternal-py-sample-run
+description: "Run all samples or a single sample (sync and async) for the azure-ai-contentunderstanding SDK. Use when you need to verify samples work correctly after SDK changes."
 ---
 
-# Run All Samples
+# Run Samples
 
-This skill runs all Python samples for the `azure-ai-contentunderstanding` SDK to verify they execute correctly.
+This skill runs Python samples for the `azure-ai-contentunderstanding` SDK to verify they execute correctly. You can run all samples or a specific sample by name.
 
 ## Prerequisites
 
@@ -78,17 +78,29 @@ This maps your deployed models to those required by prebuilt analyzers.
 
 The script automatically sets up the environment if needed. It's **safe to rerun** - existing `.venv` and `.env` files are never overwritten.
 
-From the `.github/skills/sdkinternal-py-sample-run-all-samples/scripts/` directory:
+### Run All Samples
+
+From the `.github/skills/sdkinternal-py-sample-run/scripts/` directory:
 
 ```bash
-./run_all_samples.sh
+./run_samples.sh
 ```
 
 Or from the package root:
 
 ```bash
-.github/skills/sdkinternal-py-sample-run-all-samples/scripts/run_all_samples.sh
+.github/skills/sdkinternal-py-sample-run/scripts/run_samples.sh
 ```
+
+### Run a Single Sample
+
+Pass the sample filename as an argument to run only that sample:
+
+```bash
+./run_samples.sh sample_analyze_document.py
+```
+
+The script searches for the sample in both sync (`samples/`) and async (`samples/async_samples/`) directories. If the sample is not found, it displays all available samples.
 
 ## What It Does
 
@@ -99,15 +111,16 @@ Or from the package root:
 2. **Automatic .env configuration** (safe - never overwrites existing):
    - If `.env` exists → uses it
    - If `.env` doesn't exist but `env.sample` does → copies `env.sample` to `.env`
-3. Runs all sync samples (`samples/*.py`)
-4. Runs all async samples (`samples/async_samples/*.py`)
-5. Logs all output to a timestamped log file in the current directory
+3. **Sample execution**:
+   - If no argument → runs all sync samples (`samples/*.py`) then all async samples (`samples/async_samples/*.py`)
+   - If sample name argument → runs only that specific sample (auto-detects sync or async)
+4. Logs all output to a timestamped log file in the current directory
 
 ## Script Location
 
 The bash script is located at:
 ```
-.github/skills/sdkinternal-py-sample-run-all-samples/scripts/run_all_samples.sh
+.github/skills/sdkinternal-py-sample-run/scripts/run_samples.sh
 ```
 
 ## Configuration
@@ -119,7 +132,7 @@ The script uses the following defaults:
 To use a specific Python interpreter:
 
 ```bash
-VENV_PY=python3.11 ./run_all_samples.sh
+VENV_PY=python3.11 ./run_samples.sh
 ```
 
 ## Expected Output

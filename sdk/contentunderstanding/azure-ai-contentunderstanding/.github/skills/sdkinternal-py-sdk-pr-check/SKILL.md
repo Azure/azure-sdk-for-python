@@ -1,5 +1,5 @@
 ---
-name: sdkinternal-py-sdk-pre-pr-check
+name: sdkinternal-py-sdk-pr-check
 description: "Run all required CI checks before creating a PR for the azure-ai-contentunderstanding SDK. Use this skill to validate code quality, type checking, documentation, and tests before submitting changes."
 ---
 
@@ -78,7 +78,7 @@ pip install "tox<5" black bandit
 Alternatively, run the automated setup script:
 
 ```bash
-.github/skills/sdkinternal-py-env-setup-venv/scripts/setup_venv.sh
+.github/skills/sdkinternal-py-setup/scripts/setup_venv.sh
 ```
 
 ## Package Directory

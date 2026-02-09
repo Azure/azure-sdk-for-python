@@ -1,5 +1,5 @@
 ---
-name: sdkinternal-py-sdk-update-from-typespec
+name: sdkinternal-py-sdk-update
 description: "Update the azure-ai-contentunderstanding SDK from a new TypeSpec commit. Use when the TypeSpec spec has been updated and the SDK needs regeneration."
 ---
 
@@ -64,7 +64,7 @@ pip install "tox<5" black bandit
 Alternatively, run the automated setup script:
 
 ```bash
-.github/skills/sdkinternal-py-env-setup-venv/scripts/setup_venv.sh
+.github/skills/sdkinternal-py-setup/scripts/setup_venv.sh
 ```
 
 ## Workflow Steps

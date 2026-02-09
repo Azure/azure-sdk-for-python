@@ -1,5 +1,5 @@
 ---
-name: sdkinternal-py-env-setup-venv
+name: sdkinternal-py-setup
 description: Set up Python virtual environment for azure-ai-contentunderstanding package development. Use this skill when setting up the development environment, creating venv, installing dependencies, or configuring environment variables.
 ---
 
@@ -123,7 +123,7 @@ Run the automated setup script:
 
 ```bash
 # From the package directory
-.github/skills/sdkinternal-py-env-setup-venv/scripts/setup_venv.sh
+.github/skills/sdkinternal-py-setup/scripts/setup_venv.sh
 ```
 
 Or run all steps manually:

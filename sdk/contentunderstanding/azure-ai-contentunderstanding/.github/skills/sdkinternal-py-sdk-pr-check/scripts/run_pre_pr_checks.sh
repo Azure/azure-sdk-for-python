@@ -57,7 +57,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
     echo "  pip install \"tox<5\" black bandit"
     echo ""
     echo "Or run the setup script:"
-    echo "  $PACKAGE_DIR/.github/skills/sdkinternal-py-env-setup-venv/scripts/setup_venv.sh"
+    echo "  $PACKAGE_DIR/.github/skills/sdkinternal-py-setup/scripts/setup_venv.sh"
     echo ""
     read -p "Continue without venv? (y/N) " -n 1 -r
     echo ""
