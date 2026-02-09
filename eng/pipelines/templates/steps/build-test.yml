@@ -93,7 +93,7 @@ steps:
           --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
           --checks="${{ parameters.ToxTestEnv }}"
-          --injected-packages="${{ parameters.InjectedPackages }}"
+          --injected-packages="${{ parameters.InjectedPackages }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
@@ -115,7 +115,7 @@ steps:
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
           --checks="${{ parameters.ToxTestEnv }}" `
-          --injected-packages="${{ parameters.InjectedPackages }}"
+          --injected-packages="${{ parameters.InjectedPackages }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests
@@ -159,11 +159,11 @@ steps:
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
 
-          Write-Host (Get-Command python).Source
+          Write-Host (Get-Command python).Source;
 
           python eng/scripts/dispatch_checks.py "$(TargetingString)" `
             --service="${{ parameters.ServiceDirectory }}" `
-            --checks="samples"
+            --checks="samples";
 
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
@@ -172,7 +172,7 @@ steps:
         Write-Host (Get-Command python).Source
         python eng/scripts/dispatch_checks.py "$(TargetingString)" `
           --service="${{ parameters.ServiceDirectory }}" `
-          --checks="samples"
+          --checks="samples";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: 'Test Samples'
