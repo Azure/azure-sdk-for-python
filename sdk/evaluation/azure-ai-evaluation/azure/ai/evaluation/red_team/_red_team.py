@@ -1406,6 +1406,10 @@ class RedTeam:
 
             # Execute attacks - use Foundry if orchestrator is not available
             if _ORCHESTRATOR_AVAILABLE:
+                self.logger.info("Using orchestrator-based execution (legacy PyRIT path)")
+                self.logger.info(
+                    "Consider upgrading to PyRIT 0.11+ for improved Foundry-based execution"
+                )
                 await self._execute_attacks(
                     flattened_attack_strategies,
                     all_objectives,

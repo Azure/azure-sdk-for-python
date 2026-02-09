@@ -19,6 +19,7 @@ from .._utils.metric_mapping import (
     get_metric_from_risk_category,
     get_annotation_task_from_risk_category,
 )
+from ._foundry_result_processor import _read_seed_content
 
 
 class RAIServiceScorer(TrueFalseScorer):
@@ -80,23 +81,14 @@ class RAIServiceScorer(TrueFalseScorer):
     def _read_seed_value(self, seed) -> str:
         """Read seed value, handling file paths for binary_path data type.
 
-        For binary_path data type, reads the file contents. For other types,
-        returns the value directly.
+        Delegates to the shared _read_seed_content function.
 
         :param seed: The seed object containing the value
         :type seed: SeedPrompt
         :return: The content string
         :rtype: str
         """
-        data_type = getattr(seed, "data_type", "text")
-
-        if data_type == "binary_path" and os.path.isfile(seed.value):
-            try:
-                with open(seed.value, "r", encoding="utf-8") as f:
-                    return f.read()
-            except Exception:
-                return seed.value  # Fallback to raw value if file read fails
-        return seed.value
+        return _read_seed_content(seed)
 
     def _build_context_lookup(self) -> None:
         """Build lookup from prompt_group_id to context data."""

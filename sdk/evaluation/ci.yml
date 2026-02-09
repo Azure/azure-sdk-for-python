@@ -34,6 +34,10 @@ extends:
         Path: sdk/evaluation/platform-matrix.json
         Selection: sparse
         GenerateVMJobs: true
+      - Name: redteam_matrix
+        Path: sdk/evaluation/platform-matrix-redteam.json
+        Selection: all
+        GenerateVMJobs: true
     MatrixFilters:
       - PythonVersion=^(?!3\.14)
     Artifacts:

@@ -12,6 +12,29 @@ from pyrit.models import AttackOutcome, AttackResult
 from pyrit.scenario import DatasetConfiguration
 
 
+def _read_seed_content(seed) -> str:
+    """Read seed content, handling both direct values and file paths.
+
+    For binary_path data type, reads the file contents. For other types,
+    returns the value directly.
+
+    :param seed: The seed object containing the value
+    :type seed: SeedPrompt
+    :return: The content string
+    :rtype: str
+    """
+    value = seed.value
+    data_type = getattr(seed, "data_type", "text")
+
+    if data_type == "binary_path" and os.path.isfile(value):
+        try:
+            with open(value, "r", encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            return value  # Fallback to raw value if file read fails
+    return value
+
+
 class FoundryResultProcessor:
     """Processes Foundry scenario results into JSONL format.
 
@@ -48,24 +71,14 @@ class FoundryResultProcessor:
     def _read_context_content(self, seed) -> str:
         """Read context content, handling both direct values and file paths.
 
-        For binary_path data type, reads the file contents. For other types,
-        returns the value directly.
+        Delegates to the module-level _read_seed_content function.
 
         :param seed: The seed object containing the value
         :type seed: SeedPrompt
         :return: The context content string
         :rtype: str
         """
-        value = seed.value
-        data_type = getattr(seed, "data_type", "text")
-
-        if data_type == "binary_path" and os.path.isfile(value):
-            try:
-                with open(value, "r", encoding="utf-8") as f:
-                    return f.read()
-            except Exception:
-                return value  # Fallback to raw value if file read fails
-        return value
+        return _read_seed_content(seed)
 
     def _build_context_lookup(self) -> None:
         """Build lookup from prompt_group_id (UUID) to context data."""
