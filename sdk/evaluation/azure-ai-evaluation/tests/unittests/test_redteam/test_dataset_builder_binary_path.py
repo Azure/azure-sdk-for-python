@@ -546,9 +546,12 @@ class TestCleanup:
     def test_cleanup_handles_already_deleted_files(self, builder):
         """Test that cleanup handles files that were already deleted."""
         file_path = builder._create_context_file("content", "email")
+        temp_dir = builder._temp_dir.name
         os.remove(file_path)
 
         builder.cleanup()
+
+        assert not os.path.exists(temp_dir)
 
     def test_cleanup_does_not_affect_other_builders(self):
         """Test that cleanup of one builder does not affect another builder's files."""

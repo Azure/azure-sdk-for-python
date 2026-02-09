@@ -106,7 +106,10 @@ class TestRedTeamFoundry:
             if context and "contexts" in context:
                 context_info = f" [with {len(context['contexts'])} context items]"
 
-            formatted_response = {"content": f"Response to: {query}{context_info}", "role": "assistant"}
+            formatted_response = {
+                "content": f"Response to: {query}{context_info}",
+                "role": "assistant",
+            }
             messages["messages"].append(formatted_response)
             return {
                 "messages": messages["messages"],
@@ -141,6 +144,12 @@ class TestRedTeamFoundry:
             assert "risk_category" in attack
             # IndirectJailbreak should be mapped to indirect_jailbreak technique
             assert attack["attack_technique"] in ["indirect_jailbreak", "baseline"]
+
+        # At least one result should use the indirect_jailbreak technique
+        techniques = [a["attack_technique"] for a in result.attack_details]
+        assert (
+            "indirect_jailbreak" in techniques
+        ), f"Expected indirect_jailbreak in techniques, got: {techniques}"
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
@@ -188,8 +197,10 @@ class TestRedTeamFoundry:
         for attack in result.attack_details:
             risk_categories_found.add(attack["risk_category"])
 
-        # Should have at least one result (categories may vary based on seed generation)
-        assert len(risk_categories_found) >= 1
+        # Should have results for at least 2 risk categories since we requested Violence and HateUnfairness
+        assert (
+            len(risk_categories_found) >= 2
+        ), f"Expected results for at least 2 risk categories, got {len(risk_categories_found)}: {risk_categories_found}"
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(
@@ -283,5 +294,7 @@ class TestRedTeamFoundry:
         for attack in result.attack_details:
             techniques_found.add(attack.get("attack_technique", "unknown"))
 
-        # Should have results from the strategies
-        assert len(techniques_found) >= 1
+        # Should have results from at least 2 techniques (Base64 + ROT13, possibly baseline)
+        assert (
+            len(techniques_found) >= 2
+        ), f"Expected results for at least 2 techniques, got {len(techniques_found)}: {techniques_found}"

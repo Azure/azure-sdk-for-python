@@ -5,7 +5,13 @@
 
 from typing import Dict, List, Optional, Union
 
-from pyrit.scenario.foundry import FoundryStrategy
+try:
+    from pyrit.scenario.foundry import FoundryStrategy
+except ImportError:
+    raise ImportError(
+        "Could not import FoundryStrategy from pyrit. "
+        "Please install pyrit >= 0.11.0: pip install azure-ai-evaluation[redteam]"
+    )
 
 from .._attack_strategy import AttackStrategy
 

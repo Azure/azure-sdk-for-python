@@ -1067,8 +1067,8 @@ class TestFoundryResultProcessor:
             risk_category="violence",
         )
 
-        # Check that context lookup was built
-        assert len(processor._context_lookup) >= 0
+        # Check that context lookup was built with the mock context
+        assert len(processor._context_lookup) > 0
 
     def test_get_summary_stats_empty(self):
         """Test summary stats with no results."""
@@ -1771,7 +1771,7 @@ class TestDatasetConfigurationBuilderExtended:
         attack_vehicles = [
             s for s in seeds if getattr(s, "metadata", {}).get("is_attack_vehicle")
         ]
-        assert len(attack_vehicles) >= 0  # May be 3 if working correctly
+        assert len(attack_vehicles) > 0  # Should have attack vehicles for each context
 
     def test_determine_data_type_edge_cases(self):
         """Test data type determination for edge case context types.
@@ -1846,8 +1846,8 @@ class TestRAIServiceScorerExtended:
             dataset_config=mock_dataset,
         )
 
-        # Context lookup should be built
-        assert len(scorer._context_lookup) >= 0
+        # Context lookup should be built with the mock seed
+        assert len(scorer._context_lookup) > 0
 
     def test_get_context_from_prompt_metadata(
         self, mock_credential, mock_azure_ai_project, mock_logger
@@ -2300,8 +2300,8 @@ class TestFoundryExecutionManagerExtended:
         }
         result = manager._extract_context_items(obj)
 
-        # String context should be converted to dict
-        assert len(result) >= 0
+        # String context is not a supported format and is silently ignored
+        assert len(result) == 0
 
     def test_extract_objective_string_type(
         self, mock_credential, mock_azure_ai_project, mock_logger

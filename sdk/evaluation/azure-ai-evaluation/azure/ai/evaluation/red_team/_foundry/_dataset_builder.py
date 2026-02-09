@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """DatasetConfigurationBuilder for transforming RAI service responses into PyRIT data structures."""
 
+import logging
 import tempfile
 import uuid
 from pathlib import Path
@@ -183,8 +184,12 @@ class DatasetConfigurationBuilder:
         """
         try:
             self._temp_dir.cleanup()
-        except Exception:
-            pass  # Best effort cleanup
+        except Exception as e:
+            logging.getLogger(__name__).debug(f"Failed to cleanup temp directory: {e}")
+
+    def __del__(self):
+        """Cleanup temp directory during garbage collection."""
+        self.cleanup()
 
     def _create_context_prompts(
         self,
