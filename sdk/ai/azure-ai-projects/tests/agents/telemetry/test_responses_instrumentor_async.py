@@ -14,6 +14,7 @@ from azure.ai.projects.telemetry._utils import (
     SPAN_NAME_CHAT,
     SPAN_NAME_INVOKE_AGENT,
     _set_use_message_events,
+    _set_use_simple_tool_format,
     RESPONSES_PROVIDER,
 )
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
@@ -387,11 +388,14 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    async def _test_async_function_tool_with_content_recording_streaming_impl(self, use_events, **kwargs):
+    async def _test_async_function_tool_with_content_recording_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
         """Implementation for testing asynchronous function tool usage with content recording (streaming).
 
         Args:
             use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
         """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
@@ -404,6 +408,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -535,12 +540,17 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check events for first span - user message and assistant tool call (only in events mode)
         if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*", "name": "get_weather", "arguments": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]'
+
             expected_events_1 = [
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "user",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
                     },
                 },
@@ -548,8 +558,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                        "gen_ai.event.content": tool_call_content,
                     },
                 },
             ]
@@ -583,20 +592,24 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check events for second span - tool output and assistant response (only in events mode)
         if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*", "result": {"temperature": "72°F", "condition": "sunny"}}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]'
+
             expected_events_2 = [
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                        "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                        "gen_ai.event.content": tool_output_content,
                     },
                 },
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                     },
                 },
@@ -618,11 +631,32 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         """Test asynchronous function tool usage with content recording enabled (streaming, attribute-based messages)."""
         await self._test_async_function_tool_with_content_recording_streaming_impl(False, **kwargs)
 
-    async def _test_async_function_tool_without_content_recording_streaming_impl(self, use_events, **kwargs):
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_with_content_recording_streaming_simple_format_events(self, **kwargs):
+        """Test async function tool with content recording, streaming, simple OTEL format (event mode)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_with_content_recording_streaming_simple_format_attributes(self, **kwargs):
+        """Test async function tool with content recording, streaming, simple OTEL format (attribute mode)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    async def _test_async_function_tool_without_content_recording_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
         """Implementation for testing asynchronous function tool usage without content recording (streaming).
 
         Args:
             use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
         """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
@@ -635,6 +669,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -760,12 +795,17 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check events for first span - tool call ID included but no function details (only in events mode)
         if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]'
+
             expected_events_1 = [
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "user",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                     },
                 },
@@ -773,8 +813,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
+                        "gen_ai.event.content": tool_call_content,
                     },
                 },
             ]
@@ -808,20 +847,24 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check events for second span - tool output metadata and response (only in events mode)
         if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*"}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]'
+
             expected_events_2 = [
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                        "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
+                        "gen_ai.event.content": tool_output_content,
                     },
                 },
                 {
                     "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                         "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                     },
                 },
@@ -842,6 +885,24 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
         """Test asynchronous function tool usage without content recording (streaming, attribute-based messages)."""
         await self._test_async_function_tool_without_content_recording_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_simple_format_events(self, **kwargs):
+        """Test async function tool without content recording, streaming, simple OTEL format (event mode)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_simple_format_attributes(self, **kwargs):
+        """Test async function tool without content recording, streaming, simple OTEL format (attribute mode)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
