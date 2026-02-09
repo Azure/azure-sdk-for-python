@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import datetime
+from importlib.metadata import version
 import locale
 from os import environ
 from os.path import isdir
@@ -39,11 +40,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RP_Names,
 )
 
-opentelemetry_version = ""
-
 # Workaround for missing version file
-from importlib.metadata import version
-
 opentelemetry_version = version("opentelemetry-sdk")
 
 
