@@ -139,15 +139,25 @@ class TestTableClientCosmos(AzureRecordedTestCase, TableTestCase):
                     client.create_entity({"PartitionKey": "foo", "RowKey": "foo"})
                 assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
             except ResourceNotFoundError:
-                # Create entity returns a ResourceNotFound for tablename == "- "
+                # Raises ResourceNotFound for tablename == "- "
                 if invalid_name != "- ":
                     raise
-            with pytest.raises(ValueError) as error:
-                client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
-            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
-            with pytest.raises(ValueError) as error:
-                client.delete_entity("PK", "RK")
-            assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.upsert_entity({"PartitionKey": "foo", "RowKey": "foo"})
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            except ResourceNotFoundError:
+                # Raises ResourceNotFound for tablename == "- "
+                if invalid_name != "- ":
+                    raise
+            try:
+                with pytest.raises(ValueError) as error:
+                    client.delete_entity("PK", "RK")
+                assert "Cosmos table names must contain from 1-255 characters" in str(error.value)
+            except ResourceNotFoundError:
+                # Raises ResourceNotFound for tablename == "- "
+                if invalid_name != "- ":
+                    raise
             with pytest.raises(ValueError) as error:
                 batch = []
                 batch.append(("upsert", {"PartitionKey": "A", "RowKey": "B"}))

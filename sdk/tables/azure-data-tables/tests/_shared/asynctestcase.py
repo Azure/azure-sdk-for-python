@@ -30,7 +30,7 @@ class AsyncFakeTokenCredential(object):
     """
 
     def __init__(self):
-        self.token = AccessToken(base64.b64encode(b"YOU SHALL NOT PASS"), 0)
+        self.token = AccessToken(base64.b64encode(b"YOU SHALL NOT PASS").decode("utf-8"), 0)
 
     async def get_token(self, *args, **kwargs):
         return self.token
