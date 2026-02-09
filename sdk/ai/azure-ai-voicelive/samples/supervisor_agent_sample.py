@@ -26,7 +26,7 @@ import queue
 from typing import Union, Optional, cast
 from concurrent.futures import ThreadPoolExecutor
 
-from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
+from azure.identity.aio import AzureCliCredential
 
 # Audio processing imports
 try:
@@ -357,7 +357,7 @@ class AsyncSupervisorAgentClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureCliCredential, DefaultAzureCredential],
+        credential: AsyncTokenCredential,
         model: str,
         voice: str,
         instructions: str,
