@@ -15,7 +15,6 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `EncodedTaskRunRequest` renamed its instance variable `values` to `values_property`
   - Model `EncodedTaskStep` renamed its instance variable `values` to `values_property`
   - Model `EncodedTaskStepUpdateParameters` renamed its instance variable `values` to `values_property`
