@@ -14,7 +14,12 @@ from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overlo
 from azure.core.exceptions import ODataV4Format
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import ContentFieldType, DocumentFigureKind, KnowledgeSourceKind, MediaContentKind
+from ._enums import (
+    ContentFieldType,
+    DocumentFigureKind,
+    KnowledgeSourceKind,
+    MediaContentKind,
+)
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -37,16 +42,26 @@ class AnalyzeInput(_Model):
     :vartype input_range: str
     """
 
-    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    url: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL of the input to analyze.  Only one of url or data should be specified."""
-    data: Optional[bytes] = rest_field(visibility=["read", "create", "update", "delete", "query"], format="base64")
+    data: Optional[bytes] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="base64"
+    )
     """Raw image bytes. Provide bytes-like object; do not base64-encode. Only one of url or data
      should be specified."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    name: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Name of the input."""
-    mime_type: Optional[str] = rest_field(name="mimeType", visibility=["read", "create", "update", "delete", "query"])
+    mime_type: Optional[str] = rest_field(
+        name="mimeType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The MIME type of the input content.  Ex. application/pdf, image/jpeg, etc."""
-    input_range: Optional[str] = rest_field(name="range", visibility=["read", "create", "update", "delete", "query"])
+    input_range: Optional[str] = rest_field(
+        name="range", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Range of the input to analyze (ex. ``1-3,5,9-``).  Document content uses 1-based page numbers,
      while audio visual content uses integer milliseconds."""
 
@@ -99,17 +114,24 @@ class AnalyzeResult(_Model):
     )
     """The version of the API used to analyze the document."""
     created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="createdAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """The date and time when the result was created."""
-    warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    warnings: Optional[list[ODataV4Format]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Warnings encountered while analyzing the document."""
     string_encoding: Optional[str] = rest_field(
-        name="stringEncoding", visibility=["read", "create", "update", "delete", "query"]
+        name="stringEncoding",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The string encoding format for content spans in the response. Possible values are 'codePoint',
      'utf16', and ``utf8``.  Default is ``codePoint``.\")."""
-    contents: list["_models.MediaContent"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    contents: list["_models.MediaContent"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The extracted content. Required."""
 
     @overload
@@ -154,16 +176,22 @@ class ContentField(_Model):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     spans: Optional[list["_models.ContentSpan"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Span(s) associated with the field value in the markdown content."""
-    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    confidence: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Confidence of predicting the field value."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the field value in the content."""
 
     @overload
@@ -207,7 +235,9 @@ class ArrayField(ContentField, discriminator="array"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.ARRAY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -264,19 +294,29 @@ class MediaContent(_Model):
     """
 
     __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(
+        name="kind", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Content kind. Required. Known values are: \"document\" and \"audioVisual\"."""
-    mime_type: str = rest_field(name="mimeType", visibility=["read", "create", "update", "delete", "query"])
+    mime_type: str = rest_field(
+        name="mimeType", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Detected MIME type of the content.  Ex. application/pdf, image/jpeg, etc. Required."""
     analyzer_id: Optional[str] = rest_field(
         name="analyzerId", visibility=["read", "create", "update", "delete", "query"]
     )
     """The analyzer that generated this content."""
-    category: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    category: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Classified content category."""
-    path: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    path: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The path of the content in the input."""
-    markdown: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    markdown: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Markdown representation of the content."""
     fields: Optional[dict[str, "_models.ContentField"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -347,26 +387,37 @@ class AudioVisualContent(MediaContent, discriminator="audioVisual"):
 
     kind: Literal[MediaContentKind.AUDIO_VISUAL] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Content kind. Required. Audio visual content, such as mp3, mp4, etc."""
-    start_time_ms: int = rest_field(name="startTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    start_time_ms: int = rest_field(
+        name="startTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Start time of the content in milliseconds. Required."""
-    end_time_ms: int = rest_field(name="endTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    end_time_ms: int = rest_field(
+        name="endTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End time of the content in milliseconds. Required."""
-    width: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    width: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Width of each video frame in pixels, if applicable."""
-    height: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    height: Optional[int] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Height of each video frame in pixels, if applicable."""
     camera_shot_times_ms: Optional[list[int]] = rest_field(
-        name="cameraShotTimesMs", visibility=["read", "create", "update", "delete", "query"]
+        name="cameraShotTimesMs",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of camera shot changes in the video, represented by its timestamp in milliseconds.  Only
      if returnDetails is true."""
     key_frame_times_ms: Optional[list[int]] = rest_field(
-        name="keyFrameTimesMs", visibility=["read", "create", "update", "delete", "query"]
+        name="keyFrameTimesMs",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of key frames in the video, represented by its timestamp in milliseconds.  Only if
      returnDetails is true."""
     transcript_phrases: Optional[list["_models.TranscriptPhrase"]] = rest_field(
-        name="transcriptPhrases", visibility=["read", "create", "update", "delete", "query"]
+        name="transcriptPhrases",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """List of transcript phrases.  Only if returnDetails is true."""
     segments: Optional[list["_models.AudioVisualContentSegment"]] = rest_field(
@@ -421,15 +472,25 @@ class AudioVisualContentSegment(_Model):
     :vartype end_time_ms: int
     """
 
-    segment_id: str = rest_field(name="segmentId", visibility=["read", "create", "update", "delete", "query"])
+    segment_id: str = rest_field(
+        name="segmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Segment identifier. Required."""
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    category: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Classified content category. Required."""
-    span: "_models.ContentSpan" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: "_models.ContentSpan" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the segment in the markdown content. Required."""
-    start_time_ms: int = rest_field(name="startTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    start_time_ms: int = rest_field(
+        name="startTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Start time of the segment in milliseconds. Required."""
-    end_time_ms: int = rest_field(name="endTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    end_time_ms: int = rest_field(
+        name="endTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End time of the segment in milliseconds. Required."""
 
     @overload
@@ -473,7 +534,9 @@ class BooleanField(ContentField, discriminator="boolean"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.BOOLEAN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -547,29 +610,47 @@ class ContentAnalyzer(_Model):
 
     analyzer_id: str = rest_field(name="analyzerId", visibility=["read"])
     """The unique identifier of the analyzer. Required."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A description of the analyzer."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Tags associated with the analyzer."""
-    status: Union[str, "_models.ContentAnalyzerStatus"] = rest_field(visibility=["read"])
+    status: Union[str, "_models.ContentAnalyzerStatus"] = rest_field(
+        visibility=["read"]
+    )
     """The status of the analyzer. Required. Known values are: \"creating\", \"ready\", \"deleting\",
      and \"failed\"."""
-    created_at: datetime.datetime = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    created_at: datetime.datetime = rest_field(
+        name="createdAt", visibility=["read"], format="rfc3339"
+    )
     """The date and time when the analyzer was created. Required."""
-    last_modified_at: datetime.datetime = rest_field(name="lastModifiedAt", visibility=["read"], format="rfc3339")
+    last_modified_at: datetime.datetime = rest_field(
+        name="lastModifiedAt", visibility=["read"], format="rfc3339"
+    )
     """The date and time when the analyzer was last modified. Required."""
     warnings: Optional[list[ODataV4Format]] = rest_field(visibility=["read"])
     """Warnings encountered while creating the analyzer."""
-    base_analyzer_id: Optional[str] = rest_field(name="baseAnalyzerId", visibility=["read", "create"])
+    base_analyzer_id: Optional[str] = rest_field(
+        name="baseAnalyzerId", visibility=["read", "create"]
+    )
     """The analyzer to incrementally train from."""
-    config: Optional["_models.ContentAnalyzerConfig"] = rest_field(visibility=["read", "create"])
+    config: Optional["_models.ContentAnalyzerConfig"] = rest_field(
+        visibility=["read", "create"]
+    )
     """Analyzer configuration settings."""
-    field_schema: Optional["_models.ContentFieldSchema"] = rest_field(name="fieldSchema", visibility=["read", "create"])
+    field_schema: Optional["_models.ContentFieldSchema"] = rest_field(
+        name="fieldSchema", visibility=["read", "create"]
+    )
     """The schema of fields to extracted."""
-    dynamic_field_schema: Optional[bool] = rest_field(name="dynamicFieldSchema", visibility=["read", "create"])
+    dynamic_field_schema: Optional[bool] = rest_field(
+        name="dynamicFieldSchema", visibility=["read", "create"]
+    )
     """Indicates whether the result may contain additional fields outside of the defined schema."""
-    processing_location: Optional[Union[str, "_models.ProcessingLocation"]] = rest_field(
-        name="processingLocation", visibility=["read", "create"]
+    processing_location: Optional[Union[str, "_models.ProcessingLocation"]] = (
+        rest_field(name="processingLocation", visibility=["read", "create"])
     )
     """The location where the data may be processed.  Defaults to global. Known values are:
      \"geography\", \"dataZone\", and \"global\"."""
@@ -580,7 +661,9 @@ class ContentAnalyzer(_Model):
     models: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
     """Mapping of model roles to specific model names. Ex. { \"completion\": \"gpt-4.1\",
      \"embedding\": \"text-embedding-3-large\" }."""
-    supported_models: Optional["_models.SupportedModels"] = rest_field(name="supportedModels", visibility=["read"])
+    supported_models: Optional["_models.SupportedModels"] = rest_field(
+        name="supportedModels", visibility=["read"]
+    )
     """Chat completion and embedding models supported by the analyzer."""
 
     @overload
@@ -632,11 +715,17 @@ class ContentAnalyzerAnalyzeOperationStatus(_Model):
     )
     """The status of the operation. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional[ODataV4Format] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Error object that describes the error when status is \"Failed\"."""
-    result: Optional["_models.AnalyzeResult"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    result: Optional["_models.AnalyzeResult"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the operation."""
-    usage: Optional["_models.UsageDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: Optional["_models.UsageDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Usage details of the analyze operation."""
 
     @overload
@@ -708,7 +797,9 @@ class ContentAnalyzerConfig(_Model):
         name="returnDetails", visibility=["read", "create", "update", "delete", "query"]
     )
     """Return all content details."""
-    locales: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locales: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of locale hints for speech transcription."""
     enable_ocr: Optional[bool] = rest_field(
         name="enableOcr", visibility=["read", "create", "update", "delete", "query"]
@@ -719,11 +810,13 @@ class ContentAnalyzerConfig(_Model):
     )
     """Enable layout analysis."""
     enable_figure_description: Optional[bool] = rest_field(
-        name="enableFigureDescription", visibility=["read", "create", "update", "delete", "query"]
+        name="enableFigureDescription",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Enable generation of figure description."""
     enable_figure_analysis: Optional[bool] = rest_field(
-        name="enableFigureAnalysis", visibility=["read", "create", "update", "delete", "query"]
+        name="enableFigureAnalysis",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Enable analysis of figures, such as charts and diagrams."""
     enable_formula: Optional[bool] = rest_field(
@@ -741,20 +834,26 @@ class ContentAnalyzerConfig(_Model):
     """Representation format of charts in analyze result markdown. Known values are: \"chartJs\" and
      \"markdown\"."""
     annotation_format: Optional[Union[str, "_models.AnnotationFormat"]] = rest_field(
-        name="annotationFormat", visibility=["read", "create", "update", "delete", "query"]
+        name="annotationFormat",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Representation format of annotations in analyze result markdown. Known values are: \"none\" and
      \"markdown\"."""
     disable_face_blurring: Optional[bool] = rest_field(
-        name="disableFaceBlurring", visibility=["read", "create", "update", "delete", "query"]
+        name="disableFaceBlurring",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Disable the default blurring of faces for privacy while processing the content."""
     estimate_field_source_and_confidence: Optional[bool] = rest_field(
-        name="estimateFieldSourceAndConfidence", visibility=["read", "create", "update", "delete", "query"]
+        name="estimateFieldSourceAndConfidence",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Return field grounding source and confidence."""
-    content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = rest_field(
-        name="contentCategories", visibility=["read", "create", "update", "delete", "query"]
+    content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = (
+        rest_field(
+            name="contentCategories",
+            visibility=["read", "create", "update", "delete", "query"],
+        )
     )
     """Map of categories to classify the input content(s) against."""
     enable_segment: Optional[bool] = rest_field(
@@ -762,7 +861,8 @@ class ContentAnalyzerConfig(_Model):
     )
     """Enable segmentation of the input by contentCategories."""
     segment_per_page: Optional[bool] = rest_field(
-        name="segmentPerPage", visibility=["read", "create", "update", "delete", "query"]
+        name="segmentPerPage",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Force segmentation of document content by page."""
     omit_content: Optional[bool] = rest_field(
@@ -787,7 +887,9 @@ class ContentAnalyzerConfig(_Model):
         annotation_format: Optional[Union[str, "_models.AnnotationFormat"]] = None,
         disable_face_blurring: Optional[bool] = None,
         estimate_field_source_and_confidence: Optional[bool] = None,
-        content_categories: Optional[dict[str, "_models.ContentCategoryDefinition"]] = None,
+        content_categories: Optional[
+            dict[str, "_models.ContentCategoryDefinition"]
+        ] = None,
         enable_segment: Optional[bool] = None,
         segment_per_page: Optional[bool] = None,
         omit_content: Optional[bool] = None,
@@ -827,11 +929,17 @@ class ContentAnalyzerOperationStatus(_Model):
     )
     """The status of the operation. Required. Known values are: \"NotStarted\", \"Running\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
-    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional[ODataV4Format] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Error object that describes the error when status is \"Failed\"."""
-    result: Optional["_models.ContentAnalyzer"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    result: Optional["_models.ContentAnalyzer"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The result of the operation."""
-    usage: Optional["_models.UsageDetails"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    usage: Optional["_models.UsageDetails"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Usage details of the analyzer creation operation."""
 
     @overload
@@ -867,7 +975,9 @@ class ContentCategoryDefinition(_Model):
     :vartype analyzer: ~azure.ai.contentunderstanding.models.ContentAnalyzer
     """
 
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The description of the category."""
     analyzer_id: Optional[str] = rest_field(
         name="analyzerId", visibility=["read", "create", "update", "delete", "query"]
@@ -933,7 +1043,9 @@ class ContentFieldDefinition(_Model):
     )
     """Semantic data type of the field value. Known values are: \"string\", \"date\", \"time\",
      \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Field description."""
     item_definition: Optional["_models.ContentFieldDefinition"] = rest_field(
         name="items", visibility=["read", "create", "update", "delete", "query"]
@@ -943,18 +1055,26 @@ class ContentFieldDefinition(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Named sub-fields, if type is object."""
-    examples: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    examples: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Examples of field values."""
-    enum: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    enum: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Enumeration of possible field values."""
     enum_descriptions: Optional[dict[str, str]] = rest_field(
-        name="enumDescriptions", visibility=["read", "create", "update", "delete", "query"]
+        name="enumDescriptions",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Descriptions for each enumeration value."""
-    ref: Optional[str] = rest_field(name="$ref", visibility=["read", "create", "update", "delete", "query"])
+    ref: Optional[str] = rest_field(
+        name="$ref", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Reference to another field definition."""
     estimate_source_and_confidence: Optional[bool] = rest_field(
-        name="estimateSourceAndConfidence", visibility=["read", "create", "update", "delete", "query"]
+        name="estimateSourceAndConfidence",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Return grounding source and confidence."""
 
@@ -1002,9 +1122,13 @@ class ContentFieldSchema(_Model):
     """The name of the field schema."""
     description: Optional[str] = rest_field(visibility=["read", "create"])
     """A description of the field schema."""
-    fields: dict[str, "_models.ContentFieldDefinition"] = rest_field(visibility=["read", "create"])
+    fields: dict[str, "_models.ContentFieldDefinition"] = rest_field(
+        visibility=["read", "create"]
+    )
     """The fields defined in the schema. Required."""
-    definitions: Optional[dict[str, "_models.ContentFieldDefinition"]] = rest_field(visibility=["read", "create"])
+    definitions: Optional[dict[str, "_models.ContentFieldDefinition"]] = rest_field(
+        visibility=["read", "create"]
+    )
     """Additional definitions referenced by the fields in the schema."""
 
     @overload
@@ -1070,7 +1194,9 @@ class ContentUnderstandingDefaults(_Model):
     :vartype model_deployments: dict[str, str]
     """
 
-    model_deployments: dict[str, str] = rest_field(name="modelDeployments", visibility=["read", "create", "update"])
+    model_deployments: dict[str, str] = rest_field(
+        name="modelDeployments", visibility=["read", "create", "update"]
+    )
     """Mapping of model names to deployments. Ex. { \"gpt-4.1\": \"myGpt41Deployment\",
      \"text-embedding-3-large\": \"myTextEmbedding3LargeDeployment\" }. Required."""
 
@@ -1106,11 +1232,14 @@ class CopyAuthorization(_Model):
     source: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Full path of the source analyzer. Required."""
     target_azure_resource_id: str = rest_field(
-        name="targetAzureResourceId", visibility=["read", "create", "update", "delete", "query"]
+        name="targetAzureResourceId",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Azure resource ID of the target location to copy to. Required."""
     expires_at: datetime.datetime = rest_field(
-        name="expiresAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="expiresAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """Date/time when the copy authorization expires. Required."""
 
@@ -1154,7 +1283,9 @@ class DateField(ContentField, discriminator="date"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.DATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -1223,23 +1354,33 @@ class DocumentAnnotation(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Spans of the content associated with the annotation."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Position of the annotation."""
     comments: Optional[list["_models.DocumentAnnotationComment"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Comments associated with the annotation."""
-    author: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    author: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Annotation author."""
     created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="createdAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """Date and time when the annotation was created."""
     last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="lastModifiedAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """Date and time when the annotation was last modified."""
-    tags: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Tags associated with the annotation."""
 
     @overload
@@ -1283,19 +1424,29 @@ class DocumentAnnotationComment(_Model):
     :vartype tags: list[str]
     """
 
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    message: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Comment message in Markdown. Required."""
-    author: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    author: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Author of the comment."""
     created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="createdAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """Date and time when the comment was created."""
     last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+        name="lastModifiedAt",
+        visibility=["read", "create", "update", "delete", "query"],
+        format="rfc3339",
     )
     """Date and time when the comment was last modified."""
-    tags: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Tags associated with the comment."""
 
     @overload
@@ -1345,11 +1496,17 @@ class DocumentBarcode(_Model):
      \"DataBarExpanded\", \"ITF\", \"MicroQRCode\", \"Aztec\", \"DataMatrix\", and \"MaxiCode\"."""
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Barcode value. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the barcode in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the barcode in the markdown content."""
-    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    confidence: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Confidence of predicting the barcode."""
 
     @overload
@@ -1387,13 +1544,21 @@ class DocumentCaption(_Model):
     :vartype elements: list[str]
     """
 
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Content of the caption. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the caption in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the caption in the markdown content."""
-    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Child elements of the caption."""
 
     @overload
@@ -1445,15 +1610,23 @@ class DocumentFigure(_Model):
     """
 
     __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(
+        name="kind", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Figure kind. Required. Known values are: \"unknown\", \"chart\", and \"mermaid\"."""
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Figure identifier. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the figure in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the figure in the markdown content."""
-    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Child elements of the figure, excluding any caption or footnotes."""
     caption: Optional["_models.DocumentCaption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1463,7 +1636,9 @@ class DocumentFigure(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """List of figure footnotes."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    description: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Description of the figure."""
     role: Optional[Union[str, "_models.SemanticRole"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1528,7 +1703,9 @@ class DocumentChartFigure(DocumentFigure, discriminator="chart"):
     kind: Literal[DocumentFigureKind.CHART] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Figure kind. Required. Figure containing a chart, such as a bar chart, line chart, or pie
      chart."""
-    content: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: dict[str, Any] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Chart content represented using `Chart.js config
      <https://www.chartjs.org/docs/latest/configuration/>`_. Required."""
 
@@ -1610,10 +1787,13 @@ class DocumentContent(MediaContent, discriminator="document"):
     kind: Literal[MediaContentKind.DOCUMENT] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Content kind. Required. Document content, such as pdf, image, txt, etc."""
     start_page_number: int = rest_field(
-        name="startPageNumber", visibility=["read", "create", "update", "delete", "query"]
+        name="startPageNumber",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Start page number (1-indexed) of the content. Required."""
-    end_page_number: int = rest_field(name="endPageNumber", visibility=["read", "create", "update", "delete", "query"])
+    end_page_number: int = rest_field(
+        name="endPageNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End page number (1-indexed) of the content. Required."""
     unit: Optional[Union[str, "_models.LengthUnit"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1703,17 +1883,26 @@ class DocumentContentSegment(_Model):
     :vartype end_page_number: int
     """
 
-    segment_id: str = rest_field(name="segmentId", visibility=["read", "create", "update", "delete", "query"])
+    segment_id: str = rest_field(
+        name="segmentId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Segment identifier. Required."""
-    category: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    category: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Classified content category. Required."""
-    span: "_models.ContentSpan" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: "_models.ContentSpan" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the segment in the markdown content. Required."""
     start_page_number: int = rest_field(
-        name="startPageNumber", visibility=["read", "create", "update", "delete", "query"]
+        name="startPageNumber",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """Start page number (1-indexed) of the segment. Required."""
-    end_page_number: int = rest_field(name="endPageNumber", visibility=["read", "create", "update", "delete", "query"])
+    end_page_number: int = rest_field(
+        name="endPageNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End page number (1-indexed) of the segment. Required."""
 
     @overload
@@ -1751,13 +1940,21 @@ class DocumentFootnote(_Model):
     :vartype elements: list[str]
     """
 
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Content of the footnote. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the footnote in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the footnote in the markdown content."""
-    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Child elements of the footnote."""
 
     @overload
@@ -1802,11 +1999,17 @@ class DocumentFormula(_Model):
     """Formula kind. Required. Known values are: \"inline\" and \"display\"."""
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """LaTex expression describing the formula. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the formula in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the formula in the markdown content."""
-    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    confidence: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Confidence of predicting the formula."""
 
     @overload
@@ -1844,13 +2047,19 @@ class DocumentHyperlink(_Model):
     :vartype source: str
     """
 
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Hyperlinked content. Required."""
     url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL of the hyperlink. Required."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the hyperlink in the markdown content."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Position of the hyperlink."""
 
     @overload
@@ -1885,11 +2094,17 @@ class DocumentLine(_Model):
     :vartype span: ~azure.ai.contentunderstanding.models.ContentSpan
     """
 
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Line text. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the line in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the line in the markdown content."""
 
     @overload
@@ -1942,7 +2157,9 @@ class DocumentMermaidFigure(DocumentFigure, discriminator="mermaid"):
 
     kind: Literal[DocumentFigureKind.MERMAID] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Figure kind. Required. Figure containing a diagram, such as a flowchart or network diagram."""
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Diagram content represented using `Mermaid syntax <https://mermaid.js.org/intro/>`_. Required."""
 
     @overload
@@ -1998,17 +2215,25 @@ class DocumentPage(_Model):
     :vartype formulas: list[~azure.ai.contentunderstanding.models.DocumentFormula]
     """
 
-    page_number: int = rest_field(name="pageNumber", visibility=["read", "create", "update", "delete", "query"])
+    page_number: int = rest_field(
+        name="pageNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Page number (1-based). Required."""
-    width: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    width: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Width of the page."""
-    height: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    height: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Height of the page."""
     spans: Optional[list["_models.ContentSpan"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Span(s) associated with the page in the markdown content."""
-    angle: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    angle: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The general orientation of the content in clockwise direction, measured in degrees between
      (-180, 180]. Only if enableOcr is true."""
     words: Optional[list["_models.DocumentWord"]] = rest_field(
@@ -2074,11 +2299,17 @@ class DocumentParagraph(_Model):
     )
     """Semantic role of the paragraph. Known values are: \"pageHeader\", \"pageFooter\",
      \"pageNumber\", \"title\", \"sectionHeading\", \"footnote\", and \"formulaBlock\"."""
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Paragraph text. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the paragraph in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the paragraph in the markdown content."""
 
     @overload
@@ -2111,9 +2342,13 @@ class DocumentSection(_Model):
     :vartype elements: list[str]
     """
 
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the section in the markdown content."""
-    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Child elements of the section."""
 
     @overload
@@ -2157,15 +2392,25 @@ class DocumentTable(_Model):
     :vartype role: str or ~azure.ai.contentunderstanding.models.SemanticRole
     """
 
-    row_count: int = rest_field(name="rowCount", visibility=["read", "create", "update", "delete", "query"])
+    row_count: int = rest_field(
+        name="rowCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of rows in the table. Required."""
-    column_count: int = rest_field(name="columnCount", visibility=["read", "create", "update", "delete", "query"])
+    column_count: int = rest_field(
+        name="columnCount", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of columns in the table. Required."""
-    cells: list["_models.DocumentTableCell"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    cells: list["_models.DocumentTableCell"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Cells contained within the table. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the table in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the table in the markdown content."""
     caption: Optional["_models.DocumentCaption"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2235,23 +2480,37 @@ class DocumentTableCell(_Model):
     )
     """Table cell kind. Known values are: \"content\", \"rowHeader\", \"columnHeader\", \"stubHead\",
      and \"description\"."""
-    row_index: int = rest_field(name="rowIndex", visibility=["read", "create", "update", "delete", "query"])
+    row_index: int = rest_field(
+        name="rowIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Row index of the cell. Required."""
-    column_index: int = rest_field(name="columnIndex", visibility=["read", "create", "update", "delete", "query"])
+    column_index: int = rest_field(
+        name="columnIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Column index of the cell. Required."""
-    row_span: Optional[int] = rest_field(name="rowSpan", visibility=["read", "create", "update", "delete", "query"])
+    row_span: Optional[int] = rest_field(
+        name="rowSpan", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of rows spanned by this cell."""
     column_span: Optional[int] = rest_field(
         name="columnSpan", visibility=["read", "create", "update", "delete", "query"]
     )
     """Number of columns spanned by this cell."""
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Content of the table cell. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the table cell in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the table cell in the markdown content."""
-    elements: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    elements: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Child elements of the table cell."""
 
     @overload
@@ -2295,13 +2554,21 @@ class DocumentWord(_Model):
     :vartype confidence: float
     """
 
-    content: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    content: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Word text. Required."""
-    source: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    source: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Encoded source that identifies the position of the word in the content."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the word in the markdown content."""
-    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    confidence: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Confidence of predicting the word."""
 
     @overload
@@ -2345,7 +2612,9 @@ class IntegerField(ContentField, discriminator="integer"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.INTEGER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2397,12 +2666,16 @@ class JsonField(ContentField, discriminator="json"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.JSON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Semantic data type of the field value. Required. JSON object."""
-    value_json: Optional[Any] = rest_field(name="valueJson", visibility=["read", "create", "update", "delete", "query"])
+    value_json: Optional[Any] = rest_field(
+        name="valueJson", visibility=["read", "create", "update", "delete", "query"]
+    )
     """JSON field value."""
 
     @overload
@@ -2439,7 +2712,9 @@ class KnowledgeSource(_Model):
     """
 
     __mapping__: dict[str, _Model] = {}
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(
+        name="kind", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The kind of knowledge source. Required. \"labeledData\""""
 
     @overload
@@ -2476,11 +2751,17 @@ class LabeledDataKnowledgeSource(KnowledgeSource, discriminator="labeledData"):
 
     kind: Literal[KnowledgeSourceKind.LABELED_DATA] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """A blob container containing labeled data. Required. A labeled data knowledge source."""
-    container_url: str = rest_field(name="containerUrl", visibility=["read", "create", "update", "delete", "query"])
+    container_url: str = rest_field(
+        name="containerUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The URL of the blob container containing labeled data. Required."""
-    prefix: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    prefix: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """An optional prefix to filter blobs within the container."""
-    file_list_path: str = rest_field(name="fileListPath", visibility=["read", "create", "update", "delete", "query"])
+    file_list_path: str = rest_field(
+        name="fileListPath", visibility=["read", "create", "update", "delete", "query"]
+    )
     """An optional path to a file listing specific blobs to include. Required."""
 
     @overload
@@ -2524,7 +2805,9 @@ class NumberField(ContentField, discriminator="number"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.NUMBER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2576,7 +2859,9 @@ class ObjectField(ContentField, discriminator="object"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.OBJECT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2632,7 +2917,9 @@ class StringField(ContentField, discriminator="string"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2674,9 +2961,13 @@ class SupportedModels(_Model):
     :vartype embedding: list[str]
     """
 
-    completion: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    completion: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Chat completion models supported by the analyzer."""
-    embedding: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    embedding: Optional[list[str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Embedding models supported by the analyzer."""
 
     @overload
@@ -2718,7 +3009,9 @@ class TimeField(ContentField, discriminator="time"):
     """
 
     __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    type: str = rest_discriminator(
+        name="type", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Semantic data type of the field value. Required. Known values are: \"string\", \"date\",
      \"time\", \"number\", \"integer\", \"boolean\", \"array\", \"object\", and \"json\"."""
     field_type: Literal[ContentFieldType.TIME] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -2773,21 +3066,35 @@ class TranscriptPhrase(_Model):
     :vartype words: list[~azure.ai.contentunderstanding.models.TranscriptWord]
     """
 
-    speaker: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    speaker: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Speaker index or name."""
-    start_time_ms: int = rest_field(name="startTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    start_time_ms: int = rest_field(
+        name="startTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Start time of the phrase in milliseconds. Required."""
-    end_time_ms: int = rest_field(name="endTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    end_time_ms: int = rest_field(
+        name="endTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End time of the phrase in milliseconds. Required."""
-    locale: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    locale: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Detected locale of the phrase.  Ex. en-US."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Transcript text. Required."""
-    confidence: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    confidence: Optional[float] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Confidence of predicting the phrase."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the phrase in the markdown content."""
-    words: list["_models.TranscriptWord"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    words: list["_models.TranscriptWord"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of words in the phrase. Required."""
 
     @overload
@@ -2828,13 +3135,19 @@ class TranscriptWord(_Model):
     :vartype span: ~azure.ai.contentunderstanding.models.ContentSpan
     """
 
-    start_time_ms: int = rest_field(name="startTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    start_time_ms: int = rest_field(
+        name="startTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Start time of the word in milliseconds. Required."""
-    end_time_ms: int = rest_field(name="endTimeMs", visibility=["read", "create", "update", "delete", "query"])
+    end_time_ms: int = rest_field(
+        name="endTimeMs", visibility=["read", "create", "update", "delete", "query"]
+    )
     """End time of the word in milliseconds. Required."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Transcript text. Required."""
-    span: Optional["_models.ContentSpan"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    span: Optional["_models.ContentSpan"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Span of the word in the markdown content."""
 
     @overload
@@ -2886,17 +3199,20 @@ class UsageDetails(_Model):
     """
 
     document_pages_minimal: Optional[int] = rest_field(
-        name="documentPagesMinimal", visibility=["read", "create", "update", "delete", "query"]
+        name="documentPagesMinimal",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The number of document pages processed at the minimal level. For documents without explicit
      pages (ex. txt, html), every 3000 UTF-16 characters is counted as one page."""
     document_pages_basic: Optional[int] = rest_field(
-        name="documentPagesBasic", visibility=["read", "create", "update", "delete", "query"]
+        name="documentPagesBasic",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The number of document pages processed at the basic level. For documents without explicit pages
      (ex. txt, html), every 3000 UTF-16 characters is counted as one page."""
     document_pages_standard: Optional[int] = rest_field(
-        name="documentPagesStandard", visibility=["read", "create", "update", "delete", "query"]
+        name="documentPagesStandard",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The number of document pages processed at the standard level. For documents without explicit
      pages (ex. txt, html), every 3000 UTF-16 characters is counted as one page."""
@@ -2909,11 +3225,14 @@ class UsageDetails(_Model):
     )
     """The hours of video processed."""
     contextualization_tokens: Optional[int] = rest_field(
-        name="contextualizationTokens", visibility=["read", "create", "update", "delete", "query"]
+        name="contextualizationTokens",
+        visibility=["read", "create", "update", "delete", "query"],
     )
     """The number of contextualization tokens consumed for preparing context, generating confidence
      scores, source grounding, and output formatting."""
-    tokens: Optional[dict[str, int]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tokens: Optional[dict[str, int]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of LLM and embedding tokens consumed, grouped by model (ex. GTP 4.1) and type (ex.
      input, cached input, output)."""
 

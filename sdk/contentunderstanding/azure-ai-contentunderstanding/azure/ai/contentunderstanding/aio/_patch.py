@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from typing import TYPE_CHECKING, Any, IO, Optional, Union, overload
 from azure.core.tracing.decorator_async import distributed_trace_async
 
@@ -54,7 +55,9 @@ class ContentUnderstandingClient(GeneratedClient):
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> "AnalyzeAsyncLROPoller[_models.AnalyzeResult]":  # pyright: ignore[reportInvalidTypeArguments]
+    ) -> (
+        "AnalyzeAsyncLROPoller[_models.AnalyzeResult]"
+    ):  # pyright: ignore[reportInvalidTypeArguments]
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -89,7 +92,9 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> "AnalyzeAsyncLROPoller[_models.AnalyzeResult]":  # pyright: ignore[reportInvalidTypeArguments]
+    ) -> (
+        "AnalyzeAsyncLROPoller[_models.AnalyzeResult]"
+    ):  # pyright: ignore[reportInvalidTypeArguments]
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -122,7 +127,9 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> "AnalyzeAsyncLROPoller[_models.AnalyzeResult]":  # pyright: ignore[reportInvalidTypeArguments]
+    ) -> (
+        "AnalyzeAsyncLROPoller[_models.AnalyzeResult]"
+    ):  # pyright: ignore[reportInvalidTypeArguments]
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -157,7 +164,9 @@ class ContentUnderstandingClient(GeneratedClient):
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: Optional[str] = None,
         **kwargs: Any,
-    ) -> "AnalyzeAsyncLROPoller[_models.AnalyzeResult]":  # pyright: ignore[reportInvalidTypeArguments]
+    ) -> (
+        "AnalyzeAsyncLROPoller[_models.AnalyzeResult]"
+    ):  # pyright: ignore[reportInvalidTypeArguments]
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -192,7 +201,9 @@ class ContentUnderstandingClient(GeneratedClient):
         # Call parent implementation
         # Only pass body if it's not _Unset (let parent construct from inputs if not provided)
         # Ensure content_type is always a string (not None)
-        content_type_str: str = content_type if content_type is not None else "application/json"
+        content_type_str: str = (
+            content_type if content_type is not None else "application/json"
+        )
         if body is not _Unset:
             poller = await super().begin_analyze(  # pyright: ignore[reportCallIssue]
                 analyzer_id=analyzer_id,
@@ -214,7 +225,9 @@ class ContentUnderstandingClient(GeneratedClient):
             )
 
         # Wrap in custom poller with .operation_id property (without re-initializing)
-        return AnalyzeAsyncLROPoller.from_poller(poller)  # pyright: ignore[reportReturnType]
+        return AnalyzeAsyncLROPoller.from_poller(
+            poller
+        )  # pyright: ignore[reportReturnType]
 
     @distributed_trace_async
     async def begin_analyze_binary(
@@ -226,7 +239,9 @@ class ContentUnderstandingClient(GeneratedClient):
         content_type: str = "application/octet-stream",
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> "AnalyzeAsyncLROPoller[_models.AnalyzeResult]":  # pyright: ignore[reportInvalidTypeArguments]
+    ) -> (
+        "AnalyzeAsyncLROPoller[_models.AnalyzeResult]"
+    ):  # pyright: ignore[reportInvalidTypeArguments]
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -265,7 +280,9 @@ class ContentUnderstandingClient(GeneratedClient):
         )
 
         # Wrap in custom poller with .operation_id property (without re-initializing)
-        return AnalyzeAsyncLROPoller.from_poller(poller)  # pyright: ignore[reportReturnType]
+        return AnalyzeAsyncLROPoller.from_poller(
+            poller
+        )  # pyright: ignore[reportReturnType]
 
 
 def patch_sdk():
