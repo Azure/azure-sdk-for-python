@@ -72,7 +72,7 @@ steps:
         pwsh: true
         ScriptType: InlineScript
         Inline: >-
-          $env:TOX_PIP_IMPL="uv"
+          $env:TOX_PIP_IMPL="uv";
           $account = (Get-AzContext).Account;
           $env:AZURESUBSCRIPTION_CLIENT_ID = $account.Id;
           $env:AZURESUBSCRIPTION_TENANT_ID = $account.Tenants;
