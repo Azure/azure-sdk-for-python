@@ -6,13 +6,6 @@
 
   - Client `ContainerRegistryTasksMgmtClient` added method `send_request`
   - Model `AgentPoolUpdateParameters` added property `properties`
-  - Model `EncodedTaskRunRequest` added property `values_property`
-  - Model `EncodedTaskStep` added property `values_property`
-  - Model `EncodedTaskStepUpdateParameters` added property `values_property`
-  - Model `FileTaskRunRequest` added property `values_property`
-  - Model `FileTaskStep` added property `values_property`
-  - Model `FileTaskStepUpdateParameters` added property `values_property`
-  - Model `OverrideTaskStepProperties` added property `values_property`
   - Model `TaskRunUpdateParameters` added property `properties`
   - Model `TaskUpdateParameters` added property `properties`
   - Added model `AgentPoolPropertiesUpdateParameters`
