@@ -896,7 +896,7 @@ def build_blob_download_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["Range"] = _SERIALIZER.header("range", range, "str")
+        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if range_get_content_md5 is not None:
@@ -2183,7 +2183,7 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
         _headers["x-ms-content-crc64"] = _SERIALIZER.header(
             "transactional_content_crc64", transactional_content_crc64, "bytearray"
         )
-    _headers["Range"] = _SERIALIZER.header("range", range, "str")
+    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if encryption_key is not None:
@@ -2266,7 +2266,7 @@ def build_page_blob_clear_pages_request(
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
-    _headers["Range"] = _SERIALIZER.header("range", range, "str")
+    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if encryption_key is not None:
@@ -2475,7 +2475,7 @@ def build_page_blob_get_page_ranges_request(
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
-        _headers["Range"] = _SERIALIZER.header("range", range, "str")
+        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
@@ -2540,7 +2540,7 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
     if prev_snapshot_url is not None:
         _headers["x-ms-previous-snapshot-url"] = _SERIALIZER.header("prev_snapshot_url", prev_snapshot_url, "str")
     if range is not None:
-        _headers["Range"] = _SERIALIZER.header("range", range, "str")
+        _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
