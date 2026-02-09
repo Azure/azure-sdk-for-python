@@ -28,4 +28,4 @@
 
 ### Other Changes
 
-  - Initial version
+  - This package has been separated from [azure-mgmt-containerregistry](https://pypi.org/project/azure-mgmt-containerregistry)
