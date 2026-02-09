@@ -16,7 +16,7 @@ DESCRIPTION:
 USAGE: python hello_world_sample_entra_id_and_bleu.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_ENDPOINT: Endpoint URL for the Azure App Configuration store in Bleu cloud
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL for the Azure App Configuration store in Bleu cloud
        (e.g., https://<your-store-name>.azconfig.sovcloud-api.fr)
     2) AZURE_TENANT_ID: Your Azure tenant ID
     3) AZURE_CLIENT_ID: Your application (client) ID
