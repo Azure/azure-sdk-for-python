@@ -99,7 +99,7 @@ class FoundryCBAgent:
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
                  project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
-        project_endpoint = get_project_endpoint() or project_endpoint
+        project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
         AgentServerContext(create_tool_runtime(project_endpoint, self.credentials))
 
         async def runs_endpoint(request):
@@ -198,9 +198,14 @@ class FoundryCBAgent:
         self.app.add_middleware(AgentRunContextMiddleware, agent=self)
 
         @self.app.on_event("startup")
-        async def attach_appinsights_logger():
+        async def on_startup():
             import logging
 
+            # Log server started successfully
+            port = getattr(self, '_port', 'unknown')
+            logger.info(f"FoundryCBAgent server started successfully on port {port}")
+
+            # Attach App Insights handler to uvicorn loggers
             for handler in logger.handlers:
                 if handler.name == "appinsights_handler":
                     for logger_name in ["uvicorn", "uvicorn.error", "uvicorn.access"]:
@@ -348,6 +353,7 @@ class FoundryCBAgent:
         self.init_tracing()
         config = uvicorn.Config(self.app, host="0.0.0.0", port=port, loop="asyncio")
         server = uvicorn.Server(config)
+        self._port = port
         logger.info(f"Starting FoundryCBAgent server async on port {port}")
         await server.serve()
 
@@ -363,6 +369,7 @@ class FoundryCBAgent:
         :type port: int
         """
         self.init_tracing()
+        self._port = port
         logger.info(f"Starting FoundryCBAgent server on port {port}")
         uvicorn.run(self.app, host="0.0.0.0", port=port)
 

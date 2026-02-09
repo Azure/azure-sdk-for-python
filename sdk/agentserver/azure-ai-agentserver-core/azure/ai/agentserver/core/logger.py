@@ -42,9 +42,11 @@ def get_dimensions():
     return res
 
 
-def get_project_endpoint():
+def get_project_endpoint(logger=None):
     project_endpoint = os.environ.get(Constants.AZURE_AI_PROJECT_ENDPOINT)
     if project_endpoint:
+        if logger:
+            logger.info(f"Using project endpoint from {Constants.AZURE_AI_PROJECT_ENDPOINT}: {project_endpoint}")
         return project_endpoint
     project_resource_id = os.environ.get(Constants.AGENT_PROJECT_RESOURCE_ID)
     if project_resource_id:
@@ -52,35 +54,39 @@ def get_project_endpoint():
 
         parts = last_part.split("@")
         if len(parts) < 2:
-            print(f"invalid project resource id: {project_resource_id}")
+            if logger:
+                logger.warning(f"Invalid project resource id format: {project_resource_id}")
             return None
         account = parts[0]
         project = parts[1]
-        return f"https://{account}.services.ai.azure.com/api/projects/{project}"
-    print("environment variable AGENT_PROJECT_RESOURCE_ID not set.")
+        endpoint = f"https://{account}.services.ai.azure.com/api/projects/{project}"
+        if logger:
+            logger.info(f"Using project endpoint derived from {Constants.AGENT_PROJECT_RESOURCE_ID}: {endpoint}")
+        return endpoint
     return None
 
 
-def get_application_insights_connstr():
+def get_application_insights_connstr(logger=None):
     try:
         conn_str = os.environ.get(APPINSIGHT_CONNSTR_ENV_NAME)
         if not conn_str:
-            print(f"environment variable {APPINSIGHT_CONNSTR_ENV_NAME} not set.")
-            project_endpoint = get_project_endpoint()
+            project_endpoint = get_project_endpoint(logger=logger)
             if project_endpoint:
                 # try to get the project connected application insights
                 from azure.ai.projects import AIProjectClient
                 from azure.identity import DefaultAzureCredential
-
                 project_client = AIProjectClient(credential=DefaultAzureCredential(), endpoint=project_endpoint)
                 conn_str = project_client.telemetry.get_application_insights_connection_string()
-                if not conn_str:
-                    print(f"no connected application insights found for project:{project_endpoint}")
-                else:
+                if not conn_str and logger:
+                    logger.info(f"No Application Insights connection found for project: {project_endpoint}")
+                elif conn_str:
                     os.environ[APPINSIGHT_CONNSTR_ENV_NAME] = conn_str
+            elif logger:
+                logger.info("Application Insights not configured, telemetry export disabled.")
         return conn_str
     except Exception as e:
-        print(f"failed to get application insights with error: {e}")
+        if logger:
+            logger.warning(f"Failed to get Application Insights connection string, telemetry export disabled: {e}")
         return None
 
 
@@ -107,8 +113,9 @@ def configure(log_config: dict = default_log_config):
     """
     try:
         config.dictConfig(log_config)
+        app_logger = logging.getLogger("azure.ai.agentserver")
 
-        application_insights_connection_string = get_application_insights_connstr()
+        application_insights_connection_string = get_application_insights_connstr(logger=app_logger)
         enable_application_insights_logger = (
             os.environ.get(Constants.ENABLE_APPLICATION_INSIGHTS_LOGGER, "true").lower() == "true"
         )
@@ -137,7 +144,6 @@ def configure(log_config: dict = default_log_config):
             handler.addFilter(custom_filter)
 
             # Only add to azure.ai.agentserver namespace to avoid infrastructure logs
-            app_logger = logging.getLogger("azure.ai.agentserver")
             app_logger.setLevel(get_log_level())
             app_logger.addHandler(handler)
 
