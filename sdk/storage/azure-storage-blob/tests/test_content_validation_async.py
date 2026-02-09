@@ -143,30 +143,31 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         await self._teardown()
 
-    # @BlobPreparer()
-    # @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
-    # @GenericTestProxyParametrize1()
-    # @recorded_by_proxy_async
-    # async def test_upload_blob_substream(self, a, **kwargs):
-    #     storage_account_name = kwargs.pop("storage_account_name")
-    #
-    #     await self._setup(storage_account_name)
-    #     self.container._config.max_single_put_size = 512
-    #     self.container._config.max_block_size = 512
-    #     self.container._config.min_large_block_upload_threshold = 1  # Set less than block size to enable substream
-    #     blob = self.container.get_blob_client(self._get_blob_reference())
-    #     assert_method = assert_structured_message if a == 'crc64' else assert_content_md5
-    #
-    #     data = b'abc' * 512 + b'abcde'
-    #     io = BytesIO(data)
-    #
-    #     # Act
-    #     await blob.upload_blob(io, validate_content=a, raw_request_hook=assert_method)
-    #
-    #     # Assert
-    #     content = await blob.download_blob()
-    #     assert await content.read() == data
-    #     await self._teardown()
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_upload_blob_substream(self, a, **kwargs):
+        # Substream is disabled when using content validation so this will behave like regular upload (buffer)
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        self.container._config.max_single_put_size = 512
+        self.container._config.max_block_size = 512
+        self.container._config.min_large_block_upload_threshold = 1  # Set less than block size to enable substream
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+
+        data = b'abc' * 512 + b'abcde'
+        io = BytesIO(data)
+
+        # Act
+        await blob.upload_blob(io, validate_content=a, raw_request_hook=assert_method)
+
+        # Assert
+        content = await blob.download_blob()
+        assert await content.read() == data
+        await self._teardown()
 
     @BlobPreparer()
     @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
