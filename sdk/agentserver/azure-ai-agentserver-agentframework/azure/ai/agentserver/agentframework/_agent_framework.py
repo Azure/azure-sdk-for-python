@@ -185,10 +185,12 @@ class AgentFrameworkAgent(FoundryCBAgent):
         """
         if self._thread_repository:
             conversation_id = context.conversation_id
-            agent_thread = await self._thread_repository.get(conversation_id)
+            agent_thread = await self._thread_repository.get(conversation_id, agent=agent)
             if agent_thread:
                 logger.info(f"Loaded agent thread for conversation: {conversation_id}")
                 return agent_thread
+            if self._thread_repository.message_store:
+                return AgentThread(message_store=self._thread_repository.message_store)
             return agent.get_new_thread()
         return None
 

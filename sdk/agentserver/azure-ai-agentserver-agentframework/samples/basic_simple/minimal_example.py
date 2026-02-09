@@ -4,11 +4,13 @@ from random import randint
 from typing import Annotated
 
 from agent_framework.azure import AzureOpenAIChatClient
-from azure.identity import DefaultAzureCredential
+from azure.identity import DefaultAzureCredential   
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
 from dotenv import load_dotenv
 load_dotenv()
 
 from azure.ai.agentserver.agentframework import from_agent_framework
+from azure.ai.agentserver.agentframework.persistence._foundry_thread_repository import FoundryConversationThreadRepository
 
 
 
@@ -25,8 +27,11 @@ def main() -> None:
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )
-
-    from_agent_framework(agent).run()
+    repo = FoundryConversationThreadRepository(
+        agent=agent,
+        project_endpoint="https://lusuaihub5218927825.cognitiveservices.azure.com/",
+        credential=AsyncDefaultTokenCredential())
+    from_agent_framework(agent, thread_repository=None).run()
 
 
 if __name__ == "__main__":
