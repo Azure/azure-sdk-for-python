@@ -52,7 +52,7 @@ with (
 ):
 
     print("Creating a single evaluator version - Code based (json style)")
-    code_evaluator = project_client.evaluators.create_version(
+    code_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_code",
         evaluator_version={
             "name": "my_custom_evaluator_code",
@@ -200,7 +200,7 @@ with (
         print("Waiting for evaluation run to complete...")
 
     print("Deleting the created evaluator version")
-    project_client.evaluators.delete_version(
+    project_client.beta.evaluators.delete_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
         foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW,

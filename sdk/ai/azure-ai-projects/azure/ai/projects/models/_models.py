@@ -11090,9 +11090,9 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
      list of tool definitions might look like:
      .. code-block:: json
      [
-     { "type": "function", "name": "get_weather" },
-     { "type": "mcp", "server_label": "deepwiki" },
-     { "type": "image_generation" }
+     { \"type\": \"function\", \"name\": \"get_weather\" },
+     { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+     { \"type\": \"image_generation\" }
      ]. Required."""
 
     @overload

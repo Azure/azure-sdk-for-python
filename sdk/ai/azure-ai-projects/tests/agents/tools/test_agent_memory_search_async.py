@@ -61,7 +61,7 @@ class TestAgentMemorySearchAsync(TestBase):
             # in live mode so we don't get logs of this call in test recordings.
             if is_live_and_not_recording():
                 try:
-                    await project_client.memory_stores.delete(
+                    await project_client.beta.memory_stores.delete(
                         memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
                     )
                     print(f"Memory store `{memory_store_name}` deleted")
@@ -75,7 +75,7 @@ class TestAgentMemorySearchAsync(TestBase):
                     embedding_model=embedding_model,
                     options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True),
                 )
-                memory_store = await project_client.memory_stores.create(
+                memory_store = await project_client.beta.memory_stores.create(
                     name=memory_store_name,
                     description="Test memory store for agent conversations",
                     definition=definition,
@@ -189,7 +189,7 @@ class TestAgentMemorySearchAsync(TestBase):
 
                 if memory_store:
                     try:
-                        await project_client.memory_stores.delete(
+                        await project_client.beta.memory_stores.delete(
                             memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
                         )
                         print("Memory store deleted")
