@@ -107,6 +107,8 @@ jobs:
         run: |
           python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
+        env:
+          TOX_PIP_IMPL: "pip"
 
   dev-setup-and-import:
     runs-on: ubuntu-latest

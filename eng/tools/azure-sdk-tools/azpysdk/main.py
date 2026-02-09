@@ -132,10 +132,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         parser.print_help()
         return 1
 
-    # default to uv if available
-    uv_path = shutil.which("uv")
-    if uv_path:
-        os.environ["TOX_PIP_IMPL"] = "uv"
+    # default to uv if available, but respect an explicit TOX_PIP_IMPL setting
+    if "TOX_PIP_IMPL" not in os.environ:
+        uv_path = shutil.which("uv")
+        if uv_path:
+            os.environ["TOX_PIP_IMPL"] = "uv"
 
     try:
         result = args.func(args)
