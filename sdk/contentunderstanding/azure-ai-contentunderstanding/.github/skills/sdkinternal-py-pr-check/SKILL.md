@@ -1,5 +1,5 @@
 ---
-name: sdkinternal-py-sdk-pr-check
+name: sdkinternal-py-pr-check
 description: "Run all required CI checks before creating a PR for the azure-ai-contentunderstanding SDK. Use this skill to validate code quality, type checking, documentation, and tests before submitting changes."
 ---
 
