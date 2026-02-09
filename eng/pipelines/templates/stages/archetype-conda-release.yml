@@ -39,7 +39,7 @@ stages:
                       versionSpec: '3.12'
 
                   - pwsh: |
-                      Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}
+                      Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}} -Filter "*.conda"
                     workingDirectory: $(Pipeline.Workspace)
                     displayName: Output Visible Conda Artifacts
 
