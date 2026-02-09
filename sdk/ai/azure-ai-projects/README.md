@@ -162,7 +162,6 @@ with project_client.get_openai_client() as openai_client:
     response = openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
     )
     print(f"Response output: {response.output_text}")
 
@@ -175,7 +174,6 @@ with project_client.get_openai_client() as openai_client:
     response = openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
     )
     print(f"Response output: {response.output_text}")
 
