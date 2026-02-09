@@ -12,7 +12,13 @@ from ._patch_datasets import DatasetsOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
-from ._operations import BetaOperations as GenerateBetaOperations
+from ._operations import (
+    BetaEvaluatorsOperations,
+    BetaInsightsOperations,
+    BetaOperations as GenerateBetaOperations,
+    BetaRedTeamsOperations,
+    BetaSchedulesOperations,
+)
 
 
 class BetaOperations(GenerateBetaOperations):
@@ -34,11 +40,15 @@ class BetaOperations(GenerateBetaOperations):
 
 
 __all__: List[str] = [
-    "TelemetryOperations",
-    "DatasetsOperations",
-    "ConnectionsOperations",
+    "BetaEvaluatorsOperations",
+    "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
     "BetaOperations",
+    "BetaRedTeamsOperations",
+    "BetaSchedulesOperations",
+    "ConnectionsOperations",
+    "DatasetsOperations",
+    "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 
