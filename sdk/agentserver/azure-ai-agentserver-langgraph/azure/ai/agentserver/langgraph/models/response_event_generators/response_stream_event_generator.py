@@ -43,6 +43,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             "id": context.agent_run.response_id,
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": self.aggregated_contents
         }
         created_event = project_models.ResponseCreatedEvent(
             response=project_models.Response(response_dict),
@@ -58,6 +59,7 @@ class ResponseStreamEventGenerator(ResponseEventGenerator):
             "id": context.agent_run.response_id,
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": self.aggregated_contents
         }
         in_progress_event = project_models.ResponseInProgressEvent(
             response=project_models.Response(response_dict),

@@ -274,6 +274,7 @@ class FoundryCBAgent:
             "metadata": context.request.get("metadata"),
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": []
         })
         yield project_models.ResponseCreatedEvent(sequence_number=sequence_number, response=response)
         sequence_number += 1
@@ -286,6 +287,7 @@ class FoundryCBAgent:
             "metadata": context.request.get("metadata"),
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": []
         })
         yield project_models.ResponseInProgressEvent(sequence_number=sequence_number, response=response)
 
