@@ -1213,6 +1213,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1284,6 +1285,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1354,6 +1356,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1424,6 +1427,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1498,6 +1502,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1573,6 +1578,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1647,6 +1653,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1721,6 +1728,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1799,6 +1807,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_off_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1878,6 +1887,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_on_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1956,6 +1966,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_off_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2034,6 +2045,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_on_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2116,6 +2128,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -2198,6 +2211,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -2280,6 +2294,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2362,6 +2377,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
