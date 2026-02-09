@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,39 +9,46 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import MachineLearningServicesClientConfiguration
-from .operations import IndexesOperations
+from .operations import DeploymentTemplatesOperations, IndexesOperations, PromptsOperations
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class MachineLearningServicesClient:  # pylint: disable=client-accepts-api-version-keyword
+class MachineLearningServicesClient:
     """MachineLearningServicesClient.
 
+    :ivar deployment_templates: DeploymentTemplatesOperations operations
+    :vartype deployment_templates:
+     azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.aio.operations.DeploymentTemplatesOperations
     :ivar indexes: IndexesOperations operations
-    :vartype indexes: azureaiassetsv20240401.aio.operations.IndexesOperations
+    :vartype indexes:
+     azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.aio.operations.IndexesOperations
+    :ivar prompts: PromptsOperations operations
+    :vartype prompts:
+     azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.aio.operations.PromptsOperations
     :param endpoint: Supported Azure-AI asset endpoints. Required.
     :type endpoint: str
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param resource_group_name: The name of the Resource Group. Required.
     :type resource_group_name: str
-    :param workspace_name: The name of the AzureML workspace or AI project. Required.
-    :type workspace_name: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-04-01-preview". Note that overriding this default value may result in unsupported
+     "2024-05-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -48,19 +56,18 @@ class MachineLearningServicesClient:  # pylint: disable=client-accepts-api-versi
         endpoint: str,
         subscription_id: str,
         resource_group_name: str,
-        workspace_name: str,
         credential: "AsyncTokenCredential",
         **kwargs: Any
     ) -> None:
-        _endpoint = "{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}"  # pylint: disable=line-too-long
+        _endpoint = "{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices"
         self._config = MachineLearningServicesClientConfiguration(
             endpoint=endpoint,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
             credential=credential,
             **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -83,7 +90,11 @@ class MachineLearningServicesClient:  # pylint: disable=client-accepts-api-versi
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.deployment_templates = DeploymentTemplatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.prompts = PromptsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
@@ -107,12 +118,11 @@ class MachineLearningServicesClient:  # pylint: disable=client-accepts-api-versi
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "subscriptionId": self._serialize.url("self._config.subscription_id", self._config.subscription_id, "str"),
             "resourceGroupName": self._serialize.url(
                 "self._config.resource_group_name", self._config.resource_group_name, "str"
             ),
-            "workspaceName": self._serialize.url("self._config.workspace_name", self._config.workspace_name, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
@@ -121,7 +131,7 @@ class MachineLearningServicesClient:  # pylint: disable=client-accepts-api-versi
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "MachineLearningServicesClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 
