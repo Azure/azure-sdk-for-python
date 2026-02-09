@@ -637,15 +637,21 @@ class TestRAIServiceScorer:
         mock_message = MagicMock()
         mock_message.message_pieces = [mock_piece]
 
-        mock_eval_result = {
-            "violence_score": 5,
-            "violence_reason": "Contains violent content",
-            "violence_threshold": 3,
-            "violence": "high",
-        }
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=5,
+                reason="Contains violent content",
+                threshold=3,
+                passed=False,
+                label="high",
+            )
+        ]
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
             new_callable=AsyncMock,
         ) as mock_eval:
             mock_eval.return_value = mock_eval_result
@@ -679,15 +685,21 @@ class TestRAIServiceScorer:
         mock_message = MagicMock()
         mock_message.message_pieces = [mock_piece]
 
-        mock_eval_result = {
-            "violence_score": 1,
-            "violence_reason": "No harmful content",
-            "violence_threshold": 3,
-            "violence": "low",
-        }
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=1,
+                reason="No harmful content",
+                threshold=3,
+                passed=True,
+                label="low",
+            )
+        ]
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
             new_callable=AsyncMock,
         ) as mock_eval:
             mock_eval.return_value = mock_eval_result
@@ -721,7 +733,7 @@ class TestRAIServiceScorer:
         mock_message.message_pieces = [mock_piece]
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
             new_callable=AsyncMock,
         ) as mock_eval:
             mock_eval.side_effect = Exception("RAI service error")
@@ -1917,15 +1929,21 @@ class TestRAIServiceScorerExtended:
         mock_message = MagicMock()
         mock_message.message_pieces = [mock_piece]
 
-        mock_eval_result = {
-            "violence_score": 4,
-            "violence_reason": "Contains concerning content",
-            "violence_threshold": 3,
-            "violence": "medium",
-        }
+        mock_eval_result = MagicMock()
+        mock_eval_result.results = [
+            MagicMock(
+                name="violence",
+                metric="violence",
+                score=4,
+                reason="Contains concerning content",
+                threshold=3,
+                passed=False,
+                label="medium",
+            )
+        ]
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
             new_callable=AsyncMock,
         ) as mock_eval:
             mock_eval.return_value = mock_eval_result
@@ -1966,15 +1984,21 @@ class TestRAIServiceScorerExtended:
             mock_message = MagicMock()
             mock_message.message_pieces = [mock_piece]
 
-            mock_eval_result = {
-                f"{risk_cat.value}_score": 2,
-                f"{risk_cat.value}_reason": "Test reason",
-                f"{risk_cat.value}_threshold": 3,
-                risk_cat.value: "low",
-            }
+            mock_eval_result = MagicMock()
+            mock_eval_result.results = [
+                MagicMock(
+                    name=risk_cat.value,
+                    metric=risk_cat.value,
+                    score=2,
+                    reason="Test reason",
+                    threshold=3,
+                    passed=True,
+                    label="low",
+                )
+            ]
 
             with patch(
-                "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
+                "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
                 new_callable=AsyncMock,
             ) as mock_eval:
                 mock_eval.return_value = mock_eval_result
@@ -2866,7 +2890,7 @@ class TestASRScoringErrorRegression:
         mock_message.message_pieces = [mock_piece]
 
         with patch(
-            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service",
+            "azure.ai.evaluation.red_team._foundry._rai_scorer.evaluate_with_rai_service_sync",
             new_callable=AsyncMock,
         ) as mock_eval:
             mock_eval.side_effect = Exception("Service unavailable")

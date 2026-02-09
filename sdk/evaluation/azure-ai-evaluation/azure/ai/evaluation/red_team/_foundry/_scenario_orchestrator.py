@@ -208,7 +208,7 @@ class ScenarioOrchestrator:
         strategy_stats: Dict[str, Dict[str, int]] = {}
 
         for result in results:
-            strategy_name = result.attack_identifier.get("__type__", "Unknown")
+            strategy_name = (result.attack_identifier or {}).get("__type__", "Unknown")
 
             if strategy_name not in strategy_stats:
                 strategy_stats[strategy_name] = {"decided": 0, "successful": 0}
