@@ -769,6 +769,9 @@ __all__ = [
     "ToolType",
     "TreatmentEffectType",
     "TriggerType",
+    "ApiType",
+    "ApiCenterApi",
+    "ApiCenterMcpServer",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

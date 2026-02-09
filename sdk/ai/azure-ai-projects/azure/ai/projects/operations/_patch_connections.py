@@ -73,6 +73,177 @@ class ConnectionsOperations(ConnectionsOperationsGenerated):
         return super()._get(name, **kwargs)
 
     @distributed_trace
+    def list_api_center_apis(
+        self,
+        connection_name: str,
+        *,
+        api_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> list:
+        """List APIs from an Azure API Center connection.
+
+        :param connection_name: The name of the API Center connection. Required.
+        :type connection_name: str
+        :keyword api_type: Filter APIs by type (e.g., "mcp", "rest", "graphql"). Optional.
+        :paramtype api_type: Optional[str]
+        :return: List of APIs from the API Center.
+        :rtype: list[~azure.ai.projects.models.ApiCenterApi]
+        :raises ValueError: If the connection is not found or is not an API Center connection.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        from ..models._patch import ApiCenterApi
+        
+        # Get the connection to validate it exists and get its target URL
+        connection = self.get(connection_name, **kwargs)
+        
+        if not connection.target:
+            raise ValueError(f"Connection '{connection_name}' does not have a target URL.")
+        
+        # Construct API Center REST API endpoint
+        # Format: {api_center_url}/apis?api-version=2024-03-01
+        api_center_url = connection.target.rstrip("/")
+        url = f"{api_center_url}/apis"
+        
+        # Make request to list APIs
+        from azure.core.rest import HttpRequest
+        request = HttpRequest(
+            method="GET",
+            url=url,
+            params={"api-version": "2024-03-01"}
+        )
+        
+        pipeline_response = self._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
+        response = pipeline_response.http_response
+        
+        if response.status_code != 200:
+            from azure.core.exceptions import HttpResponseError
+            raise HttpResponseError(response=response)
+        
+        # Parse response
+        data = response.json()
+        apis = []
+        
+        for api_data in data.get("value", []):
+            api_kind = api_data.get("properties", {}).get("kind", "")
+            
+            # Filter by type if specified
+            if api_type and api_kind.lower() != api_type.lower():
+                continue
+            
+            api = ApiCenterApi(
+                id=api_data.get("id", ""),
+                name=api_data.get("name", ""),
+                type=api_kind,
+                title=api_data.get("properties", {}).get("title"),
+                description=api_data.get("properties", {}).get("description"),
+                kind=api_kind,
+                metadata=api_data.get("properties", {})
+            )
+            apis.append(api)
+        
+        return apis
+
+    @distributed_trace
+    def list_api_center_mcp_servers(
+        self,
+        connection_name: str,
+        **kwargs: Any
+    ) -> list:
+        """List MCP servers from an Azure API Center connection.
+
+        :param connection_name: The name of the API Center connection. Required.
+        :type connection_name: str
+        :return: List of MCP servers from the API Center.
+        :rtype: list[~azure.ai.projects.models.ApiCenterMcpServer]
+        :raises ValueError: If the connection is not found or is not an API Center connection.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        from ..models._patch import ApiCenterMcpServer
+        
+        # Get all APIs and filter for MCP type
+        all_apis = self.list_api_center_apis(connection_name, api_type="mcp", **kwargs)
+        
+        # Convert to MCP server objects
+        mcp_servers = []
+        for api in all_apis:
+            server_url = api.metadata.get("serverUrl") or api.metadata.get("server_url")
+            connector_id = api.metadata.get("connectorId") or api.metadata.get("connector_id")
+            
+            mcp_server = ApiCenterMcpServer(
+                id=api.id,
+                name=api.name,
+                server_url=server_url,
+                title=api.title,
+                description=api.description,
+                connector_id=connector_id,
+                metadata=api.metadata
+            )
+            mcp_servers.append(mcp_server)
+        
+        return mcp_servers
+
+    @distributed_trace
+    def get_api_center_api(
+        self,
+        connection_name: str,
+        api_name: str,
+        **kwargs: Any
+    ) -> Any:
+        """Get a specific API from an Azure API Center connection.
+
+        :param connection_name: The name of the API Center connection. Required.
+        :type connection_name: str
+        :param api_name: The name of the API to retrieve. Required.
+        :type api_name: str
+        :return: The API from the API Center.
+        :rtype: ~azure.ai.projects.models.ApiCenterApi
+        :raises ValueError: If the connection or API is not found.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        from ..models._patch import ApiCenterApi
+        
+        # Get the connection to validate it exists and get its target URL
+        connection = self.get(connection_name, **kwargs)
+        
+        if not connection.target:
+            raise ValueError(f"Connection '{connection_name}' does not have a target URL.")
+        
+        # Construct API Center REST API endpoint for specific API
+        api_center_url = connection.target.rstrip("/")
+        url = f"{api_center_url}/apis/{api_name}"
+        
+        # Make request to get API
+        from azure.core.rest import HttpRequest
+        request = HttpRequest(
+            method="GET",
+            url=url,
+            params={"api-version": "2024-03-01"}
+        )
+        
+        pipeline_response = self._client._pipeline.run(request, **kwargs)  # pylint: disable=protected-access
+        response = pipeline_response.http_response
+        
+        if response.status_code != 200:
+            from azure.core.exceptions import HttpResponseError
+            raise HttpResponseError(response=response)
+        
+        # Parse response
+        api_data = response.json()
+        api_kind = api_data.get("properties", {}).get("kind", "")
+        
+        api = ApiCenterApi(
+            id=api_data.get("id", ""),
+            name=api_data.get("name", ""),
+            type=api_kind,
+            title=api_data.get("properties", {}).get("title"),
+            description=api_data.get("properties", {}).get("description"),
+            kind=api_kind,
+            metadata=api_data.get("properties", {})
+        )
+        
+        return api
+
+    @distributed_trace
     def get_default(
         self, connection_type: Union[str, ConnectionType], *, include_credentials: Optional[bool] = False, **kwargs: Any
     ) -> Connection:

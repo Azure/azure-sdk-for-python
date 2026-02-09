@@ -281,12 +281,122 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+class ApiType:
+    """API type enumeration for API Center resources."""
+    
+    MCP = "mcp"
+    """Model Context Protocol (MCP) server"""
+    REST = "rest"
+    """REST API"""
+    GRAPHQL = "graphql"
+    """GraphQL API"""
+    GRPC = "grpc"
+    """gRPC API"""
+    WEBHOOK = "webhook"
+    """Webhook API"""
+    SOAP = "soap"
+    """SOAP API"""
+    WEBSOCKET = "websocket"
+    """WebSocket API"""
+
+
+class ApiCenterApi:
+    """Represents an API from Azure API Center.
+    
+    :ivar id: The API identifier
+    :vartype id: str
+    :ivar name: The API name
+    :vartype name: str
+    :ivar type: The API type (MCP, REST, GraphQL, etc.)
+    :vartype type: str
+    :ivar title: The API title/display name
+    :vartype title: Optional[str]
+    :ivar description: The API description
+    :vartype description: Optional[str]
+    :ivar kind: The API kind
+    :vartype kind: Optional[str]
+    :ivar metadata: Additional API metadata
+    :vartype metadata: Optional[Dict[str, Any]]
+    """
+    
+    def __init__(
+        self,
+        *,
+        id: str,
+        name: str,
+        type: str,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        kind: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ):
+        self.id = id
+        self.name = name
+        self.type = type
+        self.title = title
+        self.description = description
+        self.kind = kind
+        self.metadata = metadata or {}
+        self._additional_properties = kwargs
+    
+    def __repr__(self) -> str:
+        return f"ApiCenterApi(id={self.id!r}, name={self.name!r}, type={self.type!r})"
+
+
+class ApiCenterMcpServer:
+    """Represents an MCP server from Azure API Center.
+    
+    :ivar id: The MCP server identifier
+    :vartype id: str
+    :ivar name: The MCP server name
+    :vartype name: str
+    :ivar server_url: The MCP server URL
+    :vartype server_url: Optional[str]
+    :ivar title: The MCP server title/display name
+    :vartype title: Optional[str]
+    :ivar description: The MCP server description
+    :vartype description: Optional[str]
+    :ivar connector_id: Service connector identifier
+    :vartype connector_id: Optional[str]
+    :ivar metadata: Additional server metadata
+    :vartype metadata: Optional[Dict[str, Any]]
+    """
+    
+    def __init__(
+        self,
+        *,
+        id: str,
+        name: str,
+        server_url: Optional[str] = None,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        connector_id: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        **kwargs: Any
+    ):
+        self.id = id
+        self.name = name
+        self.server_url = server_url
+        self.title = title
+        self.description = description
+        self.connector_id = connector_id
+        self.metadata = metadata or {}
+        self._additional_properties = kwargs
+    
+    def __repr__(self) -> str:
+        return f"ApiCenterMcpServer(id={self.id!r}, name={self.name!r}, server_url={self.server_url!r})"
+
+
 __all__: List[str] = [
     "CustomCredential",
     "UpdateMemoriesLROPollingMethod",
     "AsyncUpdateMemoriesLROPollingMethod",
     "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "ApiType",
+    "ApiCenterApi",
+    "ApiCenterMcpServer",
 ]  # Add all objects you want publicly available to users at this package level
 
 
