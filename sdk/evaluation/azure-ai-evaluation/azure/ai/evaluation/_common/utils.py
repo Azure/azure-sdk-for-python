@@ -573,11 +573,31 @@ def validate_conversation(conversation):
 
 
 def _extract_text_from_content(content):
+    """Extract text from content which can be a string or a list of content parts.
+    
+    :param content: Content to extract text from (string or list of dicts)
+    :type content: Union[str, List[Dict]]
+    :return: Extracted text as a string
+    :rtype: str
+    """
+    # If content is already a string, return it
+    if isinstance(content, str):
+        return content
+    
+    # If content is not iterable (e.g., None, int), convert to string
+    if not isinstance(content, (list, tuple)):
+        return str(content) if content is not None else ""
+    
+    # Extract text from list of content parts
     text = []
     for msg in content:
-        if "text" in msg:
-            text.append(msg["text"])
-    return text
+        if isinstance(msg, dict):
+            if "text" in msg:
+                text.append(msg["text"])
+        elif isinstance(msg, str):
+            text.append(msg)
+    
+    return " ".join(text) if text else ""
 
 
 def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
@@ -588,13 +608,20 @@ def filter_to_used_tools(tool_definitions, msgs_lists, logger=None):
         for msgs in msgs_lists:
             for msg in msgs:
                 if msg.get("role") == "assistant" and "content" in msg:
-                    for content in msg.get("content", []):
-                        if content.get("type") == "tool_call":
+                    content = msg.get("content", [])
+                    # Handle both string and list content types
+                    if isinstance(content, str):
+                        continue  # String content doesn't contain tool calls
+                    if not isinstance(content, list):
+                        continue  # Skip non-list, non-string content
+                    
+                    for content_item in content:
+                        if content_item.get("type") == "tool_call":
                             any_tools_used = True
-                            if "tool_call" in content and "function" in content["tool_call"]:
-                                used_tool_names.add(content["tool_call"]["function"])
-                            elif "name" in content:
-                                used_tool_names.add(content["name"])
+                            if "tool_call" in content_item and "function" in content_item["tool_call"]:
+                                used_tool_names.add(content_item["tool_call"]["function"])
+                            elif "name" in content_item:
+                                used_tool_names.add(content_item["name"])
 
         filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
         if any_tools_used and not filtered_tools:
