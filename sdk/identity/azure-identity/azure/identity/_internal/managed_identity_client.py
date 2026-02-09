@@ -12,7 +12,7 @@ from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
