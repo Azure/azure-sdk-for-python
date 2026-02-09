@@ -12,12 +12,33 @@ from ._patch_datasets import DatasetsOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
+from ._operations import BetaOperations as GenerateBetaOperations
+
+
+class BetaOperations(GenerateBetaOperations):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`beta` attribute.
+    """
+
+    memory_stores: BetaMemoryStoresOperations  # type override for mypy
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        # Override memory_stores with the patched version that has begin_update_memories
+        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+
 
 __all__: List[str] = [
     "TelemetryOperations",
     "DatasetsOperations",
     "ConnectionsOperations",
     "BetaMemoryStoresOperations",
+    "BetaOperations",
 ]  # Add all objects you want publicly available to users at this package level
 
 

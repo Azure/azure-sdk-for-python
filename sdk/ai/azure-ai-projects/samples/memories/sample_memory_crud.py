@@ -83,7 +83,9 @@ with (
 
     # List Memory Store
     memory_stores = list(
-        project_client.beta.memory_stores.list(limit=10, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW)
+        project_client.beta.memory_stores.list(
+            limit=10, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
     )
     print(f"Found {len(memory_stores)} memory stores")
     for store in memory_stores:
