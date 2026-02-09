@@ -1,10 +1,6 @@
 ## Release History
 
-### 4.15.0b3 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.15.0 (2026-02-10)
 
 #### Bugs Fixed
 * Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
@@ -13,6 +9,20 @@
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
 
+### 4.14.6 (2026-02-02)
+
+#### Bugs Fixed
+* Fixed async client crash (`AttributeError: 'NoneType' object has no attribute '_WritableLocations'`) during region discovery when `database_account` was `None`. See [PR 44939](https://github.com/Azure/azure-sdk-for-python/pull/44939)
+
+### 4.14.5 (2026-01-15)
+
+#### Bugs Fixed
+* Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error.See [PR 44659](https://github.com/Azure/azure-sdk-for-python/pull/44649)
+
+### 4.14.4 (2026-01-12)
+
+#### Bugs Fixed
+* Fixed bug where sdk was not properly retrying requests in some edge cases after partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
 
 ### 4.15.0b2 (2025-12-16)
 
