@@ -455,7 +455,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         expanded_settings: List[ConfigurationSetting] = []
 
         for setting in configuration_settings:
-            if setting.content_type and SNAPSHOT_REF_CONTENT_TYPE in setting.content_type:
+            if SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
                 # Check if this is a snapshot reference
 
                 # Track snapshot reference usage for telemetry

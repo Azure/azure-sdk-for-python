@@ -439,7 +439,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         expanded_settings: List[ConfigurationSetting] = []
 
         for setting in configuration_settings:
-            if setting.content_type and SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
+            if SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
                 # Check if this is a snapshot reference
 
                 # Track snapshot reference usage for telemetry
@@ -451,13 +451,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     snapshot_configuration_list = list(snapshot_settings.values())
                     expanded_settings.extend(snapshot_configuration_list)
                 except (ValueError, AzureError) as e:
+                    # Continue processing other settings even if snapshot resolution fails
                     logger.warning(
                         "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
                         setting.key,
                         setting.label,
                         str(e),
                     )
-                    # Continue processing other settings even if snapshot resolution fails
             else:
                 expanded_settings.append(setting)
 
