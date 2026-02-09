@@ -41,6 +41,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 
 opentelemetry_version = ""
 
+# Workaround for missing version file
 from importlib.metadata import version
 
 opentelemetry_version = version("opentelemetry-sdk")
