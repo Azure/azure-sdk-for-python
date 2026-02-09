@@ -567,13 +567,15 @@ class _ServiceClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_service_get_account_info_request(
             timeout=timeout,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -859,9 +861,10 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_create_request(
@@ -870,6 +873,7 @@ class _ContainerClientOperationsMixin(
             access=access,
             default_encryption_scope=default_encryption_scope,
             prevent_encryption_scope_override=prevent_encryption_scope_override,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -933,14 +937,16 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_get_properties_request(
             timeout=timeout,
             lease_id=lease_id,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -1036,9 +1042,10 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_delete_request(
@@ -1046,6 +1053,7 @@ class _ContainerClientOperationsMixin(
             lease_id=lease_id,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -1085,16 +1093,14 @@ class _ContainerClientOperationsMixin(
     async def set_metadata(
         self,
         *,
-        metadata: str,
         timeout: Optional[int] = None,
         lease_id: Optional[str] = None,
+        metadata: Optional[str] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified container.
 
-        :keyword metadata: The metadata headers. Required.
-        :paramtype metadata: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -1102,6 +1108,8 @@ class _ContainerClientOperationsMixin(
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: str
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -1117,16 +1125,18 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_set_metadata_request(
-            metadata=metadata,
             timeout=timeout,
             lease_id=lease_id,
+            metadata=metadata,
             if_modified_since=if_modified_since,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -1384,15 +1394,17 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_restore_request(
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             timeout=timeout,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -1461,15 +1473,17 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_rename_request(
             source_container_name=source_container_name,
             source_lease_id=source_lease_id,
             timeout=timeout,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -1833,10 +1847,11 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_release_lease_request(
@@ -1844,6 +1859,7 @@ class _ContainerClientOperationsMixin(
             timeout=timeout,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -1919,10 +1935,11 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_renew_lease_request(
@@ -1930,6 +1947,7 @@ class _ContainerClientOperationsMixin(
             timeout=timeout,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -2012,10 +2030,11 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_break_lease_request(
@@ -2023,6 +2042,7 @@ class _ContainerClientOperationsMixin(
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             break_period=break_period,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -2102,10 +2122,11 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_change_lease_request(
@@ -2114,6 +2135,7 @@ class _ContainerClientOperationsMixin(
             timeout=timeout,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -2417,13 +2439,15 @@ class _ContainerClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_get_account_info_request(
             timeout=timeout,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3117,9 +3141,10 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_delete_request(
@@ -3136,6 +3161,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             access_tier_if_unmodified_since=access_tier_if_unmodified_since,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3191,13 +3217,15 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_undelete_request(
             timeout=timeout,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3265,15 +3293,17 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_expiry_request(
             expiry_options=expiry_options,
             timeout=timeout,
             expires_on=expires_on,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3390,9 +3420,10 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_http_headers_request(
@@ -3409,6 +3440,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3498,9 +3530,10 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_immutability_policy_request(
@@ -3510,6 +3543,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             immutability_policy_mode=immutability_policy_mode,
             snapshot=snapshot,
             version_id=version_id,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3588,15 +3622,17 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_delete_immutability_policy_request(
             timeout=timeout,
             snapshot=snapshot,
             version_id=version_id,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3672,9 +3708,10 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_legal_hold_request(
@@ -3682,6 +3719,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             timeout=timeout,
             snapshot=snapshot,
             version_id=version_id,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3722,8 +3760,8 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def set_metadata(  # pylint: disable=too-many-locals
         self,
         *,
-        metadata: str,
         timeout: Optional[int] = None,
+        metadata: Optional[str] = None,
         lease_id: Optional[str] = None,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
@@ -3739,12 +3777,12 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         """The Set Metadata operation sets user-defined metadata for the specified blob as one or more
         name-value pairs.
 
-        :keyword metadata: The metadata headers. Required.
-        :paramtype metadata: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: str
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
@@ -3798,14 +3836,15 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_metadata_request(
-            metadata=metadata,
             timeout=timeout,
+            metadata=metadata,
             lease_id=lease_id,
             encryption_key=encryption_key,
             encryption_key_sha256=encryption_key_sha256,
@@ -3816,6 +3855,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4032,10 +4072,11 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_release_lease_request(
@@ -4046,6 +4087,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -4138,10 +4180,11 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_renew_lease_request(
@@ -4152,6 +4195,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -4248,10 +4292,11 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_change_lease_request(
@@ -4263,6 +4308,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -4362,10 +4408,11 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_break_lease_request(
@@ -4376,6 +4423,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -4494,9 +4542,10 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_create_snapshot_request(
@@ -4512,6 +4561,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             lease_id=lease_id,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4667,10 +4717,11 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         requires_sync: Literal[True] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", True))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_start_copy_from_url_request(
@@ -4695,6 +4746,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             requires_sync=requires_sync,
             version=self._config.version,
             headers=_headers,
@@ -4858,10 +4910,11 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_copy_from_url_request(
@@ -4888,6 +4941,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             file_request_intent=file_request_intent,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             requires_sync=requires_sync,
             version=self._config.version,
             headers=_headers,
@@ -4965,18 +5019,20 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         copy_action_abort_constant: Literal["abort"] = kwargs.pop(
             "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
         )
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_abort_copy_from_url_request(
             copy_id=copy_id,
             timeout=timeout,
             lease_id=lease_id,
+            content_type=content_type,
             copy_action_abort_constant=copy_action_abort_constant,
             version=self._config.version,
             headers=_headers,
@@ -5070,9 +5126,10 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_tier_request(
@@ -5083,6 +5140,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             rehydrate_priority=rehydrate_priority,
             lease_id=lease_id,
             if_tags=if_tags,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5138,13 +5196,15 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_get_account_info_request(
             timeout=timeout,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6666,9 +6726,10 @@ class _PageBlobClientOperationsMixin(
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_page_blob_resize_request(
@@ -6684,6 +6745,7 @@ class _PageBlobClientOperationsMixin(
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6790,9 +6852,10 @@ class _PageBlobClientOperationsMixin(
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_page_blob_update_sequence_number_request(
@@ -6805,6 +6868,7 @@ class _PageBlobClientOperationsMixin(
             blob_sequence_number=blob_sequence_number,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6905,9 +6969,10 @@ class _PageBlobClientOperationsMixin(
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_page_blob_copy_incremental_request(
@@ -6918,6 +6983,7 @@ class _PageBlobClientOperationsMixin(
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7520,9 +7586,10 @@ class _AppendBlobClientOperationsMixin(
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_append_blob_append_block_from_url_request(
@@ -7554,6 +7621,7 @@ class _AppendBlobClientOperationsMixin(
             source_encryption_algorithm=source_encryption_algorithm,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7668,9 +7736,10 @@ class _AppendBlobClientOperationsMixin(
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_append_blob_seal_request(
@@ -7681,6 +7750,7 @@ class _AppendBlobClientOperationsMixin(
             append_position=append_position,
             etag=etag,
             match_condition=match_condition,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -8521,9 +8591,10 @@ class _BlockBlobClientOperationsMixin(
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_block_blob_stage_block_from_url_request(
@@ -8548,6 +8619,7 @@ class _BlockBlobClientOperationsMixin(
             source_encryption_key=source_encryption_key,
             source_encryption_key_sha256=source_encryption_key_sha256,
             source_encryption_algorithm=source_encryption_algorithm,
+            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
