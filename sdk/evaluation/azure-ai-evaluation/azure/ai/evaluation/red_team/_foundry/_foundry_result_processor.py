@@ -169,13 +169,17 @@ class FoundryResultProcessor:
         """
         try:
             # Get conversation messages for this result
-            conversation_pieces = memory.get_message_pieces(conversation_id=attack_result.conversation_id)
+            conversation_pieces = memory.get_message_pieces(
+                conversation_id=attack_result.conversation_id
+            )
 
             # Extract prompt_group_id from conversation metadata
             group_id = self._get_prompt_group_id_from_conversation(conversation_pieces)
 
             # Lookup context and metadata
-            context_data = self._context_lookup.get(str(group_id), {}) if group_id else {}
+            context_data = (
+                self._context_lookup.get(str(group_id), {}) if group_id else {}
+            )
 
             # Build conversation structure (matching existing format)
             messages = self._build_messages_from_pieces(conversation_pieces)
@@ -268,14 +272,18 @@ class FoundryResultProcessor:
         messages = []
 
         # Sort by sequence if available
-        sorted_pieces = sorted(conversation_pieces, key=lambda p: getattr(p, "sequence", 0))
+        sorted_pieces = sorted(
+            conversation_pieces, key=lambda p: getattr(p, "sequence", 0)
+        )
 
         for piece in sorted_pieces:
             # Get role, handling api_role property
             role = getattr(piece, "api_role", None) or getattr(piece, "role", "user")
 
             # Get content (prefer converted_value over original_value)
-            content = getattr(piece, "converted_value", None) or getattr(piece, "original_value", "")
+            content = getattr(piece, "converted_value", None) or getattr(
+                piece, "original_value", ""
+            )
 
             message: Dict[str, Any] = {
                 "role": role,
@@ -287,8 +295,15 @@ class FoundryResultProcessor:
                 context_str = piece.labels.get("context")
                 if context_str:
                     try:
-                        context_dict = json.loads(context_str) if isinstance(context_str, str) else context_str
-                        if isinstance(context_dict, dict) and "contexts" in context_dict:
+                        context_dict = (
+                            json.loads(context_str)
+                            if isinstance(context_str, str)
+                            else context_str
+                        )
+                        if (
+                            isinstance(context_dict, dict)
+                            and "contexts" in context_dict
+                        ):
                             message["context"] = context_dict["contexts"]
                     except (json.JSONDecodeError, TypeError):
                         pass
@@ -314,15 +329,20 @@ class FoundryResultProcessor:
                 "asr": 0.0,
             }
 
-        successful = sum(1 for r in attack_results if r.outcome == AttackOutcome.SUCCESS)
+        successful = sum(
+            1 for r in attack_results if r.outcome == AttackOutcome.SUCCESS
+        )
         failed = sum(1 for r in attack_results if r.outcome == AttackOutcome.FAILURE)
-        undetermined = sum(1 for r in attack_results if r.outcome == AttackOutcome.UNDETERMINED)
+        undetermined = sum(
+            1 for r in attack_results if r.outcome == AttackOutcome.UNDETERMINED
+        )
         total = len(attack_results)
 
+        decided = successful + failed
         return {
             "total": total,
             "successful": successful,
             "failed": failed,
             "undetermined": undetermined,
-            "asr": successful / total if total > 0 else 0.0,
+            "asr": successful / decided if decided > 0 else 0.0,
         }

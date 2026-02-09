@@ -8,6 +8,7 @@ import json
 import os
 from typing import Any, Dict, List, Optional
 
+from pyrit.identifiers import ScorerIdentifier
 from pyrit.models import Score, UnvalidatedScore, MessagePiece, Message
 from pyrit.score import ScorerPromptValidator
 from pyrit.score.true_false.true_false_scorer import TrueFalseScorer
@@ -68,6 +69,14 @@ class RAIServiceScorer(TrueFalseScorer):
         if dataset_config:
             self._build_context_lookup()
 
+    def _build_identifier(self) -> ScorerIdentifier:
+        """Build the scorer identifier for this RAI service scorer."""
+        return self._create_identifier(
+            scorer_specific_params={
+                "risk_category": self.risk_category.value,
+            },
+        )
+
     def _read_seed_value(self, seed) -> str:
         """Read seed value, handling file paths for binary_path data type.
 
@@ -107,7 +116,9 @@ class RAIServiceScorer(TrueFalseScorer):
             context_data = []
             for seed in seed_group.seeds:
                 if hasattr(seed, "metadata") and seed.metadata:
-                    if seed.metadata.get("is_context") or seed.metadata.get("is_attack_vehicle"):
+                    if seed.metadata.get("is_context") or seed.metadata.get(
+                        "is_attack_vehicle"
+                    ):
                         # Read content from file if binary_path, otherwise use value directly
                         content = self._read_seed_value(seed)
                         context_data.append(
@@ -143,7 +154,9 @@ class RAIServiceScorer(TrueFalseScorer):
         self.validate(request_response, task=task)
 
         # Get the response text to evaluate
-        response_text = request_response.converted_value or request_response.original_value
+        response_text = (
+            request_response.converted_value or request_response.original_value
+        )
 
         # Get context from message labels or lookup
         context = self._get_context_for_piece(request_response)
@@ -205,22 +218,10 @@ class RAIServiceScorer(TrueFalseScorer):
 
         except Exception as e:
             self.logger.error(f"Error scoring with RAI service: {e}")
-            # Return undetermined score on error
-            score = Score(
-                score_value="false",
-                score_value_description=f"Scoring error: {str(e)}",
-                score_type="true_false",
-                score_category=[self.risk_category.value],
-                score_rationale=f"Error during evaluation: {str(e)}",
-                score_metadata={
-                    "error": str(e),
-                    "risk_category": self.risk_category.value,
-                },
-                scorer_class_identifier=self.get_identifier(),
-                message_piece_id=request_response.id,
-                objective=task or "",
-            )
-            return [score]
+            # Re-raise so PyRIT treats this as UNDETERMINED rather than a false-negative FAILURE.
+            # Returning score_value="false" here would conflate scoring infrastructure errors
+            # with genuine attack failures, artificially lowering ASR.
+            raise
 
     async def score_async(
         self,
@@ -253,7 +254,9 @@ class RAIServiceScorer(TrueFalseScorer):
         # Find the assistant response piece
         response_piece = None
         for piece in message.message_pieces:
-            piece_role = piece.api_role if hasattr(piece, "api_role") else str(piece.role)
+            piece_role = (
+                piece.api_role if hasattr(piece, "api_role") else str(piece.role)
+            )
             if piece_role == "assistant":
                 response_piece = piece
                 break
@@ -278,7 +281,11 @@ class RAIServiceScorer(TrueFalseScorer):
             if context_str:
                 # Parse if it's JSON
                 try:
-                    context_dict = json.loads(context_str) if isinstance(context_str, str) else context_str
+                    context_dict = (
+                        json.loads(context_str)
+                        if isinstance(context_str, str)
+                        else context_str
+                    )
                     if isinstance(context_dict, dict) and "contexts" in context_dict:
                         contexts = context_dict["contexts"]
                         return " ".join(c.get("content", "") for c in contexts if c)
@@ -290,7 +297,9 @@ class RAIServiceScorer(TrueFalseScorer):
         if hasattr(piece, "prompt_metadata") and piece.prompt_metadata:
             prompt_group_id = piece.prompt_metadata.get("prompt_group_id")
             if prompt_group_id and str(prompt_group_id) in self._context_lookup:
-                contexts = self._context_lookup[str(prompt_group_id)].get("contexts", [])
+                contexts = self._context_lookup[str(prompt_group_id)].get(
+                    "contexts", []
+                )
                 return " ".join(c.get("content", "") for c in contexts if c)
 
         return ""
@@ -356,4 +365,6 @@ class RAIServiceScorer(TrueFalseScorer):
 
         for score in scores:
             if score.score_type != "true_false":
-                raise ValueError(f"Expected true_false score type, got {score.score_type}")
+                raise ValueError(
+                    f"Expected true_false score type, got {score.score_type}"
+                )

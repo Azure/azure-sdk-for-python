@@ -101,7 +101,9 @@ class ScenarioOrchestrator:
 
         # Initialize with dataset and strategies
         # Note: FoundryScenario.initialize_async expects specific parameters
-        self.logger.info(f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}")
+        self.logger.info(
+            f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}"
+        )
 
         await self._scenario.initialize_async(
             objective_target=self.objective_target,
@@ -169,6 +171,9 @@ class ScenarioOrchestrator:
     def calculate_asr(self) -> float:
         """Calculate Attack Success Rate from results.
 
+        UNDETERMINED outcomes (e.g. scoring errors) are excluded from the denominator
+        so they don't artificially lower ASR. This matches PyRIT's _compute_stats approach.
+
         :return: Attack success rate as a float between 0 and 1
         :rtype: float
         """
@@ -179,10 +184,17 @@ class ScenarioOrchestrator:
             return 0.0
 
         successful = sum(1 for r in results if r.outcome == AttackOutcome.SUCCESS)
-        return successful / len(results)
+        decided = sum(
+            1
+            for r in results
+            if r.outcome in (AttackOutcome.SUCCESS, AttackOutcome.FAILURE)
+        )
+        return successful / decided if decided > 0 else 0.0
 
     def calculate_asr_by_strategy(self) -> Dict[str, float]:
         """Calculate Attack Success Rate grouped by strategy.
+
+        UNDETERMINED outcomes are excluded from the denominator per strategy.
 
         :return: Dictionary mapping strategy name to ASR
         :rtype: Dict[str, float]
@@ -199,14 +211,17 @@ class ScenarioOrchestrator:
             strategy_name = result.attack_identifier.get("__type__", "Unknown")
 
             if strategy_name not in strategy_stats:
-                strategy_stats[strategy_name] = {"total": 0, "successful": 0}
+                strategy_stats[strategy_name] = {"decided": 0, "successful": 0}
 
-            strategy_stats[strategy_name]["total"] += 1
+            if result.outcome in (AttackOutcome.SUCCESS, AttackOutcome.FAILURE):
+                strategy_stats[strategy_name]["decided"] += 1
             if result.outcome == AttackOutcome.SUCCESS:
                 strategy_stats[strategy_name]["successful"] += 1
 
         return {
-            strategy: stats["successful"] / stats["total"] if stats["total"] > 0 else 0.0
+            strategy: (
+                stats["successful"] / stats["decided"] if stats["decided"] > 0 else 0.0
+            )
             for strategy, stats in strategy_stats.items()
         }
 
