@@ -35,5 +35,4 @@ def add_sanitizers(test_proxy):
     add_uri_regex_sanitizer(regex=r"\.preprod\.", value=".")
 
     # Ignore Accept header differences between recordings and new SDK behavior, ignore query ordering differences in recordings and new SDK behavior
-    set_custom_default_matcher(excluded_headers="Accept")
-    set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True)
+    set_custom_default_matcher(excluded_headers="Accept", compare_bodies=False, ignore_query_ordering=True)
