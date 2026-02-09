@@ -173,7 +173,9 @@ def main() -> None:
     print("\n" + "=" * 60)
     print("IMAGE ANALYSIS FROM URL")
     print("=" * 60)
-    image_url = "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
+    image_url = (
+        "https://raw.githubusercontent.com/Azure-Samples/azure-ai-content-understanding-assets/main/image/pieChart.jpg"
+    )
 
     print(f"Analyzing image from URL with prebuilt-imageSearch...")
     print(f"  URL: {image_url}")

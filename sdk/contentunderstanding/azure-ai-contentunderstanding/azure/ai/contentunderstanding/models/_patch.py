@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 import re
 from typing import Any, Dict, List, Optional, TypeVar
 from azure.core.polling import LROPoller, PollingMethod
@@ -62,7 +63,9 @@ def _parse_operation_id(operation_location_header: str) -> str:
 
     match = re.search(regex, operation_location_header)
     if not match:
-        raise ValueError(f"Could not extract operation ID from: {operation_location_header}")
+        raise ValueError(
+            f"Could not extract operation ID from: {operation_location_header}"
+        )
 
     return match.group(1)
 
@@ -91,7 +94,11 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
             raise ValueError(f"Could not extract operation ID: {str(e)}") from e
 
     @classmethod
-    def from_poller(cls, poller: LROPoller[PollingReturnType_co]) -> "AnalyzeLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]
+    def from_poller(
+        cls, poller: LROPoller[PollingReturnType_co]
+    ) -> (
+        "AnalyzeLROPoller[PollingReturnType_co]"
+    ):  # pyright: ignore[reportInvalidTypeArguments]
         """Wrap an existing LROPoller without re-initializing the polling method.
 
         This avoids duplicate HTTP requests that would occur if we created a new
@@ -103,14 +110,19 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         :rtype: AnalyzeLROPoller
         """
         # Create instance without calling __init__ to avoid re-initialization
-        instance: AnalyzeLROPoller[PollingReturnType_co] = object.__new__(cls)  # pyright: ignore[reportInvalidTypeArguments]
+        instance: "AnalyzeLROPoller[PollingReturnType_co]" = object.__new__(
+            cls
+        )  # pyright: ignore[reportInvalidTypeArguments]
         # Copy all attributes from the original poller
         instance.__dict__.update(poller.__dict__)
         return instance
 
     @classmethod
     def from_continuation_token(
-        cls, polling_method: PollingMethod[PollingReturnType_co], continuation_token: str, **kwargs: Any
+        cls,
+        polling_method: PollingMethod[PollingReturnType_co],
+        continuation_token: str,
+        **kwargs: Any,
     ) -> "AnalyzeLROPoller":
         """Create a poller from a continuation token.
 
@@ -131,7 +143,9 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
-def _add_value_property_to_field(field_class: type, value_attr: str, return_type: Any = Any) -> None:
+def _add_value_property_to_field(
+    field_class: type, value_attr: str, return_type: Any = Any
+) -> None:
     """Add a .value property implementation at runtime.
 
     This function adds the actual property implementation so IntelliSense works.

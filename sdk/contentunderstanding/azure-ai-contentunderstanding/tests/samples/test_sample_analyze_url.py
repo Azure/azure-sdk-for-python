@@ -96,7 +96,9 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # Analyze the video
         # Use 10-second polling interval for video analysis (longer processing time)
-        poller = client.begin_analyze(analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10)
+        poller = client.begin_analyze(
+            analyzer_id="prebuilt-videoSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10
+        )
 
         result = poller.result()
 
@@ -138,8 +140,10 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # Analyze the audio
         # Use 10-second polling interval for audio analysis (longer processing time)
-        poller = client.begin_analyze(analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10)
-        
+        poller = client.begin_analyze(
+            analyzer_id="prebuilt-audioSearch", inputs=[AnalyzeInput(url=url)], polling_interval=10
+        )
+
         result = poller.result()
 
         # Assertion: Verify analysis operation completed
@@ -179,7 +183,7 @@ class TestSampleAnalyzeUrl(ContentUnderstandingClientTestBase):
 
         # Analyze the image
         poller = client.begin_analyze(analyzer_id="prebuilt-imageSearch", inputs=[AnalyzeInput(url=url)])
-        
+
         result = poller.result()
 
         # Assertion: Verify analysis operation completed

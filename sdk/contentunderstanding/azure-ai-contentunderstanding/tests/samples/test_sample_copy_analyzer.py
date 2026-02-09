@@ -54,7 +54,7 @@ class TestSampleCopyAnalyzer(ContentUnderstandingClientTestBase):
         """
         # Get variables from test proxy (recorded values in playback, empty dict in recording)
         variables = kwargs.pop("variables", {})
-        
+
         try:
             client = self.create_client(endpoint=contentunderstanding_endpoint)
 
