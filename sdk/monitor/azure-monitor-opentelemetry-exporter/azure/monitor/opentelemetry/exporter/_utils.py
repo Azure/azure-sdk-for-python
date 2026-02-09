@@ -41,17 +41,9 @@ from azure.monitor.opentelemetry.exporter._constants import (
 
 opentelemetry_version = ""
 
-# Workaround for missing version file
-try:
-    from importlib.metadata import version
+from importlib.metadata import version
 
-    opentelemetry_version = version("opentelemetry-sdk")
-except ImportError:
-    # Temporary workaround for <Py3.8
-    # importlib-metadata causing issues in CI
-    import pkg_resources  # type: ignore
-
-    opentelemetry_version = pkg_resources.get_distribution("opentelemetry-sdk").version
+opentelemetry_version = version("opentelemetry-sdk")
 
 
 # Azure App Service
