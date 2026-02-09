@@ -1,5 +1,155 @@
 # Release History
 
+## 11.0.0b1 (2026-02-09)
+
+### Features Added
+
+  - Model `AzureFileShareRecoveryPoint` added property `threat_status`
+  - Model `AzureFileShareRecoveryPoint` added property `threat_info`
+  - Model `AzureFileshareProtectedItem` added property `source_side_scan_info`
+  - Model `AzureIaaSClassicComputeVMProtectedItem` added property `source_side_scan_info`
+  - Model `AzureIaaSComputeVMProtectedItem` added property `source_side_scan_info`
+  - Model `AzureIaaSVMProtectedItem` added property `source_side_scan_info`
+  - Model `AzureSqlProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadProtectionPolicy` added property `vm_workload_policy_type`
+  - Model `AzureVmWorkloadSAPAseDatabaseProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSAPHanaDBInstanceProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSAPHanaDatabaseProtectedItem` added property `source_side_scan_info`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `parent_protected_item`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `protection_level`
+  - Model `AzureVmWorkloadSQLDatabaseProtectedItem` added property `source_side_scan_info`
+  - Model `AzureWorkloadPointInTimeRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadPointInTimeRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSAPAsePointInTimeRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSAPAseRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSAPAseRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSAPHanaPointInTimeRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSAPHanaRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSAPHanaRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSQLPointInTimeRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSQLPointInTimeRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSQLRecoveryPoint` added property `threat_status`
+  - Model `AzureWorkloadSQLRecoveryPoint` added property `threat_info`
+  - Model `AzureWorkloadSQLRecoveryPointExtendedInfo` added property `included_databases`
+  - Model `BackupEngineBaseResource` added property `system_data`
+  - Model `BackupRequestResource` added property `system_data`
+  - Model `BackupResourceConfigResource` added property `system_data`
+  - Model `BackupResourceEncryptionConfigExtendedResource` added property `system_data`
+  - Model `BackupResourceEncryptionConfigResource` added property `system_data`
+  - Model `BackupResourceVaultConfigResource` added property `system_data`
+  - Model `DPMProtectedItem` added property `source_side_scan_info`
+  - Model `GenericProtectedItem` added property `source_side_scan_info`
+  - Model `GenericRecoveryPoint` added property `threat_status`
+  - Model `GenericRecoveryPoint` added property `threat_info`
+  - Enum `HttpStatusCode` added member `CONTINUEEnum`
+  - Model `ILRRequestResource` added property `system_data`
+  - Model `IaasVMRecoveryPoint` added property `threat_status`
+  - Model `IaasVMRecoveryPoint` added property `threat_info`
+  - Model `JobResource` added property `system_data`
+  - Model `MabFileFolderProtectedItem` added property `source_side_scan_info`
+  - Model `PrivateEndpointConnectionResource` added property `system_data`
+  - Model `ProtectableContainerResource` added property `system_data`
+  - Model `ProtectedItem` added property `source_side_scan_info`
+  - Model `ProtectedItemResource` added property `system_data`
+  - Model `ProtectionContainerResource` added property `system_data`
+  - Model `ProtectionIntentResource` added property `system_data`
+  - Model `ProtectionPolicyResource` added property `system_data`
+  - Model `RecoveryPoint` added property `threat_status`
+  - Model `RecoveryPoint` added property `threat_info`
+  - Model `RecoveryPointResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceGuardProxyBaseResource` added property `system_data`
+  - Model `RestoreRequestResource` added property `system_data`
+  - Model `WorkloadItemResource` added property `system_data`
+  - Model `WorkloadProtectableItemResource` added property `system_data`
+  - Added model `ArmErrorDetail`
+  - Added model `AzureVmWorkloadSAPHanaScaleoutProtectableItem`
+  - Added model `AzureVmWorkloadSQLInstanceProtectedItem`
+  - Added enum `CreatedByType`
+  - Added model `DatabaseInRP`
+  - Added model `ErrorResponse`
+  - Added enum `InstanceProtectionReadiness`
+  - Added model `OkResponse`
+  - Added model `PatchRecoveryPointInput`
+  - Added model `PatchRecoveryPointPropertiesInput`
+  - Added enum `ProtectionLevel`
+  - Added model `SourceSideScanInfo`
+  - Added enum `SourceSideScanStatus`
+  - Added enum `SourceSideScanSummary`
+  - Added model `SystemData`
+  - Added model `ThreatInfo`
+  - Added enum `ThreatSeverity`
+  - Added enum `ThreatState`
+  - Added enum `ThreatStatus`
+  - Added model `UpdateRecoveryPointRequest`
+  - Added enum `VMWorkloadPolicyType`
+  - Model `ProtectedItemsOperations` added method `begin_create_or_update`
+
+### Breaking Changes
+
+  - Deleted or renamed client `RecoveryServicesBackupClient`
+  - Deleted or renamed enum value `HttpStatusCode.CONTINUE_ENUM`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `Resource` deleted or renamed its instance variable `e_tag`
+  - Deleted or renamed model `BMSBackupEngineQueryObject`
+  - Deleted or renamed model `BMSBackupEnginesQueryObject`
+  - Deleted or renamed model `BMSBackupSummariesQueryObject`
+  - Deleted or renamed model `BMSContainerQueryObject`
+  - Deleted or renamed model `BMSContainersInquiryQueryObject`
+  - Deleted or renamed model `BMSPOQueryObject`
+  - Deleted or renamed model `BMSRPQueryObject`
+  - Deleted or renamed model `BMSRefreshContainersQueryObject`
+  - Deleted or renamed model `BMSWorkloadItemQueryObject`
+  - Deleted or renamed model `BackupEngineBaseResourceList`
+  - Deleted or renamed model `BackupManagementUsageList`
+  - Deleted or renamed model `ClientDiscoveryResponse`
+  - Deleted or renamed model `CloudErrorBody`
+  - Deleted or renamed model `ContainerType`
+  - Deleted or renamed model `GetProtectedItemQueryObject`
+  - Deleted or renamed model `HealthState`
+  - Deleted or renamed model `IntentItemType`
+  - Deleted or renamed model `JobOperationType`
+  - Deleted or renamed model `JobQueryObject`
+  - Deleted or renamed model `JobResourceList`
+  - Deleted or renamed model `JobStatus`
+  - Deleted or renamed model `NewErrorResponse`
+  - Deleted or renamed model `NewErrorResponseError`
+  - Deleted or renamed model `ProtectableContainerResourceList`
+  - Deleted or renamed model `ProtectedItemQueryObject`
+  - Deleted or renamed model `ProtectedItemResourceList`
+  - Deleted or renamed model `ProtectionContainerResourceList`
+  - Deleted or renamed model `ProtectionIntentQueryObject`
+  - Deleted or renamed model `ProtectionIntentResourceList`
+  - Deleted or renamed model `ProtectionPolicyQueryObject`
+  - Deleted or renamed model `ProtectionPolicyResourceList`
+  - Deleted or renamed model `RecoveryPointResourceList`
+  - Deleted or renamed model `ResourceGuardProxyBaseResourceList`
+  - Deleted or renamed model `RestorePointQueryType`
+  - Deleted or renamed model `Type`
+  - Deleted or renamed model `WorkloadItemResourceList`
+  - Deleted or renamed model `WorkloadProtectableItemResourceList`
+  - Method `BackupEnginesOperations.get` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupEnginesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupJobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupProtectableItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupProtectedItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupProtectionIntentOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupResourceVaultConfigsOperations.put` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupResourceVaultConfigsOperations.update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupUsageSummariesOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BackupWorkloadItemsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed method `ProtectedItemsOperations.create_or_update`
+  - Method `ProtectionPoliciesOperations.create_or_update` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `RestoresOperations.begin_trigger` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `SecurityPINsOperations.get` changed its parameter `x_ms_authorization_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `SecurityPINsOperations.get` re-ordered its parameters from `['self', 'vault_name', 'resource_group_name', 'x_ms_authorization_auxiliary', 'parameters', 'kwargs']` to `['self', 'vault_name', 'resource_group_name', 'parameters', 'x_ms_authorization_auxiliary', 'kwargs']`
+
 ## 10.0.0 (2025-10-16)
 
 ### Breaking Changes

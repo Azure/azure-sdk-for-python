@@ -1,0 +1,4 @@
+directory: specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/RecoveryServicesBackup
+commit: 49bbe29703b0e2eb3c2b5dde117572dfd81f8c7f
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
