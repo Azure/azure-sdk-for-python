@@ -14,9 +14,9 @@ from azure.core import CaseInsensitiveEnumMeta
 class AIFoundryModelCatalogName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The name of the embedding model from the Azure AI Foundry Catalog that will be called."""
 
-    OPEN_AICLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"
+    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VIT_BASE_PATCH32 = "OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32"
     """OpenAI-CLIP-Image-Text-Embeddings-vit-base-patch32."""
-    OPEN_AICLIP_IMAGE_TEXT_EMBEDDINGS_VI_T_LARGE_PATCH14336 = "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
+    OPEN_AI_CLIP_IMAGE_TEXT_EMBEDDINGS_VI_T_LARGE_PATCH14336 = "OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336"
     """OpenAI-CLIP-Image-Text-Embeddings-ViT-Large-Patch14-336."""
     FACEBOOK_DINO_V2_IMAGE_EMBEDDINGS_VI_T_BASE = "Facebook-DinoV2-Image-Embeddings-ViT-Base"
     """Facebook-DinoV2-Image-Embeddings-ViT-Base."""
@@ -138,7 +138,7 @@ class CharFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ChatCompletionExtraParametersBehavior(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how 'extraParameters' should be handled by Azure AI Foundry. Defaults to 'error'."""
 
-    PASS_THROUGH = "pass-through"
+    PASS_THROUGH = "passThrough"
     """Passes any extra parameters directly to the model."""
     DROP = "drop"
     """Drops all extra parameters."""
