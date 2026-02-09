@@ -59,7 +59,6 @@ from ._utils import (
     SPAN_NAME_INVOKE_AGENT,
     _get_use_message_events,
     _get_use_simple_tool_format,
-    _set_use_simple_tool_format,
     start_span,
     RESPONSES_PROVIDER,
 )
@@ -458,12 +457,6 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
         # Check if binary data tracing is enabled
         enable_binary_data = self._str_to_bool(os.environ.get("AZURE_TRACING_GEN_AI_INCLUDE_BINARY_DATA", "false"))
-
-        # Check if simple tool format is enabled (only applies when using attributes mode)
-        enable_simple_tool_format = self._str_to_bool(
-            os.environ.get("AZURE_TRACING_GEN_AI_USE_SIMPLE_TOOL_FORMAT", "false")
-        )
-        _set_use_simple_tool_format(enable_simple_tool_format)
 
         if not self.is_instrumented():
             self._instrument_responses(enable_content_recording, enable_binary_data)
