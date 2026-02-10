@@ -15,7 +15,6 @@ from typing import Any
 from ..._operations._patch import extract_parameter_groups
 
 
-
 # Import the generated mixin classes
 from ._operations import _ServiceClientOperationsMixin as _ServiceClientOperationsMixinGenerated
 from ._operations import _ContainerClientOperationsMixin as _ContainerClientOperationsMixinGenerated
@@ -84,6 +83,7 @@ class _BlockBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _BlockBlob
 
     pass
 
+
 __all__: list[str] = [
     "_ServiceClientOperationsMixin",
     "_ContainerClientOperationsMixin",
@@ -92,6 +92,7 @@ __all__: list[str] = [
     "_AppendBlobClientOperationsMixin",
     "_BlockBlobClientOperationsMixin",
 ]
+
 
 def patch_sdk():
     """Do not remove from this file.

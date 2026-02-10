@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import datetime
 from typing import Any, Mapping, Optional, overload
 
 from .._utils.model_base import Model as _Model, rest_field
@@ -128,39 +130,39 @@ class BlobModifiedAccessConditions(_Model):
 
     :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
         modified since the specified date/time.
-    :vartype if_modified_since: str
+    :vartype if_modified_since: ~datetime.datetime
     :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
         been modified since the specified date/time.
-    :vartype if_unmodified_since: str
-    :ivar etag: Specify an ETag value to operate only on blobs with a matching value.
-    :vartype etag: str
-    :ivar match_condition: Specify a match condition for the ETag.
-    :vartype match_condition: str
+    :vartype if_unmodified_since: ~datetime.datetime
+    :ivar if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype if_match: str
+    :ivar if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+    :vartype if_none_match: str
     """
 
-    if_modified_since: Optional[str] = rest_field(
+    if_modified_since: Optional[datetime.datetime] = rest_field(
         name="if_modified_since", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specify this header value to operate only on a blob if it has been modified since the specified date/time."""
-    if_unmodified_since: Optional[str] = rest_field(
+    if_unmodified_since: Optional[datetime.datetime] = rest_field(
         name="if_unmodified_since", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specify this header value to operate only on a blob if it has not been modified since the specified date/time."""
-    etag: Optional[str] = rest_field(name="etag", visibility=["read", "create", "update", "delete", "query"])
+    if_match: Optional[str] = rest_field(name="if_match", visibility=["read", "create", "update", "delete", "query"])
     """Specify an ETag value to operate only on blobs with a matching value."""
-    match_condition: Optional[str] = rest_field(
-        name="match_condition", visibility=["read", "create", "update", "delete", "query"]
+    if_none_match: Optional[str] = rest_field(
+        name="if_none_match", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specify a match condition for the ETag."""
+    """Specify an ETag value to operate only on blobs without a matching value."""
 
     @overload
     def __init__(
         self,
         *,
-        if_modified_since: Optional[str] = None,
-        if_unmodified_since: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -297,33 +299,33 @@ class ModifiedAccessConditions(_Model):
 
     :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
         modified since the specified date/time.
-    :vartype if_modified_since: str
+    :vartype if_modified_since: ~datetime.datetime
     :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
         been modified since the specified date/time.
-    :vartype if_unmodified_since: str
-    :ivar etag: Specify an ETag value to operate only on blobs with a matching value.
-    :vartype etag: str
-    :ivar match_condition: Specify a match condition for the ETag.
-    :vartype match_condition: str
+    :vartype if_unmodified_since: ~datetime.datetime
+    :ivar if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype if_match: str
+    :ivar if_none_match: Specify an ETag value to operate only on blobs without a matching value.
+    :vartype if_none_match: str
     :ivar if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
         matching value.
     :vartype if_tags: str
     """
 
-    if_modified_since: Optional[str] = rest_field(
+    if_modified_since: Optional[datetime.datetime] = rest_field(
         name="if_modified_since", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specify this header value to operate only on a blob if it has been modified since the specified date/time."""
-    if_unmodified_since: Optional[str] = rest_field(
+    if_unmodified_since: Optional[datetime.datetime] = rest_field(
         name="if_unmodified_since", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specify this header value to operate only on a blob if it has not been modified since the specified date/time."""
-    etag: Optional[str] = rest_field(name="etag", visibility=["read", "create", "update", "delete", "query"])
+    if_match: Optional[str] = rest_field(name="if_match", visibility=["read", "create", "update", "delete", "query"])
     """Specify an ETag value to operate only on blobs with a matching value."""
-    match_condition: Optional[str] = rest_field(
-        name="match_condition", visibility=["read", "create", "update", "delete", "query"]
+    if_none_match: Optional[str] = rest_field(
+        name="if_none_match", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specify a match condition for the ETag."""
+    """Specify an ETag value to operate only on blobs without a matching value."""
     if_tags: Optional[str] = rest_field(name="if_tags", visibility=["read", "create", "update", "delete", "query"])
     """Specify a SQL where clause on blob tags to operate only on blobs with a matching value."""
 
@@ -331,10 +333,10 @@ class ModifiedAccessConditions(_Model):
     def __init__(
         self,
         *,
-        if_modified_since: Optional[str] = None,
-        if_unmodified_since: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_match: Optional[str] = None,
+        if_none_match: Optional[str] = None,
         if_tags: Optional[str] = None,
     ) -> None: ...
 
@@ -448,10 +450,10 @@ class SourceModifiedAccessConditions(_Model):
 
     :ivar source_if_modified_since: Specify this header value to operate only on a blob if it has
         been modified since the specified date/time.
-    :vartype source_if_modified_since: str
+    :vartype source_if_modified_since: ~datetime.datetime
     :ivar source_if_unmodified_since: Specify this header value to operate only on a blob if it
         has not been modified since the specified date/time.
-    :vartype source_if_unmodified_since: str
+    :vartype source_if_unmodified_since: ~datetime.datetime
     :ivar source_if_match: Specify an ETag value to operate only on blobs with a matching value.
     :vartype source_if_match: str
     :ivar source_if_none_match: Specify an ETag value to operate only on blobs without a matching
@@ -462,11 +464,11 @@ class SourceModifiedAccessConditions(_Model):
     :vartype source_if_tags: str
     """
 
-    source_if_modified_since: Optional[str] = rest_field(
+    source_if_modified_since: Optional[datetime.datetime] = rest_field(
         name="source_if_modified_since", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specify this header value to operate only on a blob if it has been modified since the specified date/time."""
-    source_if_unmodified_since: Optional[str] = rest_field(
+    source_if_unmodified_since: Optional[datetime.datetime] = rest_field(
         name="source_if_unmodified_since", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specify this header value to operate only on a blob if it has not been modified since the specified date/time."""
@@ -487,8 +489,8 @@ class SourceModifiedAccessConditions(_Model):
     def __init__(
         self,
         *,
-        source_if_modified_since: Optional[str] = None,
-        source_if_unmodified_since: Optional[str] = None,
+        source_if_modified_since: Optional[datetime.datetime] = None,
+        source_if_unmodified_since: Optional[datetime.datetime] = None,
         source_if_match: Optional[str] = None,
         source_if_none_match: Optional[str] = None,
         source_if_tags: Optional[str] = None,

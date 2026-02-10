@@ -9,6 +9,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any, Mapping, Optional
 
+from azure.core import MatchConditions
+
 from ..models import (
     AppendPositionAccessConditions,
     BlobHTTPHeaders,
@@ -22,6 +24,38 @@ from ..models import (
     SourceCpkInfo,
     SourceModifiedAccessConditions,
 )
+
+
+def _convert_to_etag_match_condition(
+    if_match: Optional[str],
+    if_none_match: Optional[str],
+    kwargs: dict[str, Any],
+) -> None:
+    """Convert if_match/if_none_match to etag/match_condition for the new generated operations.
+
+    The old API used if_match and if_none_match directly, but the new generated code
+    uses etag and match_condition (from azure.core.MatchConditions) which are then
+    converted internally via prep_if_match/prep_if_none_match.
+
+    Conversion logic:
+    - if_match with a specific etag -> etag=value, match_condition=IfNotModified
+    - if_match='*' -> match_condition=IfPresent
+    - if_none_match with a specific etag -> etag=value, match_condition=IfModified
+    - if_none_match='*' -> match_condition=IfMissing
+    """
+    if if_match is not None and kwargs.get("etag") is None:
+        if if_match == "*":
+            kwargs["match_condition"] = MatchConditions.IfPresent
+        else:
+            kwargs["etag"] = if_match
+            kwargs["match_condition"] = MatchConditions.IfNotModified
+
+    if if_none_match is not None and kwargs.get("etag") is None:
+        if if_none_match == "*":
+            kwargs["match_condition"] = MatchConditions.IfMissing
+        else:
+            kwargs["etag"] = if_none_match
+            kwargs["match_condition"] = MatchConditions.IfModified
 
 
 def _extract_blob_http_headers(
@@ -88,12 +122,14 @@ def _extract_modified_access_conditions(
             kwargs["if_modified_since"] = modified_access_conditions.get("if_modified_since")
         if kwargs.get("if_unmodified_since") is None:
             kwargs["if_unmodified_since"] = modified_access_conditions.get("if_unmodified_since")
-        if kwargs.get("etag") is None:
-            kwargs["etag"] = modified_access_conditions.get("etag")
-        if kwargs.get("match_condition") is None:
-            kwargs["match_condition"] = modified_access_conditions.get("match_condition")
         if kwargs.get("if_tags") is None:
             kwargs["if_tags"] = modified_access_conditions.get("if_tags")
+        # Convert if_match/if_none_match to etag/match_condition
+        _convert_to_etag_match_condition(
+            modified_access_conditions.get("if_match"),
+            modified_access_conditions.get("if_none_match"),
+            kwargs,
+        )
 
 
 def _extract_source_modified_access_conditions(
@@ -106,12 +142,13 @@ def _extract_source_modified_access_conditions(
             kwargs["source_if_modified_since"] = source_modified_access_conditions.get("source_if_modified_since")
         if kwargs.get("source_if_unmodified_since") is None:
             kwargs["source_if_unmodified_since"] = source_modified_access_conditions.get("source_if_unmodified_since")
+        if kwargs.get("source_if_tags") is None:
+            kwargs["source_if_tags"] = source_modified_access_conditions.get("source_if_tags")
+        # Pass source_if_match and source_if_none_match directly (they are used as-is in the generated code)
         if kwargs.get("source_if_match") is None:
             kwargs["source_if_match"] = source_modified_access_conditions.get("source_if_match")
         if kwargs.get("source_if_none_match") is None:
             kwargs["source_if_none_match"] = source_modified_access_conditions.get("source_if_none_match")
-        if kwargs.get("source_if_tags") is None:
-            kwargs["source_if_tags"] = source_modified_access_conditions.get("source_if_tags")
 
 
 def _extract_source_cpk_info(
@@ -182,10 +219,12 @@ def _extract_blob_modified_access_conditions(
             kwargs["if_modified_since"] = blob_modified_access_conditions.get("if_modified_since")
         if kwargs.get("if_unmodified_since") is None:
             kwargs["if_unmodified_since"] = blob_modified_access_conditions.get("if_unmodified_since")
-        if kwargs.get("etag") is None:
-            kwargs["etag"] = blob_modified_access_conditions.get("etag")
-        if kwargs.get("match_condition") is None:
-            kwargs["match_condition"] = blob_modified_access_conditions.get("match_condition")
+        # Convert if_match/if_none_match to etag/match_condition
+        _convert_to_etag_match_condition(
+            blob_modified_access_conditions.get("if_match"),
+            blob_modified_access_conditions.get("if_none_match"),
+            kwargs,
+        )
 
 
 def extract_parameter_groups(kwargs: dict[str, Any]) -> None:
