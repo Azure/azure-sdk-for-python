@@ -1283,7 +1283,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _project_apis(self):
         """Define AIProjectClient APIs to instrument for trace propagation.
-        
+
         :return: A tuple containing sync and async API tuples.
         :rtype: Tuple[Tuple, Tuple]
         """
@@ -1309,7 +1309,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _inject_openai_client(self, f, _trace_type, _name):
         """Injector for get_openai_client that enables trace context propagation if opted in.
-        
+
         :return: The wrapped function with trace context propagation enabled.
         :rtype: Callable
         """
@@ -1331,7 +1331,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _project_api_list(self):
         """Generate project API list with custom injector.
-        
+
         :return: A generator yielding API tuples with injectors.
         :rtype: Generator
         """

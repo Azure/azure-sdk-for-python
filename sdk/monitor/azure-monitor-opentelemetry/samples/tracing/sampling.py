@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Set the OTEL_TRACES_SAMPLER_ARG environment variable to 0.1
 # Sampling ratio of between 0 and 1 inclusive
