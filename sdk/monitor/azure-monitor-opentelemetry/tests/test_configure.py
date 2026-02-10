@@ -14,10 +14,8 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
-from opentelemetry.sdk._logs import LoggingHandler
 from opentelemetry.sdk.resources import Resource
 
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._configure import (
     _send_attach_warning,
     _setup_instrumentations,
@@ -33,6 +31,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import _DISTRO_
 TEST_RESOURCE = Resource({"foo": "bar"})
 
 
+# pylint: disable=too-many-public-methods
 class TestConfigure(unittest.TestCase):
     @patch(
         "azure.monitor.opentelemetry._configure._send_attach_warning",
