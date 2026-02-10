@@ -159,6 +159,17 @@ def _collection_helper(typ: Any) -> str:
 SearchFieldDataType = _SearchFieldDataType
 SearchFieldDataType.Collection = staticmethod(_collection_helper)  # type: ignore[attr-defined]
 
+# Backward-compatible aliases (old camelCase names -> new UPPER_CASE names)
+SearchFieldDataType.String = SearchFieldDataType.STRING  # type: ignore[attr-defined]
+SearchFieldDataType.Int32 = SearchFieldDataType.INT32  # type: ignore[attr-defined]
+SearchFieldDataType.Int64 = SearchFieldDataType.INT64  # type: ignore[attr-defined]
+SearchFieldDataType.Single = SearchFieldDataType.SINGLE  # type: ignore[attr-defined]
+SearchFieldDataType.Double = SearchFieldDataType.DOUBLE  # type: ignore[attr-defined]
+SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-defined]
+SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
+SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
+SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+
 
 def Collection(typ: Any) -> str:
     """Helper function to create a collection type string.
