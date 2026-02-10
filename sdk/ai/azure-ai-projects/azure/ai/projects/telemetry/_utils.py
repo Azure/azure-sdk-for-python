@@ -121,6 +121,33 @@ OPERATION_NAME_CHAT = "chat"
 # Set to True for event-based, False for attribute-based (default)
 _use_message_events = False
 
+# Configuration: Controls whether function tool calls use simplified OTEL-compliant format
+# When True (default), function_call and function_call_output use a simpler structure:
+#   tool_call: {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+#   tool_call_response: {"type": "tool_call_response", "id": "...", "result": "..."}
+# When False, the full nested structure is used
+_use_simple_tool_format = True
+
+
+def _get_use_simple_tool_format() -> bool:
+    """Get the current tool format mode (simple vs nested). Internal use only.
+
+    :return: True if using simple OTEL-compliant format, False if using nested format
+    :rtype: bool
+    """
+    return _use_simple_tool_format
+
+
+def _set_use_simple_tool_format(use_simple: bool) -> None:
+    """
+    Set the tool format mode at runtime. Internal use only.
+
+    :param use_simple: True to use simple OTEL-compliant format, False for nested format
+    :type use_simple: bool
+    """
+    global _use_simple_tool_format  # pylint: disable=global-statement
+    _use_simple_tool_format = use_simple
+
 
 def _get_use_message_events() -> bool:
     """Get the current message tracing mode (events vs attributes). Internal use only.
