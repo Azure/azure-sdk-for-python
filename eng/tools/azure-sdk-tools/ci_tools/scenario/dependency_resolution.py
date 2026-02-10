@@ -59,7 +59,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-eventhub-checkpointstoretable": {"azure-core": "1.25.0", "azure-eventhub": "5.11.0"},
     "azure-identity": {"msal": "1.23.0"},
-    "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0"},
+    "azure-core-tracing-opentelemetry": {"azure-core": "1.28.0", "opentelemetry-api": "1.29.0"},
     "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"},
     "azure-cosmos": {"azure-core": "1.30.0"},
     "azure-appconfiguration-provider": {"azure-appconfiguration": "1.7.2"},
