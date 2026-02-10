@@ -823,7 +823,7 @@ class _ContainerClientOperationsMixin(
         self,
         *,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         access: Optional[Union[str, _models.PublicAccessType]] = None,
         default_encryption_scope: Optional[str] = None,
         prevent_encryption_scope_override: Optional[bool] = None,
@@ -837,7 +837,7 @@ class _ContainerClientOperationsMixin(
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword access: The public access setting for the container. Known values are: "blob" and
          "container". Default value is None.
         :paramtype access: str or ~azure.storage.blobs.models.PublicAccessType
@@ -972,7 +972,7 @@ class _ContainerClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-meta"] = self._deserialize("str", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
@@ -1095,7 +1095,7 @@ class _ContainerClientOperationsMixin(
         *,
         timeout: Optional[int] = None,
         lease_id: Optional[str] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -1109,7 +1109,7 @@ class _ContainerClientOperationsMixin(
          and matches this ID. Default value is None.
         :paramtype lease_id: str
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -2651,8 +2651,8 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             response_headers["x-ms-client-request-id"] = self._deserialize(
                 "str", response.headers.get("x-ms-client-request-id")
             )
-            response_headers["x-ms-meta"] = self._deserialize("str", response.headers.get("x-ms-meta"))
-            response_headers["x-ms-or"] = self._deserialize("str", response.headers.get("x-ms-or"))
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["x-ms-creation-time"] = self._deserialize(
                 "rfc-1123", response.headers.get("x-ms-creation-time")
@@ -2736,8 +2736,8 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             response_headers["x-ms-client-request-id"] = self._deserialize(
                 "str", response.headers.get("x-ms-client-request-id")
             )
-            response_headers["x-ms-meta"] = self._deserialize("str", response.headers.get("x-ms-meta"))
-            response_headers["x-ms-or"] = self._deserialize("str", response.headers.get("x-ms-or"))
+            response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+            response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
             response_headers["x-ms-creation-time"] = self._deserialize(
                 "rfc-1123", response.headers.get("x-ms-creation-time")
@@ -2953,8 +2953,8 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-meta"] = self._deserialize("str", response.headers.get("x-ms-meta"))
-        response_headers["x-ms-or"] = self._deserialize("str", response.headers.get("x-ms-or"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-or"] = self._deserialize("{str}", response.headers.get("x-ms-or"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["x-ms-creation-time"] = self._deserialize(
             "rfc-1123", response.headers.get("x-ms-creation-time")
@@ -3761,7 +3761,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         *,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_id: Optional[str] = None,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
@@ -3782,7 +3782,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
@@ -4468,7 +4468,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         *,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
         encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
@@ -4488,7 +4488,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
          to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -4610,7 +4610,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         *,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         tier: Optional[Union[str, _models.AccessTier]] = None,
         rehydrate_priority: Optional[Union[str, _models.RehydratePriority]] = None,
         source_if_modified_since: Optional[datetime.datetime] = None,
@@ -4643,7 +4643,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
          "Cold". Default value is None.
@@ -4794,7 +4794,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         *,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         tier: Optional[Union[str, _models.AccessTier]] = None,
         source_if_modified_since: Optional[datetime.datetime] = None,
         source_if_unmodified_since: Optional[datetime.datetime] = None,
@@ -4830,7 +4830,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
          Timeouts for Blob Service Operations.</a>. Default value is None.
         :paramtype timeout: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", and
          "Cold". Default value is None.
@@ -5509,7 +5509,7 @@ class _PageBlobClientOperationsMixin(
         self,
         *,
         size: int,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         timeout: Optional[int] = None,
         tier: Optional[Union[str, _models.PremiumPageBlobAccessTier]] = None,
         blob_content_type: Optional[str] = None,
@@ -5541,7 +5541,7 @@ class _PageBlobClientOperationsMixin(
          blob size must be aligned to a 512-byte boundary. Required.
         :paramtype size: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -7032,7 +7032,7 @@ class _AppendBlobClientOperationsMixin(
     async def create(  # pylint: disable=too-many-locals
         self,
         *,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         timeout: Optional[int] = None,
         blob_content_type: Optional[str] = None,
         blob_content_encoding: Optional[str] = None,
@@ -7059,7 +7059,7 @@ class _AppendBlobClientOperationsMixin(
         """The Create operation creates a new append blob.
 
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -7800,7 +7800,7 @@ class _BlockBlobClientOperationsMixin(
         body: bytes,
         *,
         content_length: int,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         blob_content_type: Optional[str] = None,
@@ -7840,7 +7840,7 @@ class _BlockBlobClientOperationsMixin(
         :keyword content_length: The length of the request. Required.
         :paramtype content_length: int
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -8050,7 +8050,7 @@ class _BlockBlobClientOperationsMixin(
         self,
         *,
         copy_source: str,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         blob_content_type: Optional[str] = None,
@@ -8098,7 +8098,7 @@ class _BlockBlobClientOperationsMixin(
          authenticated via a shared access signature. Required.
         :paramtype copy_source: str
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -8681,7 +8681,7 @@ class _BlockBlobClientOperationsMixin(
         blob_content_md5: Optional[bytes] = None,
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
-        metadata: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_id: Optional[str] = None,
         blob_content_disposition: Optional[str] = None,
         encryption_key: Optional[str] = None,
@@ -8738,7 +8738,7 @@ class _BlockBlobClientOperationsMixin(
          validated by the service. Default value is None.
         :paramtype transactional_content_crc64: bytes
         :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: str
+        :paramtype metadata: dict[str, str]
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
@@ -9144,7 +9144,7 @@ class _BlockBlobClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["x-ms-meta"] = self._deserialize("str", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
