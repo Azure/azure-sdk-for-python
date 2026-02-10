@@ -65,9 +65,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        if not thread_repository and project_endpoint and credentials:
+        if not thread_repository and project_endpoint and self.credentials:
             logger.warning("No thread repository provided. FoundryConversationThreadRepository will be used.")
-            thread_repository = self._create_foundry_conversation_thread_repository(project_endpoint, credentials)
+            thread_repository = self._create_foundry_conversation_thread_repository(project_endpoint, self.credentials)
         self._thread_repository = thread_repository
         self._hitl_helper = HumanInTheLoopHelper()
 

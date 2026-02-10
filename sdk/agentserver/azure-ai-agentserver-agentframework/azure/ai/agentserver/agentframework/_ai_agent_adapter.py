@@ -48,7 +48,6 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             request_input = context.request.get("input")
 
             agent_thread = await self._load_agent_thread(context, self._agent)
-            logger.info(f"agent thread loaded with {len(await agent_thread.message_store.list_messages())} messages")
 
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
