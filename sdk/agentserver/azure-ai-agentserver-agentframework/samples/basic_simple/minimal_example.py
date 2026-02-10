@@ -1,18 +1,15 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-from pdb import run
 from random import randint
 from typing import Annotated
 
 from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import DefaultAzureCredential   
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
+
 from dotenv import load_dotenv
 load_dotenv()
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
-
 
 
 def get_weather(
