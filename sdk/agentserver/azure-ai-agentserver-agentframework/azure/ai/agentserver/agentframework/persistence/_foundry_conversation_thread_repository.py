@@ -8,6 +8,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.agentserver.core.logger import get_logger
 
 from .agent_thread_repository import AgentThreadRepository
+from ._foundry_conversation_message_store import FoundryConversationMessageStore
 
 logger = get_logger()
 
@@ -56,47 +57,3 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
         if not conversation_id:
             raise ValueError("conversation_id is required to save an AgentThread.")
         self._inventory[conversation_id] = thread
-
-
-class FoundryConversationMessageStore:
-    """A Foundry Conversation implementation of ChatMessageStoreProtocol."""
-    def __init__(self, conversation_id: str, client: AIProjectClient):
-        self._conversation_id = conversation_id
-        self._client = client
-        self._conversation_messages: list[ChatMessage] = []
-        self._cached_new_messages: list[ChatMessage] = []
-
-    async def list_messages(self) -> list[ChatMessage]:
-        """List all messages in the conversation."""
-        # For simplicity, we are caching messages in memory. In a real implementation, you would fetch from Foundry.
-        return self._conversation_messages + self._cached_new_messages
-
-    async def add_messages(self, messages: Sequence[ChatMessage]) -> None:
-        self._cached_new_messages.extend(messages)
-    
-    @classmethod
-    async def deserialize(
-        cls, serialized_store_state: MutableMapping[str, Any], **kwargs: Any
-    ) -> "FoundryConversationMessageStore":
-        conversation_id = serialized_store_state.get("conversation_id")
-        client = kwargs.get("client")
-        res = cls(conversation_id, client)
-        await res.get_conversation_history()
-        return res
-
-    async def update_from_state(self, serialized_store_state: MutableMapping[str, Any], **kwargs: Any) -> None:
-        return None
-    
-    async def serialize(self) -> MutableMapping[str, Any]:
-        return {"conversation_id": self._conversation_id}
-    
-    async def get_conversation_history(self) -> None:
-        # Retrieve conversation history from Foundry.
-        try:
-            with self._client.get_openai_client() as openai_client:
-                messages = await openai_client.conversations.items.list(self._conversation_id)
-                if messages:
-                    logger.info(f"Retrieved {len(messages)} messages for conversation {self._conversation_id} from Foundry.")
-                    self._conversation_messages = [ChatMessage(role=msg.role, content=msg.content) for msg in messages]
-        except Exception as e:
-            logger.error(f"Failed to get conversation history for {self._conversation_id}: {e}")
