@@ -9,17 +9,6 @@ from azure.ai.vision.face.aio import FaceAdministrationClient, FaceClient, FaceS
 from devtools_testutils import AzureRecordedTestCase
 
 
-class FaceAdministrationClientTestBaseAsync(AzureRecordedTestCase):
-
-    def create_async_client(self, endpoint):
-        credential = self.get_credential(FaceAdministrationClient, is_async=True)
-        return self.create_client_from_credential(
-            FaceAdministrationClient,
-            credential=credential,
-            endpoint=endpoint,
-        )
-
-
 class FaceClientTestBaseAsync(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint):
@@ -37,6 +26,17 @@ class FaceSessionClientTestBaseAsync(AzureRecordedTestCase):
         credential = self.get_credential(FaceSessionClient, is_async=True)
         return self.create_client_from_credential(
             FaceSessionClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
+
+
+class FaceAdministrationClientTestBaseAsync(AzureRecordedTestCase):
+
+    def create_async_client(self, endpoint):
+        credential = self.get_credential(FaceAdministrationClient, is_async=True)
+        return self.create_client_from_credential(
+            FaceAdministrationClient,
             credential=credential,
             endpoint=endpoint,
         )

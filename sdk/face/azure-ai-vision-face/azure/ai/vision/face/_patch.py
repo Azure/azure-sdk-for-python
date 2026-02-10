@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=too-many-lines,line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -247,59 +247,37 @@ class FaceSessionClient(FaceSessionClientGenerated):
     def create_liveness_with_verify_session(
         self,
         body: _models.CreateLivenessWithVerifySessionContent,
-        *,
-        verify_image: Union[bytes, None],
-        content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
+    ) -> _models.LivenessWithVerifySession: ...
 
     @overload
     def create_liveness_with_verify_session(
         self,
         body: JSON,
-        *,
-        verify_image: Union[bytes, None],
-        content_type: str = "application/json",
         **kwargs: Any,
-    ) -> _models.CreateLivenessWithVerifySessionResult: ...
+    ) -> _models.LivenessWithVerifySession: ...
 
     @distributed_trace
     def create_liveness_with_verify_session(
         self,
         body: Union[_models.CreateLivenessWithVerifySessionContent, JSON],
-        *,
-        verify_image: Union[bytes, None],
         **kwargs: Any,
-    ) -> _models.CreateLivenessWithVerifySessionResult:
-        """Create a new liveness session with verify. Client device submits VerifyImage during the
-        /detectLivenessWithVerify/singleModal call.
+    ) -> _models.LivenessWithVerifySession:
+        """Create a new liveness session with verify. Provide the verify image during session creation.
 
         Please refer to
-        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session
+        https://learn.microsoft.com/rest/api/face/liveness-session-operations/create-liveness-with-verify-session-with-verify-image
         for more details.
 
-        :param body: Body parameter. Is one of the following types:
-         CreateLivenessWithVerifySessionContent, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent or JSON or
-         IO[bytes]
-        :return: CreateLivenessWithVerifySessionResult. The CreateLivenessWithVerifySessionResult is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionResult
+        :param body: Request content of liveness with verify session creation. Is either a
+         CreateLivenessWithVerifySessionContent type or a JSON type. Required.
+        :type body: ~azure.ai.vision.face.models.CreateLivenessWithVerifySessionContent or JSON
+        :return: LivenessWithVerifySession. The LivenessWithVerifySession is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.vision.face.models.LivenessWithVerifySession
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if verify_image is not None:
-            if not isinstance(body, _models.CreateLivenessWithVerifySessionContent):
-            # Convert body to CreateLivenessWithVerifySessionContent if necessary
-                body = _models.CreateLivenessWithVerifySessionContent(**body)
-            request_body = (
-                _models._models.CreateLivenessWithVerifySessionMultipartContent(  # pylint: disable=protected-access
-                    parameters=body,
-                    verify_image=("verify-image", verify_image),
-                )
-            )
-            return super()._create_liveness_with_verify_session_with_verify_image(request_body, **kwargs)
-
-        return super()._create_liveness_with_verify_session(body, **kwargs)
+        return super().create_liveness_with_verify_session(body, **kwargs)
 
     def __enter__(self) -> "FaceSessionClient":
         super().__enter__()
