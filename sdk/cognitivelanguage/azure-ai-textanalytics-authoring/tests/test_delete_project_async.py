@@ -21,14 +21,13 @@ class TestConversations(AzureRecordedTestCase):
     def create_client(self, endpoint: str, key: str) -> TextAuthoringClient:  # type: ignore[override]
         return TextAuthoringClient(endpoint, AzureKeyCredential(key))  # type: ignore[arg-type]
 
-
 class TestConversationsCaseAsync(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
     async def test_delete_project_async(self, authoring_endpoint, authoring_key):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as client:
-            project_name = "MyTextPythonProject0728"
+            project_name = "MyTextProject0902Async"
 
             # Act: begin delete (LRO)
             poller = await client.begin_delete_project(project_name)

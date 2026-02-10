@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Agent-to-Agent (A2A) capabilities
-    using the A2ATool and synchronous Azure AI Projects client. The agent can communicate
+    using the A2APreviewTool and synchronous Azure AI Projects client. The agent can communicate
     with other agents and provide responses based on inter-agent interactions using the
     A2A protocol (https://a2a-protocol.org/latest/).
 
@@ -35,7 +36,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    A2ATool,
+    A2APreviewTool,
 )
 
 load_dotenv()
@@ -49,7 +50,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = A2ATool(
+    tool = A2APreviewTool(
         project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
     )
     # If the connection is missing target, we need to set the A2A endpoint URL.

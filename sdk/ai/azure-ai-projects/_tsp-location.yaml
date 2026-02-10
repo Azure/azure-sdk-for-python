@@ -1,4 +1,4 @@
-directory: specification/ai/Azure.AI.Projects
-commit: 78bfd335c31b8764578cfb9840f3b74349c10354
-repo: Azure/azure-rest-api-specs-pr
+directory: specification/ai/Foundry
+commit: 51415f0131fc0e65f88e8a75b4b729a528e8e959
+repo: Azure/azure-rest-api-specs
 additionalDirectories: 
