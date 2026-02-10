@@ -178,4 +178,7 @@ component-detection-pip-report.json
 uv.lock
 
 # Sphinx generated documentation
-website/scripts/__pycache__/
+website/
+
+# Script cache
+scripts/__pycache__/
