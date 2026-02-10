@@ -33,6 +33,7 @@ This repo is currently migrating all checks from a slower `tox`-based framework,
 |`samples`| Runs the package's samples. | `azpysdk samples .` |
 |`optional`| Invokes 'optional' requirements for a given package. | `azpysdk optional .` |
 |`devtest`| Tests a package against dependencies installed from a dev index. | `azpysdk devtest .` |
+|`update_snippet`| Updates README code snippets from sample files. | `azpysdk update_snippet .` |
 
 ## Common arguments
 
