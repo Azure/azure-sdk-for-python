@@ -118,8 +118,7 @@ class ConversationRequestItem(_Model):
     FunctionCallItem, FunctionCallOutputItem, MCPApprovalResponseRequestItem, MessageItem
 
     :ivar type: Required. Known values are: "message", "function_call", "function_call_output",
-     "mcp_list_tools", "mcp_call", "mcp_approval_request", "mcp_approval_response", and
-     "foundry_agent_call".
+     "mcp_list_tools", "mcp_call", "mcp_approval_request", and "mcp_approval_response".
     :vartype type: str or ~azure.ai.voicelive.models.ItemType
     :ivar id:
     :vartype id: str
@@ -128,8 +127,7 @@ class ConversationRequestItem(_Model):
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"message\", \"function_call\", \"function_call_output\",
-     \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", \"mcp_approval_response\", and
-     \"foundry_agent_call\"."""
+     \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", and \"mcp_approval_response\"."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -159,7 +157,7 @@ class MessageItem(ConversationRequestItem, discriminator="message"):
 
     :ivar id:
     :vartype id: str
-    :ivar type: The type of the item; must be 'message' for message items. Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required. MESSAGE.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
     :ivar role: The role of the message origionator. Required. Known values are: "system", "user",
      and "assistant".
@@ -173,7 +171,7 @@ class MessageItem(ConversationRequestItem, discriminator="message"):
 
     __mapping__: dict[str, _Model] = {}
     type: Literal[ItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item; must be 'message' for message items. Required."""
+    """The type of the item; must be 'message' for message items. Required. MESSAGE."""
     role: str = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])
     """The role of the message origionator. Required. Known values are: \"system\", \"user\", and
      \"assistant\"."""
@@ -211,20 +209,20 @@ class AssistantMessageItem(MessageItem, discriminator="assistant"):
 
     :ivar id:
     :vartype id: str
-    :ivar type: The type of the item; must be 'message' for message items. Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required. MESSAGE.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
     :ivar content: The content parts of the message. Required.
     :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
     :ivar status: Processing status of the message item. Known values are: "completed" and
      "incomplete".
     :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
-    :ivar role: Required.
+    :ivar role: Required. ASSISTANT.
     :vartype role: str or ~azure.ai.voicelive.models.ASSISTANT
     """
 
     __mapping__: dict[str, _Model] = {}
     role: Literal[MessageRole.ASSISTANT] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. ASSISTANT."""
 
     @overload
     def __init__(
@@ -267,10 +265,10 @@ class AudioEchoCancellation(_Model):
 class AudioInputTranscriptionOptions(_Model):
     """Configuration for input audio transcription.
 
-    :ivar model: The transcription model to use. Supported values:
-     'whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe',
-     'azure-speech'. Required. Is one of the following types: Literal["whisper-1"],
-     Literal["gpt-4o-transcribe"], Literal["gpt-4o-mini-transcribe"], Literal["azure-speech"], str
+    :ivar model: The transcription model to use. Supported values: 'whisper-1',
+     'gpt-4o-transcribe', 'gpt-4o-mini-transcribe', 'azure-speech'. Required. Is one of the
+     following types: Literal["whisper-1"], Literal["gpt-4o-transcribe"],
+     Literal["gpt-4o-mini-transcribe"], Literal["azure-speech"], str
     :vartype model: str
     :ivar language: Optional language code in BCP-47 (e.g., 'en-US'), or ISO-639-1 (e.g., 'en'), or
      multi languages with auto detection, (e.g., 'en,zh').
@@ -288,11 +286,10 @@ class AudioInputTranscriptionOptions(_Model):
         Literal["azure-speech"],
         str,
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The transcription model to use. Supported values:
-     'whisper-1', 'gpt-4o-transcribe', 'gpt-4o-mini-transcribe',
-     'azure-speech'. Required. Is one of the following types: Literal[\"whisper-1\"],
-     Literal[\"gpt-4o-transcribe\"], Literal[\"gpt-4o-mini-transcribe\"], Literal[\"azure-speech\"],
-     str"""
+    """The transcription model to use. Supported values: 'whisper-1', 'gpt-4o-transcribe',
+     'gpt-4o-mini-transcribe', 'azure-speech'. Required. Is one of the following types:
+     Literal[\"whisper-1\"], Literal[\"gpt-4o-transcribe\"], Literal[\"gpt-4o-mini-transcribe\"],
+     Literal[\"azure-speech\"], str"""
     language: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional language code in BCP-47 (e.g., 'en-US'), or ISO-639-1 (e.g., 'en'), or multi languages
      with auto detection, (e.g., 'en,zh')."""
@@ -839,7 +836,7 @@ class TurnDetection(_Model):
 class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     """Server Speech Detection (Azure semantic VAD, default variant).
 
-    :ivar type: Required.
+    :ivar type: Required. AZURE_SEMANTIC_VAD.
     :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD
     :ivar threshold:
     :vartype threshold: float
@@ -864,7 +861,7 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
     """
 
     type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. AZURE_SEMANTIC_VAD."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -909,7 +906,7 @@ class AzureSemanticVad(TurnDetection, discriminator="azure_semantic_vad"):
 class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     """Server Speech Detection (Azure semantic VAD, English-only).
 
-    :ivar type: Required.
+    :ivar type: Required. AZURE_SEMANTIC_VAD_EN.
     :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD_EN
     :ivar threshold:
     :vartype threshold: float
@@ -932,7 +929,7 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
     """
 
     type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD_EN] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. AZURE_SEMANTIC_VAD_EN."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -975,7 +972,7 @@ class AzureSemanticVadEn(TurnDetection, discriminator="azure_semantic_vad_en"):
 class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_vad_multilingual"):
     """Server Speech Detection (Azure semantic VAD).
 
-    :ivar type: Required.
+    :ivar type: Required. AZURE_SEMANTIC_VAD_MULTILINGUAL.
     :vartype type: str or ~azure.ai.voicelive.models.AZURE_SEMANTIC_VAD_MULTILINGUAL
     :ivar threshold:
     :vartype threshold: float
@@ -1000,7 +997,7 @@ class AzureSemanticVadMultilingual(TurnDetection, discriminator="azure_semantic_
     """
 
     type: Literal[TurnDetectionType.AZURE_SEMANTIC_VAD_MULTILINGUAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. AZURE_SEMANTIC_VAD_MULTILINGUAL."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1159,8 +1156,7 @@ class FillerResponseConfigBase(_Model):
      "static_filler" and "llm_filler".
     :vartype type: str or ~azure.ai.voicelive.models.FillerResponseConfigType
     :ivar triggers: List of triggers that can fire the filler. Any trigger can activate the filler
-     (OR logic).
-     Supported: 'latency', 'tool'.
+     (OR logic). Supported: 'latency', 'tool'.
     :vartype triggers: list[str or ~azure.ai.voicelive.models.FillerTrigger]
     :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering filler
      response. Default is 2000ms.
@@ -1200,12 +1196,11 @@ class FillerResponseConfigBase(_Model):
 
 
 class BasicFillerResponseConfig(FillerResponseConfigBase, discriminator="static_filler"):
-    """Configuration for basic/static filler response generation.
-    Randomly selects from configured texts when any trigger condition is met.
+    """Configuration for basic/static filler response generation. Randomly selects from configured
+    texts when any trigger condition is met.
 
     :ivar triggers: List of triggers that can fire the filler. Any trigger can activate the filler
-     (OR logic).
-     Supported: 'latency', 'tool'.
+     (OR logic). Supported: 'latency', 'tool'.
     :vartype triggers: list[str or ~azure.ai.voicelive.models.FillerTrigger]
     :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering filler
      response. Default is 2000ms.
@@ -1334,35 +1329,35 @@ class ClientEvent(_Model):
 
 
 class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation.item.create"):
-    """Add a new Item to the Conversation's context, including messages, function
-    calls, and function call responses. This event can be used both to populate a
-    "history" of the conversation and to add new items mid-stream, but has the
-    current limitation that it cannot populate assistant audio messages.
-    If successful, the server will respond with a ``conversation.item.created``
+    """Add a new Item to the Conversation's context, including messages, function calls, and function
+    call responses. This event can be used both to populate a "history" of the conversation and to
+    add new items mid-stream, but has the current limitation that it cannot populate assistant
+    audio messages. If successful, the server will respond with a ``conversation.item.created``
     event, otherwise an ``error`` event will be sent.
 
     :ivar type: The event type, must be ``conversation.item.create``. Required.
+     CONVERSATION_ITEM_CREATE.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_CREATE
     :ivar event_id: Optional client-generated ID used to identify this event.
     :vartype event_id: str
     :ivar previous_item_id: The ID of the preceding item after which the new item will be inserted.
-     If not set, the new item will be appended to the end of the conversation.
-     If set to ``root``, the new item will be added to the beginning of the conversation.
-     If set to an existing ID, it allows an item to be inserted mid-conversation. If the
-     ID cannot be found, an error will be returned and the item will not be added.
+     If not set, the new item will be appended to the end of the conversation. If set to ``root``,
+     the new item will be added to the beginning of the conversation. If set to an existing ID, it
+     allows an item to be inserted mid-conversation. If the ID cannot be found, an error will be
+     returned and the item will not be added.
     :vartype previous_item_id: str
     :ivar item:
     :vartype item: ~azure.ai.voicelive.models.ConversationRequestItem
     """
 
     type: Literal[ClientEventType.CONVERSATION_ITEM_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.create``. Required."""
+    """The event type, must be ``conversation.item.create``. Required. CONVERSATION_ITEM_CREATE."""
     previous_item_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the preceding item after which the new item will be inserted.
-     If not set, the new item will be appended to the end of the conversation.
-     If set to ``root``, the new item will be added to the beginning of the conversation.
-     If set to an existing ID, it allows an item to be inserted mid-conversation. If the
-     ID cannot be found, an error will be returned and the item will not be added."""
+    """The ID of the preceding item after which the new item will be inserted. If not set, the new
+     item will be appended to the end of the conversation. If set to ``root``, the new item will be
+     added to the beginning of the conversation. If set to an existing ID, it allows an item to be
+     inserted mid-conversation. If the ID cannot be found, an error will be returned and the item
+     will not be added."""
     item: Optional["_models.ConversationRequestItem"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1389,21 +1384,21 @@ class ClientEventConversationItemCreate(ClientEvent, discriminator="conversation
 
 
 class ClientEventConversationItemDelete(ClientEvent, discriminator="conversation.item.delete"):
-    """Send this event when you want to remove any item from the conversation
-    history. The server will respond with a ``conversation.item.deleted`` event,
-    unless the item does not exist in the conversation history, in which case the
-    server will respond with an error.
+    """Send this event when you want to remove any item from the conversation history. The server will
+    respond with a ``conversation.item.deleted`` event, unless the item does not exist in the
+    conversation history, in which case the server will respond with an error.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.delete``. Required.
+     CONVERSATION_ITEM_DELETE.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_DELETE
     :ivar item_id: The ID of the item to delete. Required.
     :vartype item_id: str
     """
 
     type: Literal[ClientEventType.CONVERSATION_ITEM_DELETE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.delete``. Required."""
+    """The event type, must be ``conversation.item.delete``. Required. CONVERSATION_ITEM_DELETE."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item to delete. Required."""
 
@@ -1430,21 +1425,21 @@ class ClientEventConversationItemDelete(ClientEvent, discriminator="conversation
 class ClientEventConversationItemRetrieve(ClientEvent, discriminator="conversation.item.retrieve"):
     """Send this event when you want to retrieve the server's representation of a specific item in the
     conversation history. This is useful, for example, to inspect user audio after noise
-    cancellation and VAD.
-    The server will respond with a ``conversation.item.retrieved`` event,
-    unless the item does not exist in the conversation history, in which case the
-    server will respond with an error.
+    cancellation and VAD. The server will respond with a ``conversation.item.retrieved`` event,
+    unless the item does not exist in the conversation history, in which case the server will
+    respond with an error.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.retrieve``. Required.
+     CONVERSATION_ITEM_RETRIEVE.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_RETRIEVE
     :ivar item_id: The ID of the item to retrieve. Required.
     :vartype item_id: str
     """
 
     type: Literal[ClientEventType.CONVERSATION_ITEM_RETRIEVE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.retrieve``. Required."""
+    """The event type, must be ``conversation.item.retrieve``. Required. CONVERSATION_ITEM_RETRIEVE."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item to retrieve. Required."""
 
@@ -1469,42 +1464,40 @@ class ClientEventConversationItemRetrieve(ClientEvent, discriminator="conversati
 
 
 class ClientEventConversationItemTruncate(ClientEvent, discriminator="conversation.item.truncate"):
-    """Send this event to truncate a previous assistant message’s audio. The server
-    will produce audio faster than voicelive, so this event is useful when the user
-    interrupts to truncate audio that has already been sent to the client but not
-    yet played. This will synchronize the server's understanding of the audio with
-    the client's playback.
-    Truncating audio will delete the server-side text transcript to ensure there
-    is not text in the context that hasn't been heard by the user.
-    If successful, the server will respond with a ``conversation.item.truncated``
+    """Send this event to truncate a previous assistant message’s audio. The server will produce audio
+    faster than voicelive, so this event is useful when the user interrupts to truncate audio that
+    has already been sent to the client but not yet played. This will synchronize the server's
+    understanding of the audio with the client's playback. Truncating audio will delete the
+    server-side text transcript to ensure there is not text in the context that hasn't been heard
+    by the user. If successful, the server will respond with a ``conversation.item.truncated``
     event.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.truncate``. Required.
+     CONVERSATION_ITEM_TRUNCATE.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_TRUNCATE
-    :ivar item_id: The ID of the assistant message item to truncate. Only assistant message
-     items can be truncated. Required.
+    :ivar item_id: The ID of the assistant message item to truncate. Only assistant message items
+     can be truncated. Required.
     :vartype item_id: str
     :ivar content_index: The index of the content part to truncate. Set this to 0. Required.
     :vartype content_index: int
-    :ivar audio_end_ms: Inclusive duration up to which audio is truncated, in milliseconds. If
-     the audio_end_ms is greater than the actual audio duration, the server
-     will respond with an error. Required.
+    :ivar audio_end_ms: Inclusive duration up to which audio is truncated, in milliseconds. If the
+     audio_end_ms is greater than the actual audio duration, the server will respond with an error.
+     Required.
     :vartype audio_end_ms: int
     """
 
     type: Literal[ClientEventType.CONVERSATION_ITEM_TRUNCATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.truncate``. Required."""
+    """The event type, must be ``conversation.item.truncate``. Required. CONVERSATION_ITEM_TRUNCATE."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the assistant message item to truncate. Only assistant message
-     items can be truncated. Required."""
+    """The ID of the assistant message item to truncate. Only assistant message items can be
+     truncated. Required."""
     content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The index of the content part to truncate. Set this to 0. Required."""
     audio_end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Inclusive duration up to which audio is truncated, in milliseconds. If
-     the audio_end_ms is greater than the actual audio duration, the server
-     will respond with an error. Required."""
+    """Inclusive duration up to which audio is truncated, in milliseconds. If the audio_end_ms is
+     greater than the actual audio duration, the server will respond with an error. Required."""
 
     @overload
     def __init__(
@@ -1543,6 +1536,7 @@ class ClientEventInputAudioBufferAppend(ClientEvent, discriminator="input_audio_
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.append``. Required.
+     INPUT_AUDIO_BUFFER_APPEND.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_APPEND
     :ivar audio: Base64-encoded audio. This must be in the format specified by the
      ``input_audio_format`` field in the session configuration. Required.
@@ -1550,10 +1544,10 @@ class ClientEventInputAudioBufferAppend(ClientEvent, discriminator="input_audio_
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_BUFFER_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.append``. Required."""
+    """The event type, must be ``input_audio_buffer.append``. Required. INPUT_AUDIO_BUFFER_APPEND."""
     audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Base64-encoded audio. This must be in the format specified by the
-     ``input_audio_format`` field in the session configuration. Required."""
+    """Base64-encoded audio. This must be in the format specified by the ``input_audio_format`` field
+     in the session configuration. Required."""
 
     @overload
     def __init__(
@@ -1576,17 +1570,18 @@ class ClientEventInputAudioBufferAppend(ClientEvent, discriminator="input_audio_
 
 
 class ClientEventInputAudioBufferClear(ClientEvent, discriminator="input_audio_buffer.clear"):
-    """Send this event to clear the audio bytes in the buffer. The server will
-    respond with an ``input_audio_buffer.cleared`` event.
+    """Send this event to clear the audio bytes in the buffer. The server will respond with an
+    ``input_audio_buffer.cleared`` event.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.clear``. Required.
+     INPUT_AUDIO_BUFFER_CLEAR.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_CLEAR
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_BUFFER_CLEAR] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.clear``. Required."""
+    """The event type, must be ``input_audio_buffer.clear``. Required. INPUT_AUDIO_BUFFER_CLEAR."""
 
     @overload
     def __init__(
@@ -1608,24 +1603,22 @@ class ClientEventInputAudioBufferClear(ClientEvent, discriminator="input_audio_b
 
 
 class ClientEventInputAudioBufferCommit(ClientEvent, discriminator="input_audio_buffer.commit"):
-    """Send this event to commit the user input audio buffer, which will create a
-    new user message item in the conversation. This event will produce an error
-    if the input audio buffer is empty. When in Server VAD mode, the client does
-    not need to send this event, the server will commit the audio buffer
-    automatically.
-    Committing the input audio buffer will trigger input audio transcription
-    (if enabled in session configuration), but it will not create a response
-    from the model. The server will respond with an ``input_audio_buffer.committed``
-    event.
+    """Send this event to commit the user input audio buffer, which will create a new user message
+    item in the conversation. This event will produce an error if the input audio buffer is empty.
+    When in Server VAD mode, the client does not need to send this event, the server will commit
+    the audio buffer automatically. Committing the input audio buffer will trigger input audio
+    transcription (if enabled in session configuration), but it will not create a response from the
+    model. The server will respond with an ``input_audio_buffer.committed`` event.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.commit``. Required.
+     INPUT_AUDIO_BUFFER_COMMIT.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_COMMIT
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_BUFFER_COMMIT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.commit``. Required."""
+    """The event type, must be ``input_audio_buffer.commit``. Required. INPUT_AUDIO_BUFFER_COMMIT."""
 
     @overload
     def __init__(
@@ -1651,12 +1644,12 @@ class ClientEventInputAudioClear(ClientEvent, discriminator="input_audio.clear")
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be 'input_audio.clear'. Required.
+    :ivar type: The event type, must be 'input_audio.clear'. Required. INPUT_AUDIO_CLEAR.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_CLEAR
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_CLEAR] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'input_audio.clear'. Required."""
+    """The event type, must be 'input_audio.clear'. Required. INPUT_AUDIO_CLEAR."""
 
     @overload
     def __init__(
@@ -1683,6 +1676,7 @@ class ClientEventInputAudioTurnAppend(ClientEvent, discriminator="input_audio.tu
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be 'input_audio.turn.append'. Required.
+     INPUT_AUDIO_TURN_APPEND.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_TURN_APPEND
     :ivar turn_id: The ID of the turn this audio is part of. Required.
     :vartype turn_id: str
@@ -1691,7 +1685,7 @@ class ClientEventInputAudioTurnAppend(ClientEvent, discriminator="input_audio.tu
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_TURN_APPEND] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'input_audio.turn.append'. Required."""
+    """The event type, must be 'input_audio.turn.append'. Required. INPUT_AUDIO_TURN_APPEND."""
     turn_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the turn this audio is part of. Required."""
     audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1724,13 +1718,14 @@ class ClientEventInputAudioTurnCancel(ClientEvent, discriminator="input_audio.tu
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be 'input_audio.turn.cancel'. Required.
+     INPUT_AUDIO_TURN_CANCEL.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_TURN_CANCEL
     :ivar turn_id: The ID of the turn to cancel. Required.
     :vartype turn_id: str
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_TURN_CANCEL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'input_audio.turn.cancel'. Required."""
+    """The event type, must be 'input_audio.turn.cancel'. Required. INPUT_AUDIO_TURN_CANCEL."""
     turn_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the turn to cancel. Required."""
 
@@ -1759,14 +1754,14 @@ class ClientEventInputAudioTurnEnd(ClientEvent, discriminator="input_audio.turn.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be 'input_audio.turn.end'. Required.
+    :ivar type: The event type, must be 'input_audio.turn.end'. Required. INPUT_AUDIO_TURN_END.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_TURN_END
     :ivar turn_id: The ID of the audio turn being ended. Required.
     :vartype turn_id: str
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_TURN_END] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'input_audio.turn.end'. Required."""
+    """The event type, must be 'input_audio.turn.end'. Required. INPUT_AUDIO_TURN_END."""
     turn_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the audio turn being ended. Required."""
 
@@ -1795,14 +1790,14 @@ class ClientEventInputAudioTurnStart(ClientEvent, discriminator="input_audio.tur
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be 'input_audio.turn.start'. Required.
+    :ivar type: The event type, must be 'input_audio.turn.start'. Required. INPUT_AUDIO_TURN_START.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_TURN_START
     :ivar turn_id: Unique identifier for the input audio turn. Required.
     :vartype turn_id: str
     """
 
     type: Literal[ClientEventType.INPUT_AUDIO_TURN_START] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'input_audio.turn.start'. Required."""
+    """The event type, must be 'input_audio.turn.start'. Required. INPUT_AUDIO_TURN_START."""
     turn_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the input audio turn. Required."""
 
@@ -1827,13 +1822,12 @@ class ClientEventInputAudioTurnStart(ClientEvent, discriminator="input_audio.tur
 
 
 class ClientEventResponseCancel(ClientEvent, discriminator="response.cancel"):
-    """Send this event to cancel an in-progress response. The server will respond
-    with a ``response.cancelled`` event or an error if there is no response to
-    cancel.
+    """Send this event to cancel an in-progress response. The server will respond with a
+    ``response.cancelled`` event or an error if there is no response to cancel.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.cancel``. Required.
+    :ivar type: The event type, must be ``response.cancel``. Required. RESPONSE_CANCEL.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_CANCEL
     :ivar response_id: A specific response ID to cancel - if not provided, will cancel an
      in-progress response in the default conversation.
@@ -1841,10 +1835,10 @@ class ClientEventResponseCancel(ClientEvent, discriminator="response.cancel"):
     """
 
     type: Literal[ClientEventType.RESPONSE_CANCEL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.cancel``. Required."""
+    """The event type, must be ``response.cancel``. Required. RESPONSE_CANCEL."""
     response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A specific response ID to cancel - if not provided, will cancel an
-     in-progress response in the default conversation."""
+    """A specific response ID to cancel - if not provided, will cancel an in-progress response in the
+     default conversation."""
 
     @overload
     def __init__(
@@ -1867,22 +1861,18 @@ class ClientEventResponseCancel(ClientEvent, discriminator="response.cancel"):
 
 
 class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
-    """This event instructs the server to create a Response, which means triggering
-    model inference. When in Server VAD mode, the server will create Responses
-    automatically.
-    A Response will include at least one Item, and may have two, in which case
-    the second will be a function call. These Items will be appended to the
-    conversation history.
-    The server will respond with a ``response.created`` event, events for Items
-    and content created, and finally a ``response.done`` event to indicate the
-    Response is complete.
-    The ``response.create`` event includes inference configuration like
-    ``instructions``, and ``temperature``. These fields will override the Session's
-    configuration for this Response only.
+    """This event instructs the server to create a Response, which means triggering model inference.
+    When in Server VAD mode, the server will create Responses automatically. A Response will
+    include at least one Item, and may have two, in which case the second will be a function call.
+    These Items will be appended to the conversation history. The server will respond with a
+    ``response.created`` event, events for Items and content created, and finally a
+    ``response.done`` event to indicate the Response is complete. The ``response.create`` event
+    includes inference configuration like ``instructions``, and ``temperature``. These fields will
+    override the Session's configuration for this Response only.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.create``. Required.
+    :ivar type: The event type, must be ``response.create``. Required. RESPONSE_CREATE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_CREATE
     :ivar response:
     :vartype response: ~azure.ai.voicelive.models.ResponseCreateParams
@@ -1892,7 +1882,7 @@ class ClientEventResponseCreate(ClientEvent, discriminator="response.create"):
     """
 
     type: Literal[ClientEventType.RESPONSE_CREATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.create``. Required."""
+    """The event type, must be ``response.create``. Required. RESPONSE_CREATE."""
     response: Optional["_models.ResponseCreateParams"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1928,14 +1918,14 @@ class ClientEventSessionAvatarConnect(ClientEvent, discriminator="session.avatar
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be 'session.avatar.connect'. Required.
+    :ivar type: The event type, must be 'session.avatar.connect'. Required. SESSION_AVATAR_CONNECT.
     :vartype type: str or ~azure.ai.voicelive.models.SESSION_AVATAR_CONNECT
     :ivar client_sdp: The client's SDP offer. Required.
     :vartype client_sdp: str
     """
 
     type: Literal[ClientEventType.SESSION_AVATAR_CONNECT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'session.avatar.connect'. Required."""
+    """The event type, must be 'session.avatar.connect'. Required. SESSION_AVATAR_CONNECT."""
     client_sdp: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The client's SDP offer. Required."""
 
@@ -1960,26 +1950,23 @@ class ClientEventSessionAvatarConnect(ClientEvent, discriminator="session.avatar
 
 
 class ClientEventSessionUpdate(ClientEvent, discriminator="session.update"):
-    """Send this event to update the session’s default configuration.
-    The client may send this event at any time to update any field,
-    except for ``voice``. However, note that once a session has been
-    initialized with a particular ``model``, it can’t be changed to
-    another model using ``session.update``.
-    When the server receives a ``session.update``, it will respond
-    with a ``session.updated`` event showing the full, effective configuration.
-    Only the fields that are present are updated. To clear a field like
-    ``instructions``, pass an empty string.
+    """Send this event to update the session’s default configuration. The client may send this event
+    at any time to update any field, except for ``voice``. However, note that once a session has
+    been initialized with a particular ``model``, it can’t be changed to another model using
+    ``session.update``. When the server receives a ``session.update``, it will respond with a
+    ``session.updated`` event showing the full, effective configuration. Only the fields that are
+    present are updated. To clear a field like ``instructions``, pass an empty string.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``session.update``. Required.
+    :ivar type: The event type, must be ``session.update``. Required. SESSION_UPDATE.
     :vartype type: str or ~azure.ai.voicelive.models.SESSION_UPDATE
     :ivar session: Required.
     :vartype session: ~azure.ai.voicelive.models.RequestSession
     """
 
     type: Literal[ClientEventType.SESSION_UPDATE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``session.update``. Required."""
+    """The event type, must be ``session.update``. Required. SESSION_UPDATE."""
     session: "_models.RequestSession" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -2070,123 +2057,12 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tool(_Model):
-    """The base representation of a voicelive tool definition.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    FoundryAgentTool, FunctionTool, MCPServer
-
-    :ivar type: Required. Known values are: "function", "mcp", and "foundry_agent".
-    :vartype type: str or ~azure.ai.voicelive.models.ToolType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"function\", \"mcp\", and \"foundry_agent\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FoundryAgentTool(Tool, discriminator="foundry_agent"):
-    """The definition of a Foundry agent tool as used by the voicelive endpoint.
-
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.FOUNDRY_AGENT
-    :ivar agent_name: The name of the Foundry agent to call. Required.
-    :vartype agent_name: str
-    :ivar agent_version: The version of the Foundry agent to call.
-    :vartype agent_version: str
-    :ivar project_name: The name of the Foundry project containing the agent. Required.
-    :vartype project_name: str
-    :ivar client_id: The client ID associated with the Foundry agent.
-    :vartype client_id: str
-    :ivar description: An optional description for the Foundry agent tool. If this is provided, it
-     will be used instead of the agent's description in foundry portal.
-    :vartype description: str
-    :ivar foundry_resource_override: An optional override for the Foundry resource used to execute
-     the agent.
-    :vartype foundry_resource_override: str
-    :ivar agent_context_type: The context type to use when invoking the Foundry agent. Defaults to
-     'agent_context'. Known values are: "no_context" and "agent_context".
-    :vartype agent_context_type: str or ~azure.ai.voicelive.models.FoundryAgentContextType
-    :ivar return_agent_response_directly: Whether to return the agent's response directly in the
-     VoiceLive response. Set to false means to ask the voice live to rewrite the response.
-    :vartype return_agent_response_directly: bool
-    """
-
-    type: Literal[ToolType.FOUNDRY_AGENT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    agent_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the Foundry agent to call. Required."""
-    agent_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The version of the Foundry agent to call."""
-    project_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the Foundry project containing the agent. Required."""
-    client_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The client ID associated with the Foundry agent."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional description for the Foundry agent tool. If this is provided, it will be used
-     instead of the agent's description in foundry portal."""
-    foundry_resource_override: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional override for the Foundry resource used to execute the agent."""
-    agent_context_type: Optional[Union[str, "_models.FoundryAgentContextType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The context type to use when invoking the Foundry agent. Defaults to 'agent_context'. Known
-     values are: \"no_context\" and \"agent_context\"."""
-    return_agent_response_directly: Optional[bool] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to return the agent's response directly in the VoiceLive response. Set to false means
-     to ask the voice live to rewrite the response."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        agent_name: str,
-        project_name: str,
-        agent_version: Optional[str] = None,
-        client_id: Optional[str] = None,
-        description: Optional[str] = None,
-        foundry_resource_override: Optional[str] = None,
-        agent_context_type: Optional[Union[str, "_models.FoundryAgentContextType"]] = None,
-        return_agent_response_directly: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.FOUNDRY_AGENT  # type: ignore
-
-
 class FunctionCallItem(ConversationRequestItem, discriminator="function_call"):
     """A function call item within a conversation.
 
     :ivar id:
     :vartype id: str
-    :ivar type: Required.
+    :ivar type: Required. FUNCTION_CALL.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL
     :ivar name: Required.
     :vartype name: str
@@ -2199,7 +2075,7 @@ class FunctionCallItem(ConversationRequestItem, discriminator="function_call"):
     """
 
     type: Literal[ItemType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FUNCTION_CALL."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2239,7 +2115,7 @@ class FunctionCallOutputItem(ConversationRequestItem, discriminator="function_ca
 
     :ivar id:
     :vartype id: str
-    :ivar type: Required.
+    :ivar type: Required. FUNCTION_CALL_OUTPUT.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL_OUTPUT
     :ivar call_id: Required.
     :vartype call_id: str
@@ -2250,7 +2126,7 @@ class FunctionCallOutputItem(ConversationRequestItem, discriminator="function_ca
     """
 
     type: Literal[ItemType.FUNCTION_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FUNCTION_CALL_OUTPUT."""
     call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2282,10 +2158,42 @@ class FunctionCallOutputItem(ConversationRequestItem, discriminator="function_ca
         self.type = ItemType.FUNCTION_CALL_OUTPUT  # type: ignore
 
 
+class Tool(_Model):
+    """The base representation of a voicelive tool definition.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FunctionTool, MCPServer
+
+    :ivar type: Required. Known values are: "function" and "mcp".
+    :vartype type: str or ~azure.ai.voicelive.models.ToolType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"function\" and \"mcp\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FunctionTool(Tool, discriminator="function"):
     """The definition of a function tool as used by the voicelive endpoint.
 
-    :ivar type: Required.
+    :ivar type: Required. FUNCTION.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION
     :ivar name: Required.
     :vartype name: str
@@ -2296,7 +2204,7 @@ class FunctionTool(Tool, discriminator="function"):
     """
 
     type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FUNCTION."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2398,7 +2306,7 @@ class MessageContentPart(_Model):
 class InputAudioContentPart(MessageContentPart, discriminator="input_audio"):
     """Input audio content part.
 
-    :ivar type: Required.
+    :ivar type: Required. INPUT_AUDIO.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO
     :ivar audio: Required.
     :vartype audio: str
@@ -2407,7 +2315,7 @@ class InputAudioContentPart(MessageContentPart, discriminator="input_audio"):
     """
 
     type: Literal[ContentPartType.INPUT_AUDIO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. INPUT_AUDIO."""
     audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2435,14 +2343,14 @@ class InputAudioContentPart(MessageContentPart, discriminator="input_audio"):
 class InputTextContentPart(MessageContentPart, discriminator="input_text"):
     """Input text content part.
 
-    :ivar type: Required.
+    :ivar type: Required. INPUT_TEXT.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT
     :ivar text: Required.
     :vartype text: str
     """
 
     type: Literal[ContentPartType.INPUT_TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. INPUT_TEXT."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -2516,12 +2424,11 @@ class InputTokenDetails(_Model):
 
 
 class LlmFillerResponseConfig(FillerResponseConfigBase, discriminator="llm_filler"):
-    """Configuration for LLM-based filler response generation.
-    Uses LLM to generate context-aware filler responses when any trigger condition is met.
+    """Configuration for LLM-based filler response generation. Uses LLM to generate context-aware
+    filler responses when any trigger condition is met.
 
     :ivar triggers: List of triggers that can fire the filler. Any trigger can activate the filler
-     (OR logic).
-     Supported: 'latency', 'tool'.
+     (OR logic). Supported: 'latency', 'tool'.
     :vartype triggers: list[str or ~azure.ai.voicelive.models.FillerTrigger]
     :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering filler
      response. Default is 2000ms.
@@ -2612,7 +2519,7 @@ class MCPApprovalResponseRequestItem(ConversationRequestItem, discriminator="mcp
 
     :ivar id:
     :vartype id: str
-    :ivar type: The type of the item. Required.
+    :ivar type: The type of the item. Required. MCP_APPROVAL_RESPONSE.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_APPROVAL_RESPONSE
     :ivar approval_request_id: The ID of the approval request. Required.
     :vartype approval_request_id: str
@@ -2621,7 +2528,7 @@ class MCPApprovalResponseRequestItem(ConversationRequestItem, discriminator="mcp
     """
 
     type: Literal[ItemType.MCP_APPROVAL_RESPONSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item. Required."""
+    """The type of the item. Required. MCP_APPROVAL_RESPONSE."""
     approval_request_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the approval request. Required."""
     approve: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2651,7 +2558,7 @@ class MCPApprovalResponseRequestItem(ConversationRequestItem, discriminator="mcp
 class MCPServer(Tool, discriminator="mcp"):
     """The definition of an MCP server as used by the voicelive endpoint.
 
-    :ivar type: Required.
+    :ivar type: Required. MCP.
     :vartype type: str or ~azure.ai.voicelive.models.MCP
     :ivar server_label: Required.
     :vartype server_label: str
@@ -2670,7 +2577,7 @@ class MCPServer(Tool, discriminator="mcp"):
     """
 
     type: Literal[ToolType.MCP] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. MCP."""
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     server_url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2791,14 +2698,14 @@ class OpenAIVoice(_Model):
 class OutputTextContentPart(MessageContentPart, discriminator="text"):
     """Output text content part.
 
-    :ivar type: The type of the content part. Required.
+    :ivar type: The type of the content part. Required. TEXT.
     :vartype type: str or ~azure.ai.voicelive.models.TEXT
     :ivar text: The text content. Required.
     :vartype text: str
     """
 
     type: Literal[ContentPartType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the content part. Required."""
+    """The type of the content part. Required. TEXT."""
     text: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The text content. Required."""
 
@@ -2857,14 +2764,14 @@ class OutputTokenDetails(_Model):
 class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
     """An audio content part for a request.
 
-    :ivar type: Required.
+    :ivar type: Required. INPUT_AUDIO.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO
     :ivar transcript:
     :vartype transcript: str
     """
 
     type: Literal[ContentPartType.INPUT_AUDIO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. INPUT_AUDIO."""
     transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -2889,7 +2796,7 @@ class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
 class RequestImageContentPart(ContentPart, discriminator="input_image"):
     """Input image content part.
 
-    :ivar type: Required.
+    :ivar type: Required. INPUT_IMAGE.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_IMAGE
     :ivar url:
     :vartype url: str
@@ -2898,7 +2805,7 @@ class RequestImageContentPart(ContentPart, discriminator="input_image"):
     """
 
     type: Literal[ContentPartType.INPUT_IMAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. INPUT_IMAGE."""
     url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     detail: Optional[Union[str, "_models.RequestImageContentPartDetail"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2979,9 +2886,9 @@ class RequestSession(_Model):
      is unlimited. Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
     :ivar reasoning_effort: Constrains effort on reasoning for reasoning models. Check model
-     documentation for supported values for each model.
-     Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-     a response. Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+     documentation for supported values for each model. Reducing reasoning effort can result in
+     faster responses and fewer tokens used on reasoning in a response. Known values are: "none",
+     "minimal", "low", "medium", "high", and "xhigh".
     :vartype reasoning_effort: str or ~azure.ai.voicelive.models.ReasoningEffort
     :ivar filler_response: Configuration for filler response generation during latency or tool
      calls. Is either a BasicFillerResponseConfig type or a LlmFillerResponseConfig type.
@@ -3056,10 +2963,9 @@ class RequestSession(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Constrains effort on reasoning for reasoning models. Check model documentation for supported
-     values for each model.
-     Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-     a response. Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and
-     \"xhigh\"."""
+     values for each model. Reducing reasoning effort can result in faster responses and fewer
+     tokens used on reasoning in a response. Known values are: \"none\", \"minimal\", \"low\",
+     \"medium\", \"high\", and \"xhigh\"."""
     filler_response: Optional["_types.FillerResponseConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3106,14 +3012,14 @@ class RequestSession(_Model):
 class RequestTextContentPart(ContentPart, discriminator="input_text"):
     """A text content part for a request.
 
-    :ivar type: Required.
+    :ivar type: Required. INPUT_TEXT.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_TEXT
     :ivar text:
     :vartype text: str
     """
 
     type: Literal[ContentPartType.INPUT_TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. INPUT_TEXT."""
     text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -3152,28 +3058,25 @@ class Response(_Model):
     :vartype status_details: ~azure.ai.voicelive.models.ResponseStatusDetails
     :ivar output: The list of output items generated by the response.
     :vartype output: list[~azure.ai.voicelive.models.ResponseItem]
-    :ivar usage: Usage statistics for the Response, this will correspond to billing. A
-     VoiceLive API session will maintain a conversation context and append new
-     Items to the Conversation, thus output from previous turns (text and
-     audio tokens) will become the input for later turns.
+    :ivar usage: Usage statistics for the Response, this will correspond to billing. A VoiceLive
+     API session will maintain a conversation context and append new Items to the Conversation, thus
+     output from previous turns (text and audio tokens) will become the input for later turns.
     :vartype usage: ~azure.ai.voicelive.models.TokenUsage
     :ivar conversation_id: Which conversation the response is added to, determined by the
-     ``conversation``
-     field in the ``response.create`` event. If ``auto``, the response will be added to
-     the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and
-     the value of ``conversation_id`` will be ``null``. If responses are being triggered
-     by server VAD, the response will be added to the default conversation, thus
-     the ``conversation_id`` will be an id like ``conv_1234``.
+     ``conversation`` field in the ``response.create`` event. If ``auto``, the response will be
+     added to the default conversation and the value of ``conversation_id`` will be an id like
+     ``conv_1234``. If ``none``, the response will not be added to any conversation and the value of
+     ``conversation_id`` will be ``null``. If responses are being triggered by server VAD, the
+     response will be added to the default conversation, thus the ``conversation_id`` will be an id
+     like ``conv_1234``.
     :vartype conversation_id: str
     :ivar voice: supported voice identifiers and configurations. Is one of the following types:
      Union[str, "_models.OpenAIVoiceName"], OpenAIVoice, AzureVoice
     :vartype voice: str or ~azure.ai.voicelive.models.OpenAIVoiceName or
      ~azure.ai.voicelive.models.OpenAIVoice or ~azure.ai.voicelive.models.AzureVoice
     :ivar modalities: The set of modalities the model used to respond. If there are multiple
-     modalities,
-     the model will pick one, for example if ``modalities`` is ``["text", "audio"]``, the model
-     could be responding in either text or audio.
+     modalities, the model will pick one, for example if ``modalities`` is ``["text", "audio"]``,
+     the model could be responding in either text or audio.
     :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
     :ivar output_audio_format: The format of output audio. Options are ``pcm16``, ``g711_ulaw``, or
      ``g711_alaw``. Known values are: "pcm16", "pcm16_8000hz", "pcm16_16000hz", "g711_ulaw", and
@@ -3185,9 +3088,9 @@ class Response(_Model):
      inclusive of tool calls, that was used in this response. Is either a int type or a
      Literal["inf"] type.
     :vartype max_output_tokens: int or str
-    :ivar metadata: Set of up to 16 key-value pairs that can be attached to an object.
-     This can be useful for storing additional information about the object in a structured format.
-     Keys can be a maximum of 64 characters long and values can be a maximum of 512 characters long.
+    :ivar metadata: Set of up to 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured format. Keys can be
+     a maximum of 64 characters long and values can be a maximum of 512 characters long.
     :vartype metadata: dict[str, str]
     """
 
@@ -3213,27 +3116,25 @@ class Response(_Model):
     )
     """The list of output items generated by the response."""
     usage: Optional["_models.TokenUsage"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Usage statistics for the Response, this will correspond to billing. A
-     VoiceLive API session will maintain a conversation context and append new
-     Items to the Conversation, thus output from previous turns (text and
-     audio tokens) will become the input for later turns."""
+    """Usage statistics for the Response, this will correspond to billing. A VoiceLive API session
+     will maintain a conversation context and append new Items to the Conversation, thus output from
+     previous turns (text and audio tokens) will become the input for later turns."""
     conversation_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Which conversation the response is added to, determined by the ``conversation``
-     field in the ``response.create`` event. If ``auto``, the response will be added to
-     the default conversation and the value of ``conversation_id`` will be an id like
-     ``conv_1234``. If ``none``, the response will not be added to any conversation and
-     the value of ``conversation_id`` will be ``null``. If responses are being triggered
-     by server VAD, the response will be added to the default conversation, thus
-     the ``conversation_id`` will be an id like ``conv_1234``."""
+    """Which conversation the response is added to, determined by the ``conversation`` field in the
+     ``response.create`` event. If ``auto``, the response will be added to the default conversation
+     and the value of ``conversation_id`` will be an id like ``conv_1234``. If ``none``, the
+     response will not be added to any conversation and the value of ``conversation_id`` will be
+     ``null``. If responses are being triggered by server VAD, the response will be added to the
+     default conversation, thus the ``conversation_id`` will be an id like ``conv_1234``."""
     voice: Optional["_types.Voice"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """supported voice identifiers and configurations. Is one of the following types: Union[str,
      \"_models.OpenAIVoiceName\"], OpenAIVoice, AzureVoice"""
     modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The set of modalities the model used to respond. If there are multiple modalities,
-     the model will pick one, for example if ``modalities`` is ``[\"text\", \"audio\"]``, the model
-     could be responding in either text or audio."""
+    """The set of modalities the model used to respond. If there are multiple modalities, the model
+     will pick one, for example if ``modalities`` is ``[\"text\", \"audio\"]``, the model could be
+     responding in either text or audio."""
     output_audio_format: Optional[Union[str, "_models.OutputAudioFormat"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3244,13 +3145,12 @@ class Response(_Model):
     max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls, that was used in this response. Is either a int type or a
-     Literal[\"inf\"] type."""
+    """Maximum number of output tokens for a single assistant response, inclusive of tool calls, that
+     was used in this response. Is either a int type or a Literal[\"inf\"] type."""
     metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of up to 16 key-value pairs that can be attached to an object.
-     This can be useful for storing additional information about the object in a structured format.
-     Keys can be a maximum of 64 characters long and values can be a maximum of 512 characters long."""
+    """Set of up to 16 key-value pairs that can be attached to an object. This can be useful for
+     storing additional information about the object in a structured format. Keys can be a maximum
+     of 64 characters long and values can be a maximum of 512 characters long."""
 
     @overload
     def __init__(
@@ -3285,14 +3185,14 @@ class Response(_Model):
 class ResponseAudioContentPart(ContentPart, discriminator="audio"):
     """An audio content part for a response.
 
-    :ivar type: Required.
+    :ivar type: Required. AUDIO.
     :vartype type: str or ~azure.ai.voicelive.models.AUDIO
     :ivar transcript:
     :vartype transcript: str
     """
 
     type: Literal[ContentPartType.AUDIO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. AUDIO."""
     transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -3351,7 +3251,7 @@ class ResponseStatusDetails(_Model):
 class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled"):
     """Details for a cancelled response.
 
-    :ivar type: Required.
+    :ivar type: Required. CANCELLED.
     :vartype type: str or ~azure.ai.voicelive.models.CANCELLED
     :ivar reason: Required. Is one of the following types: Literal["turn_detected"],
      Literal["client_cancelled"], str
@@ -3359,7 +3259,7 @@ class ResponseCancelledDetails(ResponseStatusDetails, discriminator="cancelled")
     """
 
     type: Literal[ResponseStatus.CANCELLED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. CANCELLED."""
     reason: Union[Literal["turn_detected"], Literal["client_cancelled"], str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3396,11 +3296,11 @@ class ResponseCreateParams(_Model):
     :ivar append_input_items: Input items to append to the conversation context before generating a
      response.
     :vartype append_input_items: list[~azure.ai.voicelive.models.ConversationRequestItem]
-    :ivar input_items: Input items to be used as the context for this response.
-     An empty array clears previous context.
+    :ivar input_items: Input items to be used as the context for this response. An empty array
+     clears previous context.
     :vartype input_items: list[~azure.ai.voicelive.models.ConversationRequestItem]
-    :ivar modalities: The set of modalities the model can respond with. To disable audio,
-     set this to ["text"].
+    :ivar modalities: The set of modalities the model can respond with. To disable audio, set this
+     to ["text"].
     :vartype modalities: list[str or ~azure.ai.voicelive.models.Modality]
     :ivar instructions: The default system instructions (i.e. system message) prepended to model
      calls. This field allows the client to guide the model on desired
@@ -3426,29 +3326,27 @@ class ResponseCreateParams(_Model):
     :ivar tools: Tools (functions) available to the model.
     :vartype tools: list[~azure.ai.voicelive.models.Tool]
     :ivar tool_choice: How the model chooses tools. Options are ``auto``, ``none``, ``required``,
-     or
-     specify a function, like ``{"type": "function", "function": {"name": "my_function"}}``.
+     or specify a function, like ``{"type": "function", "function": {"name": "my_function"}}``.
     :vartype tool_choice: str
     :ivar temperature: Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8.
     :vartype temperature: float
     :ivar max_output_tokens: Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls. Provide an integer between 1 and 4096 to
-     limit output tokens, or ``inf`` for the maximum available tokens for a
-     given model. Defaults to ``inf``. Is either a int type or a Literal["inf"] type.
+     inclusive of tool calls. Provide an integer between 1 and 4096 to limit output tokens, or
+     ``inf`` for the maximum available tokens for a given model. Defaults to ``inf``. Is either a
+     int type or a Literal["inf"] type.
     :vartype max_output_tokens: int or str
     :ivar pre_generated_assistant_message: Create the response with pre-generated assistant
-     message. The message item would be
-     added into the conversation history and returned with synthesized audio output in the created
-     response.
+     message. The message item would be added into the conversation history and returned with
+     synthesized audio output in the created response.
     :vartype pre_generated_assistant_message: ~azure.ai.voicelive.models.AssistantMessageItem
     :ivar reasoning_effort: Constrains effort on reasoning for reasoning models. Check model
-     documentation for supported values for each model.
-     Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-     a response. Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+     documentation for supported values for each model. Reducing reasoning effort can result in
+     faster responses and fewer tokens used on reasoning in a response. Known values are: "none",
+     "minimal", "low", "medium", "high", and "xhigh".
     :vartype reasoning_effort: str or ~azure.ai.voicelive.models.ReasoningEffort
-    :ivar metadata: Set of up to 16 key-value pairs that can be attached to an object.
-     This can be useful for storing additional information about the object in a structured format.
-     Keys can be a maximum of 64 characters long and values can be a maximum of 512 characters long.
+    :ivar metadata: Set of up to 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured format. Keys can be
+     a maximum of 64 characters long and values can be a maximum of 512 characters long.
     :vartype metadata: dict[str, str]
     """
 
@@ -3463,13 +3361,12 @@ class ResponseCreateParams(_Model):
     input_items: Optional[list["_models.ConversationRequestItem"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Input items to be used as the context for this response.
-     An empty array clears previous context."""
+    """Input items to be used as the context for this response. An empty array clears previous
+     context."""
     modalities: Optional[list[Union[str, "_models.Modality"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The set of modalities the model can respond with. To disable audio,
-     set this to [\"text\"]."""
+    """The set of modalities the model can respond with. To disable audio, set this to [\"text\"]."""
     instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The default system instructions (i.e. system message) prepended to model
      calls. This field allows the client to guide the model on desired
@@ -3494,36 +3391,33 @@ class ResponseCreateParams(_Model):
     tools: Optional[list["_models.Tool"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Tools (functions) available to the model."""
     tool_choice: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """How the model chooses tools. Options are ``auto``, ``none``, ``required``, or
-     specify a function, like ``{\"type\": \"function\", \"function\": {\"name\":
-     \"my_function\"}}``."""
+    """How the model chooses tools. Options are ``auto``, ``none``, ``required``, or specify a
+     function, like ``{\"type\": \"function\", \"function\": {\"name\": \"my_function\"}}``."""
     temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Sampling temperature for the model, limited to [0.6, 1.2]. Defaults to 0.8."""
     max_output_tokens: Optional[Union[int, Literal["inf"]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Maximum number of output tokens for a single assistant response,
-     inclusive of tool calls. Provide an integer between 1 and 4096 to
-     limit output tokens, or ``inf`` for the maximum available tokens for a
-     given model. Defaults to ``inf``. Is either a int type or a Literal[\"inf\"] type."""
+    """Maximum number of output tokens for a single assistant response, inclusive of tool calls.
+     Provide an integer between 1 and 4096 to limit output tokens, or ``inf`` for the maximum
+     available tokens for a given model. Defaults to ``inf``. Is either a int type or a
+     Literal[\"inf\"] type."""
     pre_generated_assistant_message: Optional["_models.AssistantMessageItem"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Create the response with pre-generated assistant message. The message item would be
-     added into the conversation history and returned with synthesized audio output in the created
-     response."""
+    """Create the response with pre-generated assistant message. The message item would be added into
+     the conversation history and returned with synthesized audio output in the created response."""
     reasoning_effort: Optional[Union[str, "_models.ReasoningEffort"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Constrains effort on reasoning for reasoning models. Check model documentation for supported
-     values for each model.
-     Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-     a response. Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and
-     \"xhigh\"."""
+     values for each model. Reducing reasoning effort can result in faster responses and fewer
+     tokens used on reasoning in a response. Known values are: \"none\", \"minimal\", \"low\",
+     \"medium\", \"high\", and \"xhigh\"."""
     metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of up to 16 key-value pairs that can be attached to an object.
-     This can be useful for storing additional information about the object in a structured format.
-     Keys can be a maximum of 64 characters long and values can be a maximum of 512 characters long."""
+    """Set of up to 16 key-value pairs that can be attached to an object. This can be useful for
+     storing additional information about the object in a structured format. Keys can be a maximum
+     of 64 characters long and values can be a maximum of 512 characters long."""
 
     @overload
     def __init__(
@@ -3560,14 +3454,14 @@ class ResponseCreateParams(_Model):
 class ResponseFailedDetails(ResponseStatusDetails, discriminator="failed"):
     """Details for a failed response.
 
-    :ivar type: Required.
+    :ivar type: Required. FAILED.
     :vartype type: str or ~azure.ai.voicelive.models.FAILED
     :ivar error: Required.
     :vartype error: any
     """
 
     type: Literal[ResponseStatus.FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FAILED."""
     error: Any = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -3594,13 +3488,12 @@ class ResponseItem(_Model):
     """Base for any response item; discriminated by ``type``.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ResponseFoundryAgentCallItem, ResponseFunctionCallItem, ResponseFunctionCallOutputItem,
-    ResponseMCPApprovalRequestItem, ResponseMCPApprovalResponseItem, ResponseMCPCallItem,
-    ResponseMCPListToolItem, ResponseMessageItem
+    ResponseFunctionCallItem, ResponseFunctionCallOutputItem, ResponseMCPApprovalRequestItem,
+    ResponseMCPApprovalResponseItem, ResponseMCPCallItem, ResponseMCPListToolItem,
+    ResponseMessageItem
 
     :ivar type: Required. Known values are: "message", "function_call", "function_call_output",
-     "mcp_list_tools", "mcp_call", "mcp_approval_request", "mcp_approval_response", and
-     "foundry_agent_call".
+     "mcp_list_tools", "mcp_call", "mcp_approval_request", and "mcp_approval_response".
     :vartype type: str or ~azure.ai.voicelive.models.ItemType
     :ivar id:
     :vartype id: str
@@ -3611,8 +3504,7 @@ class ResponseItem(_Model):
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"message\", \"function_call\", \"function_call_output\",
-     \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", \"mcp_approval_response\", and
-     \"foundry_agent_call\"."""
+     \"mcp_list_tools\", \"mcp_call\", \"mcp_approval_request\", and \"mcp_approval_response\"."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     object: Optional[Literal["realtime.item"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Default value is \"realtime.item\"."""
@@ -3637,70 +3529,6 @@ class ResponseItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResponseFoundryAgentCallItem(ResponseItem, discriminator="foundry_agent_call"):
-    """A response item that represents a call to a Foundry agent.
-
-    :ivar id:
-    :vartype id: str
-    :ivar object: Default value is "realtime.item".
-    :vartype object: str
-    :ivar type: The type of the item. Required.
-    :vartype type: str or ~azure.ai.voicelive.models.FOUNDRY_AGENT_CALL
-    :ivar name: The name of the Foundry agent. Required.
-    :vartype name: str
-    :ivar call_id: The ID of the call. Required.
-    :vartype call_id: str
-    :ivar arguments: The arguments for the agent call. Required.
-    :vartype arguments: str
-    :ivar agent_response_id: The ID of the agent response, if any.
-    :vartype agent_response_id: str
-    :ivar output: The output of the agent call.
-    :vartype output: str
-    :ivar error: The error, if any, from the agent call.
-    :vartype error: any
-    """
-
-    type: Literal[ItemType.FOUNDRY_AGENT_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item. Required."""
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the Foundry agent. Required."""
-    call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the call. Required."""
-    arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The arguments for the agent call. Required."""
-    agent_response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the agent response, if any."""
-    output: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The output of the agent call."""
-    error: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The error, if any, from the agent call."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: str,
-        call_id: str,
-        arguments: str,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        object: Optional[Literal["realtime.item"]] = None,
-        agent_response_id: Optional[str] = None,
-        output: Optional[str] = None,
-        error: Optional[Any] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ItemType.FOUNDRY_AGENT_CALL  # type: ignore
-
-
 class ResponseFunctionCallItem(ResponseItem, discriminator="function_call"):
     """A function call item within a conversation.
 
@@ -3708,7 +3536,7 @@ class ResponseFunctionCallItem(ResponseItem, discriminator="function_call"):
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: Required.
+    :ivar type: Required. FUNCTION_CALL.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL
     :ivar name: Required.
     :vartype name: str
@@ -3721,7 +3549,7 @@ class ResponseFunctionCallItem(ResponseItem, discriminator="function_call"):
     """
 
     type: Literal[ItemType.FUNCTION_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FUNCTION_CALL."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3764,7 +3592,7 @@ class ResponseFunctionCallOutputItem(ResponseItem, discriminator="function_call_
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: Required.
+    :ivar type: Required. FUNCTION_CALL_OUTPUT.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION_CALL_OUTPUT
     :ivar call_id: Required.
     :vartype call_id: str
@@ -3773,7 +3601,7 @@ class ResponseFunctionCallOutputItem(ResponseItem, discriminator="function_call_
     """
 
     type: Literal[ItemType.FUNCTION_CALL_OUTPUT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FUNCTION_CALL_OUTPUT."""
     call_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     output: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3804,7 +3632,7 @@ class ResponseFunctionCallOutputItem(ResponseItem, discriminator="function_call_
 class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete"):
     """Details for an incomplete response.
 
-    :ivar type: Required.
+    :ivar type: Required. INCOMPLETE.
     :vartype type: str or ~azure.ai.voicelive.models.INCOMPLETE
     :ivar reason: Required. Is one of the following types: Literal["max_output_tokens"],
      Literal["content_filter"], str
@@ -3812,7 +3640,7 @@ class ResponseIncompleteDetails(ResponseStatusDetails, discriminator="incomplete
     """
 
     type: Literal[ResponseStatus.INCOMPLETE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. INCOMPLETE."""
     reason: Union[Literal["max_output_tokens"], Literal["content_filter"], str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3845,7 +3673,7 @@ class ResponseMCPApprovalRequestItem(ResponseItem, discriminator="mcp_approval_r
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: The type of the item. Required.
+    :ivar type: The type of the item. Required. MCP_APPROVAL_REQUEST.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_APPROVAL_REQUEST
     :ivar arguments: The arguments for the tool call.
     :vartype arguments: str
@@ -3856,7 +3684,7 @@ class ResponseMCPApprovalRequestItem(ResponseItem, discriminator="mcp_approval_r
     """
 
     type: Literal[ItemType.MCP_APPROVAL_REQUEST] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item. Required."""
+    """The type of the item. Required. MCP_APPROVAL_REQUEST."""
     arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The arguments for the tool call."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3894,7 +3722,7 @@ class ResponseMCPApprovalResponseItem(ResponseItem, discriminator="mcp_approval_
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: The type of the item. Required.
+    :ivar type: The type of the item. Required. MCP_APPROVAL_RESPONSE.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_APPROVAL_RESPONSE
     :ivar approval_request_id: The ID of the approval request. Required.
     :vartype approval_request_id: str
@@ -3905,7 +3733,7 @@ class ResponseMCPApprovalResponseItem(ResponseItem, discriminator="mcp_approval_
     """
 
     type: Literal[ItemType.MCP_APPROVAL_RESPONSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item. Required."""
+    """The type of the item. Required. MCP_APPROVAL_RESPONSE."""
     approval_request_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the approval request. Required."""
     approve: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3943,7 +3771,7 @@ class ResponseMCPCallItem(ResponseItem, discriminator="mcp_call"):
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: The type of the item. Required.
+    :ivar type: The type of the item. Required. MCP_CALL.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_CALL
     :ivar approval_request_id: The ID of the approval request, if any.
     :vartype approval_request_id: str
@@ -3960,7 +3788,7 @@ class ResponseMCPCallItem(ResponseItem, discriminator="mcp_call"):
     """
 
     type: Literal[ItemType.MCP_CALL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item. Required."""
+    """The type of the item. Required. MCP_CALL."""
     approval_request_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the approval request, if any."""
     arguments: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4007,7 +3835,7 @@ class ResponseMCPListToolItem(ResponseItem, discriminator="mcp_list_tools"):
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: The type of the item. Required.
+    :ivar type: The type of the item. Required. MCP_LIST_TOOLS.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS
     :ivar tools: The tools available on the server. Required.
     :vartype tools: list[~azure.ai.voicelive.models.MCPTool]
@@ -4016,7 +3844,7 @@ class ResponseMCPListToolItem(ResponseItem, discriminator="mcp_list_tools"):
     """
 
     type: Literal[ItemType.MCP_LIST_TOOLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the item. Required."""
+    """The type of the item. Required. MCP_LIST_TOOLS."""
     tools: list["_models.MCPTool"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The tools available on the server. Required."""
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4051,7 +3879,7 @@ class ResponseMessageItem(ResponseItem, discriminator="message"):
     :vartype id: str
     :ivar object: Default value is "realtime.item".
     :vartype object: str
-    :ivar type: Required.
+    :ivar type: Required. MESSAGE.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
     :ivar role: Required. Known values are: "system", "user", and "assistant".
     :vartype role: str or ~azure.ai.voicelive.models.MessageRole
@@ -4062,7 +3890,7 @@ class ResponseMessageItem(ResponseItem, discriminator="message"):
     """
 
     type: Literal[ItemType.MESSAGE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. MESSAGE."""
     role: Union[str, "_models.MessageRole"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required. Known values are: \"system\", \"user\", and \"assistant\"."""
     content: list["_models.ContentPart"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4149,9 +3977,9 @@ class ResponseSession(_Model):
      is unlimited. Is either a int type or a Literal["inf"] type.
     :vartype max_response_output_tokens: int or str
     :ivar reasoning_effort: Constrains effort on reasoning for reasoning models. Check model
-     documentation for supported values for each model.
-     Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-     a response. Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+     documentation for supported values for each model. Reducing reasoning effort can result in
+     faster responses and fewer tokens used on reasoning in a response. Known values are: "none",
+     "minimal", "low", "medium", "high", and "xhigh".
     :vartype reasoning_effort: str or ~azure.ai.voicelive.models.ReasoningEffort
     :ivar filler_response: Configuration for filler response generation during latency or tool
      calls. Is either a BasicFillerResponseConfig type or a LlmFillerResponseConfig type.
@@ -4230,10 +4058,9 @@ class ResponseSession(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Constrains effort on reasoning for reasoning models. Check model documentation for supported
-     values for each model.
-     Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-     a response. Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and
-     \"xhigh\"."""
+     values for each model. Reducing reasoning effort can result in faster responses and fewer
+     tokens used on reasoning in a response. Known values are: \"none\", \"minimal\", \"low\",
+     \"medium\", \"high\", and \"xhigh\"."""
     filler_response: Optional["_types.FillerResponseConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4286,14 +4113,14 @@ class ResponseSession(_Model):
 class ResponseTextContentPart(ContentPart, discriminator="text"):
     """A text content part for a response.
 
-    :ivar type: Required.
+    :ivar type: Required. TEXT.
     :vartype type: str or ~azure.ai.voicelive.models.TEXT
     :ivar text:
     :vartype text: str
     """
 
     type: Literal[ContentPartType.TEXT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. TEXT."""
     text: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -4407,18 +4234,15 @@ class ServerEvent(_Model):
     ServerEventResponseAudioTranscriptDelta, ServerEventResponseAudioTranscriptDone,
     ServerEventResponseContentPartAdded, ServerEventResponseContentPartDone,
     ServerEventResponseCreated, ServerEventResponseDone,
-    ServerEventResponseFoundryAgentCallCompleted, ServerEventResponseFoundryAgentCallFailed,
-    ServerEventResponseFoundryAgentCallInProgress,
-    ServerEventResponseFoundryAgentCallArgumentsDelta,
-    ServerEventResponseFoundryAgentCallArgumentsDone,
     ServerEventResponseFunctionCallArgumentsDelta, ServerEventResponseFunctionCallArgumentsDone,
     ServerEventResponseMcpCallCompleted, ServerEventResponseMcpCallFailed,
     ServerEventResponseMcpCallInProgress, ServerEventResponseMcpCallArgumentsDelta,
     ServerEventResponseMcpCallArgumentsDone, ServerEventResponseOutputItemAdded,
     ServerEventResponseOutputItemDone, ServerEventResponseTextDelta, ServerEventResponseTextDone,
-    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated
+    ServerEventSessionAvatarConnecting, ServerEventSessionCreated, ServerEventSessionUpdated,
+    ServerEventWarning
 
-    :ivar type: The type of event. Required. Known values are: "error",
+    :ivar type: The type of event. Required. Known values are: "error", "warning",
      "session.avatar.connecting", "session.created", "session.updated",
      "conversation.item.input_audio_transcription.completed",
      "conversation.item.input_audio_transcription.delta",
@@ -4435,11 +4259,8 @@ class ServerEvent(_Model):
      "response.animation_viseme.done", "response.function_call_arguments.delta",
      "response.function_call_arguments.done", "mcp_list_tools.in_progress",
      "mcp_list_tools.completed", "mcp_list_tools.failed", "response.mcp_call_arguments.delta",
-     "response.mcp_call_arguments.done", "mcp_approval_request", "mcp_approval_response",
-     "response.mcp_call.in_progress", "response.mcp_call.completed", "response.mcp_call.failed",
-     "response.foundry_agent_call_arguments.delta", "response.foundry_agent_call_arguments.done",
-     "response.foundry_agent_call.in_progress", "response.foundry_agent_call.completed", and
-     "response.foundry_agent_call.failed".
+     "response.mcp_call_arguments.done", "response.mcp_call.in_progress",
+     "response.mcp_call.completed", and "response.mcp_call.failed".
     :vartype type: str or ~azure.ai.voicelive.models.ServerEventType
     :ivar event_id:
     :vartype event_id: str
@@ -4447,7 +4268,7 @@ class ServerEvent(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of event. Required. Known values are: \"error\",
+    """The type of event. Required. Known values are: \"error\", \"warning\",
      \"session.avatar.connecting\", \"session.created\", \"session.updated\",
      \"conversation.item.input_audio_transcription.completed\",
      \"conversation.item.input_audio_transcription.delta\",
@@ -4465,11 +4286,8 @@ class ServerEvent(_Model):
      \"response.animation_viseme.done\", \"response.function_call_arguments.delta\",
      \"response.function_call_arguments.done\", \"mcp_list_tools.in_progress\",
      \"mcp_list_tools.completed\", \"mcp_list_tools.failed\", \"response.mcp_call_arguments.delta\",
-     \"response.mcp_call_arguments.done\", \"mcp_approval_request\", \"mcp_approval_response\",
-     \"response.mcp_call.in_progress\", \"response.mcp_call.completed\",
-     \"response.mcp_call.failed\", \"response.foundry_agent_call_arguments.delta\",
-     \"response.foundry_agent_call_arguments.done\", \"response.foundry_agent_call.in_progress\",
-     \"response.foundry_agent_call.completed\", and \"response.foundry_agent_call.failed\"."""
+     \"response.mcp_call_arguments.done\", \"response.mcp_call.in_progress\",
+     \"response.mcp_call.completed\", and \"response.mcp_call.failed\"."""
     event_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -4496,23 +4314,23 @@ class ServerEvent(_Model):
         # pylint: disable-next=protected-access
         return cls._deserialize(payload, [])
 
-
 class ServerEventConversationItemCreated(ServerEvent, discriminator="conversation.item.created"):
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    The server is generating a Response, which if successful will produce
+    * The server is generating a Response, which if successful will produce
     either one or two Items, which will be of type `message`
     (role `assistant`) or type `function_call`.
-    The input audio buffer has been committed, either by the client or the
+    * The input audio buffer has been committed, either by the client or the
     server (in `server_vad` mode). The server will take the content of the
     input audio buffer and add it to a new user message Item.
-    The client has sent a `conversation.item.create` event to add a new Item
+    * The client has sent a `conversation.item.create` event to add a new Item
     to the Conversation.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.created``. Required.
+     CONVERSATION_ITEM_CREATED.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_CREATED
     :ivar previous_item_id: The ID of the preceding item in the Conversation context, allows the
      client to understand the order of the conversation.
@@ -4522,10 +4340,10 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.created``. Required."""
+    """The event type, must be ``conversation.item.created``. Required. CONVERSATION_ITEM_CREATED."""
     previous_item_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the preceding item in the Conversation context, allows the
-     client to understand the order of the conversation."""
+    """The ID of the preceding item in the Conversation context, allows the client to understand the
+     order of the conversation."""
     item: Optional["_models.ResponseItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -4551,19 +4369,20 @@ class ServerEventConversationItemCreated(ServerEvent, discriminator="conversatio
 
 class ServerEventConversationItemDeleted(ServerEvent, discriminator="conversation.item.deleted"):
     """Returned when an item in the conversation is deleted by the client with a
-    ``conversation.item.delete`` event. This event is used to synchronize the
-    server's understanding of the conversation history with the client's view.
+    ``conversation.item.delete`` event. This event is used to synchronize the server's
+    understanding of the conversation history with the client's view.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.deleted``. Required.
+     CONVERSATION_ITEM_DELETED.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_DELETED
     :ivar item_id: The ID of the item that was deleted. Required.
     :vartype item_id: str
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_DELETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.deleted``. Required."""
+    """The event type, must be ``conversation.item.deleted``. Required. CONVERSATION_ITEM_DELETED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item that was deleted. Required."""
 
@@ -4590,20 +4409,18 @@ class ServerEventConversationItemDeleted(ServerEvent, discriminator="conversatio
 class ServerEventConversationItemInputAudioTranscriptionCompleted(
     ServerEvent, discriminator="conversation.item.input_audio_transcription.completed"
 ):  # pylint: disable=name-too-long
-    """This event is the output of audio transcription for user audio written to the
-    user audio buffer. Transcription begins when the input audio buffer is
-    committed by the client or server (in ``server_vad`` mode). Transcription runs
-    asynchronously with Response creation, so this event may come before or after
-    the Response events.
-    VoiceLive API models accept audio natively, and thus input transcription is a
-    separate process run on a separate ASR (Automatic Speech Recognition) model.
-    The transcript may diverge somewhat from the model's interpretation, and
+    """This event is the output of audio transcription for user audio written to the user audio
+    buffer. Transcription begins when the input audio buffer is committed by the client or server
+    (in ``server_vad`` mode). Transcription runs asynchronously with Response creation, so this
+    event may come before or after the Response events. VoiceLive API models accept audio natively,
+    and thus input transcription is a separate process run on a separate ASR (Automatic Speech
+    Recognition) model. The transcript may diverge somewhat from the model's interpretation, and
     should be treated as a rough guide.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be
-     ``conversation.item.input_audio_transcription.completed``. Required.
+    :ivar type: The event type, must be ``conversation.item.input_audio_transcription.completed``.
+     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED.
     :vartype type: str or
      ~azure.ai.voicelive.models.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED
     :ivar item_id: The ID of the user message item containing the audio. Required.
@@ -4615,8 +4432,8 @@ class ServerEventConversationItemInputAudioTranscriptionCompleted(
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be
-     ``conversation.item.input_audio_transcription.completed``. Required."""
+    """The event type, must be ``conversation.item.input_audio_transcription.completed``. Required.
+     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the user message item containing the audio. Required."""
     content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4654,7 +4471,7 @@ class ServerEventConversationItemInputAudioTranscriptionDelta(
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.input_audio_transcription.delta``.
-     Required.
+     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA.
     :vartype type: str or
      ~azure.ai.voicelive.models.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA
     :ivar item_id: The ID of the item. Required.
@@ -4668,7 +4485,8 @@ class ServerEventConversationItemInputAudioTranscriptionDelta(
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.input_audio_transcription.delta``. Required."""
+    """The event type, must be ``conversation.item.input_audio_transcription.delta``. Required.
+     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item. Required."""
     content_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4706,14 +4524,14 @@ class ServerEventConversationItemInputAudioTranscriptionDelta(
 class ServerEventConversationItemInputAudioTranscriptionFailed(
     ServerEvent, discriminator="conversation.item.input_audio_transcription.failed"
 ):  # pylint: disable=name-too-long
-    """Returned when input audio transcription is configured, and a transcription
-    request for a user message failed. These events are separate from other
-    ``error`` events so that the client can identify the related Item.
+    """Returned when input audio transcription is configured, and a transcription request for a user
+    message failed. These events are separate from other ``error`` events so that the client can
+    identify the related Item.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be
-     ``conversation.item.input_audio_transcription.failed``. Required.
+    :ivar type: The event type, must be ``conversation.item.input_audio_transcription.failed``.
+     Required. CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED.
     :vartype type: str or
      ~azure.ai.voicelive.models.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED
     :ivar item_id: The ID of the user message item. Required.
@@ -4725,8 +4543,8 @@ class ServerEventConversationItemInputAudioTranscriptionFailed(
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be
-     ``conversation.item.input_audio_transcription.failed``. Required."""
+    """The event type, must be ``conversation.item.input_audio_transcription.failed``. Required.
+     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the user message item. Required."""
     content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4760,6 +4578,7 @@ class ServerEventConversationItemRetrieved(ServerEvent, discriminator="conversat
     """Returned when a conversation item is retrieved with ``conversation.item.retrieve``.
 
     :ivar type: The event type, must be ``conversation.item.retrieved``. Required.
+     CONVERSATION_ITEM_RETRIEVED.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_RETRIEVED
     :ivar item:
     :vartype item: ~azure.ai.voicelive.models.ResponseItem
@@ -4768,7 +4587,7 @@ class ServerEventConversationItemRetrieved(ServerEvent, discriminator="conversat
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_RETRIEVED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.retrieved``. Required."""
+    """The event type, must be ``conversation.item.retrieved``. Required. CONVERSATION_ITEM_RETRIEVED."""
     item: Optional["_models.ResponseItem"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
     @overload
@@ -4792,15 +4611,16 @@ class ServerEventConversationItemRetrieved(ServerEvent, discriminator="conversat
 
 
 class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversation.item.truncated"):
-    """Returned when an earlier assistant audio message item is truncated by the
-    client with a ``conversation.item.truncate`` event. This event is used to
-    synchronize the server's understanding of the audio with the client's playback.
-    This action will truncate the audio and remove the server-side text transcript
-    to ensure there is no text in the context that hasn't been heard by the user.
+    """Returned when an earlier assistant audio message item is truncated by the client with a
+    ``conversation.item.truncate`` event. This event is used to synchronize the server's
+    understanding of the audio with the client's playback. This action will truncate the audio and
+    remove the server-side text transcript to ensure there is no text in the context that hasn't
+    been heard by the user.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``conversation.item.truncated``. Required.
+     CONVERSATION_ITEM_TRUNCATED.
     :vartype type: str or ~azure.ai.voicelive.models.CONVERSATION_ITEM_TRUNCATED
     :ivar item_id: The ID of the assistant message item that was truncated. Required.
     :vartype item_id: str
@@ -4812,7 +4632,7 @@ class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversat
     """
 
     type: Literal[ServerEventType.CONVERSATION_ITEM_TRUNCATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``conversation.item.truncated``. Required."""
+    """The event type, must be ``conversation.item.truncated``. Required. CONVERSATION_ITEM_TRUNCATED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the assistant message item that was truncated. Required."""
     content_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4843,20 +4663,20 @@ class ServerEventConversationItemTruncated(ServerEvent, discriminator="conversat
 
 
 class ServerEventError(ServerEvent, discriminator="error"):
-    """Returned when an error occurs, which could be a client problem or a server
-    problem. Most errors are recoverable and the session will stay open, we
-    recommend to implementors to monitor and log error messages by default.
+    """Returned when an error occurs, which could be a client problem or a server problem. Most errors
+    are recoverable and the session will stay open, we recommend to implementors to monitor and log
+    error messages by default.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``error``. Required.
+    :ivar type: The event type, must be ``error``. Required. ERROR.
     :vartype type: str or ~azure.ai.voicelive.models.ERROR
     :ivar error: Details of the error. Required.
     :vartype error: ~azure.ai.voicelive.models.ServerEventErrorDetails
     """
 
     type: Literal[ServerEventType.ERROR] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``error``. Required."""
+    """The event type, must be ``error``. Required. ERROR."""
     error: "_models.ServerEventErrorDetails" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Details of the error. Required."""
 
@@ -4935,11 +4755,12 @@ class ServerEventInputAudioBufferCleared(ServerEvent, discriminator="input_audio
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.cleared``. Required.
+     INPUT_AUDIO_BUFFER_CLEARED.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_CLEARED
     """
 
     type: Literal[ServerEventType.INPUT_AUDIO_BUFFER_CLEARED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.cleared``. Required."""
+    """The event type, must be ``input_audio_buffer.cleared``. Required. INPUT_AUDIO_BUFFER_CLEARED."""
 
     @overload
     def __init__(
@@ -4961,14 +4782,14 @@ class ServerEventInputAudioBufferCleared(ServerEvent, discriminator="input_audio
 
 
 class ServerEventInputAudioBufferCommitted(ServerEvent, discriminator="input_audio_buffer.committed"):
-    """Returned when an input audio buffer is committed, either by the client or
-    automatically in server VAD mode. The ``item_id`` property is the ID of the user
-    message item that will be created, thus a ``conversation.item.created`` event
-    will also be sent to the client.
+    """Returned when an input audio buffer is committed, either by the client or automatically in
+    server VAD mode. The ``item_id`` property is the ID of the user message item that will be
+    created, thus a ``conversation.item.created`` event will also be sent to the client.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.committed``. Required.
+     INPUT_AUDIO_BUFFER_COMMITTED.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_COMMITTED
     :ivar previous_item_id: The ID of the preceding item after which the new item will be inserted.
     :vartype previous_item_id: str
@@ -4977,7 +4798,8 @@ class ServerEventInputAudioBufferCommitted(ServerEvent, discriminator="input_aud
     """
 
     type: Literal[ServerEventType.INPUT_AUDIO_BUFFER_COMMITTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.committed``. Required."""
+    """The event type, must be ``input_audio_buffer.committed``. Required.
+     INPUT_AUDIO_BUFFER_COMMITTED."""
     previous_item_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the preceding item after which the new item will be inserted."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5005,24 +4827,23 @@ class ServerEventInputAudioBufferCommitted(ServerEvent, discriminator="input_aud
 
 
 class ServerEventInputAudioBufferSpeechStarted(ServerEvent, discriminator="input_audio_buffer.speech_started"):
-    """Sent by the server when in ``server_vad`` mode to indicate that speech has been
-    detected in the audio buffer. This can happen any time audio is added to the
-    buffer (unless speech is already detected). The client may want to use this
-    event to interrupt audio playback or provide visual feedback to the user.
-    The client should expect to receive a ``input_audio_buffer.speech_stopped`` event
-    when speech stops. The ``item_id`` property is the ID of the user message item
-    that will be created when speech stops and will also be included in the
-    ``input_audio_buffer.speech_stopped`` event (unless the client manually commits
-    the audio buffer during VAD activation).
+    """Sent by the server when in ``server_vad`` mode to indicate that speech has been detected in the
+    audio buffer. This can happen any time audio is added to the buffer (unless speech is already
+    detected). The client may want to use this event to interrupt audio playback or provide visual
+    feedback to the user. The client should expect to receive a
+    ``input_audio_buffer.speech_stopped`` event when speech stops. The ``item_id`` property is the
+    ID of the user message item that will be created when speech stops and will also be included in
+    the ``input_audio_buffer.speech_stopped`` event (unless the client manually commits the audio
+    buffer during VAD activation).
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.speech_started``. Required.
+     INPUT_AUDIO_BUFFER_SPEECH_STARTED.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_SPEECH_STARTED
     :ivar audio_start_ms: Milliseconds from the start of all audio written to the buffer during the
-     session when speech was first detected. This will correspond to the
-     beginning of audio sent to the model, and thus includes the
-     ``prefix_padding_ms`` configured in the Session. Required.
+     session when speech was first detected. This will correspond to the beginning of audio sent to
+     the model, and thus includes the ``prefix_padding_ms`` configured in the Session. Required.
     :vartype audio_start_ms: int
     :ivar item_id: The ID of the user message item that will be created when speech stops.
      Required.
@@ -5030,12 +4851,12 @@ class ServerEventInputAudioBufferSpeechStarted(ServerEvent, discriminator="input
     """
 
     type: Literal[ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STARTED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.speech_started``. Required."""
+    """The event type, must be ``input_audio_buffer.speech_started``. Required.
+     INPUT_AUDIO_BUFFER_SPEECH_STARTED."""
     audio_start_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Milliseconds from the start of all audio written to the buffer during the
-     session when speech was first detected. This will correspond to the
-     beginning of audio sent to the model, and thus includes the
-     ``prefix_padding_ms`` configured in the Session. Required."""
+    """Milliseconds from the start of all audio written to the buffer during the session when speech
+     was first detected. This will correspond to the beginning of audio sent to the model, and thus
+     includes the ``prefix_padding_ms`` configured in the Session. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the user message item that will be created when speech stops. Required."""
 
@@ -5061,13 +4882,14 @@ class ServerEventInputAudioBufferSpeechStarted(ServerEvent, discriminator="input
 
 
 class ServerEventInputAudioBufferSpeechStopped(ServerEvent, discriminator="input_audio_buffer.speech_stopped"):
-    """Returned in ``server_vad`` mode when the server detects the end of speech in
-    the audio buffer. The server will also send an ``conversation.item.created``
-    event with the user message item that is created from the audio buffer.
+    """Returned in ``server_vad`` mode when the server detects the end of speech in the audio buffer.
+    The server will also send an ``conversation.item.created`` event with the user message item
+    that is created from the audio buffer.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``input_audio_buffer.speech_stopped``. Required.
+     INPUT_AUDIO_BUFFER_SPEECH_STOPPED.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO_BUFFER_SPEECH_STOPPED
     :ivar audio_end_ms: Milliseconds since the session started when speech stopped. This will
      correspond to the end of audio sent to the model, and thus includes the
@@ -5078,11 +4900,12 @@ class ServerEventInputAudioBufferSpeechStopped(ServerEvent, discriminator="input
     """
 
     type: Literal[ServerEventType.INPUT_AUDIO_BUFFER_SPEECH_STOPPED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``input_audio_buffer.speech_stopped``. Required."""
+    """The event type, must be ``input_audio_buffer.speech_stopped``. Required.
+     INPUT_AUDIO_BUFFER_SPEECH_STOPPED."""
     audio_end_ms: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Milliseconds since the session started when speech stopped. This will
-     correspond to the end of audio sent to the model, and thus includes the
-     ``min_silence_duration_ms`` configured in the Session. Required."""
+    """Milliseconds since the session started when speech stopped. This will correspond to the end of
+     audio sent to the model, and thus includes the ``min_silence_duration_ms`` configured in the
+     Session. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the user message item that will be created. Required."""
 
@@ -5112,14 +4935,14 @@ class ServerEventMcpListToolsCompleted(ServerEvent, discriminator="mcp_list_tool
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. MCP_LIST_TOOLS_COMPLETED.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS_COMPLETED
     :ivar item_id: The item ID. Required.
     :vartype item_id: str
     """
 
     type: Literal[ServerEventType.MCP_LIST_TOOLS_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. MCP_LIST_TOOLS_COMPLETED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The item ID. Required."""
 
@@ -5148,14 +4971,14 @@ class ServerEventMcpListToolsFailed(ServerEvent, discriminator="mcp_list_tools.f
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. MCP_LIST_TOOLS_FAILED.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS_FAILED
     :ivar item_id: The item ID. Required.
     :vartype item_id: str
     """
 
     type: Literal[ServerEventType.MCP_LIST_TOOLS_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. MCP_LIST_TOOLS_FAILED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The item ID. Required."""
 
@@ -5184,14 +5007,14 @@ class ServerEventMcpListToolsInProgress(ServerEvent, discriminator="mcp_list_too
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. MCP_LIST_TOOLS_IN_PROGRESS.
     :vartype type: str or ~azure.ai.voicelive.models.MCP_LIST_TOOLS_IN_PROGRESS
     :ivar item_id: The item ID. Required.
     :vartype item_id: str
     """
 
     type: Literal[ServerEventType.MCP_LIST_TOOLS_IN_PROGRESS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. MCP_LIST_TOOLS_IN_PROGRESS."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The item ID. Required."""
 
@@ -5222,7 +5045,7 @@ class ServerEventResponseAnimationBlendshapeDelta(
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_ANIMATION_BLENDSHAPES_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_BLENDSHAPES_DELTA
     :ivar response_id: Required.
     :vartype response_id: str
@@ -5239,7 +5062,7 @@ class ServerEventResponseAnimationBlendshapeDelta(
     """
 
     type: Literal[ServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5286,7 +5109,7 @@ class ServerEventResponseAnimationBlendshapeDone(
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_ANIMATION_BLENDSHAPES_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_BLENDSHAPES_DONE
     :ivar response_id: Required.
     :vartype response_id: str
@@ -5297,7 +5120,7 @@ class ServerEventResponseAnimationBlendshapeDone(
     """
 
     type: Literal[ServerEventType.RESPONSE_ANIMATION_BLENDSHAPES_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5332,7 +5155,7 @@ class ServerEventResponseAnimationVisemeDelta(ServerEvent, discriminator="respon
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_ANIMATION_VISEME_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_VISEME_DELTA
     :ivar response_id: Required.
     :vartype response_id: str
@@ -5349,7 +5172,7 @@ class ServerEventResponseAnimationVisemeDelta(ServerEvent, discriminator="respon
     """
 
     type: Literal[ServerEventType.RESPONSE_ANIMATION_VISEME_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_ANIMATION_VISEME_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5393,7 +5216,7 @@ class ServerEventResponseAnimationVisemeDone(ServerEvent, discriminator="respons
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_ANIMATION_VISEME_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_ANIMATION_VISEME_DONE
     :ivar response_id: Required.
     :vartype response_id: str
@@ -5406,7 +5229,7 @@ class ServerEventResponseAnimationVisemeDone(ServerEvent, discriminator="respons
     """
 
     type: Literal[ServerEventType.RESPONSE_ANIMATION_VISEME_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_ANIMATION_VISEME_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5444,7 +5267,7 @@ class ServerEventResponseAudioDelta(ServerEvent, discriminator="response.audio.d
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.audio.delta``. Required.
+    :ivar type: The event type, must be ``response.audio.delta``. Required. RESPONSE_AUDIO_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_DELTA
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -5459,7 +5282,7 @@ class ServerEventResponseAudioDelta(ServerEvent, discriminator="response.audio.d
     """
 
     type: Literal[ServerEventType.RESPONSE_AUDIO_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.audio.delta``. Required."""
+    """The event type, must be ``response.audio.delta``. Required. RESPONSE_AUDIO_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5496,12 +5319,12 @@ class ServerEventResponseAudioDelta(ServerEvent, discriminator="response.audio.d
 
 
 class ServerEventResponseAudioDone(ServerEvent, discriminator="response.audio.done"):
-    """Returned when the model-generated audio is done. Also emitted when a Response
-    is interrupted, incomplete, or cancelled.
+    """Returned when the model-generated audio is done. Also emitted when a Response is interrupted,
+    incomplete, or cancelled.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.audio.done``. Required.
+    :ivar type: The event type, must be ``response.audio.done``. Required. RESPONSE_AUDIO_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_DONE
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -5514,7 +5337,7 @@ class ServerEventResponseAudioDone(ServerEvent, discriminator="response.audio.do
     """
 
     type: Literal[ServerEventType.RESPONSE_AUDIO_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.audio.done``. Required."""
+    """The event type, must be ``response.audio.done``. Required. RESPONSE_AUDIO_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5552,7 +5375,7 @@ class ServerEventResponseAudioTimestampDelta(ServerEvent, discriminator="respons
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_AUDIO_TIMESTAMP_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_TIMESTAMP_DELTA
     :ivar response_id: Required.
     :vartype response_id: str
@@ -5573,7 +5396,7 @@ class ServerEventResponseAudioTimestampDelta(ServerEvent, discriminator="respons
     """
 
     type: Literal[ServerEventType.RESPONSE_AUDIO_TIMESTAMP_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_AUDIO_TIMESTAMP_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5623,7 +5446,7 @@ class ServerEventResponseAudioTimestampDone(ServerEvent, discriminator="response
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_AUDIO_TIMESTAMP_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_TIMESTAMP_DONE
     :ivar response_id: Required.
     :vartype response_id: str
@@ -5636,7 +5459,7 @@ class ServerEventResponseAudioTimestampDone(ServerEvent, discriminator="response
     """
 
     type: Literal[ServerEventType.RESPONSE_AUDIO_TIMESTAMP_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_AUDIO_TIMESTAMP_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5675,6 +5498,7 @@ class ServerEventResponseAudioTranscriptDelta(ServerEvent, discriminator="respon
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.audio_transcript.delta``. Required.
+     RESPONSE_AUDIO_TRANSCRIPT_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_TRANSCRIPT_DELTA
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -5689,7 +5513,8 @@ class ServerEventResponseAudioTranscriptDelta(ServerEvent, discriminator="respon
     """
 
     type: Literal[ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.audio_transcript.delta``. Required."""
+    """The event type, must be ``response.audio_transcript.delta``. Required.
+     RESPONSE_AUDIO_TRANSCRIPT_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5726,13 +5551,13 @@ class ServerEventResponseAudioTranscriptDelta(ServerEvent, discriminator="respon
 
 
 class ServerEventResponseAudioTranscriptDone(ServerEvent, discriminator="response.audio_transcript.done"):
-    """Returned when the model-generated transcription of audio output is done
-    streaming. Also emitted when a Response is interrupted, incomplete, or
-    cancelled.
+    """Returned when the model-generated transcription of audio output is done streaming. Also emitted
+    when a Response is interrupted, incomplete, or cancelled.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.audio_transcript.done``. Required.
+     RESPONSE_AUDIO_TRANSCRIPT_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_AUDIO_TRANSCRIPT_DONE
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -5747,7 +5572,8 @@ class ServerEventResponseAudioTranscriptDone(ServerEvent, discriminator="respons
     """
 
     type: Literal[ServerEventType.RESPONSE_AUDIO_TRANSCRIPT_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.audio_transcript.done``. Required."""
+    """The event type, must be ``response.audio_transcript.done``. Required.
+     RESPONSE_AUDIO_TRANSCRIPT_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5784,12 +5610,13 @@ class ServerEventResponseAudioTranscriptDone(ServerEvent, discriminator="respons
 
 
 class ServerEventResponseContentPartAdded(ServerEvent, discriminator="response.content_part.added"):
-    """Returned when a new content part is added to an assistant message item during
-    response generation.
+    """Returned when a new content part is added to an assistant message item during response
+    generation.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.content_part.added``. Required.
+     RESPONSE_CONTENT_PART_ADDED.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_CONTENT_PART_ADDED
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -5804,7 +5631,7 @@ class ServerEventResponseContentPartAdded(ServerEvent, discriminator="response.c
     """
 
     type: Literal[ServerEventType.RESPONSE_CONTENT_PART_ADDED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.content_part.added``. Required."""
+    """The event type, must be ``response.content_part.added``. Required. RESPONSE_CONTENT_PART_ADDED."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5841,12 +5668,13 @@ class ServerEventResponseContentPartAdded(ServerEvent, discriminator="response.c
 
 
 class ServerEventResponseContentPartDone(ServerEvent, discriminator="response.content_part.done"):
-    """Returned when a content part is done streaming in an assistant message item.
-    Also emitted when a Response is interrupted, incomplete, or cancelled.
+    """Returned when a content part is done streaming in an assistant message item. Also emitted when
+    a Response is interrupted, incomplete, or cancelled.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.content_part.done``. Required.
+     RESPONSE_CONTENT_PART_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_CONTENT_PART_DONE
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -5861,7 +5689,7 @@ class ServerEventResponseContentPartDone(ServerEvent, discriminator="response.co
     """
 
     type: Literal[ServerEventType.RESPONSE_CONTENT_PART_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.content_part.done``. Required."""
+    """The event type, must be ``response.content_part.done``. Required. RESPONSE_CONTENT_PART_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5898,19 +5726,19 @@ class ServerEventResponseContentPartDone(ServerEvent, discriminator="response.co
 
 
 class ServerEventResponseCreated(ServerEvent, discriminator="response.created"):
-    """Returned when a new Response is created. The first event of response creation,
-    where the response is in an initial state of ``in_progress``.
+    """Returned when a new Response is created. The first event of response creation, where the
+    response is in an initial state of ``in_progress``.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.created``. Required.
+    :ivar type: The event type, must be ``response.created``. Required. RESPONSE_CREATED.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_CREATED
     :ivar response: Required.
     :vartype response: ~azure.ai.voicelive.models.Response
     """
 
     type: Literal[ServerEventType.RESPONSE_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.created``. Required."""
+    """The event type, must be ``response.created``. Required. RESPONSE_CREATED."""
     response: "_models.Response" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -5935,20 +5763,20 @@ class ServerEventResponseCreated(ServerEvent, discriminator="response.created"):
 
 
 class ServerEventResponseDone(ServerEvent, discriminator="response.done"):
-    """Returned when a Response is done streaming. Always emitted, no matter the
-    final state. The Response object included in the ``response.done`` event will
-    include all output Items in the Response but will omit the raw audio data.
+    """Returned when a Response is done streaming. Always emitted, no matter the final state. The
+    Response object included in the ``response.done`` event will include all output Items in the
+    Response but will omit the raw audio data.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.done``. Required.
+    :ivar type: The event type, must be ``response.done``. Required. RESPONSE_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_DONE
     :ivar response: Required.
     :vartype response: ~azure.ai.voicelive.models.Response
     """
 
     type: Literal[ServerEventType.RESPONSE_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.done``. Required."""
+    """The event type, must be ``response.done``. Required. RESPONSE_DONE."""
     response: "_models.Response" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -5972,246 +5800,6 @@ class ServerEventResponseDone(ServerEvent, discriminator="response.done"):
         self.type = ServerEventType.RESPONSE_DONE  # type: ignore
 
 
-class ServerEventResponseFoundryAgentCallArgumentsDelta(
-    ServerEvent, discriminator="response.foundry_agent_call_arguments.delta"
-):  # pylint: disable=name-too-long
-    """Represents a delta update of the arguments for a Foundry agent call.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DELTA
-    :ivar delta: The delta of the arguments. Required.
-    :vartype delta: str
-    :ivar item_id: The ID of the item associated with the event. Required.
-    :vartype item_id: str
-    :ivar response_id: The ID of the response associated with the event. Required.
-    :vartype response_id: str
-    :ivar output_index: The index of the output associated with the event. Required.
-    :vartype output_index: int
-    """
-
-    type: Literal[ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The delta of the arguments. Required."""
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the item associated with the event. Required."""
-    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the response associated with the event. Required."""
-    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The index of the output associated with the event. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        delta: str,
-        item_id: str,
-        response_id: str,
-        output_index: int,
-        event_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DELTA  # type: ignore
-
-
-class ServerEventResponseFoundryAgentCallArgumentsDone(
-    ServerEvent, discriminator="response.foundry_agent_call_arguments.done"
-):  # pylint: disable=name-too-long
-    """Indicates the completion of the arguments for a Foundry agent call.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DONE
-    :ivar item_id: The ID of the item associated with the event. Required.
-    :vartype item_id: str
-    :ivar response_id: The ID of the response associated with the event. Required.
-    :vartype response_id: str
-    :ivar output_index: The index of the output associated with the event. Required.
-    :vartype output_index: int
-    :ivar arguments: The full arguments for the agent call.
-    :vartype arguments: str
-    """
-
-    type: Literal[ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the item associated with the event. Required."""
-    response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the response associated with the event. Required."""
-    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The index of the output associated with the event. Required."""
-    arguments: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The full arguments for the agent call."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        item_id: str,
-        response_id: str,
-        output_index: int,
-        event_id: Optional[str] = None,
-        arguments: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DONE  # type: ignore
-
-
-class ServerEventResponseFoundryAgentCallCompleted(
-    ServerEvent, discriminator="response.foundry_agent_call.completed"
-):  # pylint: disable=name-too-long
-    """Indicates the Foundry agent call has completed.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FOUNDRY_AGENT_CALL_COMPLETED
-    :ivar item_id: The ID of the item associated with the event. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output associated with the event. Required.
-    :vartype output_index: int
-    """
-
-    type: Literal[ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the item associated with the event. Required."""
-    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The index of the output associated with the event. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        item_id: str,
-        output_index: int,
-        event_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_COMPLETED  # type: ignore
-
-
-class ServerEventResponseFoundryAgentCallFailed(
-    ServerEvent, discriminator="response.foundry_agent_call.failed"
-):  # pylint: disable=name-too-long
-    """Indicates the Foundry agent call has failed.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FOUNDRY_AGENT_CALL_FAILED
-    :ivar item_id: The ID of the item associated with the event. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output associated with the event. Required.
-    :vartype output_index: int
-    """
-
-    type: Literal[ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the item associated with the event. Required."""
-    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The index of the output associated with the event. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        item_id: str,
-        output_index: int,
-        event_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_FAILED  # type: ignore
-
-
-class ServerEventResponseFoundryAgentCallInProgress(
-    ServerEvent, discriminator="response.foundry_agent_call.in_progress"
-):  # pylint: disable=name-too-long
-    """Indicates the Foundry agent call is in progress.
-
-    :ivar event_id:
-    :vartype event_id: str
-    :ivar type: Required.
-    :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FOUNDRY_AGENT_CALL_IN_PROGRESS
-    :ivar item_id: The ID of the item associated with the event. Required.
-    :vartype item_id: str
-    :ivar output_index: The index of the output associated with the event. Required.
-    :vartype output_index: int
-    :ivar agent_response_id: The ID of the agent response, if any.
-    :vartype agent_response_id: str
-    """
-
-    type: Literal[ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_IN_PROGRESS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
-    item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the item associated with the event. Required."""
-    output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The index of the output associated with the event. Required."""
-    agent_response_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the agent response, if any."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        item_id: str,
-        output_index: int,
-        event_id: Optional[str] = None,
-        agent_response_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ServerEventType.RESPONSE_FOUNDRY_AGENT_CALL_IN_PROGRESS  # type: ignore
-
-
 class ServerEventResponseFunctionCallArgumentsDelta(
     ServerEvent, discriminator="response.function_call_arguments.delta"
 ):  # pylint: disable=name-too-long
@@ -6220,6 +5808,7 @@ class ServerEventResponseFunctionCallArgumentsDelta(
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.function_call_arguments.delta``. Required.
+     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -6234,7 +5823,8 @@ class ServerEventResponseFunctionCallArgumentsDelta(
     """
 
     type: Literal[ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.function_call_arguments.delta``. Required."""
+    """The event type, must be ``response.function_call_arguments.delta``. Required.
+     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6273,12 +5863,13 @@ class ServerEventResponseFunctionCallArgumentsDelta(
 class ServerEventResponseFunctionCallArgumentsDone(
     ServerEvent, discriminator="response.function_call_arguments.done"
 ):  # pylint: disable=name-too-long
-    """Returned when the model-generated function call arguments are done streaming.
-    Also emitted when a Response is interrupted, incomplete, or cancelled.
+    """Returned when the model-generated function call arguments are done streaming. Also emitted when
+    a Response is interrupted, incomplete, or cancelled.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.function_call_arguments.done``. Required.
+     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -6295,7 +5886,8 @@ class ServerEventResponseFunctionCallArgumentsDone(
     """
 
     type: Literal[ServerEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.function_call_arguments.done``. Required."""
+    """The event type, must be ``response.function_call_arguments.done``. Required.
+     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6339,7 +5931,7 @@ class ServerEventResponseMcpCallArgumentsDelta(ServerEvent, discriminator="respo
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_MCP_CALL_ARGUMENTS_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_ARGUMENTS_DELTA
     :ivar delta: The delta of the arguments. Required.
     :vartype delta: str
@@ -6354,7 +5946,7 @@ class ServerEventResponseMcpCallArgumentsDelta(ServerEvent, discriminator="respo
     """
 
     type: Literal[ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_MCP_CALL_ARGUMENTS_DELTA."""
     delta: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The delta of the arguments. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6395,7 +5987,7 @@ class ServerEventResponseMcpCallArgumentsDone(ServerEvent, discriminator="respon
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_MCP_CALL_ARGUMENTS_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_ARGUMENTS_DONE
     :ivar item_id: The ID of the item associated with the event. Required.
     :vartype item_id: str
@@ -6408,7 +6000,7 @@ class ServerEventResponseMcpCallArgumentsDone(ServerEvent, discriminator="respon
     """
 
     type: Literal[ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_MCP_CALL_ARGUMENTS_DONE."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item associated with the event. Required."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6446,7 +6038,7 @@ class ServerEventResponseMcpCallCompleted(ServerEvent, discriminator="response.m
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_MCP_CALL_COMPLETED.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_COMPLETED
     :ivar item_id: The ID of the item associated with the event. Required.
     :vartype item_id: str
@@ -6455,7 +6047,7 @@ class ServerEventResponseMcpCallCompleted(ServerEvent, discriminator="response.m
     """
 
     type: Literal[ServerEventType.RESPONSE_MCP_CALL_COMPLETED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_MCP_CALL_COMPLETED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item associated with the event. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6487,7 +6079,7 @@ class ServerEventResponseMcpCallFailed(ServerEvent, discriminator="response.mcp_
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_MCP_CALL_FAILED.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_FAILED
     :ivar item_id: The ID of the item associated with the event. Required.
     :vartype item_id: str
@@ -6496,7 +6088,7 @@ class ServerEventResponseMcpCallFailed(ServerEvent, discriminator="response.mcp_
     """
 
     type: Literal[ServerEventType.RESPONSE_MCP_CALL_FAILED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_MCP_CALL_FAILED."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item associated with the event. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6528,7 +6120,7 @@ class ServerEventResponseMcpCallInProgress(ServerEvent, discriminator="response.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: Required.
+    :ivar type: Required. RESPONSE_MCP_CALL_IN_PROGRESS.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_MCP_CALL_IN_PROGRESS
     :ivar item_id: The ID of the item associated with the event. Required.
     :vartype item_id: str
@@ -6537,7 +6129,7 @@ class ServerEventResponseMcpCallInProgress(ServerEvent, discriminator="response.
     """
 
     type: Literal[ServerEventType.RESPONSE_MCP_CALL_IN_PROGRESS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. RESPONSE_MCP_CALL_IN_PROGRESS."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the item associated with the event. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6570,6 +6162,7 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.output_item.added``. Required.
+     RESPONSE_OUTPUT_ITEM_ADDED.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_OUTPUT_ITEM_ADDED
     :ivar response_id: The ID of the Response to which the item belongs. Required.
     :vartype response_id: str
@@ -6580,7 +6173,7 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
     """
 
     type: Literal[ServerEventType.RESPONSE_OUTPUT_ITEM_ADDED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.output_item.added``. Required."""
+    """The event type, must be ``response.output_item.added``. Required. RESPONSE_OUTPUT_ITEM_ADDED."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Response to which the item belongs. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6610,12 +6203,13 @@ class ServerEventResponseOutputItemAdded(ServerEvent, discriminator="response.ou
 
 
 class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.output_item.done"):
-    """Returned when an Item is done streaming. Also emitted when a Response is
-    interrupted, incomplete, or cancelled.
+    """Returned when an Item is done streaming. Also emitted when a Response is interrupted,
+    incomplete, or cancelled.
 
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be ``response.output_item.done``. Required.
+     RESPONSE_OUTPUT_ITEM_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_OUTPUT_ITEM_DONE
     :ivar response_id: The ID of the Response to which the item belongs. Required.
     :vartype response_id: str
@@ -6626,7 +6220,7 @@ class ServerEventResponseOutputItemDone(ServerEvent, discriminator="response.out
     """
 
     type: Literal[ServerEventType.RESPONSE_OUTPUT_ITEM_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.output_item.done``. Required."""
+    """The event type, must be ``response.output_item.done``. Required. RESPONSE_OUTPUT_ITEM_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Response to which the item belongs. Required."""
     output_index: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6660,7 +6254,7 @@ class ServerEventResponseTextDelta(ServerEvent, discriminator="response.text.del
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.text.delta``. Required.
+    :ivar type: The event type, must be ``response.text.delta``. Required. RESPONSE_TEXT_DELTA.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_TEXT_DELTA
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -6675,7 +6269,7 @@ class ServerEventResponseTextDelta(ServerEvent, discriminator="response.text.del
     """
 
     type: Literal[ServerEventType.RESPONSE_TEXT_DELTA] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.text.delta``. Required."""
+    """The event type, must be ``response.text.delta``. Required. RESPONSE_TEXT_DELTA."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6712,12 +6306,12 @@ class ServerEventResponseTextDelta(ServerEvent, discriminator="response.text.del
 
 
 class ServerEventResponseTextDone(ServerEvent, discriminator="response.text.done"):
-    """Returned when the text value of a "text" content part is done streaming. Also
-    emitted when a Response is interrupted, incomplete, or cancelled.
+    """Returned when the text value of a "text" content part is done streaming. Also emitted when a
+    Response is interrupted, incomplete, or cancelled.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``response.text.done``. Required.
+    :ivar type: The event type, must be ``response.text.done``. Required. RESPONSE_TEXT_DONE.
     :vartype type: str or ~azure.ai.voicelive.models.RESPONSE_TEXT_DONE
     :ivar response_id: The ID of the response. Required.
     :vartype response_id: str
@@ -6732,7 +6326,7 @@ class ServerEventResponseTextDone(ServerEvent, discriminator="response.text.done
     """
 
     type: Literal[ServerEventType.RESPONSE_TEXT_DONE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``response.text.done``. Required."""
+    """The event type, must be ``response.text.done``. Required. RESPONSE_TEXT_DONE."""
     response_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The ID of the response. Required."""
     item_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6775,13 +6369,14 @@ class ServerEventSessionAvatarConnecting(ServerEvent, discriminator="session.ava
     :ivar event_id:
     :vartype event_id: str
     :ivar type: The event type, must be 'session.avatar.connecting'. Required.
+     SESSION_AVATAR_CONNECTING.
     :vartype type: str or ~azure.ai.voicelive.models.SESSION_AVATAR_CONNECTING
     :ivar server_sdp: The server's SDP answer for the avatar connection. Required.
     :vartype server_sdp: str
     """
 
     type: Literal[ServerEventType.SESSION_AVATAR_CONNECTING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be 'session.avatar.connecting'. Required."""
+    """The event type, must be 'session.avatar.connecting'. Required. SESSION_AVATAR_CONNECTING."""
     server_sdp: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The server's SDP answer for the avatar connection. Required."""
 
@@ -6806,20 +6401,19 @@ class ServerEventSessionAvatarConnecting(ServerEvent, discriminator="session.ava
 
 
 class ServerEventSessionCreated(ServerEvent, discriminator="session.created"):
-    """Returned when a Session is created. Emitted automatically when a new
-    connection is established as the first server event. This event will contain
-    the default Session configuration.
+    """Returned when a Session is created. Emitted automatically when a new connection is established
+    as the first server event. This event will contain the default Session configuration.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``session.created``. Required.
+    :ivar type: The event type, must be ``session.created``. Required. SESSION_CREATED.
     :vartype type: str or ~azure.ai.voicelive.models.SESSION_CREATED
     :ivar session: Required.
     :vartype session: ~azure.ai.voicelive.models.ResponseSession
     """
 
     type: Literal[ServerEventType.SESSION_CREATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``session.created``. Required."""
+    """The event type, must be ``session.created``. Required. SESSION_CREATED."""
     session: "_models.ResponseSession" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -6844,19 +6438,18 @@ class ServerEventSessionCreated(ServerEvent, discriminator="session.created"):
 
 
 class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
-    """Returned when a session is updated with a ``session.update`` event, unless
-    there is an error.
+    """Returned when a session is updated with a ``session.update`` event, unless there is an error.
 
     :ivar event_id:
     :vartype event_id: str
-    :ivar type: The event type, must be ``session.updated``. Required.
+    :ivar type: The event type, must be ``session.updated``. Required. SESSION_UPDATED.
     :vartype type: str or ~azure.ai.voicelive.models.SESSION_UPDATED
     :ivar session: Required.
     :vartype session: ~azure.ai.voicelive.models.ResponseSession
     """
 
     type: Literal[ServerEventType.SESSION_UPDATED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The event type, must be ``session.updated``. Required."""
+    """The event type, must be ``session.updated``. Required. SESSION_UPDATED."""
     session: "_models.ResponseSession" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -6880,10 +6473,87 @@ class ServerEventSessionUpdated(ServerEvent, discriminator="session.updated"):
         self.type = ServerEventType.SESSION_UPDATED  # type: ignore
 
 
+class ServerEventWarning(ServerEvent, discriminator="warning"):
+    """Returned when a warning occurs that does not interrupt the conversation flow. Warnings are
+    informational and the session will continue normally.
+
+    :ivar event_id:
+    :vartype event_id: str
+    :ivar type: The event type, must be ``warning``. Required. WARNING.
+    :vartype type: str or ~azure.ai.voicelive.models.WARNING
+    :ivar warning: Details of the warning. Required.
+    :vartype warning: ~azure.ai.voicelive.models.ServerEventWarningDetails
+    """
+
+    type: Literal[ServerEventType.WARNING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The event type, must be ``warning``. Required. WARNING."""
+    warning: "_models.ServerEventWarningDetails" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Details of the warning. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        warning: "_models.ServerEventWarningDetails",
+        event_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ServerEventType.WARNING  # type: ignore
+
+
+class ServerEventWarningDetails(_Model):
+    """Details of the warning.
+
+    :ivar message: A human-readable warning message. Required.
+    :vartype message: str
+    :ivar code: Warning code, if any.
+    :vartype code: str
+    :ivar param: Parameter related to the warning, if any.
+    :vartype param: str
+    """
+
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable warning message. Required."""
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Warning code, if any."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Parameter related to the warning, if any."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: str,
+        code: Optional[str] = None,
+        param: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ServerVad(TurnDetection, discriminator="server_vad"):
     """Base model for VAD-based turn detection.
 
-    :ivar type: Required.
+    :ivar type: Required. SERVER_VAD.
     :vartype type: str or ~azure.ai.voicelive.models.SERVER_VAD
     :ivar threshold:
     :vartype threshold: float
@@ -6902,7 +6572,7 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
     """
 
     type: Literal[TurnDetectionType.SERVER_VAD] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. SERVER_VAD."""
     threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     prefix_padding_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     silence_duration_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6947,20 +6617,20 @@ class SystemMessageItem(MessageItem, discriminator="system"):
 
     :ivar id:
     :vartype id: str
-    :ivar type: The type of the item; must be 'message' for message items. Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required. MESSAGE.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
     :ivar content: The content parts of the message. Required.
     :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
     :ivar status: Processing status of the message item. Known values are: "completed" and
      "incomplete".
     :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
-    :ivar role: Required.
+    :ivar role: Required. SYSTEM.
     :vartype role: str or ~azure.ai.voicelive.models.SYSTEM
     """
 
     __mapping__: dict[str, _Model] = {}
     role: Literal[MessageRole.SYSTEM] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. SYSTEM."""
 
     @overload
     def __init__(
@@ -7041,13 +6711,13 @@ class ToolChoiceSelection(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ToolChoiceFunctionSelection
 
-    :ivar type: Required. Known values are: "function", "mcp", and "foundry_agent".
+    :ivar type: Required. Known values are: "function" and "mcp".
     :vartype type: str or ~azure.ai.voicelive.models.ToolType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"function\", \"mcp\", and \"foundry_agent\"."""
+    """Required. Known values are: \"function\" and \"mcp\"."""
 
     @overload
     def __init__(
@@ -7070,14 +6740,14 @@ class ToolChoiceSelection(_Model):
 class ToolChoiceFunctionSelection(ToolChoiceSelection, discriminator="function"):
     """The representation of a voicelive tool_choice selecting a named function tool.
 
-    :ivar type: Required.
+    :ivar type: Required. FUNCTION.
     :vartype type: str or ~azure.ai.voicelive.models.FUNCTION
     :ivar name: Required.
     :vartype name: str
     """
 
     type: Literal[ToolType.FUNCTION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. FUNCTION."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
@@ -7105,20 +6775,20 @@ class UserMessageItem(MessageItem, discriminator="user"):
 
     :ivar id:
     :vartype id: str
-    :ivar type: The type of the item; must be 'message' for message items. Required.
+    :ivar type: The type of the item; must be 'message' for message items. Required. MESSAGE.
     :vartype type: str or ~azure.ai.voicelive.models.MESSAGE
     :ivar content: The content parts of the message. Required.
     :vartype content: list[~azure.ai.voicelive.models.MessageContentPart]
     :ivar status: Processing status of the message item. Known values are: "completed" and
      "incomplete".
     :vartype status: str or ~azure.ai.voicelive.models.ItemParamStatus
-    :ivar role: Required.
+    :ivar role: Required. USER.
     :vartype role: str or ~azure.ai.voicelive.models.USER
     """
 
     __mapping__: dict[str, _Model] = {}
     role: Literal[MessageRole.USER] = rest_discriminator(name="role", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required."""
+    """Required. USER."""
 
     @overload
     def __init__(

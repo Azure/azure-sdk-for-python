@@ -30,18 +30,18 @@ class AvatarConfigTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Avatar config types."""
 
     VIDEO_AVATAR = "video-avatar"
-    """Video avatar"""
+    """Video avatar."""
     PHOTO_AVATAR = "photo-avatar"
-    """Photo avatar"""
+    """Photo avatar."""
 
 
 class AvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Avatar config output protocols."""
 
     WEBRTC = "webrtc"
-    """WebRTC protocol, output the audio/video streams via WebRTC"""
+    """WebRTC protocol, output the audio/video streams via WebRTC."""
     WEBSOCKET = "websocket"
-    """WebSocket protocol, output the video frames over WebSocket"""
+    """WebSocket protocol, output the video frames over WebSocket."""
 
 
 class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -59,32 +59,54 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Client event types used in VoiceLive protocol."""
 
     SESSION_UPDATE = "session.update"
+    """SESSION_UPDATE."""
     INPUT_AUDIO_BUFFER_APPEND = "input_audio_buffer.append"
+    """INPUT_AUDIO_BUFFER_APPEND."""
     INPUT_AUDIO_BUFFER_COMMIT = "input_audio_buffer.commit"
+    """INPUT_AUDIO_BUFFER_COMMIT."""
     INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer.clear"
+    """INPUT_AUDIO_BUFFER_CLEAR."""
     INPUT_AUDIO_TURN_START = "input_audio.turn.start"
+    """INPUT_AUDIO_TURN_START."""
     INPUT_AUDIO_TURN_APPEND = "input_audio.turn.append"
+    """INPUT_AUDIO_TURN_APPEND."""
     INPUT_AUDIO_TURN_END = "input_audio.turn.end"
+    """INPUT_AUDIO_TURN_END."""
     INPUT_AUDIO_TURN_CANCEL = "input_audio.turn.cancel"
+    """INPUT_AUDIO_TURN_CANCEL."""
     INPUT_AUDIO_CLEAR = "input_audio.clear"
+    """INPUT_AUDIO_CLEAR."""
     CONVERSATION_ITEM_CREATE = "conversation.item.create"
+    """CONVERSATION_ITEM_CREATE."""
     CONVERSATION_ITEM_RETRIEVE = "conversation.item.retrieve"
+    """CONVERSATION_ITEM_RETRIEVE."""
     CONVERSATION_ITEM_TRUNCATE = "conversation.item.truncate"
+    """CONVERSATION_ITEM_TRUNCATE."""
     CONVERSATION_ITEM_DELETE = "conversation.item.delete"
+    """CONVERSATION_ITEM_DELETE."""
     RESPONSE_CREATE = "response.create"
+    """RESPONSE_CREATE."""
     RESPONSE_CANCEL = "response.cancel"
+    """RESPONSE_CANCEL."""
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    """SESSION_AVATAR_CONNECT."""
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """MCP_APPROVAL_RESPONSE."""
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ContentPartType."""
 
     INPUT_TEXT = "input_text"
+    """INPUT_TEXT."""
     INPUT_AUDIO = "input_audio"
+    """INPUT_AUDIO."""
     INPUT_IMAGE = "input_image"
+    """INPUT_IMAGE."""
     TEXT = "text"
+    """TEXT."""
     AUDIO = "audio"
+    """AUDIO."""
 
 
 class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -118,24 +140,15 @@ class FillerTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Trigger filler when a tool call is being executed."""
 
 
-class FoundryAgentContextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The available set of Foundry agent context types."""
-
-    NO_CONTEXT = "no_context"
-    """Only the current user input is sent, no context maintained."""
-    AGENT_CONTEXT = "agent_context"
-    """Agent maintains its own context (thread), only current input sent per call."""
-
-
 class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Input audio format types supported."""
 
     PCM16 = "pcm16"
-    """16-bit PCM audio format at default sampling rate (24kHz)"""
+    """16-bit PCM audio format at default sampling rate (24kHz)."""
     G711_ULAW = "g711_ulaw"
-    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
+    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
     G711_ALAW = "g711_alaw"
-    """G.711 A-law audio format at 8kHz sampling rate"""
+    """G.711 A-law audio format at 8kHz sampling rate."""
 
 
 class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -151,13 +164,19 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ItemType."""
 
     MESSAGE = "message"
+    """MESSAGE."""
     FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
     FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
     MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
     MCP_CALL = "mcp_call"
+    """MCP_CALL."""
     MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    FOUNDRY_AGENT_CALL = "foundry_agent_call"
+    """MCP_APPROVAL_RESPONSE."""
 
 
 class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -173,8 +192,11 @@ class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of MessageRole."""
 
     SYSTEM = "system"
+    """SYSTEM."""
     USER = "user"
+    """USER."""
     ASSISTANT = "assistant"
+    """ASSISTANT."""
 
 
 class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -219,15 +241,15 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output audio format types supported."""
 
     PCM16 = "pcm16"
-    """16-bit PCM audio format at default sampling rate (24kHz)"""
+    """16-bit PCM audio format at default sampling rate (24kHz)."""
     PCM16_8000_HZ = "pcm16_8000hz"
-    """16-bit PCM audio format at 8kHz sampling rate"""
+    """16-bit PCM audio format at 8kHz sampling rate."""
     PCM16_16000_HZ = "pcm16_16000hz"
-    """16-bit PCM audio format at 16kHz sampling rate"""
+    """16-bit PCM audio format at 16kHz sampling rate."""
     G711_ULAW = "g711_ulaw"
-    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
+    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
     G711_ALAW = "g711_alaw"
-    """G.711 A-law audio format at 8kHz sampling rate"""
+    """G.711 A-law audio format at 8kHz sampling rate."""
 
 
 class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -245,14 +267,13 @@ class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Photo avatar base modes."""
 
     VASA1 = "vasa-1"
-    """VASA-1 model"""
+    """VASA-1 model."""
 
 
 class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Constrains effort on reasoning for reasoning models. Check model documentation for supported
-    values for each model.
-    Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-    a response.
+    values for each model. Reducing reasoning effort can result in faster responses and fewer
+    tokens used on reasoning in a response.
     """
 
     NONE = "none"
@@ -295,65 +316,108 @@ class ResponseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Terminal status of a response."""
 
     COMPLETED = "completed"
+    """COMPLETED."""
     CANCELLED = "cancelled"
+    """CANCELLED."""
     FAILED = "failed"
+    """FAILED."""
     INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
     IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
 
 
 class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Server event types used in VoiceLive protocol."""
 
     ERROR = "error"
+    """ERROR."""
+    WARNING = "warning"
+    """WARNING."""
     SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
+    """SESSION_AVATAR_CONNECTING."""
     SESSION_CREATED = "session.created"
+    """SESSION_CREATED."""
     SESSION_UPDATED = "session.updated"
+    """SESSION_UPDATED."""
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED = "conversation.item.input_audio_transcription.completed"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED."""
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA = "conversation.item.input_audio_transcription.delta"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA."""
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED = "conversation.item.input_audio_transcription.failed"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED."""
     CONVERSATION_ITEM_CREATED = "conversation.item.created"
+    """CONVERSATION_ITEM_CREATED."""
     CONVERSATION_ITEM_RETRIEVED = "conversation.item.retrieved"
+    """CONVERSATION_ITEM_RETRIEVED."""
     CONVERSATION_ITEM_TRUNCATED = "conversation.item.truncated"
+    """CONVERSATION_ITEM_TRUNCATED."""
     CONVERSATION_ITEM_DELETED = "conversation.item.deleted"
+    """CONVERSATION_ITEM_DELETED."""
     INPUT_AUDIO_BUFFER_COMMITTED = "input_audio_buffer.committed"
+    """INPUT_AUDIO_BUFFER_COMMITTED."""
     INPUT_AUDIO_BUFFER_CLEARED = "input_audio_buffer.cleared"
+    """INPUT_AUDIO_BUFFER_CLEARED."""
     INPUT_AUDIO_BUFFER_SPEECH_STARTED = "input_audio_buffer.speech_started"
+    """INPUT_AUDIO_BUFFER_SPEECH_STARTED."""
     INPUT_AUDIO_BUFFER_SPEECH_STOPPED = "input_audio_buffer.speech_stopped"
+    """INPUT_AUDIO_BUFFER_SPEECH_STOPPED."""
     RESPONSE_CREATED = "response.created"
+    """RESPONSE_CREATED."""
     RESPONSE_DONE = "response.done"
+    """RESPONSE_DONE."""
     RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
+    """RESPONSE_OUTPUT_ITEM_ADDED."""
     RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
+    """RESPONSE_OUTPUT_ITEM_DONE."""
     RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
+    """RESPONSE_CONTENT_PART_ADDED."""
     RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
+    """RESPONSE_CONTENT_PART_DONE."""
     RESPONSE_TEXT_DELTA = "response.text.delta"
+    """RESPONSE_TEXT_DELTA."""
     RESPONSE_TEXT_DONE = "response.text.done"
+    """RESPONSE_TEXT_DONE."""
     RESPONSE_AUDIO_TRANSCRIPT_DELTA = "response.audio_transcript.delta"
+    """RESPONSE_AUDIO_TRANSCRIPT_DELTA."""
     RESPONSE_AUDIO_TRANSCRIPT_DONE = "response.audio_transcript.done"
+    """RESPONSE_AUDIO_TRANSCRIPT_DONE."""
     RESPONSE_AUDIO_DELTA = "response.audio.delta"
+    """RESPONSE_AUDIO_DELTA."""
     RESPONSE_AUDIO_DONE = "response.audio.done"
+    """RESPONSE_AUDIO_DONE."""
     RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
     RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
+    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
     RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
+    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
     RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
+    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
     RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
+    """RESPONSE_ANIMATION_VISEME_DELTA."""
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
+    """RESPONSE_ANIMATION_VISEME_DONE."""
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
+    """RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA."""
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    """RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE."""
     MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+    """MCP_LIST_TOOLS_IN_PROGRESS."""
     MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+    """MCP_LIST_TOOLS_COMPLETED."""
     MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+    """MCP_LIST_TOOLS_FAILED."""
     RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+    """RESPONSE_MCP_CALL_ARGUMENTS_DELTA."""
     RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """RESPONSE_MCP_CALL_ARGUMENTS_DONE."""
     RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    """RESPONSE_MCP_CALL_IN_PROGRESS."""
     RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    """RESPONSE_MCP_CALL_COMPLETED."""
     RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
-    RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DELTA = "response.foundry_agent_call_arguments.delta"
-    RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DONE = "response.foundry_agent_call_arguments.done"
-    RESPONSE_FOUNDRY_AGENT_CALL_IN_PROGRESS = "response.foundry_agent_call.in_progress"
-    RESPONSE_FOUNDRY_AGENT_CALL_COMPLETED = "response.foundry_agent_call.completed"
-    RESPONSE_FOUNDRY_AGENT_CALL_FAILED = "response.foundry_agent_call.failed"
+    """RESPONSE_MCP_CALL_FAILED."""
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -368,19 +432,24 @@ class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported tool type discriminators for voicelive tools.
-    Currently, only 'function' tools are supported.
+    """The supported tool type discriminators for voicelive tools. Currently, only 'function' tools
+    are supported.
     """
 
     FUNCTION = "function"
+    """FUNCTION."""
     MCP = "mcp"
-    FOUNDRY_AGENT = "foundry_agent"
+    """MCP."""
 
 
 class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TurnDetectionType."""
 
     SERVER_VAD = "server_vad"
+    """SERVER_VAD."""
     AZURE_SEMANTIC_VAD = "azure_semantic_vad"
+    """AZURE_SEMANTIC_VAD."""
     AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
+    """AZURE_SEMANTIC_VAD_EN."""
     AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
+    """AZURE_SEMANTIC_VAD_MULTILINGUAL."""
