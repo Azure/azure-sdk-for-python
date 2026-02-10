@@ -22,7 +22,7 @@ from corehttp.runtime.policies import (
     RetryPolicy,
     HTTPPolicy,
 )
-from corehttp.runtime._base import PipelineClientBase, _format_url_section
+from corehttp.runtime._base import PipelineClientBase, _format_url_section, _urljoin
 from corehttp.transport import HttpTransport
 from corehttp.transport.requests import RequestsTransport
 from corehttp.transport.httpx import HttpXTransport
@@ -88,6 +88,25 @@ def test_transport_socket_timeout(transport):
     with pytest.raises(BaseError):
         with Pipeline(transport(), policies=policies) as pipeline:
             response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
+
+
+def test_url_join():
+    assert _urljoin("devstoreaccount1", "?testdir") == "devstoreaccount1?testdir"
+    assert _urljoin("devstoreaccount1", "?testdir=foo") == "devstoreaccount1?testdir=foo"
+    assert _urljoin("devstoreaccount1/api", "?a=1") == "devstoreaccount1/api?a=1"
+    assert (
+        _urljoin("devstoreaccount1", "/?restype=service&comp=properties")
+        == "devstoreaccount1/?restype=service&comp=properties"
+    )
+    assert _urljoin("devstoreaccount1", "") == "devstoreaccount1"
+    assert _urljoin("devstoreaccount1", "testdir/") == "devstoreaccount1/testdir/"
+    assert _urljoin("devstoreaccount1/", "") == "devstoreaccount1/"
+    assert _urljoin("devstoreaccount1/", "/testdir/") == "devstoreaccount1/testdir/"
+    assert _urljoin("devstoreaccount1/", "testdir/") == "devstoreaccount1/testdir/"
+    assert _urljoin("devstoreaccount1?a=1", "testdir/") == "devstoreaccount1/testdir/?a=1"
+    assert _urljoin("devstoreaccount1", "testdir/?b=2") == "devstoreaccount1/testdir/?b=2"
+    assert _urljoin("devstoreaccount1?a=1", "testdir/?b=2") == "devstoreaccount1/testdir/?a=1&b=2"
+    assert _urljoin("devstoreaccount1", "documentModels:build") == "devstoreaccount1/documentModels:build"
 
 
 def test_format_url_basic():
@@ -175,6 +194,39 @@ def test_format_incorrect_endpoint():
     assert (
         str(exp.value) == "The value provided for the url part Endpoint was incorrect, and resulted in an invalid url"
     )
+
+
+def test_format_url_query_strings():
+    client = PipelineClientBase("https://foo.core.windows.net")
+    formatted = client.format_url("/")
+    assert formatted == "https://foo.core.windows.net/"
+
+    formatted = client.format_url("/?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net/?a=X&c=Y"
+
+    formatted = client.format_url("?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net?a=X&c=Y"
+
+    formatted = client.format_url("/Tables/?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net/Tables/?a=X&c=Y"
+
+    formatted = client.format_url("/Tables?a=X&c=Y")
+    assert formatted == "https://foo.core.windows.net/Tables?a=X&c=Y"
+
+
+def test_format_url_from_http_request():
+    client = PipelineClientBase("https://foo.core.windows.net")
+
+    _url = "/"
+    _params = {"foo": "bar"}
+    request = HttpRequest("GET", _url, params=_params)
+    formatted = client.format_url(request.url)
+    assert formatted == "https://foo.core.windows.net/?foo=bar"
+
+    _url = "?restype=service&comp=properties"
+    request = HttpRequest("GET", _url)
+    formatted = client.format_url(request.url)
+    assert formatted == "https://foo.core.windows.net?restype=service&comp=properties"
 
 
 def test_request_json():
