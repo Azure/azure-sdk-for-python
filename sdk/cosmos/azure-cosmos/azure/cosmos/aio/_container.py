@@ -872,10 +872,10 @@ class ContainerProxy:
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
 
         # populate availability_strategy
-        if (Constants.Kwargs.availability_strategy in feed_options
-                and feed_options[Constants.Kwargs.availability_strategy] is not _Unset):
-            feed_options[Constants.Kwargs.availability_strategy] =\
-                _validate_hedging_strategy(feed_options.pop(Constants.Kwargs.availability_strategy))
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not _Unset):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
+                _validate_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
 
