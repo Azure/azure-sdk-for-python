@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.computebulkactions import ComputeBulkActionsClient
+from azure.mgmt.computebulkactions import ComputeBulkActionsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -16,7 +16,7 @@ AZURE_LOCATION = "eastus"
 @pytest.mark.live_test_only
 class TestComputeBulkActionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ComputeBulkActionsClient)
+        self.client = self.create_mgmt_client(ComputeBulkActionsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
