@@ -6,7 +6,7 @@ This guide is for developers using `azure-mgmt-containerregistry` who need to mi
 
 ## Summary of Changes
 
-To improve the user experience, some APIs formerly in `azure-mgmt-containerregistry` have been moved to two new, more focused packages:
+To improve the user experience, some APIs formerly in `azure-mgmt-containerregistry` have been moved to more focused package:
 - `azure-mgmt-containerregistrytasks`
 
 **Most APIs are still available in `azure-mgmt-containerregistry`**. Only a small subset of operations and models related to container registry tasks have been relocated.
