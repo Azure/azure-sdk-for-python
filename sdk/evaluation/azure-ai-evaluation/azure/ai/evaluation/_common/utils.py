@@ -711,12 +711,11 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
 
 
 def _format_value(v):
+    if v is None:
+        return "None"
     if isinstance(v, str):
         return f'"{v}"'
-    elif v is None:
-        return "None"
-    else:
-        return str(v)
+    return v
 
 
 def _get_agent_response(agent_response_msgs, include_tool_messages=False):
