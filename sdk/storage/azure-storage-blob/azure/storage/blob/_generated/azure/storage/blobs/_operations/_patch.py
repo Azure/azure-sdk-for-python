@@ -58,24 +58,24 @@ def _convert_to_etag_match_condition(
             kwargs["match_condition"] = MatchConditions.IfModified
 
 
+def _set_if_not_none(kwargs: dict[str, Any], key: str, value: Any) -> None:
+    """Set a value in kwargs only if the value is not None and the key is not already set."""
+    if value is not None and kwargs.get(key) is None:
+        kwargs[key] = value
+
+
 def _extract_blob_http_headers(
     blob_http_headers: Optional[BlobHTTPHeaders],
     kwargs: dict[str, Any],
 ) -> None:
     """Extract BlobHTTPHeaders fields into kwargs if not already set."""
     if blob_http_headers is not None:
-        if kwargs.get("blob_cache_control") is None:
-            kwargs["blob_cache_control"] = blob_http_headers.get("blob_cache_control")
-        if kwargs.get("blob_content_type") is None:
-            kwargs["blob_content_type"] = blob_http_headers.get("blob_content_type")
-        if kwargs.get("blob_content_md5") is None:
-            kwargs["blob_content_md5"] = blob_http_headers.get("blob_content_md5")
-        if kwargs.get("blob_content_encoding") is None:
-            kwargs["blob_content_encoding"] = blob_http_headers.get("blob_content_encoding")
-        if kwargs.get("blob_content_language") is None:
-            kwargs["blob_content_language"] = blob_http_headers.get("blob_content_language")
-        if kwargs.get("blob_content_disposition") is None:
-            kwargs["blob_content_disposition"] = blob_http_headers.get("blob_content_disposition")
+        _set_if_not_none(kwargs, "blob_cache_control", blob_http_headers.get("blob_cache_control"))
+        _set_if_not_none(kwargs, "blob_content_type", blob_http_headers.get("blob_content_type"))
+        _set_if_not_none(kwargs, "blob_content_md5", blob_http_headers.get("blob_content_md5"))
+        _set_if_not_none(kwargs, "blob_content_encoding", blob_http_headers.get("blob_content_encoding"))
+        _set_if_not_none(kwargs, "blob_content_language", blob_http_headers.get("blob_content_language"))
+        _set_if_not_none(kwargs, "blob_content_disposition", blob_http_headers.get("blob_content_disposition"))
 
 
 def _extract_lease_access_conditions(
@@ -84,8 +84,7 @@ def _extract_lease_access_conditions(
 ) -> None:
     """Extract LeaseAccessConditions fields into kwargs if not already set."""
     if lease_access_conditions is not None:
-        if kwargs.get("lease_id") is None:
-            kwargs["lease_id"] = lease_access_conditions.get("lease_id")
+        _set_if_not_none(kwargs, "lease_id", lease_access_conditions.get("lease_id"))
 
 
 def _extract_cpk_info(
@@ -94,12 +93,9 @@ def _extract_cpk_info(
 ) -> None:
     """Extract CpkInfo fields into kwargs if not already set."""
     if cpk_info is not None:
-        if kwargs.get("encryption_key") is None:
-            kwargs["encryption_key"] = cpk_info.get("encryption_key")
-        if kwargs.get("encryption_key_sha256") is None:
-            kwargs["encryption_key_sha256"] = cpk_info.get("encryption_key_sha256")
-        if kwargs.get("encryption_algorithm") is None:
-            kwargs["encryption_algorithm"] = cpk_info.get("encryption_algorithm")
+        _set_if_not_none(kwargs, "encryption_key", cpk_info.get("encryption_key"))
+        _set_if_not_none(kwargs, "encryption_key_sha256", cpk_info.get("encryption_key_sha256"))
+        _set_if_not_none(kwargs, "encryption_algorithm", cpk_info.get("encryption_algorithm"))
 
 
 def _extract_cpk_scope_info(
@@ -108,8 +104,7 @@ def _extract_cpk_scope_info(
 ) -> None:
     """Extract CpkScopeInfo fields into kwargs if not already set."""
     if cpk_scope_info is not None:
-        if kwargs.get("encryption_scope") is None:
-            kwargs["encryption_scope"] = cpk_scope_info.get("encryption_scope")
+        _set_if_not_none(kwargs, "encryption_scope", cpk_scope_info.get("encryption_scope"))
 
 
 def _extract_modified_access_conditions(
@@ -118,12 +113,9 @@ def _extract_modified_access_conditions(
 ) -> None:
     """Extract ModifiedAccessConditions fields into kwargs if not already set."""
     if modified_access_conditions is not None:
-        if kwargs.get("if_modified_since") is None:
-            kwargs["if_modified_since"] = modified_access_conditions.get("if_modified_since")
-        if kwargs.get("if_unmodified_since") is None:
-            kwargs["if_unmodified_since"] = modified_access_conditions.get("if_unmodified_since")
-        if kwargs.get("if_tags") is None:
-            kwargs["if_tags"] = modified_access_conditions.get("if_tags")
+        _set_if_not_none(kwargs, "if_modified_since", modified_access_conditions.get("if_modified_since"))
+        _set_if_not_none(kwargs, "if_unmodified_since", modified_access_conditions.get("if_unmodified_since"))
+        _set_if_not_none(kwargs, "if_tags", modified_access_conditions.get("if_tags"))
         # Convert if_match/if_none_match to etag/match_condition
         _convert_to_etag_match_condition(
             modified_access_conditions.get("if_match"),
@@ -138,17 +130,12 @@ def _extract_source_modified_access_conditions(
 ) -> None:
     """Extract SourceModifiedAccessConditions fields into kwargs if not already set."""
     if source_modified_access_conditions is not None:
-        if kwargs.get("source_if_modified_since") is None:
-            kwargs["source_if_modified_since"] = source_modified_access_conditions.get("source_if_modified_since")
-        if kwargs.get("source_if_unmodified_since") is None:
-            kwargs["source_if_unmodified_since"] = source_modified_access_conditions.get("source_if_unmodified_since")
-        if kwargs.get("source_if_tags") is None:
-            kwargs["source_if_tags"] = source_modified_access_conditions.get("source_if_tags")
+        _set_if_not_none(kwargs, "source_if_modified_since", source_modified_access_conditions.get("source_if_modified_since"))
+        _set_if_not_none(kwargs, "source_if_unmodified_since", source_modified_access_conditions.get("source_if_unmodified_since"))
+        _set_if_not_none(kwargs, "source_if_tags", source_modified_access_conditions.get("source_if_tags"))
         # Pass source_if_match and source_if_none_match directly (they are used as-is in the generated code)
-        if kwargs.get("source_if_match") is None:
-            kwargs["source_if_match"] = source_modified_access_conditions.get("source_if_match")
-        if kwargs.get("source_if_none_match") is None:
-            kwargs["source_if_none_match"] = source_modified_access_conditions.get("source_if_none_match")
+        _set_if_not_none(kwargs, "source_if_match", source_modified_access_conditions.get("source_if_match"))
+        _set_if_not_none(kwargs, "source_if_none_match", source_modified_access_conditions.get("source_if_none_match"))
 
 
 def _extract_source_cpk_info(
@@ -157,12 +144,9 @@ def _extract_source_cpk_info(
 ) -> None:
     """Extract SourceCpkInfo fields into kwargs if not already set."""
     if source_cpk_info is not None:
-        if kwargs.get("source_encryption_key") is None:
-            kwargs["source_encryption_key"] = source_cpk_info.get("source_encryption_key")
-        if kwargs.get("source_encryption_key_sha256") is None:
-            kwargs["source_encryption_key_sha256"] = source_cpk_info.get("source_encryption_key_sha256")
-        if kwargs.get("source_encryption_algorithm") is None:
-            kwargs["source_encryption_algorithm"] = source_cpk_info.get("source_encryption_algorithm")
+        _set_if_not_none(kwargs, "source_encryption_key", source_cpk_info.get("source_encryption_key"))
+        _set_if_not_none(kwargs, "source_encryption_key_sha256", source_cpk_info.get("source_encryption_key_sha256"))
+        _set_if_not_none(kwargs, "source_encryption_algorithm", source_cpk_info.get("source_encryption_algorithm"))
 
 
 def _extract_sequence_number_access_conditions(
@@ -171,16 +155,9 @@ def _extract_sequence_number_access_conditions(
 ) -> None:
     """Extract SequenceNumberAccessConditions fields into kwargs if not already set."""
     if sequence_number_access_conditions is not None:
-        if kwargs.get("if_sequence_number_less_than_or_equal_to") is None:
-            kwargs["if_sequence_number_less_than_or_equal_to"] = sequence_number_access_conditions.get(
-                "if_sequence_number_less_than_or_equal_to"
-            )
-        if kwargs.get("if_sequence_number_less_than") is None:
-            kwargs["if_sequence_number_less_than"] = sequence_number_access_conditions.get(
-                "if_sequence_number_less_than"
-            )
-        if kwargs.get("if_sequence_number_equal_to") is None:
-            kwargs["if_sequence_number_equal_to"] = sequence_number_access_conditions.get("if_sequence_number_equal_to")
+        _set_if_not_none(kwargs, "if_sequence_number_less_than_or_equal_to", sequence_number_access_conditions.get("if_sequence_number_less_than_or_equal_to"))
+        _set_if_not_none(kwargs, "if_sequence_number_less_than", sequence_number_access_conditions.get("if_sequence_number_less_than"))
+        _set_if_not_none(kwargs, "if_sequence_number_equal_to", sequence_number_access_conditions.get("if_sequence_number_equal_to"))
 
 
 def _extract_append_position_access_conditions(
@@ -189,10 +166,8 @@ def _extract_append_position_access_conditions(
 ) -> None:
     """Extract AppendPositionAccessConditions fields into kwargs if not already set."""
     if append_position_access_conditions is not None:
-        if kwargs.get("max_size") is None:
-            kwargs["max_size"] = append_position_access_conditions.get("max_size")
-        if kwargs.get("append_position") is None:
-            kwargs["append_position"] = append_position_access_conditions.get("append_position")
+        _set_if_not_none(kwargs, "max_size", append_position_access_conditions.get("max_size"))
+        _set_if_not_none(kwargs, "append_position", append_position_access_conditions.get("append_position"))
 
 
 def _extract_container_cpk_scope_info(
@@ -201,12 +176,8 @@ def _extract_container_cpk_scope_info(
 ) -> None:
     """Extract ContainerCpkScopeInfo fields into kwargs if not already set."""
     if container_cpk_scope_info is not None:
-        if kwargs.get("default_encryption_scope") is None:
-            kwargs["default_encryption_scope"] = container_cpk_scope_info.get("default_encryption_scope")
-        if kwargs.get("prevent_encryption_scope_override") is None:
-            kwargs["prevent_encryption_scope_override"] = container_cpk_scope_info.get(
-                "prevent_encryption_scope_override"
-            )
+        _set_if_not_none(kwargs, "default_encryption_scope", container_cpk_scope_info.get("default_encryption_scope"))
+        _set_if_not_none(kwargs, "prevent_encryption_scope_override", container_cpk_scope_info.get("prevent_encryption_scope_override"))
 
 
 def _extract_blob_modified_access_conditions(
@@ -215,10 +186,8 @@ def _extract_blob_modified_access_conditions(
 ) -> None:
     """Extract BlobModifiedAccessConditions fields into kwargs if not already set."""
     if blob_modified_access_conditions is not None:
-        if kwargs.get("if_modified_since") is None:
-            kwargs["if_modified_since"] = blob_modified_access_conditions.get("if_modified_since")
-        if kwargs.get("if_unmodified_since") is None:
-            kwargs["if_unmodified_since"] = blob_modified_access_conditions.get("if_unmodified_since")
+        _set_if_not_none(kwargs, "if_modified_since", blob_modified_access_conditions.get("if_modified_since"))
+        _set_if_not_none(kwargs, "if_unmodified_since", blob_modified_access_conditions.get("if_unmodified_since"))
         # Convert if_match/if_none_match to etag/match_condition
         _convert_to_etag_match_condition(
             blob_modified_access_conditions.get("if_match"),
@@ -259,9 +228,6 @@ def extract_parameter_groups(kwargs: dict[str, Any]) -> None:
     _extract_append_position_access_conditions(append_position_access_conditions, kwargs)
     _extract_container_cpk_scope_info(container_cpk_scope_info, kwargs)
     _extract_blob_modified_access_conditions(blob_modified_access_conditions, kwargs)
-
-
-
 
 
 # Import the generated mixin classes
