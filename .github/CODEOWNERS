@@ -505,7 +505,7 @@
 # ServiceLabel: %API Management %Service Attention
 # ServiceOwners:          @miaojiang
 
-# ServiceLabel: %Application Insights %Service Attention
+# ServiceLabel: %Monitor - ApplicationInsights %Service Attention
 # ServiceOwners:          @azmonapplicationinsights
 
 # ServiceLabel: %App Services %Service Attention
