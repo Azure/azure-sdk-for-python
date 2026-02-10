@@ -1,0 +1,34 @@
+{% set name = "conda-release-test" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: {{ environ.get('AZURESDK_CONDA_VERSION', '0.0.1') }}
+
+source:
+  url: {{ environ.get('RELEASETEST_SOURCE_DISTRIBUTION', '') }}
+
+build:
+  noarch: python
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  host:
+    - pip
+    - python
+  run:
+    - python
+
+test:
+  imports:
+    - conda_release_test
+
+about:
+  home: "https://github.com/Azure/azure-sdk-for-python"
+  license: MIT
+  license_family: MIT
+  license_file:
+  summary: "Test package for conda upload pipeline validation"
+  description: |
+    This is a dummy test package used to validate the conda publish pipeline.
+    It contains no actual functionality and should not be used in production.

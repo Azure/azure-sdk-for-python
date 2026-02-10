@@ -198,6 +198,10 @@ parameters:
     displayName: 'azure-mgmt'
     type: boolean
     default: true
+  - name: release_conda_release_test
+    displayName: 'conda-release-test'
+    type: boolean
+    default: true
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -543,6 +547,13 @@ extends:
                       checkout:
                         - package: azure-monitor-querymetrics
                           version: 1.0.0
+                    - name: conda-release-test
+                      service: releasetest
+                      in_batch: ${{ parameters.release_conda_release_test }}
+                      checkout:
+                        - package: conda-release-test
+                          checkout_path: sdk/releasetest
+                          version: 0.0.1
                     - name: azure-mgmt
                       service: mgmt
                       in_batch: ${{ parameters.release_azure_mgmt }}
