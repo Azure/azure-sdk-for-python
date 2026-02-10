@@ -4,8 +4,8 @@ trigger:
       - main
   paths:
     include:
-      - conda/conda-recipes/*
-      - conda/conda-releaselogs/*
+      - conda/conda-recipes/**
+      - conda/conda-releaselogs/**
       - eng/pipelines/templates/stages/conda-sdk-client.yml
 pr:
   branches:
@@ -13,8 +13,8 @@ pr:
       - main
   paths:
     include:
-      - conda/conda-recipes/*
-      - conda/conda-releaselogs/*
+      - conda/conda-recipes/**
+      - conda/conda-releaselogs/**
       - eng/pipelines/templates/stages/conda-sdk-client.yml
 
 parameters:
