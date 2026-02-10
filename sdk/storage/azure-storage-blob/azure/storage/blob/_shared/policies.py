@@ -110,14 +110,18 @@ def is_retry(response, mode):  # pylint: disable=too-many-return-statements
     return False
 
 
-def is_checksum_retry(response):
-    # # retry if invalid content md5
-    # if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
-    #     computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-    #         StorageContentValidation.get_content_md5(response.http_response.body())
-    #     )
-    #     if response.http_response.headers["content-md5"] != computed_md5:
-    #         return True
+def is_checksum_retry(response) -> bool:
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return False
+
+    # Legacy code - retry on content-md5 mismatch
+    if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
+        computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
+            StorageContentValidation.get_content_md5(response.http_response.body())
+        )
+        if response.http_response.headers["content-md5"] != computed_md5:
+            return True
     return False
 
 
@@ -411,7 +415,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
         validate_content = response.context.get("validate_content", False)
         if not validate_content:
             return
-        
+
         if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
             computed_md5 = request.context.get("validate_content_md5") or encode_base64(
                 StorageContentValidation.get_content_md5(response.http_response.body())

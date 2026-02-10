@@ -16,6 +16,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Async
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
+from .validation import ChecksumAlgorithm
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -37,18 +38,22 @@ async def retry_hook(settings, **kwargs):
 
 
 async def is_checksum_retry(response):
-    # retry if invalid content md5
-    # if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
-    #     if hasattr(response.http_response, "load_body"):
-    #         try:
-    #             await response.http_response.load_body()  # Load the body in memory and close the socket
-    #         except (StreamClosedError, StreamConsumedError):
-    #             pass
-    #     computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
-    #         StorageContentValidation.get_content_md5(response.http_response.body())
-    #     )
-    #     if response.http_response.headers["content-md5"] != computed_md5:
-    #         return True
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return False
+
+    # Legacy code - retry on content-md5 mismatch
+    if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
+        if hasattr(response.http_response, "load_body"):
+            try:
+                await response.http_response.load_body()  # Load the body in memory and close the socket
+            except (StreamClosedError, StreamConsumedError):
+                pass
+        computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
+            StorageContentValidation.get_content_md5(response.http_response.body())
+        )
+        if response.http_response.headers["content-md5"] != computed_md5:
+            return True
     return False
 
 
