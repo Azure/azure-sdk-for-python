@@ -115,8 +115,8 @@ def is_checksum_retry(response) -> bool:
     if not validate_content:
         return False
 
-    # Legacy code - retry on content-md5 mismatch
-    if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
+    # Legacy code - evaluate retry only on validate_content=True
+    if validate_content is True and response.http_response.headers.get("content-md5"):
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
             StorageContentValidation.get_content_md5(response.http_response.body())
         )
@@ -358,9 +358,6 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     @staticmethod
     def get_content_md5(data):
-        # Since HTTP does not differentiate between no content and empty content,
-        # we have to perform a None check.
-        data = data or b""
         md5 = hashlib.md5()  # nosec
         if isinstance(data, bytes):
             md5.update(data)
@@ -409,7 +406,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
                 else:
                     raise ValueError(CV_TYPE_ERROR_MSG)
 
-            request.context["validate_content"] = validate_content
+        request.context["validate_content"] = validate_content
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
         validate_content = response.context.get("validate_content", False)

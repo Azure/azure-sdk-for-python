@@ -42,8 +42,8 @@ async def is_checksum_retry(response):
     if not validate_content:
         return False
 
-    # Legacy code - retry on content-md5 mismatch
-    if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
+    # Legacy code - evaluate retry only on validate_content=True
+    if validate_content is True and response.http_response.headers.get("content-md5"):
         if hasattr(response.http_response, "load_body"):
             try:
                 await response.http_response.load_body()  # Load the body in memory and close the socket
