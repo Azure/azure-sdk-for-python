@@ -16,6 +16,7 @@ steps:
             | ConvertFrom-Json
 
           if ($pkgInfo) {
+            Write-Host "Running azpysdk update-snippets for $targetedPackage (includes black formatting)"
             azpysdk update-snippets "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
           }
           else {
