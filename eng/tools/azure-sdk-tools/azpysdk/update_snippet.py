@@ -33,15 +33,30 @@ def get_snippets_from_directory(package_dir: str) -> Dict[str, str]:
             except UnicodeDecodeError:
                 continue
 
-            pattern = r"# \[START(?P<name>[A-Z a-z0-9_]+)\](?P<body>[\s\S]+?)# \[END[A-Z a-z0-9_]+\]"
+            pattern = "# \\[START(?P<name>[A-Z a-z0-9_]+)\\](?P<body>[\\s\\S]+?)# \\[END[A-Z a-z0-9_]+\\]"
             matches = re.findall(pattern, content)
 
             for match in matches:
                 name = match[0].strip()
                 snippet = match[1]
+                # Remove extra spaces
+                # A sample code snippet could be like:
+                # \n
+                #         # [START trio]
+                #         from azure.core.pipeline.transport import TrioRequestsTransport
 
-                # Dedent: count leading spaces on the first real line after the
-                # START marker and strip that prefix from every subsequent line.
+                #         async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
+                #             return await pipeline.run(request)
+                #         # [END trio]
+                # \n
+                # On one hand, the spaces in the beginning of the line may vary. e.g. If the snippet
+                # is in a class, it may have more spaces than if it is not in a class.
+                # On the other hand, we cannot remove all spaces because indents are part of Python syntax.
+                # Here is our algorithm:
+                # We firstly count the spaces of the # [START snippet] line.
+                # And for every line, we remove this amount of spaces in the beginning of the line.
+                # To only remove the spaces in the beginning and to make sure we only remove it once per line,
+                # We use replace('\n' + spaces, '\n').
                 spaces = ""
                 for char in snippet[1:]:
                     if char == " ":
@@ -130,14 +145,8 @@ class update_snippet(Check):
             pkg_dir = parsed.folder
             pkg_name = parsed.name
 
-            if in_ci():
-                if not is_check_enabled(args.target, "update_snippet"):
-                    logger.info(f"Package {pkg_name} opts-out of update_snippet check.")
-                    continue
-
             logger.info(f"Processing snippets for {pkg_name} ({pkg_dir})")
 
-            # 1. Extract snippets from sample files
             snippets = get_snippets_from_directory(pkg_dir)
             if not snippets:
                 logger.info(f"No snippets found for {pkg_name}, skipping.")
@@ -145,7 +154,7 @@ class update_snippet(Check):
 
             logger.info(f"Found {len(snippets)} snippet(s) for {pkg_name}.")
 
-            # 2. Update README files
+            # Update README.md files
             any_out_of_date = False
             for target in target_md_files:
                 for md_file in Path(pkg_dir).rglob(target):
@@ -157,10 +166,13 @@ class update_snippet(Check):
                         logger.warning(f"Unable to read {md_file} due to encoding error, skipping.")
 
             if any_out_of_date:
-                logger.error(
-                    f"Snippets for {pkg_name} were out of date. "
-                    f'Run \'azpysdk update_snippet .\' from the package directory to fix.'
-                )
+                if in_ci():
+                    logger.error(
+                        f"Snippets for {pkg_name} are out of sync. Run 'azpysdk update_snippet .' from the package directory to fix."
+                    )
+                else:
+                    logger.error(f"Snippets for {pkg_name} were out of sync and updated.")
+
                 results.append(1)
             else:
                 logger.info(f"Snippets for {pkg_name} are up to date.")
