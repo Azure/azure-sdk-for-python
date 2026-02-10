@@ -23,7 +23,6 @@
 """
 
 import warnings
-from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
 
 from azure.core.credentials import TokenCredential
