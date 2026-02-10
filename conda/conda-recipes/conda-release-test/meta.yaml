@@ -21,7 +21,7 @@ requirements:
 
 test:
   imports:
-    - conda_release_test
+    - six
 
 about:
   home: "https://github.com/Azure/azure-sdk-for-python"

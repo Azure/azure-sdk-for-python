@@ -21,31 +21,31 @@ parameters:
   - name: release_msal
     displayName: 'msal'
     type: boolean
-    default: true
+    default: false
   - name: release_msal_extensions
     displayName: 'msal-extensions'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_core
     displayName: 'azure-core'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_identity
     displayName: 'azure-identity'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_healthinsights
     displayName: 'azure-healthinsights'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_storage
     displayName: 'azure-storage'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_contentsafety
     displayName: 'azure-ai-contentsafety'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_evaluation
     displayName: 'azure-ai-evaluation'
     type: boolean
@@ -57,147 +57,147 @@ parameters:
   - name: release_azure_ai_language_conversations
     displayName: 'azure-ai-language-conversations'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_language_questionanswering
     displayName: 'azure-ai-language-questionanswering'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_ml
     displayName: 'azure-ai-ml'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_textanalytics
     displayName: 'azure-ai-textanalytics'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_translation_document
     displayName: 'azure-ai-translation-document'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_translation_text
     displayName: 'azure-ai-translation-text'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_vision
     displayName: 'azure-ai-vision'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_voicelive
     displayName: 'azure-ai-voicelive'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_appconfiguration
     displayName: 'azure-appconfiguration'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_appconfiguration_provider
     displayName: 'azure-appconfiguration-provider'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_communication
     displayName: 'azure-communication'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_confidentialledger
     displayName: 'azure-confidentialledger'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_containerregistry
     displayName: 'azure-containerregistry'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_cosmos
     displayName: 'azure-cosmos'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_data_tables
     displayName: 'azure-data-tables'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_developer_loadtesting
     displayName: 'azure-developer-loadtesting'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_digitaltwins_core
     displayName: 'azure-digitaltwins-core'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_eventgrid
     displayName: 'azure-eventgrid'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_eventhub
     displayName: 'azure-eventhub'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_iot_deviceupdate
     displayName: 'azure-iot-deviceupdate'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_keyvault
     displayName: 'azure-keyvault'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_messaging_webpubsubservice
     displayName: 'azure-messaging-webpubsubservice'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_messaging_webpubsubclient
     displayName: 'azure-messaging-webpubsubclient'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_monitor_query
     displayName: 'azure-monitor-query'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_monitor_ingestion
     displayName: 'azure-monitor-ingestion'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_schemaregistry
     displayName: 'azure-schemaregistry'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_search_documents
     displayName: 'azure-search-documents'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_security_attestation
     displayName: 'azure-security-attestation'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_servicebus
     displayName: 'azure-servicebus'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_documentintelligence
     displayName: 'azure-ai-documentintelligence'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_health_deidentification
     displayName: 'azure-health-deidentification'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_agents
     displayName: 'azure-ai-agents'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_ai_projects
     displayName: 'azure-ai-projects'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_monitor_querymetrics
     displayName: 'azure-monitor-querymetrics'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_monitor_opentelemetry
     displayName: 'azure-monitor-opentelemetry'
     type: boolean
-    default: true
+    default: false
   - name: release_azure_mgmt
     displayName: 'azure-mgmt'
     type: boolean
-    default: true
+    default: false
   - name: release_conda_release_test
     displayName: 'conda-release-test'
     type: boolean
@@ -552,8 +552,7 @@ extends:
                       in_batch: ${{ parameters.release_conda_release_test }}
                       checkout:
                         - package: conda-release-test
-                          checkout_path: sdk/releasetest
-                          version: 0.0.1
+                          download_uri: https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz
                     - name: azure-mgmt
                       service: mgmt
                       in_batch: ${{ parameters.release_azure_mgmt }}
