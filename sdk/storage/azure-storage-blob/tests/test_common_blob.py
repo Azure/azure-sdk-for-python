@@ -51,7 +51,7 @@ from azure.storage.blob import (
     generate_container_sas,
     upload_blob_to_url
 )
-from azure.storage.blob._generated.models import RehydratePriority
+from azure.storage.blob._generated.azure.storage.blobs.models import RehydratePriority
 
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
