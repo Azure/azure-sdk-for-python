@@ -39,6 +39,7 @@ def get_audience(authority):
         return "https://management.usgovcloudapi.net"
     if authority == "login.azure-test.net":
         return "https://management.azure-test.net"
+    return ""
 
 
 def get_credential(authority, **kwargs):
