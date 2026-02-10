@@ -238,13 +238,13 @@ extends:
                         - package: azure-common
                           version: 1.1.28
                     - name: msal
-                      in_batch: true
+                      in_batch: ${{ parameters.release_msal }}
                       checkout:
                         - package: msal
                           download_uri: https://files.pythonhosted.org/packages/cf/0e/c857c46d653e104019a84f22d4494f2119b4fe9f896c92b4b864b3b045cc/msal-1.34.0.tar.gz
                     - name: msal-extensions
                       common_root: msal
-                      in_batch: true
+                      in_batch: ${{ parameters.release_msal_extensions }}
                       checkout:
                         - package: msal-extensions
                           download_uri: https://files.pythonhosted.org/packages/01/99/5d239b6156eddf761a636bded1118414d161bd6b7b37a9335549ed159396/msal_extensions-1.3.1.tar.gz
@@ -548,11 +548,14 @@ extends:
                         - package: azure-monitor-querymetrics
                           version: 1.0.0
                     - name: conda-release-test
+                      common_root: azure
                       service: releasetest
                       in_batch: ${{ parameters.release_conda_release_test }}
                       checkout:
-                        - package: conda-release-test
-                          download_uri: https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz
+                        - package: azure-common
+                          version: 1.1.28
+                        - package: azure-nspkg
+                          version: 3.0.2
                     - name: azure-mgmt
                       service: mgmt
                       in_batch: ${{ parameters.release_azure_mgmt }}

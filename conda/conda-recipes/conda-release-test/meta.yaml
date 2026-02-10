@@ -21,7 +21,7 @@ requirements:
 
 test:
   imports:
-    - six
+    - azure.common
 
 about:
   home: "https://github.com/Azure/azure-sdk-for-python"
