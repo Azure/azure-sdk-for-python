@@ -136,12 +136,15 @@ class FoundryConversationMessageStore:
                 self._cached_messages.append(ChatMessage.from_dict(msg_data))
             elif isinstance(msg_data, ChatMessage):
                 self._cached_messages.append(msg_data)
-        
-        history_messages = await self.get_conversation_history()
+        await self.retrieve_messages()
+
+    async def retrieve_messages(self):
+        history_messages = await self._get_conversation_history()
         filtered_messages = HumanInTheLoopHelper().remove_hitl_messages_from_conversation_thread(history_messages or [])
         self._retrieved_messages = filtered_messages
+        logger.info(f"Store updated from state with {len(self._retrieved_messages)} retrieved messages and {len(self._cached_messages)} cached messages.")
 
-    async def get_conversation_history(self) -> List[ChatMessage]:
+    async def _get_conversation_history(self) -> List[ChatMessage]:
         # Retrieve conversation history from Foundry.
         if not self._project_client:
             logger.error("AIProjectClient is not configured; cannot load conversation history.")

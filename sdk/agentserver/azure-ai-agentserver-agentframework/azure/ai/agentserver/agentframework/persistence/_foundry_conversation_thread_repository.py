@@ -5,6 +5,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from azure.ai.projects.aio import AIProjectClient
 
+from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 
 from .agent_thread_repository import AgentThreadRepository
@@ -43,10 +44,12 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
         if conversation_id in self._inventory:
             return self._inventory[conversation_id]
         message_store = FoundryConversationMessageStore(conversation_id, self._client)
-        await message_store.get_conversation_history()
+        await message_store.retrieve_messages()
         return AgentThread(message_store=message_store)
 
-    async def set(self, conversation_id: Optional[str], thread: AgentThread) -> None:
+    async def set(self,
+            conversation_id: Optional[str],
+            thread: AgentThread) -> None:
         """Save the thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
