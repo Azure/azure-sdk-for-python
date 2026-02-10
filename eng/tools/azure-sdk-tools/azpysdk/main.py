@@ -35,6 +35,7 @@ from .breaking import breaking
 from .samples import samples
 from .devtest import devtest
 from .optional import optional
+from .update_snippets import update_snippets
 
 from ci_tools.logging import configure_logging, logger
 
@@ -101,6 +102,7 @@ def build_parser() -> argparse.ArgumentParser:
     samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
+    update_snippets().register(subparsers, [common])
 
     return parser
 
