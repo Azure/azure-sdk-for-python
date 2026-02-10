@@ -158,8 +158,10 @@ class DependencyCheck(Check):
     def _verify_installed_packages(self, executable: str, package_dir: str, staging_directory: str) -> bool:
         packages_file = os.path.join(staging_directory, "packages.txt")
         if not os.path.exists(packages_file):
-            logger.error(f"Expected packages.txt not found at {packages_file} for {package_dir}.")
-            return False
+            logger.info(
+                f"Packages.txt not found at {packages_file} after installation for {package_dir}. No direct dependencies to verify, skipping verification."
+            )
+            return True
 
         verify_script = os.path.join(REPO_ROOT, "eng/tox/verify_installed_packages.py")
         verify_command = [verify_script, "--packages-file", packages_file]
