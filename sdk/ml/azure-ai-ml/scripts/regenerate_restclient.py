@@ -208,10 +208,10 @@ def regenerate_restclient(
         # Data-plane uses _dataplane or _dataplanepreview suffix
         if "preview" in api_version_normalized:
             # v2024_04_01_preview -> v2024_04_01_dataplanepreview
-            target_folder = api_version_normalized.replace("_preview", "_dataplanepreview1")
+            target_folder = api_version_normalized.replace("_preview", "_dataplanepreview")
         else:
             # v2024_04_01 -> v2024_04_01_dataplane
-            target_folder = api_version_normalized + "_dataplane1"
+            target_folder = api_version_normalized + "_dataplane"
     else:
         # Control-plane uses api_version as-is
         target_folder = api_version_normalized
