@@ -58,6 +58,7 @@ from ._utils import (
     SPAN_NAME_CHAT,
     SPAN_NAME_INVOKE_AGENT,
     _get_use_message_events,
+    _get_use_simple_tool_format,
     start_span,
     RESPONSES_PROVIDER,
 )
@@ -170,6 +171,18 @@ class ResponsesInstrumentor:
         :rtype: bool
         """
         return self._impl.is_binary_data_enabled()
+
+    def is_simple_tool_format_enabled(self) -> bool:
+        """This function gets the simple tool format value.
+
+        When enabled, function tool calls use a simplified OTEL-compliant format:
+          tool_call: {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+          tool_call_response: {"type": "tool_call_response", "id": "...", "result": "..."}
+
+        :return: A bool value indicating whether simple tool format is enabled.
+        :rtype: bool
+        """
+        return _get_use_simple_tool_format()
 
 
 class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attributes,too-many-statements,too-many-public-methods
@@ -703,9 +716,21 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                                             output_value = {k: v for k, v in output_value.items() if k != "image_url"}
                                 tool_output["output"] = output_value
 
-                    # Add to parts array (type "tool_call_output" wraps the tool output)
-                    # Always include type and id, even when content recording is disabled
-                    parts.append({"type": "tool_call_output", "content": tool_output})
+                    # Add to parts array
+                    # Check if simple tool format is enabled for function_call_output types
+                    if _get_use_simple_tool_format() and item_type == "function_call_output":
+                        # Build simplified OTEL-compliant format:
+                        # {"type": "tool_call_response", "id": "...", "result": "..."}
+                        simple_response: Dict[str, Any] = {"type": "tool_call_response"}
+                        if "id" in tool_output:
+                            simple_response["id"] = tool_output["id"]
+                        if _trace_responses_content and "output" in tool_output:
+                            simple_response["result"] = tool_output["output"]
+                        parts.append(simple_response)
+                    else:
+                        # Original nested format (type "tool_call_output" wraps the tool output)
+                        # Always include type and id, even when content recording is disabled
+                        parts.append({"type": "tool_call_output", "content": tool_output})
                 except Exception:  # pylint: disable=broad-exception-caught
                     # Skip items that can't be processed
                     logger.debug(
@@ -1044,8 +1069,25 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Helper to emit a single tool call event or attribute."""
-        # Wrap tool call in parts array
-        parts = [{"type": "tool_call", "content": tool_call}]
+        # Check if simple tool format is enabled for function_call types
+        if _get_use_simple_tool_format() and tool_call.get("type") == "function_call":
+            # Build simplified OTEL-compliant format:
+            # {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+            simple_tool_call: Dict[str, Any] = {"type": "tool_call"}
+            if "id" in tool_call:
+                simple_tool_call["id"] = tool_call["id"]
+            # Extract name and arguments from nested function object if content recording enabled
+            if _trace_responses_content and "function" in tool_call:
+                func = tool_call["function"]
+                if "name" in func:
+                    simple_tool_call["name"] = func["name"]
+                if "arguments" in func:
+                    simple_tool_call["arguments"] = func["arguments"]
+            parts = [simple_tool_call]
+        else:
+            # Original nested format
+            parts = [{"type": "tool_call", "content": tool_call}]
+
         content_array = [{"role": "assistant", "parts": parts}]
 
         if _get_use_message_events():
@@ -1069,9 +1111,21 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Helper to emit a single tool output event or attribute."""
-        # Wrap tool output in parts array
-        # Tool outputs are inputs TO the model (from tool execution), so use role "tool"
-        parts = [{"type": "tool_call_output", "content": tool_output}]
+        # Check if simple tool format is enabled for function_call_output types
+        if _get_use_simple_tool_format() and tool_output.get("type") == "function_call_output":
+            # Build simplified OTEL-compliant format:
+            # {"type": "tool_call_response", "id": "...", "result": "..."}
+            simple_tool_response: Dict[str, Any] = {"type": "tool_call_response"}
+            if "id" in tool_output:
+                simple_tool_response["id"] = tool_output["id"]
+            # Add result only if content recording is enabled
+            if _trace_responses_content and "output" in tool_output:
+                simple_tool_response["result"] = tool_output["output"]
+            parts = [simple_tool_response]
+        else:
+            # Original nested format
+            parts = [{"type": "tool_call_output", "content": tool_output}]
+
         content_array = [{"role": "tool", "parts": parts}]
 
         if _get_use_message_events():
