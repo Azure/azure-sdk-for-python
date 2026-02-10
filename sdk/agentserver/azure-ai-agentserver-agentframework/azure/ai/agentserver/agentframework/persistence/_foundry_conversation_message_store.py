@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 import inspect
 from collections.abc import MutableMapping, Sequence
-from typing import Any, Optional, Union
+from typing import Any, List, Optional, Union
 
 from agent_framework import ChatMessage
 
@@ -19,34 +19,10 @@ from azure.ai.projects.models import (
 
 from azure.ai.agentserver.core.logger import get_logger
 
+from ..models.conversation_converters import ConversationItemConverter
+from ..models.human_in_the_loop_helper import HumanInTheLoopHelper
+
 logger = get_logger()
-
-def _convert_item_to_chat_message(item: ResponsesMessageItemResource) -> Optional[ChatMessage]:
-    """Convert an ItemResource from the Conversations API to a ChatMessage.
-
-    :param item: The item resource from the Conversations API.
-    :type item: ResponsesMessageItemResource
-    :return: The converted ChatMessage, or None if conversion is not possible.
-    :rtype: Optional[ChatMessage]
-    """
-    if item.type != ItemType.MESSAGE:
-        return None
-
-    role = str(item.role).lower()
-    content_parts: list[str] = []
-
-    if hasattr(item, "content") and item.content:
-        for content_item in item.content:
-            if isinstance(content_item, ItemContentInputText):
-                content_parts.append(content_item.text)
-            elif isinstance(content_item, ItemContentOutputText):
-                content_parts.append(content_item.text)
-
-    if not content_parts:
-        return None
-
-    return ChatMessage(role=role, content="\n".join(content_parts))
-
 
 class FoundryConversationMessageStore:
     """A ChatMessageStoreProtocol implementation that reads messages from Azure AI Foundry Conversations API.
@@ -161,18 +137,20 @@ class FoundryConversationMessageStore:
             elif isinstance(msg_data, ChatMessage):
                 self._cached_messages.append(msg_data)
         
-        await self.get_conversation_history()
+        history_messages = await self.get_conversation_history()
+        filtered_messages = HumanInTheLoopHelper().remove_hitl_messages_from_conversation_thread(history_messages or [])
+        self._retrieved_messages = filtered_messages
 
-    async def get_conversation_history(self) -> None:
+    async def get_conversation_history(self) -> List[ChatMessage]:
         # Retrieve conversation history from Foundry.
         if not self._project_client:
             logger.error("AIProjectClient is not configured; cannot load conversation history.")
             return
 
         try:
+            converter = ConversationItemConverter()
             async with self._project_client.get_openai_client() as openai_client:
                 raw_items = await openai_client.conversations.items.list(self._conversation_id)
-                logger.info(f"Fetched conversation items for conversation {self._conversation_id} from Foundry.")
                 retrieved_messages: list[ChatMessage] = []
 
                 if raw_items is None:
@@ -184,22 +162,21 @@ class FoundryConversationMessageStore:
                     async for page in iter_pages():
                         items = getattr(page, "data", None) or []
                         for item in items:
-                            logger.info(f"Processing item {type(item)}: {item}")
-                            chat_message = _convert_item_to_chat_message(item)
+                            chat_message = converter.to_chat_message(item)
                             if chat_message:
                                 retrieved_messages.append(chat_message)
-
-                self._retrieved_messages = retrieved_messages
                 logger.info(
                     "Retrieved %s messages for conversation %s from Foundry.",
-                    len(self._retrieved_messages),
+                    len(retrieved_messages),
                     self._conversation_id,
                 )
+                return retrieved_messages[::-1]
         except Exception:
             logger.exception(
                 "Failed to get conversation history for %s",
                 self._conversation_id,
             )
+            return []
 
 
     async def serialize(self, **kwargs: Any) -> dict[str, Any]:

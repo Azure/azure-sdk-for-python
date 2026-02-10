@@ -295,13 +295,3 @@ class ConversationItemConverter:
             if value not in (None, [], {}, ""):
                 return True
         return False
-
-    def to_conversation_item(self, message: ChatMessage) -> Optional[ConversationItem]:
-        """
-        Convert a ChatMessage to a ConversationItem for the Conversations API.
-
-        :param message: The ChatMessage to convert.
-        :type message: ChatMessage
-        :return: The converted ConversationItem, or None if conversion is not possible.
-        :rtype: Optional[ConversationItem]
-        """

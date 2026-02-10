@@ -119,3 +119,29 @@ class HumanInTheLoopHelper:
             result=response_result,
         )
         return ChatMessage(role="tool", contents=[response_content])
+    
+    def remove_hitl_messages_from_conversation_thread(self, thread_messages: List[ChatMessage]) -> List[ChatMessage]:
+        filtered_messages = []
+        hitl_call_ids = set()
+        for message in thread_messages:
+            filtered_contents = []
+            for content in message.contents:
+                if content.type == "function_call" and content.name == HUMAN_IN_THE_LOOP_FUNCTION_NAME:
+                    call_id = getattr(content, "call_id", None)
+                    if call_id:
+                        hitl_call_ids.add(call_id)
+                elif content.type == "function_result" and getattr(content, "call_id", None) in hitl_call_ids:
+                    # skip human feedback content for HitL function calls
+                    hitl_call_ids.pop(getattr(content, "call_id", None))
+                    continue
+                else:
+                    filtered_contents.append(content)
+            if filtered_contents:
+                filtered_message = ChatMessage(
+                    role=message.role,
+                    contents=filtered_contents,
+                    id=message.id,
+                    metadata=message.metadata,
+                )
+                filtered_messages.append(filtered_message)
+        return filtered_messages
