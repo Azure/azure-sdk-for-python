@@ -154,8 +154,8 @@
 # PRLabel: %Defender EASM
 /sdk/easm/                                                           @nathanfalke
 
-# ServiceLabel: %FaceAPI
-# PRLabel: %FaceAPI
+# ServiceLabel: %Cognitive - Face
+# PRLabel: %Cognitive - Face
 /sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
