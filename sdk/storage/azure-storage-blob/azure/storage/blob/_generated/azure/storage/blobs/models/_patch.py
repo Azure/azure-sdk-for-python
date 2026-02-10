@@ -7,110 +7,531 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Optional
-from typing_extensions import TypedDict, NotRequired
-from enum import Enum
-from azure.core import CaseInsensitiveEnumMeta
+from typing import Any, Mapping, Optional, overload
+
+from .._utils.model_base import Model as _Model, rest_field
 
 
-class AppendPositionAccessConditions(TypedDict, total=False):
-    """Parameter group for append position access conditions."""
+class AppendPositionAccessConditions(_Model):
+    """Parameter group for append position access conditions.
 
-    max_size: NotRequired[Optional[int]]
-    append_position: NotRequired[Optional[int]]
-
-
-class BlobHTTPHeaders(TypedDict, total=False):
-    """Parameter group for blob HTTP headers."""
-
-    blob_cache_control: NotRequired[Optional[str]]
-    blob_content_type: NotRequired[Optional[str]]
-    blob_content_md5: NotRequired[Optional[bytes]]
-    blob_content_encoding: NotRequired[Optional[str]]
-    blob_content_language: NotRequired[Optional[str]]
-    blob_content_disposition: NotRequired[Optional[str]]
-
-
-class BlobModifiedAccessConditions(TypedDict, total=False):
-    """Parameter group for blob modified access conditions."""
-
-    if_modified_since: NotRequired[Optional[str]]
-    if_unmodified_since: NotRequired[Optional[str]]
-    etag: NotRequired[Optional[str]]
-    match_condition: NotRequired[Optional[str]]
-
-
-class ContainerCpkScopeInfo(TypedDict, total=False):
-    """Parameter group for container CPK scope info."""
-
-    default_encryption_scope: NotRequired[Optional[str]]
-    prevent_encryption_scope_override: NotRequired[Optional[bool]]
-
-
-class CpkScopeInfo(TypedDict, total=False):
-    """Parameter group.
-
-    encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
-     encryption scope to use to encrypt the data provided in the request. If not specified,
-     encryption is performed with the default account encryption scope.  For more information, see
-     Encryption at Rest for Azure Storage Services.
+    :ivar max_size: Optional conditional header. The max length in bytes permitted for the append
+        blob. If the Append Block operation would cause the blob to exceed that limit or if the
+        blob size is already greater than the value specified in this header, the request will fail
+        with MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
+    :vartype max_size: int
+    :ivar append_position: Optional conditional header, used only for the Append Block operation.
+        A number indicating the byte offset to compare. Append Block will succeed only if the
+        append position is equal to this number. If it is not, the request will fail with the
+        AppendPositionConditionNotMet error (HTTP status code 412 - Precondition Failed).
+    :vartype append_position: int
     """
 
-    encryption_scope: NotRequired[Optional[str]]
+    max_size: Optional[int] = rest_field(name="max_size", visibility=["read", "create", "update", "delete", "query"])
+    """Optional conditional header. The max length in bytes permitted for the append blob."""
+    append_position: Optional[int] = rest_field(
+        name="append_position", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional conditional header, used only for the Append Block operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_size: Optional[int] = None,
+        append_position: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
-class CpkInfo(TypedDict, total=False):
-    """Parameter group for CPK info."""
+class BlobHTTPHeaders(_Model):
+    """Parameter group for blob HTTP headers.
 
-    encryption_key: NotRequired[Optional[str]]
-    encryption_key_sha256: NotRequired[Optional[str]]
-    encryption_algorithm: NotRequired[Optional[str]]
-
-
-class ModifiedAccessConditions(TypedDict, total=False):
-    """Parameter group for modified access conditions."""
-
-    if_modified_since: NotRequired[Optional[str]]
-    if_unmodified_since: NotRequired[Optional[str]]
-    etag: NotRequired[Optional[str]]
-    match_condition: NotRequired[Optional[str]]
-    if_tags: NotRequired[Optional[str]]
-
-
-class SequenceNumberAccessConditions(TypedDict, total=False):
-    """Parameter group for sequence number access conditions."""
-
-    if_sequence_number_less_than_or_equal_to: NotRequired[Optional[int]]
-    if_sequence_number_less_than: NotRequired[Optional[int]]
-    if_sequence_number_equal_to: NotRequired[Optional[int]]
-
-
-class SourceCpkInfo(TypedDict, total=False):
-    """Parameter group for source CPK info."""
-
-    source_encryption_key: NotRequired[Optional[str]]
-    source_encryption_key_sha256: NotRequired[Optional[str]]
-    source_encryption_algorithm: NotRequired[Optional[str]]
-
-
-class SourceModifiedAccessConditions(TypedDict, total=False):
-    """Parameter group for source modified access conditions."""
-
-    source_if_modified_since: NotRequired[Optional[str]]
-    source_if_unmodified_since: NotRequired[Optional[str]]
-    source_if_match: NotRequired[Optional[str]]
-    source_if_none_match: NotRequired[Optional[str]]
-    source_if_tags: NotRequired[Optional[str]]
-
-
-class LeaseAccessConditions(TypedDict, total=False):
-    """Parameter group.
-
-    lease_id: If specified, the operation only succeeds if the resource's lease is active and
-    matches this ID.
+    :ivar blob_cache_control: Optional. Sets the blob's cache control. If specified, this property
+        is stored with the blob and returned with a read request.
+    :vartype blob_cache_control: str
+    :ivar blob_content_type: Optional. Sets the blob's content type. If specified, this property
+        is stored with the blob and returned with a read request.
+    :vartype blob_content_type: str
+    :ivar blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is not
+        validated, as the hashes for the individual blocks were validated when each was uploaded.
+    :vartype blob_content_md5: bytes
+    :ivar blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+        property is stored with the blob and returned with a read request.
+    :vartype blob_content_encoding: str
+    :ivar blob_content_language: Optional. Set the blob's content language. If specified, this
+        property is stored with the blob and returned with a read request.
+    :vartype blob_content_language: str
+    :ivar blob_content_disposition: Optional. Sets the blob's Content-Disposition header.
+    :vartype blob_content_disposition: str
     """
 
-    lease_id: NotRequired[Optional[str]]
+    blob_cache_control: Optional[str] = rest_field(
+        name="blob_cache_control", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Sets the blob's cache control."""
+    blob_content_type: Optional[str] = rest_field(
+        name="blob_content_type", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Sets the blob's content type."""
+    blob_content_md5: Optional[bytes] = rest_field(
+        name="blob_content_md5", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. An MD5 hash of the blob content."""
+    blob_content_encoding: Optional[str] = rest_field(
+        name="blob_content_encoding", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Sets the blob's content encoding."""
+    blob_content_language: Optional[str] = rest_field(
+        name="blob_content_language", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Set the blob's content language."""
+    blob_content_disposition: Optional[str] = rest_field(
+        name="blob_content_disposition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Sets the blob's Content-Disposition header."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blob_cache_control: Optional[str] = None,
+        blob_content_type: Optional[str] = None,
+        blob_content_md5: Optional[bytes] = None,
+        blob_content_encoding: Optional[str] = None,
+        blob_content_language: Optional[str] = None,
+        blob_content_disposition: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobModifiedAccessConditions(_Model):
+    """Parameter group for blob modified access conditions.
+
+    :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
+        modified since the specified date/time.
+    :vartype if_modified_since: str
+    :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
+        been modified since the specified date/time.
+    :vartype if_unmodified_since: str
+    :ivar etag: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype etag: str
+    :ivar match_condition: Specify a match condition for the ETag.
+    :vartype match_condition: str
+    """
+
+    if_modified_since: Optional[str] = rest_field(
+        name="if_modified_since", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has been modified since the specified date/time."""
+    if_unmodified_since: Optional[str] = rest_field(
+        name="if_unmodified_since", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has not been modified since the specified date/time."""
+    etag: Optional[str] = rest_field(name="etag", visibility=["read", "create", "update", "delete", "query"])
+    """Specify an ETag value to operate only on blobs with a matching value."""
+    match_condition: Optional[str] = rest_field(
+        name="match_condition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify a match condition for the ETag."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerCpkScopeInfo(_Model):
+    """Parameter group for container CPK scope info.
+
+    :ivar default_encryption_scope: Optional. Version 2019-07-07 and later. Specifies the default
+        encryption scope to set on the container and use for all future writes.
+    :vartype default_encryption_scope: str
+    :ivar prevent_encryption_scope_override: Optional. Version 2019-07-07 and later. If true,
+        prevents any request from specifying a different encryption scope than the scope set on
+        the container.
+    :vartype prevent_encryption_scope_override: bool
+    """
+
+    default_encryption_scope: Optional[str] = rest_field(
+        name="default_encryption_scope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the default encryption scope to set on the container."""
+    prevent_encryption_scope_override: Optional[bool] = rest_field(
+        name="prevent_encryption_scope_override", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. If true, prevents any request from specifying a different encryption scope."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_encryption_scope: Optional[str] = None,
+        prevent_encryption_scope_override: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CpkScopeInfo(_Model):
+    """Parameter group for CPK scope info.
+
+    :ivar encryption_scope: Optional. Version 2019-07-07 and later. Specifies the name of the
+        encryption scope to use to encrypt the data provided in the request. If not specified,
+        encryption is performed with the default account encryption scope.
+    :vartype encryption_scope: str
+    """
+
+    encryption_scope: Optional[str] = rest_field(
+        name="encryption_scope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the name of the encryption scope to use to encrypt the data."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encryption_scope: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CpkInfo(_Model):
+    """Parameter group for CPK info.
+
+    :ivar encryption_key: Optional. Specifies the encryption key to use to encrypt the data
+        provided in the request.
+    :vartype encryption_key: str
+    :ivar encryption_key_sha256: Optional. Specifies the SHA256 hash of the encryption key.
+    :vartype encryption_key_sha256: str
+    :ivar encryption_algorithm: Optional. Specifies the algorithm to use when encrypting data
+        using the given key.
+    :vartype encryption_algorithm: str
+    """
+
+    encryption_key: Optional[str] = rest_field(
+        name="encryption_key", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the encryption key to use to encrypt the data provided in the request."""
+    encryption_key_sha256: Optional[str] = rest_field(
+        name="encryption_key_sha256", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the SHA256 hash of the encryption key."""
+    encryption_algorithm: Optional[str] = rest_field(
+        name="encryption_algorithm", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the algorithm to use when encrypting data using the given key."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ModifiedAccessConditions(_Model):
+    """Parameter group for modified access conditions.
+
+    :ivar if_modified_since: Specify this header value to operate only on a blob if it has been
+        modified since the specified date/time.
+    :vartype if_modified_since: str
+    :ivar if_unmodified_since: Specify this header value to operate only on a blob if it has not
+        been modified since the specified date/time.
+    :vartype if_unmodified_since: str
+    :ivar etag: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype etag: str
+    :ivar match_condition: Specify a match condition for the ETag.
+    :vartype match_condition: str
+    :ivar if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+        matching value.
+    :vartype if_tags: str
+    """
+
+    if_modified_since: Optional[str] = rest_field(
+        name="if_modified_since", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has been modified since the specified date/time."""
+    if_unmodified_since: Optional[str] = rest_field(
+        name="if_unmodified_since", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has not been modified since the specified date/time."""
+    etag: Optional[str] = rest_field(name="etag", visibility=["read", "create", "update", "delete", "query"])
+    """Specify an ETag value to operate only on blobs with a matching value."""
+    match_condition: Optional[str] = rest_field(
+        name="match_condition", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify a match condition for the ETag."""
+    if_tags: Optional[str] = rest_field(name="if_tags", visibility=["read", "create", "update", "delete", "query"])
+    """Specify a SQL where clause on blob tags to operate only on blobs with a matching value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        if_modified_since: Optional[str] = None,
+        if_unmodified_since: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[str] = None,
+        if_tags: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SequenceNumberAccessConditions(_Model):
+    """Parameter group for sequence number access conditions.
+
+    :ivar if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on a
+        blob if it has a sequence number less than or equal to the specified.
+    :vartype if_sequence_number_less_than_or_equal_to: int
+    :ivar if_sequence_number_less_than: Specify this header value to operate only on a blob if it
+        has a sequence number less than the specified.
+    :vartype if_sequence_number_less_than: int
+    :ivar if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
+        has the specified sequence number.
+    :vartype if_sequence_number_equal_to: int
+    """
+
+    if_sequence_number_less_than_or_equal_to: Optional[int] = rest_field(
+        name="if_sequence_number_less_than_or_equal_to", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has a sequence number less than or equal to the specified."""
+    if_sequence_number_less_than: Optional[int] = rest_field(
+        name="if_sequence_number_less_than", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has a sequence number less than the specified."""
+    if_sequence_number_equal_to: Optional[int] = rest_field(
+        name="if_sequence_number_equal_to", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has the specified sequence number."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
+        if_sequence_number_less_than: Optional[int] = None,
+        if_sequence_number_equal_to: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SourceCpkInfo(_Model):
+    """Parameter group for source CPK info.
+
+    :ivar source_encryption_key: Optional. Specifies the encryption key to use to decrypt the
+        source data.
+    :vartype source_encryption_key: str
+    :ivar source_encryption_key_sha256: Optional. Specifies the SHA256 hash of the encryption key
+        used to decrypt the source data.
+    :vartype source_encryption_key_sha256: str
+    :ivar source_encryption_algorithm: Optional. Specifies the algorithm to use when decrypting
+        the source data using the given key.
+    :vartype source_encryption_algorithm: str
+    """
+
+    source_encryption_key: Optional[str] = rest_field(
+        name="source_encryption_key", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the encryption key to use to decrypt the source data."""
+    source_encryption_key_sha256: Optional[str] = rest_field(
+        name="source_encryption_key_sha256", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the SHA256 hash of the encryption key used to decrypt the source data."""
+    source_encryption_algorithm: Optional[str] = rest_field(
+        name="source_encryption_algorithm", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Specifies the algorithm to use when decrypting the source data using the given key."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_encryption_key: Optional[str] = None,
+        source_encryption_key_sha256: Optional[str] = None,
+        source_encryption_algorithm: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SourceModifiedAccessConditions(_Model):
+    """Parameter group for source modified access conditions.
+
+    :ivar source_if_modified_since: Specify this header value to operate only on a blob if it has
+        been modified since the specified date/time.
+    :vartype source_if_modified_since: str
+    :ivar source_if_unmodified_since: Specify this header value to operate only on a blob if it
+        has not been modified since the specified date/time.
+    :vartype source_if_unmodified_since: str
+    :ivar source_if_match: Specify an ETag value to operate only on blobs with a matching value.
+    :vartype source_if_match: str
+    :ivar source_if_none_match: Specify an ETag value to operate only on blobs without a matching
+        value.
+    :vartype source_if_none_match: str
+    :ivar source_if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+        matching value.
+    :vartype source_if_tags: str
+    """
+
+    source_if_modified_since: Optional[str] = rest_field(
+        name="source_if_modified_since", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has been modified since the specified date/time."""
+    source_if_unmodified_since: Optional[str] = rest_field(
+        name="source_if_unmodified_since", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify this header value to operate only on a blob if it has not been modified since the specified date/time."""
+    source_if_match: Optional[str] = rest_field(
+        name="source_if_match", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify an ETag value to operate only on blobs with a matching value."""
+    source_if_none_match: Optional[str] = rest_field(
+        name="source_if_none_match", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify an ETag value to operate only on blobs without a matching value."""
+    source_if_tags: Optional[str] = rest_field(
+        name="source_if_tags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specify a SQL where clause on blob tags to operate only on blobs with a matching value."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_if_modified_since: Optional[str] = None,
+        source_if_unmodified_since: Optional[str] = None,
+        source_if_match: Optional[str] = None,
+        source_if_none_match: Optional[str] = None,
+        source_if_tags: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LeaseAccessConditions(_Model):
+    """Parameter group for lease access conditions.
+
+    :ivar lease_id: If specified, the operation only succeeds if the resource's lease is active
+        and matches this ID.
+    :vartype lease_id: str
+    """
+
+    lease_id: Optional[str] = rest_field(name="lease_id", visibility=["read", "create", "update", "delete", "query"])
+    """If specified, the operation only succeeds if the resource's lease is active and matches this ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lease_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 __all__: list[str] = [
