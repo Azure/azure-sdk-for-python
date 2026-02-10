@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft. All rights reserved.
 
+from pdb import run
 from random import randint
 from typing import Annotated
 
@@ -10,7 +11,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.persistence._foundry_thread_repository import FoundryConversationThreadRepository
+from azure.ai.agentserver.agentframework.persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
 
 
 
@@ -27,11 +28,8 @@ def main() -> None:
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )
-    repo = FoundryConversationThreadRepository(
-        agent=agent,
-        project_endpoint="https://lusuaihub5218927825.cognitiveservices.azure.com/",
-        credential=AsyncDefaultTokenCredential())
-    from_agent_framework(agent, thread_repository=None).run()
+
+    from_agent_framework(agent).run()
 
 
 if __name__ == "__main__":

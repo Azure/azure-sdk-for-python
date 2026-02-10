@@ -43,10 +43,11 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
             return None
         if conversation_id in self._inventory:
             return self._inventory[conversation_id]
+
         message_store = FoundryConversationMessageStore(conversation_id, self._client)
         await message_store.retrieve_messages()
-
-        return AgentThread(message_store=message_store)
+        self._inventory[conversation_id] = AgentThread(message_store=message_store)
+        return self._inventory[conversation_id]
 
     async def set(self,
             conversation_id: Optional[str],

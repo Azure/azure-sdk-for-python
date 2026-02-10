@@ -80,7 +80,7 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
         if not conversation_id or not thread:
             return
         self._inventory[conversation_id] = thread
-    
+
 
 class SerializedAgentThreadRepository(AgentThreadRepository):
     """Implementation of AgentThreadRepository with AgentThread serialization."""
@@ -92,7 +92,7 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
         :type agent: AgentProtocol
         """
         self._agent = agent
-    
+
     async def get(
         self,
         conversation_id: Optional[str],
