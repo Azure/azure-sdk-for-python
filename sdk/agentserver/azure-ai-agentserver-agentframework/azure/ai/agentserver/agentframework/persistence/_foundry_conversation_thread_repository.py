@@ -45,6 +45,7 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
             return self._inventory[conversation_id]
         message_store = FoundryConversationMessageStore(conversation_id, self._client)
         await message_store.retrieve_messages()
+
         return AgentThread(message_store=message_store)
 
     async def set(self,

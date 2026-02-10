@@ -6,7 +6,7 @@ import json
 import os
 from typing import Any, Optional, Union
 
-from agent_framework import AgentThread, AgentProtocol, ChatMessageStore, ChatMessageStoreProtocol, WorkflowAgent
+from agent_framework import AgentThread, AgentProtocol, WorkflowAgent
 
 
 class AgentThreadRepository(ABC):
@@ -42,13 +42,6 @@ class AgentThreadRepository(ABC):
         :param thread: The thread to save.
         :type thread: AgentThread
         """
-    
-    @property
-    def message_store(self) -> Optional[ChatMessageStoreProtocol]:
-        """
-        Optional message store for the repository.
-        """
-        return None
 
 
 class InMemoryAgentThreadRepository(AgentThreadRepository):
@@ -88,29 +81,18 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
             return
         self._inventory[conversation_id] = thread
     
-    @property
-    def message_store(self) -> Optional[ChatMessageStoreProtocol]:
-        return ChatMessageStore()
-
 
 class SerializedAgentThreadRepository(AgentThreadRepository):
     """Implementation of AgentThreadRepository with AgentThread serialization."""
-    def __init__(self, agent: AgentProtocol, message_store: Optional[ChatMessageStoreProtocol] = None) -> None:
+    def __init__(self, agent: AgentProtocol) -> None:
         """
         Initialize the repository with the given agent.
 
         :param agent: The agent instance.
         :type agent: AgentProtocol
-        :param message_store: Optional message store for the repository.
-        :type message_store: Optional[ChatMessageStoreProtocol]
         """
         self._agent = agent
-        self._message_store = message_store
     
-    @property
-    def message_store(self) -> Optional[ChatMessageStoreProtocol]:
-        return self._message_store
-
     async def get(
         self,
         conversation_id: Optional[str],

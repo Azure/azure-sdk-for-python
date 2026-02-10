@@ -142,7 +142,6 @@ class FoundryConversationMessageStore:
         history_messages = await self._get_conversation_history()
         filtered_messages = HumanInTheLoopHelper().remove_hitl_messages_from_conversation_thread(history_messages or [])
         self._retrieved_messages = filtered_messages
-        logger.info(f"Store updated from state with {len(self._retrieved_messages)} retrieved messages and {len(self._cached_messages)} cached messages.")
 
     async def _get_conversation_history(self) -> List[ChatMessage]:
         # Retrieve conversation history from Foundry.
