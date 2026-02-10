@@ -21,9 +21,7 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy_async
     async def test_synonym_map(self, endpoint):
-        client = SearchIndexClient(
-            endpoint, get_credential(is_async=True), retry_backoff_factor=60
-        )
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
         async with client:
             await self._test_create_synonym_map(client)
             await self._test_delete_synonym_map(client)
@@ -81,9 +79,7 @@ class TestSearchClientSynonymMaps(AzureRecordedTestCase):
 
         result.e_tag = etag
         with pytest.raises(HttpResponseError):
-            await client.delete_synonym_map(
-                result, match_condition=MatchConditions.IfNotModified
-            )
+            await client.delete_synonym_map(result, match_condition=MatchConditions.IfNotModified)
         await client.delete_synonym_map(name)
 
     async def _test_get_synonym_map(self, client):

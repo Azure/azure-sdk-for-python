@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
@@ -71,16 +72,16 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
             self._architecture = ArtifactArchitecture(self._architecture)
         except ValueError:
             pass
-        self._created_on = kwargs.get("created_on", None)
-        self._digest = kwargs.get("digest", None)
-        self._last_updated_on = kwargs.get("last_updated_on", None)
+        self._created_on = kwargs.get("created_on", datetime.min)
+        self._digest = kwargs.get("digest", "")
+        self._last_updated_on = kwargs.get("last_updated_on", datetime.min)
         self._operating_system = kwargs.get("operating_system", None)
         try:
             self._operating_system = ArtifactOperatingSystem(self._operating_system)
         except ValueError:
             pass
-        self._repository_name = kwargs.get("repository_name", None)
-        self._registry = kwargs.get("registry", None)
+        self._repository_name = kwargs.get("repository_name", "")
+        self._registry = kwargs.get("registry", "")
         self._size_in_bytes = kwargs.get("size_in_bytes", None)
         self._tags = kwargs.get("tags", None)
         self.can_delete = kwargs.get("can_delete")
@@ -98,10 +99,12 @@ class ArtifactManifestProperties:  # pylint: disable=too-many-instance-attribute
             operating_system=generated.operating_system,
             size_in_bytes=generated.size,
             tags=generated.tags,
-            can_delete=None if generated.changeable_attributes is None else generated.changeable_attributes.can_delete,
-            can_read=None if generated.changeable_attributes is None else generated.changeable_attributes.can_read,
-            can_write=None if generated.changeable_attributes is None else generated.changeable_attributes.can_write,
-            can_list=None if generated.changeable_attributes is None else generated.changeable_attributes.can_list,
+            can_delete=(
+                None if generated.changeable_attributes is None else generated.changeable_attributes.can_delete
+            ),
+            can_read=(None if generated.changeable_attributes is None else generated.changeable_attributes.can_read),
+            can_write=(None if generated.changeable_attributes is None else generated.changeable_attributes.can_write),
+            can_list=(None if generated.changeable_attributes is None else generated.changeable_attributes.can_list),
             repository_name=kwargs.get("repository_name"),
             registry=kwargs.get("registry"),
         )
@@ -200,11 +203,11 @@ class RepositoryProperties:
     """Write Permissions for a repository."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self._created_on = kwargs.get("created_on", None)
-        self._last_updated_on = kwargs.get("last_updated_on", None)
-        self._manifest_count = kwargs.get("manifest_count", None)
-        self._name = kwargs.get("name", None)
-        self._tag_count = kwargs.get("tag_count", None)
+        self._created_on: Optional[datetime] = kwargs.get("created_on", None)
+        self._last_updated_on: Optional[datetime] = kwargs.get("last_updated_on", None)
+        self._manifest_count: Optional[int] = kwargs.get("manifest_count", None)
+        self._name: Optional[str] = kwargs.get("name", None)
+        self._tag_count: Optional[int] = kwargs.get("tag_count", None)
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")
@@ -243,42 +246,42 @@ class RepositoryProperties:
         return self.__getattribute__(name)
 
     @property
-    def created_on(self) -> datetime:
+    def created_on(self) -> Optional[datetime]:
         """Time and date the repository was created.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._created_on
 
     @property
-    def last_updated_on(self) -> datetime:
+    def last_updated_on(self) -> Optional[datetime]:
         """Time and date the repository was last updated.
 
-        :rtype: ~datetime.datetime
+        :rtype: ~datetime.datetime or None
         """
         return self._last_updated_on
 
     @property
-    def manifest_count(self) -> int:
+    def manifest_count(self) -> Optional[int]:
         """Number of manifests in the repository.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._manifest_count
 
     @property
-    def name(self) -> str:
+    def name(self) -> Optional[str]:
         """Name of the repository.
 
-        :rtype: str
+        :rtype: str or None
         """
         return self._name
 
     @property
-    def tag_count(self) -> int:
+    def tag_count(self) -> Optional[int]:
         """Number of tags associated with the repository.
 
-        :rtype: int
+        :rtype: int or None
         """
         return self._tag_count
 
@@ -296,11 +299,11 @@ class ArtifactTagProperties:
     """Write Permissions for a tag."""
 
     def __init__(self, **kwargs: Any) -> None:
-        self._created_on = kwargs.get("created_on", None)
-        self._digest = kwargs.get("digest", None)
-        self._last_updated_on = kwargs.get("last_updated_on", None)
-        self._name = kwargs.get("name", None)
-        self._repository_name = kwargs.get("repository_name", None)
+        self._created_on = kwargs.get("created_on", datetime.min)
+        self._digest = kwargs.get("digest", "")
+        self._last_updated_on = kwargs.get("last_updated_on", datetime.min)
+        self._name = kwargs.get("name", "")
+        self._repository_name = kwargs.get("repository_name", "")
         self.can_delete = kwargs.get("can_delete")
         self.can_read = kwargs.get("can_read")
         self.can_list = kwargs.get("can_list")

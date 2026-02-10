@@ -1,3 +1,9 @@
+# coding=utf-8
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 """Sample - Export and import a Question Answering authoring project.
 
 Shows how to:

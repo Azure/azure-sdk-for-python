@@ -1,0 +1,21 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.resource.changes.models.ChangeAttributes": null,
+        "azure.mgmt.resource.changes.models.ChangeBase": null,
+        "azure.mgmt.resource.changes.models.ChangeProperties": null,
+        "azure.mgmt.resource.changes.models.ChangeResourceListResult": null,
+        "azure.mgmt.resource.changes.models.Resource": null,
+        "azure.mgmt.resource.changes.models.ChangeResourceResult": null,
+        "azure.mgmt.resource.changes.models.ErrorAdditionalInfo": null,
+        "azure.mgmt.resource.changes.models.ErrorDetail": null,
+        "azure.mgmt.resource.changes.models.ErrorResponse": null,
+        "azure.mgmt.resource.changes.models.ChangeType": null,
+        "azure.mgmt.resource.changes.models.PropertyChangeType": null,
+        "azure.mgmt.resource.changes.models.ChangeCategory": null,
+        "azure.mgmt.resource.changes.operations.ChangesOperations.list": null,
+        "azure.mgmt.resource.changes.aio.operations.ChangesOperations.list": null,
+        "azure.mgmt.resource.changes.operations.ChangesOperations.get": null,
+        "azure.mgmt.resource.changes.aio.operations.ChangesOperations.get": null
+    }
+}
