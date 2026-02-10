@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed PipelineClient.format_url to avoid adding trailing slashes when the URL template contains only query parameters.
+
 ### Other Changes
 
 ## 1.38.0 (2026-01-12)

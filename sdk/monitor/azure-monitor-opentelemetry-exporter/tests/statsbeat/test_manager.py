@@ -3,9 +3,8 @@
 import os
 import unittest
 from unittest import mock
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
-from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatConfig, StatsbeatManager
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
@@ -13,13 +12,13 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL,
-    _DEFAULT_EU_STATS_CONNECTION_STRING,
-    _DEFAULT_NON_EU_STATS_CONNECTION_STRING,
 )
 
 # cSpell:disable
 
 
+# pylint: disable=too-many-public-methods
+# pylint: disable=protected-access, line-too-long, unused-argument
 class TestStatsbeatConfig(unittest.TestCase):
     def setUp(self):
         os.environ.pop(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL, None)
@@ -277,7 +276,7 @@ class TestStatsbeatManager(unittest.TestCase):
         try:
             if hasattr(self, "manager"):
                 self.manager.shutdown()
-        except Exception:
+        except Exception:  # pylint: disable=broad-exception-caught
             pass
         os.environ.pop(_APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL, None)
         # Reset singleton state - only clear StatsbeatManager instances

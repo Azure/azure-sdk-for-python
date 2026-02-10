@@ -3,12 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import SettingSelector, load
-from azure.appconfiguration import AzureAppConfigurationClient
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase, setup_configs, has_feature_flag, get_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
+from azure.appconfiguration import AzureAppConfigurationClient
+from azure.appconfiguration.provider import SettingSelector, load
 
 
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):

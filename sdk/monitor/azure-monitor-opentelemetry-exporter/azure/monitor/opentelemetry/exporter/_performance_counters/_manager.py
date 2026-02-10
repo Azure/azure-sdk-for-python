@@ -62,7 +62,7 @@ _LAST_EXCEPTION_RATE_TIME = datetime.now()
 _EXCEPTIONS_COUNT = 0
 
 
-#  pylint: disable=unused-argument
+#  pylint: disable=unused-argument, do-not-use-logging-exception, do-not-log-exceptions-if-not-debug
 def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
     """Get process CPU usage as a percentage.
 
