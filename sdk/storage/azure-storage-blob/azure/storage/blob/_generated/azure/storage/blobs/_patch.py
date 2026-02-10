@@ -1,0 +1,199 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+from typing import Any, Optional, TYPE_CHECKING, Union
+
+from azure.core import PipelineClient
+from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.rest import HttpRequest, HttpResponse
+
+from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
+from ._operations import (
+    _AppendBlobClientOperationsMixin,
+    _BlobClientOperationsMixin,
+    _BlockBlobClientOperationsMixin,
+    _ContainerClientOperationsMixin,
+    _PageBlobClientOperationsMixin,
+    _ServiceClientOperationsMixin,
+)
+from ._utils.serialization import Deserializer, Serializer
+
+if TYPE_CHECKING:
+    from azure.core.credentials import TokenCredential
+
+
+class BlobClientConfiguration(GeneratedBlobClientConfiguration):
+    """Configuration for BlobClient that allows optional credentials.
+
+    This class overrides the generated configuration to allow None credentials
+    for anonymous access to public blobs.
+
+    :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
+     Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Can be None for
+     anonymous access.
+    :type credential: ~azure.core.credentials.TokenCredential or None
+    :keyword version: Specifies the version of the operation to use for this request.
+    :paramtype version: str
+    """
+
+    def __init__(self, url: str, credential: Optional["TokenCredential"] = None, **kwargs: Any) -> None:
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+
+        version: str = kwargs.pop("version", "2026-04-06")
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        from ._version import VERSION
+
+        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
+class _ServiceOperationsWrapper(_ServiceClientOperationsMixin):
+    """Wrapper to provide service operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _ContainerOperationsWrapper(_ContainerClientOperationsMixin):
+    """Wrapper to provide container operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _BlobOperationsWrapper(_BlobClientOperationsMixin):
+    """Wrapper to provide blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _PageBlobOperationsWrapper(_PageBlobClientOperationsMixin):
+    """Wrapper to provide page blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _AppendBlobOperationsWrapper(_AppendBlobClientOperationsMixin):
+    """Wrapper to provide append blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class _BlockBlobOperationsWrapper(_BlockBlobClientOperationsMixin):
+    """Wrapper to provide block blob operations with shared pipeline client."""
+
+    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
+        self._config = config
+        self._client = client
+        self._serialize = serialize
+        self._deserialize = deserialize
+
+
+class AzureBlobStorage:
+    """Combined client that exposes all blob storage operations as attributes.
+
+    This class wraps the individual operation mixins and exposes them as attributes
+    to maintain backward compatibility with the previous autorest-generated client structure.
+
+    :param url: The host name of the blob storage account.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword version: Specifies the version of the operation to use for this request.
+    :paramtype version: str
+    """
+
+    def __init__(
+        self, url: str, credential: Optional["TokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
+    ) -> None:
+        _endpoint = "{url}"
+        self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
+
+        if pipeline is not None:
+            self._client = PipelineClient(base_url=_endpoint, pipeline=pipeline)
+        else:
+            from azure.core.pipeline import policies
+
+            _policies = kwargs.pop("policies", None)
+            if _policies is None:
+                _policies = [
+                    policies.RequestIdPolicy(**kwargs),
+                    self._config.headers_policy,
+                    self._config.user_agent_policy,
+                    self._config.proxy_policy,
+                    policies.ContentDecodePolicy(**kwargs),
+                    self._config.redirect_policy,
+                    self._config.retry_policy,
+                    self._config.authentication_policy,
+                    self._config.custom_hook_policy,
+                    self._config.logging_policy,
+                    policies.DistributedTracingPolicy(**kwargs),
+                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                    self._config.http_logging_policy,
+                ]
+            self._client = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+
+        self._serialize = Serializer()
+        self._deserialize = Deserializer()
+        self._serialize.client_side_validation = False
+
+        # Create operation wrappers as attributes
+        self.service = _ServiceOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.container = _ContainerOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.blob = _BlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.page_blob = _PageBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.append_blob = _AppendBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+        self.block_blob = _BlockBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
+
+    def close(self) -> None:
+        self._client.close()
+
+    def __enter__(self) -> "AzureBlobStorage":
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
+
+
+__all__: list[str] = ["AzureBlobStorage", "BlobClientConfiguration"]
+
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
