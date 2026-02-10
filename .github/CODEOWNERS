@@ -640,9 +640,6 @@
 # ServiceLabel: %Devtestlab %Service Attention
 # ServiceOwners:          @Tanmayeekamath
 
-# ServiceLabel: %Device Provisioning Service %Service Attention
-# ServiceOwners:          @nberdy
-
 # ServiceLabel: %Functions %Service Attention
 # ServiceOwners:          @ahmedelnably @fabiocav
 
