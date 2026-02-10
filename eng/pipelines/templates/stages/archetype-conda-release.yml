@@ -54,7 +54,7 @@ stages:
                         Write-Host "Uploading: $($package.FullName)"
                         $success = $false
                         for ($attempt = 1; $attempt -le 3; $attempt++) {
-                          anaconda upload --user $env:CONDA_USERNAME --skip-existing --private $package.FullName
+                          anaconda upload --user $env:CONDA_USERNAME --skip-existing $package.FullName
                           if ($LASTEXITCODE -eq 0) {
                             $success = $true
                             break
