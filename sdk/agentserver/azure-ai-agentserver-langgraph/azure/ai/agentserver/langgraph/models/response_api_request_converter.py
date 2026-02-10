@@ -38,6 +38,72 @@ item_content_type_mapping = {
 }
 
 
+def convert_item_resource_to_message(item: Dict) -> AnyMessage:
+    """
+    Convert an ItemResource (from AIProjectClient conversation items) to a LangGraph message.
+
+    :param item: The ItemResource dict from AIProjectClient.conversations.items.list().
+    :type item: Dict
+
+    :return: The converted LangGraph message.
+    :rtype: AnyMessage
+    """
+    item_type = item.get("type", project_models.ItemType.MESSAGE)
+
+    if item_type == project_models.ItemType.MESSAGE:
+        role = item.get("role", project_models.ResponsesMessageRole.USER)
+        content = item.get("content", [])
+
+        # Extract text content from the content list
+        if isinstance(content, list) and len(content) > 0:
+            # Get text from first text content item
+            text_content = ""
+            for content_item in content:
+                content_type = content_item.get("type", "")
+                if content_type in ("input_text", "output_text", "text"):
+                    text_content = content_item.get("text", "")
+                    break
+            if not text_content:
+                # Fallback: try to get any text field
+                text_content = content[0].get("text", "")
+            content = text_content
+        elif isinstance(content, str):
+            pass  # content is already a string
+        else:
+            content = str(content) if content else ""
+
+        if role not in role_mapping:
+            logger.warning(f"Unknown role '{role}' in item resource, defaulting to USER")
+            role = project_models.ResponsesMessageRole.USER
+
+        return role_mapping[role](content=content)
+
+    if item_type == project_models.ItemType.FUNCTION_CALL:
+        call_id = item.get("call_id", "")
+        name = item.get("name", "")
+        arguments = item.get("arguments", "{}")
+        try:
+            args = json.loads(arguments) if arguments else {}
+        except json.JSONDecodeError:
+            args = {}
+        return AIMessage(tool_calls=[ToolCall(id=call_id, name=name, args=args)], content="")
+
+    if item_type == project_models.ItemType.FUNCTION_CALL_OUTPUT:
+        call_id = item.get("call_id", "")
+        output = item.get("output", "")
+        if isinstance(output, list):
+            # Extract text from output list
+            text_parts = []
+            for out_item in output:
+                if out_item.get("type") in ("input_text", "output_text", "text"):
+                    text_parts.append(out_item.get("text", ""))
+            output = " ".join(text_parts)
+        return ToolMessage(content=output, tool_call_id=call_id)
+
+    logger.warning(f"Unsupported item type '{item_type}' in item resource, skipping")
+    return None  # type: ignore
+
+
 class ResponseAPIRequestConverter(ABC):
     """
     Convert CreateResponse to LangGraph request format.

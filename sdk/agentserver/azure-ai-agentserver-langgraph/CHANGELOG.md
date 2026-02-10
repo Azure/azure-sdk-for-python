@@ -1,6 +1,12 @@
 # Release History
 
 
+## 1.0.0b11 (Unreleased)
+
+### Features Added
+
+- Use AsyncOpenAI directly for fetching historical conversation items instead of AIProjectClient
+
 ## 1.0.0b10 (2026-01-27)
 
 ### Bugs Fixed
