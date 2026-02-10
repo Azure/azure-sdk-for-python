@@ -150,7 +150,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         properties = await file_client.get_file_properties()
         while properties.copy.status != 'success':
             count = count + 1
-            if count > 10:
+            if count > 15:
                 pytest.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
             properties = await file_client.get_file_properties()

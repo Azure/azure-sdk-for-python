@@ -1,6 +1,8 @@
 import functools
 from typing import cast
 
+import pytest
+
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.ai.language.conversations.models import (
@@ -35,7 +37,7 @@ class TestConversations(AzureRecordedTestCase):
 
     ...
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy

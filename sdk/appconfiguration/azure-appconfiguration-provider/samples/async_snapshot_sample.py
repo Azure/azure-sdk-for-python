@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+import os
+import uuid
 import asyncio
-from azure.appconfiguration.provider.aio import load
-from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.aio import AzureAppConfigurationClient  # type:ignore
 from azure.appconfiguration import (  # type:ignore
     ConfigurationSettingsFilter,
@@ -14,8 +13,8 @@ from azure.appconfiguration import (  # type:ignore
     FeatureFlagConfigurationSetting,
 )
 from azure.identity.aio import DefaultAzureCredential
-import os
-import uuid
+from azure.appconfiguration.provider.aio import load
+from azure.appconfiguration.provider import SettingSelector
 
 
 async def main():
