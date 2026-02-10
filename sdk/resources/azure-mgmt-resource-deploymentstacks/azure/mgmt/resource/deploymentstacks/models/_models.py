@@ -21,48 +21,42 @@ class ActionOnUnmanage(_Model):
     """Defines the behavior of resources that are no longer managed after the stack is updated or
     deleted.
 
-    :ivar resources: Specifies an action for a newly unmanaged resource. Delete will attempt to
-     delete the resource from Azure. Detach will leave the resource in it's current state. Required.
-     Known values are: "delete" and "detach".
+    :ivar resources: Specifies an action for a newly unmanaged resource. Required. Known values
+     are: "delete" and "detach".
     :vartype resources: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
-    :ivar resource_groups: Specifies an action for a newly unmanaged resource. Delete will attempt
-     to delete the resource from Azure. Detach will leave the resource in it's current state. Known
-     values are: "delete" and "detach".
+     ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
+    :ivar resource_groups: Specifies an action for a newly unmanaged resource group. Known values
+     are: "delete" and "detach".
     :vartype resource_groups: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
-    :ivar management_groups: Specifies an action for a newly unmanaged resource. Delete will
-     attempt to delete the resource from Azure. Detach will leave the resource in it's current
-     state. Known values are: "delete" and "detach".
+     ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
+    :ivar management_groups: Specifies an action for a newly unmanaged resource management group.
+     Known values are: "delete" and "detach".
     :vartype management_groups: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+     ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
     :ivar resources_without_delete_support: Some resources do not support deletion.  This flag will
      denote how the stack should handle those resources. Known values are: "detach" and "fail".
     :vartype resources_without_delete_support: str or
-     ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+     ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
     """
 
-    resources: Union[str, "_models.DeploymentStacksDeleteDetachEnum"] = rest_field(
+    resources: Union[str, "_models.UnmanageActionResourceMode"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies an action for a newly unmanaged resource. Delete will attempt to delete the resource
-     from Azure. Detach will leave the resource in it's current state. Required. Known values are:
-     \"delete\" and \"detach\"."""
-    resource_groups: Optional[Union[str, "_models.DeploymentStacksDeleteDetachEnum"]] = rest_field(
+    """Specifies an action for a newly unmanaged resource. Required. Known values are: \"delete\" and
+     \"detach\"."""
+    resource_groups: Optional[Union[str, "_models.UnmanageActionResourceGroupMode"]] = rest_field(
         name="resourceGroups", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies an action for a newly unmanaged resource. Delete will attempt to delete the resource
-     from Azure. Detach will leave the resource in it's current state. Known values are: \"delete\"
-     and \"detach\"."""
-    management_groups: Optional[Union[str, "_models.DeploymentStacksDeleteDetachEnum"]] = rest_field(
+    """Specifies an action for a newly unmanaged resource group. Known values are: \"delete\" and
+     \"detach\"."""
+    management_groups: Optional[Union[str, "_models.UnmanageActionManagementGroupMode"]] = rest_field(
         name="managementGroups", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Specifies an action for a newly unmanaged resource. Delete will attempt to delete the resource
-     from Azure. Detach will leave the resource in it's current state. Known values are: \"delete\"
-     and \"detach\"."""
-    resources_without_delete_support: Optional[
-        Union[str, "_models.DeploymentStacksResourcesWithoutDeleteSupportEnum"]
-    ] = rest_field(name="resourcesWithoutDeleteSupport", visibility=["read", "create", "update", "delete", "query"])
+    """Specifies an action for a newly unmanaged resource management group. Known values are:
+     \"delete\" and \"detach\"."""
+    resources_without_delete_support: Optional[Union[str, "_models.ResourcesWithoutDeleteSupportAction"]] = rest_field(
+        name="resourcesWithoutDeleteSupport", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Some resources do not support deletion.  This flag will denote how the stack should handle
      those resources. Known values are: \"detach\" and \"fail\"."""
 
@@ -70,12 +64,10 @@ class ActionOnUnmanage(_Model):
     def __init__(
         self,
         *,
-        resources: Union[str, "_models.DeploymentStacksDeleteDetachEnum"],
-        resource_groups: Optional[Union[str, "_models.DeploymentStacksDeleteDetachEnum"]] = None,
-        management_groups: Optional[Union[str, "_models.DeploymentStacksDeleteDetachEnum"]] = None,
-        resources_without_delete_support: Optional[
-            Union[str, "_models.DeploymentStacksResourcesWithoutDeleteSupportEnum"]
-        ] = None,
+        resources: Union[str, "_models.UnmanageActionResourceMode"],
+        resource_groups: Optional[Union[str, "_models.UnmanageActionResourceGroupMode"]] = None,
+        management_groups: Optional[Union[str, "_models.UnmanageActionManagementGroupMode"]] = None,
+        resources_without_delete_support: Optional[Union[str, "_models.ResourcesWithoutDeleteSupportAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -602,7 +594,7 @@ class DeploymentStackProperties(_Model):
     :vartype duration: str
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """The error detail."""
     template: Optional[dict[str, Any]] = rest_field(visibility=["create", "update"])
     """The template content. You use this element when you want to pass the template syntax directly
@@ -718,7 +710,6 @@ class DeploymentStackProperties(_Model):
         *,
         action_on_unmanage: "_models.ActionOnUnmanage",
         deny_settings: "_models.DenySettings",
-        error: Optional["_models.ErrorDetail"] = None,
         template: Optional[dict[str, Any]] = None,
         template_link: Optional["_models.DeploymentStacksTemplateLink"] = None,
         parameters: Optional[dict[str, "_models.DeploymentParameter"]] = None,
@@ -1494,7 +1485,7 @@ class DeploymentStacksWhatIfResultProperties(_Model):
      list[~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDiagnostic]
     """
 
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """The error detail."""
     template: Optional[dict[str, Any]] = rest_field(visibility=["create", "update"])
     """The template content. You use this element when you want to pass the template syntax directly
@@ -1593,7 +1584,6 @@ class DeploymentStacksWhatIfResultProperties(_Model):
         deny_settings: "_models.DenySettings",
         deployment_stack_resource_id: str,
         retention_interval: datetime.timedelta,
-        error: Optional["_models.ErrorDetail"] = None,
         template: Optional[dict[str, Any]] = None,
         template_link: Optional["_models.DeploymentStacksTemplateLink"] = None,
         parameters: Optional[dict[str, "_models.DeploymentParameter"]] = None,
@@ -1788,7 +1778,7 @@ class DeploymentStackValidateResult(_Model):
     """Type of this resource."""
     system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """The error detail."""
     properties: Optional["_models.DeploymentStackValidateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -1799,7 +1789,6 @@ class DeploymentStackValidateResult(_Model):
     def __init__(
         self,
         *,
-        error: Optional["_models.ErrorDetail"] = None,
         properties: Optional["_models.DeploymentStackValidateProperties"] = None,
     ) -> None: ...
 
@@ -2065,25 +2054,8 @@ class ResourceReferenceExtended(_Model):
     """The extensible resource identifiers."""
     api_version: Optional[str] = rest_field(name="apiVersion", visibility=["read"])
     """The API version the resource was deployed with."""
-    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read"])
     """The error detail."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class SystemData(_Model):

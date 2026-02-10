@@ -32,8 +32,7 @@ if TYPE_CHECKING:
 
 
 class DeploymentStacksClient:
-    """The APIs listed in this specification can be used to manage Deployment stack resources through
-    the Azure Resource Manager.
+    """DeploymentStacksClient.
 
     :ivar deployment_stacks_what_if_results_at_resource_group:
      DeploymentStacksWhatIfResultsAtResourceGroupOperations operations

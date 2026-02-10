@@ -85,17 +85,6 @@ class DeploymentStackProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumM
     """The deployment stack is currently performing an operation"""
 
 
-class DeploymentStacksDeleteDetachEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies an action for a newly unmanaged resource. Delete will attempt to delete the resource
-    from Azure. Detach will leave the resource in it's current state.
-    """
-
-    DELETE = "delete"
-    """Delete the specified resources from Azure"""
-    DETACH = "detach"
-    """Keep the specified resources in Azure"""
-
-
 class DeploymentStacksDiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Denotes the additional response level."""
 
@@ -116,17 +105,6 @@ class DeploymentStacksManagementStatus(str, Enum, metaclass=CaseInsensitiveEnumM
     """The resource is not managed by the deployment stack."""
     UNKNOWN = "unknown"
     """The management state of the resource could not be determined."""
-
-
-class DeploymentStacksResourcesWithoutDeleteSupportEnum(  # pylint: disable=name-too-long
-    str, Enum, metaclass=CaseInsensitiveEnumMeta
-):
-    """Specifies an action for resources that do not support deletion."""
-
-    DETACH = "detach"
-    """Detach the specified resources from the deployment stack and continue"""
-    FAIL = "fail"
-    """Fail the deployment stack if resources cannot be deleted"""
 
 
 class DeploymentStacksWhatIfChangeCertainty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -189,6 +167,42 @@ class ResourceStatusMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_FAILED = "deleteFailed"
     """Unable to delete the resource from Azure. The delete will be retried on the next stack
     deployment, or can be deleted manually."""
+
+
+class ResourcesWithoutDeleteSupportAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an action for resources that do not support deletion."""
+
+    DETACH = "detach"
+    """Detach the specified resources from the deployment stack and continue."""
+    FAIL = "fail"
+    """Fail the deployment stack if resources cannot be deleted."""
+
+
+class UnmanageActionManagementGroupMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an action for a newly unmanaged resource."""
+
+    DELETE = "delete"
+    """Delete the management groups from Azure."""
+    DETACH = "detach"
+    """Keep the management groups in Azure."""
+
+
+class UnmanageActionResourceGroupMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an action for a newly unmanaged resource group."""
+
+    DELETE = "delete"
+    """Delete the resource groups from Azure."""
+    DETACH = "detach"
+    """Keep the resource groups in Azure."""
+
+
+class UnmanageActionResourceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an action for a newly unmanaged resource."""
+
+    DELETE = "delete"
+    """Delete the resources from Azure"""
+    DETACH = "detach"
+    """Keep the resources in Azure"""
 
 
 class ValidationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):

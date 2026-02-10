@@ -575,11 +575,11 @@ class DeploymentStacksWhatIfResultsAtResourceGroupOperations:  # pylint: disable
         resource_group_name: str,
         deployment_stacks_what_if_result_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -596,20 +596,20 @@ class DeploymentStacksWhatIfResultsAtResourceGroupOperations:  # pylint: disable
         :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
          resources. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
         :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
          unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
         :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
         :keyword unmanage_action_resources_without_delete_support: Some resources do not support
          deletion.  This flag will denote how the stack should handle those resources. Known values are:
          "detach" and "fail". Default value is None.
         :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -1282,11 +1282,11 @@ class DeploymentStacksWhatIfResultsAtSubscriptionOperations:  # pylint: disable=
         self,
         deployment_stacks_what_if_result_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -1300,20 +1300,20 @@ class DeploymentStacksWhatIfResultsAtSubscriptionOperations:  # pylint: disable=
         :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
          resources. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
         :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
          unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
         :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
         :keyword unmanage_action_resources_without_delete_support: Some resources do not support
          deletion.  This flag will denote how the stack should handle those resources. Known values are:
          "detach" and "fail". Default value is None.
         :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -1538,8 +1538,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     ) -> _models.DeploymentStacksWhatIfResult:
         """Gets the Deployment stack with the given name.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -1613,8 +1612,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     def list(self, management_group_id: str, **kwargs: Any) -> AsyncItemPaged["_models.DeploymentStacksWhatIfResult"]:
         """Lists Deployment stacks at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :return: An iterator like instance of DeploymentStacksWhatIfResult
         :rtype:
@@ -1800,8 +1798,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     ) -> AsyncLROPoller[_models.DeploymentStacksWhatIfResult]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -1830,8 +1827,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     ) -> AsyncLROPoller[_models.DeploymentStacksWhatIfResult]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -1860,8 +1856,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     ) -> AsyncLROPoller[_models.DeploymentStacksWhatIfResult]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -1901,8 +1896,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     ) -> AsyncLROPoller[_models.DeploymentStacksWhatIfResult]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -1991,11 +1985,11 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
         management_group_id: str,
         deployment_stacks_what_if_result_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -2003,8 +1997,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
         """Deletes a Deployment stack by name at the specified scope. When operation completes, status
         code 200 returned without content.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -2012,20 +2005,20 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
         :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
          resources. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
         :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
          unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
         :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
         :keyword unmanage_action_resources_without_delete_support: Some resources do not support
          deletion.  This flag will denote how the stack should handle those resources. Known values are:
          "detach" and "fail". Default value is None.
         :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -2160,8 +2153,7 @@ class DeploymentStacksWhatIfResultsAtManagementGroupOperations:  # pylint: disab
     ) -> AsyncLROPoller[_models.DeploymentStacksWhatIfResult]:
         """Returns property-level changes that will be made by the deployment if executed.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stacks_what_if_result_name: Name of the deployment stack what-if result.
          Required.
@@ -2934,11 +2926,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         deployment_stack_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -3018,11 +3010,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         deployment_stack_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -3038,20 +3030,20 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
          resources. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
         :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
          unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
         :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
         :keyword unmanage_action_resources_without_delete_support: Some resources do not support
          deletion.  This flag will denote how the stack should handle those resources. Known values are:
          "detach" and "fail". Default value is None.
         :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -3806,11 +3798,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         self,
         deployment_stack_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -3888,11 +3880,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         self,
         deployment_stack_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -3905,20 +3897,20 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
          resources. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
         :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
          unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
         :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
         :keyword unmanage_action_resources_without_delete_support: Some resources do not support
          deletion.  This flag will denote how the stack should handle those resources. Known values are:
          "detach" and "fail". Default value is None.
         :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -4048,8 +4040,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DeploymentStack:
         """Gets the Deployment stack with the given name.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4118,8 +4109,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncItemPaged["_models.DeploymentStack"]:
         """Lists Deployment stacks at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :return: An iterator like instance of DeploymentStack
         :rtype:
@@ -4298,8 +4288,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """Runs preflight validation on the Deployment stack template at the specified scope to verify its
         acceptance to Azure Resource Manager.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4328,8 +4317,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """Runs preflight validation on the Deployment stack template at the specified scope to verify its
         acceptance to Azure Resource Manager.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4358,8 +4346,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """Runs preflight validation on the Deployment stack template at the specified scope to verify its
         acceptance to Azure Resource Manager.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4393,8 +4380,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """Runs preflight validation on the Deployment stack template at the specified scope to verify its
         acceptance to Azure Resource Manager.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4551,8 +4537,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4580,8 +4565,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4609,8 +4593,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4636,8 +4619,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.DeploymentStack]:
         """Creates or updates a Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
@@ -4715,11 +4697,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         management_group_id: str,
         deployment_stack_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -4798,11 +4780,11 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         management_group_id: str,
         deployment_stack_name: str,
         *,
-        unmanage_action_resources: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_resource_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
-        unmanage_action_management_groups: Optional[Union[str, _models.DeploymentStacksDeleteDetachEnum]] = None,
+        unmanage_action_resources: Optional[Union[str, _models.UnmanageActionResourceMode]] = None,
+        unmanage_action_resource_groups: Optional[Union[str, _models.UnmanageActionResourceGroupMode]] = None,
+        unmanage_action_management_groups: Optional[Union[str, _models.UnmanageActionManagementGroupMode]] = None,
         unmanage_action_resources_without_delete_support: Optional[
-            Union[str, _models.DeploymentStacksResourcesWithoutDeleteSupportEnum]
+            Union[str, _models.ResourcesWithoutDeleteSupportAction]
         ] = None,
         bypass_stack_out_of_sync_error: Optional[bool] = None,
         **kwargs: Any
@@ -4810,28 +4792,27 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
         """Deletes a Deployment stack by name at the specified scope. When operation completes, status
         code 200 returned without content.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
         :keyword unmanage_action_resources: Flag to indicate delete rather than detach for unmanaged
          resources. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resources: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceMode
         :keyword unmanage_action_resource_groups: Flag to indicate delete rather than detach for
          unmanaged resource groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_resource_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionResourceGroupMode
         :keyword unmanage_action_management_groups: Flag to indicate delete rather than detach for
          unmanaged management groups. Known values are: "delete" and "detach". Default value is None.
         :paramtype unmanage_action_management_groups: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksDeleteDetachEnum
+         ~azure.mgmt.resource.deploymentstacks.models.UnmanageActionManagementGroupMode
         :keyword unmanage_action_resources_without_delete_support: Some resources do not support
          deletion.  This flag will denote how the stack should handle those resources. Known values are:
          "detach" and "fail". Default value is None.
         :paramtype unmanage_action_resources_without_delete_support: str or
-         ~azure.mgmt.resource.deploymentstacks.models.DeploymentStacksResourcesWithoutDeleteSupportEnum
+         ~azure.mgmt.resource.deploymentstacks.models.ResourcesWithoutDeleteSupportAction
         :keyword bypass_stack_out_of_sync_error: Flag to bypass service errors that indicate the stack
          resource list is not correctly synchronized. Default value is None.
         :paramtype bypass_stack_out_of_sync_error: bool
@@ -4894,8 +4875,7 @@ class DeploymentStacksOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.DeploymentStackTemplateDefinition:
         """Exports the template used to create the Deployment stack at the specified scope.
 
-        :param management_group_id: The name of the management group. The name is case insensitive.
-         Required.
+        :param management_group_id: The management group ID. Required.
         :type management_group_id: str
         :param deployment_stack_name: Name of the deployment stack. Required.
         :type deployment_stack_name: str
