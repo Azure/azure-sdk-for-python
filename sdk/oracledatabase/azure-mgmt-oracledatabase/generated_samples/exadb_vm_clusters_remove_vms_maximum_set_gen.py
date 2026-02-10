@@ -33,7 +33,7 @@ def main():
 
     response = client.exadb_vm_clusters.begin_remove_vms(
         resource_group_name="rgopenapi",
-        exadb_vm_cluster_name="vmClusterName",
+        exadb_vm_cluster_name="exadbVmClusterName1",
         body={
             "dbNodes": [
                 {
@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-03-01/ExadbVmClusters_RemoveVms_MaximumSet_Gen.json
+# x-ms-original-file: 2025-09-01/ExadbVmClusters_RemoveVms_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

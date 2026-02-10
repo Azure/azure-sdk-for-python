@@ -12,16 +12,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._archives_operations import ArchivesOperations  # type: ignore
-from ._archive_versions_operations import ArchiveVersionsOperations  # type: ignore
+from ._operations import Operations  # type: ignore
+from ._registries_operations import RegistriesOperations  # type: ignore
 from ._cache_rules_operations import CacheRulesOperations  # type: ignore
 from ._connected_registries_operations import ConnectedRegistriesOperations  # type: ignore
 from ._credential_sets_operations import CredentialSetsOperations  # type: ignore
-from ._export_pipelines_operations import ExportPipelinesOperations  # type: ignore
-from ._registries_operations import RegistriesOperations  # type: ignore
-from ._import_pipelines_operations import ImportPipelinesOperations  # type: ignore
-from ._operations import Operations  # type: ignore
-from ._pipeline_runs_operations import PipelineRunsOperations  # type: ignore
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._replications_operations import ReplicationsOperations  # type: ignore
 from ._scope_maps_operations import ScopeMapsOperations  # type: ignore
@@ -37,16 +32,11 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ArchivesOperations",
-    "ArchiveVersionsOperations",
+    "Operations",
+    "RegistriesOperations",
     "CacheRulesOperations",
     "ConnectedRegistriesOperations",
     "CredentialSetsOperations",
-    "ExportPipelinesOperations",
-    "RegistriesOperations",
-    "ImportPipelinesOperations",
-    "Operations",
-    "PipelineRunsOperations",
     "PrivateEndpointConnectionsOperations",
     "ReplicationsOperations",
     "ScopeMapsOperations",

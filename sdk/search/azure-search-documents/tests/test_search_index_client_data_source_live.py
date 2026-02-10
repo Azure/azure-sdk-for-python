@@ -39,7 +39,6 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
         self._test_create_or_update_datasource(client, storage_cs)
         self._test_create_or_update_datasource_if_unchanged(client, storage_cs)
         self._test_delete_datasource_if_unchanged(client, storage_cs)
-        self._test_delete_datasource_string_if_unchanged(client, storage_cs)
 
     def _test_create_datasource(self, client, storage_cs):
         ds_name = "create"
@@ -116,21 +115,3 @@ class TestSearchClientDataSources(AzureRecordedTestCase):
         data_source_connection.e_tag = etag  # reset to the original data source connection
         with pytest.raises(HttpResponseError):
             client.delete_data_source_connection(data_source_connection, match_condition=MatchConditions.IfNotModified)
-
-    def _test_delete_datasource_string_if_unchanged(self, client, storage_cs):
-        ds_name = "delstrunch"
-        data_source_connection = self._create_data_source_connection(storage_cs, ds_name)
-        created = client.create_data_source_connection(data_source_connection)
-        etag = created.e_tag
-
-        # Now update the data source connection
-        data_source_connection.description = "updated"
-        client.create_or_update_data_source_connection(data_source_connection)
-
-        # prepare data source connection
-        data_source_connection.e_tag = etag  # reset to the original data source connection
-        with pytest.raises(ValueError):
-            client.delete_data_source_connection(
-                data_source_connection.name,
-                match_condition=MatchConditions.IfNotModified,
-            )

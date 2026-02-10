@@ -20,11 +20,11 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_workspace(self, resource_group):
+    def test_tables_list_by_workspace(self, resource_group):
         response = self.client.tables.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,7 +32,7 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create_or_update(self, resource_group):
+    def test_tables_begin_create_or_update(self, resource_group):
         response = self.client.tables.begin_create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
@@ -107,7 +107,7 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
                 "totalRetentionInDaysAsDefault": bool,
                 "type": "str",
             },
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -115,7 +115,7 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_update(self, resource_group):
+    def test_tables_begin_update(self, resource_group):
         response = self.client.tables.begin_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
@@ -190,7 +190,7 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
                 "totalRetentionInDaysAsDefault": bool,
                 "type": "str",
             },
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -198,12 +198,12 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_tables_get(self, resource_group):
         response = self.client.tables.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
             table_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -211,12 +211,12 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_tables_begin_delete(self, resource_group):
         response = self.client.tables.begin_delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
             table_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -224,12 +224,12 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_migrate(self, resource_group):
+    def test_tables_migrate(self, resource_group):
         response = self.client.tables.migrate(
             resource_group_name=resource_group.name,
             workspace_name="str",
             table_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -237,12 +237,12 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_cancel_search(self, resource_group):
+    def test_tables_cancel_search(self, resource_group):
         response = self.client.tables.cancel_search(
             resource_group_name=resource_group.name,
             workspace_name="str",
             table_name="str",
-            api_version="2022-10-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

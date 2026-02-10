@@ -1,5 +1,34 @@
 # Release History
 
+## 1.1.0 (2025-11-12)
+
+### Features Added
+
+  - Model `PaloAltoNetworksNgfwMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PaloAltoNetworksNgfwMgmtClient` added operation group `palo_alto_networks_cloudngfw_operations`
+  - Client `PaloAltoNetworksNgfwMgmtClient` added operation group `metrics_object_firewall`
+  - Model `FirewallResource` added property `is_strata_cloud_managed`
+  - Model `FirewallResource` added property `strata_cloud_manager_config`
+  - Model `FirewallResourceUpdateProperties` added property `is_strata_cloud_managed`
+  - Model `FirewallResourceUpdateProperties` added property `strata_cloud_manager_config`
+  - Model `FirewallStatusResource` added property `is_strata_cloud_managed`
+  - Model `FirewallStatusResource` added property `strata_cloud_manager_info`
+  - Model `NetworkProfile` added property `trusted_ranges`
+  - Model `NetworkProfile` added property `private_source_nat_rules_destination`
+  - Added model `CloudManagerTenantList`
+  - Added enum `EnableStatus`
+  - Added model `MetricsObjectFirewallResource`
+  - Added model `MetricsObjectFirewallResourceListResult`
+  - Added model `ProductSerialNumberRequestStatus`
+  - Added model `ProductSerialNumberStatus`
+  - Added enum `ProductSerialStatusValues`
+  - Added enum `RegistrationStatus`
+  - Added model `StrataCloudManagerConfig`
+  - Added model `StrataCloudManagerInfo`
+  - Added model `SupportInfoModel`
+  - Added operation group `MetricsObjectFirewallOperations`
+  - Added operation group `PaloAltoNetworksCloudngfwOperationsOperations`
+
 ## 2.0.0b1 (2023-11-20)
 
 ### Features Added

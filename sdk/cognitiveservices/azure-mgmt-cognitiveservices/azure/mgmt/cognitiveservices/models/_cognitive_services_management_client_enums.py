@@ -184,6 +184,7 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BING_LLM_SEARCH = "BingLLMSearch"
     SERVERLESS = "Serverless"
     MANAGED_ONLINE_ENDPOINT = "ManagedOnlineEndpoint"
+    AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
 
 
 class ConnectionGroup(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -250,6 +251,17 @@ class DeploymentScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MANUAL = "Manual"
 
 
+class DeprecationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the deprecation date is a confirmed planned end-of-life date or an estimated
+    deprecation date. When 'Planned', the deprecation date represents a confirmed and communicated
+    model end-of-life date. When 'Tentative', the deprecation date is an estimated timeline that
+    may be subject to change.
+    """
+
+    PLANNED = "Planned"
+    TENTATIVE = "Tentative"
+
+
 class EncryptionScopeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status of the resource at the time the operation was called."""
 
@@ -312,10 +324,20 @@ class ModelLifecycleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model lifecycle status."""
 
     STABLE = "Stable"
+    """Legacy state. Replaced with GenerallyAvailable going forward."""
     PREVIEW = "Preview"
+    """Model is in preview and may be subject to changes."""
     GENERALLY_AVAILABLE = "GenerallyAvailable"
+    """Model is generally available for production use."""
     DEPRECATING = "Deprecating"
+    """Model is being deprecated and will be removed in the future. Only customers with existing
+    deployments can create new deployments with this model."""
     DEPRECATED = "Deprecated"
+    """Model has been deprecated, also known as retired, and is no longer supported. Inference calls
+    to deployments of models in this lifecycle state will return 410 errors."""
+    LEGACY = "Legacy"
+    """Model is a legacy version that is no longer recommended for use. Customers should migrate to
+    newer models. Check replacementConfig for upgrade information."""
 
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -468,6 +490,13 @@ class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENTERPRISE = "Enterprise"
 
 
+class TierUpgradePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the tier upgrade policy for the subscription."""
+
+    ONCE_UPGRADE_IS_AVAILABLE = "OnceUpgradeIsAvailable"
+    NO_AUTO_UPGRADE = "NoAutoUpgrade"
+
+
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit of the metric."""
 
@@ -478,3 +507,10 @@ class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
     MILLISECONDS = "Milliseconds"
+
+
+class UpgradeAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether an upgrade to the next quota tier is available."""
+
+    AVAILABLE = "Available"
+    NOT_AVAILABLE = "NotAvailable"

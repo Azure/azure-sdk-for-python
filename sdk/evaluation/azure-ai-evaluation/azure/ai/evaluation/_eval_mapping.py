@@ -11,7 +11,15 @@
 
 # Import all evals
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
-from azure.ai.evaluation._evaluators._task_completion import TaskCompletionEvaluator
+from azure.ai.evaluation._evaluators._task_completion import _TaskCompletionEvaluator
+from azure.ai.evaluation._evaluators._tool_input_accuracy import (
+    _ToolInputAccuracyEvaluator,
+)
+from azure.ai.evaluation._evaluators._tool_selection import _ToolSelectionEvaluator
+from azure.ai.evaluation._evaluators._tool_call_success import _ToolCallSuccessEvaluator
+from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
+    _TaskNavigationEfficiencyEvaluator,
+)
 from azure.ai.evaluation import (
     BleuScoreEvaluator,
     CodeVulnerabilityEvaluator,
@@ -68,8 +76,12 @@ EVAL_CLASS_MAP = {
     SexualEvaluator: "sexual",
     SimilarityEvaluator: "similarity",
     TaskAdherenceEvaluator: "task_adherence",
-    TaskCompletionEvaluator: "task_completion",
+    _TaskCompletionEvaluator: "task_completion",
+    _TaskNavigationEfficiencyEvaluator: "task_navigation_efficiency",
     ToolCallAccuracyEvaluator: "tool_call_accuracy",
+    _ToolInputAccuracyEvaluator: "tool_input_accuracy",
+    _ToolSelectionEvaluator: "tool_selection",
+    _ToolCallSuccessEvaluator: "tool_call_success",
     UngroundedAttributesEvaluator: "ungrounded_attributes",
     ViolenceEvaluator: "violence",
 }

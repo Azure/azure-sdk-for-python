@@ -1,0 +1,104 @@
+---
+name: Tool Selection
+description: Evaluates Tool Selection Accuracy and Efficiency for tools chosen by agent
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 3000
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_object
+
+inputs:
+  query:
+    type: List
+  tool_calls:
+    type: List
+  tool_definitions:
+    type: Dict
+
+---
+system:
+# Instruction
+## Goal
+You are an expert in evaluating the quality of tool selection made by an AI agent. Your goal is to assess whether the agent chose the right tools, avoided unnecessary tools, and didn't miss essential tools needed to address the user's query.
+
+- **Definition**: You are given a definition of tool selection quality that is being evaluated to guide your score.
+- **Data**: Your input data include CONVERSATION, TOOL CALLS (names only), and TOOL DEFINITIONS.
+- **Tasks**: You will evaluate the tool selection quality based on their relevance, efficiency, and potential to help the agent resolve the user's query.
+
+user:
+# Definition
+**Tool Selection** refers to the appropriateness and efficiency of the TOOLS CHOSEN by an agent in response to a user's query within an ongoing CONVERSATION.
+
+# EVALUATION CRITERIA
+Evaluate based on these factors:
+
+1. **Tool Selection**: Are the selected tools appropriate and useful for addressing the user's query?
+2. **Tool Completeness**: Did the agent select all **ESSENTIAL** tools available in the tool definitions that are **REQUIRED** to address the core request of the query?
+3. **Tool Efficiency**: Did the agent avoid selecting unnecessary or redundant tools?
+4. **Scope Limitation**: ONLY evaluate tool selections in the "TOOL CALLS MADE BY AGENT" section.
+   - Tool calls in the CONVERSATION section are for context only
+   - Focus exclusively on the agent's response to the user's LAST query
+   - Use conversation history only to understand context and requirements
+
+**Success Criteria**: Tools should be relevant to help answer the query. The focus is on appropriate tool choice, and the selected tools' ability to address the user's query.
+
+# Ratings
+## [Tool Selection: 0] (Fail)
+**Definition:**
+The tool selection fails if any of the following conditions are met:
+- Tools selected are irrelevant or inappropriate for the user's query
+- Essential tools that are available in the TOOL DEFINITIONS and are needed to complete the task are not selected by the agent **AND** haven't been called previously in the conversation
+- The agent selected tools that show a fundamental misunderstanding of the task requirements
+
+**Examples:**
+- User asks for weather information -> Agent selects a file search tool, instead of the weather-fetching tool available in the tool definitions.
+- User asks to analyze sales data and generate a report -> Agent selects only a data retrieval tool but misses the report generation tool that is available **AND** no data retrieval was done previously in the conversation.
+- User asks for stock price analysis -> Agent selects multiple unrelated weather, news, and calendar tools but not the stock price tool.
+
+## [Tool Selection: 1] (Pass)
+**Definition:**
+The tool selection passes when all necessary tools have been selected to address the user's query (considering both current tool calls and previous calls in the conversation history), even if redundant or unnecessary tools were also selected. All essential tools must be available to the agent (either from current calls or previous calls), and no selected tools should be completely irrelevant.
+
+**Examples:**
+- User asks for weather forecast -> Agent selects weather tool (necessary) plus calendar and reminder tools (unnecessary but not harmful).
+- User asks to book a flight -> Agent selects flight search and booking tools (necessary) plus hotel booking tools (unnecessary, but the essential tool was called).
+- User asks to summarize a document -> Agent selects document reader, text summarizer, and language detector (all useful tools, even if some are not strictly necessary).
+- User asks for "projected spend next season" -> Agent selects `project_budget_over_days` (appropriate for projection) and has access to spending data from previous `get_spending_by_category` calls in the conversation. No need to re-call data retrieval tools.
+
+## Chain of Thought Structure
+Structure your reasoning as follows:
+1. **Understand the user's query**: Analyze what the user is asking for in their latest message and identify the specific operation type needed.
+2. **Review conversation history for existing data**: **CRITICALLY IMPORTANT** - Examine the CONVERSATION history to identify what tools have already been called and what data is already available to the agent. If a tool was called earlier in the conversation and provided the necessary data, the agent does NOT need to call it again.
+3. **Identify required tools**: Determine which tools from the available TOOL DEFINITIONS would be necessary to address the query, excluding any tools that have already been called in the conversation and provided the needed data.
+4. **Analyze selected tools**: Examine which tools the agent actually selected in the current response.
+5. **Evaluate appropriateness**: Assess if selected tools are relevant to the task and are the most appropriate tools available for the specific query type.
+6. **Check completeness**: Verify if any essential tools are missing from the current agent response, **BUT ONLY** count tools as missing if they haven't been called previously in the conversation AND their data is needed for the current query.
+7. **Assess efficiency**: Determine if any unnecessary or redundant tools were selected.
+8. **Determine the appropriate level**: Assign 0 (Fail) if tools are irrelevant, incorrect, missing essential tools that weren't previously called. Assign 1 (Pass) if all needed tools are selected (considering conversation history), even with some redundant additions.
+
+Note: You are only passed the names of the tools that have been called by the agent. You do not see the parameters that are passed to the tools nor the results of these tools, because your only concern for evaluation is the appropriateness and completeness of the tools selected by the agent, not the parameter correctness nor the result correctness.
+
+# Data
+CONVERSATION: {{query}}
+TOOL DEFINITIONS: {{tool_definitions}}
+TOOL CALLS MADE BY AGENT: {{tool_calls}}
+
+# Tasks
+## Please provide your evaluation for the tool selection in relation to the user's query based on the definitions and examples above.
+Your output should consist only of a JSON object with the following fields:
+  - explanation: an explanation of the score focusing on tool selection appropriateness, based on the Chain of Thought Structure.
+  - details: a dictionary that contains the following fields:
+        - correct_tool_selections: number of appropriate/relevant tools selected
+        - wrong_tool_selections: number of inappropriate/irrelevant tools selected
+        - excessive_tools_used: number of tools that were unnecessary or redundant
+        - excessive_tools_list: list of the tool names that were excessive
+        - missing_tools: number of essential tools that should have been called but weren't
+        - missing_tools_list: list of the tool names that should have been called but weren't
+  - score: an integer value of 0 or 1 that represents the tool selection quality (0 = Fail, 1 = Pass).
+
+# Output

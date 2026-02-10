@@ -79,6 +79,8 @@ async def sample_recognize_pii_entities_async():
                     print("No PII entities found for this document.")
         else:
             print("No documents in the response or unexpected result type.")
+
+
 # [END recognize_pii_entities_async]
 
 

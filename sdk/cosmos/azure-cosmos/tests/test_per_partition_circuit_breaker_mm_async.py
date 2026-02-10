@@ -4,7 +4,7 @@ import asyncio
 import os
 import unittest
 import uuid
-from typing import Any
+from typing import Any, Union
 
 import pytest
 from azure.core.pipeline.transport._aiohttp import AioHttpTransport
@@ -18,12 +18,12 @@ from _fault_injection_transport_async import FaultInjectionTransportAsync
 from test_per_partition_circuit_breaker_mm import create_doc, read_operations_and_errors, \
     write_operations_and_errors, operations, REGION_1, REGION_2, CHANGE_FEED, CHANGE_FEED_PK, CHANGE_FEED_EPK, READ, \
     CREATE, READ_ALL_ITEMS, DELETE_ALL_ITEMS_BY_PARTITION_KEY, QUERY, QUERY_PK, BATCH, UPSERT, REPLACE, PATCH, DELETE, \
-    PK_VALUE, validate_unhealthy_partitions, validate_response_uri
+    PK_VALUE, validate_unhealthy_partitions, validate_response_uri, user_agent_hook
 from test_per_partition_circuit_breaker_mm import validate_stats
 
 COLLECTION = "created_collection"
 
-async def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri):
+async def perform_write_operation(operation, container, fault_injection_container, doc_id, pk, expected_uri=None):
     doc = {'id': doc_id,
            'pk': pk,
            'name': 'sample document',
@@ -33,7 +33,7 @@ async def perform_write_operation(operation, container, fault_injection_containe
     elif operation == UPSERT:
         resp = await fault_injection_container.upsert_item(body=doc)
     elif operation == REPLACE:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         new_doc = {'id': doc_id,
                    'pk': pk,
                    'name': 'sample document' + str(uuid),
@@ -41,11 +41,11 @@ async def perform_write_operation(operation, container, fault_injection_containe
         await asyncio.sleep(1)
         resp = await fault_injection_container.replace_item(item=doc['id'], body=new_doc)
     elif operation == DELETE:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         await asyncio.sleep(1)
         resp = await fault_injection_container.delete_item(item=doc['id'], partition_key=doc['pk'])
     elif operation == PATCH:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         await asyncio.sleep(1)
         operations = [{"op": "incr", "path": "/company", "value": 3}]
         resp = await fault_injection_container.patch_item(item=doc['id'], partition_key=doc['pk'], patch_operations=operations)
@@ -59,9 +59,9 @@ async def perform_write_operation(operation, container, fault_injection_containe
         resp = await fault_injection_container.execute_item_batch(batch_operations, partition_key=doc['pk'])
     # this will need to be emulator only
     elif operation == DELETE_ALL_ITEMS_BY_PARTITION_KEY:
-        await container.create_item(body=doc)
+        await container.upsert_item(body=doc)
         resp = await fault_injection_container.delete_all_items_by_partition_key(pk)
-    if resp:
+    if resp and expected_uri:
         validate_response_uri(resp, expected_uri)
 
 async def perform_read_operation(operation, container, doc_id, pk, expected_uri):
@@ -111,7 +111,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
-    async def setup_method_with_custom_transport(self, custom_transport: AioHttpTransport, default_endpoint=host, **kwargs):
+    async def setup_method_with_custom_transport(self, custom_transport: Union[AioHttpTransport, Any], default_endpoint=host, **kwargs):
         container_id = kwargs.pop("container_id", None)
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
@@ -339,10 +339,11 @@ class TestPerPartitionCircuitBreakerMMAsync:
         await cleanup_method([custom_setup, setup])
 
     async def test_stat_reset_async(self):
+        status_code = 500
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(
             0,
             CosmosHttpResponseError(
-                status_code=503,
+                status_code=status_code,
                 message="Some injected error.")
         ))
         setup, doc, expected_uri, uri_down, custom_setup, custom_transport, predicate = \
@@ -371,7 +372,7 @@ class TestPerPartitionCircuitBreakerMMAsync:
                                                   PK_VALUE,
                                                   expected_uri)
                 except CosmosHttpResponseError as e:
-                    assert e.status_code == 503
+                    assert e.status_code == status_code
             validate_unhealthy_partitions(global_endpoint_manager, 0)
             validate_stats(global_endpoint_manager, 2, 2, 2, 2, 0, 0)
             await asyncio.sleep(25)
@@ -479,6 +480,14 @@ class TestPerPartitionCircuitBreakerMMAsync:
         finally:
             _partition_health_tracker.INITIAL_UNAVAILABLE_TIME_MS = original_unavailable_time
             await cleanup_method([custom_setup, setup])
+
+    async def test_circuit_breaker_user_agent_feature_flag_mm_async(self):
+        # Simple test to verify the user agent suffix is being updated with the relevant feature flags
+        custom_setup = await self.setup_method_with_custom_transport(None)
+        container = custom_setup['col']
+        # Create a document to check the response headers
+        await container.upsert_item(body={'id': str(uuid.uuid4()), 'pk': PK_VALUE, 'name': 'sample document', 'key': 'value'},
+                                              raw_response_hook=user_agent_hook)
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,7 +1,7 @@
+import sys
 from collections import OrderedDict
 from pathlib import Path
 from unittest.mock import Mock, patch
-import sys
 
 import pytest
 
@@ -97,10 +97,6 @@ class TestDataUtils:
             read_local_mltable_metadata_contents(path=mltable_folder / "should-fail")
         assert "No such file or directory" in str(ex)
 
-    @pytest.mark.skipif(
-        sys.version_info >= (3, 13),
-        reason="Failing in spacific use case of TemporaryDirectory in Python 3.13 in test case only, skipping the test for now.",
-    )
     @patch("azure.ai.ml._utils._data_utils.get_datastore_info")
     @patch("azure.ai.ml._utils._data_utils.get_storage_client")
     def test_read_remote_mltable_metadata_contents(
@@ -126,7 +122,9 @@ class TestDataUtils:
         tmp_metadata_file.write_text(file_contents)
 
         # remote azureml accessible
-        with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory", return_value=mltable_folder):
+        with patch("azure.ai.ml._utils._data_utils.TemporaryDirectory") as mock_tmp:
+            mock_tmp.return_value.__enter__.return_value = str(mltable_folder)
+            mock_tmp.return_value.__exit__.return_value = None
             contents = read_remote_mltable_metadata_contents(
                 datastore_operations=mock_datastore_operations,
                 base_uri="azureml://datastores/mydatastore/paths/images/dogs",

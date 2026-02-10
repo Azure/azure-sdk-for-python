@@ -25,7 +25,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.databases.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -103,7 +103,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                     "redisVersion": "str",
                     "resourceState": "str",
                 },
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -117,7 +117,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -131,7 +131,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 database_name="str",
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -145,7 +145,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -160,7 +160,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 cluster_name="str",
                 database_name="str",
                 parameters={"keyType": "str"},
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -176,7 +176,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 cluster_name="str",
                 database_name="str",
                 parameters={"sasUris": ["str"]},
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -192,7 +192,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 cluster_name="str",
                 database_name="str",
                 parameters={"sasUri": "str"},
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -208,7 +208,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 cluster_name="str",
                 database_name="str",
                 parameters={"ids": ["str"]},
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -226,7 +226,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 parameters={
                     "geoReplication": {"groupNickname": "str", "linkedDatabases": [{"id": "str", "state": "str"}]}
                 },
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -241,7 +241,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 database_name="str",
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -256,7 +256,7 @@ class TestRedisEnterpriseManagementDatabasesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 database_name="str",
-                api_version="2025-05-01-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

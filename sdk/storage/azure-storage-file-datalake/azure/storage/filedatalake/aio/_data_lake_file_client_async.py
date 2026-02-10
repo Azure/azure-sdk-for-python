@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -128,6 +128,9 @@ class DataLakeFileClient(PathClient):
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials_async.AsyncTokenCredential or
             str or Dict[str, str] or None
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -217,14 +220,14 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword str encryption_context:
+            Specifies the encryption context to set on the file.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
-        :keyword str encryption_context:
-            Specifies the encryption context to set on the file.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
@@ -395,7 +398,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def upload_data(
-        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         **kwargs: Any
@@ -404,7 +407,7 @@ class DataLakeFileClient(PathClient):
         Upload data to a file.
 
         :param data: Content to be uploaded to file
-        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
@@ -423,11 +426,11 @@ class DataLakeFileClient(PathClient):
             The default permission is 0777 for a directory and 0666 for a file. The default umask is 0027.
             The umask must be specified in 4-digit octal notation (e.g. 0766).
         :keyword str permissions: Optional and only valid if Hierarchical Namespace
-         is enabled for the account. Sets POSIX access permissions for the file
-         owner, the file owning group, and others. Each class may be granted
-         read, write, or execute permission.  The sticky bit is also supported.
-         Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
-         supported.
+            is enabled for the account. Sets POSIX access permissions for the file
+            owner, the file owning group, and others. Each class may be granted
+            read, write, or execute permission.  The sticky bit is also supported.
+            Both symbolic (rwxrw-rw-) and 4-digit octal notation (e.g. 0766) are
+            supported.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -457,13 +460,6 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
-        :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see
-            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
-            This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
-            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
-            the timeout will apply to each call individually.
         :keyword int max_concurrency:
             Maximum number of parallel connections to use when transferring the file in chunks.
             This option does not affect the underlying connection pool, and may
@@ -478,6 +474,13 @@ class DataLakeFileClient(PathClient):
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: ~typing.Callable[[int, Optional[int]], Awaitable[None]]
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
         """
@@ -494,7 +497,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def append_data(
-        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
         **kwargs: Any
@@ -502,9 +505,11 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]]
         :param int offset: start position of the data to be appended to.
-        :param length: Size of the data in bytes.
+        :param length: 
+            Size of the data to append. Optional if the length of data can be determined. For Iterable and IO,
+            if the length is not provided and cannot be determined, all data will be read into memory.
         :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
@@ -539,6 +544,13 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
@@ -568,7 +580,7 @@ class DataLakeFileClient(PathClient):
         retain_uncommitted_data: Optional[bool] = False,
         **kwargs: Any
     ) -> Dict[str, Any]:
-        """ Commit the previous appended data.
+        """Commit the previous appended data.
 
         :param int offset: offset is equal to the length of the file after commit the
             previous appended data.
@@ -594,7 +606,7 @@ class DataLakeFileClient(PathClient):
             been closed). If "false" a change notification is raised indicating
             the file has changed. The default is false. This query parameter is
             set to true by the Hadoop ABFS driver to indicate that the file stream
-            has been closed."
+            has been closed.
         :keyword ~datetime.datetime if_modified_since:
             A DateTime value. Azure expects the date value passed in to be UTC.
             If timezone is included, any non-UTC datetimes will be converted to UTC.
@@ -636,6 +648,13 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.storage.filedatalake.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
+        :keyword int timeout:
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Any]
 
@@ -709,6 +728,8 @@ class DataLakeFileClient(PathClient):
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: ~typing.Callable[[int, Optional[int]], Awaitable[None]]
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
+            decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

@@ -47,6 +47,7 @@ def main():
                 "enabled": True,
                 "enabledFilteringCriteria": "srcIP=158.255.7.8 || dstPort=56891",
                 "format": {"type": "JSON", "version": 1},
+                "recordTypes": "B,E",
                 "storageId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Storage/storageAccounts/nwtest1mgvbfmqsigdxe",
                 "targetResourceId": "/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/networkSecurityGroups/desmondcentral-nsg",
             },
@@ -55,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2024-07-01/examples/NetworkWatcherFlowLogCreate.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/NetworkWatcherFlowLogCreate.json
 if __name__ == "__main__":
     main()

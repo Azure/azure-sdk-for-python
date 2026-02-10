@@ -167,9 +167,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        client._config.version = self._api_version  # type: ignore [assignment] # pylint: disable=protected-access
-        return client
+        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
@@ -815,6 +813,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `ItemPaged.by_page()`.
+        :keyword str start_from:
+            Specifies the full path (inclusive) to list paths from.
+            Only one entity level is supported.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -846,10 +847,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             self._client.container.list_blob_flat_segment,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return ItemPaged(
             command, prefix=name_starts_with, results_per_page=results_per_page, container=self.container_name,
-            page_iterator_class=BlobPropertiesPaged)
+           page_iterator_class=BlobPropertiesPaged)
 
     @distributed_trace
     def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
@@ -867,6 +869,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `ItemPaged.by_page()`.
+        :keyword str start_from:
+            Specifies the full path (inclusive) to list paths from.
+            Only one entity level is supported.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -925,6 +930,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword str start_from:
+            Specifies the full path (inclusive) to list paths from.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

@@ -7,13 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class AadConfiguration(_serialization.Model):
@@ -34,7 +36,7 @@ class AadConfiguration(_serialization.Model):
         "admin_group_object_ids": {"key": "adminGroupObjectIds", "type": "[str]"},
     }
 
-    def __init__(self, *, admin_group_object_ids: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, admin_group_object_ids: list[str], **kwargs: Any) -> None:
         """
         :keyword admin_group_object_ids: The list of Azure Active Directory group object IDs that will
          have an administrative role on the Kubernetes cluster. Required.
@@ -42,6 +44,65 @@ class AadConfiguration(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.admin_group_object_ids = admin_group_object_ids
+
+
+class ActionState(_serialization.Model):
+    """ActionState represents the state of an action taken against a resource. This can be used to
+    represent both explicitly and implicitly defined action types.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar action_type: The representation of the action for which this is a status. Matches ARM
+     resource action format when the action is an ARM-based action.
+    :vartype action_type: str
+    :ivar correlation_id: The correlation ID for the original action request. Omitted if there is
+     no related correlation ID.
+    :vartype correlation_id: str
+    :ivar end_time: The timestamp of when the action reached its final, terminal state. Uses ISO
+     8601 format.
+    :vartype end_time: str
+    :ivar message: The description providing additional context for the status value. May be empty
+     or contain guidance in the case of a failure.
+    :vartype message: str
+    :ivar start_time: The timestamp of when the action began, in ISO 8601 format.
+    :vartype start_time: str
+    :ivar status: The status of the action. Known values are: "Completed", "InProgress", and
+     "Failed".
+    :vartype status: str or ~azure.mgmt.networkcloud.models.ActionStateStatus
+    :ivar step_states: The ordered list of the individual steps which make up the action.
+    :vartype step_states: list[~azure.mgmt.networkcloud.models.StepState]
+    """
+
+    _validation = {
+        "action_type": {"readonly": True},
+        "correlation_id": {"readonly": True},
+        "end_time": {"readonly": True},
+        "message": {"readonly": True},
+        "start_time": {"readonly": True},
+        "status": {"readonly": True},
+        "step_states": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "action_type": {"key": "actionType", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "step_states": {"key": "stepStates", "type": "[StepState]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.action_type: Optional[str] = None
+        self.correlation_id: Optional[str] = None
+        self.end_time: Optional[str] = None
+        self.message: Optional[str] = None
+        self.start_time: Optional[str] = None
+        self.status: Optional[Union[str, "_models.ActionStateStatus"]] = None
+        self.step_states: Optional[list["_models.StepState"]] = None
 
 
 class AdministrativeCredentials(_serialization.Model):
@@ -104,7 +165,7 @@ class AdministratorConfiguration(_serialization.Model):
         self,
         *,
         admin_username: Optional[str] = None,
-        ssh_public_keys: Optional[List["_models.SshPublicKey"]] = None,
+        ssh_public_keys: Optional[list["_models.SshPublicKey"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -135,7 +196,7 @@ class AdministratorConfigurationPatch(_serialization.Model):
         "ssh_public_keys": {"key": "sshPublicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(self, *, ssh_public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, ssh_public_keys: Optional[list["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword ssh_public_keys: SshPublicKey represents the public key used to authenticate with a
          resource through SSH.
@@ -263,7 +324,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -398,14 +459,14 @@ class AgentPool(TrackedResource):
         count: int,
         mode: Union[str, "_models.AgentPoolMode"],
         vm_sku_name: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
         agent_options: Optional["_models.AgentOptions"] = None,
         attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
-        availability_zones: Optional[List[str]] = None,
-        labels: Optional[List["_models.KubernetesLabel"]] = None,
-        taints: Optional[List["_models.KubernetesLabel"]] = None,
+        availability_zones: Optional[list[str]] = None,
+        labels: Optional[list["_models.KubernetesLabel"]] = None,
+        taints: Optional[list["_models.KubernetesLabel"]] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -537,9 +598,9 @@ class AgentPoolConfiguration(_serialization.Model):
         administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
         agent_options: Optional["_models.AgentOptions"] = None,
         attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
-        availability_zones: Optional[List[str]] = None,
-        labels: Optional[List["_models.KubernetesLabel"]] = None,
-        taints: Optional[List["_models.KubernetesLabel"]] = None,
+        availability_zones: Optional[list[str]] = None,
+        labels: Optional[list["_models.KubernetesLabel"]] = None,
+        taints: Optional[list["_models.KubernetesLabel"]] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -605,7 +666,7 @@ class AgentPoolList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.AgentPool"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.AgentPool"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -647,7 +708,7 @@ class AgentPoolPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         administrator_configuration: Optional["_models.NodePoolAdministratorConfigurationPatch"] = None,
         count: Optional[int] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
@@ -793,9 +854,9 @@ class AttachedNetworkConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        l2_networks: Optional[List["_models.L2NetworkAttachmentConfiguration"]] = None,
-        l3_networks: Optional[List["_models.L3NetworkAttachmentConfiguration"]] = None,
-        trunked_networks: Optional[List["_models.TrunkedNetworkAttachmentConfiguration"]] = None,
+        l2_networks: Optional[list["_models.L2NetworkAttachmentConfiguration"]] = None,
+        l3_networks: Optional[list["_models.L3NetworkAttachmentConfiguration"]] = None,
+        trunked_networks: Optional[list["_models.TrunkedNetworkAttachmentConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -870,6 +931,9 @@ class BareMetalMachine(TrackedResource):
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar action_states: The current state of any in progress or completed actions. The most recent
+     known instance of each action type is shown.
+    :vartype action_states: list[~azure.mgmt.networkcloud.models.ActionState]
     :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
      resources that have attached this network.
     :vartype associated_resource_ids: list[str]
@@ -883,6 +947,11 @@ class BareMetalMachine(TrackedResource):
     :vartype bmc_mac_address: str
     :ivar boot_mac_address: The MAC address of a NIC connected to the PXE network. Required.
     :vartype boot_mac_address: str
+    :ivar ca_certificate: The CA certificate information issued by the platform for connecting to
+     TLS interfaces for the bare metal machine. Callers add this certificate to the trusted CA store
+     on the Kubernetes control plane nodes to allow secure communication with the bare metal
+     machine.
+    :vartype ca_certificate: ~azure.mgmt.networkcloud.models.CertificateInfo
     :ivar cluster_id: The resource ID of the cluster this bare metal machine is associated with.
     :vartype cluster_id: str
     :ivar cordon_status: The cordon status of the bare metal machine. Known values are: "Cordoned"
@@ -965,11 +1034,13 @@ class BareMetalMachine(TrackedResource):
         "location": {"required": True},
         "etag": {"readonly": True},
         "extended_location": {"required": True},
+        "action_states": {"readonly": True},
         "associated_resource_ids": {"readonly": True},
         "bmc_connection_string": {"required": True},
         "bmc_credentials": {"required": True},
         "bmc_mac_address": {"required": True, "pattern": r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"},
         "boot_mac_address": {"required": True, "pattern": r"^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"},
+        "ca_certificate": {"readonly": True},
         "cluster_id": {"readonly": True},
         "cordon_status": {"readonly": True},
         "detailed_status": {"readonly": True},
@@ -1007,11 +1078,13 @@ class BareMetalMachine(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "action_states": {"key": "properties.actionStates", "type": "[ActionState]"},
         "associated_resource_ids": {"key": "properties.associatedResourceIds", "type": "[str]"},
         "bmc_connection_string": {"key": "properties.bmcConnectionString", "type": "str"},
         "bmc_credentials": {"key": "properties.bmcCredentials", "type": "AdministrativeCredentials"},
         "bmc_mac_address": {"key": "properties.bmcMacAddress", "type": "str"},
         "boot_mac_address": {"key": "properties.bootMacAddress", "type": "str"},
+        "ca_certificate": {"key": "properties.caCertificate", "type": "CertificateInfo"},
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
         "cordon_status": {"key": "properties.cordonStatus", "type": "str"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
@@ -1059,7 +1132,7 @@ class BareMetalMachine(TrackedResource):
         rack_id: str,
         rack_slot: int,
         serial_number: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         machine_cluster_version: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1102,24 +1175,26 @@ class BareMetalMachine(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
-        self.associated_resource_ids: Optional[List[str]] = None
+        self.action_states: Optional[list["_models.ActionState"]] = None
+        self.associated_resource_ids: Optional[list[str]] = None
         self.bmc_connection_string = bmc_connection_string
         self.bmc_credentials = bmc_credentials
         self.bmc_mac_address = bmc_mac_address
         self.boot_mac_address = boot_mac_address
+        self.ca_certificate: Optional["_models.CertificateInfo"] = None
         self.cluster_id: Optional[str] = None
         self.cordon_status: Optional[Union[str, "_models.BareMetalMachineCordonStatus"]] = None
         self.detailed_status: Optional[Union[str, "_models.BareMetalMachineDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
         self.hardware_inventory: Optional["_models.HardwareInventory"] = None
         self.hardware_validation_status: Optional["_models.HardwareValidationStatus"] = None
-        self.hybrid_aks_clusters_associated_ids: Optional[List[str]] = None
+        self.hybrid_aks_clusters_associated_ids: Optional[list[str]] = None
         self.kubernetes_node_name: Optional[str] = None
         self.kubernetes_version: Optional[str] = None
         self.machine_cluster_version = machine_cluster_version
         self.machine_details = machine_details
         self.machine_name = machine_name
-        self.machine_roles: Optional[List[str]] = None
+        self.machine_roles: Optional[list[str]] = None
         self.machine_sku_id = machine_sku_id
         self.oam_ipv4_address: Optional[str] = None
         self.oam_ipv6_address: Optional[str] = None
@@ -1130,10 +1205,10 @@ class BareMetalMachine(TrackedResource):
         self.rack_slot = rack_slot
         self.ready_state: Optional[Union[str, "_models.BareMetalMachineReadyState"]] = None
         self.runtime_protection_status: Optional["_models.RuntimeProtectionStatus"] = None
-        self.secret_rotation_status: Optional[List["_models.SecretRotationStatus"]] = None
+        self.secret_rotation_status: Optional[list["_models.SecretRotationStatus"]] = None
         self.serial_number = serial_number
         self.service_tag: Optional[str] = None
-        self.virtual_machines_associated_ids: Optional[List[str]] = None
+        self.virtual_machines_associated_ids: Optional[list[str]] = None
 
 
 class BareMetalMachineCommandSpecification(_serialization.Model):
@@ -1158,7 +1233,7 @@ class BareMetalMachineCommandSpecification(_serialization.Model):
         "command": {"key": "command", "type": "str"},
     }
 
-    def __init__(self, *, command: str, arguments: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, command: str, arguments: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword arguments: The list of string arguments that will be passed to the script in order as
          separate arguments.
@@ -1194,8 +1269,7 @@ class BareMetalMachineConfigurationData(_serialization.Model):
      tag.
     :vartype machine_details: str
     :ivar machine_name: The user-provided name for the bare metal machine created from this
-     specification.
-     If not provided, the machine name will be generated programmatically.
+     specification. If not provided, the machine name will be generated programmatically.
     :vartype machine_name: str
     :ivar rack_slot: The slot the physical machine is in the rack based on the BOM configuration.
      Required.
@@ -1253,8 +1327,7 @@ class BareMetalMachineConfigurationData(_serialization.Model):
          tag.
         :paramtype machine_details: str
         :keyword machine_name: The user-provided name for the bare metal machine created from this
-         specification.
-         If not provided, the machine name will be generated programmatically.
+         specification. If not provided, the machine name will be generated programmatically.
         :paramtype machine_name: str
         :keyword rack_slot: The slot the physical machine is in the rack based on the BOM
          configuration. Required.
@@ -1346,9 +1419,12 @@ class BareMetalMachineKeySet(TrackedResource):
      system of the machines.
     :vartype os_group_name: str
     :ivar privilege_level: The access level allowed for the users in this key set. Required. Known
-     values are: "Standard" and "Superuser".
+     values are: "Standard", "Superuser", and "Other".
     :vartype privilege_level: str or
      ~azure.mgmt.networkcloud.models.BareMetalMachineKeySetPrivilegeLevel
+    :ivar privilege_level_name: The name of the access level to apply when the privilege level is
+     set to Other.
+    :vartype privilege_level_name: str
     :ivar provisioning_state: The provisioning state of the bare metal machine key set. Known
      values are: "Succeeded", "Failed", "Canceled", "Accepted", and "Provisioning".
     :vartype provisioning_state: str or
@@ -1397,6 +1473,7 @@ class BareMetalMachineKeySet(TrackedResource):
         "last_validation": {"key": "properties.lastValidation", "type": "iso-8601"},
         "os_group_name": {"key": "properties.osGroupName", "type": "str"},
         "privilege_level": {"key": "properties.privilegeLevel", "type": "str"},
+        "privilege_level_name": {"key": "properties.privilegeLevelName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "user_list": {"key": "properties.userList", "type": "[KeySetUser]"},
         "user_list_status": {"key": "properties.userListStatus", "type": "[KeySetUserStatus]"},
@@ -1409,11 +1486,12 @@ class BareMetalMachineKeySet(TrackedResource):
         extended_location: "_models.ExtendedLocation",
         azure_group_id: str,
         expiration: datetime.datetime,
-        jump_hosts_allowed: List[str],
+        jump_hosts_allowed: list[str],
         privilege_level: Union[str, "_models.BareMetalMachineKeySetPrivilegeLevel"],
-        user_list: List["_models.KeySetUser"],
-        tags: Optional[Dict[str, str]] = None,
+        user_list: list["_models.KeySetUser"],
+        tags: Optional[dict[str, str]] = None,
         os_group_name: Optional[str] = None,
+        privilege_level_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1438,9 +1516,12 @@ class BareMetalMachineKeySet(TrackedResource):
          system of the machines.
         :paramtype os_group_name: str
         :keyword privilege_level: The access level allowed for the users in this key set. Required.
-         Known values are: "Standard" and "Superuser".
+         Known values are: "Standard", "Superuser", and "Other".
         :paramtype privilege_level: str or
          ~azure.mgmt.networkcloud.models.BareMetalMachineKeySetPrivilegeLevel
+        :keyword privilege_level_name: The name of the access level to apply when the privilege level
+         is set to Other.
+        :paramtype privilege_level_name: str
         :keyword user_list: The unique list of permitted users. Required.
         :paramtype user_list: list[~azure.mgmt.networkcloud.models.KeySetUser]
         """
@@ -1455,9 +1536,10 @@ class BareMetalMachineKeySet(TrackedResource):
         self.last_validation: Optional[datetime.datetime] = None
         self.os_group_name = os_group_name
         self.privilege_level = privilege_level
+        self.privilege_level_name = privilege_level_name
         self.provisioning_state: Optional[Union[str, "_models.BareMetalMachineKeySetProvisioningState"]] = None
         self.user_list = user_list
-        self.user_list_status: Optional[List["_models.KeySetUserStatus"]] = None
+        self.user_list_status: Optional[list["_models.KeySetUserStatus"]] = None
 
 
 class BareMetalMachineKeySetList(_serialization.Model):
@@ -1478,7 +1560,7 @@ class BareMetalMachineKeySetList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.BareMetalMachineKeySet"]] = None,
+        value: Optional[list["_models.BareMetalMachineKeySet"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1518,10 +1600,10 @@ class BareMetalMachineKeySetPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         expiration: Optional[datetime.datetime] = None,
-        jump_hosts_allowed: Optional[List[str]] = None,
-        user_list: Optional[List["_models.KeySetUser"]] = None,
+        jump_hosts_allowed: Optional[list[str]] = None,
+        user_list: Optional[list["_models.KeySetUser"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1561,7 +1643,7 @@ class BareMetalMachineList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.BareMetalMachine"]] = None,
+        value: Optional[list["_models.BareMetalMachine"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1582,8 +1664,7 @@ class BareMetalMachinePatchParameters(_serialization.Model):
     :ivar tags: The Azure resource tags that will replace the existing ones.
     :vartype tags: dict[str, str]
     :ivar machine_details: The details provided by the customer during the creation of rack
-     manifests
-     that allows for custom data to be associated with this machine.
+     manifests that allows for custom data to be associated with this machine.
     :vartype machine_details: str
     """
 
@@ -1597,14 +1678,13 @@ class BareMetalMachinePatchParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, machine_details: Optional[str] = None, **kwargs: Any
+        self, *, tags: Optional[dict[str, str]] = None, machine_details: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]
         :keyword machine_details: The details provided by the customer during the creation of rack
-         manifests
-         that allows for custom data to be associated with this machine.
+         manifests that allows for custom data to be associated with this machine.
         :paramtype machine_details: str
         """
         super().__init__(**kwargs)
@@ -1652,8 +1732,17 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
     :vartype boot_mac_address: str
     :ivar machine_name: The OS-level hostname assigned to this machine.
     :vartype machine_name: str
+    :ivar safeguard_mode: The safeguard mode to use for the replace action, where None indicates to
+     bypass safeguards and All indicates to utilize all safeguards. Known values are: "All" and
+     "None".
+    :vartype safeguard_mode: str or
+     ~azure.mgmt.networkcloud.models.BareMetalMachineReplaceSafeguardMode
     :ivar serial_number: The serial number of the bare metal machine.
     :vartype serial_number: str
+    :ivar storage_policy: The indicator of whether to bypass clearing storage while replacing a
+     bare metal machine. Known values are: "Preserve" and "DiscardAll".
+    :vartype storage_policy: str or
+     ~azure.mgmt.networkcloud.models.BareMetalMachineReplaceStoragePolicy
     """
 
     _validation = {
@@ -1668,7 +1757,9 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
         "bmc_mac_address": {"key": "bmcMacAddress", "type": "str"},
         "boot_mac_address": {"key": "bootMacAddress", "type": "str"},
         "machine_name": {"key": "machineName", "type": "str"},
+        "safeguard_mode": {"key": "safeguardMode", "type": "str"},
         "serial_number": {"key": "serialNumber", "type": "str"},
+        "storage_policy": {"key": "storagePolicy", "type": "str"},
     }
 
     def __init__(
@@ -1678,7 +1769,9 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
         bmc_mac_address: Optional[str] = None,
         boot_mac_address: Optional[str] = None,
         machine_name: Optional[str] = None,
+        safeguard_mode: Union[str, "_models.BareMetalMachineReplaceSafeguardMode"] = "All",
         serial_number: Optional[str] = None,
+        storage_policy: Union[str, "_models.BareMetalMachineReplaceStoragePolicy"] = "DiscardAll",
         **kwargs: Any
     ) -> None:
         """
@@ -1693,15 +1786,26 @@ class BareMetalMachineReplaceParameters(_serialization.Model):
         :paramtype boot_mac_address: str
         :keyword machine_name: The OS-level hostname assigned to this machine.
         :paramtype machine_name: str
+        :keyword safeguard_mode: The safeguard mode to use for the replace action, where None indicates
+         to bypass safeguards and All indicates to utilize all safeguards. Known values are: "All" and
+         "None".
+        :paramtype safeguard_mode: str or
+         ~azure.mgmt.networkcloud.models.BareMetalMachineReplaceSafeguardMode
         :keyword serial_number: The serial number of the bare metal machine.
         :paramtype serial_number: str
+        :keyword storage_policy: The indicator of whether to bypass clearing storage while replacing a
+         bare metal machine. Known values are: "Preserve" and "DiscardAll".
+        :paramtype storage_policy: str or
+         ~azure.mgmt.networkcloud.models.BareMetalMachineReplaceStoragePolicy
         """
         super().__init__(**kwargs)
         self.bmc_credentials = bmc_credentials
         self.bmc_mac_address = bmc_mac_address
         self.boot_mac_address = boot_mac_address
         self.machine_name = machine_name
+        self.safeguard_mode = safeguard_mode
         self.serial_number = serial_number
+        self.storage_policy = storage_policy
 
 
 class BareMetalMachineRunCommandParameters(_serialization.Model):
@@ -1713,10 +1817,9 @@ class BareMetalMachineRunCommandParameters(_serialization.Model):
     :ivar arguments: The list of string arguments that will be passed to the script in order as
      separate arguments.
     :vartype arguments: list[str]
-    :ivar limit_time_seconds: The maximum time the script is allowed to run.
-     If the execution time exceeds the maximum, the script will be stopped, any output produced
-     until then will be captured, and the exit code matching a timeout will be returned (252).
-     Required.
+    :ivar limit_time_seconds: The maximum time the script is allowed to run. If the execution time
+     exceeds the maximum, the script will be stopped, any output produced until then will be
+     captured, and the exit code matching a timeout will be returned (252). Required.
     :vartype limit_time_seconds: int
     :ivar script: The base64 encoded script to execute on the bare metal machine. Required.
     :vartype script: str
@@ -1734,16 +1837,15 @@ class BareMetalMachineRunCommandParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, limit_time_seconds: int, script: str, arguments: Optional[List[str]] = None, **kwargs: Any
+        self, *, limit_time_seconds: int, script: str, arguments: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword arguments: The list of string arguments that will be passed to the script in order as
          separate arguments.
         :paramtype arguments: list[str]
-        :keyword limit_time_seconds: The maximum time the script is allowed to run.
-         If the execution time exceeds the maximum, the script will be stopped, any output produced
-         until then will be captured, and the exit code matching a timeout will be returned (252).
-         Required.
+        :keyword limit_time_seconds: The maximum time the script is allowed to run. If the execution
+         time exceeds the maximum, the script will be stopped, any output produced until then will be
+         captured, and the exit code matching a timeout will be returned (252). Required.
         :paramtype limit_time_seconds: int
         :keyword script: The base64 encoded script to execute on the bare metal machine. Required.
         :paramtype script: str
@@ -1763,10 +1865,9 @@ class BareMetalMachineRunDataExtractsParameters(_serialization.Model):  # pylint
     :ivar commands: The list of curated data extraction commands to be executed directly against
      the target machine. Required.
     :vartype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-    :ivar limit_time_seconds: The maximum time the commands are allowed to run.
-     If the execution time exceeds the maximum, the script will be stopped, any output produced
-     until then will be captured, and the exit code matching a timeout will be returned (252).
-     Required.
+    :ivar limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+     time exceeds the maximum, the script will be stopped, any output produced until then will be
+     captured, and the exit code matching a timeout will be returned (252). Required.
     :vartype limit_time_seconds: int
     """
 
@@ -1781,16 +1882,15 @@ class BareMetalMachineRunDataExtractsParameters(_serialization.Model):  # pylint
     }
 
     def __init__(
-        self, *, commands: List["_models.BareMetalMachineCommandSpecification"], limit_time_seconds: int, **kwargs: Any
+        self, *, commands: list["_models.BareMetalMachineCommandSpecification"], limit_time_seconds: int, **kwargs: Any
     ) -> None:
         """
         :keyword commands: The list of curated data extraction commands to be executed directly against
          the target machine. Required.
         :paramtype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-        :keyword limit_time_seconds: The maximum time the commands are allowed to run.
-         If the execution time exceeds the maximum, the script will be stopped, any output produced
-         until then will be captured, and the exit code matching a timeout will be returned (252).
-         Required.
+        :keyword limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+         time exceeds the maximum, the script will be stopped, any output produced until then will be
+         captured, and the exit code matching a timeout will be returned (252). Required.
         :paramtype limit_time_seconds: int
         """
         super().__init__(**kwargs)
@@ -1807,10 +1907,9 @@ class BareMetalMachineRunReadCommandsParameters(_serialization.Model):  # pylint
     :ivar commands: The list of read-only commands to be executed directly against the target
      machine. Required.
     :vartype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-    :ivar limit_time_seconds: The maximum time the commands are allowed to run.
-     If the execution time exceeds the maximum, the script will be stopped, any output produced
-     until then will be captured, and the exit code matching a timeout will be returned (252).
-     Required.
+    :ivar limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+     time exceeds the maximum, the script will be stopped, any output produced until then will be
+     captured, and the exit code matching a timeout will be returned (252). Required.
     :vartype limit_time_seconds: int
     """
 
@@ -1825,16 +1924,15 @@ class BareMetalMachineRunReadCommandsParameters(_serialization.Model):  # pylint
     }
 
     def __init__(
-        self, *, commands: List["_models.BareMetalMachineCommandSpecification"], limit_time_seconds: int, **kwargs: Any
+        self, *, commands: list["_models.BareMetalMachineCommandSpecification"], limit_time_seconds: int, **kwargs: Any
     ) -> None:
         """
         :keyword commands: The list of read-only commands to be executed directly against the target
          machine. Required.
         :paramtype commands: list[~azure.mgmt.networkcloud.models.BareMetalMachineCommandSpecification]
-        :keyword limit_time_seconds: The maximum time the commands are allowed to run.
-         If the execution time exceeds the maximum, the script will be stopped, any output produced
-         until then will be captured, and the exit code matching a timeout will be returned (252).
-         Required.
+        :keyword limit_time_seconds: The maximum time the commands are allowed to run. If the execution
+         time exceeds the maximum, the script will be stopped, any output produced until then will be
+         captured, and the exit code matching a timeout will be returned (252). Required.
         :paramtype limit_time_seconds: int
         """
         super().__init__(**kwargs)
@@ -1876,10 +1974,10 @@ class BgpAdvertisement(_serialization.Model):
     def __init__(
         self,
         *,
-        ip_address_pools: List[str],
+        ip_address_pools: list[str],
         advertise_to_fabric: Union[str, "_models.AdvertiseToFabric"] = "True",
-        communities: Optional[List[str]] = None,
-        peers: Optional[List[str]] = None,
+        communities: Optional[list[str]] = None,
+        peers: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1932,10 +2030,10 @@ class BgpServiceLoadBalancerConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        bgp_advertisements: Optional[List["_models.BgpAdvertisement"]] = None,
-        bgp_peers: Optional[List["_models.ServiceLoadBalancerBgpPeer"]] = None,
+        bgp_advertisements: Optional[list["_models.BgpAdvertisement"]] = None,
+        bgp_peers: Optional[list["_models.ServiceLoadBalancerBgpPeer"]] = None,
         fabric_peering_enabled: Union[str, "_models.FabricPeeringEnabled"] = "True",
-        ip_address_pools: Optional[List["_models.IpAddressPool"]] = None,
+        ip_address_pools: Optional[list["_models.IpAddressPool"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2059,8 +2157,8 @@ class BmcKeySet(TrackedResource):
         azure_group_id: str,
         expiration: datetime.datetime,
         privilege_level: Union[str, "_models.BmcKeySetPrivilegeLevel"],
-        user_list: List["_models.KeySetUser"],
-        tags: Optional[Dict[str, str]] = None,
+        user_list: list["_models.KeySetUser"],
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2095,7 +2193,7 @@ class BmcKeySet(TrackedResource):
         self.privilege_level = privilege_level
         self.provisioning_state: Optional[Union[str, "_models.BmcKeySetProvisioningState"]] = None
         self.user_list = user_list
-        self.user_list_status: Optional[List["_models.KeySetUserStatus"]] = None
+        self.user_list_status: Optional[list["_models.KeySetUserStatus"]] = None
 
 
 class BmcKeySetList(_serialization.Model):
@@ -2113,7 +2211,7 @@ class BmcKeySetList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.BmcKeySet"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.BmcKeySet"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -2148,9 +2246,9 @@ class BmcKeySetPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         expiration: Optional[datetime.datetime] = None,
-        user_list: Optional[List["_models.KeySetUser"]] = None,
+        user_list: Optional[list["_models.KeySetUser"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2168,13 +2266,39 @@ class BmcKeySetPatchParameters(_serialization.Model):
         self.user_list = user_list
 
 
+class CertificateInfo(_serialization.Model):
+    """CertificateInfo represents the non-private information of an X.509 Certificate.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar hash: The hash value of the X.509 Certificate.
+    :vartype hash: str
+    :ivar value: The textual value of the X.509 Certificate.
+    :vartype value: str
+    """
+
+    _validation = {
+        "hash": {"readonly": True},
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "hash": {"key": "hash", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.hash: Optional[str] = None
+        self.value: Optional[str] = None
+
+
 class CloudServicesNetwork(TrackedResource):
     """Upon creation, the additional services that are provided by the platform will be allocated and
     represented in the status of this resource. All resources associated with this cloud services
-    network will be part
-    of the same layer 2 (L2) isolation domain. At least one service network must be created but may
-    be reused across many
-    virtual machines and/or Hybrid AKS clusters.
+    network will be part of the same layer 2 (L2) isolation domain. At least one service network
+    must be created but may be reused across many virtual machines and/or Hybrid AKS clusters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2233,6 +2357,10 @@ class CloudServicesNetwork(TrackedResource):
      are: "Succeeded", "Failed", "Canceled", "Provisioning", and "Accepted".
     :vartype provisioning_state: str or
      ~azure.mgmt.networkcloud.models.CloudServicesNetworkProvisioningState
+    :ivar storage_options: The storage options for the cloud services network.
+    :vartype storage_options: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageOptions
+    :ivar storage_status: The storage status for the cloud services network.
+    :vartype storage_status: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageStatus
     :ivar virtual_machines_associated_ids: Field Deprecated. These fields will be empty/omitted.
      The list of virtual machine resource IDs, excluding any Hybrid AKS virtual machines, that are
      currently using this cloud services network.
@@ -2255,6 +2383,7 @@ class CloudServicesNetwork(TrackedResource):
         "hybrid_aks_clusters_associated_ids": {"readonly": True},
         "interface_name": {"readonly": True},
         "provisioning_state": {"readonly": True},
+        "storage_status": {"readonly": True},
         "virtual_machines_associated_ids": {"readonly": True},
     }
 
@@ -2277,6 +2406,8 @@ class CloudServicesNetwork(TrackedResource):
         "hybrid_aks_clusters_associated_ids": {"key": "properties.hybridAksClustersAssociatedIds", "type": "[str]"},
         "interface_name": {"key": "properties.interfaceName", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "storage_options": {"key": "properties.storageOptions", "type": "CloudServicesNetworkStorageOptions"},
+        "storage_status": {"key": "properties.storageStatus", "type": "CloudServicesNetworkStorageStatus"},
         "virtual_machines_associated_ids": {"key": "properties.virtualMachinesAssociatedIds", "type": "[str]"},
     }
 
@@ -2285,11 +2416,12 @@ class CloudServicesNetwork(TrackedResource):
         *,
         location: str,
         extended_location: "_models.ExtendedLocation",
-        tags: Optional[Dict[str, str]] = None,
-        additional_egress_endpoints: Optional[List["_models.EgressEndpoint"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        additional_egress_endpoints: Optional[list["_models.EgressEndpoint"]] = None,
         enable_default_egress_endpoints: Optional[
             Union[str, "_models.CloudServicesNetworkEnableDefaultEgressEndpoints"]
         ] = None,
+        storage_options: Optional["_models.CloudServicesNetworkStorageOptions"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2307,21 +2439,25 @@ class CloudServicesNetwork(TrackedResource):
          endpoints are allowed for the egress traffic. Known values are: "True" and "False".
         :paramtype enable_default_egress_endpoints: str or
          ~azure.mgmt.networkcloud.models.CloudServicesNetworkEnableDefaultEgressEndpoints
+        :keyword storage_options: The storage options for the cloud services network.
+        :paramtype storage_options: ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageOptions
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
         self.additional_egress_endpoints = additional_egress_endpoints
-        self.associated_resource_ids: Optional[List[str]] = None
+        self.associated_resource_ids: Optional[list[str]] = None
         self.cluster_id: Optional[str] = None
         self.detailed_status: Optional[Union[str, "_models.CloudServicesNetworkDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
         self.enable_default_egress_endpoints = enable_default_egress_endpoints
-        self.enabled_egress_endpoints: Optional[List["_models.EgressEndpoint"]] = None
-        self.hybrid_aks_clusters_associated_ids: Optional[List[str]] = None
+        self.enabled_egress_endpoints: Optional[list["_models.EgressEndpoint"]] = None
+        self.hybrid_aks_clusters_associated_ids: Optional[list[str]] = None
         self.interface_name: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.CloudServicesNetworkProvisioningState"]] = None
-        self.virtual_machines_associated_ids: Optional[List[str]] = None
+        self.storage_options = storage_options
+        self.storage_status: Optional["_models.CloudServicesNetworkStorageStatus"] = None
+        self.virtual_machines_associated_ids: Optional[list[str]] = None
 
 
 class CloudServicesNetworkList(_serialization.Model):
@@ -2342,7 +2478,7 @@ class CloudServicesNetworkList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.CloudServicesNetwork"]] = None,
+        value: Optional[list["_models.CloudServicesNetwork"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2369,22 +2505,27 @@ class CloudServicesNetworkPatchParameters(_serialization.Model):
      are allowed for the egress traffic. Known values are: "True" and "False".
     :vartype enable_default_egress_endpoints: str or
      ~azure.mgmt.networkcloud.models.CloudServicesNetworkEnableDefaultEgressEndpoints
+    :ivar storage_options: The storage options for the cloud services network.
+    :vartype storage_options:
+     ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageOptionsPatch
     """
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
         "additional_egress_endpoints": {"key": "properties.additionalEgressEndpoints", "type": "[EgressEndpoint]"},
         "enable_default_egress_endpoints": {"key": "properties.enableDefaultEgressEndpoints", "type": "str"},
+        "storage_options": {"key": "properties.storageOptions", "type": "CloudServicesNetworkStorageOptionsPatch"},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
-        additional_egress_endpoints: Optional[List["_models.EgressEndpoint"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        additional_egress_endpoints: Optional[list["_models.EgressEndpoint"]] = None,
         enable_default_egress_endpoints: Optional[
             Union[str, "_models.CloudServicesNetworkEnableDefaultEgressEndpoints"]
         ] = None,
+        storage_options: Optional["_models.CloudServicesNetworkStorageOptionsPatch"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2397,11 +2538,154 @@ class CloudServicesNetworkPatchParameters(_serialization.Model):
          endpoints are allowed for the egress traffic. Known values are: "True" and "False".
         :paramtype enable_default_egress_endpoints: str or
          ~azure.mgmt.networkcloud.models.CloudServicesNetworkEnableDefaultEgressEndpoints
+        :keyword storage_options: The storage options for the cloud services network.
+        :paramtype storage_options:
+         ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageOptionsPatch
         """
         super().__init__(**kwargs)
         self.tags = tags
         self.additional_egress_endpoints = additional_egress_endpoints
         self.enable_default_egress_endpoints = enable_default_egress_endpoints
+        self.storage_options = storage_options
+
+
+class CloudServicesNetworkStorageOptions(_serialization.Model):
+    """CloudServicesNetworkStorageOptions represents the storage options for the cloud services
+    network.
+
+    :ivar mode: The indicator to enable shared storage on the cloud services network. If not
+     specified, the allocation will align with the standard storage enablement. Known values are:
+     "None" and "Standard".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageMode
+    :ivar size_mi_b: The requested storage allocation for the volume in Mebibytes.
+    :vartype size_mi_b: int
+    :ivar storage_appliance_id: The resource ID of the storage appliance that hosts the storage.
+    :vartype storage_appliance_id: str
+    """
+
+    _validation = {
+        "size_mi_b": {"minimum": 1},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "size_mi_b": {"key": "sizeMiB", "type": "int"},
+        "storage_appliance_id": {"key": "storageApplianceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.CloudServicesNetworkStorageMode"]] = None,
+        size_mi_b: Optional[int] = None,
+        storage_appliance_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: The indicator to enable shared storage on the cloud services network. If not
+         specified, the allocation will align with the standard storage enablement. Known values are:
+         "None" and "Standard".
+        :paramtype mode: str or ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageMode
+        :keyword size_mi_b: The requested storage allocation for the volume in Mebibytes.
+        :paramtype size_mi_b: int
+        :keyword storage_appliance_id: The resource ID of the storage appliance that hosts the storage.
+        :paramtype storage_appliance_id: str
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.size_mi_b = size_mi_b
+        self.storage_appliance_id = storage_appliance_id
+
+
+class CloudServicesNetworkStorageOptionsPatch(_serialization.Model):
+    """CloudServicesNetworkStorageOptionsPatch represents the patchable storage options for the cloud
+    services network.
+
+    :ivar mode: The indicator to enable shared storage on the cloud services network. Known values
+     are: "None" and "Standard".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageMode
+    :ivar size_mi_b: The requested storage allocation for the volume in Mebibytes.
+    :vartype size_mi_b: int
+    :ivar storage_appliance_id: The resource ID of the storage appliance that hosts the storage.
+    :vartype storage_appliance_id: str
+    """
+
+    _validation = {
+        "size_mi_b": {"minimum": 1},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "size_mi_b": {"key": "sizeMiB", "type": "int"},
+        "storage_appliance_id": {"key": "storageApplianceId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.CloudServicesNetworkStorageMode"]] = None,
+        size_mi_b: Optional[int] = None,
+        storage_appliance_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: The indicator to enable shared storage on the cloud services network. Known
+         values are: "None" and "Standard".
+        :paramtype mode: str or ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageMode
+        :keyword size_mi_b: The requested storage allocation for the volume in Mebibytes.
+        :paramtype size_mi_b: int
+        :keyword storage_appliance_id: The resource ID of the storage appliance that hosts the storage.
+        :paramtype storage_appliance_id: str
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.size_mi_b = size_mi_b
+        self.storage_appliance_id = storage_appliance_id
+
+
+class CloudServicesNetworkStorageStatus(_serialization.Model):
+    """CloudServicesNetworkStorageStatus represents the storage status of the cloud services network.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: The indicator of if shared storage is enabled on the cloud services network. Known
+     values are: "None" and "Standard".
+    :vartype mode: str or ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageMode
+    :ivar size_mi_b: The size in Mebibytes of the storage allocation.
+    :vartype size_mi_b: int
+    :ivar status: The status of the storage allocation for the cloud services network. Known values
+     are: "Available", "ExpandingVolume", and "ExpansionFailed".
+    :vartype status: str or ~azure.mgmt.networkcloud.models.CloudServicesNetworkStorageStatusStatus
+    :ivar status_message: The description for the status of the shared storage.
+    :vartype status_message: str
+    :ivar volume_id: The resource ID of the volume created to host the shared storage.
+    :vartype volume_id: str
+    """
+
+    _validation = {
+        "mode": {"readonly": True},
+        "size_mi_b": {"readonly": True, "minimum": 0},
+        "status": {"readonly": True},
+        "status_message": {"readonly": True},
+        "volume_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "size_mi_b": {"key": "sizeMiB", "type": "int"},
+        "status": {"key": "status", "type": "str"},
+        "status_message": {"key": "statusMessage", "type": "str"},
+        "volume_id": {"key": "volumeId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.mode: Optional[Union[str, "_models.CloudServicesNetworkStorageMode"]] = None
+        self.size_mi_b: Optional[int] = None
+        self.status: Optional[Union[str, "_models.CloudServicesNetworkStorageStatusStatus"]] = None
+        self.status_message: Optional[str] = None
+        self.volume_id: Optional[str] = None
 
 
 class Cluster(TrackedResource):
@@ -2433,6 +2717,9 @@ class Cluster(TrackedResource):
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
     :ivar identity: The identity for the resource.
     :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
+    :ivar action_states: The current state of any in progress or completed actions. The most recent
+     known instance of each action type is shown.
+    :vartype action_states: list[~azure.mgmt.networkcloud.models.ActionState]
     :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
      only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
      Required.
@@ -2467,8 +2754,8 @@ class Cluster(TrackedResource):
     :ivar cluster_manager_id: The resource ID of the cluster manager that manages this cluster.
      This is set by the Cluster Manager when the cluster is created.
     :vartype cluster_manager_id: str
-    :ivar cluster_service_principal: The service principal to be used by the cluster during Arc
-     Appliance installation.
+    :ivar cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+     privileges. The service principal to be used by the cluster during Arc Appliance installation.
     :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
     :ivar cluster_type: The type of rack configuration for the cluster. Required. Known values are:
      "SingleRack" and "MultiRack".
@@ -2482,8 +2769,7 @@ class Cluster(TrackedResource):
      of compute machines during environment validation and deployment.
     :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
     :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
-     multi-rack
-     cluster, or an empty list in a single-rack cluster.
+     multi-rack cluster, or an empty list in a single-rack cluster.
     :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
     :ivar detailed_status: The current detailed status of the cluster. Known values are:
      "PendingDeployment", "Deploying", "Running", "Updating", "UpdatePaused", "Degraded",
@@ -2539,6 +2825,7 @@ class Cluster(TrackedResource):
         "location": {"required": True},
         "etag": {"readonly": True},
         "extended_location": {"required": True},
+        "action_states": {"readonly": True},
         "aggregator_or_single_rack_definition": {"required": True},
         "available_upgrade_versions": {"readonly": True},
         "cluster_capacity": {"readonly": True},
@@ -2569,6 +2856,7 @@ class Cluster(TrackedResource):
         "etag": {"key": "etag", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
+        "action_states": {"key": "properties.actionStates", "type": "[ActionState]"},
         "aggregator_or_single_rack_definition": {
             "key": "properties.aggregatorOrSingleRackDefinition",
             "type": "RackDefinition",
@@ -2628,7 +2916,7 @@ class Cluster(TrackedResource):
         cluster_type: Union[str, "_models.ClusterType"],
         cluster_version: str,
         network_fabric_id: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         analytics_output_settings: Optional["_models.AnalyticsOutputSettings"] = None,
         analytics_workspace_id: Optional[str] = None,
@@ -2636,7 +2924,7 @@ class Cluster(TrackedResource):
         cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = None,
         command_output_settings: Optional["_models.CommandOutputSettings"] = None,
         compute_deployment_threshold: Optional["_models.ValidationThreshold"] = None,
-        compute_rack_definitions: Optional[List["_models.RackDefinition"]] = None,
+        compute_rack_definitions: Optional[list["_models.RackDefinition"]] = None,
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
         runtime_protection_configuration: Optional["_models.RuntimeProtectionConfiguration"] = None,
         secret_archive: Optional["_models.ClusterSecretArchive"] = None,
@@ -2668,8 +2956,8 @@ class Cluster(TrackedResource):
         :keyword cluster_location: The customer-provided location information to identify where the
          cluster resides.
         :paramtype cluster_location: str
-        :keyword cluster_service_principal: The service principal to be used by the cluster during Arc
-         Appliance installation.
+        :keyword cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+         privileges. The service principal to be used by the cluster during Arc Appliance installation.
         :paramtype cluster_service_principal:
          ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
         :keyword cluster_type: The type of rack configuration for the cluster. Required. Known values
@@ -2684,8 +2972,7 @@ class Cluster(TrackedResource):
          failures of compute machines during environment validation and deployment.
         :paramtype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
         :keyword compute_rack_definitions: The list of rack definitions for the compute racks in a
-         multi-rack
-         cluster, or an empty list in a single-rack cluster.
+         multi-rack cluster, or an empty list in a single-rack cluster.
         :paramtype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
         :keyword managed_resource_group_configuration: The configuration of the managed resource group
          associated with the resource.
@@ -2714,10 +3001,11 @@ class Cluster(TrackedResource):
         self.etag: Optional[str] = None
         self.extended_location = extended_location
         self.identity = identity
+        self.action_states: Optional[list["_models.ActionState"]] = None
         self.aggregator_or_single_rack_definition = aggregator_or_single_rack_definition
         self.analytics_output_settings = analytics_output_settings
         self.analytics_workspace_id = analytics_workspace_id
-        self.available_upgrade_versions: Optional[List["_models.ClusterAvailableUpgradeVersion"]] = None
+        self.available_upgrade_versions: Optional[list["_models.ClusterAvailableUpgradeVersion"]] = None
         self.cluster_capacity: Optional["_models.ClusterCapacity"] = None
         self.cluster_connection_status: Optional[Union[str, "_models.ClusterConnectionStatus"]] = None
         self.cluster_extended_location: Optional["_models.ExtendedLocation"] = None
@@ -2743,7 +3031,7 @@ class Cluster(TrackedResource):
         self.support_expiry_date: Optional[str] = None
         self.update_strategy = update_strategy
         self.vulnerability_scanning_settings = vulnerability_scanning_settings
-        self.workload_resource_ids: Optional[List[str]] = None
+        self.workload_resource_ids: Optional[list[str]] = None
 
 
 class ClusterAvailableUpgradeVersion(_serialization.Model):
@@ -2960,7 +3248,7 @@ class ClusterDeployParameters(_serialization.Model):
         "skip_validations_for_machines": {"key": "skipValidationsForMachines", "type": "[str]"},
     }
 
-    def __init__(self, *, skip_validations_for_machines: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, skip_validations_for_machines: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword skip_validations_for_machines: The names of bare metal machines in the cluster that
          should be skipped during environment validation.
@@ -2985,7 +3273,7 @@ class ClusterList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Cluster"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Cluster"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -3027,9 +3315,8 @@ class ClusterManager(TrackedResource):
     :ivar analytics_workspace_id: The resource ID of the Log Analytics workspace that is used for
      the logs collection.
     :vartype analytics_workspace_id: str
-    :ivar availability_zones: Field deprecated, this value will no longer influence the cluster
-     manager allocation process and will be removed in a future version. The Azure availability
-     zones within the region that will be used to support the cluster manager resource.
+    :ivar availability_zones: The Azure availability zones within the region that will be used to
+     support the cluster manager resource.
     :vartype availability_zones: list[str]
     :ivar cluster_versions: The list of the cluster versions the manager supports. It is used as
      input in clusterVersion property of a cluster resource.
@@ -3055,9 +3342,8 @@ class ClusterManager(TrackedResource):
      "Succeeded", "Failed", "Canceled", "Provisioning", "Accepted", and "Updating".
     :vartype provisioning_state: str or
      ~azure.mgmt.networkcloud.models.ClusterManagerProvisioningState
-    :ivar vm_size: Field deprecated, this value will no longer influence the cluster manager
-     allocation process and will be removed in a future version. The size of the Azure virtual
-     machines to use for hosting the cluster manager resource.
+    :ivar vm_size: The size of the Azure virtual machines to use for hosting the cluster manager
+     resource.
     :vartype vm_size: str
     """
 
@@ -3105,10 +3391,10 @@ class ClusterManager(TrackedResource):
         *,
         location: str,
         fabric_controller_id: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         analytics_workspace_id: Optional[str] = None,
-        availability_zones: Optional[List[str]] = None,
+        availability_zones: Optional[list[str]] = None,
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
         vm_size: Optional[str] = None,
         **kwargs: Any
@@ -3123,9 +3409,8 @@ class ClusterManager(TrackedResource):
         :keyword analytics_workspace_id: The resource ID of the Log Analytics workspace that is used
          for the logs collection.
         :paramtype analytics_workspace_id: str
-        :keyword availability_zones: Field deprecated, this value will no longer influence the cluster
-         manager allocation process and will be removed in a future version. The Azure availability
-         zones within the region that will be used to support the cluster manager resource.
+        :keyword availability_zones: The Azure availability zones within the region that will be used
+         to support the cluster manager resource.
         :paramtype availability_zones: list[str]
         :keyword fabric_controller_id: The resource ID of the fabric controller that has one to one
          mapping with the cluster manager. Required.
@@ -3134,9 +3419,8 @@ class ClusterManager(TrackedResource):
          associated with the resource.
         :paramtype managed_resource_group_configuration:
          ~azure.mgmt.networkcloud.models.ManagedResourceGroupConfiguration
-        :keyword vm_size: Field deprecated, this value will no longer influence the cluster manager
-         allocation process and will be removed in a future version. The size of the Azure virtual
-         machines to use for hosting the cluster manager resource.
+        :keyword vm_size: The size of the Azure virtual machines to use for hosting the cluster manager
+         resource.
         :paramtype vm_size: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
@@ -3144,7 +3428,7 @@ class ClusterManager(TrackedResource):
         self.identity = identity
         self.analytics_workspace_id = analytics_workspace_id
         self.availability_zones = availability_zones
-        self.cluster_versions: Optional[List["_models.ClusterAvailableVersion"]] = None
+        self.cluster_versions: Optional[list["_models.ClusterAvailableVersion"]] = None
         self.detailed_status: Optional[Union[str, "_models.ClusterManagerDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
         self.fabric_controller_id = fabric_controller_id
@@ -3169,7 +3453,7 @@ class ClusterManagerList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ClusterManager"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.ClusterManager"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -3201,7 +3485,7 @@ class ClusterManagerPatchParameters(_serialization.Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3302,8 +3586,8 @@ class ClusterMetricsConfiguration(TrackedResource):
         location: str,
         extended_location: "_models.ExtendedLocation",
         collection_interval: int,
-        tags: Optional[Dict[str, str]] = None,
-        enabled_metrics: Optional[List[str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        enabled_metrics: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3327,7 +3611,7 @@ class ClusterMetricsConfiguration(TrackedResource):
         self.collection_interval = collection_interval
         self.detailed_status: Optional[Union[str, "_models.ClusterMetricsConfigurationDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
-        self.disabled_metrics: Optional[List[str]] = None
+        self.disabled_metrics: Optional[list[str]] = None
         self.enabled_metrics = enabled_metrics
         self.provisioning_state: Optional[Union[str, "_models.ClusterMetricsConfigurationProvisioningState"]] = None
 
@@ -3350,7 +3634,7 @@ class ClusterMetricsConfigurationList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.ClusterMetricsConfiguration"]] = None,
+        value: Optional[list["_models.ClusterMetricsConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3390,9 +3674,9 @@ class ClusterMetricsConfigurationPatchParameters(_serialization.Model):  # pylin
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         collection_interval: Optional[int] = None,
-        enabled_metrics: Optional[List[str]] = None,
+        enabled_metrics: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3426,8 +3710,8 @@ class ClusterPatchParameters(_serialization.Model):
     :ivar cluster_location: The customer-provided location information to identify where the
      cluster resides.
     :vartype cluster_location: str
-    :ivar cluster_service_principal: The service principal to be used by the cluster during Arc
-     Appliance installation.
+    :ivar cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+     privileges. The service principal to be used by the cluster during Arc Appliance installation.
     :vartype cluster_service_principal: ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
     :ivar command_output_settings: The settings for commands run in this cluster, such as bare
      metal machine run read only commands and data extracts.
@@ -3436,8 +3720,7 @@ class ClusterPatchParameters(_serialization.Model):
      of compute machines during environment validation and deployment.
     :vartype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
     :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
-     multi-rack
-     cluster, or an empty list in a single-rack cluster.
+     multi-rack cluster, or an empty list in a single-rack cluster.
     :vartype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
     :ivar runtime_protection_configuration: The settings for cluster runtime protection.
     :vartype runtime_protection_configuration:
@@ -3489,14 +3772,14 @@ class ClusterPatchParameters(_serialization.Model):
         self,
         *,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         aggregator_or_single_rack_definition: Optional["_models.RackDefinition"] = None,
         analytics_output_settings: Optional["_models.AnalyticsOutputSettings"] = None,
         cluster_location: Optional[str] = None,
         cluster_service_principal: Optional["_models.ServicePrincipalInformation"] = None,
         command_output_settings: Optional["_models.CommandOutputSettings"] = None,
         compute_deployment_threshold: Optional["_models.ValidationThreshold"] = None,
-        compute_rack_definitions: Optional[List["_models.RackDefinition"]] = None,
+        compute_rack_definitions: Optional[list["_models.RackDefinition"]] = None,
         runtime_protection_configuration: Optional["_models.RuntimeProtectionConfiguration"] = None,
         secret_archive: Optional["_models.ClusterSecretArchive"] = None,
         secret_archive_settings: Optional["_models.SecretArchiveSettings"] = None,
@@ -3518,8 +3801,8 @@ class ClusterPatchParameters(_serialization.Model):
         :keyword cluster_location: The customer-provided location information to identify where the
          cluster resides.
         :paramtype cluster_location: str
-        :keyword cluster_service_principal: The service principal to be used by the cluster during Arc
-         Appliance installation.
+        :keyword cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
+         privileges. The service principal to be used by the cluster during Arc Appliance installation.
         :paramtype cluster_service_principal:
          ~azure.mgmt.networkcloud.models.ServicePrincipalInformation
         :keyword command_output_settings: The settings for commands run in this cluster, such as bare
@@ -3529,8 +3812,7 @@ class ClusterPatchParameters(_serialization.Model):
          failures of compute machines during environment validation and deployment.
         :paramtype compute_deployment_threshold: ~azure.mgmt.networkcloud.models.ValidationThreshold
         :keyword compute_rack_definitions: The list of rack definitions for the compute racks in a
-         multi-rack
-         cluster, or an empty list in a single-rack cluster.
+         multi-rack cluster, or an empty list in a single-rack cluster.
         :paramtype compute_rack_definitions: list[~azure.mgmt.networkcloud.models.RackDefinition]
         :keyword runtime_protection_configuration: The settings for cluster runtime protection.
         :paramtype runtime_protection_configuration:
@@ -3640,9 +3922,8 @@ class ClusterUpdateStrategy(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar max_unavailable: The maximum number of worker nodes that can be offline within the
-     increment of update, e.g., rack-by-rack.
-     Limited by the maximum number of machines in the increment. Defaults to the whole increment
-     size.
+     increment of update, e.g., rack-by-rack. Limited by the maximum number of machines in the
+     increment. Defaults to the whole increment size.
     :vartype max_unavailable: int
     :ivar strategy_type: The mode of operation for runtime protection. Required. Known values are:
      "Rack" and "PauseAfterRack".
@@ -3685,9 +3966,8 @@ class ClusterUpdateStrategy(_serialization.Model):
     ) -> None:
         """
         :keyword max_unavailable: The maximum number of worker nodes that can be offline within the
-         increment of update, e.g., rack-by-rack.
-         Limited by the maximum number of machines in the increment. Defaults to the whole increment
-         size.
+         increment of update, e.g., rack-by-rack. Limited by the maximum number of machines in the
+         increment. Defaults to the whole increment size.
         :paramtype max_unavailable: int
         :keyword strategy_type: The mode of operation for runtime protection. Required. Known values
          are: "Rack" and "PauseAfterRack".
@@ -3736,6 +4016,55 @@ class ClusterUpdateVersionParameters(_serialization.Model):
         self.target_cluster_version = target_cluster_version
 
 
+class CommandOutputOverride(_serialization.Model):
+    """CommandOutputOverride represents an overridden value for the command output settings.
+
+    :ivar associated_identity: The selection of the managed identity to use with this storage
+     account container. The identity type must be either system assigned or user assigned.
+    :vartype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
+    :ivar command_output_type: The type of command output for the override. Known values are:
+     "BareMetalMachineRunCommand", "BareMetalMachineRunDataExtracts",
+     "BareMetalMachineRunReadCommands", "StorageRunReadCommands", and
+     "BareMetalMachineRunDataExtractsRestricted".
+    :vartype command_output_type: str or ~azure.mgmt.networkcloud.models.CommandOutputType
+    :ivar container_url: The URL of the storage account container that is to be used by the
+     specified identities.
+    :vartype container_url: str
+    """
+
+    _attribute_map = {
+        "associated_identity": {"key": "associatedIdentity", "type": "IdentitySelector"},
+        "command_output_type": {"key": "commandOutputType", "type": "str"},
+        "container_url": {"key": "containerUrl", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        associated_identity: Optional["_models.IdentitySelector"] = None,
+        command_output_type: Optional[Union[str, "_models.CommandOutputType"]] = None,
+        container_url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword associated_identity: The selection of the managed identity to use with this storage
+         account container. The identity type must be either system assigned or user assigned.
+        :paramtype associated_identity: ~azure.mgmt.networkcloud.models.IdentitySelector
+        :keyword command_output_type: The type of command output for the override. Known values are:
+         "BareMetalMachineRunCommand", "BareMetalMachineRunDataExtracts",
+         "BareMetalMachineRunReadCommands", "StorageRunReadCommands", and
+         "BareMetalMachineRunDataExtractsRestricted".
+        :paramtype command_output_type: str or ~azure.mgmt.networkcloud.models.CommandOutputType
+        :keyword container_url: The URL of the storage account container that is to be used by the
+         specified identities.
+        :paramtype container_url: str
+        """
+        super().__init__(**kwargs)
+        self.associated_identity = associated_identity
+        self.command_output_type = command_output_type
+        self.container_url = container_url
+
+
 class CommandOutputSettings(_serialization.Model):
     """CommandOutputSettings represents the settings for commands run within the cluster such as bare
     metal machine run read-only commands.
@@ -3746,11 +4075,16 @@ class CommandOutputSettings(_serialization.Model):
     :ivar container_url: The URL of the storage account container that is to be used by the
      specified identities.
     :vartype container_url: str
+    :ivar overrides: The list of optional overrides allowing for association of storage containers
+     and identities to specific types of command output. If a type is not overridden, the default
+     identity and storage container will be utilized.
+    :vartype overrides: list[~azure.mgmt.networkcloud.models.CommandOutputOverride]
     """
 
     _attribute_map = {
         "associated_identity": {"key": "associatedIdentity", "type": "IdentitySelector"},
         "container_url": {"key": "containerUrl", "type": "str"},
+        "overrides": {"key": "overrides", "type": "[CommandOutputOverride]"},
     }
 
     def __init__(
@@ -3758,6 +4092,7 @@ class CommandOutputSettings(_serialization.Model):
         *,
         associated_identity: Optional["_models.IdentitySelector"] = None,
         container_url: Optional[str] = None,
+        overrides: Optional[list["_models.CommandOutputOverride"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3767,10 +4102,15 @@ class CommandOutputSettings(_serialization.Model):
         :keyword container_url: The URL of the storage account container that is to be used by the
          specified identities.
         :paramtype container_url: str
+        :keyword overrides: The list of optional overrides allowing for association of storage
+         containers and identities to specific types of command output. If a type is not overridden, the
+         default identity and storage container will be utilized.
+        :paramtype overrides: list[~azure.mgmt.networkcloud.models.CommandOutputOverride]
         """
         super().__init__(**kwargs)
         self.associated_identity = associated_identity
         self.container_url = container_url
+        self.overrides = overrides
 
 
 class Console(TrackedResource):
@@ -3867,7 +4207,7 @@ class Console(TrackedResource):
         extended_location: "_models.ExtendedLocation",
         enabled: Union[str, "_models.ConsoleEnabled"],
         ssh_public_key: "_models.SshPublicKey",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         expiration: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -3916,7 +4256,7 @@ class ConsoleList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Console"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Console"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -3954,7 +4294,7 @@ class ConsolePatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         enabled: Optional[Union[str, "_models.ConsoleEnabled"]] = None,
         expiration: Optional[datetime.datetime] = None,
         ssh_public_key: Optional["_models.SshPublicKey"] = None,
@@ -4017,7 +4357,7 @@ class ControlPlaneNodeConfiguration(_serialization.Model):
         count: int,
         vm_sku_name: str,
         administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
-        availability_zones: Optional[List[str]] = None,
+        availability_zones: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -4106,7 +4446,7 @@ class EgressEndpoint(_serialization.Model):
         "endpoints": {"key": "endpoints", "type": "[EndpointDependency]"},
     }
 
-    def __init__(self, *, category: str, endpoints: List["_models.EndpointDependency"], **kwargs: Any) -> None:
+    def __init__(self, *, category: str, endpoints: list["_models.EndpointDependency"], **kwargs: Any) -> None:
         """
         :keyword category: The descriptive category name of endpoints accessible by the AKS agent node.
          For example, azure-resource-management, API server, etc. The platform egress endpoints provided
@@ -4220,8 +4560,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -4353,8 +4693,8 @@ class HardwareInventory(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.additional_host_information: Optional[str] = None
-        self.interfaces: Optional[List["_models.HardwareInventoryNetworkInterface"]] = None
-        self.nics: Optional[List["_models.Nic"]] = None
+        self.interfaces: Optional[list["_models.HardwareInventoryNetworkInterface"]] = None
+        self.nics: Optional[list["_models.Nic"]] = None
 
 
 class HardwareInventoryNetworkInterface(_serialization.Model):
@@ -4586,9 +4926,9 @@ class InitialAgentPoolConfiguration(_serialization.Model):
         administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
         agent_options: Optional["_models.AgentOptions"] = None,
         attached_network_configuration: Optional["_models.AttachedNetworkConfiguration"] = None,
-        availability_zones: Optional[List[str]] = None,
-        labels: Optional[List["_models.KubernetesLabel"]] = None,
-        taints: Optional[List["_models.KubernetesLabel"]] = None,
+        availability_zones: Optional[list[str]] = None,
+        labels: Optional[list["_models.KubernetesLabel"]] = None,
+        taints: Optional[list["_models.KubernetesLabel"]] = None,
         upgrade_settings: Optional["_models.AgentPoolUpgradeSettings"] = None,
         **kwargs: Any
     ) -> None:
@@ -4680,7 +5020,7 @@ class IpAddressPool(_serialization.Model):
     def __init__(
         self,
         *,
-        addresses: List[str],
+        addresses: list[str],
         name: str,
         auto_assign: Optional[Union[str, "_models.BfdEnabled"]] = None,
         only_use_host_ips: Optional[Union[str, "_models.BfdEnabled"]] = None,
@@ -4956,10 +5296,10 @@ class KubernetesCluster(TrackedResource):
         location: str,
         extended_location: "_models.ExtendedLocation",
         control_plane_node_configuration: "_models.ControlPlaneNodeConfiguration",
-        initial_agent_pool_configurations: List["_models.InitialAgentPoolConfiguration"],
+        initial_agent_pool_configurations: list["_models.InitialAgentPoolConfiguration"],
         kubernetes_version: str,
         network_configuration: "_models.NetworkConfiguration",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         aad_configuration: Optional["_models.AadConfiguration"] = None,
         administrator_configuration: Optional["_models.AdministratorConfiguration"] = None,
         managed_resource_group_configuration: Optional["_models.ManagedResourceGroupConfiguration"] = None,
@@ -5005,20 +5345,20 @@ class KubernetesCluster(TrackedResource):
         self.extended_location = extended_location
         self.aad_configuration = aad_configuration
         self.administrator_configuration = administrator_configuration
-        self.attached_network_ids: Optional[List[str]] = None
-        self.available_upgrades: Optional[List["_models.AvailableUpgrade"]] = None
+        self.attached_network_ids: Optional[list[str]] = None
+        self.available_upgrades: Optional[list["_models.AvailableUpgrade"]] = None
         self.cluster_id: Optional[str] = None
         self.connected_cluster_id: Optional[str] = None
         self.control_plane_kubernetes_version: Optional[str] = None
         self.control_plane_node_configuration = control_plane_node_configuration
         self.detailed_status: Optional[Union[str, "_models.KubernetesClusterDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
-        self.feature_statuses: Optional[List["_models.FeatureStatus"]] = None
+        self.feature_statuses: Optional[list["_models.FeatureStatus"]] = None
         self.initial_agent_pool_configurations = initial_agent_pool_configurations
         self.kubernetes_version = kubernetes_version
         self.managed_resource_group_configuration = managed_resource_group_configuration
         self.network_configuration = network_configuration
-        self.nodes: Optional[List["_models.KubernetesClusterNode"]] = None
+        self.nodes: Optional[list["_models.KubernetesClusterNode"]] = None
         self.provisioning_state: Optional[Union[str, "_models.KubernetesClusterProvisioningState"]] = None
 
 
@@ -5106,8 +5446,8 @@ class KubernetesClusterFeature(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
-        options: Optional[List["_models.StringKeyValuePair"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        options: Optional[list["_models.StringKeyValuePair"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5149,7 +5489,7 @@ class KubernetesClusterFeatureList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.KubernetesClusterFeature"]] = None,
+        value: Optional[list["_models.KubernetesClusterFeature"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5181,8 +5521,8 @@ class KubernetesClusterFeaturePatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
-        options: Optional[List["_models.StringKeyValuePair"]] = None,
+        tags: Optional[dict[str, str]] = None,
+        options: Optional[list["_models.StringKeyValuePair"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5214,7 +5554,7 @@ class KubernetesClusterList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.KubernetesCluster"]] = None,
+        value: Optional[list["_models.KubernetesCluster"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5336,14 +5676,14 @@ class KubernetesClusterNode(_serialization.Model):
         self.disk_size_gb: Optional[int] = None
         self.image: Optional[str] = None
         self.kubernetes_version: Optional[str] = None
-        self.labels: Optional[List["_models.KubernetesLabel"]] = None
+        self.labels: Optional[list["_models.KubernetesLabel"]] = None
         self.memory_size_gb: Optional[int] = None
         self.mode: Optional[Union[str, "_models.AgentPoolMode"]] = None
         self.name: Optional[str] = None
-        self.network_attachments: Optional[List["_models.NetworkAttachment"]] = None
+        self.network_attachments: Optional[list["_models.NetworkAttachment"]] = None
         self.power_state: Optional[Union[str, "_models.KubernetesNodePowerState"]] = None
         self.role: Optional[Union[str, "_models.KubernetesNodeRole"]] = None
-        self.taints: Optional[List["_models.KubernetesLabel"]] = None
+        self.taints: Optional[list["_models.KubernetesLabel"]] = None
         self.vm_sku_name: Optional[str] = None
 
 
@@ -5380,7 +5720,7 @@ class KubernetesClusterPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         administrator_configuration: Optional["_models.AdministratorConfigurationPatch"] = None,
         control_plane_node_configuration: Optional["_models.ControlPlaneNodePatchConfiguration"] = None,
         kubernetes_version: Optional[str] = None,
@@ -5576,7 +5916,7 @@ class L2Network(TrackedResource):
         location: str,
         extended_location: "_models.ExtendedLocation",
         l2_isolation_domain_id: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         hybrid_aks_plugin_type: Optional[Union[str, "_models.HybridAksPluginType"]] = None,
         interface_name: Optional[str] = None,
         **kwargs: Any
@@ -5604,16 +5944,16 @@ class L2Network(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
-        self.associated_resource_ids: Optional[List[str]] = None
+        self.associated_resource_ids: Optional[list[str]] = None
         self.cluster_id: Optional[str] = None
         self.detailed_status: Optional[Union[str, "_models.L2NetworkDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
-        self.hybrid_aks_clusters_associated_ids: Optional[List[str]] = None
+        self.hybrid_aks_clusters_associated_ids: Optional[list[str]] = None
         self.hybrid_aks_plugin_type = hybrid_aks_plugin_type
         self.interface_name = interface_name
         self.l2_isolation_domain_id = l2_isolation_domain_id
         self.provisioning_state: Optional[Union[str, "_models.L2NetworkProvisioningState"]] = None
-        self.virtual_machines_associated_ids: Optional[List[str]] = None
+        self.virtual_machines_associated_ids: Optional[list[str]] = None
 
 
 class L2NetworkAttachmentConfiguration(_serialization.Model):
@@ -5674,7 +6014,7 @@ class L2NetworkList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.L2Network"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.L2Network"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -5698,7 +6038,7 @@ class L2NetworkPatchParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]
@@ -5720,7 +6060,7 @@ class L2ServiceLoadBalancerConfiguration(_serialization.Model):
         "ip_address_pools": {"key": "ipAddressPools", "type": "[IpAddressPool]"},
     }
 
-    def __init__(self, *, ip_address_pools: Optional[List["_models.IpAddressPool"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, ip_address_pools: Optional[list["_models.IpAddressPool"]] = None, **kwargs: Any) -> None:
         """
         :keyword ip_address_pools: The list of pools of IP addresses that can be allocated to load
          balancer services.
@@ -5789,12 +6129,10 @@ class L3Network(TrackedResource):
      Known values are: "IPV4", "IPV6", and "DualStack".
     :vartype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
     :ivar ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this L3 network. Required when
-     the IP allocation type
-     is IPV4 or DualStack.
+     the IP allocation type is IPV4 or DualStack.
     :vartype ipv4_connected_prefix: str
     :ivar ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this L3 network. Required when
-     the IP allocation type
-     is IPV6 or DualStack.
+     the IP allocation type is IPV6 or DualStack.
     :vartype ipv6_connected_prefix: str
     :ivar l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
      Required.
@@ -5863,7 +6201,7 @@ class L3Network(TrackedResource):
         extended_location: "_models.ExtendedLocation",
         l3_isolation_domain_id: str,
         vlan: int,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         hybrid_aks_ipam_enabled: Union[str, "_models.HybridAksIpamEnabled"] = "True",
         hybrid_aks_plugin_type: Optional[Union[str, "_models.HybridAksPluginType"]] = None,
         interface_name: Optional[str] = None,
@@ -5897,12 +6235,10 @@ class L3Network(TrackedResource):
          Known values are: "IPV4", "IPV6", and "DualStack".
         :paramtype ip_allocation_type: str or ~azure.mgmt.networkcloud.models.IpAllocationType
         :keyword ipv4_connected_prefix: The IPV4 prefix (CIDR) assigned to this L3 network. Required
-         when the IP allocation type
-         is IPV4 or DualStack.
+         when the IP allocation type is IPV4 or DualStack.
         :paramtype ipv4_connected_prefix: str
         :keyword ipv6_connected_prefix: The IPV6 prefix (CIDR) assigned to this L3 network. Required
-         when the IP allocation type
-         is IPV6 or DualStack.
+         when the IP allocation type is IPV6 or DualStack.
         :paramtype ipv6_connected_prefix: str
         :keyword l3_isolation_domain_id: The resource ID of the Network Fabric l3IsolationDomain.
          Required.
@@ -5913,11 +6249,11 @@ class L3Network(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
-        self.associated_resource_ids: Optional[List[str]] = None
+        self.associated_resource_ids: Optional[list[str]] = None
         self.cluster_id: Optional[str] = None
         self.detailed_status: Optional[Union[str, "_models.L3NetworkDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
-        self.hybrid_aks_clusters_associated_ids: Optional[List[str]] = None
+        self.hybrid_aks_clusters_associated_ids: Optional[list[str]] = None
         self.hybrid_aks_ipam_enabled = hybrid_aks_ipam_enabled
         self.hybrid_aks_plugin_type = hybrid_aks_plugin_type
         self.interface_name = interface_name
@@ -5926,7 +6262,7 @@ class L3Network(TrackedResource):
         self.ipv6_connected_prefix = ipv6_connected_prefix
         self.l3_isolation_domain_id = l3_isolation_domain_id
         self.provisioning_state: Optional[Union[str, "_models.L3NetworkProvisioningState"]] = None
-        self.virtual_machines_associated_ids: Optional[List[str]] = None
+        self.virtual_machines_associated_ids: Optional[list[str]] = None
         self.vlan = vlan
 
 
@@ -5999,7 +6335,7 @@ class L3NetworkList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.L3Network"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.L3Network"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -6024,7 +6360,7 @@ class L3NetworkPatchParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]
@@ -6174,12 +6510,12 @@ class MachineSkuSlot(_serialization.Model):
         self.bootstrap_protocol: Optional[Union[str, "_models.BootstrapProtocol"]] = None
         self.cpu_cores: Optional[int] = None
         self.cpu_sockets: Optional[int] = None
-        self.disks: Optional[List["_models.MachineDisk"]] = None
+        self.disks: Optional[list["_models.MachineDisk"]] = None
         self.generation: Optional[str] = None
         self.hardware_version: Optional[str] = None
         self.memory_capacity_gb: Optional[int] = None
         self.model: Optional[str] = None
-        self.network_interfaces: Optional[List["_models.NetworkInterface"]] = None
+        self.network_interfaces: Optional[list["_models.NetworkInterface"]] = None
         self.total_threads: Optional[int] = None
         self.vendor: Optional[str] = None
 
@@ -6261,7 +6597,7 @@ class ManagedServiceIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6291,51 +6627,37 @@ class NetworkAttachment(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar attached_network_id: The resource ID of the associated network attached to the virtual
-     machine.
-     It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork resources.
-     Required.
+     machine. It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork
+     resources. Required.
     :vartype attached_network_id: str
-    :ivar default_gateway: The indicator of whether this is the default gateway.
-     Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
-     machine may be specified as True. Known values are: "True" and "False".
+    :ivar default_gateway: The indicator of whether this is the default gateway. Only one of the
+     attached networks (including the CloudServicesNetwork attachment) for a single machine may be
+     specified as True. Known values are: "True" and "False".
     :vartype default_gateway: str or ~azure.mgmt.networkcloud.models.DefaultGateway
-    :ivar ip_allocation_method: The IP allocation mechanism for the virtual machine.
-     Dynamic and Static are only valid for l3Network which may also specify Disabled.
-     Otherwise, Disabled is the only permitted value. Required. Known values are: "Dynamic",
-     "Static", and "Disabled".
+    :ivar ip_allocation_method: The IP allocation mechanism for the virtual machine. Dynamic and
+     Static are only valid for l3Network which may also specify Disabled. Otherwise, Disabled is the
+     only permitted value. Required. Known values are: "Dynamic", "Static", and "Disabled".
     :vartype ip_allocation_method: str or
      ~azure.mgmt.networkcloud.models.VirtualMachineIPAllocationMethod
-    :ivar ipv4_address: The IPv4 address of the virtual machine.
-
-     This field is used only if the attached network has IPAllocationType of IPV4 or DualStack.
-
-     If IPAllocationMethod is:
-     Static - this field must contain a user specified IPv4 address from within the subnet specified
-     in the attached network.
-     Dynamic - this field is read-only, but will be populated with an address from within the subnet
-     specified in the attached network.
-     Disabled - this field will be empty.
+    :ivar ipv4_address: The IPv4 address of the virtual machine.  This field is used only if the
+     attached network has IPAllocationType of IPV4 or DualStack.  If IPAllocationMethod is: Static -
+     this field must contain a user specified IPv4 address from within the subnet specified in the
+     attached network. Dynamic - this field is read-only, but will be populated with an address from
+     within the subnet specified in the attached network. Disabled - this field will be empty.
     :vartype ipv4_address: str
-    :ivar ipv6_address: The IPv6 address of the virtual machine.
-
-     This field is used only if the attached network has IPAllocationType of IPV6 or DualStack.
-
-     If IPAllocationMethod is:
-     Static - this field must contain an IPv6 address range from within the range specified in the
-     attached network.
-     Dynamic - this field is read-only, but will be populated with an range from within the subnet
-     specified in the attached network.
-     Disabled - this field will be empty.
+    :ivar ipv6_address: The IPv6 address of the virtual machine.  This field is used only if the
+     attached network has IPAllocationType of IPV6 or DualStack.  If IPAllocationMethod is: Static -
+     this field must contain an IPv6 address range from within the range specified in the attached
+     network. Dynamic - this field is read-only, but will be populated with an range from within the
+     subnet specified in the attached network. Disabled - this field will be empty.
     :vartype ipv6_address: str
     :ivar mac_address: The MAC address of the interface for the virtual machine that corresponds to
      this network attachment.
     :vartype mac_address: str
-    :ivar network_attachment_name: The associated network's interface name.
-     If specified, the network attachment name has a maximum length of 15 characters and must be
-     unique to this virtual machine.
-     If the user doesn’t specify this value, the default interface name of the network resource will
-     be used.
-     For a CloudServicesNetwork resource, this name will be ignored.
+    :ivar network_attachment_name: The associated network's interface name. If specified, the
+     network attachment name has a maximum length of 15 characters and must be unique to this
+     virtual machine. If the user doesn’t specify this value, the default interface name of the
+     network resource will be used. For a CloudServicesNetwork resource, this name will be ignored.
     :vartype network_attachment_name: str
     """
 
@@ -6369,48 +6691,34 @@ class NetworkAttachment(_serialization.Model):
     ) -> None:
         """
         :keyword attached_network_id: The resource ID of the associated network attached to the virtual
-         machine.
-         It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork resources.
-         Required.
+         machine. It can be one of cloudServicesNetwork, l3Network, l2Network or trunkedNetwork
+         resources. Required.
         :paramtype attached_network_id: str
-        :keyword default_gateway: The indicator of whether this is the default gateway.
-         Only one of the attached networks (including the CloudServicesNetwork attachment) for a single
-         machine may be specified as True. Known values are: "True" and "False".
+        :keyword default_gateway: The indicator of whether this is the default gateway. Only one of the
+         attached networks (including the CloudServicesNetwork attachment) for a single machine may be
+         specified as True. Known values are: "True" and "False".
         :paramtype default_gateway: str or ~azure.mgmt.networkcloud.models.DefaultGateway
-        :keyword ip_allocation_method: The IP allocation mechanism for the virtual machine.
-         Dynamic and Static are only valid for l3Network which may also specify Disabled.
-         Otherwise, Disabled is the only permitted value. Required. Known values are: "Dynamic",
-         "Static", and "Disabled".
+        :keyword ip_allocation_method: The IP allocation mechanism for the virtual machine. Dynamic and
+         Static are only valid for l3Network which may also specify Disabled. Otherwise, Disabled is the
+         only permitted value. Required. Known values are: "Dynamic", "Static", and "Disabled".
         :paramtype ip_allocation_method: str or
          ~azure.mgmt.networkcloud.models.VirtualMachineIPAllocationMethod
-        :keyword ipv4_address: The IPv4 address of the virtual machine.
-
-         This field is used only if the attached network has IPAllocationType of IPV4 or DualStack.
-
-         If IPAllocationMethod is:
-         Static - this field must contain a user specified IPv4 address from within the subnet specified
-         in the attached network.
-         Dynamic - this field is read-only, but will be populated with an address from within the subnet
-         specified in the attached network.
-         Disabled - this field will be empty.
+        :keyword ipv4_address: The IPv4 address of the virtual machine.  This field is used only if the
+         attached network has IPAllocationType of IPV4 or DualStack.  If IPAllocationMethod is: Static -
+         this field must contain a user specified IPv4 address from within the subnet specified in the
+         attached network. Dynamic - this field is read-only, but will be populated with an address from
+         within the subnet specified in the attached network. Disabled - this field will be empty.
         :paramtype ipv4_address: str
-        :keyword ipv6_address: The IPv6 address of the virtual machine.
-
-         This field is used only if the attached network has IPAllocationType of IPV6 or DualStack.
-
-         If IPAllocationMethod is:
-         Static - this field must contain an IPv6 address range from within the range specified in the
-         attached network.
-         Dynamic - this field is read-only, but will be populated with an range from within the subnet
-         specified in the attached network.
-         Disabled - this field will be empty.
+        :keyword ipv6_address: The IPv6 address of the virtual machine.  This field is used only if the
+         attached network has IPAllocationType of IPV6 or DualStack.  If IPAllocationMethod is: Static -
+         this field must contain an IPv6 address range from within the range specified in the attached
+         network. Dynamic - this field is read-only, but will be populated with an range from within the
+         subnet specified in the attached network. Disabled - this field will be empty.
         :paramtype ipv6_address: str
-        :keyword network_attachment_name: The associated network's interface name.
-         If specified, the network attachment name has a maximum length of 15 characters and must be
-         unique to this virtual machine.
-         If the user doesn’t specify this value, the default interface name of the network resource will
-         be used.
-         For a CloudServicesNetwork resource, this name will be ignored.
+        :keyword network_attachment_name: The associated network's interface name. If specified, the
+         network attachment name has a maximum length of 15 characters and must be unique to this
+         virtual machine. If the user doesn’t specify this value, the default interface name of the
+         network resource will be used. For a CloudServicesNetwork resource, this name will be ignored.
         :paramtype network_attachment_name: str
         """
         super().__init__(**kwargs)
@@ -6495,8 +6803,8 @@ class NetworkConfiguration(_serialization.Model):
         bgp_service_load_balancer_configuration: Optional["_models.BgpServiceLoadBalancerConfiguration"] = None,
         dns_service_ip: Optional[str] = None,
         l2_service_load_balancer_configuration: Optional["_models.L2ServiceLoadBalancerConfiguration"] = None,
-        pod_cidrs: Optional[List[str]] = None,
-        service_cidrs: Optional[List[str]] = None,
+        pod_cidrs: Optional[list[str]] = None,
+        service_cidrs: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -6644,7 +6952,7 @@ class NodePoolAdministratorConfigurationPatch(_serialization.Model):
         "ssh_public_keys": {"key": "sshPublicKeys", "type": "[SshPublicKey]"},
     }
 
-    def __init__(self, *, ssh_public_keys: Optional[List["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, ssh_public_keys: Optional[list["_models.SshPublicKey"]] = None, **kwargs: Any) -> None:
         """
         :keyword ssh_public_keys: SshPublicKey represents the public key used to authenticate with a
          resource through SSH.
@@ -6771,7 +7079,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Operation"]] = None
+        self.value: Optional[list["_models.Operation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -6857,7 +7165,7 @@ class OperationStatusResult(_serialization.Model):
         self.error: Optional["_models.ErrorDetail"] = None
         self.id: Optional[str] = None
         self.name: Optional[str] = None
-        self.operations: Optional[List["_models.OperationStatusResult"]] = None
+        self.operations: Optional[list["_models.OperationStatusResult"]] = None
         self.percent_complete: Optional[float] = None
         self.resource_id: Optional[str] = None
         self.start_time: Optional[datetime.datetime] = None
@@ -7016,7 +7324,7 @@ class Rack(TrackedResource):
         rack_location: str,
         rack_serial_number: str,
         rack_sku_id: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7114,9 +7422,9 @@ class RackDefinition(_serialization.Model):
         rack_serial_number: str,
         rack_sku_id: str,
         availability_zone: Optional[str] = None,
-        bare_metal_machine_configuration_data: Optional[List["_models.BareMetalMachineConfigurationData"]] = None,
+        bare_metal_machine_configuration_data: Optional[list["_models.BareMetalMachineConfigurationData"]] = None,
         rack_location: Optional[str] = None,
-        storage_appliance_configuration_data: Optional[List["_models.StorageApplianceConfigurationData"]] = None,
+        storage_appliance_configuration_data: Optional[list["_models.StorageApplianceConfigurationData"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7168,7 +7476,7 @@ class RackList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Rack"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Rack"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -7207,7 +7515,7 @@ class RackPatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         rack_location: Optional[str] = None,
         rack_serial_number: Optional[str] = None,
         **kwargs: Any
@@ -7299,14 +7607,14 @@ class RackSku(Resource):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.compute_machines: Optional[List["_models.MachineSkuSlot"]] = None
-        self.controller_machines: Optional[List["_models.MachineSkuSlot"]] = None
+        self.compute_machines: Optional[list["_models.MachineSkuSlot"]] = None
+        self.controller_machines: Optional[list["_models.MachineSkuSlot"]] = None
         self.description: Optional[str] = None
         self.max_cluster_slots: Optional[int] = None
         self.provisioning_state: Optional[Union[str, "_models.RackSkuProvisioningState"]] = None
         self.rack_type: Optional[Union[str, "_models.RackSkuType"]] = None
-        self.storage_appliances: Optional[List["_models.StorageApplianceSkuSlot"]] = None
-        self.supported_rack_sku_ids: Optional[List[str]] = None
+        self.storage_appliances: Optional[list["_models.StorageApplianceSkuSlot"]] = None
+        self.supported_rack_sku_ids: Optional[list[str]] = None
 
 
 class RackSkuList(_serialization.Model):
@@ -7324,7 +7632,7 @@ class RackSkuList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.RackSku"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.RackSku"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -7416,6 +7724,8 @@ class SecretArchiveReference(_serialization.Model):
 
     :ivar key_vault_id: The resource ID of the key vault containing the secret.
     :vartype key_vault_id: str
+    :ivar key_vault_uri: The URI of the key containing the secret.
+    :vartype key_vault_uri: str
     :ivar secret_name: The name of the secret in the key vault.
     :vartype secret_name: str
     :ivar secret_version: The version of the secret in the key vault.
@@ -7424,12 +7734,14 @@ class SecretArchiveReference(_serialization.Model):
 
     _validation = {
         "key_vault_id": {"readonly": True},
+        "key_vault_uri": {"readonly": True},
         "secret_name": {"readonly": True},
         "secret_version": {"readonly": True},
     }
 
     _attribute_map = {
         "key_vault_id": {"key": "keyVaultId", "type": "str"},
+        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
         "secret_name": {"key": "secretName", "type": "str"},
         "secret_version": {"key": "secretVersion", "type": "str"},
     }
@@ -7438,6 +7750,7 @@ class SecretArchiveReference(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.key_vault_id: Optional[str] = None
+        self.key_vault_uri: Optional[str] = None
         self.secret_name: Optional[str] = None
         self.secret_version: Optional[str] = None
 
@@ -7719,6 +8032,52 @@ class SshPublicKey(_serialization.Model):
         self.key_data = key_data
 
 
+class StepState(_serialization.Model):
+    """StepState represents the state of a step in an action.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar end_time: The timestamp for when processing of the step reached its terminal state, in
+     ISO 8601 format.
+    :vartype end_time: str
+    :ivar message: The message providing additional context for the status value. May be empty, or
+     contain diagnostic information in the case of a failure.
+    :vartype message: str
+    :ivar start_time: The timestamp for when processing of the step began, in ISO 8601 format.
+    :vartype start_time: str
+    :ivar status: The status of the step. A value of Completed or Failed indicates a terminal state
+     for the step. Known values are: "Completed", "InProgress", "Failed", and "NotStarted".
+    :vartype status: str or ~azure.mgmt.networkcloud.models.StepStateStatus
+    :ivar step_name: The name for the step.
+    :vartype step_name: str
+    """
+
+    _validation = {
+        "end_time": {"readonly": True},
+        "message": {"readonly": True},
+        "start_time": {"readonly": True},
+        "status": {"readonly": True},
+        "step_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "end_time": {"key": "endTime", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "step_name": {"key": "stepName", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.end_time: Optional[str] = None
+        self.message: Optional[str] = None
+        self.start_time: Optional[str] = None
+        self.status: Optional[Union[str, "_models.StepStateStatus"]] = None
+        self.step_name: Optional[str] = None
+
+
 class StorageAppliance(TrackedResource):
     """StorageAppliance represents on-premises Network Cloud storage appliance.
 
@@ -7749,12 +8108,15 @@ class StorageAppliance(TrackedResource):
     :ivar administrator_credentials: The credentials of the administrative interface on this
      storage appliance. Required.
     :vartype administrator_credentials: ~azure.mgmt.networkcloud.models.AdministrativeCredentials
+    :ivar ca_certificate: The CA certificate information issued by the platform for connecting to
+     TLS interfaces for the storage appliance. Callers add this certificate to their trusted CA
+     store to allow secure communication with the storage appliance.
+    :vartype ca_certificate: ~azure.mgmt.networkcloud.models.CertificateInfo
     :ivar capacity: The total capacity of the storage appliance. Measured in GiB.
     :vartype capacity: int
-    :ivar capacity_used: The amount of storage consumed.
+    :ivar capacity_used: The amount of storage consumed. Measured in GiB.
     :vartype capacity_used: int
     :ivar cluster_id: The resource ID of the cluster this storage appliance is associated with.
-     Measured in GiB.
     :vartype cluster_id: str
     :ivar detailed_status: The detailed status of the storage appliance. Known values are:
      "Available", "Degraded", "Error", and "Provisioning".
@@ -7805,6 +8167,7 @@ class StorageAppliance(TrackedResource):
         "etag": {"readonly": True},
         "extended_location": {"required": True},
         "administrator_credentials": {"required": True},
+        "ca_certificate": {"readonly": True},
         "capacity": {"readonly": True},
         "capacity_used": {"readonly": True},
         "cluster_id": {"readonly": True},
@@ -7837,6 +8200,7 @@ class StorageAppliance(TrackedResource):
             "key": "properties.administratorCredentials",
             "type": "AdministrativeCredentials",
         },
+        "ca_certificate": {"key": "properties.caCertificate", "type": "CertificateInfo"},
         "capacity": {"key": "properties.capacity", "type": "int"},
         "capacity_used": {"key": "properties.capacityUsed", "type": "int"},
         "cluster_id": {"key": "properties.clusterId", "type": "str"},
@@ -7866,7 +8230,7 @@ class StorageAppliance(TrackedResource):
         rack_slot: int,
         serial_number: str,
         storage_appliance_sku_id: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7894,6 +8258,7 @@ class StorageAppliance(TrackedResource):
         self.etag: Optional[str] = None
         self.extended_location = extended_location
         self.administrator_credentials = administrator_credentials
+        self.ca_certificate: Optional["_models.CertificateInfo"] = None
         self.capacity: Optional[int] = None
         self.capacity_used: Optional[int] = None
         self.cluster_id: Optional[str] = None
@@ -7907,10 +8272,44 @@ class StorageAppliance(TrackedResource):
         self.rack_slot = rack_slot
         self.remote_vendor_management_feature: Optional[Union[str, "_models.RemoteVendorManagementFeature"]] = None
         self.remote_vendor_management_status: Optional[Union[str, "_models.RemoteVendorManagementStatus"]] = None
-        self.secret_rotation_status: Optional[List["_models.SecretRotationStatus"]] = None
+        self.secret_rotation_status: Optional[list["_models.SecretRotationStatus"]] = None
         self.serial_number = serial_number
         self.storage_appliance_sku_id = storage_appliance_sku_id
         self.version: Optional[str] = None
+
+
+class StorageApplianceCommandSpecification(_serialization.Model):
+    """StorageApplianceCommandSpecification represents the command and optional arguments to run.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar arguments: The list of strings that will be passed to the script in order as separate
+     arguments.
+    :vartype arguments: list[str]
+    :ivar command: The command to execute. Required.
+    :vartype command: str
+    """
+
+    _validation = {
+        "command": {"required": True},
+    }
+
+    _attribute_map = {
+        "arguments": {"key": "arguments", "type": "[str]"},
+        "command": {"key": "command", "type": "str"},
+    }
+
+    def __init__(self, *, command: str, arguments: Optional[list[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword arguments: The list of strings that will be passed to the script in order as separate
+         arguments.
+        :paramtype arguments: list[str]
+        :keyword command: The command to execute. Required.
+        :paramtype command: str
+        """
+        super().__init__(**kwargs)
+        self.arguments = arguments
+        self.command = command
 
 
 class StorageApplianceConfigurationData(_serialization.Model):
@@ -7993,7 +8392,7 @@ class StorageApplianceEnableRemoteVendorManagementParameters(_serialization.Mode
         "support_endpoints": {"key": "supportEndpoints", "type": "[str]"},
     }
 
-    def __init__(self, *, support_endpoints: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, support_endpoints: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword support_endpoints: Field Deprecated. This field is not used and will be rejected if
          provided. The list of IPv4 subnets (in CIDR format), IPv6 subnets (in CIDR format), or
@@ -8023,7 +8422,7 @@ class StorageApplianceList(_serialization.Model):
         self,
         *,
         next_link: Optional[str] = None,
-        value: Optional[List["_models.StorageAppliance"]] = None,
+        value: Optional[list["_models.StorageAppliance"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8053,7 +8452,7 @@ class StorageAppliancePatchParameters(_serialization.Model):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, serial_number: Optional[str] = None, **kwargs: Any
+        self, *, tags: Optional[dict[str, str]] = None, serial_number: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
@@ -8064,6 +8463,44 @@ class StorageAppliancePatchParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.tags = tags
         self.serial_number = serial_number
+
+
+class StorageApplianceRunReadCommandsParameters(_serialization.Model):  # pylint: disable=name-too-long
+    """StorageApplianceRunReadCommandsParameters represents the body of request containing list of
+    read-only commands to run on the storage appliance.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar commands: The list of read-only commands to be executed directly against the target
+     storage appliance. Required.
+    :vartype commands: list[~azure.mgmt.networkcloud.models.StorageApplianceCommandSpecification]
+    :ivar limit_time_seconds: The maximum time the commands are allowed to run. Required.
+    :vartype limit_time_seconds: int
+    """
+
+    _validation = {
+        "commands": {"required": True, "min_items": 1},
+        "limit_time_seconds": {"required": True, "maximum": 14400, "minimum": 60},
+    }
+
+    _attribute_map = {
+        "commands": {"key": "commands", "type": "[StorageApplianceCommandSpecification]"},
+        "limit_time_seconds": {"key": "limitTimeSeconds", "type": "int"},
+    }
+
+    def __init__(
+        self, *, commands: list["_models.StorageApplianceCommandSpecification"], limit_time_seconds: int, **kwargs: Any
+    ) -> None:
+        """
+        :keyword commands: The list of read-only commands to be executed directly against the target
+         storage appliance. Required.
+        :paramtype commands: list[~azure.mgmt.networkcloud.models.StorageApplianceCommandSpecification]
+        :keyword limit_time_seconds: The maximum time the commands are allowed to run. Required.
+        :paramtype limit_time_seconds: int
+        """
+        super().__init__(**kwargs)
+        self.commands = commands
+        self.limit_time_seconds = limit_time_seconds
 
 
 class StorageApplianceSkuSlot(_serialization.Model):
@@ -8122,7 +8559,7 @@ class StorageProfile(_serialization.Model):
     }
 
     def __init__(
-        self, *, os_disk: "_models.OsDisk", volume_attachments: Optional[List[str]] = None, **kwargs: Any
+        self, *, os_disk: "_models.OsDisk", volume_attachments: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword os_disk: The disk to use with this virtual machine. Required.
@@ -8244,7 +8681,7 @@ class TagsParameter(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]
@@ -8367,9 +8804,9 @@ class TrunkedNetwork(TrackedResource):
         *,
         location: str,
         extended_location: "_models.ExtendedLocation",
-        isolation_domain_ids: List[str],
-        vlans: List[int],
-        tags: Optional[Dict[str, str]] = None,
+        isolation_domain_ids: list[str],
+        vlans: list[int],
+        tags: Optional[dict[str, str]] = None,
         hybrid_aks_plugin_type: Optional[Union[str, "_models.HybridAksPluginType"]] = None,
         interface_name: Optional[str] = None,
         **kwargs: Any
@@ -8401,16 +8838,16 @@ class TrunkedNetwork(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
-        self.associated_resource_ids: Optional[List[str]] = None
+        self.associated_resource_ids: Optional[list[str]] = None
         self.cluster_id: Optional[str] = None
         self.detailed_status: Optional[Union[str, "_models.TrunkedNetworkDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
-        self.hybrid_aks_clusters_associated_ids: Optional[List[str]] = None
+        self.hybrid_aks_clusters_associated_ids: Optional[list[str]] = None
         self.hybrid_aks_plugin_type = hybrid_aks_plugin_type
         self.interface_name = interface_name
         self.isolation_domain_ids = isolation_domain_ids
         self.provisioning_state: Optional[Union[str, "_models.TrunkedNetworkProvisioningState"]] = None
-        self.virtual_machines_associated_ids: Optional[List[str]] = None
+        self.virtual_machines_associated_ids: Optional[list[str]] = None
         self.vlans = vlans
 
 
@@ -8472,7 +8909,7 @@ class TrunkedNetworkList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.TrunkedNetwork"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.TrunkedNetwork"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -8496,7 +8933,7 @@ class TrunkedNetworkPatchParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]
@@ -8611,6 +9048,8 @@ class VirtualMachine(TrackedResource):
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar identity: The identity for the resource.
+    :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
     :ivar admin_username: The name of the administrator to which the ssh public keys will be added
      into the authorized keys. Required.
     :vartype admin_username: str
@@ -8648,8 +9087,11 @@ class VirtualMachine(TrackedResource):
     :vartype memory_size_gb: int
     :ivar network_attachments: The list of network attachments to the virtual machine.
     :vartype network_attachments: list[~azure.mgmt.networkcloud.models.NetworkAttachment]
-    :ivar network_data: The Base64 encoded cloud-init network data.
+    :ivar network_data: Field Deprecated: The Base64 encoded cloud-init network data. The
+     networkDataContent property will be used in preference to this property.
     :vartype network_data: str
+    :ivar network_data_content: The Base64 encoded cloud-init network data.
+    :vartype network_data_content: str
     :ivar placement_hints: The scheduling hints for the virtual machine.
     :vartype placement_hints: list[~azure.mgmt.networkcloud.models.VirtualMachinePlacementHint]
     :ivar power_state: The power state of the virtual machine. Known values are: "On", "Off", and
@@ -8665,8 +9107,11 @@ class VirtualMachine(TrackedResource):
     :ivar storage_profile: The storage profile that specifies size and other parameters about the
      disks related to the virtual machine. Required.
     :vartype storage_profile: ~azure.mgmt.networkcloud.models.StorageProfile
-    :ivar user_data: The Base64 encoded cloud-init user data.
+    :ivar user_data: Field Deprecated: The Base64 encoded cloud-init user data. The userDataContent
+     property will be used in preference to this property.
     :vartype user_data: str
+    :ivar user_data_content: The Base64 encoded cloud-init user data.
+    :vartype user_data_content: str
     :ivar virtio_interface: Field Deprecated, use virtualizationModel instead. The type of the
      virtio interface. Known values are: "Modern" and "Transitional".
     :vartype virtio_interface: str or
@@ -8718,6 +9163,7 @@ class VirtualMachine(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "admin_username": {"key": "properties.adminUsername", "type": "str"},
         "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
         "bare_metal_machine_id": {"key": "properties.bareMetalMachineId", "type": "str"},
@@ -8735,12 +9181,14 @@ class VirtualMachine(TrackedResource):
         "memory_size_gb": {"key": "properties.memorySizeGB", "type": "int"},
         "network_attachments": {"key": "properties.networkAttachments", "type": "[NetworkAttachment]"},
         "network_data": {"key": "properties.networkData", "type": "str"},
+        "network_data_content": {"key": "properties.networkDataContent", "type": "str"},
         "placement_hints": {"key": "properties.placementHints", "type": "[VirtualMachinePlacementHint]"},
         "power_state": {"key": "properties.powerState", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "ssh_public_keys": {"key": "properties.sshPublicKeys", "type": "[SshPublicKey]"},
         "storage_profile": {"key": "properties.storageProfile", "type": "StorageProfile"},
         "user_data": {"key": "properties.userData", "type": "str"},
+        "user_data_content": {"key": "properties.userDataContent", "type": "str"},
         "virtio_interface": {"key": "properties.virtioInterface", "type": "str"},
         "vm_device_model": {"key": "properties.vmDeviceModel", "type": "str"},
         "vm_image": {"key": "properties.vmImage", "type": "str"},
@@ -8762,15 +9210,18 @@ class VirtualMachine(TrackedResource):
         memory_size_gb: int,
         storage_profile: "_models.StorageProfile",
         vm_image: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         boot_method: Union[str, "_models.VirtualMachineBootMethod"] = "UEFI",
         console_extended_location: Optional["_models.ExtendedLocation"] = None,
         isolate_emulator_thread: Union[str, "_models.VirtualMachineIsolateEmulatorThread"] = "True",
-        network_attachments: Optional[List["_models.NetworkAttachment"]] = None,
+        network_attachments: Optional[list["_models.NetworkAttachment"]] = None,
         network_data: Optional[str] = None,
-        placement_hints: Optional[List["_models.VirtualMachinePlacementHint"]] = None,
-        ssh_public_keys: Optional[List["_models.SshPublicKey"]] = None,
+        network_data_content: Optional[str] = None,
+        placement_hints: Optional[list["_models.VirtualMachinePlacementHint"]] = None,
+        ssh_public_keys: Optional[list["_models.SshPublicKey"]] = None,
         user_data: Optional[str] = None,
+        user_data_content: Optional[str] = None,
         virtio_interface: Union[str, "_models.VirtualMachineVirtioInterfaceType"] = "Modern",
         vm_device_model: Union[str, "_models.VirtualMachineDeviceModelType"] = "T2",
         vm_image_repository_credentials: Optional["_models.ImageRepositoryCredentials"] = None,
@@ -8784,6 +9235,8 @@ class VirtualMachine(TrackedResource):
         :keyword extended_location: The extended location of the cluster associated with the resource.
          Required.
         :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+        :keyword identity: The identity for the resource.
+        :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
         :keyword admin_username: The name of the administrator to which the ssh public keys will be
          added into the authorized keys. Required.
         :paramtype admin_username: str
@@ -8808,8 +9261,11 @@ class VirtualMachine(TrackedResource):
         :paramtype memory_size_gb: int
         :keyword network_attachments: The list of network attachments to the virtual machine.
         :paramtype network_attachments: list[~azure.mgmt.networkcloud.models.NetworkAttachment]
-        :keyword network_data: The Base64 encoded cloud-init network data.
+        :keyword network_data: Field Deprecated: The Base64 encoded cloud-init network data. The
+         networkDataContent property will be used in preference to this property.
         :paramtype network_data: str
+        :keyword network_data_content: The Base64 encoded cloud-init network data.
+        :paramtype network_data_content: str
         :keyword placement_hints: The scheduling hints for the virtual machine.
         :paramtype placement_hints: list[~azure.mgmt.networkcloud.models.VirtualMachinePlacementHint]
         :keyword ssh_public_keys: The list of ssh public keys. Each key will be added to the virtual
@@ -8818,8 +9274,11 @@ class VirtualMachine(TrackedResource):
         :keyword storage_profile: The storage profile that specifies size and other parameters about
          the disks related to the virtual machine. Required.
         :paramtype storage_profile: ~azure.mgmt.networkcloud.models.StorageProfile
-        :keyword user_data: The Base64 encoded cloud-init user data.
+        :keyword user_data: Field Deprecated: The Base64 encoded cloud-init user data. The
+         userDataContent property will be used in preference to this property.
         :paramtype user_data: str
+        :keyword user_data_content: The Base64 encoded cloud-init user data.
+        :paramtype user_data_content: str
         :keyword virtio_interface: Field Deprecated, use virtualizationModel instead. The type of the
          virtio interface. Known values are: "Modern" and "Transitional".
         :paramtype virtio_interface: str or
@@ -8839,6 +9298,7 @@ class VirtualMachine(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
+        self.identity = identity
         self.admin_username = admin_username
         self.availability_zone: Optional[str] = None
         self.bare_metal_machine_id: Optional[str] = None
@@ -8853,17 +9313,60 @@ class VirtualMachine(TrackedResource):
         self.memory_size_gb = memory_size_gb
         self.network_attachments = network_attachments
         self.network_data = network_data
+        self.network_data_content = network_data_content
         self.placement_hints = placement_hints
         self.power_state: Optional[Union[str, "_models.VirtualMachinePowerState"]] = None
         self.provisioning_state: Optional[Union[str, "_models.VirtualMachineProvisioningState"]] = None
         self.ssh_public_keys = ssh_public_keys
         self.storage_profile = storage_profile
         self.user_data = user_data
+        self.user_data_content = user_data_content
         self.virtio_interface = virtio_interface
         self.vm_device_model = vm_device_model
         self.vm_image = vm_image
         self.vm_image_repository_credentials = vm_image_repository_credentials
-        self.volumes: Optional[List[str]] = None
+        self.volumes: Optional[list[str]] = None
+
+
+class VirtualMachineAssignRelayParameters(_serialization.Model):
+    """VirtualMachineAssignRelayParameters represents the body of the request to update the relay used
+    for a Microsoft.HybridCompute machine associated with the virtual machine.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar machine_id: The resourceId of the Microsoft.HybridCompute machine resource to assign
+     relay usage. Required.
+    :vartype machine_id: str
+    :ivar relay_type: The indicator of which relay type the machine should be assigned to use.
+     Platform indicates the use of a platform-dedicated relay. Public indicates the use of the
+     standard public relay for Arc services. Known values are: "Platform" and "Public".
+    :vartype relay_type: str or ~azure.mgmt.networkcloud.models.RelayType
+    """
+
+    _validation = {
+        "machine_id": {"required": True},
+    }
+
+    _attribute_map = {
+        "machine_id": {"key": "machineId", "type": "str"},
+        "relay_type": {"key": "relayType", "type": "str"},
+    }
+
+    def __init__(
+        self, *, machine_id: str, relay_type: Union[str, "_models.RelayType"] = "Platform", **kwargs: Any
+    ) -> None:
+        """
+        :keyword machine_id: The resourceId of the Microsoft.HybridCompute machine resource to assign
+         relay usage. Required.
+        :paramtype machine_id: str
+        :keyword relay_type: The indicator of which relay type the machine should be assigned to use.
+         Platform indicates the use of a platform-dedicated relay. Public indicates the use of the
+         standard public relay for Arc services. Known values are: "Platform" and "Public".
+        :paramtype relay_type: str or ~azure.mgmt.networkcloud.models.RelayType
+        """
+        super().__init__(**kwargs)
+        self.machine_id = machine_id
+        self.relay_type = relay_type
 
 
 class VirtualMachineList(_serialization.Model):
@@ -8881,7 +9384,7 @@ class VirtualMachineList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.VirtualMachine"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.VirtualMachine"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -8897,6 +9400,8 @@ class VirtualMachineList(_serialization.Model):
 class VirtualMachinePatchParameters(_serialization.Model):
     """VirtualMachinePatchParameters represents the body of the request to patch the virtual machine.
 
+    :ivar identity: The identity for the resource.
+    :vartype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
     :ivar tags: The Azure resource tags that will replace the existing ones.
     :vartype tags: dict[str, str]
     :ivar vm_image_repository_credentials: The credentials used to login to the image repository
@@ -8906,6 +9411,7 @@ class VirtualMachinePatchParameters(_serialization.Model):
     """
 
     _attribute_map = {
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "tags": {"key": "tags", "type": "{str}"},
         "vm_image_repository_credentials": {
             "key": "properties.vmImageRepositoryCredentials",
@@ -8916,11 +9422,14 @@ class VirtualMachinePatchParameters(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
         vm_image_repository_credentials: Optional["_models.ImageRepositoryCredentials"] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword identity: The identity for the resource.
+        :paramtype identity: ~azure.mgmt.networkcloud.models.ManagedServiceIdentity
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]
         :keyword vm_image_repository_credentials: The credentials used to login to the image repository
@@ -8929,6 +9438,7 @@ class VirtualMachinePatchParameters(_serialization.Model):
          ~azure.mgmt.networkcloud.models.ImageRepositoryCredentials
         """
         super().__init__(**kwargs)
+        self.identity = identity
         self.tags = tags
         self.vm_image_repository_credentials = vm_image_repository_credentials
 
@@ -9052,6 +9562,8 @@ class Volume(TrackedResource):
     :ivar extended_location: The extended location of the cluster associated with the resource.
      Required.
     :vartype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
+    :ivar allocated_size_mi_b: The allocated size of the volume in Mebibytes.
+    :vartype allocated_size_mi_b: int
     :ivar attached_to: The list of resource IDs that attach the volume. It may include virtual
      machines and Hybrid AKS clusters.
     :vartype attached_to: list[str]
@@ -9065,8 +9577,10 @@ class Volume(TrackedResource):
     :vartype provisioning_state: str or ~azure.mgmt.networkcloud.models.VolumeProvisioningState
     :ivar serial_number: The unique identifier of the volume.
     :vartype serial_number: str
-    :ivar size_mi_b: The size of the allocation for this volume in Mebibytes. Required.
+    :ivar size_mi_b: The requested storage allocation for the volume in Mebibytes. Required.
     :vartype size_mi_b: int
+    :ivar storage_appliance_id: The resource ID of the storage appliance that hosts the volume.
+    :vartype storage_appliance_id: str
     """
 
     _validation = {
@@ -9077,6 +9591,7 @@ class Volume(TrackedResource):
         "location": {"required": True},
         "etag": {"readonly": True},
         "extended_location": {"required": True},
+        "allocated_size_mi_b": {"readonly": True, "minimum": 0},
         "attached_to": {"readonly": True},
         "detailed_status": {"readonly": True},
         "detailed_status_message": {"readonly": True},
@@ -9094,12 +9609,14 @@ class Volume(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "etag": {"key": "etag", "type": "str"},
         "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "allocated_size_mi_b": {"key": "properties.allocatedSizeMiB", "type": "int"},
         "attached_to": {"key": "properties.attachedTo", "type": "[str]"},
         "detailed_status": {"key": "properties.detailedStatus", "type": "str"},
         "detailed_status_message": {"key": "properties.detailedStatusMessage", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "serial_number": {"key": "properties.serialNumber", "type": "str"},
         "size_mi_b": {"key": "properties.sizeMiB", "type": "int"},
+        "storage_appliance_id": {"key": "properties.storageApplianceId", "type": "str"},
     }
 
     def __init__(
@@ -9108,7 +9625,8 @@ class Volume(TrackedResource):
         location: str,
         extended_location: "_models.ExtendedLocation",
         size_mi_b: int,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        storage_appliance_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9119,18 +9637,22 @@ class Volume(TrackedResource):
         :keyword extended_location: The extended location of the cluster associated with the resource.
          Required.
         :paramtype extended_location: ~azure.mgmt.networkcloud.models.ExtendedLocation
-        :keyword size_mi_b: The size of the allocation for this volume in Mebibytes. Required.
+        :keyword size_mi_b: The requested storage allocation for the volume in Mebibytes. Required.
         :paramtype size_mi_b: int
+        :keyword storage_appliance_id: The resource ID of the storage appliance that hosts the volume.
+        :paramtype storage_appliance_id: str
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.etag: Optional[str] = None
         self.extended_location = extended_location
-        self.attached_to: Optional[List[str]] = None
+        self.allocated_size_mi_b: Optional[int] = None
+        self.attached_to: Optional[list[str]] = None
         self.detailed_status: Optional[Union[str, "_models.VolumeDetailedStatus"]] = None
         self.detailed_status_message: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.VolumeProvisioningState"]] = None
         self.serial_number: Optional[str] = None
         self.size_mi_b = size_mi_b
+        self.storage_appliance_id = storage_appliance_id
 
 
 class VolumeList(_serialization.Model):
@@ -9148,7 +9670,7 @@ class VolumeList(_serialization.Model):
     }
 
     def __init__(
-        self, *, next_link: Optional[str] = None, value: Optional[List["_models.Volume"]] = None, **kwargs: Any
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.Volume"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword next_link: The link used to get the next page of operations.
@@ -9172,7 +9694,7 @@ class VolumePatchParameters(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: The Azure resource tags that will replace the existing ones.
         :paramtype tags: dict[str, str]

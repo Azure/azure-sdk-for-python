@@ -82,6 +82,7 @@ class TestOracleDatabaseMgmtExadbVmClustersOperations(AzureMgmtRecordedTestCase)
                     "scanIpIds": ["str"],
                     "scanListenerPortTcp": 0,
                     "scanListenerPortTcpSsl": 0,
+                    "shapeAttribute": "str",
                     "snapshotFileSystemStorage": {"totalSizeInGbs": 0},
                     "subnetOcid": "str",
                     "systemVersion": "str",

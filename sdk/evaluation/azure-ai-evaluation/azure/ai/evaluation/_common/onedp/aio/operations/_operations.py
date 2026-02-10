@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Literal, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -38,7 +38,6 @@ from ...operations._operations import (
     build_connections_get_request,
     build_connections_get_with_credentials_request,
     build_connections_list_request,
-    build_connections_list_with_credentials_request,
     build_datasets_create_or_update_version_request,
     build_datasets_delete_version_request,
     build_datasets_get_credentials_request,
@@ -55,21 +54,40 @@ from ...operations._operations import (
     build_evaluation_results_list_latest_request,
     build_evaluation_results_list_versions_request,
     build_evaluation_results_start_pending_upload_request,
+    build_evaluation_rules_create_or_update_request,
+    build_evaluation_rules_delete_request,
+    build_evaluation_rules_get_request,
+    build_evaluation_rules_list_request,
+    build_evaluation_taxonomies_create_request,
+    build_evaluation_taxonomies_delete_request,
+    build_evaluation_taxonomies_get_request,
+    build_evaluation_taxonomies_list_request,
+    build_evaluation_taxonomies_update_request,
+    build_evaluations_cancel_request,
     build_evaluations_check_annotation_request,
     build_evaluations_create_agent_evaluation_request,
-    build_evaluations_create_run_request,
-    build_evaluations_get_agent_evaluation_results_request,
+    build_evaluations_create_request,
+    build_evaluations_delete_request,
     build_evaluations_get_request,
     build_evaluations_list_request,
     build_evaluations_operation_results_request,
     build_evaluations_submit_annotation_request,
     build_evaluations_upload_run_request,
     build_evaluations_upload_update_run_request,
+    build_evaluators_create_evaluator_version_request,
+    build_evaluators_delete_evaluator_version_request,
+    build_evaluators_get_evaluator_version_request,
+    build_evaluators_list_latest_versions_request,
+    build_evaluators_list_versions_request,
+    build_evaluators_update_evaluator_version_request,
     build_indexes_create_or_update_version_request,
     build_indexes_delete_version_request,
     build_indexes_get_version_request,
     build_indexes_list_latest_request,
     build_indexes_list_versions_request,
+    build_insights_generate_insights_request,
+    build_insights_get_insight_request,
+    build_insights_list_insights_request,
     build_red_teams_create_run_request,
     build_red_teams_get_attack_objectives_request,
     build_red_teams_get_jail_break_dataset_request,
@@ -83,8 +101,15 @@ from ...operations._operations import (
     build_red_teams_submit_simulation_request,
     build_red_teams_upload_run_request,
     build_red_teams_upload_update_run_request,
+    build_schedules_create_or_update_request,
+    build_schedules_delete_request,
+    build_schedules_get_request,
+    build_schedules_get_run_request,
+    build_schedules_list_request,
+    build_schedules_list_runs_request,
+    build_sync_evals_create_request,
 )
-from .._configuration import AIProjectClientConfiguration
+from .._configuration import ProjectsClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
@@ -97,14 +122,14 @@ class ConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -112,10 +137,10 @@ class ConnectionsOperations:
     async def get(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name, without populating connection credentials.
 
-        :param name: The name of the resource. Required.
+        :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
         :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Connection
+        :rtype: ~azure.ai.projects.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -177,10 +202,10 @@ class ConnectionsOperations:
     async def get_with_credentials(self, name: str, **kwargs: Any) -> _models.Connection:
         """Get a connection by name, with its connection credentials.
 
-        :param name: The name of the resource. Required.
+        :param name: The friendly name of the connection, provided by the user. Required.
         :type name: str
         :return: Connection. The Connection is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Connection
+        :rtype: ~azure.ai.projects.models.Connection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -244,8 +269,6 @@ class ConnectionsOperations:
         *,
         connection_type: Optional[Union[str, _models.ConnectionType]] = None,
         default_connection: Optional[bool] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Connection"]:
         """List all connections in the project, without populating connection credentials.
@@ -253,22 +276,17 @@ class ConnectionsOperations:
         :keyword connection_type: List connections of this specific type. Known values are:
          "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
          "AppConfig", "AppInsights", and "CustomKeys". Default value is None.
-        :paramtype connection_type: str or ~azure.ai.projects.onedp.models.ConnectionType
+        :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
         :keyword default_connection: List connections that are default connections. Default value is
          None.
         :paramtype default_connection: bool
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
         :return: An iterator like instance of Connection
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Connection]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Connection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -285,9 +303,6 @@ class ConnectionsOperations:
                 _request = build_connections_list_request(
                     connection_type=connection_type,
                     default_connection=default_connection,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -345,39 +360,90 @@ class ConnectionsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @distributed_trace
-    def list_with_credentials(
-        self,
-        *,
-        connection_type: Optional[Union[str, _models.ConnectionType]] = None,
-        default_connection: Optional[bool] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.Connection"]:
-        """List all connections in the project, with their connection credentials.
 
-        :keyword connection_type: List connections of this specific type. Known values are:
-         "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", and "CustomKeys". Default value is None.
-        :paramtype connection_type: str or ~azure.ai.projects.onedp.models.ConnectionType
-        :keyword default_connection: List connections that are default connections. Default value is
-         None.
-        :paramtype default_connection: bool
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
-        :return: An iterator like instance of Connection
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Connection]
+class SyncEvalsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`sync_evals` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create(
+        self, eval: _models.SyncEvalInput, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvalRunOutputItem:
+        """Synchronize evaluation runs from connected resources.
+
+        :param eval: Creates a sync eval run. Required.
+        :type eval: ~azure.ai.projects.models.SyncEvalInput
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvalRunOutputItem. The EvalRunOutputItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvalRunOutputItem
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
+    @overload
+    async def create(
+        self, eval: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvalRunOutputItem:
+        """Synchronize evaluation runs from connected resources.
 
+        :param eval: Creates a sync eval run. Required.
+        :type eval: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvalRunOutputItem. The EvalRunOutputItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvalRunOutputItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, eval: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvalRunOutputItem:
+        """Synchronize evaluation runs from connected resources.
+
+        :param eval: Creates a sync eval run. Required.
+        :type eval: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvalRunOutputItem. The EvalRunOutputItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvalRunOutputItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def create(
+        self, eval: Union[_models.SyncEvalInput, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvalRunOutputItem:
+        """Synchronize evaluation runs from connected resources.
+
+        :param eval: Creates a sync eval run. Is one of the following types: SyncEvalInput, JSON,
+         IO[bytes] Required.
+        :type eval: ~azure.ai.projects.models.SyncEvalInput or JSON or IO[bytes]
+        :return: EvalRunOutputItem. The EvalRunOutputItem is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvalRunOutputItem
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -386,71 +452,56 @@ class ConnectionsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-                _request = build_connections_list_with_credentials_request(
-                    connection_type=connection_type,
-                    default_connection=default_connection,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvalRunOutputItem] = kwargs.pop("cls", None)
 
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(eval, (IOBase, bytes)):
+            _content = eval
+        else:
+            _content = json.dumps(eval, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-            return _request
+        _request = build_sync_evals_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Connection], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        response = pipeline_response.http_response
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvalRunOutputItem, response.json())
 
-            return pipeline_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
 
 class EvaluationsOperations:
@@ -459,14 +510,14 @@ class EvaluationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`evaluations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -474,6 +525,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get(self, name: str, **kwargs: Any) -> _models.Evaluation:
         """Get an evaluation run by name.
@@ -481,7 +533,7 @@ class EvaluationsOperations:
         :param name: Identifier of the evaluation. Required.
         :type name: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -542,48 +594,19 @@ class EvaluationsOperations:
     @distributed_trace
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={
-            "2025-05-15-preview": [
-                "api_version",
-                "tags",
-                "properties",
-                "top",
-                "skip",
-                "maxpagesize",
-                "client_request_id",
-                "accept",
-            ]
-        },
+        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    def list(
-        self,
-        *,
-        tags: Optional[str] = None,
-        properties: Optional[str] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.Evaluation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Evaluation"]:
         """List evaluation runs.
 
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword properties: Comma-separated list of property names (and optionally values). Example:
-         prop1,prop2=value2. Default value is None.
-        :paramtype properties: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
         :return: An iterator like instance of Evaluation
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Evaluation]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Evaluation]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Evaluation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -598,11 +621,6 @@ class EvaluationsOperations:
             if not next_link:
 
                 _request = build_evaluations_list_request(
-                    tags=tags,
-                    properties=properties,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -661,23 +679,23 @@ class EvaluationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def create_run(
+    async def create(
         self, evaluation: _models.Evaluation, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
 
         :param evaluation: Evaluation to be run. Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.Evaluation
+        :type evaluation: ~azure.ai.projects.models.Evaluation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_run(
+    async def create(
         self, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -688,12 +706,12 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_run(
+    async def create(
         self, evaluation: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Evaluation:
         """Creates an evaluation run.
@@ -704,25 +722,24 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def create_run(
-        self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.Evaluation:
+    async def create(self, evaluation: Union[_models.Evaluation, JSON, IO[bytes]], **kwargs: Any) -> _models.Evaluation:
         """Creates an evaluation run.
 
         :param evaluation: Evaluation to be run. Is one of the following types: Evaluation, JSON,
          IO[bytes] Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.Evaluation or JSON or IO[bytes]
+        :type evaluation: ~azure.ai.projects.models.Evaluation or JSON or IO[bytes]
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -746,7 +763,7 @@ class EvaluationsOperations:
         else:
             _content = json.dumps(evaluation, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluations_create_run_request(
+        _request = build_evaluations_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -791,12 +808,12 @@ class EvaluationsOperations:
         """Creates an agent evaluation run.
 
         :param evaluation: Agent evaluation to be run. Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.AgentEvaluationRequest
+        :type evaluation: ~azure.ai.projects.models.AgentEvaluationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :rtype: ~azure.ai.projects.models.AgentEvaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -812,7 +829,7 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :rtype: ~azure.ai.projects.models.AgentEvaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -828,14 +845,15 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :rtype: ~azure.ai.projects.models.AgentEvaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def create_agent_evaluation(
         self, evaluation: Union[_models.AgentEvaluationRequest, JSON, IO[bytes]], **kwargs: Any
@@ -844,9 +862,9 @@ class EvaluationsOperations:
 
         :param evaluation: Agent evaluation to be run. Is one of the following types:
          AgentEvaluationRequest, JSON, IO[bytes] Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.AgentEvaluationRequest or JSON or IO[bytes]
+        :type evaluation: ~azure.ai.projects.models.AgentEvaluationRequest or JSON or IO[bytes]
         :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :rtype: ~azure.ai.projects.models.AgentEvaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -911,16 +929,16 @@ class EvaluationsOperations:
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "run_id", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def get_agent_evaluation_results(self, run_id: str, **kwargs: Any) -> _models.AgentEvaluation:
-        """Get agent evaluation results.
+    async def cancel(self, name: str, **kwargs: Any) -> None:
+        """Cancel an evaluation run by name.
 
-        :param run_id: Agent run id, for agent API v1, it's ``[thread_id]:[run_id]``; for agent API v2,
-         it's only the run_id. Required.
-        :type run_id: str
-        :return: AgentEvaluation. The AgentEvaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AgentEvaluation
+        :param name: Identifier of the evaluation. Required.
+        :type name: str
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -934,10 +952,10 @@ class EvaluationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentEvaluation] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluations_get_agent_evaluation_results_request(
-            run_id=run_id,
+        _request = build_evaluations_cancel_request(
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -947,36 +965,88 @@ class EvaluationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.AgentEvaluation, response.json())
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
+    )
+    async def delete(self, name: str, **kwargs: Any) -> None:
+        """Delete an evaluation run by name.
+
+        :param name: Identifier of the evaluation. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluations_delete_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def check_annotation(self, **kwargs: Any) -> List[str]:
         """Check annotation supported by the service.
@@ -1041,7 +1111,7 @@ class EvaluationsOperations:
         """Submit the annotation.
 
         :param annotation_dto: Annotation data inputList of supported annotation. Required.
-        :type annotation_dto: ~azure.ai.projects.onedp.models.AnnotationDTO
+        :type annotation_dto: ~azure.ai.projects.models.AnnotationDTO
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1086,6 +1156,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def submit_annotation(
         self, annotation_dto: Union[_models.AnnotationDTO, JSON, IO[bytes]], **kwargs: Any
@@ -1094,7 +1165,7 @@ class EvaluationsOperations:
 
         :param annotation_dto: Annotation data inputList of supported annotation. Is one of the
          following types: AnnotationDTO, JSON, IO[bytes] Required.
-        :type annotation_dto: ~azure.ai.projects.onedp.models.AnnotationDTO or JSON or IO[bytes]
+        :type annotation_dto: ~azure.ai.projects.models.AnnotationDTO or JSON or IO[bytes]
         :return: str
         :rtype: str
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1162,6 +1233,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def operation_results(self, operation_id: str, **kwargs: Any) -> List[Dict[str, Any]]:
         """Poll for the operation results.
@@ -1229,12 +1301,12 @@ class EvaluationsOperations:
         """Upload the result to an evaluation run.
 
         :param evaluation: Evaluation to upload. Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.EvaluationUpload
+        :type evaluation: ~azure.ai.projects.models.EvaluationUpload
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1250,7 +1322,7 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1266,7 +1338,7 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1274,6 +1346,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def upload_run(
         self, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
@@ -1282,9 +1355,9 @@ class EvaluationsOperations:
 
         :param evaluation: Evaluation to upload. Is one of the following types: EvaluationUpload, JSON,
          IO[bytes] Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.EvaluationUpload or JSON or IO[bytes]
+        :type evaluation: ~azure.ai.projects.models.EvaluationUpload or JSON or IO[bytes]
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1355,12 +1428,12 @@ class EvaluationsOperations:
         :param name: Name of the evaluation run to update. Required.
         :type name: str
         :param evaluation: Evaluation upload to update. Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.EvaluationUpload
+        :type evaluation: ~azure.ai.projects.models.EvaluationUpload
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1378,7 +1451,7 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1396,7 +1469,7 @@ class EvaluationsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -1404,6 +1477,7 @@ class EvaluationsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def upload_update_run(
         self, name: str, evaluation: Union[_models.EvaluationUpload, JSON, IO[bytes]], **kwargs: Any
@@ -1414,9 +1488,9 @@ class EvaluationsOperations:
         :type name: str
         :param evaluation: Evaluation upload to update. Is one of the following types:
          EvaluationUpload, JSON, IO[bytes] Required.
-        :type evaluation: ~azure.ai.projects.onedp.models.EvaluationUpload or JSON or IO[bytes]
+        :type evaluation: ~azure.ai.projects.models.EvaluationUpload or JSON or IO[bytes]
         :return: Evaluation. The Evaluation is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Evaluation
+        :rtype: ~azure.ai.projects.models.Evaluation
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1480,52 +1554,516 @@ class EvaluationsOperations:
         return deserialized  # type: ignore
 
 
+class EvaluatorsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`evaluators` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "type", "limit", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list_versions(
+        self,
+        name: str,
+        *,
+        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+        limit: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.EvaluatorVersion"]:
+        """List all versions of the given evaluator.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
+         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         value is None.
+        :paramtype type: str or str or str or str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :return: An iterator like instance of EvaluatorVersion
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluators_list_versions_request(
+                    name=name,
+                    type=type,
+                    limit=limit,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluatorVersion], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "type", "limit", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list_latest_versions(
+        self,
+        *,
+        type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
+        limit: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.EvaluatorVersion"]:
+        """List the latest version of each evaluator.
+
+        :keyword type: Filter evaluators by type. Possible values: 'all', 'custom', 'builtin'. Is one
+         of the following types: Literal["builtin"], Literal["custom"], Literal["all"], str Default
+         value is None.
+        :paramtype type: str or str or str or str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the default is 20. Default value is None.
+        :paramtype limit: int
+        :return: An iterator like instance of EvaluatorVersion
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluatorVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluators_list_latest_versions_request(
+                    type=type,
+                    limit=limit,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluatorVersion], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def get_evaluator_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
+        """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
+        the EvaluatorVersion does not exist.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to retrieve. Required.
+        :type version: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_get_evaluator_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def delete_evaluator_version(self, name: str, version: str, **kwargs: Any) -> None:
+        """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
+        EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to delete. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_delete_evaluator_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def create_evaluator_version(self, name: str, **kwargs: Any) -> _models.EvaluatorVersion:
+        """Create a new EvaluatorVersion with auto incremented version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_create_evaluator_version_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def update_evaluator_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
+        """Update an existing EvaluatorVersion with the given version id.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+
+        _request = build_evaluators_update_evaluator_version_request(
+            name=name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
 class DatasetsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`datasets` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(
-        self,
-        name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.DatasetVersion"]:
+    def list_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models.DatasetVersion"]:
         """List all versions of the given DatasetVersion.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.DatasetVersion]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1546,10 +2084,6 @@ class DatasetsOperations:
 
                 _request = build_datasets_list_versions_request(
                     name=name,
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1608,31 +2142,11 @@ class DatasetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_latest(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.DatasetVersion"]:
+    def list_latest(self, **kwargs: Any) -> AsyncItemPaged["_models.DatasetVersion"]:
         """List the latest version of each DatasetVersion.
 
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
         :return: An iterator like instance of DatasetVersion
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.DatasetVersion]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.DatasetVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -1652,10 +2166,6 @@ class DatasetsOperations:
             if not next_link:
 
                 _request = build_datasets_list_latest_request(
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1715,14 +2225,15 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.DatasetVersion:
-        """Get the specific version of the DatasetVersion.
+        """Get the specific version of the DatasetVersion. The service returns 404 Not Found error if the
+        DatasetVersion does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to retrieve. Required.
         :type version: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1778,7 +2289,8 @@ class DatasetsOperations:
 
     @distributed_trace_async
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the DatasetVersion.
+        """Delete the specific version of the DatasetVersion. The service returns 204 No Content if the
+        DatasetVersion was deleted successfully or if the DatasetVersion does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -1832,82 +2344,94 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        body: _models.DatasetVersion,
+        dataset_version: _models.DatasetVersion,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Required.
-        :type body: ~azure.ai.projects.onedp.models.DatasetVersion
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: ~azure.ai.projects.models.DatasetVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        dataset_version: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Required.
-        :type body: JSON
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        dataset_version: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Required.
-        :type body: IO[bytes]
+        :param dataset_version: The DatasetVersion to create or update. Required.
+        :type dataset_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def create_or_update_version(
-        self, name: str, version: str, body: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, version: str, dataset_version: Union[_models.DatasetVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.DatasetVersion:
         """Create a new or update an existing DatasetVersion with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the DatasetVersion to create or replace. Required.
+        :param version: The specific version id of the DatasetVersion to create or update. Required.
         :type version: str
-        :param body: The definition of the DatasetVersion to create or update. Is one of the following
-         types: DatasetVersion, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.DatasetVersion or JSON or IO[bytes]
+        :param dataset_version: The DatasetVersion to create or update. Is one of the following types:
+         DatasetVersion, JSON, IO[bytes] Required.
+        :type dataset_version: ~azure.ai.projects.models.DatasetVersion or JSON or IO[bytes]
         :return: DatasetVersion. The DatasetVersion is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.DatasetVersion
+        :rtype: ~azure.ai.projects.models.DatasetVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1924,12 +2448,12 @@ class DatasetsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DatasetVersion] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(dataset_version, (IOBase, bytes)):
+            _content = dataset_version
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(dataset_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_create_or_update_version_request(
             name=name,
@@ -1976,7 +2500,7 @@ class DatasetsOperations:
         self,
         name: str,
         version: str,
-        body: _models.PendingUploadRequest,
+        pending_upload_request: _models.PendingUploadRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1987,19 +2511,25 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: ~azure.ai.projects.onedp.models.PendingUploadRequest
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def start_pending_upload_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -2007,19 +2537,25 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: JSON
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def start_pending_upload_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -2027,19 +2563,23 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def start_pending_upload_version(
-        self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of a dataset for a specific version.
 
@@ -2047,11 +2587,12 @@ class DatasetsOperations:
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Is one of the following types: PendingUploadRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.PendingUploadRequest or JSON or IO[bytes]
+        :param pending_upload_request: The pending upload request parameters. Is one of the following
+         types: PendingUploadRequest, JSON, IO[bytes] Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
+         IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2070,10 +2611,10 @@ class DatasetsOperations:
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(pending_upload_request, (IOBase, bytes)):
+            _content = pending_upload_request
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_start_pending_upload_version_request(
             name=name,
@@ -2116,19 +2657,15 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_credentials(
-        self, name: str, version: str, body: Any, **kwargs: Any
-    ) -> _models.AssetCredentialResponse:
-        """Get download sas for dataset version.
+    async def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.AssetCredentialResponse:
+        """Get the SAS credential to access the storage account associated with a Dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the DatasetVersion to operate on. Required.
         :type version: str
-        :param body: Parameters for the action. Required.
-        :type body: any
         :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :rtype: ~azure.ai.projects.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2139,20 +2676,15 @@ class DatasetsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[_models.AssetCredentialResponse] = kwargs.pop("cls", None)
-
-        _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_datasets_get_credentials_request(
             name=name,
             version=version,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -2194,46 +2726,25 @@ class IndexesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`indexes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_versions(
-        self,
-        name: str,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.Index"]:
+    def list_versions(self, name: str, **kwargs: Any) -> AsyncItemPaged["_models.Index"]:
         """List all versions of the given Index.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
         :return: An iterator like instance of Index
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Index]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2254,10 +2765,6 @@ class IndexesOperations:
 
                 _request = build_indexes_list_versions_request(
                     name=name,
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2316,31 +2823,11 @@ class IndexesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_latest(
-        self,
-        *,
-        top: Optional[int] = None,
-        skip: Optional[str] = None,
-        tags: Optional[str] = None,
-        list_view_type: Optional[Union[str, _models.ListViewType]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.Index"]:
+    def list_latest(self, **kwargs: Any) -> AsyncItemPaged["_models.Index"]:
         """List the latest version of each Index.
 
-        :keyword top: Top count of results, top count cannot be greater than the page size. If topCount
-         > page size, results with be default page size count will be returned. Default value is None.
-        :paramtype top: int
-        :keyword skip: Continuation token for pagination. Default value is None.
-        :paramtype skip: str
-        :keyword tags: Comma-separated list of tag names (and optionally values). Example:
-         tag1,tag2=value2. Default value is None.
-        :paramtype tags: str
-        :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
-         View type for including/excluding (for example) archived entities. Known values are:
-         "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
         :return: An iterator like instance of Index
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Index]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Index]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2360,10 +2847,6 @@ class IndexesOperations:
             if not next_link:
 
                 _request = build_indexes_list_latest_request(
-                    top=top,
-                    skip=skip,
-                    tags=tags,
-                    list_view_type=list_view_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2423,14 +2906,15 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.Index:
-        """Get the specific version of the Index.
+        """Get the specific version of the Index. The service returns 404 Not Found error if the Index
+        does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the Index to retrieve. Required.
         :type version: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Index
+        :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2486,7 +2970,8 @@ class IndexesOperations:
 
     @distributed_trace_async
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the Index.
+        """Delete the specific version of the Index. The service returns 204 No Content if the Index was
+        deleted successfully or if the Index does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -2537,79 +3022,91 @@ class IndexesOperations:
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: _models.Index, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        index: _models.Index,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Required.
-        :type body: ~azure.ai.projects.onedp.models.Index
+        :param index: The Index to create or update. Required.
+        :type index: ~azure.ai.projects.models.Index
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Index
+        :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, version: str, index: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Required.
-        :type body: JSON
+        :param index: The Index to create or update. Required.
+        :type index: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Index
+        :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        index: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Required.
-        :type body: IO[bytes]
+        :param index: The Index to create or update. Required.
+        :type index: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Index
+        :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def create_or_update_version(
-        self, name: str, version: str, body: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
+        self, name: str, version: str, index: Union[_models.Index, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Index:
         """Create a new or update an existing Index with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the Index to create or replace. Required.
+        :param version: The specific version id of the Index to create or update. Required.
         :type version: str
-        :param body: The definition of the Index to create or update. Is one of the following types:
-         Index, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.Index or JSON or IO[bytes]
+        :param index: The Index to create or update. Is one of the following types: Index, JSON,
+         IO[bytes] Required.
+        :type index: ~azure.ai.projects.models.Index or JSON or IO[bytes]
         :return: Index. The Index is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Index
+        :rtype: ~azure.ai.projects.models.Index
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2626,12 +3123,12 @@ class IndexesOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Index] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(index, (IOBase, bytes)):
+            _content = index
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(index, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_indexes_create_or_update_version_request(
             name=name,
@@ -2674,20 +3171,376 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
+class InsightsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`insights` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def generate_insights(
+        self, insight: _models.Insight, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Insight:
+        """Generate Insights.
+
+        :param insight: Complete evaluation configuration including data source, evaluators, and result
+         settings. Required.
+        :type insight: ~azure.ai.projects.models.Insight
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Insight. The Insight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Insight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def generate_insights(
+        self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Insight:
+        """Generate Insights.
+
+        :param insight: Complete evaluation configuration including data source, evaluators, and result
+         settings. Required.
+        :type insight: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Insight. The Insight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Insight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def generate_insights(
+        self, insight: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Insight:
+        """Generate Insights.
+
+        :param insight: Complete evaluation configuration including data source, evaluators, and result
+         settings. Required.
+        :type insight: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Insight. The Insight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Insight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": [
+                "api_version",
+                "repeatability_request_id",
+                "repeatability_first_sent",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def generate_insights(
+        self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Insight:
+        """Generate Insights.
+
+        :param insight: Complete evaluation configuration including data source, evaluators, and result
+         settings. Is one of the following types: Insight, JSON, IO[bytes] Required.
+        :type insight: ~azure.ai.projects.models.Insight or JSON or IO[bytes]
+        :return: Insight. The Insight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Insight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(insight, (IOBase, bytes)):
+            _content = insight
+        else:
+            _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_insights_generate_insights_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Insight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": ["api_version", "id", "include_coordinates", "client_request_id", "accept"]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def get_insight(
+        self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
+    ) -> _models.Insight:
+        """Get a specific insight by Id.
+
+        :param id: The unique identifier for the insights report. Required.
+        :type id: str
+        :keyword include_coordinates: Whether to include coordinates for visualization in the response.
+         Defaults to false. Default value is None.
+        :paramtype include_coordinates: bool
+        :return: Insight. The Insight is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Insight
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
+
+        _request = build_insights_get_insight_request(
+            id=id,
+            include_coordinates=include_coordinates,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Insight, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": [
+                "api_version",
+                "type",
+                "eval_id",
+                "run_id",
+                "agent_name",
+                "include_coordinates",
+                "client_request_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list_insights(
+        self,
+        *,
+        type: Optional[Union[str, _models.InsightType]] = None,
+        eval_id: Optional[str] = None,
+        run_id: Optional[str] = None,
+        agent_name: Optional[str] = None,
+        include_coordinates: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.Insight"]:
+        """List all insights in reverse chronological order (newest first).
+
+        :keyword type: Filter by the type of analysis. Known values are: "EvaluationRunClusterInsight",
+         "AgentClusterInsight", and "EvaluationComparison". Default value is None.
+        :paramtype type: str or ~azure.ai.projects.models.InsightType
+        :keyword eval_id: Filter by the evaluation ID. Default value is None.
+        :paramtype eval_id: str
+        :keyword run_id: Filter by the evaluation run ID. Default value is None.
+        :paramtype run_id: str
+        :keyword agent_name: Filter by the agent name. Default value is None.
+        :paramtype agent_name: str
+        :keyword include_coordinates: Whether to include coordinates for visualization in the response.
+         Defaults to false. Default value is None.
+        :paramtype include_coordinates: bool
+        :return: An iterator like instance of Insight
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Insight]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Insight]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_insights_list_insights_request(
+                    type=type,
+                    eval_id=eval_id,
+                    run_id=run_id,
+                    agent_name=agent_name,
+                    include_coordinates=include_coordinates,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Insight], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
 class DeploymentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`deployments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2698,7 +3551,7 @@ class DeploymentsOperations:
         :param name: Name of the deployment. Required.
         :type name: str
         :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.Deployment
+        :rtype: ~azure.ai.projects.models.Deployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2762,8 +3615,7 @@ class DeploymentsOperations:
         *,
         model_publisher: Optional[str] = None,
         model_name: Optional[str] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
+        deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.Deployment"]:
         """List all deployed models in the project.
@@ -2773,18 +3625,16 @@ class DeploymentsOperations:
         :keyword model_name: Model name (the publisher specific name) to filter models by. Default
          value is None.
         :paramtype model_name: str
-        :keyword top: The number of result items to return. Default value is None.
-        :paramtype top: int
-        :keyword skip: The number of result items to skip. Default value is None.
-        :paramtype skip: int
+        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
+         is None.
+        :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
         :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.Deployment]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Deployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        maxpagesize = kwargs.pop("maxpagesize", None)
         cls: ClsType[List[_models.Deployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2801,9 +3651,7 @@ class DeploymentsOperations:
                 _request = build_deployments_list_request(
                     model_publisher=model_publisher,
                     model_name=model_name,
-                    top=top,
-                    skip=skip,
-                    maxpagesize=maxpagesize,
+                    deployment_type=deployment_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -2868,14 +3716,14 @@ class RedTeamsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`red_teams` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2883,6 +3731,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
@@ -2890,7 +3739,7 @@ class RedTeamsOperations:
         :param name: Identifier of the red team. Required.
         :type name: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2954,6 +3803,7 @@ class RedTeamsOperations:
         params_added_on={
             "2025-05-15-preview": ["api_version", "top", "skip", "maxpagesize", "client_request_id", "accept"]
         },
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
@@ -2965,7 +3815,7 @@ class RedTeamsOperations:
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
         :return: An iterator like instance of RedTeam
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.RedTeam]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3053,12 +3903,12 @@ class RedTeamsOperations:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
-        :type red_team: ~azure.ai.projects.onedp.models.RedTeam
+        :type red_team: ~azure.ai.projects.models.RedTeam
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3074,7 +3924,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3090,7 +3940,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3098,15 +3948,16 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def create_run(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
          Required.
-        :type red_team: ~azure.ai.projects.onedp.models.RedTeam or JSON or IO[bytes]
+        :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3175,12 +4026,12 @@ class RedTeamsOperations:
         """Upload the result to a redteam run.
 
         :param redteam: Redteam to upload. Required.
-        :type redteam: ~azure.ai.projects.onedp.models.RedTeamUpload
+        :type redteam: ~azure.ai.projects.models.RedTeamUpload
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3196,7 +4047,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3212,7 +4063,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3220,6 +4071,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def upload_run(
         self, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3228,9 +4080,9 @@ class RedTeamsOperations:
 
         :param redteam: Redteam to upload. Is one of the following types: RedTeamUpload, JSON,
          IO[bytes] Required.
-        :type redteam: ~azure.ai.projects.onedp.models.RedTeamUpload or JSON or IO[bytes]
+        :type redteam: ~azure.ai.projects.models.RedTeamUpload or JSON or IO[bytes]
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3301,12 +4153,12 @@ class RedTeamsOperations:
         :param name: Name of the redteam run to update. Required.
         :type name: str
         :param redteam: Redteam upload to update. Required.
-        :type redteam: ~azure.ai.projects.onedp.models.RedTeamUpload
+        :type redteam: ~azure.ai.projects.models.RedTeamUpload
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3324,7 +4176,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3342,7 +4194,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3350,6 +4202,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "name", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def upload_update_run(
         self, name: str, redteam: Union[_models.RedTeamUpload, JSON, IO[bytes]], **kwargs: Any
@@ -3360,9 +4213,9 @@ class RedTeamsOperations:
         :type name: str
         :param redteam: Redteam upload to update. Is one of the following types: RedTeamUpload, JSON,
          IO[bytes] Required.
-        :type redteam: ~azure.ai.projects.onedp.models.RedTeamUpload or JSON or IO[bytes]
+        :type redteam: ~azure.ai.projects.models.RedTeamUpload or JSON or IO[bytes]
         :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.RedTeam
+        :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3429,6 +4282,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_jail_break_dataset_with_type(self, type: str, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset with type.
@@ -3500,9 +4354,11 @@ class RedTeamsOperations:
                 "risk_category",
                 "lang",
                 "strategy",
+                "target_type",
                 "accept",
             ]
         },
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_attack_objectives(
         self,
@@ -3511,6 +4367,7 @@ class RedTeamsOperations:
         risk_types: Optional[List[str]] = None,
         lang: Optional[str] = None,
         strategy: Optional[str] = None,
+        target_type: Optional[str] = None,
         **kwargs: Any
     ) -> List[_models.AttackObjective]:
         """Get the attack objectives.
@@ -3524,8 +4381,10 @@ class RedTeamsOperations:
         :paramtype lang: str
         :keyword strategy: The strategy. Default value is None.
         :paramtype strategy: str
+        :keyword target_type: The target, model/agent. Default value is None.
+        :paramtype target_type: str
         :return: list of AttackObjective
-        :rtype: list[~azure.ai.projects.onedp.models.AttackObjective]
+        :rtype: list[~azure.ai.projects.models.AttackObjective]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3546,6 +4405,7 @@ class RedTeamsOperations:
             risk_types=risk_types,
             lang=lang,
             strategy=strategy,
+            target_type=target_type,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3585,6 +4445,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_jail_break_dataset(self, **kwargs: Any) -> List[str]:
         """Get the jailbreak dataset.
@@ -3646,6 +4507,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_template_parameters_with_type(self, type: str, **kwargs: Any) -> str:
         """Get template parameters with type.
@@ -3710,6 +4572,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_template_parameters(self, **kwargs: Any) -> str:
         """Get template parameters.
@@ -3771,6 +4634,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "path", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_template_parameters_image(self, *, path: str, **kwargs: Any) -> str:
         """Get the template parameters image.
@@ -3838,12 +4702,12 @@ class RedTeamsOperations:
         """Submit a request for simulation.
 
         :param body: Properties of a Prompt Version. Required.
-        :type body: ~azure.ai.projects.onedp.models.SimulationDTO
+        :type body: ~azure.ai.projects.models.SimulationDTO
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: LongRunningResponse. The LongRunningResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.LongRunningResponse
+        :rtype: ~azure.ai.projects.models.LongRunningResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3859,7 +4723,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: LongRunningResponse. The LongRunningResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.LongRunningResponse
+        :rtype: ~azure.ai.projects.models.LongRunningResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3875,7 +4739,7 @@ class RedTeamsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: LongRunningResponse. The LongRunningResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.LongRunningResponse
+        :rtype: ~azure.ai.projects.models.LongRunningResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -3883,6 +4747,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def submit_simulation(
         self, body: Union[_models.SimulationDTO, JSON, IO[bytes]], **kwargs: Any
@@ -3891,9 +4756,9 @@ class RedTeamsOperations:
 
         :param body: Properties of a Prompt Version. Is one of the following types: SimulationDTO,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.SimulationDTO or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.models.SimulationDTO or JSON or IO[bytes]
         :return: LongRunningResponse. The LongRunningResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.LongRunningResponse
+        :rtype: ~azure.ai.projects.models.LongRunningResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3959,6 +4824,7 @@ class RedTeamsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "operation_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def operation_results(self, operation_id: str, **kwargs: Any) -> _models.ChatCompletions:
         """Poll for the operation results.
@@ -3966,7 +4832,7 @@ class RedTeamsOperations:
         :param operation_id: Operation ID for the polling operation. Required.
         :type operation_id: str
         :return: ChatCompletions. The ChatCompletions is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.ChatCompletions
+        :rtype: ~azure.ai.projects.models.ChatCompletions
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4020,20 +4886,1056 @@ class RedTeamsOperations:
         return deserialized  # type: ignore
 
 
+class EvaluationTaxonomiesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`evaluation_taxonomies` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
+        """Get an evaluation run by name.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+
+        _request = build_evaluation_taxonomies_get_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": ["api_version", "input_name", "input_type", "client_request_id", "accept"]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list(
+        self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EvaluationTaxonomy"]:
+        """List evaluation taxonomies.
+
+        :keyword input_name: Filter by the evaluation input name. Default value is None.
+        :paramtype input_name: str
+        :keyword input_type: Filter by taxonomy input type. Default value is None.
+        :paramtype input_type: str
+        :return: An iterator like instance of EvaluationTaxonomy
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluationTaxonomy]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluation_taxonomies_list_request(
+                    input_name=input_name,
+                    input_type=input_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluationTaxonomy], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def delete(self, name: str, **kwargs: Any) -> None:
+        """Delete an evaluation taxonomy by name.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluation_taxonomies_delete_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    async def create(
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def create(
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluation_taxonomies_create_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def update(
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluation_taxonomies_update_request(
+            name=name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class SchedulesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`schedules` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def delete(self, id: str, **kwargs: Any) -> None:
+        """Delete a schedule.
+
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_schedules_delete_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def get(self, id: str, **kwargs: Any) -> _models.Schedule:
+        """Get a schedule by id.
+
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :return: Schedule. The Schedule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Schedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
+
+        _request = build_schedules_get_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Schedule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Schedule"]:
+        """List all schedules.
+
+        :return: An iterator like instance of Schedule
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Schedule]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_schedules_list_request(
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Schedule], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def create_or_update(
+        self, id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Schedule:
+        """Create or update a schedule by id.
+
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :param schedule: Schedule resource. Required.
+        :type schedule: ~azure.ai.projects.models.Schedule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Schedule. The Schedule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Schedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Schedule:
+        """Create or update a schedule by id.
+
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :param schedule: Schedule resource. Required.
+        :type schedule: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Schedule. The Schedule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Schedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.Schedule:
+        """Create or update a schedule by id.
+
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :param schedule: Schedule resource. Required.
+        :type schedule: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Schedule. The Schedule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Schedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def create_or_update(
+        self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.Schedule:
+        """Create or update a schedule by id.
+
+        :param id: Identifier of the schedule. Required.
+        :type id: str
+        :param schedule: Schedule resource. Is one of the following types: Schedule, JSON, IO[bytes]
+         Required.
+        :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
+        :return: Schedule. The Schedule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Schedule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(schedule, (IOBase, bytes)):
+            _content = schedule
+        else:
+            _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_schedules_create_or_update_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Schedule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "run_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
+        """Get a schedule run by id.
+
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
+        :param run_id: Identifier of the schedule run. Required.
+        :type run_id: str
+        :return: ScheduleRun. The ScheduleRun is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ScheduleRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ScheduleRun] = kwargs.pop("cls", None)
+
+        _request = build_schedules_get_run_request(
+            schedule_id=schedule_id,
+            run_id=run_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.ScheduleRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list_runs(self, schedule_id: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduleRun"]:
+        """List all schedule runs.
+
+        :param schedule_id: Identifier of the schedule. Required.
+        :type schedule_id: str
+        :return: An iterator like instance of ScheduleRun
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScheduleRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_schedules_list_runs_request(
+                    schedule_id=schedule_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.ScheduleRun], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
 class EvaluationResultsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.ai.projects.onedp.aio.AIProjectClient`'s
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
         :attr:`evaluation_results` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4043,6 +5945,7 @@ class EvaluationResultsOperations:
         params_added_on={
             "2025-05-15-preview": ["api_version", "name", "top", "skip", "tags", "list_view_type", "accept"]
         },
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list_versions(
         self,
@@ -4069,10 +5972,9 @@ class EvaluationResultsOperations:
         :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
          View type for including/excluding (for example) archived entities. Known values are:
          "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
+        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
         :return: An iterator like instance of EvaluationResult
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.EvaluationResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4158,6 +6060,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "top", "skip", "tags", "list_view_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list_latest(
         self,
@@ -4181,10 +6084,9 @@ class EvaluationResultsOperations:
         :keyword list_view_type: [ListViewType.ActiveOnly, ListViewType.ArchivedOnly, ListViewType.All]
          View type for including/excluding (for example) archived entities. Known values are:
          "ActiveOnly", "ArchivedOnly", and "All". Default value is None.
-        :paramtype list_view_type: str or ~azure.ai.projects.onedp.models.ListViewType
+        :paramtype list_view_type: str or ~azure.ai.projects.models.ListViewType
         :return: An iterator like instance of EvaluationResult
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.onedp.models.EvaluationResult]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4269,16 +6171,18 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluationResult:
-        """Get the specific version of the EvaluationResult.
+        """Get the specific version of the EvaluationResult. The service returns 404 Not Found error if
+        the EvaluationResult does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
         :param version: The specific version id of the EvaluationResult to retrieve. Required.
         :type version: str
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4336,9 +6240,11 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete the specific version of the EvaluationResult.
+        """Delete the specific version of the EvaluationResult. The service returns 204 No Content if the
+        EvaluationResult was deleted successfully or if the EvaluationResult does not exist.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -4392,86 +6298,103 @@ class EvaluationResultsOperations:
         self,
         name: str,
         version: str,
-        body: _models.EvaluationResult,
+        evaluation_result: _models.EvaluationResult,
         *,
-        content_type: str = "application/json",
+        content_type: str = "application/merge-patch+json",
         **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
+        :param version: The specific version id of the EvaluationResult to create or update. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create or update. Required.
-        :type body: ~azure.ai.projects.onedp.models.EvaluationResult
+        :param evaluation_result: The EvaluationResult to create or update. Required.
+        :type evaluation_result: ~azure.ai.projects.models.EvaluationResult
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        evaluation_result: JSON,
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
+        :param version: The specific version id of the EvaluationResult to create or update. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create or update. Required.
-        :type body: JSON
+        :param evaluation_result: The EvaluationResult to create or update. Required.
+        :type evaluation_result: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_or_update_version(
-        self, name: str, version: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        evaluation_result: IO[bytes],
+        *,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
+        :param version: The specific version id of the EvaluationResult to create or update. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create or update. Required.
-        :type body: IO[bytes]
+        :param evaluation_result: The EvaluationResult to create or update. Required.
+        :type evaluation_result: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
+         Default value is "application/merge-patch+json".
         :paramtype content_type: str
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     @api_version_validation(
         method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        params_added_on={"2025-05-15-preview": ["api_version", "name", "content_type", "version", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def create_or_update_version(
-        self, name: str, version: str, body: Union[_models.EvaluationResult, JSON, IO[bytes]], **kwargs: Any
+        self,
+        name: str,
+        version: str,
+        evaluation_result: Union[_models.EvaluationResult, JSON, IO[bytes]],
+        **kwargs: Any
     ) -> _models.EvaluationResult:
         """Create a new or update an existing EvaluationResult with the given version id.
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param version: The specific version id of the EvaluationResult to create or replace. Required.
+        :param version: The specific version id of the EvaluationResult to create or update. Required.
         :type version: str
-        :param body: The definition of the EvaluationResult to create or update. Is one of the
-         following types: EvaluationResult, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.EvaluationResult or JSON or IO[bytes]
+        :param evaluation_result: The EvaluationResult to create or update. Is one of the following
+         types: EvaluationResult, JSON, IO[bytes] Required.
+        :type evaluation_result: ~azure.ai.projects.models.EvaluationResult or JSON or IO[bytes]
         :return: EvaluationResult. The EvaluationResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.EvaluationResult
+        :rtype: ~azure.ai.projects.models.EvaluationResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4488,12 +6411,12 @@ class EvaluationResultsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EvaluationResult] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/merge-patch+json"
         _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
+        if isinstance(evaluation_result, (IOBase, bytes)):
+            _content = evaluation_result
         else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(evaluation_result, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_evaluation_results_create_or_update_version_request(
             name=name,
@@ -4552,12 +6475,12 @@ class EvaluationResultsOperations:
         :param version: The specific version id of the EvaluationResult to operate on. Required.
         :type version: str
         :param body: Parameters for the action. Required.
-        :type body: ~azure.ai.projects.onedp.models.PendingUploadRequest
+        :type body: ~azure.ai.projects.models.PendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4577,7 +6500,7 @@ class EvaluationResultsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4597,7 +6520,7 @@ class EvaluationResultsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4605,6 +6528,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def start_pending_upload(
         self, name: str, version: str, body: Union[_models.PendingUploadRequest, JSON, IO[bytes]], **kwargs: Any
@@ -4617,9 +6541,9 @@ class EvaluationResultsOperations:
         :type version: str
         :param body: Parameters for the action. Is one of the following types: PendingUploadRequest,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.PendingUploadRequest or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.models.PendingUploadRequest or JSON or IO[bytes]
         :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.PendingUploadResponse
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4700,12 +6624,12 @@ class EvaluationResultsOperations:
         :param version: The specific version id of the EvaluationResult to operate on. Required.
         :type version: str
         :param body: Parameters for the action. Required.
-        :type body: ~azure.ai.projects.onedp.models.AssetCredentialRequest
+        :type body: ~azure.ai.projects.models.AssetCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :rtype: ~azure.ai.projects.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4725,7 +6649,7 @@ class EvaluationResultsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :rtype: ~azure.ai.projects.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4745,7 +6669,7 @@ class EvaluationResultsOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :rtype: ~azure.ai.projects.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -4753,6 +6677,7 @@ class EvaluationResultsOperations:
     @api_version_validation(
         method_added_on="2025-05-15-preview",
         params_added_on={"2025-05-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def get_credentials(
         self, name: str, version: str, body: Union[_models.AssetCredentialRequest, JSON, IO[bytes]], **kwargs: Any
@@ -4765,9 +6690,9 @@ class EvaluationResultsOperations:
         :type version: str
         :param body: Parameters for the action. Is one of the following types: AssetCredentialRequest,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.projects.onedp.models.AssetCredentialRequest or JSON or IO[bytes]
+        :type body: ~azure.ai.projects.models.AssetCredentialRequest or JSON or IO[bytes]
         :return: AssetCredentialResponse. The AssetCredentialResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.onedp.models.AssetCredentialResponse
+        :rtype: ~azure.ai.projects.models.AssetCredentialResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4830,3 +6755,389 @@ class EvaluationResultsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class EvaluationRulesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.ProjectsClient`'s
+        :attr:`evaluation_rules` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProjectsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
+        """Get an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
+
+        _request = build_evaluation_rules_get_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def delete(self, id: str, **kwargs: Any) -> None:
+        """Delete an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_evaluation_rules_delete_request(
+            id=id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Required.
+        :type evaluation_rule: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
+        api_versions_list=["2025-11-15-preview"],
+    )
+    async def create_or_update(
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationRule:
+        """Create or update an evaluation rule.
+
+        :param id: Unique identifier for the evaluation rule. Required.
+        :type id: str
+        :param evaluation_rule: Evaluation rule resource. Is one of the following types:
+         EvaluationRule, JSON, IO[bytes] Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
+        :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationRule
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(evaluation_rule, (IOBase, bytes)):
+            _content = evaluation_rule
+        else:
+            _content = json.dumps(evaluation_rule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_evaluation_rules_create_or_update_request(
+            id=id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationRule, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-11-15-preview",
+        params_added_on={
+            "2025-11-15-preview": ["api_version", "action_type", "agent_name", "enabled", "client_request_id", "accept"]
+        },
+        api_versions_list=["2025-11-15-preview"],
+    )
+    def list(
+        self,
+        *,
+        action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
+        agent_name: Optional[str] = None,
+        enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.EvaluationRule"]:
+        """List all evaluation rules.
+
+        :keyword action_type: Filter by the type of evaluation rule. Known values are:
+         "continuousEvaluation" and "humanEvaluation". Default value is None.
+        :paramtype action_type: str or ~azure.ai.projects.models.EvaluationRuleActionType
+        :keyword agent_name: Filter by the agent name. Default value is None.
+        :paramtype agent_name: str
+        :keyword enabled: Filter by the enabled status. Default value is None.
+        :paramtype enabled: bool
+        :return: An iterator like instance of EvaluationRule
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationRule]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EvaluationRule]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_evaluation_rules_list_request(
+                    action_type=action_type,
+                    agent_name=agent_name,
+                    enabled=enabled,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.EvaluationRule], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

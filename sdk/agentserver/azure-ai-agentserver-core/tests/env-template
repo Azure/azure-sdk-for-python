@@ -1,0 +1,31 @@
+# ===== Agent Framework Configuration (NEW - Required for agent_framework samples) =====
+# Required for all Agent Framework samples (basic_simple, mcp_simple, mcp_apikey, workflow_agent_simple)
+AZURE_AI_PROJECT_ENDPOINT=https://<project-name>.region.project.azure.ai/
+AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
+
+# Optional: Azure AI Project resource ID for telemetry
+# Format: /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.MachineLearningServices/workspaces/<workspace>
+AGENT_PROJECT_NAME=
+
+# GitHub Token for MCP samples (mcp_simple, mcp_apikey)
+# Get from: https://github.com/settings/tokens
+GITHUB_TOKEN=your-github-token-here
+
+# ===== Legacy Azure OpenAI Configuration (For backward compatibility) =====
+AZURE_OPENAI_API_KEY=your-api-key-here
+AZURE_OPENAI_ENDPOINT=https://your-endpoint.openai.azure.com/
+AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=gpt-4o
+OPENAI_API_VERSION=2025-03-01-preview
+
+# Azure OpenAI Embeddings Configuration (for RAG tests)
+# If not set, will use the same values as Chat API
+AZURE_OPENAI_EMBEDDINGS_API_KEY=your-embeddings-api-key-here
+AZURE_OPENAI_EMBEDDINGS_ENDPOINT=https://your-endpoint.openai.azure.com/
+AZURE_OPENAI_EMBEDDINGS_DEPLOYMENT_NAME=text-embedding-ada-002
+AZURE_OPENAI_EMBEDDINGS_API_VERSION=2025-03-01-preview
+
+# Note: 
+# - Copy this file to .env and fill in your actual values
+# - Never commit .env file to git (it's in .gitignore)
+# - In CI/CD, these values are loaded from GitHub Secrets
+

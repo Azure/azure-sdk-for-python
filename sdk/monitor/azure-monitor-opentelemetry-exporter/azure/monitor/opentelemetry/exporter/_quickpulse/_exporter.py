@@ -82,7 +82,6 @@ class _UnsuccessfulQuickPulsePostError(Exception):
 
 
 class _QuickpulseExporter(MetricExporter):
-
     def __init__(self, **kwargs: Any) -> None:
         """Metric exporter for Quickpulse.
 
@@ -96,6 +95,7 @@ class _QuickpulseExporter(MetricExporter):
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
         self._credential = kwargs.get("credential")
+        self.aad_audience = parsed_connection_string.aad_audience
         config = QuickpulseClientConfiguration(credential=self._credential)  # type: ignore
         qp_redirect_policy = _QuickpulseRedirectPolicy(permit_redirects=False)
         policies = [
@@ -105,7 +105,7 @@ class _QuickpulseExporter(MetricExporter):
             ContentDecodePolicy(),
             # Logging for client calls
             config.http_logging_policy,
-            _get_auth_policy(self._credential, config.authentication_policy),
+            _get_auth_policy(self._credential, config.authentication_policy, self.aad_audience),
             config.authentication_policy,
             # Explicitly disabling to avoid tracing live metrics calls
             # DistributedTracingPolicy(),
@@ -183,7 +183,9 @@ class _QuickpulseExporter(MetricExporter):
                             try:
                                 _update_filter_configuration(etag, config)
                             except Exception:  # pylint: disable=broad-except
-                                _logger.exception("Exception occurred while updating filter config.")  # pylint: disable=C4769
+                                _logger.exception(
+                                    "Exception occurred while updating filter config."
+                                )  # pylint: disable=C4769
                                 result = MetricExportResult.FAILURE
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while publishing live metrics.")  # pylint: disable=C4769
@@ -246,7 +248,6 @@ class _QuickpulseExporter(MetricExporter):
 
 
 class _QuickpulseMetricReader(MetricReader):
-
     def __init__(
         self,
         exporter: _QuickpulseExporter,
@@ -301,7 +302,9 @@ class _QuickpulseMetricReader(MetricReader):
                             # Reset etag to default if not subscribed
                             _set_quickpulse_etag("")
                     except Exception:  # pylint: disable=broad-except
-                        _logger.exception("Exception occurred while reading live metrics ping response.")  # pylint: disable=C4769
+                        _logger.exception(
+                            "Exception occurred while reading live metrics ping response."
+                        )  # pylint: disable=C4769
                         _set_quickpulse_etag("")
                 # TODO: Implement redirect
                 else:

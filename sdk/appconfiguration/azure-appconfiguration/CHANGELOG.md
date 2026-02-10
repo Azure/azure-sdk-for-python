@@ -1,6 +1,6 @@
 # Release History
 
-## 1.7.2 (Unreleased)
+## 1.8.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,25 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.8.0 (2026-01-26)
+
+### Features Added
+
+- Fixed AudiencePolicy to correctly handle AAD audience errors and return ClientAuthenticationError as expected.
+- Added a `match_conditions` parameter to the `by_page()` method exposed by the page iterator returned by `list_configuration_settings()` to efficiently monitor configuration changes using etags without fetching unchanged data.
+- Added query parameter normalization to support Azure Front Door as a CDN. Query parameter keys are now converted to lowercase and sorted alphabetically.
+- Added support for providing Entra ID authentication audiences via the `audience` keyword argument in the `AzureAppConfigurationClient` constructor to enable authentication against sovereign clouds.
+
+### Other Changes
+
+- Replaced deprecated `datetime.utcnow()` with timezone-aware `datetime.now(timezone.utc)`.
+- Improved authentication scope handling to automatically detect and use correct audience URLs for Azure Public Cloud, Azure US Government, and Azure China cloud environments.
+
+## 1.7.2 (2025-10-20)
+
+### Bugs Fixed
+- Fixed a bug where non-HTTPS endpoints would not function correctly.
 
 ## 1.7.1 (2024-08-22)
 

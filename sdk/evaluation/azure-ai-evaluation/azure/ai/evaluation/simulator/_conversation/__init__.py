@@ -15,7 +15,7 @@ import jinja2
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
 from .._model_tools import LLMBase, OpenAIChatCompletionsModel, RAIClient
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
 

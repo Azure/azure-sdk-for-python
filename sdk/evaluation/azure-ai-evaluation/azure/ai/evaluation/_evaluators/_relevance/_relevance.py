@@ -87,15 +87,13 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
     def __init__(self, model_config, *, credential=None, threshold=3, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self._threshold = threshold
-        self._higher_is_better = True
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
             threshold=threshold,
             credential=credential,
-            _higher_is_better=self._higher_is_better,
+            _higher_is_better=True,
             **kwargs,
         )
 
@@ -177,7 +175,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         if not isinstance(eval_input["response"], str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = result.get("llm_output")
         score = math.nan
 
         if isinstance(llm_output, dict):
@@ -188,15 +187,24 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             return {
                 self._result_key: float(score),
                 f"gpt_{self._result_key}": float(score),
-                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
+                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
+                f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
+                f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
+                f"{self._result_key}_model": result.get("model_id", ""),
+                f"{self._result_key}_sample_input": result.get("sample_input", ""),
+                f"{self._result_key}_sample_output": result.get("sample_output", ""),
             }
+
+        if logger:
+            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
 
         binary_result = self._get_binary_result(score)
         return {
             self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
             f"{self._result_key}_result": binary_result,
             f"{self._result_key}_threshold": self._threshold,
         }

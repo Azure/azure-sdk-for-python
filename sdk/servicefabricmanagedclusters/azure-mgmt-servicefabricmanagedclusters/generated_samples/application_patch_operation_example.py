@@ -30,15 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.applications.update(
+    response = client.applications.begin_update(
         resource_group_name="resRg",
         cluster_name="myCluster",
         application_name="myApp",
-        parameters={"tags": {"a": "b"}},
-    )
+        parameters={"properties": {"parameters": {"param1": "value1", "param2": "value2"}}, "tags": {"a": "b"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/ApplicationPatchOperation_example.json
+# x-ms-original-file: 2025-10-01-preview/ApplicationPatchOperation_example.json
 if __name__ == "__main__":
     main()

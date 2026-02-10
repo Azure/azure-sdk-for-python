@@ -26,6 +26,24 @@ class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Timestamps per word in the output audio."""
 
 
+class AvatarConfigTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Avatar config types."""
+
+    VIDEO_AVATAR = "video-avatar"
+    """Video avatar"""
+    PHOTO_AVATAR = "photo-avatar"
+    """Photo avatar"""
+
+
+class AvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Avatar config output protocols."""
+
+    WEBRTC = "webrtc"
+    """WebRTC protocol, output the audio/video streams via WebRTC"""
+    WEBSOCKET = "websocket"
+    """WebSocket protocol, output the video frames over WebSocket"""
+
+
 class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Union of all supported Azure voice types."""
 
@@ -56,6 +74,7 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_CREATE = "response.create"
     RESPONSE_CANCEL = "response.cancel"
     SESSION_AVATAR_CONNECT = "session.avatar.connect"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -63,6 +82,7 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INPUT_TEXT = "input_text"
     INPUT_AUDIO = "input_audio"
+    INPUT_IMAGE = "input_image"
     TEXT = "text"
     AUDIO = "audio"
 
@@ -78,6 +98,33 @@ class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High sensitivity threshold level."""
     DEFAULT = "default"
     """Default sensitivity threshold level."""
+
+
+class FillerResponseConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Filler response configuration types."""
+
+    STATIC_FILLER = "static_filler"
+    """Static filler configuration type."""
+    LLM_FILLER = "llm_filler"
+    """LLM-based filler configuration type."""
+
+
+class FillerTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Triggers that can activate filler response generation."""
+
+    LATENCY = "latency"
+    """Trigger filler when response latency exceeds threshold."""
+    TOOL = "tool"
+    """Trigger filler when a tool call is being executed."""
+
+
+class FoundryAgentContextType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The available set of Foundry agent context types."""
+
+    NO_CONTEXT = "no_context"
+    """Only the current user input is sent, no context maintained."""
+    AGENT_CONTEXT = "agent_context"
+    """Agent maintains its own context (thread), only current input sent per call."""
 
 
 class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -106,6 +153,20 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MESSAGE = "message"
     FUNCTION_CALL = "function_call"
     FUNCTION_CALL_OUTPUT = "function_call_output"
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    MCP_CALL = "mcp_call"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    FOUNDRY_AGENT_CALL = "foundry_agent_call"
+
+
+class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The available set of MCP approval types."""
+
+    NEVER = "never"
+    """Approval is never required."""
+    ALWAYS = "always"
+    """Approval is always required."""
 
 
 class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -148,6 +209,10 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Shimmer voice."""
     VERSE = "verse"
     """Verse voice."""
+    MARIN = "marin"
+    """Marin voice."""
+    CEDAR = "cedar"
+    """Cedar voice."""
 
 
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -155,9 +220,9 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     PCM16 = "pcm16"
     """16-bit PCM audio format at default sampling rate (24kHz)"""
-    PCM16_8000_HZ = "pcm16-8000hz"
+    PCM16_8000_HZ = "pcm16_8000hz"
     """16-bit PCM audio format at 8kHz sampling rate"""
-    PCM16_16000_HZ = "pcm16-16000hz"
+    PCM16_16000_HZ = "pcm16_16000hz"
     """16-bit PCM audio format at 16kHz sampling rate"""
     G711_ULAW = "g711_ulaw"
     """G.711 μ-law (mu-law) audio format at 8kHz sampling rate"""
@@ -174,6 +239,45 @@ class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the latest Phoenix model."""
     PHOENIX_V2_NEURAL = "PhoenixV2Neural"
     """Use the Phoenix V2 model."""
+
+
+class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Photo avatar base modes."""
+
+    VASA1 = "vasa-1"
+    """VASA-1 model"""
+
+
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning models. Check model documentation for supported
+    values for each model.
+    Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
+    a response.
+    """
+
+    NONE = "none"
+    """No reasoning effort."""
+    MINIMAL = "minimal"
+    """Minimal reasoning effort."""
+    LOW = "low"
+    """Low reasoning effort - faster responses with less reasoning."""
+    MEDIUM = "medium"
+    """Medium reasoning effort - balanced between speed and reasoning depth."""
+    HIGH = "high"
+    """High reasoning effort - more thorough reasoning, may take longer."""
+    XHIGH = "xhigh"
+    """Extra high reasoning effort - maximum reasoning depth."""
+
+
+class RequestImageContentPartDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
+
+    AUTO = "auto"
+    """Automatically select an appropriate detail level."""
+    LOW = "low"
+    """Use a lower detail level to reduce bandwidth or cost."""
+    HIGH = "high"
+    """Use a higher detail level—potentially more resource-intensive."""
 
 
 class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,6 +339,21 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
+    MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
+    MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
+    MCP_LIST_TOOLS_FAILED = "mcp_list_tools.failed"
+    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call_arguments.delta"
+    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call_arguments.done"
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
+    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
+    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
+    RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DELTA = "response.foundry_agent_call_arguments.delta"
+    RESPONSE_FOUNDRY_AGENT_CALL_ARGUMENTS_DONE = "response.foundry_agent_call_arguments.done"
+    RESPONSE_FOUNDRY_AGENT_CALL_IN_PROGRESS = "response.foundry_agent_call.in_progress"
+    RESPONSE_FOUNDRY_AGENT_CALL_COMPLETED = "response.foundry_agent_call.completed"
+    RESPONSE_FOUNDRY_AGENT_CALL_FAILED = "response.foundry_agent_call.failed"
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -254,6 +373,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     FUNCTION = "function"
+    MCP = "mcp"
+    FOUNDRY_AGENT = "foundry_agent"
 
 
 class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

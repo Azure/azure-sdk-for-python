@@ -33,10 +33,10 @@ def main():
 
     client.jobs.begin_delete(
         resource_group_name="rg",
-        job_name="testWorkerContainerAppsJob0",
+        job_name="testworkercontainerappsjob0",
     ).result()
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/Job_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/Job_Delete.json
 if __name__ == "__main__":
     main()

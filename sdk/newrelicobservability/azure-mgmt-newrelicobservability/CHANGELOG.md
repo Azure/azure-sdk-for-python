@@ -1,5 +1,32 @@
 # Release History
 
+## 2.0.0b1 (2025-11-17)
+
+### Features Added
+
+  - Model `NewRelicObservabilityMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `NewRelicObservabilityMgmtClient` added operation group `saa_s`
+  - Model `MarketplaceSaaSInfo` added property `publisher_id`
+  - Model `MarketplaceSaaSInfo` added property `offer_id`
+  - Model `NewRelicMonitorResource` added property `saa_s_data`
+  - Model `NewRelicMonitorResourceUpdate` added property `saa_s_data`
+  - Added model `ActivateSaaSParameterRequest`
+  - Added model `LatestLinkedSaaSResponse`
+  - Added model `ResubscribeProperties`
+  - Added model `SaaSData`
+  - Added model `SaaSResourceDetailsResponse`
+  - Operation group `MonitorsOperations` added method `begin_link_saa_s`
+  - Operation group `MonitorsOperations` added method `begin_resubscribe`
+  - Operation group `MonitorsOperations` added method `latest_linked_saa_s`
+  - Operation group `MonitorsOperations` added method `refresh_ingestion_key`
+  - Added operation group `SaaSOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed model `BillingCycle`
+  - Operation group `MonitoredSubscriptionsOperations` renamed method `begin_createor_update` to `begin_create_or_update`
+  - Operation group `MonitorsOperations` renamed method `update` to `begin_update`
+
 ## 1.1.0 (2024-03-18)
 
 ### Features Added

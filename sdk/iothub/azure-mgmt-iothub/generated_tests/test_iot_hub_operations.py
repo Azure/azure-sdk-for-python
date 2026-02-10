@@ -22,7 +22,7 @@ class TestIotHubOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
         response = self.client.operations.list(
-            api_version="2023-06-30-preview",
+            api_version="2025-08-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

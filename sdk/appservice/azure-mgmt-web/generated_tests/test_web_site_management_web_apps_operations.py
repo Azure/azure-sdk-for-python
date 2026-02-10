@@ -23,7 +23,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_web_apps_list(self, resource_group):
         response = self.client.web_apps.list(
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
     def test_web_apps_list_by_resource_group(self, resource_group):
         response = self.client.web_apps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -367,7 +367,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "virtualNetworkSubnetId": "str",
                 "workloadProfileName": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -379,7 +379,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.delete(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -457,6 +457,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "outboundIpAddresses": "str",
                 "possibleOutboundIpAddresses": "str",
+                "publicNetworkAccess": "str",
                 "redundancyMode": "str",
                 "repositorySiteName": "str",
                 "reserved": False,
@@ -651,7 +652,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "usageState": "str",
                 "virtualNetworkSubnetId": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -663,7 +664,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.analyze_custom_hostname(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -676,7 +677,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot_swap_entity={"preserveVnet": bool, "targetSlot": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -708,7 +709,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -720,7 +721,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_backups(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -733,7 +734,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             backup_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -746,7 +747,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             backup_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -779,7 +780,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -811,7 +812,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -823,7 +824,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_basic_publishing_credentials_policies(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -835,7 +836,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_ftp_allowed(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -854,7 +855,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -866,7 +867,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_scm_allowed(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -885,7 +886,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -897,7 +898,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_configurations(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -910,7 +911,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             app_settings={"id": "str", "kind": "str", "name": "str", "properties": {"str": "str"}, "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -922,7 +923,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_application_settings(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -978,7 +979,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "unauthenticatedClientAction": "str",
                 "validateIssuer": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -990,7 +991,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_auth_settings(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1002,7 +1003,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_auth_settings_v2_without_secrets(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1122,7 +1123,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "platform": {"configFilePath": "str", "enabled": bool, "runtimeVersion": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1134,7 +1135,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_auth_settings_v2(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1163,7 +1164,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1175,7 +1176,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_azure_storage_accounts(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1207,7 +1208,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1219,7 +1220,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.delete_backup_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1231,7 +1232,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_backup_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1243,7 +1244,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_app_settings_key_vault_references(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -1256,7 +1257,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             app_setting_key="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1268,7 +1269,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_site_connection_string_key_vault_references(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -1281,7 +1282,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             connection_string_key="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1300,7 +1301,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "properties": {"str": {"type": "str", "value": "str"}},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1312,7 +1313,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_connection_strings(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1324,7 +1325,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_diagnostic_logs_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1353,7 +1354,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1366,7 +1367,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             metadata={"id": "str", "kind": "str", "name": "str", "properties": {"str": "str"}, "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1378,7 +1379,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_metadata(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1390,7 +1391,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.begin_list_publishing_credentials(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -1412,7 +1413,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "tagsRequiringAuth": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1424,7 +1425,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_site_push_settings(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1436,7 +1437,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_slot_configuration_names(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1457,7 +1458,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1469,7 +1470,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_configuration(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1657,7 +1658,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "windowsFxVersion": "str",
                 "xManagedServiceIdentityId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1845,7 +1846,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "windowsFxVersion": "str",
                 "xManagedServiceIdentityId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1857,7 +1858,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_configuration_snapshot_info(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -1870,7 +1871,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             snapshot_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1883,7 +1884,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             snapshot_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1895,7 +1896,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_web_site_container_logs(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1907,7 +1908,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_container_logs_zip(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1919,7 +1920,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_continuous_web_jobs(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -1932,7 +1933,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1945,7 +1946,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1958,7 +1959,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1971,7 +1972,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -1983,7 +1984,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_production_site_deployment_statuses(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -1996,7 +1997,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             deployment_status_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2008,7 +2009,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_deployments(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2021,7 +2022,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2049,7 +2050,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "status": 0,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2062,7 +2063,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2075,7 +2076,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2106,7 +2107,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2118,7 +2119,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_domain_ownership_identifiers(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2131,7 +2132,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             domain_ownership_identifier_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2145,7 +2146,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             domain_ownership_identifier_name="str",
             domain_ownership_identifier={"id": "str", "kind": "str", "name": "str", "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2158,7 +2159,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             domain_ownership_identifier_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2172,7 +2173,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             domain_ownership_identifier_name="str",
             domain_ownership_identifier={"id": "str", "kind": "str", "name": "str", "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2184,7 +2185,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_ms_deploy_status(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2209,7 +2210,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "skipAppData": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2221,7 +2222,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_ms_deploy_log(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2233,7 +2234,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_one_deploy_status(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2245,7 +2246,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.create_one_deploy_operation(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2257,7 +2258,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_functions(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2269,7 +2270,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_functions_admin_token(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2282,7 +2283,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             function_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2314,7 +2315,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "test_data_href": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2327,7 +2328,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             function_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2342,7 +2343,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             function_name="str",
             key_name="str",
             key={"name": "str", "value": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2356,7 +2357,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             function_name="str",
             key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2369,7 +2370,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             function_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2382,7 +2383,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             function_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2394,7 +2395,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_host_keys(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2406,7 +2407,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_sync_status(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2418,7 +2419,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.sync_functions(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2433,7 +2434,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             key_type="str",
             key_name="str",
             key={"name": "str", "value": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2447,7 +2448,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             key_type="str",
             key_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2459,7 +2460,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_host_name_bindings(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2472,7 +2473,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             host_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2500,7 +2501,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualIP": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2513,7 +2514,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             host_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2527,7 +2528,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2555,7 +2556,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "serviceBusSuffix": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2569,7 +2570,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             namespace_name="str",
             relay_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2597,7 +2598,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "serviceBusSuffix": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2609,7 +2610,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_hybrid_connections(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2621,7 +2622,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_relay_service_connections(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2634,7 +2635,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             entity_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2660,7 +2661,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "resourceType": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2673,7 +2674,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             entity_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2699,7 +2700,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "resourceType": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2711,7 +2712,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_instance_identifiers(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2724,7 +2725,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2737,7 +2738,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2763,7 +2764,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "skipAppData": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2776,7 +2777,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2789,7 +2790,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2803,7 +2804,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2817,7 +2818,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2831,7 +2832,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2845,7 +2846,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2860,7 +2861,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             base_address="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2874,7 +2875,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2886,7 +2887,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.is_cloneable(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2898,7 +2899,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_site_backups(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2910,7 +2911,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_sync_function_triggers(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2922,7 +2923,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.update_machine_key(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2945,7 +2946,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "switchSiteAfterMigration": False,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2965,7 +2966,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2977,7 +2978,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_migrate_my_sql_status(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -2989,7 +2990,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_swift_virtual_network_connection(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3009,7 +3010,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "swiftSupported": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3021,7 +3022,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.delete_swift_virtual_network(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3041,7 +3042,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "swiftSupported": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3054,7 +3055,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             view="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3067,7 +3068,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             operation_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3079,7 +3080,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.start_web_site_network_trace(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3091,7 +3092,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.begin_start_web_site_network_trace_operation(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3103,7 +3104,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.stop_web_site_network_trace(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3116,7 +3117,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             operation_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3129,7 +3130,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             operation_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3142,7 +3143,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             operation_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3154,7 +3155,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.generate_new_site_publishing_password(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3166,7 +3167,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_perf_mon_counters(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3178,7 +3179,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_site_php_error_log_flag(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3190,7 +3191,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_premier_add_ons(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3203,7 +3204,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             premier_add_on_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3229,7 +3230,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vendor": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3242,7 +3243,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             premier_add_on_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3266,7 +3267,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vendor": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3278,7 +3279,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_private_access(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3300,7 +3301,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                     {"key": 0, "name": "str", "resourceId": "str", "subnets": [{"key": 0, "name": "str"}]}
                 ],
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3312,7 +3313,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_private_endpoint_connection_list(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3325,7 +3326,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3348,7 +3349,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3361,7 +3362,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             private_endpoint_connection_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3373,7 +3374,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_private_link_resources(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3385,7 +3386,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_processes(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3398,7 +3399,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             process_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3411,7 +3412,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             process_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3424,7 +3425,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             process_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3437,7 +3438,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             process_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3451,7 +3452,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             base_address="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3464,7 +3465,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             process_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3476,7 +3477,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_public_certificates(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3489,7 +3490,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             public_certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3511,7 +3512,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "thumbprint": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3524,7 +3525,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             public_certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3537,7 +3538,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             publishing_profile_options={"format": "str", "includeDisasterRecoveryEndpoints": bool},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3549,7 +3550,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.reset_production_slot_config(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3561,7 +3562,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.restart(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3592,7 +3593,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3614,7 +3615,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "useDRSecondary": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3638,7 +3639,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "useDRSecondary": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3650,7 +3651,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_site_containers(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3663,7 +3664,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             container_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3697,7 +3698,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                     {"containerMountPath": "str", "volumeSubPath": "str", "data": "str", "readOnly": bool}
                 ],
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3710,7 +3711,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             container_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3722,7 +3723,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_site_extensions(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3735,7 +3736,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             site_extension_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3748,7 +3749,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             site_extension_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -3761,7 +3762,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             site_extension_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -3773,7 +3774,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_slots(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -3786,7 +3787,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4108,7 +4109,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "virtualNetworkSubnetId": "str",
                 "workloadProfileName": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4121,7 +4122,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4200,6 +4201,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "outboundIpAddresses": "str",
                 "possibleOutboundIpAddresses": "str",
+                "publicNetworkAccess": "str",
                 "redundancyMode": "str",
                 "repositorySiteName": "str",
                 "reserved": False,
@@ -4394,7 +4396,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "usageState": "str",
                 "virtualNetworkSubnetId": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4407,7 +4409,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4421,7 +4423,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             slot_swap_entity={"preserveVnet": bool, "targetSlot": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4454,7 +4456,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4467,7 +4469,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -4481,7 +4483,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             backup_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4495,7 +4497,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             backup_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4529,7 +4531,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4562,7 +4564,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -4575,7 +4577,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -4588,7 +4590,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4608,7 +4610,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4621,7 +4623,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4641,7 +4643,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4654,7 +4656,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -4668,7 +4670,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             app_settings={"id": "str", "kind": "str", "name": "str", "properties": {"str": "str"}, "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4681,7 +4683,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4738,7 +4740,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "unauthenticatedClientAction": "str",
                 "validateIssuer": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4751,7 +4753,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4764,7 +4766,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4885,7 +4887,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "platform": {"configFilePath": "str", "enabled": bool, "runtimeVersion": "str"},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4898,7 +4900,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4928,7 +4930,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4941,7 +4943,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4974,7 +4976,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -4987,7 +4989,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5000,7 +5002,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5013,7 +5015,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5027,7 +5029,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             app_setting_key="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5040,7 +5042,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5054,7 +5056,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             connection_string_key="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5074,7 +5076,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "properties": {"str": {"type": "str", "value": "str"}},
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5087,7 +5089,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5100,7 +5102,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5130,7 +5132,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5144,7 +5146,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             metadata={"id": "str", "kind": "str", "name": "str", "properties": {"str": "str"}, "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5157,7 +5159,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5170,7 +5172,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5193,7 +5195,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "tagsRequiringAuth": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5206,7 +5208,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5219,7 +5221,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5408,7 +5410,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "windowsFxVersion": "str",
                 "xManagedServiceIdentityId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5597,7 +5599,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "windowsFxVersion": "str",
                 "xManagedServiceIdentityId": 0,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5610,7 +5612,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5624,7 +5626,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             snapshot_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5638,7 +5640,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             snapshot_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5651,7 +5653,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5664,7 +5666,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5677,7 +5679,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5691,7 +5693,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5705,7 +5707,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5719,7 +5721,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5733,7 +5735,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5746,7 +5748,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5760,7 +5762,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             deployment_status_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5773,7 +5775,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5787,7 +5789,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5816,7 +5818,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "status": 0,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5830,7 +5832,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5844,7 +5846,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5876,7 +5878,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5889,7 +5891,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5903,7 +5905,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             domain_ownership_identifier_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5918,7 +5920,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             domain_ownership_identifier_name="str",
             slot="str",
             domain_ownership_identifier={"id": "str", "kind": "str", "name": "str", "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5932,7 +5934,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             domain_ownership_identifier_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5947,7 +5949,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             domain_ownership_identifier_name="str",
             slot="str",
             domain_ownership_identifier={"id": "str", "kind": "str", "name": "str", "type": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5960,7 +5962,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -5986,7 +5988,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "skipAppData": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5999,7 +6001,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6012,7 +6014,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6025,7 +6027,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6039,7 +6041,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             function_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6072,7 +6074,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "test_data_href": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -6086,7 +6088,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             function_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6102,7 +6104,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             key_name="str",
             slot="str",
             key={"name": "str", "value": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6117,7 +6119,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             function_name="str",
             key_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6131,7 +6133,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             function_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6145,7 +6147,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             function_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6158,7 +6160,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6171,7 +6173,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6184,7 +6186,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6200,7 +6202,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             key_name="str",
             slot="str",
             key={"name": "str", "value": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6215,7 +6217,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             key_type="str",
             key_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6228,7 +6230,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6242,7 +6244,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             host_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6271,7 +6273,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualIP": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6285,7 +6287,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             host_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6300,7 +6302,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             namespace_name="str",
             relay_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6329,7 +6331,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "serviceBusSuffix": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6344,7 +6346,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             namespace_name="str",
             relay_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6373,7 +6375,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "serviceBusSuffix": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6386,7 +6388,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6399,7 +6401,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6413,7 +6415,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             entity_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6440,7 +6442,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "resourceType": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6454,7 +6456,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             entity_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6481,7 +6483,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "resourceType": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6494,7 +6496,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6508,7 +6510,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             instance_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6522,7 +6524,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6549,7 +6551,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "skipAppData": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -6563,7 +6565,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6577,7 +6579,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6592,7 +6594,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6607,7 +6609,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6622,7 +6624,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6637,7 +6639,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6653,7 +6655,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             base_address="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6668,7 +6670,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             slot="str",
             instance_id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6681,7 +6683,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6694,7 +6696,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6707,7 +6709,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6720,7 +6722,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6733,7 +6735,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6754,7 +6756,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "swiftSupported": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6767,7 +6769,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6788,7 +6790,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "swiftSupported": bool,
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6802,7 +6804,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             view="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6816,7 +6818,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             operation_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6829,7 +6831,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6842,7 +6844,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -6855,7 +6857,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6869,7 +6871,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             operation_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6883,7 +6885,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             operation_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6897,7 +6899,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             operation_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6910,7 +6912,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6923,7 +6925,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -6936,7 +6938,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6949,7 +6951,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6963,7 +6965,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             premier_add_on_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -6990,7 +6992,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vendor": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7004,7 +7006,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             premier_add_on_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7029,7 +7031,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vendor": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7042,7 +7044,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7065,7 +7067,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                     {"key": 0, "name": "str", "resourceId": "str", "subnets": [{"key": 0, "name": "str"}]}
                 ],
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7078,7 +7080,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7092,7 +7094,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             private_endpoint_connection_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7116,7 +7118,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7130,7 +7132,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             private_endpoint_connection_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7143,7 +7145,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7156,7 +7158,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7170,7 +7172,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7184,7 +7186,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7198,7 +7200,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7212,7 +7214,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7227,7 +7229,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             process_id="str",
             base_address="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7241,7 +7243,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             process_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7254,7 +7256,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7268,7 +7270,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             public_certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7291,7 +7293,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "thumbprint": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7305,7 +7307,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             public_certificate_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7319,7 +7321,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             publishing_profile_options={"format": "str", "includeDisasterRecoveryEndpoints": bool},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7332,7 +7334,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7345,7 +7347,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7377,7 +7379,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "storageAccountUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7400,7 +7402,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "useDRSecondary": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7425,7 +7427,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "useDRSecondary": bool,
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7438,7 +7440,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7452,7 +7454,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             container_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7487,7 +7489,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                     {"containerMountPath": "str", "volumeSubPath": "str", "data": "str", "readOnly": bool}
                 ],
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7501,7 +7503,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             container_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7514,7 +7516,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7528,7 +7530,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             site_extension_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7542,7 +7544,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             site_extension_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7556,7 +7558,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             site_extension_id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7570,7 +7572,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             slot_swap_entity={"preserveVnet": bool, "targetSlot": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7584,7 +7586,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             slot_swap_entity={"preserveVnet": bool, "targetSlot": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7597,7 +7599,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7610,7 +7612,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7623,7 +7625,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7659,7 +7661,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "repoUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7672,7 +7674,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7708,7 +7710,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "repoUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7721,7 +7723,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7734,7 +7736,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -7747,7 +7749,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7760,7 +7762,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7773,7 +7775,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7786,7 +7788,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7799,7 +7801,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7813,7 +7815,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7827,7 +7829,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7841,7 +7843,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7856,7 +7858,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             web_job_name="str",
             id="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7870,7 +7872,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7883,7 +7885,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -7896,7 +7898,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7910,7 +7912,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             vnet_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7947,7 +7949,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vnetResourceId": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7961,7 +7963,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             vnet_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -7998,7 +8000,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vnetResourceId": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8013,7 +8015,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             vnet_name="str",
             gateway_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8036,7 +8038,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "vnetName": "str",
                 "vpnPackageUri": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8059,7 +8061,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "vnetName": "str",
                 "vpnPackageUri": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8072,7 +8074,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8086,7 +8088,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8099,7 +8101,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot_swap_entity={"preserveVnet": bool, "targetSlot": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8112,7 +8114,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot_swap_entity={"preserveVnet": bool, "targetSlot": "str"},
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8124,7 +8126,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_snapshots(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8136,7 +8138,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_snapshots_from_dr_secondary(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8148,7 +8150,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.get_source_control(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8183,7 +8185,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "repoUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8195,7 +8197,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.delete_source_control(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8230,7 +8232,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "repoUrl": "str",
                 "type": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8242,7 +8244,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.start(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8254,7 +8256,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.begin_start_network_trace(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8266,7 +8268,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.stop(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8278,7 +8280,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.stop_network_trace(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8290,7 +8292,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.sync_repository(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8302,7 +8304,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.sync_function_triggers(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8314,7 +8316,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_triggered_web_jobs(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8327,7 +8329,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8340,7 +8342,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8353,7 +8355,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8367,7 +8369,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             web_job_name="str",
             id="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8380,7 +8382,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8392,7 +8394,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_usages(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8404,7 +8406,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_vnet_connections(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8417,7 +8419,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8453,7 +8455,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vnetResourceId": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8466,7 +8468,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             vnet_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8502,7 +8504,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "vnetResourceId": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8516,7 +8518,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             vnet_name="str",
             gateway_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8538,7 +8540,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "vnetName": "str",
                 "vpnPackageUri": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8560,7 +8562,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
                 "vnetName": "str",
                 "vpnPackageUri": "str",
             },
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8572,7 +8574,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_web_jobs(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8585,7 +8587,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             web_job_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8597,7 +8599,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.deploy_workflow_artifacts(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8610,7 +8612,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8623,7 +8625,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8637,7 +8639,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             name="str",
             slot="str",
             workflow_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8650,7 +8652,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             slot="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8662,7 +8664,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_workflows(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8675,7 +8677,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             name="str",
             workflow_name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -8687,7 +8689,7 @@ class TestWebSiteManagementWebAppsOperations(AzureMgmtRecordedTestCase):
         response = self.client.web_apps.list_workflows_connections(
             resource_group_name=resource_group.name,
             name="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

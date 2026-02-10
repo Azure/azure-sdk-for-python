@@ -82,12 +82,14 @@ class TestPrompty:
     async def test_first_match_text(self, prompty_config: Dict[str, Any]):
         prompty = AsyncPrompty(COHERENCE_PROMPTY, **prompty_config)
         result = await prompty(query="What is the capital of France?", response="France capital Paris")
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
 
         # We expect an output string that contains <S0>chain of thoughts</S0> <S1>explanation<S1> <S2>int_score</S2>
-        assert isinstance(result, str)
+        assert isinstance(llm_output, str)
         matched = re.match(
             r"^\s*<S0>(.*)</S0>\s*<S1>(.*)</S1>\s*<S2>(.*)</S2>\s*$",
-            result,
+            llm_output,
             re.MULTILINE | re.DOTALL,
         )
         assert matched
@@ -100,18 +102,22 @@ class TestPrompty:
     async def test_first_match_image(self, prompty_config: Dict[str, Any]):
         prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
         result = await prompty(image="image1.jpg", question="What is this a picture of?")
-        assert isinstance(result, str)
-        assert "apple" in result.lower()
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
+        assert isinstance(llm_output, str)
+        assert "apple" in llm_output.lower()
 
     @pytest.mark.asyncio
     async def test_first_match_text_streaming(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
         result = await prompty(firstName="Bob", question="What is the capital of France?")
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
 
-        assert isinstance(result, AsyncGenerator)
+        assert isinstance(llm_output, AsyncGenerator)
         combined = ""
-        async for chunk in result:
+        async for chunk in llm_output:
             assert isinstance(chunk, str)
             combined += chunk
 
@@ -123,10 +129,12 @@ class TestPrompty:
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(IMAGE_PROMPTY, **prompty_config)
         result = await prompty(image="image1.jpg", question="What is this a picture of?")
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
 
-        assert isinstance(result, AsyncGenerator)
+        assert isinstance(llm_output, AsyncGenerator)
         combined = ""
-        async for chunk in result:
+        async for chunk in llm_output:
             assert isinstance(chunk, str)
             combined += chunk
 
@@ -144,19 +152,21 @@ class TestPrompty:
         prompty_config["outputs"] = outputs
         prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
         result = await prompty(question="What is the capital of France?")
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
 
-        assert isinstance(result, Mapping)
-        assert "firstName" in result
-        assert result["firstName"] == "John"
-        assert "answer" in result
-        assert "Paris" in result["answer"]
+        assert isinstance(llm_output, Mapping)
+        assert "firstName" in llm_output
+        assert llm_output["firstName"] == "John"
+        assert "answer" in llm_output
+        assert "Paris" in llm_output["answer"]
 
         if outputs:
-            # Should ahve only first name, and answer
-            assert "lastName" not in result
+            # Should have only first name, and answer
+            assert "lastName" not in llm_output
         else:
-            assert "lastName" in result
-            assert result["lastName"] == "Doh"
+            assert "lastName" in llm_output
+            assert llm_output["lastName"] == "Doh"
 
     @pytest.mark.asyncio
     async def test_first_match_text_json_missing(self, prompty_config: Dict[str, Any]):
@@ -171,17 +181,21 @@ class TestPrompty:
         prompty_config["model"]["parameters"]["stream"] = True
         prompty = AsyncPrompty(JSON_PROMPTY, **prompty_config)
         result = await prompty(question="What is the capital of France?", firstName="Barbra", lastName="Streisand")
-        assert isinstance(result, Mapping)
-        assert result["firstName"] == "Barbra"
-        assert result["lastName"] == "Streisand"
-        assert "Paris" in result["answer"]
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
+        assert isinstance(llm_output, Mapping)
+        assert llm_output["firstName"] == "Barbra"
+        assert llm_output["lastName"] == "Streisand"
+        assert "Paris" in llm_output["answer"]
 
     @pytest.mark.asyncio
     async def test_full_text(self, prompty_config: Dict[str, Any]):
         prompty_config["model"]["response"] = "full"
         prompty = AsyncPrompty(BASIC_PROMPTY, **prompty_config)
         result = await prompty(firstName="Bob", question="What is the capital of France?")
-        assert isinstance(result, ChatCompletion)
-        response: str = result.choices[0].message.content or ""
+        assert isinstance(result, dict)
+        llm_output = result["llm_output"]
+        assert isinstance(llm_output, ChatCompletion)
+        response: str = llm_output.choices[0].message.content or ""
         assert "Bob" in response
         assert "Paris" in response

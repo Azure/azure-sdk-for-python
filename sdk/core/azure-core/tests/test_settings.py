@@ -174,6 +174,32 @@ class TestConverters(object):
         with pytest.raises(ValueError):
             m.convert_azure_cloud(10)
 
+    def test_convert_tracing_impl_bad(self):
+        with pytest.raises(ValueError):
+            m.convert_tracing_impl("foo")
+
+    def test_convert_tracing_impl_caching(self):
+        m.convert_tracing_impl.cache_clear()
+        with patch.dict(
+            m._tracing_implementation_dict,
+            {
+                "opentelemetry": MagicMock(wraps=m._get_opentelemetry_span),
+                "opencensus": MagicMock(wraps=m._get_opencensus_span),
+            },
+        ) as patched_dict:
+            mock_method = patched_dict["opentelemetry"]
+            impl1 = m.convert_tracing_impl("opentelemetry")
+            impl2 = m.convert_tracing_impl("opentelemetry")
+            assert impl1 is impl2
+            assert mock_method.call_count == 1
+
+            mock_method = patched_dict["opencensus"]
+            impl1 = m.convert_tracing_impl("opencensus")
+            impl2 = m.convert_tracing_impl("opencensus")
+            assert impl1 is impl2
+            assert mock_method.call_count == 1
+        m.convert_tracing_impl.cache_clear()
+
 
 _standard_settings = ["log_level", "tracing_enabled"]
 

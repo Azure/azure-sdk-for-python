@@ -29,7 +29,10 @@ from _shared.testcase import ConfidentialLedgerPreparer, ConfidentialLedgerTestC
 
 class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def create_confidentialledger_client(
-        self, endpoint, ledger_id, use_aad_auth,
+        self,
+        endpoint,
+        ledger_id,
+        use_aad_auth,
     ):
         # Always explicitly fetch the TLS certificate.
         network_cert = await self.set_ledger_identity_async(ledger_id)
@@ -43,9 +46,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             ledger_certificate_path=self.network_certificate_path,  # type: ignore
         )
 
-        certificate_credential = ConfidentialLedgerCertificateCredential(
-            certificate_path=self.user_certificate_path
-        )
+        certificate_credential = ConfidentialLedgerCertificateCredential(certificate_path=self.user_certificate_path)
         certificate_based_client = ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=endpoint,
@@ -73,16 +74,13 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # the logic for overriding the default certificate verification) is still tested when
             # the test-proxy is involved.
             #
-            # Note the combined bundle should be created *after* any os.remove calls so we don't 
+            # Note the combined bundle should be created *after* any os.remove calls so we don't
             # interfere with auto-magic certificate retrieval tests.
-            create_combined_bundle(
-                [self.network_certificate_path, TEST_PROXY_CERT],
-                self.network_certificate_path
-            )
+            create_combined_bundle([self.network_certificate_path, TEST_PROXY_CERT], self.network_certificate_path)
 
         if not use_aad_auth:
             # We need to add the certificate-based user as an Administrator.
-            try: 
+            try:
                 await aad_based_client.create_or_update_ledger_user(
                     USER_CERTIFICATE_THUMBPRINT, {"assignedRoles": ["Administrator"]}
                 )
@@ -140,20 +138,14 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
-        poller = await client.begin_wait_for_commit(
-            transaction_id=append_result_transaction_id
-        )
+        poller = await client.begin_wait_for_commit(transaction_id=append_result_transaction_id)
         await poller.wait()
 
-        transaction_status = await client.get_transaction_status(
-            transaction_id=append_result_transaction_id
-        )
+        transaction_status = await client.get_transaction_status(transaction_id=append_result_transaction_id)
         assert transaction_status["transactionId"] == append_result_transaction_id
         assert transaction_status["state"] == "Committed"
 
-        poller = await client.begin_get_receipt(
-            transaction_id=append_result_transaction_id
-        )
+        poller = await client.begin_get_receipt(transaction_id=append_result_transaction_id)
         receipt = await poller.result()
         assert receipt["transactionId"] == append_result_transaction_id
         assert receipt["receipt"]
@@ -170,9 +162,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert latest_entry["contents"] == entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
-        poller = await client.begin_create_ledger_entry(
-            {"contents": "Test entry 2 from Python SDK"}
-        )
+        poller = await client.begin_create_ledger_entry({"contents": "Test entry 2 from Python SDK"})
         await poller.wait()
 
         latest_entry = await client.get_current_ledger_entry()
@@ -180,9 +170,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         assert latest_entry["contents"] != entry_contents
         assert latest_entry["collectionId"] == append_result_sub_ledger_id
 
-        poller = await client.begin_get_ledger_entry(
-            transaction_id=append_result_transaction_id
-        )
+        poller = await client.begin_get_ledger_entry(transaction_id=append_result_transaction_id)
         original_entry = await poller.result()
         assert original_entry["entry"]["transactionId"] == append_result_transaction_id
         assert original_entry["entry"]["contents"] == entry_contents
@@ -191,7 +179,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
     async def test_append_entry_flow_with_collection_id_aad_user(
-        self, **kwargs,
+        self,
+        **kwargs,
     ):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
@@ -206,7 +195,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy_async
     async def test_append_entry_flow_with_collection_id_cert_user(
-        self, **kwargs,
+        self,
+        **kwargs,
     ):
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
         confidentialledger_id = kwargs.pop("confidentialledger_id")
@@ -231,27 +221,19 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         append_result_sub_ledger_id = append_result["collectionId"]
         append_result_transaction_id = append_result["transactionId"]
 
-        poller = await client.begin_wait_for_commit(
-            transaction_id=append_result_transaction_id
-        )
+        poller = await client.begin_wait_for_commit(transaction_id=append_result_transaction_id)
         await poller.wait()
 
-        transaction_status = await client.get_transaction_status(
-            transaction_id=append_result_transaction_id
-        )
+        transaction_status = await client.get_transaction_status(transaction_id=append_result_transaction_id)
         assert transaction_status
         assert transaction_status["state"] == "Committed"
 
-        poller = await client.begin_get_receipt(
-            transaction_id=append_result_transaction_id
-        )
+        poller = await client.begin_get_receipt(transaction_id=append_result_transaction_id)
         receipt = await poller.result()
         assert receipt["transactionId"] == append_result_transaction_id
         assert receipt["receipt"]
 
-        latest_entry = await client.get_current_ledger_entry(
-            collection_id=collection_id
-        )
+        latest_entry = await client.get_current_ledger_entry(collection_id=collection_id)
         # The transaction ids may not be equal in the unfortunate edge case where an internal
         # operation occurs after the ledger append (e.g. because a node was restarted). Then,
         # the latest id will be higher.
@@ -269,9 +251,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         )
         await poller.wait()
 
-        latest_entry = await client.get_current_ledger_entry(
-            collection_id=collection_id
-        )
+        latest_entry = await client.get_current_ledger_entry(collection_id=collection_id)
         assert latest_entry["transactionId"] != append_result_transaction_id
         assert latest_entry["contents"] != entry_contents
         assert latest_entry["collectionId"] == collection_id
@@ -331,24 +311,15 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         messages = {m: [] for m in range(num_collections)}
         for i in range(num_messages_sent):
             message = "message-{0}".format(i)
-            kwargs = (
-                {} if num_collections == 0 else {"collection_id": "{0}".format(i % num_collections)}
-            )
+            kwargs = {} if num_collections == 0 else {"collection_id": "{0}".format(i % num_collections)}
 
             if i != num_messages_sent - 1:
-                append_result = await client.create_ledger_entry(
-                    {"contents": message}, **kwargs
-                )
+                append_result = await client.create_ledger_entry({"contents": message}, **kwargs)
             else:
-                append_poller = await client.begin_create_ledger_entry(
-                    {"contents": message},
-                    **kwargs
-                )
+                append_poller = await client.begin_create_ledger_entry({"contents": message}, **kwargs)
                 append_result = await append_poller.result()
 
-            messages[i % num_collections].append(
-                (append_result["transactionId"], message, kwargs)
-            )
+            messages[i % num_collections].append((append_result["transactionId"], message, kwargs))
 
         num_matched = 0
         for i in range(num_collections):
@@ -399,8 +370,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
     async def user_management_actions(self, client):
         aad_user_id = "0" * 36  # AAD Object Ids have length 36
         cert_user_id = (
-            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4"
-            ":77:30:1F"
+            "7F:75:58:60:70:A8:B6:15:A2:CD:24:55:25:B9:64:49:F8:BF:F0:E3:4D:92:EA:B2:8C:30:E6:2D:F4" ":77:30:1F"
         )
         for user_id in [aad_user_id, cert_user_id]:
             await client.delete_ledger_user(user_id)
@@ -425,7 +395,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
             user = await client.get_ledger_user(user_id)
             assert user["userId"] == user_id
-            assert user["assignedRoles"] == ["Contributor","Reader"]
+            assert user["assignedRoles"] == ["Contributor", "Reader"]
 
             await client.delete_ledger_user(user_id)
             await asyncio.sleep(3)  # Let the DELETE user operation be committed, just in case.
@@ -468,10 +438,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
         constitution = await client.get_constitution()
         assert constitution["script"]
         assert constitution["digest"]
-        assert (
-            constitution["digest"].lower() == 
-            hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
-        )
+        assert constitution["digest"].lower() == hashlib.sha256(constitution["script"].encode()).hexdigest().lower()
 
         ledger_enclaves = await client.get_enclave_quotes()
         assert len(ledger_enclaves["enclaveQuotes"]) == 3
@@ -507,8 +474,8 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
             # is not used. Using that instead can cause an error as there is no event loop running
             # for this non-async test.
             authentication_policy=policies.BearerTokenCredentialPolicy(
-                credential, 
-                *["https://confidential-ledger.azure.com/.default"], 
+                credential,
+                *["https://confidential-ledger.azure.com/.default"],
                 **kwargs,
             ),
         )
@@ -530,9 +497,7 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
         # Create the client directly instead of going through the create_confidentialledger_client
         # as we don't need any additional setup.
-        certificate_credential = ConfidentialLedgerCertificateCredential(
-            certificate_path=self.user_certificate_path
-        )
+        certificate_credential = ConfidentialLedgerCertificateCredential(certificate_path=self.user_certificate_path)
         ConfidentialLedgerClient(
             credential=certificate_credential,
             endpoint=confidentialledger_endpoint,

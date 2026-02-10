@@ -43,7 +43,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-async def sample_text_custom_single_label_classification_async():
+async def sample_single_label_classify_async():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -115,10 +115,10 @@ async def sample_text_custom_single_label_classification_async():
                     print(f"Kind: {op_result.kind}")
 
                     result = op_result.results
-                    for doc in (result.documents or []):
+                    for doc in result.documents or []:
                         print(f"\nDocument ID: {doc.id}")
                         # Single-label: typically one class, but iterate to be general
-                        for cls_item in (doc.class_property or []):
+                        for cls_item in doc.class_property or []:
                             print(f"  Predicted category: {cls_item.category}")
                             print(f"  Confidence score: {cls_item.confidence_score}")
                 else:
@@ -127,13 +127,15 @@ async def sample_text_custom_single_label_classification_async():
                             f"\n[Other action] name={op_result.task_name}, "
                             f"status={op_result.status}, kind={op_result.kind}"
                         )
-                    except Exception:
-                        print("\n[Other action present]")
+                    except (AttributeError, TypeError) as e:
+                        print(f"\n[Other action present] Exception: {e}")
+
+
 # [END text_custom_single_label_classification_async]
 
 
 async def main():
-    await sample_text_custom_single_label_classification_async()
+    await sample_single_label_classify_async()
 
 
 if __name__ == "__main__":

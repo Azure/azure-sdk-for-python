@@ -41,7 +41,7 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-core": "1.11.0",
     "requests": "2.19.0",
     "six": "1.12.0",
-    "cryptography": "38.0.3",
+    "cryptography": "41.0.0",
     "msal": "1.23.0",
     "azure-storage-file-datalake": "12.2.0",
 }
@@ -62,7 +62,7 @@ MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
     "azure-storage-file-datalake": {"azure-storage-blob": "12.22.0"},
     "azure-cosmos": {"azure-core": "1.30.0"},
     "azure-appconfiguration-provider": {"azure-appconfiguration": "1.7.2"},
-    "azure-ai-evaluation": {"aiohttp": "3.8.6"}
+    "azure-ai-evaluation": {"aiohttp": "3.8.6"},
 }
 
 MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
@@ -70,16 +70,11 @@ MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 # PLATFORM SPECIFIC OVERRIDES provide additional generic (EG not tied to the package whos dependencies are being processed)
 # filtering on a _per platform_ basis. Primarily used to limit certain packages due to platform compat
 PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
-    ">=3.12.0": {
-        "azure-core": "1.23.1",
-        "aiohttp": "3.9.0",
-        "six": "1.16.0",
-        "requests": "2.30.0"
+    ">=3.14.0": {
+        "typing-extensions": "4.15.0",
     },
-    ">=3.13.0": {
-        "typing-extensions": "4.12.0",
-        "aiohttp": "3.10.6"
-    }
+    ">=3.12.0": {"azure-core": "1.23.1", "aiohttp": "3.9.0", "six": "1.16.0", "requests": "2.30.0"},
+    ">=3.13.0": {"typing-extensions": "4.13.0", "aiohttp": "3.10.6"},
 }
 
 PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {}
@@ -185,9 +180,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
 
     # lower bound general
     if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
-        versions = [
-            v for v in versions if Version(v) >= Version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
-        ]
+        versions = [v for v in versions if Version(v) >= Version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])]
 
     # lower bound platform-specific
     for platform_bound in PLATFORM_SPECIFIC_MINIMUM_OVERRIDES.keys():
@@ -210,9 +203,7 @@ def process_bounded_versions(originating_pkg_name: str, pkg_name: str, versions:
 
     # upper bound general
     if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
-        versions = [
-            v for v in versions if Version(v) <= Version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
-        ]
+        versions = [v for v in versions if Version(v) <= Version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])]
 
     # upper bound platform
     for platform_bound in PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES.keys():
@@ -253,10 +244,21 @@ def process_requirement(req, dependency_type, orig_pkg_name):
         )
         return ""
 
+    # if the specifier includes preview versions, then we can resolve preview versions
+    # otherwise, we should filter them out
+    allows_prereleases = spec is not None and spec.prereleases is True
+
     # get available versions on PyPI
     client = PyPIClient()
     versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
+
+    # prepass filter before choosing a latest or minimum, eliminate prerelease versions if they are not allowed based on the specifier
+    if not allows_prereleases:
+        versions = [v for v in versions if not Version(v).is_prerelease]
+        logging.info(
+            "Filtered out pre-release versions for %s based on specifier. Remaining versions: %s", pkg_name, versions
+        )
 
     # think of the various versions that come back from pypi as the top of a funnel
     # We apply generic overrides -> platform specific overrides -> package specific overrides
@@ -414,6 +416,5 @@ if __name__ == "__main__":
     if not (os.path.exists(setup_path) and os.path.exists(args.work_dir)):
         logging.error("Invalid arguments. Please make sure target directory and working directory are valid path")
         sys.exit(1)
-
 
     install_dependent_packages(setup_path, args.dependency_type, args.work_dir)

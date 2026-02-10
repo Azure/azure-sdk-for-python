@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping # pylint:disable=import-error
 from io import IOBase
 import json
-from typing import Any, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -58,28 +58,28 @@ from ...operations._operations import (
     build_exported_model_delete_exported_model_request,
     build_exported_model_get_exported_model_job_status_request,
     build_exported_model_get_exported_model_request,
-    build_project_assign_deployment_resources_request,
+    build_project_assign_project_resources_request,
     build_project_cancel_training_job_request,
     build_project_copy_project_authorization_request,
     build_project_copy_project_request,
     build_project_export_request,
-    build_project_get_assign_deployment_resources_status_request,
+    build_project_get_assign_project_resources_status_request,
     build_project_get_copy_project_status_request,
     build_project_get_export_status_request,
     build_project_get_project_deletion_status_request,
     build_project_get_project_request,
     build_project_get_swap_deployments_status_request,
     build_project_get_training_status_request,
-    build_project_get_unassign_deployment_resources_status_request,
+    build_project_get_unassign_project_resources_status_request,
     build_project_import_method_request,
-    build_project_list_deployment_resources_request,
     build_project_list_deployments_request,
     build_project_list_exported_models_request,
+    build_project_list_project_resources_request,
     build_project_list_trained_models_request,
     build_project_list_training_jobs_request,
     build_project_swap_deployments_request,
     build_project_train_request,
-    build_project_unassign_deployment_resources_request,
+    build_project_unassign_project_resources_request,
     build_trained_model_delete_trained_model_request,
     build_trained_model_evaluate_model_request,
     build_trained_model_get_evaluation_status_request,
@@ -93,7 +93,7 @@ from .._configuration import ConversationAuthoringClientConfiguration, Conversat
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 _Unset: Any = object()
 
 
@@ -120,7 +120,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ProjectDetails]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ProjectDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -172,7 +172,7 @@ class _ConversationAuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProjectDetails], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.ProjectDetails], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -221,7 +221,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.SupportedLanguage]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.SupportedLanguage]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -274,7 +274,7 @@ class _ConversationAuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SupportedLanguage], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.SupportedLanguage], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -298,9 +298,9 @@ class _ConversationAuthoringClientOperationsMixin(
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "top", "skip", "maxpagesize", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "top", "skip", "maxpagesize", "accept"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     def list_assigned_resource_deployments(
         self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
@@ -322,7 +322,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AssignedProjectDeploymentsMetadata]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.AssignedProjectDeploymentsMetadata]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -374,7 +374,7 @@ class _ConversationAuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AssignedProjectDeploymentsMetadata], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.AssignedProjectDeploymentsMetadata], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -428,7 +428,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.PrebuiltEntity]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.PrebuiltEntity]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -482,7 +482,7 @@ class _ConversationAuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.PrebuiltEntity], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.PrebuiltEntity], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -531,7 +531,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TrainingConfigVersion]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.TrainingConfigVersion]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -584,7 +584,7 @@ class _ConversationAuthoringClientOperationsMixin(
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TrainingConfigVersion], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.TrainingConfigVersion], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -852,7 +852,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
+    async def begin_delete_project(self, project_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a project.
 
         :param project_name: The name of the project to use. Required.
@@ -902,9 +902,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def _get_export_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.ExportProjectState:
+    async def _get_export_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         :param project_name: The new project name. Required.
@@ -912,7 +910,7 @@ class _ConversationAuthoringClientOperationsMixin(
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -926,7 +924,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_get_export_status_request(
             project_name=project_name,
@@ -959,9 +957,7 @@ class _ConversationAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ExportProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ExportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -969,9 +965,7 @@ class _ConversationAuthoringClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_import_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.ImportProjectState:
+    async def _get_import_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.ImportProjectState:
         """Gets the status for an import.
 
         :param project_name: The new project name. Required.
@@ -979,7 +973,7 @@ class _ConversationAuthoringClientOperationsMixin(
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ImportProjectState. The ImportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ImportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ImportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -993,7 +987,7 @@ class _ConversationAuthoringClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ImportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ImportProjectState] = kwargs.pop("cls", None)
 
         _request = build_conversation_authoring_get_import_status_request(
             project_name=project_name,
@@ -1026,9 +1020,7 @@ class _ConversationAuthoringClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ImportProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ImportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1056,11 +1048,9 @@ class DeploymentOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> _models.ProjectDeployment:
+    async def get_deployment(self, deployment_name: str, **kwargs: Any) -> _models.ProjectDeployment:
         """Gets the details of a deployment.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param deployment_name: Represents deployment name. Required.
         :type deployment_name: str
         :return: ProjectDeployment. The ProjectDeployment is compatible with MutableMapping
@@ -1081,8 +1071,8 @@ class DeploymentOperations:
         cls: ClsType[_models.ProjectDeployment] = kwargs.pop("cls", None)
 
         _request = build_deployment_get_deployment_request(
-            project_name=project_name,
             deployment_name=deployment_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1119,11 +1109,7 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     async def _deploy_project_initial(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models._models.CreateDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, deployment_name: str, body: Union[_models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1147,8 +1133,8 @@ class DeploymentOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_deployment_deploy_project_request(
-            project_name=project_name,
             deployment_name=deployment_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1186,54 +1172,76 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_deploy_project(
+    async def begin_deploy_project(
         self,
-        project_name: str,
         deployment_name: str,
-        body: _models._models.CreateDeploymentDetails,
+        body: _models.CreateDeploymentDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-
-    @distributed_trace_async
-    async def _begin_deploy_project(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models._models.CreateDeploymentDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a new deployment or replaces an existing one.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_deploy_project(
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates a new deployment or replaces an existing one.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_deploy_project(
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates a new deployment or replaces an existing one.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The new deployment info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_deploy_project(
+        self, deployment_name: str, body: Union[_models.CreateDeploymentDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates a new deployment or replaces an existing one.
+
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :param body: The new deployment info. Is one of the following types: CreateDeploymentDetails,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.CreateDeploymentDetails
-         or JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.CreateDeploymentDetails or JSON
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1248,7 +1256,6 @@ class DeploymentOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._deploy_project_initial(
-                project_name=project_name,
                 deployment_name=deployment_name,
                 body=body,
                 content_type=content_type,
@@ -1286,9 +1293,7 @@ class DeploymentOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    async def _delete_deployment_initial(
-        self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    async def _delete_deployment_initial(self, deployment_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1303,8 +1308,8 @@ class DeploymentOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_deployment_delete_deployment_request(
-            project_name=project_name,
             deployment_name=deployment_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1340,13 +1345,9 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_delete_deployment(
-        self, project_name: str, deployment_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete_deployment(self, deployment_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes a project deployment.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
         :return: An instance of AsyncLROPoller that returns None
@@ -1362,12 +1363,7 @@ class DeploymentOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_deployment_initial(
-                project_name=project_name,
-                deployment_name=deployment_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                deployment_name=deployment_name, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -1399,16 +1395,12 @@ class DeploymentOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "deployment_name", "content_type"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _delete_deployment_from_resources_initial(  # pylint: disable=name-too-long
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, deployment_name: str, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1432,8 +1424,8 @@ class DeploymentOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_deployment_delete_deployment_from_resources_request(
-            project_name=project_name,
             deployment_name=deployment_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1471,59 +1463,88 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_delete_deployment_from_resources(
+    async def begin_delete_deployment_from_resources(
         self,
-        project_name: str,
         deployment_name: str,
-        body: _models._models.DeleteDeploymentDetails,
+        body: _models.ProjectResourceIds,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
+    ) -> AsyncLROPoller[None]:
+        """Deletes a deployment from the specified project-assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _begin_delete_deployment_from_resources(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
+    async def begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a deployment from the specified project-assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _begin_delete_deployment_from_resources(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
+    async def begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a deployment from the specified project-assigned resources.
+
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "deployment_name", "content_type"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _begin_delete_deployment_from_resources(
-        self,
-        project_name: str,
-        deployment_name: str,
-        body: Union[_models._models.DeleteDeploymentDetails, JSON, IO[bytes]],
-        **kwargs: Any
+    async def begin_delete_deployment_from_resources(
+        self, deployment_name: str, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes a project deployment from the specified assigned resources.
+        """Deletes a deployment from the specified project-assigned resources.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
         :type deployment_name: str
-        :param body: The options for deleting the deployment. Is one of the following types:
-         DeleteDeploymentDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.DeleteDeploymentDetails
-         or JSON or IO[bytes]
+        :param body: The Language or AIService resource list for deleting the deployment.\\r\\n
+         The deployment will only be deleted from the specified resources, and will remain for the rest.
+         Is one of the following types: ProjectResourceIds, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1538,7 +1559,6 @@ class DeploymentOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_deployment_from_resources_initial(
-                project_name=project_name,
                 deployment_name=deployment_name,
                 body=body,
                 content_type=content_type,
@@ -1578,25 +1598,22 @@ class DeploymentOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "deployment_name", "job_id", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "deployment_name", "job_id", "accept"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
-        self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentDeleteFromResourcesState:
+    async def get_deployment_delete_from_resources_status(  # pylint: disable=name-too-long
+        self, deployment_name: str, job_id: str, **kwargs: Any
+    ) -> _models.DeploymentDeleteFromResourcesState:
         """Gets the status of an existing delete deployment from specific resources job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param deployment_name: Represents deployment name. Required.
         :type deployment_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: DeploymentDeleteFromResourcesState. The DeploymentDeleteFromResourcesState is
          compatible with MutableMapping
-        :rtype:
-         ~azure.ai.language.conversations.authoring.models._models.DeploymentDeleteFromResourcesState
+        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentDeleteFromResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1610,12 +1627,12 @@ class DeploymentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeploymentDeleteFromResourcesState] = kwargs.pop("cls", None)
 
         _request = build_deployment_get_deployment_delete_from_resources_status_request(
-            project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1644,9 +1661,7 @@ class DeploymentOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentDeleteFromResourcesState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DeploymentDeleteFromResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1654,19 +1669,15 @@ class DeploymentOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_deployment_status(
-        self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentState:
+    async def get_deployment_status(self, deployment_name: str, job_id: str, **kwargs: Any) -> _models.DeploymentState:
         """Gets the status of an existing deployment job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param deployment_name: Represents deployment name. Required.
         :type deployment_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: DeploymentState. The DeploymentState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentState
+        :rtype: ~azure.ai.language.conversations.authoring.models.DeploymentState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1680,12 +1691,12 @@ class DeploymentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DeploymentState] = kwargs.pop("cls", None)
 
         _request = build_deployment_get_deployment_status_request(
-            project_name=project_name,
             deployment_name=deployment_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1714,9 +1725,7 @@ class DeploymentOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.DeploymentState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1745,12 +1754,10 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_trained_models(
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.ProjectTrainedModel"]:
         """Lists the trained models belonging to a project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -1764,7 +1771,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ProjectTrainedModel]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ProjectTrainedModel]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1778,7 +1785,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_project_list_trained_models_request(
-                    project_name=project_name,
+                    project_name=self._config.project_name,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1817,7 +1824,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProjectTrainedModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.ProjectTrainedModel], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1841,12 +1848,10 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_training_jobs(
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.TrainingState"]:
         """Lists the non-expired training jobs created for a project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -1860,7 +1865,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.TrainingState]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.TrainingState]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1874,7 +1879,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_project_list_training_jobs_request(
-                    project_name=project_name,
+                    project_name=self._config.project_name,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -1913,7 +1918,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TrainingState], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.TrainingState], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1937,31 +1942,29 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    def list_deployment_resources(
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AssignedDeploymentResource"]:
-        """Lists the deployments resources assigned to the project.
+    def list_project_resources(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AssignedProjectResource"]:
+        """Lists the Language or AIService resources assigned to the project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
         :paramtype skip: int
-        :return: An iterator like instance of AssignedDeploymentResource
+        :return: An iterator like instance of AssignedProjectResource
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AssignedDeploymentResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.language.conversations.authoring.models.AssignedProjectResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.AssignedDeploymentResource]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.AssignedProjectResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1974,8 +1977,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_project_list_deployment_resources_request(
-                    project_name=project_name,
+                _request = build_project_list_project_resources_request(
+                    project_name=self._config.project_name,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -2014,7 +2017,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AssignedDeploymentResource], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.AssignedProjectResource], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2038,12 +2041,10 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def list_deployments(
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.ProjectDeployment"]:
         """Lists the deployments belonging to a project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -2057,7 +2058,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ProjectDeployment]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ProjectDeployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2071,7 +2072,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_project_list_deployments_request(
-                    project_name=project_name,
+                    project_name=self._config.project_name,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -2110,7 +2111,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ProjectDeployment], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.ProjectDeployment], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2134,17 +2135,15 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "top", "skip", "maxpagesize", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     def list_exported_models(
-        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.ExportedTrainedModel"]:
         """Lists the exported models belonging to a project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :keyword top: The number of result items to return. Default value is None.
         :paramtype top: int
         :keyword skip: The number of result items to skip. Default value is None.
@@ -2158,7 +2157,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.ExportedTrainedModel]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.ExportedTrainedModel]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2172,7 +2171,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             if not next_link:
 
                 _request = build_project_list_exported_models_request(
-                    project_name=project_name,
+                    project_name=self._config.project_name,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
@@ -2211,7 +2210,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.ExportedTrainedModel], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.ExportedTrainedModel], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2234,15 +2233,12 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _assign_deployment_resources_initial(
-        self,
-        project_name: str,
-        body: Union[_models._models.AssignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+    async def _assign_project_resources_initial(
+        self, body: Union[_models.AssignProjectResourcesDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2265,8 +2261,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_assign_deployment_resources_request(
-            project_name=project_name,
+        _request = build_project_assign_project_resources_request(
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2304,47 +2300,83 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_assign_deployment_resources(
-        self,
-        project_name: str,
-        body: _models._models.AssignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_assign_deployment_resources(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_assign_deployment_resources(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
-    )
-    async def _begin_assign_deployment_resources(
-        self,
-        project_name: str,
-        body: Union[_models._models.AssignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+    async def begin_assign_project_resources(
+        self, body: _models.AssignProjectResourcesDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
-        available only via AAD authentication and not supported via subscription key authentication.
-        For more details about AAD authentication, check here:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
         `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
         <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The new project resources info. Is one of the following types:
-         AssignDeploymentResourcesDetails, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.language.conversations.authoring.models._models.AssignDeploymentResourcesDetails or
+        :param body: The new project resources to be assigned. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignProjectResourcesDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_assign_project_resources(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources to be assigned. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_assign_project_resources(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources to be assigned. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
+    )
+    async def begin_assign_project_resources(
+        self, body: Union[_models.AssignProjectResourcesDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Assign new Language or AIService Azure resources to a project to allowing deployment to them.
+        This API is available only via AAD authentication and not supported via subscription key
+        authentication. For more details about AAD authentication, check here:
+        `https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+        <https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory>`_.
+
+        :param body: The new project resources to be assigned. Is one of the following types:
+         AssignProjectResourcesDetails, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.AssignProjectResourcesDetails or
          JSON or IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -2359,14 +2391,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._assign_deployment_resources_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+            raw_result = await self._assign_project_resources_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -2398,15 +2424,12 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _unassign_deployment_resources_initial(
-        self,
-        project_name: str,
-        body: Union[_models._models.UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+    async def _unassign_project_resources_initial(
+        self, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2429,8 +2452,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_project_unassign_deployment_resources_request(
-            project_name=project_name,
+        _request = build_project_unassign_project_resources_request(
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2468,45 +2491,68 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_unassign_deployment_resources(
-        self,
-        project_name: str,
-        body: _models._models.UnassignDeploymentResourcesDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
+    async def begin_unassign_project_resources(
+        self, body: _models.ProjectResourceIds, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Unassign resources from a project. This disallows deployment to these resources.
+
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _begin_unassign_deployment_resources(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
+    async def begin_unassign_project_resources(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Unassign resources from a project. This disallows deployment to these resources.
+
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _begin_unassign_deployment_resources(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
+    async def begin_unassign_project_resources(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Unassign resources from a project. This disallows deployment to these resources.
+
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _begin_unassign_deployment_resources(
-        self,
-        project_name: str,
-        body: Union[_models._models.UnassignDeploymentResourcesDetails, JSON, IO[bytes]],
-        **kwargs: Any
+    async def begin_unassign_project_resources(
+        self, body: Union[_models.ProjectResourceIds, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Unassign resources from a project. This disallows deploying new deployments to these resources,
-        and deletes existing deployments assigned to them.
+        """Unassign resources from a project. This disallows deployment to these resources.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
-        :param body: The info for the deployment resources to be deleted. Is one of the following
-         types: UnassignDeploymentResourcesDetails, JSON, IO[bytes] Required.
-        :type body:
-         ~azure.ai.language.conversations.authoring.models._models.UnassignDeploymentResourcesDetails or
-         JSON or IO[bytes]
+        :param body: The list of Language or AIService Azure resource IDs to be unassigned. Is one of
+         the following types: ProjectResourceIds, JSON, IO[bytes] Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ProjectResourceIds or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2520,14 +2566,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._unassign_deployment_resources_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+            raw_result = await self._unassign_project_resources_initial(
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -2560,22 +2600,17 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "job_id", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _get_assign_deployment_resources_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentResourcesState:
-        """Gets the status of an existing assign deployment resources job.
+    async def get_assign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.ProjectResourcesState:
+        """Gets the status of an existing assign project resources job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentResourcesState
+        :return: ProjectResourcesState. The ProjectResourcesState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2589,11 +2624,11 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_get_assign_deployment_resources_status_request(
-            project_name=project_name,
+        _request = build_project_get_assign_project_resources_status_request(
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2622,9 +2657,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentResourcesState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ProjectResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2633,22 +2666,17 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "job_id", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-11-01",
+        params_added_on={"2025-11-01": ["api_version", "project_name", "job_id", "accept"]},
+        api_versions_list=["2025-11-01", "2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _get_unassign_deployment_resources_status(  # pylint: disable=name-too-long
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.DeploymentResourcesState:
-        """Gets the status of an existing unassign deployment resources job.
+    async def get_unassign_project_resources_status(self, job_id: str, **kwargs: Any) -> _models.ProjectResourcesState:
+        """Gets the status of an existing unassign project resources job.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
-        :return: DeploymentResourcesState. The DeploymentResourcesState is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.DeploymentResourcesState
+        :return: ProjectResourcesState. The ProjectResourcesState is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectResourcesState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2662,11 +2690,11 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.DeploymentResourcesState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectResourcesState] = kwargs.pop("cls", None)
 
-        _request = build_project_get_unassign_deployment_resources_status_request(
-            project_name=project_name,
+        _request = build_project_get_unassign_project_resources_status_request(
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2695,9 +2723,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.DeploymentResourcesState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ProjectResourcesState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2705,7 +2731,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     async def _swap_deployments_initial(
-        self, project_name: str, body: Union[_models._models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2729,7 +2755,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_project_swap_deployments_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2767,35 +2793,63 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_swap_deployments(
-        self,
-        project_name: str,
-        body: _models._models.SwapDeploymentsDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_swap_deployments(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_swap_deployments(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-
-    @distributed_trace_async
-    async def _begin_swap_deployments(
-        self, project_name: str, body: Union[_models._models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+    async def begin_swap_deployments(
+        self, body: _models.SwapDeploymentsDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Swaps two existing deployments with each other.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
+        :param body: The job object to swap two deployments. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_swap_deployments(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_swap_deployments(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Swaps two existing deployments with each other.
+
+        :param body: The job object to swap two deployments. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_swap_deployments(
+        self, body: Union[_models.SwapDeploymentsDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Swaps two existing deployments with each other.
+
         :param body: The job object to swap two deployments. Is one of the following types:
          SwapDeploymentsDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.SwapDeploymentsDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsDetails or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2810,13 +2864,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._swap_deployments_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -2848,17 +2896,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def _get_swap_deployments_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.SwapDeploymentsState:
+    async def get_swap_deployments_status(self, job_id: str, **kwargs: Any) -> _models.SwapDeploymentsState:
         """Gets the status of an existing swap deployment job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: SwapDeploymentsState. The SwapDeploymentsState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.SwapDeploymentsState
+        :rtype: ~azure.ai.language.conversations.authoring.models.SwapDeploymentsState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2872,11 +2916,11 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.SwapDeploymentsState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.SwapDeploymentsState] = kwargs.pop("cls", None)
 
         _request = build_project_get_swap_deployments_status_request(
-            project_name=project_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2905,9 +2949,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.SwapDeploymentsState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.SwapDeploymentsState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2915,11 +2957,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_project(self, project_name: str, **kwargs: Any) -> _models.ProjectDetails:
+    async def get_project(self, **kwargs: Any) -> _models.ProjectDetails:
         """Gets the details of a project.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :return: ProjectDetails. The ProjectDetails is compatible with MutableMapping
         :rtype: ~azure.ai.language.conversations.authoring.models.ProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2938,7 +2978,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.ProjectDetails] = kwargs.pop("cls", None)
 
         _request = build_project_get_project_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2975,13 +3015,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models._models.ProjectDeletionState:
+    async def get_project_deletion_status(self, job_id: str, **kwargs: Any) -> _models.ProjectDeletionState:
         """Gets the status for a project deletion job.
 
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ProjectDeletionState. The ProjectDeletionState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ProjectDeletionState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ProjectDeletionState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2995,7 +3035,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ProjectDeletionState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ProjectDeletionState] = kwargs.pop("cls", None)
 
         _request = build_project_get_project_deletion_status_request(
             job_id=job_id,
@@ -3027,9 +3067,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ProjectDeletionState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ProjectDeletionState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3038,10 +3076,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     async def _import_method_initial(
         self,
-        project_name: str,
-        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
+        body: Union[_models.ExportedProject, JSON, IO[bytes]],
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3066,7 +3103,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_project_import_method_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             exported_project_format=exported_project_format,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3105,54 +3142,98 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_import_method(
+    async def begin_import(
         self,
-        project_name: str,
-        body: _models._models.ExportedProject,
+        body: _models.ExportedProject,
         *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_import_method(
-        self,
-        project_name: str,
-        body: JSON,
-        *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_import_method(
-        self,
-        project_name: str,
-        body: IO[bytes],
-        *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-
-    @distributed_trace_async
-    async def _begin_import_method(
-        self,
-        project_name: str,
-        body: Union[_models._models.ExportedProject, JSON, IO[bytes]],
-        *,
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
+        :param body: The project data to import. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_import(
+        self,
+        body: JSON,
+        *,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param body: The project data to import. Required.
+        :type body: JSON
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_import(
+        self,
+        body: IO[bytes],
+        *,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
+        :param body: The project data to import. Required.
+        :type body: IO[bytes]
+        :keyword exported_project_format: The format of the exported project file to use. Known values
+         are: "Conversation" and "Luis". Default value is None.
+        :paramtype exported_project_format: str or
+         ~azure.ai.language.conversations.authoring.models.ExportedProjectFormat
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_import(
+        self,
+        body: Union[_models.ExportedProject, JSON, IO[bytes]],
+        *,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Triggers a job to import a project. If a project with the same name already exists, the data of
+        that project is replaced.
+
         :param body: The project data to import. Is one of the following types: ExportedProject, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.ExportedProject or JSON
-         or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedProject or JSON or
+         IO[bytes]
         :keyword exported_project_format: The format of the exported project file to use. Known values
          are: "Conversation" and "Luis". Default value is None.
         :paramtype exported_project_format: str or
@@ -3171,7 +3252,6 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._import_method_initial(
-                project_name=project_name,
                 body=body,
                 exported_project_format=exported_project_format,
                 content_type=content_type,
@@ -3211,10 +3291,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     async def _export_initial(
         self,
-        project_name: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
@@ -3233,7 +3312,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_project_export_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
             asset_kind=asset_kind,
@@ -3273,20 +3352,17 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_export(
+    async def begin_export(
         self,
-        project_name: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
-        exported_project_format: Optional[Union[str, _models._enums.ExportedProjectFormat]] = None,
+        exported_project_format: Optional[Union[str, _models.ExportedProjectFormat]] = None,
         asset_kind: Optional[str] = None,
         trained_model_label: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Triggers a job to export a project's data.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :keyword string_index_type: Specifies the method used to interpret string offsets. For
          additional information see `https://aka.ms/text-analytics-offsets
          <https://aka.ms/text-analytics-offsets>`_. Known values are: "Utf16CodeUnit", "Utf8CodeUnit",
@@ -3315,7 +3391,6 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._export_initial(
-                project_name=project_name,
                 string_index_type=string_index_type,
                 exported_project_format=exported_project_format,
                 asset_kind=asset_kind,
@@ -3355,17 +3430,13 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def _get_export_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.ExportProjectState:
+    async def get_export_status(self, job_id: str, **kwargs: Any) -> _models.ExportProjectState:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ExportProjectState. The ExportProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3379,11 +3450,11 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExportProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportProjectState] = kwargs.pop("cls", None)
 
         _request = build_project_get_export_status_request(
-            project_name=project_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3412,9 +3483,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ExportProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ExportProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3422,45 +3491,83 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _copy_project_authorization(
+    async def copy_project_authorization(
         self,
-        project_name: str,
         *,
         project_kind: Union[str, _models.ProjectKind],
         content_type: str = "application/json",
         storage_input_container_name: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models._models.CopyProjectDetails: ...
+    ) -> _models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :keyword project_kind: Represents the project kind. Known values are: "Conversation",
+         "Orchestration", and "CustomConversationSummarization". Required.
+        :paramtype project_kind: str or ~azure.ai.language.conversations.authoring.models.ProjectKind
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword storage_input_container_name: The name of the storage container. Default value is
+         None.
+        :paramtype storage_input_container_name: str
+        :keyword allow_overwrite: Whether to allow an existing project to be overwritten using the
+         resulting copy authorization. Default value is None.
+        :paramtype allow_overwrite: bool
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _copy_project_authorization(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.CopyProjectDetails: ...
+    async def copy_project_authorization(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _copy_project_authorization(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models._models.CopyProjectDetails: ...
+    async def copy_project_authorization(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.CopyProjectDetails:
+        """Generates a copy project operation authorization to the current target Azure resource.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "content_type", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _copy_project_authorization(
+    async def copy_project_authorization(
         self,
-        project_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         project_kind: Union[str, _models.ProjectKind] = _Unset,
         storage_input_container_name: Optional[str] = None,
         allow_overwrite: Optional[bool] = None,
         **kwargs: Any
-    ) -> _models._models.CopyProjectDetails:
+    ) -> _models.CopyProjectDetails:
         """Generates a copy project operation authorization to the current target Azure resource.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword project_kind: Represents the project kind. Known values are: "Conversation",
@@ -3473,7 +3580,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
          resulting copy authorization. Default value is None.
         :paramtype allow_overwrite: bool
         :return: CopyProjectDetails. The CopyProjectDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.CopyProjectDetails
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3488,7 +3595,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.CopyProjectDetails] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CopyProjectDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if project_kind is _Unset:
@@ -3507,7 +3614,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_project_copy_project_authorization_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3538,9 +3645,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.CopyProjectDetails, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.CopyProjectDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3548,12 +3653,12 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _copy_project_initial(
-        self, project_name: str, body: Union[_models._models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3577,7 +3682,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_project_copy_project_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3615,40 +3720,68 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_copy_project(
-        self,
-        project_name: str,
-        body: _models._models.CopyProjectDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_copy_project(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_copy_project(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
-    )
-    async def _begin_copy_project(
-        self, project_name: str, body: Union[_models._models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+    async def begin_copy_project(
+        self, body: _models.CopyProjectDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Copies an existing project to another Azure resource.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
+        :param body: The copy project info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_copy_project(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_copy_project(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
+        :param body: The copy project info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "content_type"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
+    )
+    async def begin_copy_project(
+        self, body: Union[_models.CopyProjectDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Copies an existing project to another Azure resource.
+
         :param body: The copy project info. Is one of the following types: CopyProjectDetails, JSON,
          IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.CopyProjectDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.CopyProjectDetails or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3663,13 +3796,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._copy_project_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -3702,21 +3829,17 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "job_id", "accept"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "job_id", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _get_copy_project_status(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.CopyProjectState:
+    async def get_copy_project_status(self, job_id: str, **kwargs: Any) -> _models.CopyProjectState:
         """Gets the status of an existing copy project job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: CopyProjectState. The CopyProjectState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.CopyProjectState
+        :rtype: ~azure.ai.language.conversations.authoring.models.CopyProjectState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -3730,11 +3853,11 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.CopyProjectState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.CopyProjectState] = kwargs.pop("cls", None)
 
         _request = build_project_get_copy_project_status_request(
-            project_name=project_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3763,9 +3886,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.CopyProjectState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.CopyProjectState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -3773,7 +3894,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     async def _train_initial(
-        self, project_name: str, body: Union[_models._models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+        self, body: Union[_models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3797,7 +3918,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_project_train_request(
-            project_name=project_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3835,35 +3956,69 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_train(
-        self,
-        project_name: str,
-        body: _models._models.TrainingJobDetails,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.TrainingJobResult]: ...
-    @overload
-    async def _begin_train(
-        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.TrainingJobResult]: ...
-    @overload
-    async def _begin_train(
-        self, project_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.TrainingJobResult]: ...
-
-    @distributed_trace_async
-    async def _begin_train(
-        self, project_name: str, body: Union[_models._models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+    async def begin_train(
+        self, body: _models.TrainingJobDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.TrainingJobResult]:
         """Triggers a training job for a project.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
+        :param body: The training input parameters. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_train(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_train(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
+        :param body: The training input parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
+         compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.TrainingJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_train(
+        self, body: Union[_models.TrainingJobDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[_models.TrainingJobResult]:
+        """Triggers a training job for a project.
+
         :param body: The training input parameters. Is one of the following types: TrainingJobDetails,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.TrainingJobDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.TrainingJobDetails or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
          compatible with MutableMapping
         :rtype:
@@ -3880,13 +4035,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._train_initial(
-                project_name=project_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -3928,11 +4077,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace_async
-    async def _get_training_status(self, project_name: str, job_id: str, **kwargs: Any) -> _models.TrainingState:
+    async def get_training_status(self, job_id: str, **kwargs: Any) -> _models.TrainingState:
         """Gets the status for a training job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: TrainingState. The TrainingState is compatible with MutableMapping
@@ -3953,8 +4100,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[_models.TrainingState] = kwargs.pop("cls", None)
 
         _request = build_project_get_training_status_request(
-            project_name=project_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3990,7 +4137,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    async def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def _cancel_training_job_initial(self, job_id: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4005,8 +4152,8 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_project_cancel_training_job_request(
-            project_name=project_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4042,13 +4189,9 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_cancel_training_job(
-        self, project_name: str, job_id: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.TrainingJobResult]:
+    async def begin_cancel_training_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[_models.TrainingJobResult]:
         """Triggers a cancellation for a running training job.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: An instance of AsyncLROPoller that returns TrainingJobResult. The TrainingJobResult is
@@ -4066,12 +4209,7 @@ class ProjectOperations:  # pylint: disable=too-many-public-methods
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._cancel_training_job_initial(
-                project_name=project_name,
-                job_id=job_id,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
+                job_id=job_id, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
             )
             await raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
@@ -4134,17 +4272,13 @@ class ExportedModelOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name", "accept"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def get_exported_model(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> _models.ExportedTrainedModel:
+    async def get_exported_model(self, exported_model_name: str, **kwargs: Any) -> _models.ExportedTrainedModel:
         """Gets the details of an exported model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :return: ExportedTrainedModel. The ExportedTrainedModel is compatible with MutableMapping
@@ -4165,8 +4299,8 @@ class ExportedModelOperations:
         cls: ClsType[_models.ExportedTrainedModel] = kwargs.pop("cls", None)
 
         _request = build_exported_model_get_exported_model_request(
-            project_name=project_name,
             exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4203,13 +4337,11 @@ class ExportedModelOperations:
         return deserialized  # type: ignore
 
     @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _delete_exported_model_initial(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    async def _delete_exported_model_initial(self, exported_model_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4224,8 +4356,8 @@ class ExportedModelOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_exported_model_delete_exported_model_request(
-            project_name=project_name,
             exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4262,17 +4394,13 @@ class ExportedModelOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _begin_delete_exported_model(
-        self, project_name: str, exported_model_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete_exported_model(self, exported_model_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Deletes an existing exported model.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :return: An instance of AsyncLROPoller that returns None
@@ -4288,7 +4416,6 @@ class ExportedModelOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._delete_exported_model_initial(
-                project_name=project_name,
                 exported_model_name=exported_model_name,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -4325,16 +4452,12 @@ class ExportedModelOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _create_or_update_exported_model_initial(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: Union[_models._models.ExportedModelDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, exported_model_name: str, body: Union[_models.ExportedModelDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4358,8 +4481,8 @@ class ExportedModelOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_exported_model_create_or_update_exported_model_request(
-            project_name=project_name,
             exported_model_name=exported_model_name,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4397,59 +4520,81 @@ class ExportedModelOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_create_or_update_exported_model(
+    async def begin_create_or_update_exported_model(
         self,
-        project_name: str,
         exported_model_name: str,
-        body: _models._models.ExportedModelDetails,
+        body: _models.ExportedModelDetails,
         *,
         content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_create_or_update_exported_model(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-    @overload
-    async def _begin_create_or_update_exported_model(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[None]: ...
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2024-11-15-preview",
-        params_added_on={"2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
-    )
-    async def _begin_create_or_update_exported_model(
-        self,
-        project_name: str,
-        exported_model_name: str,
-        body: Union[_models._models.ExportedModelDetails, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Creates a new exported model or replaces an existing one.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update_exported_model(
+        self, exported_model_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update_exported_model(
+        self, exported_model_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
+        :param exported_model_name: The exported model name. Required.
+        :type exported_model_name: str
+        :param body: The exported model info. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "exported_model_name", "content_type"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
+    )
+    async def begin_create_or_update_exported_model(
+        self, exported_model_name: str, body: Union[_models.ExportedModelDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates a new exported model or replaces an existing one.
+
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :param body: The exported model info. Is one of the following types: ExportedModelDetails,
          JSON, IO[bytes] Required.
-        :type body: ~azure.ai.language.conversations.authoring.models._models.ExportedModelDetails or
-         JSON or IO[bytes]
+        :type body: ~azure.ai.language.conversations.authoring.models.ExportedModelDetails or JSON or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4464,7 +4609,6 @@ class ExportedModelOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._create_or_update_exported_model_initial(
-                project_name=project_name,
                 exported_model_name=exported_model_name,
                 body=body,
                 content_type=content_type,
@@ -4504,25 +4648,23 @@ class ExportedModelOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2024-11-15-preview",
+        method_added_on="2025-05-15-preview",
         params_added_on={
-            "2024-11-15-preview": ["api_version", "project_name", "exported_model_name", "job_id", "accept"]
+            "2025-05-15-preview": ["api_version", "project_name", "exported_model_name", "job_id", "accept"]
         },
-        api_versions_list=["2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _get_exported_model_job_status(
-        self, project_name: str, exported_model_name: str, job_id: str, **kwargs: Any
-    ) -> _models._models.ExportedModelState:
+    async def get_exported_model_job_status(
+        self, exported_model_name: str, job_id: str, **kwargs: Any
+    ) -> _models.ExportedModelState:
         """Gets the status for an existing job to create or update an exported model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param exported_model_name: The exported model name. Required.
         :type exported_model_name: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: ExportedModelState. The ExportedModelState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.ExportedModelState
+        :rtype: ~azure.ai.language.conversations.authoring.models.ExportedModelState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4536,12 +4678,12 @@ class ExportedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.ExportedModelState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ExportedModelState] = kwargs.pop("cls", None)
 
         _request = build_exported_model_get_exported_model_job_status_request(
-            project_name=project_name,
             exported_model_name=exported_model_name,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4570,9 +4712,7 @@ class ExportedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.ExportedModelState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.ExportedModelState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4600,13 +4740,9 @@ class TrainedModelOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get_trained_model(
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> _models.ProjectTrainedModel:
+    async def get_trained_model(self, trained_model_label: str, **kwargs: Any) -> _models.ProjectTrainedModel:
         """Gets the details of a trained model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: ProjectTrainedModel. The ProjectTrainedModel is compatible with MutableMapping
@@ -4627,8 +4763,8 @@ class TrainedModelOperations:
         cls: ClsType[_models.ProjectTrainedModel] = kwargs.pop("cls", None)
 
         _request = build_trained_model_get_trained_model_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4665,11 +4801,9 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_trained_model(self, project_name: str, trained_model_label: str, **kwargs: Any) -> None:
+    async def delete_trained_model(self, trained_model_label: str, **kwargs: Any) -> None:
         """Deletes an existing trained model.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: None
@@ -4690,8 +4824,8 @@ class TrainedModelOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_trained_model_delete_trained_model_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4716,16 +4850,12 @@ class TrainedModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
     async def _evaluate_model_initial(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: Union[_models.EvaluationDetails, JSON, IO[bytes]],
-        **kwargs: Any
+        self, trained_model_label: str, body: Union[_models.EvaluationDetails, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4749,8 +4879,8 @@ class TrainedModelOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_trained_model_evaluate_model_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4788,53 +4918,81 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def _begin_evaluate_model(
+    async def begin_evaluate_model(
         self,
-        project_name: str,
         trained_model_label: str,
         body: _models.EvaluationDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models._models.EvaluationJobResult]: ...
+    ) -> AsyncLROPoller[_models.EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: ~azure.ai.language.conversations.authoring.models.EvaluationDetails
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The
+         EvaluationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _begin_evaluate_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models._models.EvaluationJobResult]: ...
+    async def begin_evaluate_model(
+        self, trained_model_label: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The
+         EvaluationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @overload
-    async def _begin_evaluate_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models._models.EvaluationJobResult]: ...
+    async def begin_evaluate_model(
+        self, trained_model_label: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluationJobResult]:
+        """Triggers evaluation operation on a trained model.
+
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param body: The training input parameters. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The
+         EvaluationJobResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
-        params_added_on={"2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        method_added_on="2025-05-15-preview",
+        params_added_on={"2025-05-15-preview": ["api_version", "project_name", "trained_model_label", "content_type"]},
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _begin_evaluate_model(
-        self,
-        project_name: str,
-        trained_model_label: str,
-        body: Union[_models.EvaluationDetails, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models._models.EvaluationJobResult]:
+    async def begin_evaluate_model(
+        self, trained_model_label: str, body: Union[_models.EvaluationDetails, JSON, IO[bytes]], **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluationJobResult]:
         """Triggers evaluation operation on a trained model.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param body: The training input parameters. Is one of the following types: EvaluationDetails,
@@ -4844,20 +5002,19 @@ class TrainedModelOperations:
         :return: An instance of AsyncLROPoller that returns EvaluationJobResult. The
          EvaluationJobResult is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models._models.EvaluationJobResult]
+         ~azure.core.polling.AsyncLROPoller[~azure.ai.language.conversations.authoring.models.EvaluationJobResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models._models.EvaluationJobResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvaluationJobResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._evaluate_model_initial(
-                project_name=project_name,
                 trained_model_label=trained_model_label,
                 body=body,
                 content_type=content_type,
@@ -4876,10 +5033,7 @@ class TrainedModelOperations:
                 "str", response.headers.get("Operation-Location")
             )
 
-            deserialized = _deserialize(
-                _models._models.EvaluationJobResult,  # pylint: disable=protected-access
-                response.json().get("result", {}),
-            )
+            deserialized = _deserialize(_models.EvaluationJobResult, response.json().get("result", {}))
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
             return deserialized
@@ -4898,19 +5052,17 @@ class TrainedModelOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models._models.EvaluationJobResult].from_continuation_token( # pylint:disable=protected-access
+            return AsyncLROPoller[_models.EvaluationJobResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models._models.EvaluationJobResult]( # pylint:disable=protected-access
+        return AsyncLROPoller[_models.EvaluationJobResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    async def _load_snapshot_initial(
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    async def _load_snapshot_initial(self, trained_model_label: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4925,8 +5077,8 @@ class TrainedModelOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_trained_model_load_snapshot_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4962,13 +5114,9 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _begin_load_snapshot(
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_load_snapshot(self, trained_model_label: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: An instance of AsyncLROPoller that returns None
@@ -4984,7 +5132,6 @@ class TrainedModelOperations:
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._load_snapshot_initial(
-                project_name=project_name,
                 trained_model_label=trained_model_label,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5022,25 +5169,23 @@ class TrainedModelOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2023-04-15-preview",
+        method_added_on="2025-05-15-preview",
         params_added_on={
-            "2023-04-15-preview": ["api_version", "project_name", "trained_model_label", "job_id", "accept"]
+            "2025-05-15-preview": ["api_version", "project_name", "trained_model_label", "job_id", "accept"]
         },
-        api_versions_list=["2023-04-15-preview", "2024-11-15-preview", "2025-05-15-preview"],
+        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
     )
-    async def _get_evaluation_status(
-        self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models._models.EvaluationState:
+    async def get_evaluation_status(
+        self, trained_model_label: str, job_id: str, **kwargs: Any
+    ) -> _models.EvaluationState:
         """Gets the status for an evaluation job.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: EvaluationState. The EvaluationState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.EvaluationState
+        :rtype: ~azure.ai.language.conversations.authoring.models.EvaluationState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5054,12 +5199,12 @@ class TrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.EvaluationState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvaluationState] = kwargs.pop("cls", None)
 
         _request = build_trained_model_get_evaluation_status_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5088,9 +5233,7 @@ class TrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.EvaluationState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.EvaluationState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5100,7 +5243,6 @@ class TrainedModelOperations:
     @distributed_trace
     def get_model_evaluation_results(
         self,
-        project_name: str,
         trained_model_label: str,
         *,
         string_index_type: Union[str, _models.StringIndexType],
@@ -5111,8 +5253,6 @@ class TrainedModelOperations:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
         inference results for the data included in the evaluation process.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :keyword string_index_type: Specifies the method used to interpret string offsets. For
@@ -5134,7 +5274,7 @@ class TrainedModelOperations:
         _params = kwargs.pop("params", {}) or {}
 
         maxpagesize = kwargs.pop("maxpagesize", None)
-        cls: ClsType[List[_models.UtteranceEvaluationResult]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.UtteranceEvaluationResult]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5148,8 +5288,8 @@ class TrainedModelOperations:
             if not next_link:
 
                 _request = build_trained_model_get_model_evaluation_results_request(
-                    project_name=project_name,
                     trained_model_label=trained_model_label,
+                    project_name=self._config.project_name,
                     string_index_type=string_index_type,
                     top=top,
                     skip=skip,
@@ -5189,7 +5329,7 @@ class TrainedModelOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.UtteranceEvaluationResult], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models.UtteranceEvaluationResult], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -5212,14 +5352,10 @@ class TrainedModelOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_model_evaluation_summary(
-        self, project_name: str, trained_model_label: str, **kwargs: Any
-    ) -> _models.EvalSummary:
+    async def get_model_evaluation_summary(self, trained_model_label: str, **kwargs: Any) -> _models.EvalSummary:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
 
-        :param project_name: The name of the project to use. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :return: EvalSummary. The EvalSummary is compatible with MutableMapping
@@ -5240,8 +5376,8 @@ class TrainedModelOperations:
         cls: ClsType[_models.EvalSummary] = kwargs.pop("cls", None)
 
         _request = build_trained_model_get_model_evaluation_summary_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5278,19 +5414,17 @@ class TrainedModelOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def _get_load_snapshot_status(
-        self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
-    ) -> _models._models.LoadSnapshotState:
+    async def get_load_snapshot_status(
+        self, trained_model_label: str, job_id: str, **kwargs: Any
+    ) -> _models.LoadSnapshotState:
         """Gets the status for loading a snapshot.
 
-        :param project_name: The new project name. Required.
-        :type project_name: str
         :param trained_model_label: The trained model label. Required.
         :type trained_model_label: str
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: LoadSnapshotState. The LoadSnapshotState is compatible with MutableMapping
-        :rtype: ~azure.ai.language.conversations.authoring.models._models.LoadSnapshotState
+        :rtype: ~azure.ai.language.conversations.authoring.models.LoadSnapshotState
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5304,12 +5438,12 @@ class TrainedModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models._models.LoadSnapshotState] = kwargs.pop("cls", None)
+        cls: ClsType[_models.LoadSnapshotState] = kwargs.pop("cls", None)
 
         _request = build_trained_model_get_load_snapshot_status_request(
-            project_name=project_name,
             trained_model_label=trained_model_label,
             job_id=job_id,
+            project_name=self._config.project_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5338,9 +5472,7 @@ class TrainedModelOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(
-                _models._models.LoadSnapshotState, response.json()  # pylint: disable=protected-access
-            )
+            deserialized = _deserialize(_models.LoadSnapshotState, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

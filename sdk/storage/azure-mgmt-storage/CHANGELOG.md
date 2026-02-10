@@ -1,5 +1,21 @@
 # Release History
 
+## 24.0.0 (2025-10-22)
+
+### Features Added
+
+  - Model `StorageManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Model `ObjectReplicationPolicy` added property `priority_replication`
+  - Model `StorageAccount` added property `geo_priority_replication_status`
+  - Model `StorageAccountCreateParameters` added property `geo_priority_replication_status`
+  - Model `StorageAccountUpdateParameters` added property `geo_priority_replication_status`
+  - Added model `GeoPriorityReplicationStatus`
+  - Added model `ObjectReplicationPolicyPropertiesPriorityReplication`
+
+### Breaking Changes
+
+  - Method `StorageTaskAssignmentsOperations.list` renamed its parameter from `maxpagesize` to `top`
+
 ## 23.1.0 (2025-09-22)
 
 ### Features Added

@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
+import jwt
 import unittest
 import uuid
 from datetime import datetime, timedelta
@@ -40,7 +41,7 @@ TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 class TestFileSystemAsync(AsyncStorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
         self.test_file_systems = []
 
@@ -383,7 +384,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             datalake_storage_account_name,
-            datalake_storage_account_key,
+            datalake_storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -712,9 +713,9 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        dsc2 = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret)
         async with DataLakeServiceClient(
-                self.dsc.url, credential=datalake_storage_account_key) as ds_client:
+                self.dsc.url, credential=datalake_storage_account_key.secret) as ds_client:
             fs1 = await ds_client.create_file_system(self._get_file_system_reference(prefix="fs1"))
             await fs1.delete_file_system()
         await dsc2.create_file_system(self._get_file_system_reference(prefix="fs2"))
@@ -813,7 +814,7 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key)
+        dsc = DataLakeServiceClient(self.dsc.url, credential=datalake_storage_account_key.secret)
         # Act
         filesystems = []
         async for fs in dsc.list_file_systems(include_system=True):
@@ -906,6 +907,32 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         # there are 24 subpaths in total
         assert len(paths) == 24
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_list_paths_start_from(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        # Arrange
+        file_system = await self._create_file_system()
+        for i in range(0, 6):
+            dir = await file_system.create_directory(f"dir{i}")
+
+            # create a subdirectory under the current directory
+            subdir = await dir.create_sub_directory("subdir")
+            await subdir.create_sub_directory("subsub")
+
+            # create a file under the current directory
+            await subdir.create_file("file")
+
+        paths = []
+        async for path in file_system.get_paths(recursive=True, max_results=2, start_from="dir3"):
+            paths.append(path)
+
+        # there are 12 subpaths in total
+        assert len(paths) == 12
 
     @DataLakePreparer()
     @recorded_by_proxy_async
@@ -1278,6 +1305,148 @@ class TestFileSystemAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert acl == access_control['acl']
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_get_user_delegation_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
+        service = DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"),
+            credential=token_credential,
+        )
+        start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key_1 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        user_delegation_key_2 = await service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+
+        # Assert key1 is valid
+        assert user_delegation_key_1.signed_oid is not None
+        assert user_delegation_key_1.signed_tid is not None
+        assert user_delegation_key_1.signed_start is not None
+        assert user_delegation_key_1.signed_expiry is not None
+        assert user_delegation_key_1.signed_version is not None
+        assert user_delegation_key_1.signed_service is not None
+        assert user_delegation_key_1.value is not None
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        assert user_delegation_key_1.signed_oid == user_delegation_key_2.signed_oid
+        assert user_delegation_key_1.signed_tid == user_delegation_key_2.signed_tid
+        assert user_delegation_key_1.signed_start == user_delegation_key_2.signed_start
+        assert user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
+        assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
+        assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @DataLakePreparer()
+    async def test_datalake_cross_tenant_delegation_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        token_credential = self.get_credential(DataLakeServiceClient, is_async=True)
+        account_url = self.account_url(datalake_storage_account_name, "dfs")
+        dsc = DataLakeServiceClient(account_url, credential=token_credential)
+        file_system_name = self.get_resource_name(TEST_FILE_SYSTEM_PREFIX)
+        file_system = await dsc.create_file_system(file_system_name)
+        directory_name = "dir"
+        directory = await file_system.create_directory(directory_name)
+        file_name = "file"
+        file = await directory.create_file(file_name)
+        data = b"abc123"
+        await file.upload_data(data, length=len(data), overwrite=True)
+
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        token = await token_credential.get_token("https://storage.azure.com/.default")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegation_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = await dsc.get_user_delegation_key(
+            key_start_time=start,
+            key_expiry_time=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
+
+        file_system_token = self.generate_sas(
+            generate_file_system_sas,
+            dsc.account_name,
+            file_system_name,
+            user_delegation_key,
+            permission=FileSystemSasPermissions(write=True, read=True, delete=True, list=True),
+            expiry=expiry,
+            user_delegation_oid=user_delegation_oid,
+        )
+
+        assert "sduoid=" + user_delegation_oid in file_system_token
+        assert "skdutid=" + delegated_user_tid in file_system_token
+
+        file_system_client = FileSystemClient(
+            f"{account_url}?{file_system_token}",
+            file_system_name=file_system_name,
+            credential=token_credential
+        )
+
+        paths = []
+        async for path in file_system_client.get_paths():
+            paths.append(path)
+
+        assert len(paths) == 2
+        assert paths[0]["name"] == directory.path_name
+        assert paths[1]["name"] == file.path_name
+
+        directory_token = self.generate_sas(
+            generate_directory_sas,
+            dsc.account_name,
+            file_system_name,
+            directory_name,
+            user_delegation_key,
+            permission=FileSasPermissions(write=True, read=True, delete=True),
+            expiry=expiry,
+            user_delegation_oid=user_delegation_oid
+        )
+
+        assert "sduoid=" + user_delegation_oid in directory_token
+        assert "skdutid=" + delegated_user_tid in directory_token
+
+        directory_client = DataLakeDirectoryClient(
+            f"{account_url}?{directory_token}",
+            file_system_name=file_system_name,
+            directory_name=directory_name,
+            credential=token_credential
+        )
+        props = await directory_client.get_directory_properties()
+        assert props is not None
+
+        file_token = self.generate_sas(
+            generate_file_sas,
+            datalake_storage_account_name,
+            file_system_name,
+            directory_name,
+            file_name,
+            credential=user_delegation_key,
+            permission=FileSasPermissions(write=True, read=True, delete=True),
+            expiry=expiry,
+            user_delegation_oid=user_delegation_oid
+        )
+
+        assert "sduoid=" + user_delegation_oid in file_token
+        assert "skdutid=" + delegated_user_tid in file_token
+
+        file_client = DataLakeFileClient(
+            f"{account_url}?{file_token}",
+            file_system_name=file_system_name,
+            file_path=f"{directory_name}/{file_name}",
+            credential=token_credential
+        )
+        content = await (await file_client.download_file()).readall()
+        assert content == data
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

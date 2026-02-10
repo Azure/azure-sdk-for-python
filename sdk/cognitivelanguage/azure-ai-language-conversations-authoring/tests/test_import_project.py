@@ -1,6 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import json
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
@@ -42,7 +41,7 @@ class TestConversationsImportCase(TestConversations):
     @recorded_by_proxy
     def test_import_project(self, authoring_endpoint, authoring_key):
         authoring_client = self.create_client(authoring_endpoint, authoring_key)
-        project_name = "PythonImportProject0820"
+        project_name = "PythonImportProject1113"
         project_client = authoring_client.get_project_client(project_name)
 
         # ----- Build assets using objects -----

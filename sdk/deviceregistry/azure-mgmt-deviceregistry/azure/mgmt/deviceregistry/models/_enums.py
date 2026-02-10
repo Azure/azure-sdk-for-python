@@ -58,6 +58,26 @@ class DataPointObservabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Map as log to OpenTelemetry."""
 
 
+class DatasetDestinationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The set of supported dataset destinations for an asset."""
+
+    MQTT = "Mqtt"
+    """MQTT target."""
+    BROKER_STATE_STORE = "BrokerStateStore"
+    """Broker State Store target."""
+    STORAGE = "Storage"
+    """Storage target."""
+
+
+class EventDestinationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The set of supported event destinations for an asset."""
+
+    MQTT = "Mqtt"
+    """MQTT target."""
+    STORAGE = "Storage"
+    """Storage target."""
+
+
 class EventObservabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Defines the event observability mode."""
 
@@ -65,6 +85,46 @@ class EventObservabilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No mapping to OpenTelemetry."""
     LOG = "Log"
     """Map as log to OpenTelemetry."""
+
+
+class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the schema format."""
+
+    JSON_SCHEMA_DRAFT7 = "JsonSchema/draft-07"
+    """JSON Schema version draft 7 format"""
+    DELTA1_0 = "Delta/1.0"
+    """Delta format"""
+
+
+class ManagementActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the ManagementAction's type."""
+
+    CALL = "Call"
+    """Call action type."""
+    READ = "Read"
+    """Read action type."""
+    WRITE = "Write"
+    """Write action type."""
+
+
+class MqttDestinationQos(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The set of supported QoS types for a MQTT destination."""
+
+    QOS0 = "Qos0"
+    """QoS 0."""
+    QOS1 = "Qos1"
+    """QoS 1."""
+
+
+class NamespaceDiscoveredManagementActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the ManagementAction's type."""
+
+    CALL = "Call"
+    """Call action type."""
+    READ = "Read"
+    """Read action type."""
+    WRITE = "Write"
+    """Write action type."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -93,6 +153,38 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource has been accepted by the server."""
     DELETING = "Deleting"
     """Resource is deleting."""
+
+
+class SchemaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the schema type."""
+
+    MESSAGE_SCHEMA = "MessageSchema"
+    """Message Schema schema type"""
+
+
+class Scope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope of the migrate resources operation."""
+
+    RESOURCES = "Resources"
+    """Scoping the migration to resourceIds provided"""
+
+
+class StreamDestinationTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The set of supported stream destinations for an asset."""
+
+    MQTT = "Mqtt"
+    """MQTT target."""
+    STORAGE = "Storage"
+    """Storage target."""
+
+
+class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
+
+    NONE = "None"
+    """No managed system identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed system identity."""
 
 
 class TopicRetainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

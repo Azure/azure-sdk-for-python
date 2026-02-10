@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar
+from typing import Any, Callable, Literal, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -28,7 +28,7 @@ from .._configuration import AzureQueueStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -37,6 +37,7 @@ _SERIALIZER.client_side_validation = False
 def build_dequeue_request(
     url: str,
     *,
+    version: str,
     number_of_messages: Optional[int] = None,
     visibilitytimeout: Optional[int] = None,
     timeout: Optional[int] = None,
@@ -46,7 +47,6 @@ def build_dequeue_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -77,12 +77,11 @@ def build_dequeue_request(
 
 
 def build_clear_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -110,6 +109,7 @@ def build_enqueue_request(
     url: str,
     *,
     content: Any,
+    version: str,
     visibilitytimeout: Optional[int] = None,
     message_time_to_live: Optional[int] = None,
     timeout: Optional[int] = None,
@@ -120,7 +120,6 @@ def build_enqueue_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -155,6 +154,7 @@ def build_enqueue_request(
 def build_peek_request(
     url: str,
     *,
+    version: str,
     number_of_messages: Optional[int] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
@@ -164,7 +164,6 @@ def build_peek_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     peekonly: Literal["true"] = kwargs.pop("peekonly", _params.pop("peekonly", "true"))
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -218,7 +217,7 @@ class MessagesOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.DequeuedMessageItem]:
+    ) -> list[_models.DequeuedMessageItem]:
         """The Dequeue operation retrieves one or more messages from the front of the queue.
 
         :param number_of_messages: Optional. A nonzero integer value that specifies the number of
@@ -255,15 +254,15 @@ class MessagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.DequeuedMessageItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.DequeuedMessageItem]] = kwargs.pop("cls", None)
 
         _request = build_dequeue_request(
             url=self._config.url,
+            version=self._config.version,
             number_of_messages=number_of_messages,
             visibilitytimeout=visibilitytimeout,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -278,7 +277,10 @@ class MessagesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -326,9 +328,9 @@ class MessagesOperations:
 
         _request = build_clear_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -343,7 +345,10 @@ class MessagesOperations:
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -363,7 +368,7 @@ class MessagesOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.EnqueuedMessage]:
+    ) -> list[_models.EnqueuedMessage]:
         """The Enqueue operation adds a new message to the back of the message queue. A visibility timeout
         can also be specified to make the message invisible until the visibility timeout expires. A
         message must be in a format that can be included in an XML request with UTF-8 encoding. The
@@ -409,18 +414,18 @@ class MessagesOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[List[_models.EnqueuedMessage]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.EnqueuedMessage]] = kwargs.pop("cls", None)
 
         _content = self._serialize.body(queue_message, "QueueMessage", is_xml=True)
 
         _request = build_enqueue_request(
             url=self._config.url,
+            version=self._config.version,
             visibilitytimeout=visibilitytimeout,
             message_time_to_live=message_time_to_live,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -436,7 +441,10 @@ class MessagesOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -458,7 +466,7 @@ class MessagesOperations:
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
-    ) -> List[_models.PeekedMessageItem]:
+    ) -> list[_models.PeekedMessageItem]:
         """The Peek operation retrieves one or more messages from the front of the queue, but does not
         alter the visibility of the message.
 
@@ -491,15 +499,15 @@ class MessagesOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         peekonly: Literal["true"] = kwargs.pop("peekonly", _params.pop("peekonly", "true"))
-        cls: ClsType[List[_models.PeekedMessageItem]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models.PeekedMessageItem]] = kwargs.pop("cls", None)
 
         _request = build_peek_request(
             url=self._config.url,
+            version=self._config.version,
             number_of_messages=number_of_messages,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             peekonly=peekonly,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -514,7 +522,10 @@ class MessagesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

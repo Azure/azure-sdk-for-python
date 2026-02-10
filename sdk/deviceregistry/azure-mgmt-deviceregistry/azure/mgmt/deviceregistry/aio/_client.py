@@ -7,29 +7,40 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import DeviceRegistryMgmtClientConfiguration
 from .operations import (
     AssetEndpointProfilesOperations,
     AssetsOperations,
     BillingContainersOperations,
+    NamespaceAssetsOperations,
+    NamespaceDevicesOperations,
+    NamespaceDiscoveredAssetsOperations,
+    NamespaceDiscoveredDevicesOperations,
+    NamespacesOperations,
     OperationStatusOperations,
     Operations,
+    SchemaRegistriesOperations,
+    SchemaVersionsOperations,
+    SchemasOperations,
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DeviceRegistryMgmtClient:
+class DeviceRegistryMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Microsoft.DeviceRegistry Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -44,13 +55,34 @@ class DeviceRegistryMgmtClient:
     :ivar billing_containers: BillingContainersOperations operations
     :vartype billing_containers:
      azure.mgmt.deviceregistry.aio.operations.BillingContainersOperations
+    :ivar namespaces: NamespacesOperations operations
+    :vartype namespaces: azure.mgmt.deviceregistry.aio.operations.NamespacesOperations
+    :ivar namespace_assets: NamespaceAssetsOperations operations
+    :vartype namespace_assets: azure.mgmt.deviceregistry.aio.operations.NamespaceAssetsOperations
+    :ivar namespace_devices: NamespaceDevicesOperations operations
+    :vartype namespace_devices: azure.mgmt.deviceregistry.aio.operations.NamespaceDevicesOperations
+    :ivar namespace_discovered_assets: NamespaceDiscoveredAssetsOperations operations
+    :vartype namespace_discovered_assets:
+     azure.mgmt.deviceregistry.aio.operations.NamespaceDiscoveredAssetsOperations
+    :ivar namespace_discovered_devices: NamespaceDiscoveredDevicesOperations operations
+    :vartype namespace_discovered_devices:
+     azure.mgmt.deviceregistry.aio.operations.NamespaceDiscoveredDevicesOperations
+    :ivar schema_registries: SchemaRegistriesOperations operations
+    :vartype schema_registries: azure.mgmt.deviceregistry.aio.operations.SchemaRegistriesOperations
+    :ivar schemas: SchemasOperations operations
+    :vartype schemas: azure.mgmt.deviceregistry.aio.operations.SchemasOperations
+    :ivar schema_versions: SchemaVersionsOperations operations
+    :vartype schema_versions: azure.mgmt.deviceregistry.aio.operations.SchemaVersionsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service host. Default value is "https://management.azure.com".
+    :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2024-11-01".
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Default value is "2025-10-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -61,13 +93,26 @@ class DeviceRegistryMgmtClient:
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = DeviceRegistryMgmtClientConfiguration(
-            credential=credential, subscription_id=subscription_id, base_url=base_url, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -86,7 +131,9 @@ class DeviceRegistryMgmtClient:
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, _endpoint), policies=_policies, **kwargs
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -102,6 +149,24 @@ class DeviceRegistryMgmtClient:
         self.billing_containers = BillingContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.namespace_assets = NamespaceAssetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.namespace_devices = NamespaceDevicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.namespace_discovered_assets = NamespaceDiscoveredAssetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.namespace_discovered_devices = NamespaceDiscoveredDevicesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.schema_registries = SchemaRegistriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.schemas = SchemasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schema_versions = SchemaVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

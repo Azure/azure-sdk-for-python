@@ -26,7 +26,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             environment_name="str",
             http_route_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             environment_name="str",
             http_route_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -74,7 +74,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
                                     },
                                 }
                             ],
-                            "targets": [{"containerApp": "str", "label": "str", "revision": "str", "weight": 0}],
+                            "targets": [{"containerApp": "str", "label": "str", "revision": "str"}],
                         }
                     ],
                 },
@@ -88,7 +88,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
                 },
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -96,13 +96,15 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_http_route_config_delete(self, resource_group):
-        response = await self.client.http_route_config.delete(
-            resource_group_name=resource_group.name,
-            environment_name="str",
-            http_route_name="str",
-            api_version="2025-02-02-preview",
-        )
+    async def test_http_route_config_begin_delete(self, resource_group):
+        response = await (
+            await self.client.http_route_config.begin_delete(
+                resource_group_name=resource_group.name,
+                environment_name="str",
+                http_route_name="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...
@@ -113,7 +115,7 @@ class TestContainerAppsAPIHttpRouteConfigOperationsAsync(AzureMgmtRecordedTestCa
         response = self.client.http_route_config.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

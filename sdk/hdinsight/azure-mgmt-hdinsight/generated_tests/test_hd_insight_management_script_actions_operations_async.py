@@ -21,12 +21,12 @@ class TestHDInsightManagementScriptActionsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_script_actions_delete(self, resource_group):
         response = await self.client.script_actions.delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             script_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,11 +34,11 @@ class TestHDInsightManagementScriptActionsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_cluster(self, resource_group):
+    async def test_script_actions_list_by_cluster(self, resource_group):
         response = self.client.script_actions.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,12 +46,12 @@ class TestHDInsightManagementScriptActionsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_execution_detail(self, resource_group):
+    async def test_script_actions_get_execution_detail(self, resource_group):
         response = await self.client.script_actions.get_execution_detail(
             resource_group_name=resource_group.name,
             cluster_name="str",
             script_execution_id="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -59,12 +59,12 @@ class TestHDInsightManagementScriptActionsOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_execution_async_operation_status(self, resource_group):
+    async def test_script_actions_get_execution_async_operation_status(self, resource_group):
         response = await self.client.script_actions.get_execution_async_operation_status(
             resource_group_name=resource_group.name,
             cluster_name="str",
             operation_id="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

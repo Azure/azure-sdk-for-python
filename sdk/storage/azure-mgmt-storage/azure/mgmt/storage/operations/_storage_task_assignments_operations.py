@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -36,7 +36,8 @@ from .._configuration import StorageManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +49,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -71,7 +72,7 @@ def build_create_request(
             "str",
             max_length=24,
             min_length=3,
-            pattern=r"^[a-z0-9]{3,24}$",
+            pattern=r"^[a-z][a-z0-9]{2,23}$",
         ),
     }
 
@@ -94,7 +95,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -117,7 +118,7 @@ def build_update_request(
             "str",
             max_length=24,
             min_length=3,
-            pattern=r"^[a-z0-9]{3,24}$",
+            pattern=r"^[a-z][a-z0-9]{2,23}$",
         ),
     }
 
@@ -140,7 +141,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +163,7 @@ def build_get_request(
             "str",
             max_length=24,
             min_length=3,
-            pattern=r"^[a-z0-9]{3,24}$",
+            pattern=r"^[a-z][a-z0-9]{2,23}$",
         ),
     }
 
@@ -183,7 +184,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -205,7 +206,7 @@ def build_delete_request(
             "str",
             max_length=24,
             min_length=3,
-            pattern=r"^[a-z0-9]{3,24}$",
+            pattern=r"^[a-z][a-z0-9]{2,23}$",
         ),
     }
 
@@ -221,17 +222,12 @@ def build_delete_request(
 
 
 def build_list_request(
-    resource_group_name: str,
-    account_name: str,
-    subscription_id: str,
-    *,
-    maxpagesize: Optional[int] = None,
-    **kwargs: Any
+    resource_group_name: str, account_name: str, subscription_id: str, *, top: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -252,8 +248,8 @@ def build_list_request(
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    if maxpagesize is not None:
-        _params["$maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -935,7 +931,7 @@ class StorageTaskAssignmentsOperations:
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, account_name: str, maxpagesize: Optional[int] = None, **kwargs: Any
+        self, resource_group_name: str, account_name: str, top: Optional[int] = None, **kwargs: Any
     ) -> ItemPaged["_models.StorageTaskAssignment"]:
         """List all the storage task assignments in an account.
 
@@ -946,9 +942,9 @@ class StorageTaskAssignmentsOperations:
          Storage account names must be between 3 and 24 characters in length and use numbers and
          lower-case letters only. Required.
         :type account_name: str
-        :param maxpagesize: Optional, specifies the maximum number of storage task assignment Ids to be
+        :param top: Optional, specifies the maximum number of storage task assignment Ids to be
          included in the list response. Default value is None.
-        :type maxpagesize: int
+        :type top: int
         :return: An iterator like instance of either StorageTaskAssignment or the result of
          cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.storage.models.StorageTaskAssignment]
@@ -975,7 +971,7 @@ class StorageTaskAssignmentsOperations:
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
-                    maxpagesize=maxpagesize,
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,

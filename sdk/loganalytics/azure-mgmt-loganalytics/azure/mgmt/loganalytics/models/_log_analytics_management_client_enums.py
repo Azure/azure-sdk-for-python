@@ -10,6 +10,15 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Direction of Access Rule."""
+
+    INBOUND = "Inbound"
+    """Applies to inbound network traffic to the secured resources."""
+    OUTBOUND = "Outbound"
+    """Applies to outbound network traffic from the secured resources"""
+
+
 class BillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Configures whether billing will be only on the cluster or each workspace will be billed by its
     proportional use. This does not change the overall billing, only how it will be distributed.
@@ -18,37 +27,6 @@ class BillingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CLUSTER = "Cluster"
     WORKSPACES = "Workspaces"
-
-
-class Capacity(int, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The capacity reservation level in Gigabytes for this cluster."""
-
-    ONE_HUNDRED = 100
-    TWO_HUNDRED = 200
-    THREE_HUNDRED = 300
-    FOUR_HUNDRED = 400
-    FIVE_HUNDRED = 500
-    TEN_HUNDRED = 1000
-    TWO_THOUSAND = 2000
-    FIVE_THOUSAND = 5000
-    TEN_THOUSAND = 10000
-    TWENTY_FIVE_THOUSAND = 25000
-    FIFTY_THOUSAND = 50000
-
-
-class CapacityReservationLevel(int, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The capacity reservation level in GB for this workspace, when CapacityReservation sku is
-    selected.
-    """
-
-    ONE_HUNDRED = 100
-    TWO_HUNDRED = 200
-    THREE_HUNDRED = 300
-    FOUR_HUNDRED = 400
-    FIVE_HUNDRED = 500
-    TEN_HUNDRED = 1000
-    TWO_THOUSAND = 2000
-    FIVE_THOUSAND = 5000
 
 
 class ClusterEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -61,6 +39,20 @@ class ClusterEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
     PROVISIONING_ACCOUNT = "ProvisioningAccount"
     UPDATING = "Updating"
+
+
+class ClusterReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the cluster replication."""
+
+    SUCCEEDED = "Succeeded"
+    ENABLE_REQUESTED = "EnableRequested"
+    ENABLING = "Enabling"
+    DISABLE_REQUESTED = "DisableRequested"
+    DISABLING = "Disabling"
+    ROLLBACK_REQUESTED = "RollbackRequested"
+    ROLLING_BACK = "RollingBack"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class ClusterSkuNameEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -173,15 +165,27 @@ class DataSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that creates/modifies resources."""
+    """Type of managed service identity."""
 
-    USER = "user"
-    APPLICATION = "application"
-    MANAGED_IDENTITY = "managedIdentity"
-    KEY = "key"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     NONE = "None"
+
+
+class IssueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of issue."""
+
+    UNKNOWN = "Unknown"
+    """Unknown issue type"""
+    CONFIGURATION_PROPAGATION_FAILURE = "ConfigurationPropagationFailure"
+    """An error occurred while applying the network security perimeter (NSP) configuration."""
+    MISSING_PERIMETER_CONFIGURATION = "MissingPerimeterConfiguration"
+    """A network connectivity issue is happening on the resource which could be addressed either by
+    adding new resources to the network security perimeter (NSP) or by modifying access rules."""
+    MISSING_IDENTITY_CONFIGURATION = "MissingIdentityConfiguration"
+    """An managed identity hasn't been associated with the resource. The resource will still be able
+    to validate inbound traffic from the network security perimeter (NSP) or matching inbound
+    access rules, but it won't be able to perform outbound access as a member of the NSP."""
 
 
 class LinkedServiceEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -202,6 +206,20 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
+class NetworkSecurityPerimeterConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of a network security perimeter configuration that is being created or
+    updated.
+    """
+
+    SUCCEEDED = "Succeeded"
+    CREATING = "Creating"
+    UPDATING = "Updating"
+    DELETING = "Deleting"
+    ACCEPTED = "Accepted"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class ProvisioningStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -227,6 +245,9 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Enables connectivity to Log Analytics through public DNS."""
     DISABLED = "Disabled"
     """Disables public connectivity to Log Analytics through public DNS."""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """Resource is only accessible from private networks and access approved by network security
+    perimeter associated to this resource."""
 
 
 class PurgeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -236,11 +257,36 @@ class PurgeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMPLETED = "completed"
 
 
+class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode of the resource association."""
+
+    ENFORCED = "Enforced"
+    """Enforced access mode - traffic to the resource that failed access checks is blocked"""
+    LEARNING = "Learning"
+    """Learning access mode - traffic to the resource is enabled for analysis but not blocked"""
+    AUDIT = "Audit"
+    """Audit access mode - traffic to the resource that fails access checks is logged but not blocked"""
+
+
+class RuleTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SummaryRules rule type: User."""
+
+    USER = "User"
+    """User defined summary rule. This is the definition for rules created and defined by users."""
+
+
 class SearchSortEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sort order of the search."""
 
     ASC = "asc"
     DESC = "desc"
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the issue."""
+
+    WARNING = "Warning"
+    ERROR = "Error"
 
 
 class SkuNameEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -265,6 +311,15 @@ class SourceEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tables created by the owner of the Workspace, and only found in this Workspace."""
 
 
+class StatusCodeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the reason for rule deactivation."""
+
+    USER_ACTION = "UserAction"
+    """Summary rule stop originated from a user action (Stop was called)."""
+    DATA_PLANE_ERROR = "DataPlaneError"
+    """Summary rule stop was caused due to data plane related error."""
+
+
 class StorageInsightState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The state of the storage insight connection to the workspace."""
 
@@ -276,9 +331,11 @@ class TablePlanEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Instruct the system how to handle and charge the logs ingested to this table."""
 
     BASIC = "Basic"
-    """Logs  that are adjusted to support high volume low value verbose logs."""
+    """Medium-touch logs needed for troubleshooting and incident response."""
     ANALYTICS = "Analytics"
-    """Logs  that allow monitoring and analytics."""
+    """High-value logs used for continuous monitoring, real-time detection, and performance analytics."""
+    AUXILIARY = "Auxiliary"
+    """Low-touch logs, such as verbose logs, and data required for auditing and compliance."""
 
 
 class TableSubTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -310,6 +367,13 @@ class TableTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data collected by a search job."""
 
 
+class TimeSelectorEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The time cursor used in Summary rules bins processing, e.g. TimeGenerated."""
+
+    TIME_GENERATED = "TimeGenerated"
+    """TimeGenerated."""
+
+
 class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the destination resource."""
 
@@ -327,6 +391,30 @@ class WorkspaceEntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
     PROVISIONING_ACCOUNT = "ProvisioningAccount"
     UPDATING = "Updating"
+
+
+class WorkspaceFailoverState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The failover state of the replication."""
+
+    INACTIVE = "Inactive"
+    ACTIVATING = "Activating"
+    ACTIVE = "Active"
+    DEACTIVATING = "Deactivating"
+    FAILED = "Failed"
+
+
+class WorkspaceReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the replication."""
+
+    SUCCEEDED = "Succeeded"
+    ENABLE_REQUESTED = "EnableRequested"
+    ENABLING = "Enabling"
+    DISABLE_REQUESTED = "DisableRequested"
+    DISABLING = "Disabling"
+    ROLLBACK_REQUESTED = "RollbackRequested"
+    ROLLING_BACK = "RollingBack"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
 
 
 class WorkspaceSkuNameEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):

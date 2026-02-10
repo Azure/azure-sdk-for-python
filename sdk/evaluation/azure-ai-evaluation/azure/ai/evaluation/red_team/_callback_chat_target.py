@@ -19,7 +19,6 @@ class _CallbackChatTarget(PromptChatTarget):
         *,
         callback: Callable[[List[Dict], bool, Optional[str], Optional[Dict[str, Any]]], Dict],
         stream: bool = False,
-        prompt_to_context: Optional[Dict[str, str]] = None,
     ) -> None:
         """
         Initializes an instance of the _CallbackChatTarget class.
@@ -33,12 +32,10 @@ class _CallbackChatTarget(PromptChatTarget):
         Args:
             callback (Callable): The callback function that sends a prompt to a target and receives a response.
             stream (bool, optional): Indicates whether the target supports streaming. Defaults to False.
-            prompt_to_context (Optional[Dict[str, str]], optional): Mapping from prompt content to context. Defaults to None.
         """
         PromptChatTarget.__init__(self)
         self._callback = callback
         self._stream = stream
-        self._prompt_to_context = prompt_to_context or {}
 
     async def send_prompt_async(self, *, prompt_request: PromptRequestResponse) -> PromptRequestResponse:
 
@@ -49,25 +46,61 @@ class _CallbackChatTarget(PromptChatTarget):
 
         messages.append(request.to_chat_message())
 
-        logger.info(f"Sending the following prompt to the prompt target: {request}")
+        logger.debug(f"Sending the following prompt to the prompt target: {request}")
 
-        # Get context for the current prompt if available
-        current_prompt_content = request.converted_value
-        context_data = self._prompt_to_context.get(current_prompt_content, "")
-        context_dict = {"context": context_data} if context_data else {}
+        # Extract context from request labels if available
+        # The context is stored in memory labels when the prompt is sent by orchestrator
+        context_dict = {}
+        if hasattr(request, "labels") and request.labels and "context" in request.labels:
+            context_data = request.labels["context"]
+            if context_data and isinstance(context_data, dict):
+                # context_data is always a dict with 'contexts' list
+                # Each context can have its own context_type and tool_name
+                contexts = context_data.get("contexts", [])
 
-        # If context is not available via prompt_to_context, it can be fetched from the memory
-        if not context_dict:
-            memory_label_context = request.labels.get("context", None)
-            context_dict = {"context": memory_label_context} if memory_label_context else {}
+                # Build context_dict to pass to callback
+                context_dict = {"contexts": contexts}
+
+                # Check if any context has agent-specific fields for logging
+                has_agent_fields = any(
+                    isinstance(ctx, dict)
+                    and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
+                    for ctx in contexts
+                )
+
+                if has_agent_fields:
+                    tool_names = [
+                        ctx.get("tool_name") for ctx in contexts if isinstance(ctx, dict) and "tool_name" in ctx
+                    ]
+                    logger.debug(f"Extracted agent context: {len(contexts)} context source(s), tool_names={tool_names}")
+                else:
+                    logger.debug(f"Extracted model context: {len(contexts)} context source(s)")
 
         # response_context contains "messages", "stream", "session_state, "context"
-        response_context = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
+        response = await self._callback(messages=messages, stream=self._stream, session_state=None, context=context_dict)  # type: ignore
 
-        response_text = response_context["messages"][-1]["content"]
+        # Store token_usage before processing tuple
+        token_usage = None
+        if isinstance(response, dict) and "token_usage" in response:
+            token_usage = response["token_usage"]
+
+        if type(response) == tuple:
+            response, tool_output = response
+            request.labels["tool_calls"] = tool_output
+            # Check for token_usage in the response dict from tuple
+            if isinstance(response, dict) and "token_usage" in response:
+                token_usage = response["token_usage"]
+
+        response_text = response["messages"][-1]["content"]
+
         response_entry = construct_response_from_request(request=request, response_text_pieces=[response_text])
 
-        logger.info("Received the following response from the prompt target" + f"{response_text}")
+        # Add token_usage to the response entry's labels (not the request)
+        if token_usage:
+            response_entry.request_pieces[0].labels["token_usage"] = token_usage
+            logger.debug(f"Captured token usage from callback: {token_usage}")
+
+        logger.debug("Received the following response from the prompt target" + f"{response_text}")
         return response_entry
 
     def _validate_request(self, *, prompt_request: PromptRequestResponse) -> None:

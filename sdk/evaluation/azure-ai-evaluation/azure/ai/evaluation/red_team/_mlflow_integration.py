@@ -352,7 +352,7 @@ class MLflowIntegration:
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=uuid.uuid4(),
+                            name=str(uuid.uuid4()),
                             path=tmpdir,
                             metrics=metrics,
                             result_type=ResultType.REDTEAM,
@@ -408,7 +408,16 @@ class MLflowIntegration:
 
         # Return the scan_result directly for legacy compatibility
         # This maintains the old format that was expected previously
-        legacy_payload = scan_result.copy() if scan_result else {}
+        # Filter out AOAI_Compatible properties - those belong in results.json only
+        legacy_payload = (
+            {
+                k: v
+                for k, v in scan_result.items()
+                if k not in ["AOAI_Compatible_Summary", "AOAI_Compatible_Row_Results"]
+            }
+            if scan_result
+            else {}
+        )
 
         # Ensure we have the basic required fields
         if "scorecard" not in legacy_payload:

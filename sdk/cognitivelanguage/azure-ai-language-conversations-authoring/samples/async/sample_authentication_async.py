@@ -48,11 +48,11 @@ async def sample_authentication_api_key_async():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    clu_client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key))
+    clu_client = ConversationAuthoringClient(endpoint, AzureKeyCredential(key)) # pylint: disable=unused-variable
     # [END create_clu_client_with_key_async]
 
 
-async def sample_authentication_with_azure_active_directory():
+async def sample_authentication_with_aad():
     """DefaultAzureCredential will use the values from these environment
     variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
     """
@@ -63,7 +63,7 @@ async def sample_authentication_with_azure_active_directory():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
 
-    clu_client = ConversationAuthoringClient(endpoint, credential=credential)
+    clu_client = ConversationAuthoringClient(endpoint, credential=credential) # pylint: disable=unused-variable
 
 
 async def main():

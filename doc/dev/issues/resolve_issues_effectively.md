@@ -13,17 +13,15 @@ If you are not familiar with the SDK usage of a service, you can find relevant e
 
 For some common errors, you can check [here](#summary-of-common-errors).
 
-## Feature Request(For users)
+## Feature Request (For users)
 
-See [here][request_a_feature] for more details.
+Python SDKs are automatically generated based on REST API, so we generally do not recommend modifying SDK code manually. If you need a new function, but the SDK does not provide it, you need to open an issue in the [REST API repository](https://github.com/Azure/azure-rest-api-specs/issues) to describe clearly the feature you want.
 
 ## Bug Report (For users)
 
 Please describe the bug in as much detail as possible, such as listing the SDK package name, version and operating system info you use.
 
 If you can provide detailed reproduction steps, it will help us locate and solve the issue.
-
-<hr/>
 
 ## Summary Of Common Errors
 
@@ -73,7 +71,6 @@ When this error occurs, you can check the version of `msrest` and upgrade it to 
 
 
 [sample repo]: https://github.com/Azure-Samples/azure-samples-python-management
-[request_a_feature]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/how_to_request_a_feature_in_sdk.md
 [rest API]: https://github.com/Azure/azure-rest-api-specs
 [rest issue]: https://github.com/Azure/azure-rest-api-specs/issues
 [SDK dependency]: https://github.com/Azure/azure-sdk-for-python/blob/main/shared_requirements.txt

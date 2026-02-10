@@ -21,11 +21,11 @@ class TestMicrosoftElasticOpenAIOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_open_ai_list(self, resource_group):
         response = self.client.open_ai.list(
             resource_group_name=resource_group.name,
             monitor_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,12 +33,12 @@ class TestMicrosoftElasticOpenAIOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_open_ai_get(self, resource_group):
         response = await self.client.open_ai.get(
             resource_group_name=resource_group.name,
             monitor_name="str",
             integration_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -46,12 +46,12 @@ class TestMicrosoftElasticOpenAIOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_open_ai_create_or_update(self, resource_group):
         response = await self.client.open_ai.create_or_update(
             resource_group_name=resource_group.name,
             monitor_name="str",
             integration_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -59,12 +59,12 @@ class TestMicrosoftElasticOpenAIOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_open_ai_delete(self, resource_group):
         response = await self.client.open_ai.delete(
             resource_group_name=resource_group.name,
             monitor_name="str",
             integration_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -72,12 +72,12 @@ class TestMicrosoftElasticOpenAIOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_status(self, resource_group):
+    async def test_open_ai_get_status(self, resource_group):
         response = await self.client.open_ai.get_status(
             resource_group_name=resource_group.name,
             monitor_name="str",
             integration_name="str",
-            api_version="2024-06-15-preview",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself

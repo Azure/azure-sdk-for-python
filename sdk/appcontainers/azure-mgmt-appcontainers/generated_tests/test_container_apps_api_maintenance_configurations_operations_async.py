@@ -25,7 +25,7 @@ class TestContainerAppsAPIMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
         response = self.client.maintenance_configurations.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestContainerAppsAPIMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestContainerAppsAPIMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             environment_name="str",
             config_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestContainerAppsAPIMaintenanceConfigurationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             environment_name="str",
             config_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

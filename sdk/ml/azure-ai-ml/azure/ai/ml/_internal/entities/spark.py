@@ -140,11 +140,11 @@ class InternalSparkComponent(
         return self._jars
 
     @jars.setter
-    def jars(self, value: Union[str, List[str]]):
+    def jars(self, value: Optional[Union[str, List[str]]]):
         """Set the jars of the component.
 
         :param value: The jars of the component.
-        :type value: Union[str, List[str]]
+        :type value: Optional[Union[str, List[str]]]
         :return: No return
         :rtype: None
         """

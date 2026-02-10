@@ -3,6 +3,7 @@
 import asyncio
 import os
 import random
+import sys
 import uuid
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
@@ -160,14 +161,26 @@ def create_logger(file_name):
     handler = RotatingFileHandler(
         "log-" + get_user_agent(prefix) + '.log',
         maxBytes=1024 * 1024 * 10,  # 10 mb
-        backupCount=2
+        backupCount=5
     )
     logger.setLevel(LOG_LEVEL)
     # create filters for the logger handler to reduce the noise
     workload_logger_filter = WorkloadLoggerFilter()
-    handler.addFilter(workload_logger_filter)
+    # handler.addFilter(workload_logger_filter)
     logger.addHandler(handler)
     return prefix, logger
+
+def create_inner_logger(file_name="internal_logger_tues"):
+    logger = logging.getLogger("internal_requests")
+    prefix = os.path.splitext(file_name)[0] + "-" + str(os.getpid())
+    # Create a rotating file handler
+    handler = RotatingFileHandler(
+        "log-" + file_name + '.log',
+        maxBytes=1024 * 1024 * 10,  # 10 mb
+        backupCount=5
+    )
+    logger.setLevel(LOG_LEVEL)
+    logger.addHandler(handler)
 
 
 class WorkloadLoggerFilter(logging.Filter):

@@ -122,8 +122,6 @@ def regenerate_restclient(api_tag, verbose):
         "autorest",
         "--python",
         "--track2",
-        "--version=3.6.2",
-        "--use=@autorest/python@latest",
         f"--python-sdks-folder={restclient_path.absolute()}",
         "--package-version=0.1.0",
         tag_arg,

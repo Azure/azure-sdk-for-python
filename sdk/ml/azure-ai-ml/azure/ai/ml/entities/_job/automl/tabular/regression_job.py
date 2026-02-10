@@ -73,7 +73,7 @@ class RegressionJob(AutoMLTabular):
     def training(self) -> RegressionTrainingSettings:
         return self._training or RegressionTrainingSettings()
 
-    @training.setter
+    @training.setter  # type: ignore[override]
     def training(self, value: Union[Dict, RegressionTrainingSettings]) -> None:  # pylint: disable=unused-argument
         ...
 

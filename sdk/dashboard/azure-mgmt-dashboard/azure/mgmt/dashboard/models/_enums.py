@@ -52,6 +52,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class CreatorCanAdmin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The creator will have admin access for the Grafana instance."""
+
+    DISABLED = "Disabled"
+    """Creator admin access is disabled"""
+    ENABLED = "Enabled"
+    """Creator admin access is enabled"""
+
+
 class DeterministicOutboundIP(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DeterministicOutboundIP."""
 
@@ -148,10 +157,19 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
+class Size(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the capacity tier of the Grafana instance."""
+
+    X1 = "X1"
+    """X1 capacity tier"""
+    X2 = "X2"
+    """X2 capacity tier"""
+
+
 class StartTLSPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The StartTLSPolicy setting of the SMTP configuration
     `https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy
-    <https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy>`_.
+        <https://pkg.go.dev/github.com/go-mail/mail#StartTLSPolicy>`_.
     """
 
     OPPORTUNISTIC_START_TLS = "OpportunisticStartTLS"

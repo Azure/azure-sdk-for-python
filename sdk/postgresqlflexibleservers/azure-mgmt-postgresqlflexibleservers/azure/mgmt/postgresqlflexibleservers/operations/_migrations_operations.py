@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -32,39 +32,35 @@ from .._configuration import PostgreSQLManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_create_request(
-    subscription_id: str, resource_group_name: str, target_db_server_name: str, migration_name: str, **kwargs: Any
+    resource_group_name: str, server_name: str, migration_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/migrations/{migrationName}",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url(
-            "subscription_id",
-            subscription_id,
-            "str",
-            pattern=r"([a-z0-9]){8,8}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){12,12}",
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", pattern=r"^[-a-z0-9A-Z._()]+[^.]$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "targetDbServerName": _SERIALIZER.url(
-            "target_db_server_name", target_db_server_name, "str", pattern=r"([-a-z0-9]){3,63}"
+        "serverName": _SERIALIZER.url(
+            "server_name", server_name, "str", max_length=63, min_length=3, pattern=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*"
         ),
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
@@ -83,31 +79,26 @@ def build_create_request(
 
 
 def build_get_request(
-    subscription_id: str, resource_group_name: str, target_db_server_name: str, migration_name: str, **kwargs: Any
+    resource_group_name: str, server_name: str, migration_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/migrations/{migrationName}",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url(
-            "subscription_id",
-            subscription_id,
-            "str",
-            pattern=r"([a-z0-9]){8,8}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){12,12}",
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", pattern=r"^[-a-z0-9A-Z._()]+[^.]$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "targetDbServerName": _SERIALIZER.url(
-            "target_db_server_name", target_db_server_name, "str", pattern=r"([-a-z0-9]){3,63}"
+        "serverName": _SERIALIZER.url(
+            "server_name", server_name, "str", max_length=63, min_length=3, pattern=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*"
         ),
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
@@ -124,32 +115,27 @@ def build_get_request(
 
 
 def build_update_request(
-    subscription_id: str, resource_group_name: str, target_db_server_name: str, migration_name: str, **kwargs: Any
+    resource_group_name: str, server_name: str, migration_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/migrations/{migrationName}",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url(
-            "subscription_id",
-            subscription_id,
-            "str",
-            pattern=r"([a-z0-9]){8,8}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){12,12}",
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", pattern=r"^[-a-z0-9A-Z._()]+[^.]$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "targetDbServerName": _SERIALIZER.url(
-            "target_db_server_name", target_db_server_name, "str", pattern=r"([-a-z0-9]){3,63}"
+        "serverName": _SERIALIZER.url(
+            "server_name", server_name, "str", max_length=63, min_length=3, pattern=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*"
         ),
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
@@ -167,32 +153,27 @@ def build_update_request(
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_request(
-    subscription_id: str, resource_group_name: str, target_db_server_name: str, migration_name: str, **kwargs: Any
+def build_cancel_request(
+    resource_group_name: str, server_name: str, migration_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations/{migrationName}",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/migrations/{migrationName}",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url(
-            "subscription_id",
-            subscription_id,
-            "str",
-            pattern=r"([a-z0-9]){8,8}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){12,12}",
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", pattern=r"^[-a-z0-9A-Z._()]+[^.]$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "targetDbServerName": _SERIALIZER.url(
-            "target_db_server_name", target_db_server_name, "str", pattern=r"([-a-z0-9]){3,63}"
+        "serverName": _SERIALIZER.url(
+            "server_name", server_name, "str", max_length=63, min_length=3, pattern=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*"
         ),
         "migrationName": _SERIALIZER.url("migration_name", migration_name, "str", pattern=r"^[a-z][a-z0-9]*$"),
     }
@@ -209,9 +190,9 @@ def build_delete_request(
 
 
 def build_list_by_target_server_request(
-    subscription_id: str,
     resource_group_name: str,
-    target_db_server_name: str,
+    server_name: str,
+    subscription_id: str,
     *,
     migration_list_filter: Optional[Union[str, _models.MigrationListFilter]] = None,
     **kwargs: Any
@@ -219,26 +200,21 @@ def build_list_by_target_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{targetDbServerName}/migrations",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/migrations",
     )
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url(
-            "subscription_id",
-            subscription_id,
-            "str",
-            pattern=r"([a-z0-9]){8,8}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){4,4}[-]([a-z0-9]){12,12}",
-        ),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", pattern=r"^[-a-z0-9A-Z._()]+[^.]$"
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
         ),
-        "targetDbServerName": _SERIALIZER.url(
-            "target_db_server_name", target_db_server_name, "str", pattern=r"([-a-z0-9]){3,63}"
+        "serverName": _SERIALIZER.url(
+            "server_name", server_name, "str", max_length=63, min_length=3, pattern=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*"
         ),
     }
 
@@ -255,6 +231,44 @@ def build_list_by_target_server_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_check_name_availability_request(
+    resource_group_name: str, server_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DBforPostgreSQL/flexibleServers/{serverName}/checkMigrationNameAvailability",
+    )
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url(
+            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
+        ),
+        "serverName": _SERIALIZER.url(
+            "server_name", server_name, "str", max_length=63, min_length=3, pattern=r"^[a-zA-Z0-9]+(-[a-zA-Z0-9]+)*"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class MigrationsOperations:
     """
     .. warning::
@@ -267,7 +281,7 @@ class MigrationsOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: PostgreSQLManagementClientConfiguration = (
@@ -279,92 +293,86 @@ class MigrationsOperations:
     @overload
     def create(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_name: str,
-        parameters: _models.MigrationResource,
+        parameters: _models.Migration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MigrationResource:
+    ) -> _models.Migration:
         """Creates a new migration.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: The required parameters for creating a migration. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :param parameters: Parameters required for creating a migration. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def create(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MigrationResource:
+    ) -> _models.Migration:
         """Creates a new migration.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: The required parameters for creating a migration. Required.
+        :param parameters: Parameters required for creating a migration. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def create(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_name: str,
-        parameters: Union[_models.MigrationResource, IO[bytes]],
+        parameters: Union[_models.Migration, IO[bytes]],
         **kwargs: Any
-    ) -> _models.MigrationResource:
+    ) -> _models.Migration:
         """Creates a new migration.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: The required parameters for creating a migration. Is either a
-         MigrationResource type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource or IO[bytes]
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :param parameters: Parameters required for creating a migration. Is either a Migration type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.Migration or IO[bytes]
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -380,7 +388,7 @@ class MigrationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MigrationResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -388,13 +396,13 @@ class MigrationsOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "MigrationResource")
+            _json = self._serialize.body(parameters, "Migration")
 
         _request = build_create_request(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            target_db_server_name=target_db_server_name,
+            server_name=server_name,
             migration_name=migration_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -413,10 +421,13 @@ class MigrationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MigrationResource", pipeline_response.http_response)
+        deserialized = self._deserialize("Migration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -424,26 +435,18 @@ class MigrationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(
-        self,
-        subscription_id: str,
-        resource_group_name: str,
-        target_db_server_name: str,
-        migration_name: str,
-        **kwargs: Any
-    ) -> _models.MigrationResource:
-        """Gets details of a migration.
+    def get(self, resource_group_name: str, server_name: str, migration_name: str, **kwargs: Any) -> _models.Migration:
+        """Gets information about a migration.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -458,13 +461,13 @@ class MigrationsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.MigrationResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
 
         _request = build_get_request(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            target_db_server_name=target_db_server_name,
+            server_name=server_name,
             migration_name=migration_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -480,10 +483,13 @@ class MigrationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MigrationResource", pipeline_response.http_response)
+        deserialized = self._deserialize("Migration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -493,99 +499,93 @@ class MigrationsOperations:
     @overload
     def update(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_name: str,
         parameters: _models.MigrationResourceForPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MigrationResource:
+    ) -> _models.Migration:
         """Updates an existing migration. The request body can contain one to many of the mutable
         properties present in the migration definition. Certain property updates initiate migration
         state transitions.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: The required parameters for updating a migration. Required.
+        :param parameters: Parameters required to update an existing migration. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResourceForPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     def update(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_name: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.MigrationResource:
+    ) -> _models.Migration:
         """Updates an existing migration. The request body can contain one to many of the mutable
         properties present in the migration definition. Certain property updates initiate migration
         state transitions.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: The required parameters for updating a migration. Required.
+        :param parameters: Parameters required to update an existing migration. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
     def update(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_name: str,
         parameters: Union[_models.MigrationResourceForPatch, IO[bytes]],
         **kwargs: Any
-    ) -> _models.MigrationResource:
+    ) -> _models.Migration:
         """Updates an existing migration. The request body can contain one to many of the mutable
         properties present in the migration definition. Certain property updates initiate migration
         state transitions.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :param parameters: The required parameters for updating a migration. Is either a
+        :param parameters: Parameters required to update an existing migration. Is either a
          MigrationResourceForPatch type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResourceForPatch or
          IO[bytes]
-        :return: MigrationResource or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationResource
+        :return: Migration or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -601,7 +601,7 @@ class MigrationsOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MigrationResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Migration] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -612,10 +612,10 @@ class MigrationsOperations:
             _json = self._serialize.body(parameters, "MigrationResourceForPatch")
 
         _request = build_update_request(
-            subscription_id=subscription_id,
             resource_group_name=resource_group_name,
-            target_db_server_name=target_db_server_name,
+            server_name=server_name,
             migration_name=migration_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -634,10 +634,13 @@ class MigrationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("MigrationResource", pipeline_response.http_response)
+        deserialized = self._deserialize("Migration", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -645,26 +648,20 @@ class MigrationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self,
-        subscription_id: str,
-        resource_group_name: str,
-        target_db_server_name: str,
-        migration_name: str,
-        **kwargs: Any
-    ) -> None:
-        """Deletes a migration.
+    def cancel(
+        self, resource_group_name: str, server_name: str, migration_name: str, **kwargs: Any
+    ) -> Optional[_models.Migration]:
+        """Cancels an active migration.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_name: The name of the migration. Required.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_name: Name of migration. Required.
         :type migration_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: Migration or None or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.Migration or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -679,13 +676,13 @@ class MigrationsOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.Migration]] = kwargs.pop("cls", None)
 
-        _request = build_delete_request(
-            subscription_id=subscription_id,
+        _request = build_cancel_request(
             resource_group_name=resource_group_name,
-            target_db_server_name=target_db_server_name,
+            server_name=server_name,
             migration_name=migration_name,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -701,43 +698,50 @@ class MigrationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("Migration", pipeline_response.http_response)
+
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_by_target_server(
         self,
-        subscription_id: str,
         resource_group_name: str,
-        target_db_server_name: str,
+        server_name: str,
         migration_list_filter: Optional[Union[str, _models.MigrationListFilter]] = None,
         **kwargs: Any
-    ) -> Iterable["_models.MigrationResource"]:
-        """List all the migrations on a given target server.
+    ) -> ItemPaged["_models.Migration"]:
+        """Lists all migrations of a target flexible server.
 
-        :param subscription_id: The subscription ID of the target database server. Required.
-        :type subscription_id: str
-        :param resource_group_name: The resource group name of the target database server. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param target_db_server_name: The name of the target database server. Required.
-        :type target_db_server_name: str
-        :param migration_list_filter: Migration list filter. Retrieves either active migrations or all
-         migrations. Known values are: "Active" and "All". Default value is None.
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param migration_list_filter: Migration list filter. Indicates if the request should retrieve
+         only active migrations or all migrations. Defaults to Active. Known values are: "Active" and
+         "All". Default value is None.
         :type migration_list_filter: str or
          ~azure.mgmt.postgresqlflexibleservers.models.MigrationListFilter
-        :return: An iterator like instance of either MigrationResource or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.postgresqlflexibleservers.models.MigrationResource]
+        :return: An iterator like instance of either Migration or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.postgresqlflexibleservers.models.Migration]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
-        cls: ClsType[_models.MigrationResourceListResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MigrationList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -751,9 +755,9 @@ class MigrationsOperations:
             if not next_link:
 
                 _request = build_list_by_target_server_request(
-                    subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
-                    target_db_server_name=target_db_server_name,
+                    server_name=server_name,
+                    subscription_id=self._config.subscription_id,
                     migration_list_filter=migration_list_filter,
                     api_version=api_version,
                     headers=_headers,
@@ -779,7 +783,7 @@ class MigrationsOperations:
             return _request
 
         def extract_data(pipeline_response):
-            deserialized = self._deserialize("MigrationResourceListResult", pipeline_response)
+            deserialized = self._deserialize("MigrationList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -796,9 +800,155 @@ class MigrationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+    @overload
+    def check_name_availability(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        parameters: _models.MigrationNameAvailability,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MigrationNameAvailability:
+        """Check the validity and availability of the given name, to assign it to a new migration.
+
+        Checks if a proposed migration name is valid and available.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param parameters: Parameters required to check if a migration name is valid and available.
+         Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MigrationNameAvailability or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def check_name_availability(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MigrationNameAvailability:
+        """Check the validity and availability of the given name, to assign it to a new migration.
+
+        Checks if a proposed migration name is valid and available.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param parameters: Parameters required to check if a migration name is valid and available.
+         Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MigrationNameAvailability or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def check_name_availability(
+        self,
+        resource_group_name: str,
+        server_name: str,
+        parameters: Union[_models.MigrationNameAvailability, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.MigrationNameAvailability:
+        """Check the validity and availability of the given name, to assign it to a new migration.
+
+        Checks if a proposed migration name is valid and available.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param server_name: The name of the server. Required.
+        :type server_name: str
+        :param parameters: Parameters required to check if a migration name is valid and available. Is
+         either a MigrationNameAvailability type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability or
+         IO[bytes]
+        :return: MigrationNameAvailability or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailability
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MigrationNameAvailability] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "MigrationNameAvailability")
+
+        _request = build_check_name_availability_request(
+            resource_group_name=resource_group_name,
+            server_name=server_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("MigrationNameAvailability", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

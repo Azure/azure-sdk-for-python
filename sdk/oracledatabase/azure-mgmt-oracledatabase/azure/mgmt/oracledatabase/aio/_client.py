@@ -30,6 +30,8 @@ from .operations import (
     DbNodesOperations,
     DbServersOperations,
     DbSystemShapesOperations,
+    DbSystemsOperations,
+    DbVersionsOperations,
     DnsPrivateViewsOperations,
     DnsPrivateZonesOperations,
     ExadbVmClustersOperations,
@@ -38,14 +40,16 @@ from .operations import (
     FlexComponentsOperations,
     GiMinorVersionsOperations,
     GiVersionsOperations,
-    ListActionsOperations,
+    NetworkAnchorsOperations,
     Operations,
     OracleSubscriptionsOperations,
+    ResourceAnchorsOperations,
     SystemVersionsOperations,
     VirtualNetworkAddressesOperations,
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
@@ -57,8 +61,6 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes
     :ivar cloud_exadata_infrastructures: CloudExadataInfrastructuresOperations operations
     :vartype cloud_exadata_infrastructures:
      azure.mgmt.oracledatabase.aio.operations.CloudExadataInfrastructuresOperations
-    :ivar list_actions: ListActionsOperations operations
-    :vartype list_actions: azure.mgmt.oracledatabase.aio.operations.ListActionsOperations
     :ivar db_servers: DbServersOperations operations
     :vartype db_servers: azure.mgmt.oracledatabase.aio.operations.DbServersOperations
     :ivar cloud_vm_clusters: CloudVmClustersOperations operations
@@ -108,13 +110,24 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes
     :ivar exascale_db_storage_vaults: ExascaleDbStorageVaultsOperations operations
     :vartype exascale_db_storage_vaults:
      azure.mgmt.oracledatabase.aio.operations.ExascaleDbStorageVaultsOperations
+    :ivar network_anchors: NetworkAnchorsOperations operations
+    :vartype network_anchors: azure.mgmt.oracledatabase.aio.operations.NetworkAnchorsOperations
+    :ivar resource_anchors: ResourceAnchorsOperations operations
+    :vartype resource_anchors: azure.mgmt.oracledatabase.aio.operations.ResourceAnchorsOperations
+    :ivar db_systems: DbSystemsOperations operations
+    :vartype db_systems: azure.mgmt.oracledatabase.aio.operations.DbSystemsOperations
+    :ivar db_versions: DbVersionsOperations operations
+    :vartype db_versions: azure.mgmt.oracledatabase.aio.operations.DbVersionsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is "2025-03-01".
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Default value is "2025-09-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -122,10 +135,16 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -134,6 +153,7 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -167,7 +187,6 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes
         self.cloud_exadata_infrastructures = CloudExadataInfrastructuresOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.list_actions = ListActionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.db_servers = DbServersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.cloud_vm_clusters = CloudVmClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -216,6 +235,12 @@ class OracleDatabaseMgmtClient:  # pylint: disable=too-many-instance-attributes
         self.exascale_db_storage_vaults = ExascaleDbStorageVaultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.network_anchors = NetworkAnchorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.resource_anchors = ResourceAnchorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.db_systems = DbSystemsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.db_versions = DbVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

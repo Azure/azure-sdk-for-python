@@ -165,15 +165,6 @@ class ImportMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FORCE = "Force"
 
 
-class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that last modified the resource."""
-
-    USER = "User"
-    APPLICATION = "Application"
-    MANAGED_IDENTITY = "ManagedIdentity"
-    KEY = "Key"
-
-
 class LogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The verbosity of logs persisted on the connected registry."""
 
@@ -182,13 +173,6 @@ class LogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WARNING = "Warning"
     ERROR = "Error"
     NONE = "None"
-
-
-class MetadataSearch(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Determines whether registry artifacts are indexed for metadata search."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
 
 
 class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -205,44 +189,11 @@ class OS(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LINUX = "Linux"
 
 
-class PackageSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of package source for a archive."""
-
-    REMOTE = "remote"
-
-
 class PasswordName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The password name."""
 
     PASSWORD = "password"
     PASSWORD2 = "password2"
-
-
-class PipelineOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """PipelineOptions."""
-
-    OVERWRITE_TAGS = "OverwriteTags"
-    OVERWRITE_BLOBS = "OverwriteBlobs"
-    DELETE_SOURCE_BLOB_ON_SUCCESS = "DeleteSourceBlobOnSuccess"
-    CONTINUE_ON_ERRORS = "ContinueOnErrors"
-
-
-class PipelineRunSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the source."""
-
-    AZURE_STORAGE_BLOB = "AzureStorageBlob"
-
-
-class PipelineRunTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the target."""
-
-    AZURE_STORAGE_BLOB = "AzureStorageBlob"
-
-
-class PipelineSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of source for the import pipeline."""
-
-    AZURE_STORAGE_BLOB_CONTAINER = "AzureStorageBlobContainer"
 
 
 class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -25,7 +25,7 @@ class TestStorageManagementNetworkSecurityPerimeterConfigurationsOperationsAsync
         response = self.client.network_security_perimeter_configurations.list(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestStorageManagementNetworkSecurityPerimeterConfigurationsOperationsAsync
             resource_group_name=resource_group.name,
             account_name="str",
             network_security_perimeter_configuration_name="str",
-            api_version="2025-01-01",
+            api_version="2025-06-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestStorageManagementNetworkSecurityPerimeterConfigurationsOperationsAsync
                 resource_group_name=resource_group.name,
                 account_name="str",
                 network_security_perimeter_configuration_name="str",
-                api_version="2025-01-01",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

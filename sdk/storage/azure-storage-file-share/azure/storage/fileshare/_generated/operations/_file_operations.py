@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, IO, Iterator, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, IO, Iterator, Literal, Optional, TypeVar, Union
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,16 +30,17 @@ from .._configuration import AzureFileStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_create_request(
+def build_create_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     url: str,
     *,
     file_content_length: int,
+    version: str,
     timeout: Optional[int] = None,
     file_content_type: Optional[str] = None,
     file_content_encoding: Optional[str] = None,
@@ -47,7 +48,7 @@ def build_create_request(
     file_cache_control: Optional[str] = None,
     file_content_md5: Optional[bytes] = None,
     file_content_disposition: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
@@ -60,6 +61,10 @@ def build_create_request(
     group: Optional[str] = None,
     file_mode: Optional[str] = None,
     nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+    content_md5: Optional[bytes] = None,
+    file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+    content_length: Optional[int] = None,
+    content: Optional[IO[bytes]] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -68,7 +73,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -133,14 +138,25 @@ def build_create_request(
         _headers["x-ms-mode"] = _SERIALIZER.header("file_mode", file_mode, "str")
     if nfs_file_type is not None:
         _headers["x-ms-file-file-type"] = _SERIALIZER.header("nfs_file_type", nfs_file_type, "str")
+    if content_md5 is not None:
+        _headers["Content-MD5"] = _SERIALIZER.header("content_md5", content_md5, "bytearray")
+    if file_property_semantics is not None:
+        _headers["x-ms-file-property-semantics"] = _SERIALIZER.header(
+            "file_property_semantics", file_property_semantics, "str"
+        )
+    if content_length is not None:
+        _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
 def build_download_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     range: Optional[str] = None,
     range_get_content_md5: Optional[bool] = None,
@@ -153,7 +169,6 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -192,6 +207,7 @@ def build_download_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
@@ -202,7 +218,6 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -235,6 +250,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
@@ -244,7 +260,6 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -272,9 +287,10 @@ def build_delete_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_set_http_headers_request(
+def build_set_http_headers_request(  # pylint: disable=too-many-locals
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     file_content_length: Optional[int] = None,
     file_content_type: Optional[str] = None,
@@ -302,7 +318,6 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -372,8 +387,9 @@ def build_set_http_headers_request(
 def build_set_metadata_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -383,7 +399,6 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -417,6 +432,7 @@ def build_set_metadata_request(
 def build_acquire_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
@@ -430,7 +446,6 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -468,6 +483,7 @@ def build_release_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
@@ -479,7 +495,6 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -514,6 +529,7 @@ def build_change_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -526,7 +542,6 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -562,6 +577,7 @@ def build_change_lease_request(
 def build_break_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -574,7 +590,6 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -611,6 +626,7 @@ def build_upload_range_request(
     *,
     range: str,
     content_length: int,
+    version: str,
     timeout: Optional[int] = None,
     file_range_write: Union[str, _models.FileRangeWriteType] = "update",
     content_md5: Optional[bytes] = None,
@@ -628,7 +644,6 @@ def build_upload_range_request(
 
     comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -680,6 +695,7 @@ def build_upload_range_from_url_request(
     range: str,
     copy_source: str,
     content_length: int,
+    version: str,
     timeout: Optional[int] = None,
     source_range: Optional[str] = None,
     source_content_crc64: Optional[bytes] = None,
@@ -700,7 +716,6 @@ def build_upload_range_from_url_request(
     file_range_write_from_url: Literal["update"] = kwargs.pop(
         "file_range_write_from_url", _headers.pop("x-ms-write", "update")
     )
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -762,6 +777,7 @@ def build_upload_range_from_url_request(
 def build_get_range_list_request(
     url: str,
     *,
+    version: str,
     sharesnapshot: Optional[str] = None,
     prevsharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -776,7 +792,6 @@ def build_get_range_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rangelist"] = kwargs.pop("comp", _params.pop("comp", "rangelist"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -813,12 +828,13 @@ def build_get_range_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_start_copy_request(
+def build_start_copy_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     copy_source: str,
+    version: str,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
@@ -843,7 +859,6 @@ def build_start_copy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -918,6 +933,7 @@ def build_abort_copy_request(
     url: str,
     *,
     copy_id: str,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
@@ -931,7 +947,6 @@ def build_abort_copy_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -965,6 +980,7 @@ def build_abort_copy_request(
 def build_list_handles_request(
     url: str,
     *,
+    version: str,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
     timeout: Optional[int] = None,
@@ -977,7 +993,6 @@ def build_list_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["listhandles"] = kwargs.pop("comp", _params.pop("comp", "listhandles"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1014,6 +1029,7 @@ def build_force_close_handles_request(
     url: str,
     *,
     handle_id: str,
+    version: str,
     timeout: Optional[int] = None,
     marker: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
@@ -1025,7 +1041,6 @@ def build_force_close_handles_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["forceclosehandles"] = kwargs.pop("comp", _params.pop("comp", "forceclosehandles"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1057,10 +1072,11 @@ def build_force_close_handles_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rename_request(
+def build_rename_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     rename_source: str,
+    version: str,
     timeout: Optional[int] = None,
     replace_if_exists: Optional[bool] = None,
     ignore_read_only: Optional[bool] = None,
@@ -1073,7 +1089,7 @@ def build_rename_request(
     file_permission: str = "inherit",
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     file_permission_key: Optional[str] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_content_type: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
@@ -1084,7 +1100,6 @@ def build_rename_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1150,8 +1165,9 @@ def build_create_symbolic_link_request(
     url: str,
     *,
     link_text: str,
+    version: str,
     timeout: Optional[int] = None,
-    metadata: Optional[Dict[str, str]] = None,
+    metadata: Optional[dict[str, str]] = None,
     file_creation_time: str = "now",
     file_last_write_time: str = "now",
     request_id_parameter: Optional[str] = None,
@@ -1165,7 +1181,6 @@ def build_create_symbolic_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1208,6 +1223,7 @@ def build_create_symbolic_link_request(
 def build_get_symbolic_link_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -1218,7 +1234,6 @@ def build_get_symbolic_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["symboliclink"] = kwargs.pop("restype", _params.pop("restype", "symboliclink"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1251,6 +1266,7 @@ def build_create_hard_link_request(
     url: str,
     *,
     target_file: str,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     lease_id: Optional[str] = None,
@@ -1262,7 +1278,6 @@ def build_create_hard_link_request(
 
     restype: Literal["hardlink"] = kwargs.pop("restype", _params.pop("restype", "hardlink"))
     file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
-    version: Literal["2025-11-05"] = kwargs.pop("version", _headers.pop("x-ms-version", "2025-11-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1313,11 +1328,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         file_content_length: int,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -1329,8 +1344,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
         nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        content_length: Optional[int] = None,
         file_http_headers: Optional[_models.FileHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
+        optionalbody: Optional[IO[bytes]] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new file or replaces a file. Note it only initializes the file with no content.
@@ -1386,10 +1405,26 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :param nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
          "Regular", "Directory", and "SymLink". Default value is None.
         :type nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :param content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. When the Content-MD5 header is specified, the File service compares
+         the hash of the content that has arrived with the header value that was sent. If the two hashes
+         do not match, the operation will fail with error code 400 (Bad Request). Default value is None.
+        :type content_md5: bytes
+        :param file_property_semantics: SMB only, default value is New.  New will forcefully add the
+         ARCHIVE attribute flag and alter the permissions specified in x-ms-file-permission to inherit
+         missing permissions from the parent.  Restore will apply changes without further modification.
+         Known values are: "New" and "Restore". Default value is None.
+        :type file_property_semantics: str or ~azure.storage.fileshare.models.FilePropertySemantics
+        :param content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.
+         Default value is None.
+        :type content_length: int
         :param file_http_headers: Parameter group. Default value is None.
         :type file_http_headers: ~azure.storage.fileshare.models.FileHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.fileshare.models.LeaseAccessConditions
+        :param optionalbody: Initial data. Default value is None.
+        :type optionalbody: IO[bytes]
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1406,6 +1441,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         file_type_constant: Literal["file"] = kwargs.pop("file_type_constant", _headers.pop("x-ms-type", "file"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optionalbody else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _file_content_type = None
@@ -1424,10 +1463,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             _file_content_type = file_http_headers.file_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
+        _content = optionalbody
 
         _request = build_create_request(
             url=self._config.url,
             file_content_length=file_content_length,
+            version=self._config.version,
             timeout=timeout,
             file_content_type=_file_content_type,
             file_content_encoding=_file_content_encoding,
@@ -1448,10 +1489,14 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             group=group,
             file_mode=file_mode,
             nfs_file_type=nfs_file_type,
+            content_md5=content_md5,
+            file_property_semantics=file_property_semantics,
+            content_length=content_length,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
-            version=self._config.version,
+            content_type=content_type,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1466,7 +1511,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1499,6 +1547,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
         response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
         response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
 
         if cls:
             return cls(pipeline_response, None, response_headers)  # type: ignore
@@ -1554,6 +1604,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_download_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             range=range,
             range_get_content_md5=range_get_content_md5,
@@ -1561,7 +1612,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1581,7 +1631,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1696,12 +1749,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1716,7 +1769,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1815,11 +1871,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1834,7 +1890,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -1847,7 +1906,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def set_http_headers(  # pylint: disable=inconsistent-return-statements
+    def set_http_headers(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         file_content_length: Optional[int] = None,
@@ -1955,6 +2014,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_http_headers_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_content_length=file_content_length,
             file_content_type=_file_content_type,
@@ -1977,7 +2037,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1992,7 +2051,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2033,7 +2095,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -2073,13 +2135,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2094,7 +2156,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2159,6 +2224,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -2167,7 +2233,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2182,7 +2247,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2239,13 +2307,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2260,7 +2328,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2325,6 +2396,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             proposed_lease_id=proposed_lease_id,
             request_id_parameter=request_id_parameter,
@@ -2332,7 +2404,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2347,7 +2418,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2411,6 +2485,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
@@ -2418,7 +2493,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2433,7 +2507,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2451,7 +2528,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def upload_range(  # pylint: disable=inconsistent-return-statements
+    def upload_range(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         range: str,
         content_length: int,
@@ -2524,7 +2601,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         comp: Literal["range"] = kwargs.pop("comp", _params.pop("comp", "range"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optionalbody else None
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -2536,6 +2616,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             range=range,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             file_range_write=file_range_write,
             content_md5=content_md5,
@@ -2547,7 +2628,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2563,7 +2643,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2670,6 +2753,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             range=range,
             copy_source=copy_source,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             source_range=source_range,
             source_content_crc64=source_content_crc64,
@@ -2683,7 +2767,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2698,7 +2781,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2780,6 +2866,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_range_list_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             prevsharesnapshot=prevsharesnapshot,
             timeout=timeout,
@@ -2789,7 +2876,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2804,7 +2890,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -2823,11 +2912,11 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def start_copy(  # pylint: disable=inconsistent-return-statements
+    def start_copy(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -2938,6 +3027,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_start_copy_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
@@ -2959,7 +3049,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2974,7 +3063,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3038,13 +3130,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_abort_copy_request(
             url=self._config.url,
             copy_id=copy_id,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3059,7 +3151,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3118,6 +3213,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_list_handles_request(
             url=self._config.url,
+            version=self._config.version,
             marker=marker,
             maxresults=maxresults,
             timeout=timeout,
@@ -3125,7 +3221,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3140,7 +3235,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3204,13 +3302,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
+            version=self._config.version,
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3225,7 +3323,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3244,7 +3345,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def rename(  # pylint: disable=inconsistent-return-statements
+    def rename(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -3253,7 +3354,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
         destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
@@ -3352,6 +3453,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
+            version=self._config.version,
             timeout=timeout,
             replace_if_exists=replace_if_exists,
             ignore_read_only=ignore_read_only,
@@ -3370,7 +3472,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3385,7 +3486,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3423,7 +3527,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         link_text: str,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_creation_time: str = "now",
         file_last_write_time: str = "now",
         request_id_parameter: Optional[str] = None,
@@ -3489,6 +3593,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_symbolic_link_request(
             url=self._config.url,
             link_text=link_text,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_creation_time=file_creation_time,
@@ -3499,7 +3604,6 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             group=group,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3514,7 +3618,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3587,12 +3694,12 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_symbolic_link_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3607,7 +3714,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -3676,13 +3786,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _request = build_create_hard_link_request(
             url=self._config.url,
             target_file=target_file,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             file_type_constant=file_type_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3697,7 +3807,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

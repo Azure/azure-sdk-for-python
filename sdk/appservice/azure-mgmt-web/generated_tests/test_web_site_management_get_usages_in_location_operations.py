@@ -23,7 +23,7 @@ class TestWebSiteManagementGetUsagesInLocationOperations(AzureMgmtRecordedTestCa
     def test_get_usages_in_location_list(self, resource_group):
         response = self.client.get_usages_in_location.list(
             location="str",
-            api_version="2024-11-01",
+            api_version="2025-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

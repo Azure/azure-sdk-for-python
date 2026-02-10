@@ -1,0 +1,4 @@
+-e ../../../eng/tools/azure-sdk-tools
+../azure-ai-agentserver-core
+python-dotenv
+pywin32; sys_platform == 'win32'

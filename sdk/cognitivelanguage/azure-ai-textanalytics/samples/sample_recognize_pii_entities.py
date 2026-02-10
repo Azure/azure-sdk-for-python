@@ -81,6 +81,7 @@ def sample_recognize_pii_entities():
     else:
         print("No documents in the response or unexpected result type.")
 
+
 # [END recognize_pii_entities]
 
 

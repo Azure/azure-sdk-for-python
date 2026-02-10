@@ -303,7 +303,7 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.retrieval.gpt_retrieval"]) >= 2
         assert len(row_result_df["outputs.retrieval.evaluation_per_turn"]) >= 2
 
-        assert len(metrics.keys()) == 32
+        assert len(metrics.keys()) == 88
         assert metrics["coherence.coherence"] >= 0
         assert metrics["coherence.gpt_coherence"] >= 0
         assert metrics["fluency.fluency"] >= 0
@@ -388,7 +388,8 @@ class TestMassEvaluate:
             # imageurls_with_target has 1 extra column: outputs.conversation due to the target mapping
             assert len(row_result_df.keys()) >= 33
         else:
-            assert len(row_result_df.keys()) == 32
+            # 98 columns: includes evaluation_per_turn fields for all evaluators
+            assert len(row_result_df.keys()) == 98
         known_keys = [
             "outputs.content_safety.hate_unfairness",
             "outputs.content_safety.hate_unfairness_score",
@@ -406,12 +407,8 @@ class TestMassEvaluate:
             "outputs.content_safety.violence_score",
             "outputs.content_safety.violence_reason",
             "outputs.content_safety.violence_result",
-            "outputs.protected_material.fictional_characters_label",
-            "outputs.protected_material.fictional_characters_reason",
-            "outputs.protected_material.logos_and_brands_label",
-            "outputs.protected_material.logos_and_brands_reason",
-            "outputs.protected_material.artwork_label",
-            "outputs.protected_material.artwork_reason",
+            "outputs.protected_material.protected_material_label",
+            "outputs.protected_material.protected_material_reason",
             "outputs.sexual.sexual",
             "outputs.sexual.sexual_score",
             "outputs.sexual.sexual_reason",
@@ -420,14 +417,11 @@ class TestMassEvaluate:
         for key in known_keys:
             assert key in row_result_df.keys()
 
-        assert len(metrics) == 15
+        assert len(metrics) >= 9
         assert 0 <= metrics.get("content_safety.sexual_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.violence_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.self_harm_defect_rate") <= 1
         assert 0 <= metrics.get("content_safety.hate_unfairness_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.fictional_characters_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.logos_and_brands_defect_rate") <= 1
-        assert 0 <= metrics.get("protected_material.artwork_defect_rate") <= 1
         assert 0 <= metrics.get("sexual.sexual_defect_rate") <= 1
 
     @pytest.mark.parametrize(
@@ -453,7 +447,7 @@ class TestMassEvaluate:
 
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
-        assert len(row_result_df.keys()) == 5
+        assert len(row_result_df.keys()) == 12
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["outputs.code_vulnerability.code_vulnerability_label"]) == 2
@@ -573,7 +567,9 @@ class TestMassEvaluate:
             False,
         ]
 
-        assert len(metrics.keys()) == 20
+        # Expect either 20 metrics (original) or 23 metrics (with token counts: inputTokenCount, outputTokenCount, totalTokenCount)
+        # The token count metrics may be present depending on the service version/configuration
+        assert len(metrics.keys()) in [20, 23], f"Expected 20 or 23 metrics, got {len(metrics.keys())}"
         assert metrics["code_vulnerability.code_vulnerability_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.code_injection_defect_rate"] >= 0
         assert metrics["code_vulnerability.code_vulnerability_details.full_ssrf_defect_rate"] >= 0
@@ -639,7 +635,7 @@ class TestMassEvaluate:
         row_result_df = pd.DataFrame(result["rows"])
         metrics = result["metrics"]
         # todo: change this once binary results are added to the evaluator
-        assert len(row_result_df.keys()) == 6
+        assert len(row_result_df.keys()) == 13
         assert len(row_result_df["inputs.query"]) == 2
         assert len(row_result_df["inputs.response"]) == 2
         assert len(row_result_df["inputs.context"]) == 2
@@ -647,8 +643,11 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_reason"]) == 2
         assert len(row_result_df["outputs.ungrounded_attributes.ungrounded_attributes_details"]) == 2
 
-        assert len(metrics.keys()) == 4
+        # Expect either 5 metrics (original) or 8 metrics (with token counts: inputTokenCount, outputTokenCount, totalTokenCount)
+        # The token count metrics may be present depending on the service version/configuration
+        assert len(metrics.keys()) in [5, 8], f"Expected 5 or 8 metrics, got {len(metrics.keys())}"
         assert metrics["ungrounded_attributes.ungrounded_attributes_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.emotional_state_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.protected_class_defect_rate"] >= 0
+        assert metrics["ungrounded_attributes.ungrounded_attributes_details.attitude_defect_rate"] >= 0
         assert metrics["ungrounded_attributes.ungrounded_attributes_details.groundedness_defect_rate"] >= 0

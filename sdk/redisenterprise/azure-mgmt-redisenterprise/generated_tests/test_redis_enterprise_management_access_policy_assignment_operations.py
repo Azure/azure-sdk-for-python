@@ -34,7 +34,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRec
                 "type": "str",
                 "user": {"objectId": "str"},
             },
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -48,7 +48,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRec
             cluster_name="str",
             database_name="str",
             access_policy_assignment_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -62,7 +62,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRec
             cluster_name="str",
             database_name="str",
             access_policy_assignment_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestRedisEnterpriseManagementAccessPolicyAssignmentOperations(AzureMgmtRec
             resource_group_name=resource_group.name,
             cluster_name="str",
             database_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -47,8 +47,7 @@ async def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -58,9 +57,7 @@ async def main():
 
     identity_service_client = ConfidentialLedgerCertificateClient()  # type: ignore[call-arg]
     async with identity_service_client:
-        ledger_certificate = await identity_service_client.get_ledger_identity(
-            ledger_id
-        )
+        ledger_certificate = await identity_service_client.get_ledger_identity(ledger_id)
 
     # The Confidential Ledger's TLS certificate must be written to a file to be used by the
     # ConfidentialLedgerClient. Here, we write it to a temporary file so that is is cleaned up
@@ -88,15 +85,11 @@ async def main():
             async with ledger_client:
                 try:
                     role = "Reader"
-                    await ledger_client.create_or_update_user(
-                        aad_object_id, {"assignedRole": role}
-                    )
+                    await ledger_client.create_or_update_user(aad_object_id, {"assignedRole": role})
                     print(f"User {aad_object_id} has been added as a {role}")
 
                     role = "Contributor"
-                    await ledger_client.create_or_update_user(
-                        cert_thumbprint, {"assignedRole": role}
-                    )
+                    await ledger_client.create_or_update_user(cert_thumbprint, {"assignedRole": role})
                     print(f"User {cert_thumbprint} has been added as a {role}")
 
                     print(

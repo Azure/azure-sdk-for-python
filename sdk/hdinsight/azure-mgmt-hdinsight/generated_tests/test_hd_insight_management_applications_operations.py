@@ -20,11 +20,11 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_cluster(self, resource_group):
+    def test_applications_list_by_cluster(self, resource_group):
         response = self.client.applications.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -32,12 +32,12 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_applications_get(self, resource_group):
         response = self.client.applications.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_create(self, resource_group):
+    def test_applications_begin_create(self, resource_group):
         response = self.client.applications.begin_create(
             resource_group_name=resource_group.name,
             cluster_name="str",
@@ -152,7 +152,7 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -160,12 +160,12 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_delete(self, resource_group):
+    def test_applications_begin_delete(self, resource_group):
         response = self.client.applications.begin_delete(
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -173,13 +173,13 @@ class TestHDInsightManagementApplicationsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_azure_async_operation_status(self, resource_group):
+    def test_applications_get_azure_async_operation_status(self, resource_group):
         response = self.client.applications.get_azure_async_operation_status(
             resource_group_name=resource_group.name,
             cluster_name="str",
             application_name="str",
             operation_id="str",
-            api_version="2024-08-01-preview",
+            api_version="2025-01-15-preview",
         )
 
         # please add some check logic here by yourself

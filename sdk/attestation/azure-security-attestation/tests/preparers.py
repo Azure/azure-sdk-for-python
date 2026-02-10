@@ -9,7 +9,7 @@
 from typing import List
 import functools
 
-from azure.security.attestation import AttestationType
+from azure.security.attestation.models import AttestationType
 
 try:
     from typing import TYPE_CHECKING

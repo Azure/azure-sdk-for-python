@@ -25,17 +25,6 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
-class BillingCycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Different usage type like YEARLY/MONTHLY."""
-
-    YEARLY = "YEARLY"
-    """Billing cycle is YEARLY"""
-    MONTHLY = "MONTHLY"
-    """Billing cycle is MONTHLY"""
-    WEEKLY = "WEEKLY"
-    """Billing cycle is WEEKLY"""
-
-
 class BillingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Billing source."""
 

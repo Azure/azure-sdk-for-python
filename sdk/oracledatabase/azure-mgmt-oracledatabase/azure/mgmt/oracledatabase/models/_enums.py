@@ -56,6 +56,17 @@ class AutonomousDatabaseBackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """LongTerm backup"""
 
 
+class AutonomousDatabaseLifecycleActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Autonomous Database Action Enum."""
+
+    START = "Start"
+    """Start Autonomous Database"""
+    STOP = "Stop"
+    """Stop Autonomous Database"""
+    RESTART = "Restart"
+    """Restart Autonomous Database"""
+
+
 class AutonomousDatabaseLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Autonomous database lifecycle state enum."""
 
@@ -123,6 +134,13 @@ class AzureResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Resource creation was canceled."""
     PROVISIONING = "Provisioning"
     """Indicates that resource in Provisioning state"""
+
+
+class BaseDbSystemShapes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for BaseDb System Shapes."""
+
+    VM_STANDARD_X86 = "VM.Standard.x86"
+    """Vm Standard X86"""
 
 
 class CloneType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -349,6 +367,53 @@ class DbServerProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates that resource maintenance in progress state"""
 
 
+class DbSystemDatabaseEditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Database edition type enum."""
+
+    STANDARD_EDITION = "StandardEdition"
+    """Standard edition"""
+    ENTERPRISE_EDITION = "EnterpriseEdition"
+    """Enterprise edition"""
+    ENTERPRISE_EDITION_HIGH_PERFORMANCE = "EnterpriseEditionHighPerformance"
+    """Enterprise edition high performance"""
+    ENTERPRISE_EDITION_EXTREME = "EnterpriseEditionExtreme"
+    """Enterprise edition extreme"""
+    ENTERPRISE_EDITION_DEVELOPER = "EnterpriseEditionDeveloper"
+    """Enterprise edition developer"""
+
+
+class DbSystemLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DB System lifecycle state enum."""
+
+    PROVISIONING = "Provisioning"
+    """Indicates that resource in Provisioning state"""
+    AVAILABLE = "Available"
+    """Indicates that resource in Available state"""
+    UPDATING = "Updating"
+    """Indicates that resource in Updating state"""
+    TERMINATING = "Terminating"
+    """Indicates that resource in Terminating state"""
+    TERMINATED = "Terminated"
+    """Indicates that resource in Terminated state"""
+    FAILED = "Failed"
+    """Indicates that resource in Failed state"""
+    MIGRATED = "Migrated"
+    """Indicates that resource is Migrated state"""
+    MAINTENANCE_IN_PROGRESS = "MaintenanceInProgress"
+    """Indicates that resource maintenance in progress state"""
+    NEEDS_ATTENTION = "NeedsAttention"
+    """Indicates that resource needs attention state"""
+    UPGRADING = "Upgrading"
+    """Indicates that resource in Upgrading state"""
+
+
+class DbSystemSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The DbSystem source type of the database."""
+
+    NONE = "None"
+    """for creating a new database."""
+
+
 class DisasterRecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disaster recovery type enum."""
 
@@ -365,6 +430,15 @@ class DiskRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High redundancy"""
     NORMAL = "Normal"
     """Normal redundancy"""
+
+
+class DiskRedundancyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Disk redundancy type enum."""
+
+    HIGH = "High"
+    """3-way redundancy."""
+    NORMAL = "Normal"
+    """2-way redundancy."""
 
 
 class DnsPrivateViewsLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -393,6 +467,15 @@ class DnsPrivateZonesLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """DNS Private Zones is deleting"""
     UPDATING = "Updating"
     """DNS Private Zones is updating"""
+
+
+class ExadataVmClusterStorageManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the type of storage management for the Cloud VM Cluster if its ASM or Exascale."""
+
+    ASM = "ASM"
+    """Indicates that storage management for the Cloud VM Cluster is ASM"""
+    EXASCALE = "Exascale"
+    """Indicates that storage management for the Cloud VM Cluster is Exascale"""
 
 
 class ExadbVmClusterLifecycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -696,6 +779,17 @@ class SessionModeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Redirect session mode"""
 
 
+class ShapeAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Exascale storage used for Exadata VM cluster. The default is SMART_STORAGE which
+    supports Oracle Database 23ai and later.
+    """
+
+    SMART_STORAGE = "SMART_STORAGE"
+    """Smart storage"""
+    BLOCK_STORAGE = "BLOCK_STORAGE"
+    """block storage"""
+
+
 class ShapeFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allowed values for GI Minor Versions shapeFamily filter."""
 
@@ -703,6 +797,19 @@ class ShapeFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Family value for Exadata Shape"""
     EXADB_XS = "EXADB_XS"
     """Family value for Exadb XS Shape"""
+
+
+class ShapeFamilyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed values for shape family."""
+
+    EXADATA = "EXADATA"
+    """Family value for Exadata Shape"""
+    EXADB_XS = "EXADB_XS"
+    """Family value for Exadb XS Shape"""
+    SINGLE_NODE = "SINGLENODE"
+    """Family value for Single Node Shape"""
+    VIRTUAL_MACHINE = "VIRTUALMACHINE"
+    """Family value for Virtual Machine Shape"""
 
 
 class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -722,6 +829,24 @@ class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cross region dataguard source"""
     CROSS_REGION_DISASTER_RECOVERY = "CrossRegionDisasterRecovery"
     """cross region disaster recovery source"""
+
+
+class StorageManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage Management type enum."""
+
+    LVM = "LVM"
+    """Logical Volume management"""
+
+
+class StorageVolumePerformanceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage volume performance mode."""
+
+    BALANCED = "Balanced"
+    """With this option, you are purchasing 10 VPUs per GB/month. For more information, including
+    specific throughput and IOPS performance numbers for various volume sizes."""
+    HIGH_PERFORMANCE = "HighPerformance"
+    """With this option, you are purchasing 20 VPUs per GB/month. For more information, including
+    specific throughput and IOPS performance numbers for various volume sizes."""
 
 
 class SyntaxFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

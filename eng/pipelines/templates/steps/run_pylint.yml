@@ -15,6 +15,7 @@ steps:
         "$(TargetingString)"
         --service="${{ parameters.ServiceDirectory }}"
         --checks="pylint"
+        --disable-compatibility-filter
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
     env:

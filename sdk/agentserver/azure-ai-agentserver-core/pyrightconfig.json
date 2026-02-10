@@ -1,0 +1,13 @@
+{
+  "reportOptionalMemberAccess": "warning",
+  "reportArgumentType": "warning",
+  "reportAttributeAccessIssue": "warning",
+  "reportMissingImports": "warning",
+  "reportGeneralTypeIssues": "warning",
+  "reportReturnType": "warning",
+
+  "exclude": [
+    "**/azure/ai/agentserver/core/models/**",
+    "**/samples/**"
+  ]
+}

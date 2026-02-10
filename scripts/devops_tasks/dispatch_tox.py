@@ -114,6 +114,13 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         help="Location to generate any output files(if any). For e.g. apiview stub file",
     )
 
+    parser.add_argument(
+        "--disable-compatibility-filter",
+        dest="disable_compatibility_filter",
+        action="store_true",
+        help="Flag to disable compatibility filter while discovering packages.",
+    )
+
     args = parser.parse_args()
 
     configure_logging(args)
@@ -132,7 +139,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         args.filter_type = "Build"
         compatibility_filter = False
     else:
-        compatibility_filter = True
+        compatibility_filter = not args.disable_compatibility_filter
 
     targeted_packages = discover_targeted_packages(
         args.glob_string, target_dir, "", args.filter_type, compatibility_filter

@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-03-01/autonomousDatabase_listByResourceGroup.json
+# x-ms-original-file: 2025-09-01/autonomousDatabase_listByResourceGroup.json
 if __name__ == "__main__":
     main()

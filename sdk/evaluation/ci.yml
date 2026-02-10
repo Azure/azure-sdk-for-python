@@ -35,7 +35,7 @@ extends:
         Selection: sparse
         GenerateVMJobs: true
     MatrixFilters:
-      - PythonVersion=^(?!(3\.13|3\.8))
+      - PythonVersion=^(?!3\.14)
     Artifacts:
     - name: azure-ai-evaluation
       safeName: azureaievaluation

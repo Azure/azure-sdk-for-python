@@ -52,7 +52,11 @@ class TestComputeManagementVirtualMachineScaleSetVMsOperations(AzureMgmtRecorded
             instance_id="str",
             parameters={
                 "location": "str",
-                "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                "additionalCapabilities": {
+                    "enableFips1403Encryption": bool,
+                    "hibernationEnabled": bool,
+                    "ultraSSDEnabled": bool,
+                },
                 "availabilitySet": {"id": "str"},
                 "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                 "etag": "str",

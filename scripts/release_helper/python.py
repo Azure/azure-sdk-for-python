@@ -17,7 +17,6 @@ _PYTHON_ASSIGNEE = {'ChenxiJiang333'}
 _CONFIGURED = 'Configured'
 _AUTO_ASK_FOR_CHECK = 'auto-ask-check'
 _BRANCH_ATTENTION = 'base-branch-attention'
-_MultiAPI = 'MultiAPI'
 # record published issues
 _FILE_OUT = 'published_issues_python.csv'
 
@@ -46,16 +45,8 @@ class IssueProcessPython(IssueProcess):
                 return line.split(":", 1)[-1].strip()
         return ""
 
-    def multi_api_policy(self) -> None:
-        if self.has_label(_MultiAPI) and not self.has_label(_AUTO_ASK_FOR_CHECK):
-            self.bot_advice.append(_MultiAPI)
-
     def get_edit_content(self) -> None:
         self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\nReadme Tag: {self.target_readme_tag}'
-
-    @property
-    def is_multiapi(self):
-        return self.has_label(_MultiAPI)
 
     @property
     def readme_comparison(self) -> bool:
@@ -68,7 +59,7 @@ class IssueProcessPython(IssueProcess):
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tags = pattern_tag.findall(contents)
         whether_same_tag = self.target_readme_tag in package_tags[0]
-        whether_change_readme = not whether_same_tag or self.is_multiapi
+        whether_change_readme = not whether_same_tag
         return whether_change_readme
 
     def auto_reply(self) -> None:
@@ -106,7 +97,6 @@ class IssueProcessPython(IssueProcess):
 
     def auto_bot_advice(self):
         super().auto_bot_advice()
-        self.multi_api_policy()
         self.attention_policy()
 
     def auto_close(self) -> None:
@@ -132,8 +122,6 @@ class IssueProcessPython(IssueProcess):
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
         self.output_folder = pattern_output.search(contents).group().split('/')[1]
-        if 'multi-api' in contents:
-            self.add_label(_MultiAPI)
 
     def package_name_output_folder_from_tspconfig(self):
         try:

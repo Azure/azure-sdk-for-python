@@ -24,7 +24,7 @@ class TestNetworkCloudMgmtConsolesOperations(AzureMgmtRecordedTestCase):
         response = self.client.consoles.list_by_virtual_machine(
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkCloudMgmtConsolesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
             console_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetworkCloudMgmtConsolesOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "virtualMachineAccessId": "str",
             },
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -88,7 +88,7 @@ class TestNetworkCloudMgmtConsolesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
             console_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -101,7 +101,7 @@ class TestNetworkCloudMgmtConsolesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_machine_name="str",
             console_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -48,6 +48,13 @@ class FilePermissionFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BINARY = "Binary"
 
 
+class FilePropertySemantics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """FilePropertySemantics."""
+
+    NEW = "New"
+    RESTORE = "Restore"
+
+
 class FileRangeWriteType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FileRangeWriteType."""
 
@@ -221,3 +228,10 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTHORIZATION_RESOURCE_TYPE_MISMATCH = "AuthorizationResourceTypeMismatch"
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     SHARE_SNAPSHOT_NOT_FOUND = "ShareSnapshotNotFound"
+    FILE_SHARE_PROVISIONED_IOPS_INVALID = "FileShareProvisionedIopsInvalid"
+    FILE_SHARE_PROVISIONED_BANDWIDTH_INVALID = "FileShareProvisionedBandwidthInvalid"
+    FILE_SHARE_PROVISIONED_STORAGE_INVALID = "FileShareProvisionedStorageInvalid"
+    TOTAL_SHARES_PROVISIONED_CAPACITY_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedCapacityExceedsAccountLimit"
+    TOTAL_SHARES_PROVISIONED_IOPS_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedIopsExceedsAccountLimit"
+    TOTAL_SHARES_PROVISIONED_BANDWIDTH_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesProvisionedBandwidthExceedsAccountLimit"
+    TOTAL_SHARES_COUNT_EXCEEDS_ACCOUNT_LIMIT = "TotalSharesCountExceedsAccountLimit"

@@ -92,6 +92,13 @@ class EnabledDNSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE = "AZURE"
 
 
+class EnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enable status."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class HealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status Codes for the Firewall."""
 
@@ -156,6 +163,13 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
+class ProductSerialStatusValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """allocation status of the product serial number."""
+
+    ALLOCATED = "Allocated"
+    IN_PROGRESS = "InProgress"
+
+
 class ProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Protocol Enum."""
 
@@ -183,6 +197,13 @@ class ReadOnlyProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     DELETED = "Deleted"
+
+
+class RegistrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Registration status."""
+
+    REGISTERED = "Registered"
+    NOT_REGISTERED = "Not Registered"
 
 
 class ScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

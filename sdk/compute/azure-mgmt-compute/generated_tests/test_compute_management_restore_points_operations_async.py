@@ -58,6 +58,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                                         "time": "2020-02-20 00:00:00",
                                     },
                                 },
+                                "snapshotAccessState": "str",
                             }
                         ],
                         "statuses": [
@@ -70,6 +71,7 @@ class TestComputeManagementRestorePointsOperationsAsync(AzureMgmtRecordedTestCas
                             }
                         ],
                     },
+                    "instantAccessDurationMinutes": 0,
                     "name": "str",
                     "provisioningState": "str",
                     "sourceMetadata": {

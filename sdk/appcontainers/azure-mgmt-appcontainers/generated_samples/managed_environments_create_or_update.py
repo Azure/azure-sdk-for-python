@@ -43,53 +43,18 @@ def main():
             },
             "location": "East US",
             "properties": {
-                "appInsightsConfiguration": {
-                    "connectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
-                },
-                "appLogsConfiguration": {
-                    "logAnalyticsConfiguration": {
-                        "customerId": "string",
-                        "dynamicJsonColumns": True,
-                        "sharedKey": "string",
-                    }
-                },
-                "availabilityZones": ["1", "2", "3"],
+                "appLogsConfiguration": {"logAnalyticsConfiguration": {"customerId": "string", "sharedKey": "string"}},
                 "customDomainConfiguration": {
                     "certificatePassword": "1234",
                     "certificateValue": "Y2VydA==",
                     "dnsSuffix": "www.my-name.com",
                 },
                 "daprAIConnectionString": "InstrumentationKey=00000000-0000-0000-0000-000000000000;IngestionEndpoint=https://northcentralus-0.in.applicationinsights.azure.com/",
-                "diskEncryptionConfiguration": {
-                    "keyVaultConfiguration": {
-                        "auth": {
-                            "identity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso-resources/providers/Microsoft.ManagedIdentity/userAssignedIdentities/contoso-identity"
-                        },
-                        "keyUrl": "https://contoso.vault.azure.net/mykey/19ff8313ca394b89b9e824bbbdc8c521",
-                    }
-                },
                 "ingressConfiguration": {
                     "headerCountLimit": 30,
                     "requestIdleTimeout": 5,
-                    "scale": {"maxReplicas": 4, "minReplicas": 2},
                     "terminationGracePeriodSeconds": 3600,
                     "workloadProfileName": "My-CO-01",
-                },
-                "openTelemetryConfiguration": {
-                    "destinationsConfiguration": {
-                        "dataDogConfiguration": {"key": "000000000000000000000000", "site": "string"},
-                        "otlpConfigurations": [
-                            {
-                                "endpoint": "dashboard.k8s.region.azurecontainerapps.io:80",
-                                "headers": [{"key": "api-key", "value": "xxxxxxxxxxx"}],
-                                "insecure": True,
-                                "name": "dashboard",
-                            }
-                        ],
-                    },
-                    "logsConfiguration": {"destinations": ["appInsights"]},
-                    "metricsConfiguration": {"destinations": ["dataDog"], "includeKeda": True},
-                    "tracesConfiguration": {"destinations": ["appInsights"], "includeDapr": True},
                 },
                 "peerAuthentication": {"mtls": {"enabled": True}},
                 "peerTrafficConfiguration": {"encryption": {"enabled": True}},
@@ -98,7 +63,6 @@ def main():
                 },
                 "workloadProfiles": [
                     {
-                        "enableFips": True,
                         "maximumCount": 12,
                         "minimumCount": 3,
                         "name": "My-GP-01",
@@ -125,6 +89,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ManagedEnvironments_CreateOrUpdate.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ManagedEnvironments_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

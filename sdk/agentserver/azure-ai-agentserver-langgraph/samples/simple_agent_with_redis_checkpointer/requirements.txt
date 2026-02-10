@@ -1,0 +1,5 @@
+python-dotenv>=1.0.0
+langgraph-checkpoint-redis==0.1.2
+azure-ai-agentserver-core
+azure-ai-agentserver-langgraph
+

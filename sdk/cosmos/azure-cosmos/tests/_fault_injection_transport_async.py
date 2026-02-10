@@ -60,8 +60,29 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         self.counters[ERROR_WITH_COUNTER] += 1
         return error
 
-    def add_fault(self, predicate: Callable[[HttpRequest], bool], fault_factory: Callable[[HttpRequest], Awaitable[Exception]]):
-        self.faults.append({"predicate": predicate, "apply": fault_factory})
+    def add_fault(self,
+                  predicate: Callable[[HttpRequest], bool],
+                  fault_factory: Callable[[HttpRequest], Awaitable[Exception]],
+                  max_inner_count: Optional[int] = None,
+                  after_max_count: Optional[Callable[[HttpRequest], AioHttpTransportResponse]] = None):
+        """ Adds a fault to the transport that will be applied when the predicate matches the request.
+        :param Callable predicate: A callable that takes an HttpRequest and returns True if the fault should be applied.
+        :param Callable fault_factory: A callable that takes an HttpRequest and returns an Exception to be raised.
+        :param int max_inner_count: Optional maximum number of times the fault can be applied for one request.
+            If None, the fault will be applied every time the predicate matches.
+        :param Callable after_max_count: Optional callable that takes an HttpRequest and returns a
+            AioHttpTransportResponse. Used to return a different response after the maximum number of faults has
+            been applied. Can only be used if `max_inner_count` is not None.
+        """
+        if max_inner_count is not None:
+            if after_max_count is not None:
+                self.faults.append({"predicate": predicate, "apply": fault_factory, "after_max_count": after_max_count,
+                                    "max_count": max_inner_count, "current_count": 0})
+            else:
+                self.faults.append({"predicate": predicate, "apply": fault_factory,
+                                    "max_count": max_inner_count, "current_count": 0})
+        else:
+            self.faults.append({"predicate": predicate, "apply": fault_factory})
 
     def add_response_transformation(self, predicate: Callable[[HttpRequest], bool], response_transformation: Callable[[HttpRequest, Callable[[HttpRequest], AioHttpTransportResponse]], AioHttpTransportResponse]):
         self.responseTransformations.append({
@@ -82,6 +103,16 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         # find the first fault Factory with matching predicate if any
         first_fault_factory = FaultInjectionTransportAsync.__first_item(iter(self.faults), lambda f: f["predicate"](request))
         if first_fault_factory:
+            if "max_count" in first_fault_factory:
+                FaultInjectionTransportAsync.logger.info(f"Found fault factory with max count {first_fault_factory['max_count']}")
+                if first_fault_factory["current_count"] >= first_fault_factory["max_count"]:
+                    first_fault_factory["current_count"] = 0 # reset counter
+                    if "after_max_count" in first_fault_factory:
+                        FaultInjectionTransportAsync.logger.info("Max count reached, returning after_max_count")
+                        return first_fault_factory["after_max_count"]
+                    FaultInjectionTransportAsync.logger.info("Max count reached, skipping fault injection")
+                    return await super().send(request, proxies=proxies, **config)
+                first_fault_factory["current_count"] += 1
             FaultInjectionTransportAsync.logger.info("--> FaultInjectionTransportAsync.ApplyFaultInjection")
             injected_error = await first_fault_factory["apply"](request)
             FaultInjectionTransportAsync.logger.info("Found to-be-injected error {}".format(injected_error))
@@ -239,6 +270,26 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         return response
 
     @staticmethod
+    async def transform_topology_ppaf_enabled( # cspell:disable-line
+            inner: Callable[[], Awaitable[AioHttpTransportResponse]]) -> AioHttpTransportResponse:
+
+        response = await inner()
+        if not FaultInjectionTransportAsync.predicate_is_database_account_call(response.request):
+            return response
+
+        data = response.body()
+        if response.status_code == 200 and data:
+            data = data.decode("utf-8")
+            result = json.loads(data)
+            # TODO: need to verify below behavior against actual Cosmos DB service response
+            result["enablePerPartitionFailoverBehavior"] = True
+            FaultInjectionTransportAsync.logger.info("Transformed Account Topology: {}".format(result))
+            request: HttpRequest = response.request
+            return FaultInjectionTransportAsync.MockHttpResponse(request, 200, result)
+
+        return response
+
+    @staticmethod
     async def transform_topology_mwr(
             first_region_name: str,
             second_region_name: str,
@@ -276,7 +327,7 @@ class FaultInjectionTransportAsync(AioHttpTransport):
         return response
 
     class MockHttpResponse(AioHttpTransportResponse):
-        def __init__(self, request: HttpRequest, status_code: int, content:Optional[Dict[str, Any]]):
+        def __init__(self, request: HttpRequest, status_code: int, content: Optional[Any]=None):
             self.request: HttpRequest = request
             # This is actually never None, and set by all implementations after the call to
             # __init__ of this class. This class is also a legacy impl, so it's risky to change it

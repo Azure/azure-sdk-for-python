@@ -445,6 +445,7 @@ There are two primary ways to keep secrets from being written into recordings:
 
 1. The `EnvironmentVariableLoader` will automatically sanitize the values of captured environment variables with the
    provided fake values.
+    1. For sensitive variables, also [use the `options` argument][env_var_options] to shield values in test logs.
 2. Additional sanitizers can be registered via `add_*_sanitizer` methods in `devtools_testutils`. For example, the general-use
    method for sanitizing recording bodies, headers, and URIs is `add_general_string_sanitizer`. Other sanitizers are
    available for more specific scenarios and can be found at [devtools_testutils/sanitizers.py][py_sanitizers].
@@ -582,6 +583,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
 [env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+[env_var_options]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#hide-secret-environment-variables-in-test-logs
 [get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L78
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json

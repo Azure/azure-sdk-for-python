@@ -41,6 +41,7 @@ from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import (
     WorkspaceAssetReference as WorkspaceModelReference,
 )
+from ._assets.default_deployment_template import DefaultDeploymentTemplate
 from ._autogen_entities.models import (
     AzureOpenAIDeployment,
     MarketplacePlan,
@@ -126,6 +127,7 @@ from ._deployment.deployment_settings import (
     OnlineRequestSettings,
     ProbeSettings,
 )
+from ._deployment.deployment_template import DeploymentTemplate
 from ._deployment.model_batch_deployment import ModelBatchDeployment
 from ._deployment.model_batch_deployment_settings import ModelBatchDeploymentSettings
 from ._deployment.online_deployment import (
@@ -338,6 +340,7 @@ __all__ = [
     "OnlineEndpoint",
     "Deployment",
     "BatchDeployment",
+    "DeploymentTemplate",
     "BatchJob",
     "CodeConfiguration",
     "Endpoint",
@@ -569,6 +572,7 @@ __all__ = [
     "GitSource",
     "LocalSource",
     "IndexModelConfiguration",
+    "DefaultDeploymentTemplate",
 ]
 
 # Allow importing these types for backwards compatibility

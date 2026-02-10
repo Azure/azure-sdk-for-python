@@ -10,7 +10,7 @@ import sys
 import pytest
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from devtools_testutils import get_credential, is_live
+from devtools_testutils import get_credential, is_live, set_custom_default_matcher
 from azure.communication.sms.aio import SmsClient
 from azure.core.exceptions import HttpResponseError
 from _shared.utils import async_create_token_credential, get_http_logging_policy
@@ -21,6 +21,12 @@ from acs_sms_test_case import ACSSMSTestCase
 class TestClientAsync(ACSSMSTestCase):
     def setup_method(self):
         super().setUp()
+
+        # On python 3.14, azure-core sends an additional 'Accept-Encoding' header value that causes playback issues.
+        # By ignoring it, we can avoid really wonky mismatch errors, while still validating the other headers
+        if sys.version_info >= (3, 14):
+            headers_to_ignore = "Accept-Encoding"
+            set_custom_default_matcher(ignored_headers=headers_to_ignore)
 
     @recorded_by_proxy_async
     async def test_send_sms_single_async(self):

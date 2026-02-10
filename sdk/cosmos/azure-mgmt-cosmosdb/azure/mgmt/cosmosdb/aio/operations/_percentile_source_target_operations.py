@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -31,7 +31,8 @@ from ...operations._percentile_source_target_operations import build_list_metric
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class PercentileSourceTargetOperations:
@@ -62,7 +63,7 @@ class PercentileSourceTargetOperations:
         target_region: str,
         filter: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PercentileMetric"]:
+    ) -> AsyncItemPaged["_models.PercentileMetric"]:
         """Retrieves the metrics determined by the given filter for the given account, source and target
         region. This url is only for PBS and Replication Latency data.
 

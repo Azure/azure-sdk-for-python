@@ -17,7 +17,6 @@ requirements:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - pip
     - python
     - requests-oauthlib >=0.5.0
@@ -27,7 +26,6 @@ requirements:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - cryptography
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - python
     - requests-oauthlib >=0.5.0
     - aiohttp
@@ -75,7 +73,7 @@ test:
     - azure.mgmt.applicationinsights.v2022_06_15.aio.operations
     - azure.mgmt.applicationinsights.v2022_06_15.models
     - azure.mgmt.applicationinsights.v2022_06_15.operations
-    - azure-mgmt-arizeaiobservabilityeval
+    - azure.mgmt.arizeaiobservabilityeval
     - azure.mgmt.arizeaiobservabilityeval.aio
     - azure.mgmt.arizeaiobservabilityeval.aio.operations
     - azure.mgmt.arizeaiobservabilityeval.models
@@ -152,7 +150,7 @@ test:
     - azure.mgmt.botservice.aio.operations
     - azure.mgmt.botservice.models
     - azure.mgmt.botservice.operations
-    - azure-mgmt-carbonoptimization
+    - azure.mgmt.carbonoptimization
     - azure.mgmt.carbonoptimization.aio
     - azure.mgmt.carbonoptimization.aio.operations
     - azure.mgmt.carbonoptimization.models
@@ -262,11 +260,6 @@ test:
     - azure.mgmt.dashboard.operations
     - azure.mgmt.databox
     - azure.mgmt.databox.aio
-    - azure.mgmt.datab
-    - azure.mgmt.datab.aio
-    - azure.mgmt.datab.aio.operations
-    - azure.mgmt.datab.models
-    - azure.mgmt.datab.operations
     - azure.mgmt.databoxedge
     - azure.mgmt.databoxedge.aio
     - azure.mgmt.databoxedge.aio
@@ -355,6 +348,11 @@ test:
     - azure.mgmt.dnsresolver.aio.operations
     - azure.mgmt.dnsresolver.models
     - azure.mgmt.dnsresolver.operations
+    - azure.mgmt.durabletask
+    - azure.mgmt.durabletask.aio
+    - azure.mgmt.durabletask.aio.operations
+    - azure.mgmt.durabletask.models
+    - azure.mgmt.durabletask.operations
     - azure.mgmt.dynatrace
     - azure.mgmt.dynatrace.aio
     - azure.mgmt.dynatrace.aio.operations
@@ -416,7 +414,7 @@ test:
     - azure.mgmt.hanaonazure.aio.operations
     - azure.mgmt.hanaonazure.models
     - azure.mgmt.hanaonazure.operations
-    - azure-mgmt-hardwaresecuritymodules
+    - azure.mgmt.hardwaresecuritymodules
     - azure.mgmt.hardwaresecuritymodules.aio
     - azure.mgmt.hardwaresecuritymodules.aio.operations
     - azure.mgmt.hardwaresecuritymodules.models
@@ -512,7 +510,7 @@ test:
     - azure.mgmt.labservices.aio.operations
     - azure.mgmt.labservices.models
     - azure.mgmt.labservices.operations
-    - azure-mgmt-lambdatesthyperexecute
+    - azure.mgmt.lambdatesthyperexecute
     - azure.mgmt.lambdatesthyperexecute.aio
     - azure.mgmt.lambdatesthyperexecute.aio.operations
     - azure.mgmt.lambdatesthyperexecute.models
@@ -607,7 +605,7 @@ test:
     - azure.mgmt.mongocluster.aio.operations
     - azure.mgmt.mongocluster.models
     - azure.mgmt.mongocluster.operations
-    - azure-mgmt-mongodbatlas
+    - azure.mgmt.mongodbatlas
     - azure.mgmt.mongodbatlas.aio
     - azure.mgmt.mongodbatlas.aio.operations
     - azure.mgmt.mongodbatlas.models
@@ -692,6 +690,11 @@ test:
     - azure.mgmt.peering.aio.operations
     - azure.mgmt.peering.models
     - azure.mgmt.peering.operations
+    - azure.mgmt.playwright
+    - azure.mgmt.playwright.aio
+    - azure.mgmt.playwright.aio.operations
+    - azure.mgmt.playwright.models
+    - azure.mgmt.playwright.operations
     - azure.mgmt.playwrighttesting
     - azure.mgmt.playwrighttesting.aio
     - azure.mgmt.playwrighttesting.aio.operations
@@ -722,7 +725,7 @@ test:
     - azure.mgmt.privatedns.aio.operations
     - azure.mgmt.privatedns.models
     - azure.mgmt.privatedns.operations
-    - azure-mgmt-purestorageblock
+    - azure.mgmt.purestorageblock
     - azure.mgmt.purestorageblock.aio
     - azure.mgmt.purestorageblock.aio.operations
     - azure.mgmt.purestorageblock.models
@@ -783,7 +786,7 @@ test:
     - azure.mgmt.recoveryservicesbackup.passivestamp.aio.operations
     - azure.mgmt.recoveryservicesbackup.passivestamp.models
     - azure.mgmt.recoveryservicesbackup.passivestamp.operations
-    - azure-mgmt-recoveryservicesdatareplication
+    - azure.mgmt.recoveryservicesdatareplication
     - azure.mgmt.recoveryservicesdatareplication.aio
     - azure.mgmt.recoveryservicesdatareplication.aio.operations
     - azure.mgmt.recoveryservicesdatareplication.models
@@ -830,6 +833,11 @@ test:
     - azure.mgmt.resource.features.v2021_07_01.aio.operations
     - azure.mgmt.resource.features.v2021_07_01.models
     - azure.mgmt.resource.features.v2021_07_01.operations
+    - azure.mgmt.resourcegraph
+    - azure.mgmt.resourcegraph.aio
+    - azure.mgmt.resourcegraph.aio.operations
+    - azure.mgmt.resourcegraph.models
+    - azure.mgmt.resourcegraph.operations
     - azure.mgmt.resource.links
     - azure.mgmt.resource.links.aio
     - azure.mgmt.resource.links.v2016_09_01
@@ -939,6 +947,11 @@ test:
     - azure.mgmt.signalr.aio.operations
     - azure.mgmt.signalr.models
     - azure.mgmt.signalr.operations
+    - azure.mgmt.sitemanager
+    - azure.mgmt.sitemanager.aio
+    - azure.mgmt.sitemanager.aio.operations
+    - azure.mgmt.sitemanager.models
+    - azure.mgmt.sitemanager.operations
     - azure.mgmt.sphere
     - azure.mgmt.sphere.aio
     - azure.mgmt.sphere.aio.operations
@@ -959,7 +972,7 @@ test:
     - azure.mgmt.storage.aio.operations
     - azure.mgmt.storage.models
     - azure.mgmt.storage.operations
-    - azure-mgmt-storageactions
+    - azure.mgmt.storageactions
     - azure.mgmt.storageactions.aio
     - azure.mgmt.storageactions.aio.operations
     - azure.mgmt.storageactions.models
@@ -969,6 +982,11 @@ test:
     - azure.mgmt.storagecache.aio.operations
     - azure.mgmt.storagecache.models
     - azure.mgmt.storagecache.operations
+    - azure.mgmt.storagediscovery
+    - azure.mgmt.storagediscovery.aio
+    - azure.mgmt.storagediscovery.aio.operations
+    - azure.mgmt.storagediscovery.models
+    - azure.mgmt.storagediscovery.operations
     - azure.mgmt.storagemover
     - azure.mgmt.storagemover.aio
     - azure.mgmt.storagemover.aio.operations

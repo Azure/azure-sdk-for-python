@@ -1,7 +1,7 @@
 {
-  "apiVersion": "2025-04-01-preview",
-  "commit": "baa334a7838faa6f39e7d5c2124934e0e93ea388",
+  "apiVersion": "2025-08-01-preview",
+  "commit": "d0cd556bd91d2dda700e983c0d253fa025b324c0",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/containerservice/Fleet.Management",
-  "emitterVersion": "0.47.1"
+  "emitterVersion": "0.54.0"
 }

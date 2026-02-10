@@ -1,0 +1,48 @@
+# NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
+
+trigger:
+  branches:
+    include:
+    - main
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/agentserver/
+    - sdk/core/
+
+pr:
+  branches:
+    include:
+    - main
+    - feature/*
+    - hotfix/*
+    - release/*
+    - restapi*
+  paths:
+    include:
+    - sdk/agentserver/
+    - sdk/core/
+
+extends:
+  template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
+  parameters:
+    ServiceDirectory: agentserver
+    TestProxy: true
+    BuildDocs: true
+    TestTimeoutInMinutes: 60
+    # The job "Test ubuntu2404_pypy311" in the "python - agentserver" pipeline hangs and eventually times out.
+    # Disable it until the issue is understood.
+    MatrixConfigs:
+      - Name: agentserver
+        Path: sdk/agentserver/platform-matrix.json
+        Selection: sparse
+        GenerateVMJobs: true
+    Artifacts:
+    - name: azure-ai-agentserver-core
+      safeName: azureaiagentservercore
+    - name: azure-ai-agentserver-agentframework
+      safeName: azureaiagentserveragentframework
+    - name: azure-ai-agentserver-langgraph
+      safeName: azureaiagentserverlanggraph

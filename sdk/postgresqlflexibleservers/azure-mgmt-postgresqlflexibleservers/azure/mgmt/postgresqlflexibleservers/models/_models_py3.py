@@ -7,13 +7,80 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
     from .. import models as _models
+JSON = MutableMapping[str, Any]
+
+
+class AdminCredentials(_serialization.Model):
+    """Credentials of administrator users for source and target servers.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar source_server_password: Password for the user of the source server. Required.
+    :vartype source_server_password: str
+    :ivar target_server_password: Password for the user of the target server. Required.
+    :vartype target_server_password: str
+    """
+
+    _validation = {
+        "source_server_password": {"required": True},
+        "target_server_password": {"required": True},
+    }
+
+    _attribute_map = {
+        "source_server_password": {"key": "sourceServerPassword", "type": "str"},
+        "target_server_password": {"key": "targetServerPassword", "type": "str"},
+    }
+
+    def __init__(self, *, source_server_password: str, target_server_password: str, **kwargs: Any) -> None:
+        """
+        :keyword source_server_password: Password for the user of the source server. Required.
+        :paramtype source_server_password: str
+        :keyword target_server_password: Password for the user of the target server. Required.
+        :paramtype target_server_password: str
+        """
+        super().__init__(**kwargs)
+        self.source_server_password = source_server_password
+        self.target_server_password = target_server_password
+
+
+class AdminCredentialsForPatch(_serialization.Model):
+    """Credentials of administrator users for source and target servers.
+
+    :ivar source_server_password: Password for the user of the source server.
+    :vartype source_server_password: str
+    :ivar target_server_password: Password for the user of the target server.
+    :vartype target_server_password: str
+    """
+
+    _attribute_map = {
+        "source_server_password": {"key": "sourceServerPassword", "type": "str"},
+        "target_server_password": {"key": "targetServerPassword", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        source_server_password: Optional[str] = None,
+        target_server_password: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword source_server_password: Password for the user of the source server.
+        :paramtype source_server_password: str
+        :keyword target_server_password: Password for the user of the target server.
+        :paramtype target_server_password: str
+        """
+        super().__init__(**kwargs)
+        self.source_server_password = source_server_password
+        self.target_server_password = target_server_password
 
 
 class Resource(_serialization.Model):
@@ -77,8 +144,8 @@ class ProxyResource(Resource):
     """
 
 
-class ActiveDirectoryAdministrator(ProxyResource):
-    """Represents an Microsoft Entra Administrator.
+class AdministratorMicrosoftEntra(ProxyResource):
+    """Server administrator associated to a Microsoft Entra principal.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -93,14 +160,14 @@ class ActiveDirectoryAdministrator(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar principal_type: The principal type used to represent the type of Microsoft Entra
-     Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+    :ivar principal_type: Type of Microsoft Entra principal to which the server administrator is
+     associated. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
     :vartype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-    :ivar principal_name: Microsoft Entra Administrator principal name.
+    :ivar principal_name: Name of the Microsoft Entra principal.
     :vartype principal_name: str
-    :ivar object_id: The objectId of the Microsoft Entra Administrator.
+    :ivar object_id: Object identifier of the Microsoft Entra principal.
     :vartype object_id: str
-    :ivar tenant_id: The tenantId of the Microsoft Entra Administrator.
+    :ivar tenant_id: Identifier of the tenant in which the Microsoft Entra principal exists.
     :vartype tenant_id: str
     """
 
@@ -132,14 +199,14 @@ class ActiveDirectoryAdministrator(ProxyResource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword principal_type: The principal type used to represent the type of Microsoft Entra
-         Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+        :keyword principal_type: Type of Microsoft Entra principal to which the server administrator is
+         associated. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
         :paramtype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-        :keyword principal_name: Microsoft Entra Administrator principal name.
+        :keyword principal_name: Name of the Microsoft Entra principal.
         :paramtype principal_name: str
-        :keyword object_id: The objectId of the Microsoft Entra Administrator.
+        :keyword object_id: Object identifier of the Microsoft Entra principal.
         :paramtype object_id: str
-        :keyword tenant_id: The tenantId of the Microsoft Entra Administrator.
+        :keyword tenant_id: Identifier of the tenant in which the Microsoft Entra principal exists.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
@@ -149,15 +216,15 @@ class ActiveDirectoryAdministrator(ProxyResource):
         self.tenant_id = tenant_id
 
 
-class ActiveDirectoryAdministratorAdd(_serialization.Model):
-    """Represents an Microsoft Entra Administrator.
+class AdministratorMicrosoftEntraAdd(_serialization.Model):
+    """Server administrator associated to a Microsoft Entra principal.
 
-    :ivar principal_type: The principal type used to represent the type of Microsoft Entra
-     Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+    :ivar principal_type: Type of Microsoft Entra principal to which the server administrator is
+     associated. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
     :vartype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-    :ivar principal_name: Microsoft Entra Administrator principal name.
+    :ivar principal_name: Name of the Microsoft Entra principal.
     :vartype principal_name: str
-    :ivar tenant_id: The tenantId of the Microsoft Entra Administrator.
+    :ivar tenant_id: Identifier of the tenant in which the Microsoft Entra principal exists.
     :vartype tenant_id: str
     """
 
@@ -176,12 +243,12 @@ class ActiveDirectoryAdministratorAdd(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword principal_type: The principal type used to represent the type of Microsoft Entra
-         Administrator. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
+        :keyword principal_type: Type of Microsoft Entra principal to which the server administrator is
+         associated. Known values are: "Unknown", "User", "Group", and "ServicePrincipal".
         :paramtype principal_type: str or ~azure.mgmt.postgresqlflexibleservers.models.PrincipalType
-        :keyword principal_name: Microsoft Entra Administrator principal name.
+        :keyword principal_name: Name of the Microsoft Entra principal.
         :paramtype principal_name: str
-        :keyword tenant_id: The tenantId of the Microsoft Entra Administrator.
+        :keyword tenant_id: Identifier of the tenant in which the Microsoft Entra principal exists.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
@@ -190,65 +257,32 @@ class ActiveDirectoryAdministratorAdd(_serialization.Model):
         self.tenant_id = tenant_id
 
 
-class AdminCredentials(_serialization.Model):
-    """Server admin credentials.
+class AdministratorMicrosoftEntraList(_serialization.Model):
+    """List of server administrators associated to Microsoft Entra principals.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar source_server_password: Password for source server. Required.
-    :vartype source_server_password: str
-    :ivar target_server_password: Password for target server. Required.
-    :vartype target_server_password: str
-    """
-
-    _validation = {
-        "source_server_password": {"required": True},
-        "target_server_password": {"required": True},
-    }
-
-    _attribute_map = {
-        "source_server_password": {"key": "sourceServerPassword", "type": "str"},
-        "target_server_password": {"key": "targetServerPassword", "type": "str"},
-    }
-
-    def __init__(self, *, source_server_password: str, target_server_password: str, **kwargs: Any) -> None:
-        """
-        :keyword source_server_password: Password for source server. Required.
-        :paramtype source_server_password: str
-        :keyword target_server_password: Password for target server. Required.
-        :paramtype target_server_password: str
-        """
-        super().__init__(**kwargs)
-        self.source_server_password = source_server_password
-        self.target_server_password = target_server_password
-
-
-class AdministratorListResult(_serialization.Model):
-    """A list of Microsoft Entra Administrators.
-
-    :ivar value: The list of Microsoft Entra Administrators.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAdministrator]
-    :ivar next_link: The link used to get the next page of Microsoft Entra administrators.
+    :ivar value: List of server administrators associated to Microsoft Entra principals.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.AdministratorMicrosoftEntra]
+    :ivar next_link: Link used to get the next page of results.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[ActiveDirectoryAdministrator]"},
+        "value": {"key": "value", "type": "[AdministratorMicrosoftEntra]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.ActiveDirectoryAdministrator"]] = None,
+        value: Optional[list["_models.AdministratorMicrosoftEntra"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of Microsoft Entra Administrators.
+        :keyword value: List of server administrators associated to Microsoft Entra principals.
         :paramtype value:
-         list[~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAdministrator]
-        :keyword next_link: The link used to get the next page of Microsoft Entra administrators.
+         list[~azure.mgmt.postgresqlflexibleservers.models.AdministratorMicrosoftEntra]
+        :keyword next_link: Link used to get the next page of results.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -256,17 +290,101 @@ class AdministratorListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class AdvancedThreatProtectionSettingsList(_serialization.Model):
+    """List of advanced threat protection settings for a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Array of results.
+    :vartype value:
+     list[~azure.mgmt.postgresqlflexibleservers.models.AdvancedThreatProtectionSettingsModel]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[AdvancedThreatProtectionSettingsModel]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.AdvancedThreatProtectionSettingsModel"]] = None
+        self.next_link = next_link
+
+
+class AdvancedThreatProtectionSettingsModel(ProxyResource):
+    """Advanced threat protection settings of the server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar state: Specifies the state of the advanced threat protection, whether it is enabled,
+     disabled, or a state has not been applied yet on the server. Known values are: "Enabled" and
+     "Disabled".
+    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionState
+    :ivar creation_time: Specifies the creation time (UTC) of the policy.
+    :vartype creation_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "creation_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "state": {"key": "properties.state", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+    }
+
+    def __init__(self, *, state: Optional[Union[str, "_models.ThreatProtectionState"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword state: Specifies the state of the advanced threat protection, whether it is enabled,
+         disabled, or a state has not been applied yet on the server. Known values are: "Enabled" and
+         "Disabled".
+        :paramtype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionState
+        """
+        super().__init__(**kwargs)
+        self.state = state
+        self.creation_time: Optional[datetime.datetime] = None
+
+
 class AuthConfig(_serialization.Model):
     """Authentication configuration properties of a server.
 
-    :ivar active_directory_auth: If Enabled, Microsoft Entra authentication is enabled. Known
-     values are: "Enabled" and "Disabled".
+    :ivar active_directory_auth: Indicates if the server supports Microsoft Entra authentication.
+     Known values are: "Enabled" and "Disabled".
     :vartype active_directory_auth: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAuthEnum
-    :ivar password_auth: If Enabled, Password authentication is enabled. Known values are:
-     "Enabled" and "Disabled".
-    :vartype password_auth: str or ~azure.mgmt.postgresqlflexibleservers.models.PasswordAuthEnum
-    :ivar tenant_id: Tenant id of the server.
+     ~azure.mgmt.postgresqlflexibleservers.models.MicrosoftEntraAuth
+    :ivar password_auth: Indicates if the server supports password based authentication. Known
+     values are: "Enabled" and "Disabled".
+    :vartype password_auth: str or ~azure.mgmt.postgresqlflexibleservers.models.PasswordBasedAuth
+    :ivar tenant_id: Identifier of the tenant of the delegated resource.
     :vartype tenant_id: str
     """
 
@@ -279,20 +397,65 @@ class AuthConfig(_serialization.Model):
     def __init__(
         self,
         *,
-        active_directory_auth: Optional[Union[str, "_models.ActiveDirectoryAuthEnum"]] = None,
-        password_auth: Union[str, "_models.PasswordAuthEnum"] = "Enabled",
+        active_directory_auth: Optional[Union[str, "_models.MicrosoftEntraAuth"]] = None,
+        password_auth: Optional[Union[str, "_models.PasswordBasedAuth"]] = None,
         tenant_id: str = "",
         **kwargs: Any
     ) -> None:
         """
-        :keyword active_directory_auth: If Enabled, Microsoft Entra authentication is enabled. Known
-         values are: "Enabled" and "Disabled".
+        :keyword active_directory_auth: Indicates if the server supports Microsoft Entra
+         authentication. Known values are: "Enabled" and "Disabled".
         :paramtype active_directory_auth: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.ActiveDirectoryAuthEnum
-        :keyword password_auth: If Enabled, Password authentication is enabled. Known values are:
-         "Enabled" and "Disabled".
-        :paramtype password_auth: str or ~azure.mgmt.postgresqlflexibleservers.models.PasswordAuthEnum
-        :keyword tenant_id: Tenant id of the server.
+         ~azure.mgmt.postgresqlflexibleservers.models.MicrosoftEntraAuth
+        :keyword password_auth: Indicates if the server supports password based authentication. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype password_auth: str or ~azure.mgmt.postgresqlflexibleservers.models.PasswordBasedAuth
+        :keyword tenant_id: Identifier of the tenant of the delegated resource.
+        :paramtype tenant_id: str
+        """
+        super().__init__(**kwargs)
+        self.active_directory_auth = active_directory_auth
+        self.password_auth = password_auth
+        self.tenant_id = tenant_id
+
+
+class AuthConfigForPatch(_serialization.Model):
+    """Authentication configuration properties of a server.
+
+    :ivar active_directory_auth: Indicates if the server supports Microsoft Entra authentication.
+     Known values are: "Enabled" and "Disabled".
+    :vartype active_directory_auth: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MicrosoftEntraAuth
+    :ivar password_auth: Indicates if the server supports password based authentication. Known
+     values are: "Enabled" and "Disabled".
+    :vartype password_auth: str or ~azure.mgmt.postgresqlflexibleservers.models.PasswordBasedAuth
+    :ivar tenant_id: Identifier of the tenant of the delegated resource.
+    :vartype tenant_id: str
+    """
+
+    _attribute_map = {
+        "active_directory_auth": {"key": "activeDirectoryAuth", "type": "str"},
+        "password_auth": {"key": "passwordAuth", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        active_directory_auth: Optional[Union[str, "_models.MicrosoftEntraAuth"]] = None,
+        password_auth: Optional[Union[str, "_models.PasswordBasedAuth"]] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword active_directory_auth: Indicates if the server supports Microsoft Entra
+         authentication. Known values are: "Enabled" and "Disabled".
+        :paramtype active_directory_auth: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.MicrosoftEntraAuth
+        :keyword password_auth: Indicates if the server supports password based authentication. Known
+         values are: "Enabled" and "Disabled".
+        :paramtype password_auth: str or ~azure.mgmt.postgresqlflexibleservers.models.PasswordBasedAuth
+        :keyword tenant_id: Identifier of the tenant of the delegated resource.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
@@ -308,11 +471,11 @@ class Backup(_serialization.Model):
 
     :ivar backup_retention_days: Backup retention days for the server.
     :vartype backup_retention_days: int
-    :ivar geo_redundant_backup: A value indicating whether Geo-Redundant backup is enabled on the
-     server. Known values are: "Enabled" and "Disabled".
+    :ivar geo_redundant_backup: Indicates if the server is configured to create geographically
+     redundant backups. Known values are: "Enabled" and "Disabled".
     :vartype geo_redundant_backup: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.GeoRedundantBackupEnum
-    :ivar earliest_restore_date: The earliest restore point time (ISO8601 format) for server.
+     ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup
+    :ivar earliest_restore_date: Earliest restore point time (ISO8601 format) for a server.
     :vartype earliest_restore_date: ~datetime.datetime
     """
 
@@ -330,16 +493,157 @@ class Backup(_serialization.Model):
         self,
         *,
         backup_retention_days: int = 7,
-        geo_redundant_backup: Union[str, "_models.GeoRedundantBackupEnum"] = "Disabled",
+        geo_redundant_backup: Optional[Union[str, "_models.GeographicallyRedundantBackup"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword backup_retention_days: Backup retention days for the server.
         :paramtype backup_retention_days: int
-        :keyword geo_redundant_backup: A value indicating whether Geo-Redundant backup is enabled on
-         the server. Known values are: "Enabled" and "Disabled".
+        :keyword geo_redundant_backup: Indicates if the server is configured to create geographically
+         redundant backups. Known values are: "Enabled" and "Disabled".
         :paramtype geo_redundant_backup: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.GeoRedundantBackupEnum
+         ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup
+        """
+        super().__init__(**kwargs)
+        self.backup_retention_days = backup_retention_days
+        self.geo_redundant_backup = geo_redundant_backup
+        self.earliest_restore_date: Optional[datetime.datetime] = None
+
+
+class BackupAutomaticAndOnDemand(ProxyResource):
+    """Properties of a backup.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar backup_type: Type of backup. Known values are: "Full" and "Customer On-Demand".
+    :vartype backup_type: str or ~azure.mgmt.postgresqlflexibleservers.models.BackupType
+    :ivar completed_time: Time(ISO8601 format) at which the backup was completed.
+    :vartype completed_time: ~datetime.datetime
+    :ivar source: Source of the backup.
+    :vartype source: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "backup_type": {"key": "properties.backupType", "type": "str"},
+        "completed_time": {"key": "properties.completedTime", "type": "iso-8601"},
+        "source": {"key": "properties.source", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        backup_type: Optional[Union[str, "_models.BackupType"]] = None,
+        completed_time: Optional[datetime.datetime] = None,
+        source: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword backup_type: Type of backup. Known values are: "Full" and "Customer On-Demand".
+        :paramtype backup_type: str or ~azure.mgmt.postgresqlflexibleservers.models.BackupType
+        :keyword completed_time: Time(ISO8601 format) at which the backup was completed.
+        :paramtype completed_time: ~datetime.datetime
+        :keyword source: Source of the backup.
+        :paramtype source: str
+        """
+        super().__init__(**kwargs)
+        self.backup_type = backup_type
+        self.completed_time = completed_time
+        self.source = source
+
+
+class BackupAutomaticAndOnDemandList(_serialization.Model):
+    """List of backups.
+
+    :ivar value: List of available backups.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.BackupAutomaticAndOnDemand]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[BackupAutomaticAndOnDemand]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.BackupAutomaticAndOnDemand"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of available backups.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.BackupAutomaticAndOnDemand]
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class BackupForPatch(_serialization.Model):
+    """Backup properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar backup_retention_days: Backup retention days for the server.
+    :vartype backup_retention_days: int
+    :ivar geo_redundant_backup: Indicates if the server is configured to create geographically
+     redundant backups. Known values are: "Enabled" and "Disabled".
+    :vartype geo_redundant_backup: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup
+    :ivar earliest_restore_date: Earliest restore point time (ISO8601 format) for a server.
+    :vartype earliest_restore_date: ~datetime.datetime
+    """
+
+    _validation = {
+        "earliest_restore_date": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "backup_retention_days": {"key": "backupRetentionDays", "type": "int"},
+        "geo_redundant_backup": {"key": "geoRedundantBackup", "type": "str"},
+        "earliest_restore_date": {"key": "earliestRestoreDate", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        backup_retention_days: Optional[int] = None,
+        geo_redundant_backup: Optional[Union[str, "_models.GeographicallyRedundantBackup"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword backup_retention_days: Backup retention days for the server.
+        :paramtype backup_retention_days: int
+        :keyword geo_redundant_backup: Indicates if the server is configured to create geographically
+         redundant backups. Known values are: "Enabled" and "Disabled".
+        :paramtype geo_redundant_backup: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackup
         """
         super().__init__(**kwargs)
         self.backup_retention_days = backup_retention_days
@@ -399,1922 +703,7 @@ class BackupSettings(_serialization.Model):
         self.backup_name = backup_name
 
 
-class BackupStoreDetails(_serialization.Model):
-    """Details about the target where the backup content will be stored.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar sas_uri_list: List of SAS uri of storage containers where backup data is to be
-     streamed/copied. Required.
-    :vartype sas_uri_list: list[str]
-    """
-
-    _validation = {
-        "sas_uri_list": {"required": True},
-    }
-
-    _attribute_map = {
-        "sas_uri_list": {"key": "sasUriList", "type": "[str]"},
-    }
-
-    def __init__(self, *, sas_uri_list: List[str], **kwargs: Any) -> None:
-        """
-        :keyword sas_uri_list: List of SAS uri of storage containers where backup data is to be
-         streamed/copied. Required.
-        :paramtype sas_uri_list: list[str]
-        """
-        super().__init__(**kwargs)
-        self.sas_uri_list = sas_uri_list
-
-
-class CapabilitiesListResult(_serialization.Model):
-    """Capability for the PostgreSQL server.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: A list of supported capabilities.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.FlexibleServerCapability]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[FlexibleServerCapability]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.FlexibleServerCapability"]] = None
-        self.next_link: Optional[str] = None
-
-
-class CapabilityBase(_serialization.Model):
-    """Base object for representing capability.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
-    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
-    :vartype reason: str
-    """
-
-    _validation = {
-        "status": {"readonly": True},
-        "reason": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.status: Optional[Union[str, "_models.CapabilityStatus"]] = None
-        self.reason: Optional[str] = None
-
-
-class CheckNameAvailabilityRequest(_serialization.Model):
-    """The check availability request body.
-
-    :ivar name: The name of the resource for which availability needs to be checked.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    """
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: The name of the resource for which availability needs to be checked.
-        :paramtype name: str
-        :keyword type: The resource type.
-        :paramtype type: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.type = type
-
-
-class CheckNameAvailabilityResponse(_serialization.Model):
-    """The check availability result.
-
-    :ivar name_available: Indicates if the resource name is available.
-    :vartype name_available: bool
-    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
-     "AlreadyExists".
-    :vartype reason: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityReason
-    :ivar message: Detailed reason why the given name is available.
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "name_available": {"key": "nameAvailable", "type": "bool"},
-        "reason": {"key": "reason", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
-        message: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name_available: Indicates if the resource name is available.
-        :paramtype name_available: bool
-        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
-         and "AlreadyExists".
-        :paramtype reason: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityReason
-        :keyword message: Detailed reason why the given name is available.
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.name_available = name_available
-        self.reason = reason
-        self.message = message
-
-
-class Cluster(_serialization.Model):
-    """Cluster properties of a server.
-
-    :ivar cluster_size: The node count for the cluster.
-    :vartype cluster_size: int
-    """
-
-    _attribute_map = {
-        "cluster_size": {"key": "clusterSize", "type": "int"},
-    }
-
-    def __init__(self, *, cluster_size: int = 0, **kwargs: Any) -> None:
-        """
-        :keyword cluster_size: The node count for the cluster.
-        :paramtype cluster_size: int
-        """
-        super().__init__(**kwargs)
-        self.cluster_size = cluster_size
-
-
-class ConfigTuningRequestParameter(_serialization.Model):
-    """Config tuning request parameters.
-
-    :ivar server_name: The name of server.
-    :vartype server_name: str
-    :ivar allow_server_restarts: Indicates whether PG should be restarted during a tuning session.
-    :vartype allow_server_restarts: bool
-    :ivar target_improvement_metric: The target metric the tuning session is trying to improve.
-    :vartype target_improvement_metric: str
-    :ivar config_tuning_usage_mode: The mode with which the feature will be enabled.
-    :vartype config_tuning_usage_mode: bool
-    """
-
-    _attribute_map = {
-        "server_name": {"key": "serverName", "type": "str"},
-        "allow_server_restarts": {"key": "allowServerRestarts", "type": "bool"},
-        "target_improvement_metric": {"key": "targetImprovementMetric", "type": "str"},
-        "config_tuning_usage_mode": {"key": "configTuningUsageMode", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        server_name: Optional[str] = None,
-        allow_server_restarts: Optional[bool] = None,
-        target_improvement_metric: Optional[str] = None,
-        config_tuning_usage_mode: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword server_name: The name of server.
-        :paramtype server_name: str
-        :keyword allow_server_restarts: Indicates whether PG should be restarted during a tuning
-         session.
-        :paramtype allow_server_restarts: bool
-        :keyword target_improvement_metric: The target metric the tuning session is trying to improve.
-        :paramtype target_improvement_metric: str
-        :keyword config_tuning_usage_mode: The mode with which the feature will be enabled.
-        :paramtype config_tuning_usage_mode: bool
-        """
-        super().__init__(**kwargs)
-        self.server_name = server_name
-        self.allow_server_restarts = allow_server_restarts
-        self.target_improvement_metric = target_improvement_metric
-        self.config_tuning_usage_mode = config_tuning_usage_mode
-
-
-class Configuration(ProxyResource):
-    """Represents a Configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar value: Value of the configuration. Required to update the configuration.
-    :vartype value: str
-    :ivar description: Description of the configuration.
-    :vartype description: str
-    :ivar default_value: Default value of the configuration.
-    :vartype default_value: str
-    :ivar data_type: Data type of the configuration. Known values are: "Boolean", "Numeric",
-     "Integer", and "Enumeration".
-    :vartype data_type: str or ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationDataType
-    :ivar allowed_values: Allowed values of the configuration.
-    :vartype allowed_values: str
-    :ivar source: Source of the configuration. Required to update the configuration.
-    :vartype source: str
-    :ivar is_dynamic_config: Configuration dynamic or static.
-    :vartype is_dynamic_config: bool
-    :ivar is_read_only: Configuration read-only or not.
-    :vartype is_read_only: bool
-    :ivar is_config_pending_restart: Configuration is pending restart or not.
-    :vartype is_config_pending_restart: bool
-    :ivar unit: Configuration unit.
-    :vartype unit: str
-    :ivar documentation_link: Configuration documentation link.
-    :vartype documentation_link: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "description": {"readonly": True},
-        "default_value": {"readonly": True},
-        "data_type": {"readonly": True},
-        "allowed_values": {"readonly": True},
-        "is_dynamic_config": {"readonly": True},
-        "is_read_only": {"readonly": True},
-        "is_config_pending_restart": {"readonly": True},
-        "unit": {"readonly": True},
-        "documentation_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "value": {"key": "properties.value", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "default_value": {"key": "properties.defaultValue", "type": "str"},
-        "data_type": {"key": "properties.dataType", "type": "str"},
-        "allowed_values": {"key": "properties.allowedValues", "type": "str"},
-        "source": {"key": "properties.source", "type": "str"},
-        "is_dynamic_config": {"key": "properties.isDynamicConfig", "type": "bool"},
-        "is_read_only": {"key": "properties.isReadOnly", "type": "bool"},
-        "is_config_pending_restart": {"key": "properties.isConfigPendingRestart", "type": "bool"},
-        "unit": {"key": "properties.unit", "type": "str"},
-        "documentation_link": {"key": "properties.documentationLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: Value of the configuration. Required to update the configuration.
-        :paramtype value: str
-        :keyword source: Source of the configuration. Required to update the configuration.
-        :paramtype source: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.description: Optional[str] = None
-        self.default_value: Optional[str] = None
-        self.data_type: Optional[Union[str, "_models.ConfigurationDataType"]] = None
-        self.allowed_values: Optional[str] = None
-        self.source = source
-        self.is_dynamic_config: Optional[bool] = None
-        self.is_read_only: Optional[bool] = None
-        self.is_config_pending_restart: Optional[bool] = None
-        self.unit: Optional[str] = None
-        self.documentation_link: Optional[str] = None
-
-
-class ConfigurationForUpdate(_serialization.Model):
-    """Represents a Configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Value of the configuration. Required to update the configuration.
-    :vartype value: str
-    :ivar description: Description of the configuration.
-    :vartype description: str
-    :ivar default_value: Default value of the configuration.
-    :vartype default_value: str
-    :ivar data_type: Data type of the configuration. Known values are: "Boolean", "Numeric",
-     "Integer", and "Enumeration".
-    :vartype data_type: str or ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationDataType
-    :ivar allowed_values: Allowed values of the configuration.
-    :vartype allowed_values: str
-    :ivar source: Source of the configuration. Required to update the configuration.
-    :vartype source: str
-    :ivar is_dynamic_config: Configuration dynamic or static.
-    :vartype is_dynamic_config: bool
-    :ivar is_read_only: Configuration read-only or not.
-    :vartype is_read_only: bool
-    :ivar is_config_pending_restart: Configuration is pending restart or not.
-    :vartype is_config_pending_restart: bool
-    :ivar unit: Configuration unit.
-    :vartype unit: str
-    :ivar documentation_link: Configuration documentation link.
-    :vartype documentation_link: str
-    """
-
-    _validation = {
-        "description": {"readonly": True},
-        "default_value": {"readonly": True},
-        "data_type": {"readonly": True},
-        "allowed_values": {"readonly": True},
-        "is_dynamic_config": {"readonly": True},
-        "is_read_only": {"readonly": True},
-        "is_config_pending_restart": {"readonly": True},
-        "unit": {"readonly": True},
-        "documentation_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "properties.value", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "default_value": {"key": "properties.defaultValue", "type": "str"},
-        "data_type": {"key": "properties.dataType", "type": "str"},
-        "allowed_values": {"key": "properties.allowedValues", "type": "str"},
-        "source": {"key": "properties.source", "type": "str"},
-        "is_dynamic_config": {"key": "properties.isDynamicConfig", "type": "bool"},
-        "is_read_only": {"key": "properties.isReadOnly", "type": "bool"},
-        "is_config_pending_restart": {"key": "properties.isConfigPendingRestart", "type": "bool"},
-        "unit": {"key": "properties.unit", "type": "str"},
-        "documentation_link": {"key": "properties.documentationLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: Value of the configuration. Required to update the configuration.
-        :paramtype value: str
-        :keyword source: Source of the configuration. Required to update the configuration.
-        :paramtype source: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.description: Optional[str] = None
-        self.default_value: Optional[str] = None
-        self.data_type: Optional[Union[str, "_models.ConfigurationDataType"]] = None
-        self.allowed_values: Optional[str] = None
-        self.source = source
-        self.is_dynamic_config: Optional[bool] = None
-        self.is_read_only: Optional[bool] = None
-        self.is_config_pending_restart: Optional[bool] = None
-        self.unit: Optional[str] = None
-        self.documentation_link: Optional[str] = None
-
-
-class ConfigurationListResult(_serialization.Model):
-    """A list of server configurations.
-
-    :ivar value: The list of server configurations.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Configuration]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Configuration]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.Configuration"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of server configurations.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.Configuration]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class Database(ProxyResource):
-    """Represents a Database.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar charset: The charset of the database.
-    :vartype charset: str
-    :ivar collation: The collation of the database.
-    :vartype collation: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "charset": {"pattern": r"^[a-zA-Z]+\w*$"},
-        "collation": {"pattern": r"^[a-zA-Z\-]+([. ]|\w)*$"},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "charset": {"key": "properties.charset", "type": "str"},
-        "collation": {"key": "properties.collation", "type": "str"},
-    }
-
-    def __init__(self, *, charset: Optional[str] = None, collation: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword charset: The charset of the database.
-        :paramtype charset: str
-        :keyword collation: The collation of the database.
-        :paramtype collation: str
-        """
-        super().__init__(**kwargs)
-        self.charset = charset
-        self.collation = collation
-
-
-class DatabaseListResult(_serialization.Model):
-    """A List of databases.
-
-    :ivar value: The list of databases housed in a server.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Database]
-    :ivar next_link: The link used to get the next page of databases.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Database]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.Database"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of databases housed in a server.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.Database]
-        :keyword next_link: The link used to get the next page of databases.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class DataEncryption(_serialization.Model):
-    """Data encryption properties of a server.
-
-    :ivar primary_key_uri: URI for the key in keyvault for data encryption of the primary server.
-    :vartype primary_key_uri: str
-    :ivar primary_user_assigned_identity_id: Resource Id for the User assigned identity to be used
-     for data encryption of the primary server.
-    :vartype primary_user_assigned_identity_id: str
-    :ivar geo_backup_key_uri: URI for the key in keyvault for data encryption for geo-backup of
-     server.
-    :vartype geo_backup_key_uri: str
-    :ivar geo_backup_user_assigned_identity_id: Resource Id for the User assigned identity to be
-     used for data encryption for geo-backup of server.
-    :vartype geo_backup_user_assigned_identity_id: str
-    :ivar type: Data encryption type to depict if it is System Managed vs Azure Key vault. Known
-     values are: "SystemManaged" and "AzureKeyVault".
-    :vartype type: str or ~azure.mgmt.postgresqlflexibleservers.models.ArmServerKeyType
-    :ivar primary_encryption_key_status: Primary encryption key status for Data encryption enabled
-     server. Known values are: "Valid" and "Invalid".
-    :vartype primary_encryption_key_status: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.KeyStatusEnum
-    :ivar geo_backup_encryption_key_status: Geo-backup encryption key status for Data encryption
-     enabled server. Known values are: "Valid" and "Invalid".
-    :vartype geo_backup_encryption_key_status: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.KeyStatusEnum
-    """
-
-    _attribute_map = {
-        "primary_key_uri": {"key": "primaryKeyURI", "type": "str"},
-        "primary_user_assigned_identity_id": {"key": "primaryUserAssignedIdentityId", "type": "str"},
-        "geo_backup_key_uri": {"key": "geoBackupKeyURI", "type": "str"},
-        "geo_backup_user_assigned_identity_id": {"key": "geoBackupUserAssignedIdentityId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "primary_encryption_key_status": {"key": "primaryEncryptionKeyStatus", "type": "str"},
-        "geo_backup_encryption_key_status": {"key": "geoBackupEncryptionKeyStatus", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        primary_key_uri: Optional[str] = None,
-        primary_user_assigned_identity_id: Optional[str] = None,
-        geo_backup_key_uri: Optional[str] = None,
-        geo_backup_user_assigned_identity_id: Optional[str] = None,
-        type: Optional[Union[str, "_models.ArmServerKeyType"]] = None,
-        primary_encryption_key_status: Optional[Union[str, "_models.KeyStatusEnum"]] = None,
-        geo_backup_encryption_key_status: Optional[Union[str, "_models.KeyStatusEnum"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword primary_key_uri: URI for the key in keyvault for data encryption of the primary
-         server.
-        :paramtype primary_key_uri: str
-        :keyword primary_user_assigned_identity_id: Resource Id for the User assigned identity to be
-         used for data encryption of the primary server.
-        :paramtype primary_user_assigned_identity_id: str
-        :keyword geo_backup_key_uri: URI for the key in keyvault for data encryption for geo-backup of
-         server.
-        :paramtype geo_backup_key_uri: str
-        :keyword geo_backup_user_assigned_identity_id: Resource Id for the User assigned identity to be
-         used for data encryption for geo-backup of server.
-        :paramtype geo_backup_user_assigned_identity_id: str
-        :keyword type: Data encryption type to depict if it is System Managed vs Azure Key vault. Known
-         values are: "SystemManaged" and "AzureKeyVault".
-        :paramtype type: str or ~azure.mgmt.postgresqlflexibleservers.models.ArmServerKeyType
-        :keyword primary_encryption_key_status: Primary encryption key status for Data encryption
-         enabled server. Known values are: "Valid" and "Invalid".
-        :paramtype primary_encryption_key_status: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.KeyStatusEnum
-        :keyword geo_backup_encryption_key_status: Geo-backup encryption key status for Data encryption
-         enabled server. Known values are: "Valid" and "Invalid".
-        :paramtype geo_backup_encryption_key_status: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.KeyStatusEnum
-        """
-        super().__init__(**kwargs)
-        self.primary_key_uri = primary_key_uri
-        self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
-        self.geo_backup_key_uri = geo_backup_key_uri
-        self.geo_backup_user_assigned_identity_id = geo_backup_user_assigned_identity_id
-        self.type = type
-        self.primary_encryption_key_status = primary_encryption_key_status
-        self.geo_backup_encryption_key_status = geo_backup_encryption_key_status
-
-
-class DbLevelValidationStatus(_serialization.Model):
-    """Validation status summary for an individual database.
-
-    :ivar database_name: Name of the database.
-    :vartype database_name: str
-    :ivar started_on: Start date-time of a database level validation.
-    :vartype started_on: ~datetime.datetime
-    :ivar ended_on: End date-time of a database level validation.
-    :vartype ended_on: ~datetime.datetime
-    :ivar summary: Summary of database level validations.
-    :vartype summary: list[~azure.mgmt.postgresqlflexibleservers.models.ValidationSummaryItem]
-    """
-
-    _attribute_map = {
-        "database_name": {"key": "databaseName", "type": "str"},
-        "started_on": {"key": "startedOn", "type": "iso-8601"},
-        "ended_on": {"key": "endedOn", "type": "iso-8601"},
-        "summary": {"key": "summary", "type": "[ValidationSummaryItem]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        database_name: Optional[str] = None,
-        started_on: Optional[datetime.datetime] = None,
-        ended_on: Optional[datetime.datetime] = None,
-        summary: Optional[List["_models.ValidationSummaryItem"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword database_name: Name of the database.
-        :paramtype database_name: str
-        :keyword started_on: Start date-time of a database level validation.
-        :paramtype started_on: ~datetime.datetime
-        :keyword ended_on: End date-time of a database level validation.
-        :paramtype ended_on: ~datetime.datetime
-        :keyword summary: Summary of database level validations.
-        :paramtype summary: list[~azure.mgmt.postgresqlflexibleservers.models.ValidationSummaryItem]
-        """
-        super().__init__(**kwargs)
-        self.database_name = database_name
-        self.started_on = started_on
-        self.ended_on = ended_on
-        self.summary = summary
-
-
-class DbMigrationStatus(_serialization.Model):
-    """Migration status of an individual database.
-
-    :ivar database_name: Name of the database.
-    :vartype database_name: str
-    :ivar migration_state: Migration db state of an individual database. Known values are:
-     "InProgress", "WaitingForCutoverTrigger", "Failed", "Canceled", "Succeeded", and "Canceling".
-    :vartype migration_state: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationDbState
-    :ivar migration_operation: Migration operation of an individual database.
-    :vartype migration_operation: str
-    :ivar started_on: Start date-time of a migration state.
-    :vartype started_on: ~datetime.datetime
-    :ivar ended_on: End date-time of a migration state.
-    :vartype ended_on: ~datetime.datetime
-    :ivar full_load_queued_tables: Number of tables queued for the migration of a DB.
-    :vartype full_load_queued_tables: int
-    :ivar full_load_errored_tables: Number of tables errored out during the migration of a DB.
-    :vartype full_load_errored_tables: int
-    :ivar full_load_loading_tables: Number of tables loading during the migration of a DB.
-    :vartype full_load_loading_tables: int
-    :ivar full_load_completed_tables: Number of tables loaded during the migration of a DB.
-    :vartype full_load_completed_tables: int
-    :ivar cdc_update_counter: CDC update counter.
-    :vartype cdc_update_counter: int
-    :ivar cdc_delete_counter: CDC delete counter.
-    :vartype cdc_delete_counter: int
-    :ivar cdc_insert_counter: CDC insert counter.
-    :vartype cdc_insert_counter: int
-    :ivar applied_changes: CDC applied changes counter.
-    :vartype applied_changes: int
-    :ivar incoming_changes: CDC incoming changes counter.
-    :vartype incoming_changes: int
-    :ivar latency: Lag in seconds between source and target during online phase.
-    :vartype latency: int
-    :ivar message: Error message, if any, for the migration state.
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "database_name": {"key": "databaseName", "type": "str"},
-        "migration_state": {"key": "migrationState", "type": "str"},
-        "migration_operation": {"key": "migrationOperation", "type": "str"},
-        "started_on": {"key": "startedOn", "type": "iso-8601"},
-        "ended_on": {"key": "endedOn", "type": "iso-8601"},
-        "full_load_queued_tables": {"key": "fullLoadQueuedTables", "type": "int"},
-        "full_load_errored_tables": {"key": "fullLoadErroredTables", "type": "int"},
-        "full_load_loading_tables": {"key": "fullLoadLoadingTables", "type": "int"},
-        "full_load_completed_tables": {"key": "fullLoadCompletedTables", "type": "int"},
-        "cdc_update_counter": {"key": "cdcUpdateCounter", "type": "int"},
-        "cdc_delete_counter": {"key": "cdcDeleteCounter", "type": "int"},
-        "cdc_insert_counter": {"key": "cdcInsertCounter", "type": "int"},
-        "applied_changes": {"key": "appliedChanges", "type": "int"},
-        "incoming_changes": {"key": "incomingChanges", "type": "int"},
-        "latency": {"key": "latency", "type": "int"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        database_name: Optional[str] = None,
-        migration_state: Optional[Union[str, "_models.MigrationDbState"]] = None,
-        migration_operation: Optional[str] = None,
-        started_on: Optional[datetime.datetime] = None,
-        ended_on: Optional[datetime.datetime] = None,
-        full_load_queued_tables: Optional[int] = None,
-        full_load_errored_tables: Optional[int] = None,
-        full_load_loading_tables: Optional[int] = None,
-        full_load_completed_tables: Optional[int] = None,
-        cdc_update_counter: Optional[int] = None,
-        cdc_delete_counter: Optional[int] = None,
-        cdc_insert_counter: Optional[int] = None,
-        applied_changes: Optional[int] = None,
-        incoming_changes: Optional[int] = None,
-        latency: Optional[int] = None,
-        message: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword database_name: Name of the database.
-        :paramtype database_name: str
-        :keyword migration_state: Migration db state of an individual database. Known values are:
-         "InProgress", "WaitingForCutoverTrigger", "Failed", "Canceled", "Succeeded", and "Canceling".
-        :paramtype migration_state: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.MigrationDbState
-        :keyword migration_operation: Migration operation of an individual database.
-        :paramtype migration_operation: str
-        :keyword started_on: Start date-time of a migration state.
-        :paramtype started_on: ~datetime.datetime
-        :keyword ended_on: End date-time of a migration state.
-        :paramtype ended_on: ~datetime.datetime
-        :keyword full_load_queued_tables: Number of tables queued for the migration of a DB.
-        :paramtype full_load_queued_tables: int
-        :keyword full_load_errored_tables: Number of tables errored out during the migration of a DB.
-        :paramtype full_load_errored_tables: int
-        :keyword full_load_loading_tables: Number of tables loading during the migration of a DB.
-        :paramtype full_load_loading_tables: int
-        :keyword full_load_completed_tables: Number of tables loaded during the migration of a DB.
-        :paramtype full_load_completed_tables: int
-        :keyword cdc_update_counter: CDC update counter.
-        :paramtype cdc_update_counter: int
-        :keyword cdc_delete_counter: CDC delete counter.
-        :paramtype cdc_delete_counter: int
-        :keyword cdc_insert_counter: CDC insert counter.
-        :paramtype cdc_insert_counter: int
-        :keyword applied_changes: CDC applied changes counter.
-        :paramtype applied_changes: int
-        :keyword incoming_changes: CDC incoming changes counter.
-        :paramtype incoming_changes: int
-        :keyword latency: Lag in seconds between source and target during online phase.
-        :paramtype latency: int
-        :keyword message: Error message, if any, for the migration state.
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.database_name = database_name
-        self.migration_state = migration_state
-        self.migration_operation = migration_operation
-        self.started_on = started_on
-        self.ended_on = ended_on
-        self.full_load_queued_tables = full_load_queued_tables
-        self.full_load_errored_tables = full_load_errored_tables
-        self.full_load_loading_tables = full_load_loading_tables
-        self.full_load_completed_tables = full_load_completed_tables
-        self.cdc_update_counter = cdc_update_counter
-        self.cdc_delete_counter = cdc_delete_counter
-        self.cdc_insert_counter = cdc_insert_counter
-        self.applied_changes = applied_changes
-        self.incoming_changes = incoming_changes
-        self.latency = latency
-        self.message = message
-
-
-class DbServerMetadata(_serialization.Model):
-    """Database server metadata.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar location: Location of database server.
-    :vartype location: str
-    :ivar version: Version for database engine.
-    :vartype version: str
-    :ivar storage_mb: Storage size in MB for database server.
-    :vartype storage_mb: int
-    :ivar sku: SKU for the database server. This object is empty for PG single server.
-    :vartype sku: ~azure.mgmt.postgresqlflexibleservers.models.ServerSku
-    """
-
-    _validation = {
-        "location": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "location": {"key": "location", "type": "str"},
-        "version": {"key": "version", "type": "str"},
-        "storage_mb": {"key": "storageMb", "type": "int"},
-        "sku": {"key": "sku", "type": "ServerSku"},
-    }
-
-    def __init__(
-        self,
-        *,
-        version: Optional[str] = None,
-        storage_mb: Optional[int] = None,
-        sku: Optional["_models.ServerSku"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword version: Version for database engine.
-        :paramtype version: str
-        :keyword storage_mb: Storage size in MB for database server.
-        :paramtype storage_mb: int
-        :keyword sku: SKU for the database server. This object is empty for PG single server.
-        :paramtype sku: ~azure.mgmt.postgresqlflexibleservers.models.ServerSku
-        """
-        super().__init__(**kwargs)
-        self.location: Optional[str] = None
-        self.version = version
-        self.storage_mb = storage_mb
-        self.sku = sku
-
-
-class DelegatedSubnetUsage(_serialization.Model):
-    """Delegated subnet usage data.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar subnet_name: Name of the delegated subnet for which IP addresses are in use.
-    :vartype subnet_name: str
-    :ivar usage: Number of IP addresses used by the delegated subnet.
-    :vartype usage: int
-    """
-
-    _validation = {
-        "subnet_name": {"readonly": True},
-        "usage": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "subnet_name": {"key": "subnetName", "type": "str"},
-        "usage": {"key": "usage", "type": "int"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.subnet_name: Optional[str] = None
-        self.usage: Optional[int] = None
-
-
-class ErrorAdditionalInfo(_serialization.Model):
-    """The resource management error additional info.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: JSON
-    """
-
-    _validation = {
-        "type": {"readonly": True},
-        "info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "object"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.type: Optional[str] = None
-        self.info: Optional[JSON] = None
-
-
-class ErrorDetail(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.postgresqlflexibleservers.models.ErrorDetail]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info:
-     list[~azure.mgmt.postgresqlflexibleservers.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetail]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
-
-
-class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.postgresqlflexibleservers.models.ErrorDetail
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetail"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.postgresqlflexibleservers.models.ErrorDetail
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class FastProvisioningEditionCapability(CapabilityBase):
-    """Represents capability of a fast provisioning edition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
-    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
-    :vartype reason: str
-    :ivar supported_tier: Fast provisioning supported tier name.
-    :vartype supported_tier: str
-    :ivar supported_sku: Fast provisioning supported sku name.
-    :vartype supported_sku: str
-    :ivar supported_storage_gb: Fast provisioning supported storage in Gb.
-    :vartype supported_storage_gb: int
-    :ivar supported_server_versions: Fast provisioning supported version.
-    :vartype supported_server_versions: str
-    :ivar server_count: Count of servers in cache matching the spec.
-    :vartype server_count: int
-    """
-
-    _validation = {
-        "status": {"readonly": True},
-        "reason": {"readonly": True},
-        "supported_tier": {"readonly": True},
-        "supported_sku": {"readonly": True},
-        "supported_storage_gb": {"readonly": True},
-        "supported_server_versions": {"readonly": True},
-        "server_count": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-        "supported_tier": {"key": "supportedTier", "type": "str"},
-        "supported_sku": {"key": "supportedSku", "type": "str"},
-        "supported_storage_gb": {"key": "supportedStorageGb", "type": "int"},
-        "supported_server_versions": {"key": "supportedServerVersions", "type": "str"},
-        "server_count": {"key": "serverCount", "type": "int"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.supported_tier: Optional[str] = None
-        self.supported_sku: Optional[str] = None
-        self.supported_storage_gb: Optional[int] = None
-        self.supported_server_versions: Optional[str] = None
-        self.server_count: Optional[int] = None
-
-
-class FirewallRule(ProxyResource):
-    """Represents a server firewall rule.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar start_ip_address: The start IP address of the server firewall rule. Must be IPv4 format.
-     Required.
-    :vartype start_ip_address: str
-    :ivar end_ip_address: The end IP address of the server firewall rule. Must be IPv4 format.
-     Required.
-    :vartype end_ip_address: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "start_ip_address": {
-            "required": True,
-            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
-        },
-        "end_ip_address": {
-            "required": True,
-            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
-        },
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
-        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
-    }
-
-    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs: Any) -> None:
-        """
-        :keyword start_ip_address: The start IP address of the server firewall rule. Must be IPv4
-         format. Required.
-        :paramtype start_ip_address: str
-        :keyword end_ip_address: The end IP address of the server firewall rule. Must be IPv4 format.
-         Required.
-        :paramtype end_ip_address: str
-        """
-        super().__init__(**kwargs)
-        self.start_ip_address = start_ip_address
-        self.end_ip_address = end_ip_address
-
-
-class FirewallRuleListResult(_serialization.Model):
-    """A list of firewall rules.
-
-    :ivar value: The list of firewall rules in a server.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.FirewallRule]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[FirewallRule]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.FirewallRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of firewall rules in a server.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.FirewallRule]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class FlexibleServerCapability(CapabilityBase):
-    """Capability for the PostgreSQL server.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
-    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
-    :vartype reason: str
-    :ivar name: Name of flexible servers capability.
-    :vartype name: str
-    :ivar supported_server_editions: List of supported flexible server editions.
-    :vartype supported_server_editions:
-     list[~azure.mgmt.postgresqlflexibleservers.models.FlexibleServerEditionCapability]
-    :ivar supported_server_versions: The list of server versions supported for this capability.
-    :vartype supported_server_versions:
-     list[~azure.mgmt.postgresqlflexibleservers.models.ServerVersionCapability]
-    :ivar supported_features: The supported features.
-    :vartype supported_features:
-     list[~azure.mgmt.postgresqlflexibleservers.models.SupportedFeature]
-    :ivar fast_provisioning_supported: Gets a value indicating whether fast provisioning is
-     supported. "Enabled" means fast provisioning is supported. "Disabled" stands for fast
-     provisioning is not supported. Will be deprecated in future, please look to Supported Features
-     for "FastProvisioning". Known values are: "Enabled" and "Disabled".
-    :vartype fast_provisioning_supported: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.FastProvisioningSupportedEnum
-    :ivar supported_fast_provisioning_editions: List of supported server editions for fast
-     provisioning.
-    :vartype supported_fast_provisioning_editions:
-     list[~azure.mgmt.postgresqlflexibleservers.models.FastProvisioningEditionCapability]
-    :ivar geo_backup_supported: Determines if geo-backup is supported in this region. "Enabled"
-     means geo-backup is supported. "Disabled" stands for geo-back is not supported. Will be
-     deprecated in future, please look to Supported Features for "GeoBackup". Known values are:
-     "Enabled" and "Disabled".
-    :vartype geo_backup_supported: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.GeoBackupSupportedEnum
-    :ivar zone_redundant_ha_supported: A value indicating whether Zone Redundant HA is supported in
-     this region. "Enabled" means zone redundant HA is supported. "Disabled" stands for zone
-     redundant HA is not supported. Will be deprecated in future, please look to Supported Features
-     for "ZoneRedundantHa". Known values are: "Enabled" and "Disabled".
-    :vartype zone_redundant_ha_supported: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.ZoneRedundantHaSupportedEnum
-    :ivar zone_redundant_ha_and_geo_backup_supported: A value indicating whether Zone Redundant HA
-     and Geo-backup is supported in this region. "Enabled" means zone redundant HA and geo-backup is
-     supported. "Disabled" stands for zone redundant HA and geo-backup is not supported. Will be
-     deprecated in future, please look to Supported Features for "ZoneRedundantHaAndGeoBackup".
-     Known values are: "Enabled" and "Disabled".
-    :vartype zone_redundant_ha_and_geo_backup_supported: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.ZoneRedundantHaAndGeoBackupSupportedEnum
-    :ivar storage_auto_growth_supported: A value indicating whether storage auto-grow is supported
-     in this region. "Enabled" means storage auto-grow is supported. "Disabled" stands for storage
-     auto-grow is not supported. Will be deprecated in future, please look to Supported Features for
-     "StorageAutoGrowth". Known values are: "Enabled" and "Disabled".
-    :vartype storage_auto_growth_supported: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrowthSupportedEnum
-    :ivar online_resize_supported: A value indicating whether online resize is supported in this
-     region for the given subscription. "Enabled" means storage online resize is supported.
-     "Disabled" means storage online resize is not supported. Will be deprecated in future, please
-     look to Supported Features for "OnlineResize". Known values are: "Enabled" and "Disabled".
-    :vartype online_resize_supported: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.OnlineResizeSupportedEnum
-    :ivar restricted: A value indicating whether this region is restricted. "Enabled" means region
-     is restricted. "Disabled" stands for region is not restricted. Will be deprecated in future,
-     please look to Supported Features for "Restricted". Known values are: "Enabled" and "Disabled".
-    :vartype restricted: str or ~azure.mgmt.postgresqlflexibleservers.models.RestrictedEnum
-    """
-
-    _validation = {
-        "status": {"readonly": True},
-        "reason": {"readonly": True},
-        "supported_server_editions": {"readonly": True},
-        "supported_server_versions": {"readonly": True},
-        "supported_features": {"readonly": True},
-        "fast_provisioning_supported": {"readonly": True},
-        "supported_fast_provisioning_editions": {"readonly": True},
-        "geo_backup_supported": {"readonly": True},
-        "zone_redundant_ha_supported": {"readonly": True},
-        "zone_redundant_ha_and_geo_backup_supported": {"readonly": True},
-        "storage_auto_growth_supported": {"readonly": True},
-        "online_resize_supported": {"readonly": True},
-        "restricted": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "supported_server_editions": {"key": "supportedServerEditions", "type": "[FlexibleServerEditionCapability]"},
-        "supported_server_versions": {"key": "supportedServerVersions", "type": "[ServerVersionCapability]"},
-        "supported_features": {"key": "supportedFeatures", "type": "[SupportedFeature]"},
-        "fast_provisioning_supported": {"key": "fastProvisioningSupported", "type": "str"},
-        "supported_fast_provisioning_editions": {
-            "key": "supportedFastProvisioningEditions",
-            "type": "[FastProvisioningEditionCapability]",
-        },
-        "geo_backup_supported": {"key": "geoBackupSupported", "type": "str"},
-        "zone_redundant_ha_supported": {"key": "zoneRedundantHaSupported", "type": "str"},
-        "zone_redundant_ha_and_geo_backup_supported": {"key": "zoneRedundantHaAndGeoBackupSupported", "type": "str"},
-        "storage_auto_growth_supported": {"key": "storageAutoGrowthSupported", "type": "str"},
-        "online_resize_supported": {"key": "onlineResizeSupported", "type": "str"},
-        "restricted": {"key": "restricted", "type": "str"},
-    }
-
-    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: Name of flexible servers capability.
-        :paramtype name: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.supported_server_editions: Optional[List["_models.FlexibleServerEditionCapability"]] = None
-        self.supported_server_versions: Optional[List["_models.ServerVersionCapability"]] = None
-        self.supported_features: Optional[List["_models.SupportedFeature"]] = None
-        self.fast_provisioning_supported: Optional[Union[str, "_models.FastProvisioningSupportedEnum"]] = None
-        self.supported_fast_provisioning_editions: Optional[List["_models.FastProvisioningEditionCapability"]] = None
-        self.geo_backup_supported: Optional[Union[str, "_models.GeoBackupSupportedEnum"]] = None
-        self.zone_redundant_ha_supported: Optional[Union[str, "_models.ZoneRedundantHaSupportedEnum"]] = None
-        self.zone_redundant_ha_and_geo_backup_supported: Optional[
-            Union[str, "_models.ZoneRedundantHaAndGeoBackupSupportedEnum"]
-        ] = None
-        self.storage_auto_growth_supported: Optional[Union[str, "_models.StorageAutoGrowthSupportedEnum"]] = None
-        self.online_resize_supported: Optional[Union[str, "_models.OnlineResizeSupportedEnum"]] = None
-        self.restricted: Optional[Union[str, "_models.RestrictedEnum"]] = None
-
-
-class FlexibleServerEditionCapability(CapabilityBase):
-    """Flexible server edition capabilities.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar status: The status of the capability. Known values are: "Visible", "Available",
-     "Default", and "Disabled".
-    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
-    :ivar reason: The reason for the capability not being available.
-    :vartype reason: str
-    :ivar name: Server edition name.
-    :vartype name: str
-    :ivar default_sku_name: Default sku name for the server edition.
-    :vartype default_sku_name: str
-    :ivar supported_storage_editions: The list of editions supported by this server edition.
-    :vartype supported_storage_editions:
-     list[~azure.mgmt.postgresqlflexibleservers.models.StorageEditionCapability]
-    :ivar supported_server_skus: List of supported server SKUs.
-    :vartype supported_server_skus:
-     list[~azure.mgmt.postgresqlflexibleservers.models.ServerSkuCapability]
-    """
-
-    _validation = {
-        "status": {"readonly": True},
-        "reason": {"readonly": True},
-        "name": {"readonly": True},
-        "default_sku_name": {"readonly": True},
-        "supported_storage_editions": {"readonly": True},
-        "supported_server_skus": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "reason": {"key": "reason", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "default_sku_name": {"key": "defaultSkuName", "type": "str"},
-        "supported_storage_editions": {"key": "supportedStorageEditions", "type": "[StorageEditionCapability]"},
-        "supported_server_skus": {"key": "supportedServerSkus", "type": "[ServerSkuCapability]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.name: Optional[str] = None
-        self.default_sku_name: Optional[str] = None
-        self.supported_storage_editions: Optional[List["_models.StorageEditionCapability"]] = None
-        self.supported_server_skus: Optional[List["_models.ServerSkuCapability"]] = None
-
-
-class HighAvailability(_serialization.Model):
-    """High availability properties of a server.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar mode: The HA mode for the server. Known values are: "Disabled", "ZoneRedundant", and
-     "SameZone".
-    :vartype mode: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode
-    :ivar state: A state of a HA server that is visible to user. Known values are: "NotEnabled",
-     "CreatingStandby", "ReplicatingData", "FailingOver", "Healthy", and "RemovingStandby".
-    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerHAState
-    :ivar standby_availability_zone: availability zone information of the standby.
-    :vartype standby_availability_zone: str
-    """
-
-    _validation = {
-        "state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "mode": {"key": "mode", "type": "str"},
-        "state": {"key": "state", "type": "str"},
-        "standby_availability_zone": {"key": "standbyAvailabilityZone", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        mode: Union[str, "_models.HighAvailabilityMode"] = "Disabled",
-        standby_availability_zone: str = "",
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword mode: The HA mode for the server. Known values are: "Disabled", "ZoneRedundant", and
-         "SameZone".
-        :paramtype mode: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode
-        :keyword standby_availability_zone: availability zone information of the standby.
-        :paramtype standby_availability_zone: str
-        """
-        super().__init__(**kwargs)
-        self.mode = mode
-        self.state: Optional[Union[str, "_models.ServerHAState"]] = None
-        self.standby_availability_zone = standby_availability_zone
-
-
-class ImpactRecord(_serialization.Model):
-    """Stores property that features impact on some metric if this recommended action is applied.
-
-    :ivar dimension_name: Dimension name.
-    :vartype dimension_name: str
-    :ivar unit: Dimension unit.
-    :vartype unit: str
-    :ivar query_id: Optional property that can be used to store the QueryId if the metric is for a
-     specific query.
-    :vartype query_id: int
-    :ivar absolute_value: Absolute value.
-    :vartype absolute_value: float
-    """
-
-    _attribute_map = {
-        "dimension_name": {"key": "dimensionName", "type": "str"},
-        "unit": {"key": "unit", "type": "str"},
-        "query_id": {"key": "queryId", "type": "int"},
-        "absolute_value": {"key": "absoluteValue", "type": "float"},
-    }
-
-    def __init__(
-        self,
-        *,
-        dimension_name: Optional[str] = None,
-        unit: Optional[str] = None,
-        query_id: Optional[int] = None,
-        absolute_value: Optional[float] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword dimension_name: Dimension name.
-        :paramtype dimension_name: str
-        :keyword unit: Dimension unit.
-        :paramtype unit: str
-        :keyword query_id: Optional property that can be used to store the QueryId if the metric is for
-         a specific query.
-        :paramtype query_id: int
-        :keyword absolute_value: Absolute value.
-        :paramtype absolute_value: float
-        """
-        super().__init__(**kwargs)
-        self.dimension_name = dimension_name
-        self.unit = unit
-        self.query_id = query_id
-        self.absolute_value = absolute_value
-
-
-class IndexRecommendationDetails(_serialization.Model):
-    """Recommendation details for the recommended action.
-
-    :ivar database_name: Database name.
-    :vartype database_name: str
-    :ivar schema: Schema name.
-    :vartype schema: str
-    :ivar table: Table name.
-    :vartype table: str
-    :ivar index_type: Index type.
-    :vartype index_type: str
-    :ivar index_name: Index name.
-    :vartype index_name: str
-    :ivar index_columns: Index columns.
-    :vartype index_columns: list[str]
-    :ivar included_columns: Index included columns.
-    :vartype included_columns: list[str]
-    """
-
-    _attribute_map = {
-        "database_name": {"key": "databaseName", "type": "str"},
-        "schema": {"key": "schema", "type": "str"},
-        "table": {"key": "table", "type": "str"},
-        "index_type": {"key": "indexType", "type": "str"},
-        "index_name": {"key": "indexName", "type": "str"},
-        "index_columns": {"key": "indexColumns", "type": "[str]"},
-        "included_columns": {"key": "includedColumns", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        database_name: Optional[str] = None,
-        schema: Optional[str] = None,
-        table: Optional[str] = None,
-        index_type: Optional[str] = None,
-        index_name: Optional[str] = None,
-        index_columns: Optional[List[str]] = None,
-        included_columns: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword database_name: Database name.
-        :paramtype database_name: str
-        :keyword schema: Schema name.
-        :paramtype schema: str
-        :keyword table: Table name.
-        :paramtype table: str
-        :keyword index_type: Index type.
-        :paramtype index_type: str
-        :keyword index_name: Index name.
-        :paramtype index_name: str
-        :keyword index_columns: Index columns.
-        :paramtype index_columns: list[str]
-        :keyword included_columns: Index included columns.
-        :paramtype included_columns: list[str]
-        """
-        super().__init__(**kwargs)
-        self.database_name = database_name
-        self.schema = schema
-        self.table = table
-        self.index_type = index_type
-        self.index_name = index_name
-        self.index_columns = index_columns
-        self.included_columns = included_columns
-
-
-class IndexRecommendationListResult(_serialization.Model):
-    """A list of available index recommendations.
-
-    :ivar value: A list of available index recommendations.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResource]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[IndexRecommendationResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.IndexRecommendationResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of available index recommendations.
-        :paramtype value:
-         list[~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResource]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class IndexRecommendationResource(ProxyResource):
-    """Index recommendation properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar initial_recommended_time: Creation time of this recommendation in UTC date-time string
-     format.
-    :vartype initial_recommended_time: ~datetime.datetime
-    :ivar last_recommended_time: The last refresh of this recommendation in UTC date-time string
-     format.
-    :vartype last_recommended_time: ~datetime.datetime
-    :ivar times_recommended: The number of times this recommendation has encountered.
-    :vartype times_recommended: int
-    :ivar improved_query_ids: The ImprovedQueryIds. The list will only be populated for CREATE
-     INDEX recommendations.
-    :vartype improved_query_ids: list[int]
-    :ivar recommendation_reason: Reason for this recommendation.
-    :vartype recommendation_reason: str
-    :ivar recommendation_type: Type for this recommendation. Known values are: "CreateIndex",
-     "DropIndex", and "ReIndex".
-    :vartype recommendation_type: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.RecommendationTypeEnum
-    :ivar implementation_details: Stores implementation details for the recommended action.
-    :vartype implementation_details:
-     ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResourcePropertiesImplementationDetails
-    :ivar analyzed_workload: Stores workload information for the recommended action.
-    :vartype analyzed_workload:
-     ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResourcePropertiesAnalyzedWorkload
-    :ivar estimated_impact: The estimated impact of this recommended action.
-    :vartype estimated_impact: list[~azure.mgmt.postgresqlflexibleservers.models.ImpactRecord]
-    :ivar details: Stores recommendation details for the recommended action.
-    :vartype details: ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationDetails
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "estimated_impact": {"readonly": True},
-        "details": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "initial_recommended_time": {"key": "properties.initialRecommendedTime", "type": "iso-8601"},
-        "last_recommended_time": {"key": "properties.lastRecommendedTime", "type": "iso-8601"},
-        "times_recommended": {"key": "properties.timesRecommended", "type": "int"},
-        "improved_query_ids": {"key": "properties.improvedQueryIds", "type": "[int]"},
-        "recommendation_reason": {"key": "properties.recommendationReason", "type": "str"},
-        "recommendation_type": {"key": "properties.recommendationType", "type": "str"},
-        "implementation_details": {
-            "key": "properties.implementationDetails",
-            "type": "IndexRecommendationResourcePropertiesImplementationDetails",
-        },
-        "analyzed_workload": {
-            "key": "properties.analyzedWorkload",
-            "type": "IndexRecommendationResourcePropertiesAnalyzedWorkload",
-        },
-        "estimated_impact": {"key": "properties.estimatedImpact", "type": "[ImpactRecord]"},
-        "details": {"key": "properties.details", "type": "IndexRecommendationDetails"},
-    }
-
-    def __init__(
-        self,
-        *,
-        initial_recommended_time: Optional[datetime.datetime] = None,
-        last_recommended_time: Optional[datetime.datetime] = None,
-        times_recommended: Optional[int] = None,
-        improved_query_ids: Optional[List[int]] = None,
-        recommendation_reason: Optional[str] = None,
-        recommendation_type: Optional[Union[str, "_models.RecommendationTypeEnum"]] = None,
-        implementation_details: Optional["_models.IndexRecommendationResourcePropertiesImplementationDetails"] = None,
-        analyzed_workload: Optional["_models.IndexRecommendationResourcePropertiesAnalyzedWorkload"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword initial_recommended_time: Creation time of this recommendation in UTC date-time string
-         format.
-        :paramtype initial_recommended_time: ~datetime.datetime
-        :keyword last_recommended_time: The last refresh of this recommendation in UTC date-time string
-         format.
-        :paramtype last_recommended_time: ~datetime.datetime
-        :keyword times_recommended: The number of times this recommendation has encountered.
-        :paramtype times_recommended: int
-        :keyword improved_query_ids: The ImprovedQueryIds. The list will only be populated for CREATE
-         INDEX recommendations.
-        :paramtype improved_query_ids: list[int]
-        :keyword recommendation_reason: Reason for this recommendation.
-        :paramtype recommendation_reason: str
-        :keyword recommendation_type: Type for this recommendation. Known values are: "CreateIndex",
-         "DropIndex", and "ReIndex".
-        :paramtype recommendation_type: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.RecommendationTypeEnum
-        :keyword implementation_details: Stores implementation details for the recommended action.
-        :paramtype implementation_details:
-         ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResourcePropertiesImplementationDetails
-        :keyword analyzed_workload: Stores workload information for the recommended action.
-        :paramtype analyzed_workload:
-         ~azure.mgmt.postgresqlflexibleservers.models.IndexRecommendationResourcePropertiesAnalyzedWorkload
-        """
-        super().__init__(**kwargs)
-        self.initial_recommended_time = initial_recommended_time
-        self.last_recommended_time = last_recommended_time
-        self.times_recommended = times_recommended
-        self.improved_query_ids = improved_query_ids
-        self.recommendation_reason = recommendation_reason
-        self.recommendation_type = recommendation_type
-        self.implementation_details = implementation_details
-        self.analyzed_workload = analyzed_workload
-        self.estimated_impact: Optional[List["_models.ImpactRecord"]] = None
-        self.details: Optional["_models.IndexRecommendationDetails"] = None
-
-
-class IndexRecommendationResourcePropertiesAnalyzedWorkload(_serialization.Model):  # pylint: disable=name-too-long
-    """Stores workload information for the recommended action.
-
-    :ivar start_time: Workload start time in UTC date-time string format.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: Workload end time in UTC date-time string format.
-    :vartype end_time: ~datetime.datetime
-    :ivar query_count: Workload query examined count. For DROP INDEX will be 0.
-    :vartype query_count: int
-    """
-
-    _attribute_map = {
-        "start_time": {"key": "startTime", "type": "iso-8601"},
-        "end_time": {"key": "endTime", "type": "iso-8601"},
-        "query_count": {"key": "queryCount", "type": "int"},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        query_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword start_time: Workload start time in UTC date-time string format.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: Workload end time in UTC date-time string format.
-        :paramtype end_time: ~datetime.datetime
-        :keyword query_count: Workload query examined count. For DROP INDEX will be 0.
-        :paramtype query_count: int
-        """
-        super().__init__(**kwargs)
-        self.start_time = start_time
-        self.end_time = end_time
-        self.query_count = query_count
-
-
-class IndexRecommendationResourcePropertiesImplementationDetails(_serialization.Model):  # pylint: disable=name-too-long
-    """Stores implementation details for the recommended action.
-
-    :ivar method: Method of implementation for recommended action.
-    :vartype method: str
-    :ivar script: Implementation script for the recommended action.
-    :vartype script: str
-    """
-
-    _attribute_map = {
-        "method": {"key": "method", "type": "str"},
-        "script": {"key": "script", "type": "str"},
-    }
-
-    def __init__(self, *, method: Optional[str] = None, script: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword method: Method of implementation for recommended action.
-        :paramtype method: str
-        :keyword script: Implementation script for the recommended action.
-        :paramtype script: str
-        """
-        super().__init__(**kwargs)
-        self.method = method
-        self.script = script
-
-
-class LogFile(ProxyResource):
-    """Represents a logFile.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar created_time: Creation timestamp of the log file.
-    :vartype created_time: ~datetime.datetime
-    :ivar last_modified_time: Last modified timestamp of the log file.
-    :vartype last_modified_time: ~datetime.datetime
-    :ivar size_in_kb: The size in kb of the logFile.
-    :vartype size_in_kb: int
-    :ivar type_properties_type: Type of the log file.
-    :vartype type_properties_type: str
-    :ivar url: The url to download the log file from.
-    :vartype url: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
-        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
-        "size_in_kb": {"key": "properties.sizeInKb", "type": "int"},
-        "type_properties_type": {"key": "properties.type", "type": "str"},
-        "url": {"key": "properties.url", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        created_time: Optional[datetime.datetime] = None,
-        last_modified_time: Optional[datetime.datetime] = None,
-        size_in_kb: Optional[int] = None,
-        type_properties_type: Optional[str] = None,
-        url: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword created_time: Creation timestamp of the log file.
-        :paramtype created_time: ~datetime.datetime
-        :keyword last_modified_time: Last modified timestamp of the log file.
-        :paramtype last_modified_time: ~datetime.datetime
-        :keyword size_in_kb: The size in kb of the logFile.
-        :paramtype size_in_kb: int
-        :keyword type_properties_type: Type of the log file.
-        :paramtype type_properties_type: str
-        :keyword url: The url to download the log file from.
-        :paramtype url: str
-        """
-        super().__init__(**kwargs)
-        self.created_time = created_time
-        self.last_modified_time = last_modified_time
-        self.size_in_kb = size_in_kb
-        self.type_properties_type = type_properties_type
-        self.url = url
-
-
-class LogFileListResult(_serialization.Model):
-    """A List of logFiles.
-
-    :ivar value: The list of logFiles in a server.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.LogFile]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[LogFile]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.LogFile"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of logFiles in a server.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.LogFile]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class LtrBackupRequest(BackupRequestBase):
-    """The request that is made for a long term retention backup.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar backup_settings: Backup Settings. Required.
-    :vartype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
-    :ivar target_details: Backup store detail for target server. Required.
-    :vartype target_details: ~azure.mgmt.postgresqlflexibleservers.models.BackupStoreDetails
-    """
-
-    _validation = {
-        "backup_settings": {"required": True},
-        "target_details": {"required": True},
-    }
-
-    _attribute_map = {
-        "backup_settings": {"key": "backupSettings", "type": "BackupSettings"},
-        "target_details": {"key": "targetDetails", "type": "BackupStoreDetails"},
-    }
-
-    def __init__(
-        self, *, backup_settings: "_models.BackupSettings", target_details: "_models.BackupStoreDetails", **kwargs: Any
-    ) -> None:
-        """
-        :keyword backup_settings: Backup Settings. Required.
-        :paramtype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
-        :keyword target_details: Backup store detail for target server. Required.
-        :paramtype target_details: ~azure.mgmt.postgresqlflexibleservers.models.BackupStoreDetails
-        """
-        super().__init__(backup_settings=backup_settings, **kwargs)
-        self.target_details = target_details
-
-
-class LtrBackupResponse(_serialization.Model):
-    """Response for the LTR backup API call.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar datasource_size_in_bytes: Size of datasource in bytes.
-    :vartype datasource_size_in_bytes: int
-    :ivar data_transferred_in_bytes: Data transferred in bytes.
-    :vartype data_transferred_in_bytes: int
-    :ivar backup_name: Name of Backup operation.
-    :vartype backup_name: str
-    :ivar backup_metadata: Metadata to be stored in RP. Store everything that will be required to
-     perform a successful restore using this Recovery point. e.g. Versions, DataFormat etc.
-    :vartype backup_metadata: str
-    :ivar status: Service-set extensible enum indicating the status of operation. Known values are:
-     "Running", "Cancelled", "Failed", and "Succeeded".
-    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.ExecutionStatus
-    :ivar start_time: Start time of the operation.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: End time of the operation.
-    :vartype end_time: ~datetime.datetime
-    :ivar percent_complete: PercentageCompleted.
-    :vartype percent_complete: float
-    :ivar error_code: The error code.
-    :vartype error_code: str
-    :ivar error_message: The error message.
-    :vartype error_message: str
-    """
-
-    _validation = {
-        "percent_complete": {"maximum": 100, "minimum": 0},
-        "error_code": {"readonly": True},
-        "error_message": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "datasource_size_in_bytes": {"key": "properties.datasourceSizeInBytes", "type": "int"},
-        "data_transferred_in_bytes": {"key": "properties.dataTransferredInBytes", "type": "int"},
-        "backup_name": {"key": "properties.backupName", "type": "str"},
-        "backup_metadata": {"key": "properties.backupMetadata", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
-        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
-        "percent_complete": {"key": "properties.percentComplete", "type": "float"},
-        "error_code": {"key": "properties.errorCode", "type": "str"},
-        "error_message": {"key": "properties.errorMessage", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        datasource_size_in_bytes: Optional[int] = None,
-        data_transferred_in_bytes: Optional[int] = None,
-        backup_name: Optional[str] = None,
-        backup_metadata: Optional[str] = None,
-        status: Optional[Union[str, "_models.ExecutionStatus"]] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        percent_complete: Optional[float] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword datasource_size_in_bytes: Size of datasource in bytes.
-        :paramtype datasource_size_in_bytes: int
-        :keyword data_transferred_in_bytes: Data transferred in bytes.
-        :paramtype data_transferred_in_bytes: int
-        :keyword backup_name: Name of Backup operation.
-        :paramtype backup_name: str
-        :keyword backup_metadata: Metadata to be stored in RP. Store everything that will be required
-         to perform a successful restore using this Recovery point. e.g. Versions, DataFormat etc.
-        :paramtype backup_metadata: str
-        :keyword status: Service-set extensible enum indicating the status of operation. Known values
-         are: "Running", "Cancelled", "Failed", and "Succeeded".
-        :paramtype status: str or ~azure.mgmt.postgresqlflexibleservers.models.ExecutionStatus
-        :keyword start_time: Start time of the operation.
-        :paramtype start_time: ~datetime.datetime
-        :keyword end_time: End time of the operation.
-        :paramtype end_time: ~datetime.datetime
-        :keyword percent_complete: PercentageCompleted.
-        :paramtype percent_complete: float
-        """
-        super().__init__(**kwargs)
-        self.datasource_size_in_bytes = datasource_size_in_bytes
-        self.data_transferred_in_bytes = data_transferred_in_bytes
-        self.backup_name = backup_name
-        self.backup_metadata = backup_metadata
-        self.status = status
-        self.start_time = start_time
-        self.end_time = end_time
-        self.percent_complete = percent_complete
-        self.error_code: Optional[str] = None
-        self.error_message: Optional[str] = None
-
-
-class LtrPreBackupRequest(BackupRequestBase):
-    """A request that is made for pre-backup.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar backup_settings: Backup Settings. Required.
-    :vartype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
-    """
-
-
-class LtrPreBackupResponse(_serialization.Model):
-    """Response for the LTR pre-backup API call.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar number_of_containers: Number of storage containers the plugin will use during backup.
-     More than one containers may be used for size limitations, parallelism, or redundancy etc.
-     Required.
-    :vartype number_of_containers: int
-    """
-
-    _validation = {
-        "number_of_containers": {"required": True},
-    }
-
-    _attribute_map = {
-        "number_of_containers": {"key": "properties.numberOfContainers", "type": "int"},
-    }
-
-    def __init__(self, *, number_of_containers: int, **kwargs: Any) -> None:
-        """
-        :keyword number_of_containers: Number of storage containers the plugin will use during backup.
-         More than one containers may be used for size limitations, parallelism, or redundancy etc.
-         Required.
-        :paramtype number_of_containers: int
-        """
-        super().__init__(**kwargs)
-        self.number_of_containers = number_of_containers
-
-
-class LtrServerBackupOperation(ProxyResource):
+class BackupsLongTermRetentionOperation(ProxyResource):
     """Response for the LTR backup Operation API call.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2427,30 +816,1666 @@ class LtrServerBackupOperation(ProxyResource):
         self.error_message: Optional[str] = None
 
 
+class BackupsLongTermRetentionRequest(BackupRequestBase):
+    """The request that is made for a long term retention backup.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar backup_settings: Backup Settings. Required.
+    :vartype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
+    :ivar target_details: Backup store detail for target server. Required.
+    :vartype target_details: ~azure.mgmt.postgresqlflexibleservers.models.BackupStoreDetails
+    """
+
+    _validation = {
+        "backup_settings": {"required": True},
+        "target_details": {"required": True},
+    }
+
+    _attribute_map = {
+        "backup_settings": {"key": "backupSettings", "type": "BackupSettings"},
+        "target_details": {"key": "targetDetails", "type": "BackupStoreDetails"},
+    }
+
+    def __init__(
+        self, *, backup_settings: "_models.BackupSettings", target_details: "_models.BackupStoreDetails", **kwargs: Any
+    ) -> None:
+        """
+        :keyword backup_settings: Backup Settings. Required.
+        :paramtype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
+        :keyword target_details: Backup store detail for target server. Required.
+        :paramtype target_details: ~azure.mgmt.postgresqlflexibleservers.models.BackupStoreDetails
+        """
+        super().__init__(backup_settings=backup_settings, **kwargs)
+        self.target_details = target_details
+
+
+class BackupsLongTermRetentionResponse(_serialization.Model):
+    """Response for the LTR backup API call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar datasource_size_in_bytes: Size of datasource in bytes.
+    :vartype datasource_size_in_bytes: int
+    :ivar data_transferred_in_bytes: Data transferred in bytes.
+    :vartype data_transferred_in_bytes: int
+    :ivar backup_name: Name of Backup operation.
+    :vartype backup_name: str
+    :ivar backup_metadata: Metadata to be stored in RP. Store everything that will be required to
+     perform a successful restore using this Recovery point. e.g. Versions, DataFormat etc.
+    :vartype backup_metadata: str
+    :ivar status: Service-set extensible enum indicating the status of operation. Known values are:
+     "Running", "Cancelled", "Failed", and "Succeeded".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.ExecutionStatus
+    :ivar start_time: Start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: End time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar percent_complete: PercentageCompleted.
+    :vartype percent_complete: float
+    :ivar error_code: The error code.
+    :vartype error_code: str
+    :ivar error_message: The error message.
+    :vartype error_message: str
+    """
+
+    _validation = {
+        "percent_complete": {"maximum": 100, "minimum": 0},
+        "error_code": {"readonly": True},
+        "error_message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "datasource_size_in_bytes": {"key": "properties.datasourceSizeInBytes", "type": "int"},
+        "data_transferred_in_bytes": {"key": "properties.dataTransferredInBytes", "type": "int"},
+        "backup_name": {"key": "properties.backupName", "type": "str"},
+        "backup_metadata": {"key": "properties.backupMetadata", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "percent_complete": {"key": "properties.percentComplete", "type": "float"},
+        "error_code": {"key": "properties.errorCode", "type": "str"},
+        "error_message": {"key": "properties.errorMessage", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        datasource_size_in_bytes: Optional[int] = None,
+        data_transferred_in_bytes: Optional[int] = None,
+        backup_name: Optional[str] = None,
+        backup_metadata: Optional[str] = None,
+        status: Optional[Union[str, "_models.ExecutionStatus"]] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        percent_complete: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword datasource_size_in_bytes: Size of datasource in bytes.
+        :paramtype datasource_size_in_bytes: int
+        :keyword data_transferred_in_bytes: Data transferred in bytes.
+        :paramtype data_transferred_in_bytes: int
+        :keyword backup_name: Name of Backup operation.
+        :paramtype backup_name: str
+        :keyword backup_metadata: Metadata to be stored in RP. Store everything that will be required
+         to perform a successful restore using this Recovery point. e.g. Versions, DataFormat etc.
+        :paramtype backup_metadata: str
+        :keyword status: Service-set extensible enum indicating the status of operation. Known values
+         are: "Running", "Cancelled", "Failed", and "Succeeded".
+        :paramtype status: str or ~azure.mgmt.postgresqlflexibleservers.models.ExecutionStatus
+        :keyword start_time: Start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: End time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword percent_complete: PercentageCompleted.
+        :paramtype percent_complete: float
+        """
+        super().__init__(**kwargs)
+        self.datasource_size_in_bytes = datasource_size_in_bytes
+        self.data_transferred_in_bytes = data_transferred_in_bytes
+        self.backup_name = backup_name
+        self.backup_metadata = backup_metadata
+        self.status = status
+        self.start_time = start_time
+        self.end_time = end_time
+        self.percent_complete = percent_complete
+        self.error_code: Optional[str] = None
+        self.error_message: Optional[str] = None
+
+
+class BackupStoreDetails(_serialization.Model):
+    """Details about the target where the backup content will be stored.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar sas_uri_list: List of SAS uri of storage containers where backup data is to be
+     streamed/copied. Required.
+    :vartype sas_uri_list: list[str]
+    """
+
+    _validation = {
+        "sas_uri_list": {"required": True},
+    }
+
+    _attribute_map = {
+        "sas_uri_list": {"key": "sasUriList", "type": "[str]"},
+    }
+
+    def __init__(self, *, sas_uri_list: list[str], **kwargs: Any) -> None:
+        """
+        :keyword sas_uri_list: List of SAS uri of storage containers where backup data is to be
+         streamed/copied. Required.
+        :paramtype sas_uri_list: list[str]
+        """
+        super().__init__(**kwargs)
+        self.sas_uri_list = sas_uri_list
+
+
+class CapabilityBase(_serialization.Model):
+    """Base object for representing capability.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
+     "Default", and "Disabled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.status: Optional[Union[str, "_models.CapabilityStatus"]] = None
+        self.reason: Optional[str] = None
+
+
+class Capability(CapabilityBase):
+    """Capability for the Azure Database for PostgreSQL flexible server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
+     "Default", and "Disabled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
+    :ivar name: Name of flexible servers capabilities.
+    :vartype name: str
+    :ivar supported_server_editions: List of supported compute tiers.
+    :vartype supported_server_editions:
+     list[~azure.mgmt.postgresqlflexibleservers.models.ServerEditionCapability]
+    :ivar supported_server_versions: List of supported major versions of PostgreSQL database
+     engine.
+    :vartype supported_server_versions:
+     list[~azure.mgmt.postgresqlflexibleservers.models.ServerVersionCapability]
+    :ivar supported_features: Features supported.
+    :vartype supported_features:
+     list[~azure.mgmt.postgresqlflexibleservers.models.SupportedFeature]
+    :ivar fast_provisioning_supported: Indicates if fast provisioning is supported. 'Enabled' means
+     fast provisioning is supported. 'Disabled' stands for fast provisioning is not supported. Will
+     be deprecated in the future. Look to Supported Features for 'FastProvisioning'. Known values
+     are: "Enabled" and "Disabled".
+    :vartype fast_provisioning_supported: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.FastProvisioningSupport
+    :ivar supported_fast_provisioning_editions: List of compute tiers supporting fast provisioning.
+    :vartype supported_fast_provisioning_editions:
+     list[~azure.mgmt.postgresqlflexibleservers.models.FastProvisioningEditionCapability]
+    :ivar geo_backup_supported: Indicates if geographically redundant backups are supported in this
+     location. 'Enabled' means geographically redundant backups are supported. 'Disabled' stands for
+     geographically redundant backup is not supported. Will be deprecated in the future. Look to
+     Supported Features for 'GeoBackup'. Known values are: "Enabled" and "Disabled".
+    :vartype geo_backup_supported: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.GeographicallyRedundantBackupSupport
+    :ivar zone_redundant_ha_supported: Indicates if high availability with zone redundancy is
+     supported in this location. 'Enabled' means high availability with zone redundancy is
+     supported. 'Disabled' stands for high availability with zone redundancy is not supported. Will
+     be deprecated in the future. Look to Supported Features for  'ZoneRedundantHa'. Known values
+     are: "Enabled" and "Disabled".
+    :vartype zone_redundant_ha_supported: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.ZoneRedundantHighAvailabilitySupport
+    :ivar zone_redundant_ha_and_geo_backup_supported: Indicates if high availability with zone
+     redundancy is supported in conjunction with geographically redundant backups in this location.
+     'Enabled' means high availability with zone redundancy is supported in conjunction with
+     geographically redundant backups is supported. 'Disabled' stands for high availability with
+     zone redundancy is supported in conjunction with geographically redundant backups is not
+     supported. Will be deprecated in the future. Look to Supported Features for
+     'ZoneRedundantHaAndGeoBackup'. Known values are: "Enabled" and "Disabled".
+    :vartype zone_redundant_ha_and_geo_backup_supported: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.ZoneRedundantHighAvailabilityAndGeographicallyRedundantBackupSupport
+    :ivar storage_auto_growth_supported: Indicates if storage autogrow is supported in this
+     location. 'Enabled' means storage autogrow is supported. 'Disabled' stands for storage autogrow
+     is not supported. Will be deprecated in the future. Look to Supported Features for
+     'StorageAutoGrowth'. Known values are: "Enabled" and "Disabled".
+    :vartype storage_auto_growth_supported: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrowthSupport
+    :ivar online_resize_supported: Indicates if resizing the storage, without interrupting the
+     operation of the database engine, is supported in this location for the given subscription.
+     'Enabled' means resizing the storage without interrupting the operation of the database engine
+     is supported. 'Disabled' means resizing the storage without interrupting the operation of the
+     database engine is not supported. Will be deprecated in the future. Look to Supported Features
+     for 'OnlineResize'. Known values are: "Enabled" and "Disabled".
+    :vartype online_resize_supported: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.OnlineStorageResizeSupport
+    :ivar restricted: Indicates if this location is restricted. 'Enabled' means location is
+     restricted. 'Disabled' stands for location is not restricted. Will be deprecated in the future.
+     Look to Supported Features for 'Restricted'. Known values are: "Enabled" and "Disabled".
+    :vartype restricted: str or ~azure.mgmt.postgresqlflexibleservers.models.LocationRestricted
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+        "supported_server_editions": {"readonly": True},
+        "supported_server_versions": {"readonly": True},
+        "supported_features": {"readonly": True},
+        "fast_provisioning_supported": {"readonly": True},
+        "supported_fast_provisioning_editions": {"readonly": True},
+        "geo_backup_supported": {"readonly": True},
+        "zone_redundant_ha_supported": {"readonly": True},
+        "zone_redundant_ha_and_geo_backup_supported": {"readonly": True},
+        "storage_auto_growth_supported": {"readonly": True},
+        "online_resize_supported": {"readonly": True},
+        "restricted": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "supported_server_editions": {"key": "supportedServerEditions", "type": "[ServerEditionCapability]"},
+        "supported_server_versions": {"key": "supportedServerVersions", "type": "[ServerVersionCapability]"},
+        "supported_features": {"key": "supportedFeatures", "type": "[SupportedFeature]"},
+        "fast_provisioning_supported": {"key": "fastProvisioningSupported", "type": "str"},
+        "supported_fast_provisioning_editions": {
+            "key": "supportedFastProvisioningEditions",
+            "type": "[FastProvisioningEditionCapability]",
+        },
+        "geo_backup_supported": {"key": "geoBackupSupported", "type": "str"},
+        "zone_redundant_ha_supported": {"key": "zoneRedundantHaSupported", "type": "str"},
+        "zone_redundant_ha_and_geo_backup_supported": {"key": "zoneRedundantHaAndGeoBackupSupported", "type": "str"},
+        "storage_auto_growth_supported": {"key": "storageAutoGrowthSupported", "type": "str"},
+        "online_resize_supported": {"key": "onlineResizeSupported", "type": "str"},
+        "restricted": {"key": "restricted", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of flexible servers capabilities.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.supported_server_editions: Optional[list["_models.ServerEditionCapability"]] = None
+        self.supported_server_versions: Optional[list["_models.ServerVersionCapability"]] = None
+        self.supported_features: Optional[list["_models.SupportedFeature"]] = None
+        self.fast_provisioning_supported: Optional[Union[str, "_models.FastProvisioningSupport"]] = None
+        self.supported_fast_provisioning_editions: Optional[list["_models.FastProvisioningEditionCapability"]] = None
+        self.geo_backup_supported: Optional[Union[str, "_models.GeographicallyRedundantBackupSupport"]] = None
+        self.zone_redundant_ha_supported: Optional[Union[str, "_models.ZoneRedundantHighAvailabilitySupport"]] = None
+        self.zone_redundant_ha_and_geo_backup_supported: Optional[
+            Union[str, "_models.ZoneRedundantHighAvailabilityAndGeographicallyRedundantBackupSupport"]
+        ] = None
+        self.storage_auto_growth_supported: Optional[Union[str, "_models.StorageAutoGrowthSupport"]] = None
+        self.online_resize_supported: Optional[Union[str, "_models.OnlineStorageResizeSupport"]] = None
+        self.restricted: Optional[Union[str, "_models.LocationRestricted"]] = None
+
+
+class CapabilityList(_serialization.Model):
+    """List of capabilities for the Azure Database for PostgreSQL flexible server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of supported capabilities.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Capability]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Capability]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link to retrieve next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Capability"]] = None
+        self.next_link = next_link
+
+
+class CapturedLog(ProxyResource):
+    """Log file.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar created_time: Creation timestamp of the log file.
+    :vartype created_time: ~datetime.datetime
+    :ivar last_modified_time: Last modified timestamp of the log file.
+    :vartype last_modified_time: ~datetime.datetime
+    :ivar size_in_kb: Size (in KB) of the log file.
+    :vartype size_in_kb: int
+    :ivar type_properties_type: Type of log file. Can be 'ServerLogs' or 'UpgradeLogs'.
+    :vartype type_properties_type: str
+    :ivar url: URL to download the log file from.
+    :vartype url: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "size_in_kb": {"key": "properties.sizeInKb", "type": "int"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "url": {"key": "properties.url", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        created_time: Optional[datetime.datetime] = None,
+        last_modified_time: Optional[datetime.datetime] = None,
+        size_in_kb: Optional[int] = None,
+        type_properties_type: Optional[str] = None,
+        url: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword created_time: Creation timestamp of the log file.
+        :paramtype created_time: ~datetime.datetime
+        :keyword last_modified_time: Last modified timestamp of the log file.
+        :paramtype last_modified_time: ~datetime.datetime
+        :keyword size_in_kb: Size (in KB) of the log file.
+        :paramtype size_in_kb: int
+        :keyword type_properties_type: Type of log file. Can be 'ServerLogs' or 'UpgradeLogs'.
+        :paramtype type_properties_type: str
+        :keyword url: URL to download the log file from.
+        :paramtype url: str
+        """
+        super().__init__(**kwargs)
+        self.created_time = created_time
+        self.last_modified_time = last_modified_time
+        self.size_in_kb = size_in_kb
+        self.type_properties_type = type_properties_type
+        self.url = url
+
+
+class CapturedLogList(_serialization.Model):
+    """List of log files.
+
+    :ivar value: List of log files in a server.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.CapturedLog]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[CapturedLog]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.CapturedLog"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of log files in a server.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.CapturedLog]
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class CheckNameAvailabilityRequest(_serialization.Model):
+    """The check availability request body.
+
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CheckNameAvailabilityResponse(_serialization.Model):
+    """The check availability result.
+
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
+
+
+class Cluster(_serialization.Model):
+    """Cluster properties of a server.
+
+    :ivar cluster_size: Number of nodes assigned to the elastic cluster.
+    :vartype cluster_size: int
+    :ivar default_database_name: Default database name for the elastic cluster.
+    :vartype default_database_name: str
+    """
+
+    _attribute_map = {
+        "cluster_size": {"key": "clusterSize", "type": "int"},
+        "default_database_name": {"key": "defaultDatabaseName", "type": "str"},
+    }
+
+    def __init__(self, *, cluster_size: int = 0, default_database_name: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword cluster_size: Number of nodes assigned to the elastic cluster.
+        :paramtype cluster_size: int
+        :keyword default_database_name: Default database name for the elastic cluster.
+        :paramtype default_database_name: str
+        """
+        super().__init__(**kwargs)
+        self.cluster_size = cluster_size
+        self.default_database_name = default_database_name
+
+
+class Configuration(ProxyResource):
+    """Configuration (also known as server parameter).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar value: Value of the configuration (also known as server parameter). Required to update
+     the value assigned to a specific modifiable configuration.
+    :vartype value: str
+    :ivar description: Description of the configuration (also known as server parameter).
+    :vartype description: str
+    :ivar default_value: Value assigned by default to the configuration (also known as server
+     parameter).
+    :vartype default_value: str
+    :ivar data_type: Data type of the configuration (also known as server parameter). Known values
+     are: "Boolean", "Numeric", "Integer", "Enumeration", "String", and "Set".
+    :vartype data_type: str or ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationDataType
+    :ivar allowed_values: Allowed values of the configuration (also known as server parameter).
+    :vartype allowed_values: str
+    :ivar source: Source of the value assigned to the configuration (also known as server
+     parameter). Required to update the value assigned to a specific modifiable configuration.
+    :vartype source: str
+    :ivar is_dynamic_config: Indicates if it's a dynamic (true) or static (false) configuration
+     (also known as server parameter). Static server parameters require a server restart after
+     changing the value assigned to them, for the change to take effect. Dynamic server parameters
+     do not require a server restart after changing the value assigned to them, for the change to
+     take effect.
+    :vartype is_dynamic_config: bool
+    :ivar is_read_only: Indicates if it's a read-only (true) or modifiable (false) configuration
+     (also known as server parameter).
+    :vartype is_read_only: bool
+    :ivar is_config_pending_restart: Indicates if the value assigned to the configuration (also
+     known as server parameter) is pending a server restart for it to take effect.
+    :vartype is_config_pending_restart: bool
+    :ivar unit: Units in which the configuration (also known as server parameter) value is
+     expressed.
+    :vartype unit: str
+    :ivar documentation_link: Link pointing to the documentation of the configuration (also known
+     as server parameter).
+    :vartype documentation_link: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "description": {"readonly": True},
+        "default_value": {"readonly": True},
+        "data_type": {"readonly": True},
+        "allowed_values": {"readonly": True},
+        "is_dynamic_config": {"readonly": True},
+        "is_read_only": {"readonly": True},
+        "is_config_pending_restart": {"readonly": True},
+        "unit": {"readonly": True},
+        "documentation_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "value": {"key": "properties.value", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "default_value": {"key": "properties.defaultValue", "type": "str"},
+        "data_type": {"key": "properties.dataType", "type": "str"},
+        "allowed_values": {"key": "properties.allowedValues", "type": "str"},
+        "source": {"key": "properties.source", "type": "str"},
+        "is_dynamic_config": {"key": "properties.isDynamicConfig", "type": "bool"},
+        "is_read_only": {"key": "properties.isReadOnly", "type": "bool"},
+        "is_config_pending_restart": {"key": "properties.isConfigPendingRestart", "type": "bool"},
+        "unit": {"key": "properties.unit", "type": "str"},
+        "documentation_link": {"key": "properties.documentationLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Value of the configuration (also known as server parameter). Required to update
+         the value assigned to a specific modifiable configuration.
+        :paramtype value: str
+        :keyword source: Source of the value assigned to the configuration (also known as server
+         parameter). Required to update the value assigned to a specific modifiable configuration.
+        :paramtype source: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.description: Optional[str] = None
+        self.default_value: Optional[str] = None
+        self.data_type: Optional[Union[str, "_models.ConfigurationDataType"]] = None
+        self.allowed_values: Optional[str] = None
+        self.source = source
+        self.is_dynamic_config: Optional[bool] = None
+        self.is_read_only: Optional[bool] = None
+        self.is_config_pending_restart: Optional[bool] = None
+        self.unit: Optional[str] = None
+        self.documentation_link: Optional[str] = None
+
+
+class ConfigurationForUpdate(_serialization.Model):
+    """Configuration (also known as server parameter).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Value of the configuration (also known as server parameter). Required to update
+     the value assigned to a specific modifiable configuration.
+    :vartype value: str
+    :ivar description: Description of the configuration (also known as server parameter).
+    :vartype description: str
+    :ivar default_value: Value assigned by default to the configuration (also known as server
+     parameter).
+    :vartype default_value: str
+    :ivar data_type: Data type of the configuration (also known as server parameter). Known values
+     are: "Boolean", "Numeric", "Integer", "Enumeration", "String", and "Set".
+    :vartype data_type: str or ~azure.mgmt.postgresqlflexibleservers.models.ConfigurationDataType
+    :ivar allowed_values: Allowed values of the configuration (also known as server parameter).
+    :vartype allowed_values: str
+    :ivar source: Source of the value assigned to the configuration (also known as server
+     parameter). Required to update the value assigned to a specific modifiable configuration.
+    :vartype source: str
+    :ivar is_dynamic_config: Indicates if it's a dynamic (true) or static (false) configuration
+     (also known as server parameter). Static server parameters require a server restart after
+     changing the value assigned to them, for the change to take effect. Dynamic server parameters
+     do not require a server restart after changing the value assigned to them, for the change to
+     take effect.
+    :vartype is_dynamic_config: bool
+    :ivar is_read_only: Indicates if it's a read-only (true) or modifiable (false) configuration
+     (also known as server parameter).
+    :vartype is_read_only: bool
+    :ivar is_config_pending_restart: Indicates if the value assigned to the configuration (also
+     known as server parameter) is pending a server restart for it to take effect.
+    :vartype is_config_pending_restart: bool
+    :ivar unit: Units in which the configuration (also known as server parameter) value is
+     expressed.
+    :vartype unit: str
+    :ivar documentation_link: Link pointing to the documentation of the configuration (also known
+     as server parameter).
+    :vartype documentation_link: str
+    """
+
+    _validation = {
+        "description": {"readonly": True},
+        "default_value": {"readonly": True},
+        "data_type": {"readonly": True},
+        "allowed_values": {"readonly": True},
+        "is_dynamic_config": {"readonly": True},
+        "is_read_only": {"readonly": True},
+        "is_config_pending_restart": {"readonly": True},
+        "unit": {"readonly": True},
+        "documentation_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "properties.value", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "default_value": {"key": "properties.defaultValue", "type": "str"},
+        "data_type": {"key": "properties.dataType", "type": "str"},
+        "allowed_values": {"key": "properties.allowedValues", "type": "str"},
+        "source": {"key": "properties.source", "type": "str"},
+        "is_dynamic_config": {"key": "properties.isDynamicConfig", "type": "bool"},
+        "is_read_only": {"key": "properties.isReadOnly", "type": "bool"},
+        "is_config_pending_restart": {"key": "properties.isConfigPendingRestart", "type": "bool"},
+        "unit": {"key": "properties.unit", "type": "str"},
+        "documentation_link": {"key": "properties.documentationLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[str] = None, source: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Value of the configuration (also known as server parameter). Required to update
+         the value assigned to a specific modifiable configuration.
+        :paramtype value: str
+        :keyword source: Source of the value assigned to the configuration (also known as server
+         parameter). Required to update the value assigned to a specific modifiable configuration.
+        :paramtype source: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.description: Optional[str] = None
+        self.default_value: Optional[str] = None
+        self.data_type: Optional[Union[str, "_models.ConfigurationDataType"]] = None
+        self.allowed_values: Optional[str] = None
+        self.source = source
+        self.is_dynamic_config: Optional[bool] = None
+        self.is_read_only: Optional[bool] = None
+        self.is_config_pending_restart: Optional[bool] = None
+        self.unit: Optional[str] = None
+        self.documentation_link: Optional[str] = None
+
+
+class ConfigurationList(_serialization.Model):
+    """List of configurations (also known as server parameters).
+
+    :ivar value: List of configurations (also known as server parameters).
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Configuration]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Configuration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.Configuration"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of configurations (also known as server parameters).
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.Configuration]
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class Database(ProxyResource):
+    """Represents a database.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar charset: Character set of the database.
+    :vartype charset: str
+    :ivar collation: Collation of the database.
+    :vartype collation: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "charset": {"pattern": r"^[a-zA-Z]+\w*$"},
+        "collation": {"pattern": r"^[a-zA-Z\-]+([. ]|\w)*$"},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "charset": {"key": "properties.charset", "type": "str"},
+        "collation": {"key": "properties.collation", "type": "str"},
+    }
+
+    def __init__(self, *, charset: Optional[str] = None, collation: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword charset: Character set of the database.
+        :paramtype charset: str
+        :keyword collation: Collation of the database.
+        :paramtype collation: str
+        """
+        super().__init__(**kwargs)
+        self.charset = charset
+        self.collation = collation
+
+
+class DatabaseList(_serialization.Model):
+    """List of all databases in a server.
+
+    :ivar value: List of all databases in a server.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Database]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Database]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.Database"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of all databases in a server.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.Database]
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class DatabaseMigrationState(_serialization.Model):
+    """Migration state of a database.
+
+    :ivar database_name: Name of database.
+    :vartype database_name: str
+    :ivar migration_state: Migration state of a database. Known values are: "InProgress",
+     "WaitingForCutoverTrigger", "Failed", "Canceled", "Succeeded", and "Canceling".
+    :vartype migration_state: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrationDatabaseState
+    :ivar migration_operation: Migration operation of a database.
+    :vartype migration_operation: str
+    :ivar started_on: Start time of a migration state.
+    :vartype started_on: ~datetime.datetime
+    :ivar ended_on: End time of a migration state.
+    :vartype ended_on: ~datetime.datetime
+    :ivar full_load_queued_tables: Number of tables queued for the migration of a database.
+    :vartype full_load_queued_tables: int
+    :ivar full_load_errored_tables: Number of tables encountering errors during the migration of a
+     database.
+    :vartype full_load_errored_tables: int
+    :ivar full_load_loading_tables: Number of tables loading during the migration of a database.
+    :vartype full_load_loading_tables: int
+    :ivar full_load_completed_tables: Number of tables loaded during the migration of a database.
+    :vartype full_load_completed_tables: int
+    :ivar cdc_update_counter: Change Data Capture update counter.
+    :vartype cdc_update_counter: int
+    :ivar cdc_delete_counter: Change Data Capture delete counter.
+    :vartype cdc_delete_counter: int
+    :ivar cdc_insert_counter: Change Data Capture insert counter.
+    :vartype cdc_insert_counter: int
+    :ivar applied_changes: Change Data Capture applied changes counter.
+    :vartype applied_changes: int
+    :ivar incoming_changes: Change Data Capture incoming changes counter.
+    :vartype incoming_changes: int
+    :ivar latency: Lag in seconds between source and target during online phase.
+    :vartype latency: int
+    :ivar message: Error message, if any, for the migration state.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "database_name": {"key": "databaseName", "type": "str"},
+        "migration_state": {"key": "migrationState", "type": "str"},
+        "migration_operation": {"key": "migrationOperation", "type": "str"},
+        "started_on": {"key": "startedOn", "type": "iso-8601"},
+        "ended_on": {"key": "endedOn", "type": "iso-8601"},
+        "full_load_queued_tables": {"key": "fullLoadQueuedTables", "type": "int"},
+        "full_load_errored_tables": {"key": "fullLoadErroredTables", "type": "int"},
+        "full_load_loading_tables": {"key": "fullLoadLoadingTables", "type": "int"},
+        "full_load_completed_tables": {"key": "fullLoadCompletedTables", "type": "int"},
+        "cdc_update_counter": {"key": "cdcUpdateCounter", "type": "int"},
+        "cdc_delete_counter": {"key": "cdcDeleteCounter", "type": "int"},
+        "cdc_insert_counter": {"key": "cdcInsertCounter", "type": "int"},
+        "applied_changes": {"key": "appliedChanges", "type": "int"},
+        "incoming_changes": {"key": "incomingChanges", "type": "int"},
+        "latency": {"key": "latency", "type": "int"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        database_name: Optional[str] = None,
+        migration_state: Optional[Union[str, "_models.MigrationDatabaseState"]] = None,
+        migration_operation: Optional[str] = None,
+        started_on: Optional[datetime.datetime] = None,
+        ended_on: Optional[datetime.datetime] = None,
+        full_load_queued_tables: Optional[int] = None,
+        full_load_errored_tables: Optional[int] = None,
+        full_load_loading_tables: Optional[int] = None,
+        full_load_completed_tables: Optional[int] = None,
+        cdc_update_counter: Optional[int] = None,
+        cdc_delete_counter: Optional[int] = None,
+        cdc_insert_counter: Optional[int] = None,
+        applied_changes: Optional[int] = None,
+        incoming_changes: Optional[int] = None,
+        latency: Optional[int] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword database_name: Name of database.
+        :paramtype database_name: str
+        :keyword migration_state: Migration state of a database. Known values are: "InProgress",
+         "WaitingForCutoverTrigger", "Failed", "Canceled", "Succeeded", and "Canceling".
+        :paramtype migration_state: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.MigrationDatabaseState
+        :keyword migration_operation: Migration operation of a database.
+        :paramtype migration_operation: str
+        :keyword started_on: Start time of a migration state.
+        :paramtype started_on: ~datetime.datetime
+        :keyword ended_on: End time of a migration state.
+        :paramtype ended_on: ~datetime.datetime
+        :keyword full_load_queued_tables: Number of tables queued for the migration of a database.
+        :paramtype full_load_queued_tables: int
+        :keyword full_load_errored_tables: Number of tables encountering errors during the migration of
+         a database.
+        :paramtype full_load_errored_tables: int
+        :keyword full_load_loading_tables: Number of tables loading during the migration of a database.
+        :paramtype full_load_loading_tables: int
+        :keyword full_load_completed_tables: Number of tables loaded during the migration of a
+         database.
+        :paramtype full_load_completed_tables: int
+        :keyword cdc_update_counter: Change Data Capture update counter.
+        :paramtype cdc_update_counter: int
+        :keyword cdc_delete_counter: Change Data Capture delete counter.
+        :paramtype cdc_delete_counter: int
+        :keyword cdc_insert_counter: Change Data Capture insert counter.
+        :paramtype cdc_insert_counter: int
+        :keyword applied_changes: Change Data Capture applied changes counter.
+        :paramtype applied_changes: int
+        :keyword incoming_changes: Change Data Capture incoming changes counter.
+        :paramtype incoming_changes: int
+        :keyword latency: Lag in seconds between source and target during online phase.
+        :paramtype latency: int
+        :keyword message: Error message, if any, for the migration state.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.database_name = database_name
+        self.migration_state = migration_state
+        self.migration_operation = migration_operation
+        self.started_on = started_on
+        self.ended_on = ended_on
+        self.full_load_queued_tables = full_load_queued_tables
+        self.full_load_errored_tables = full_load_errored_tables
+        self.full_load_loading_tables = full_load_loading_tables
+        self.full_load_completed_tables = full_load_completed_tables
+        self.cdc_update_counter = cdc_update_counter
+        self.cdc_delete_counter = cdc_delete_counter
+        self.cdc_insert_counter = cdc_insert_counter
+        self.applied_changes = applied_changes
+        self.incoming_changes = incoming_changes
+        self.latency = latency
+        self.message = message
+
+
+class DataEncryption(_serialization.Model):
+    """Data encryption properties of a server.
+
+    :ivar primary_key_uri: URI of the key in Azure Key Vault used for data encryption of the
+     primary storage associated to a server.
+    :vartype primary_key_uri: str
+    :ivar primary_user_assigned_identity_id: Identifier of the user assigned managed identity used
+     to access the key in Azure Key Vault for data encryption of the primary storage associated to a
+     server.
+    :vartype primary_user_assigned_identity_id: str
+    :ivar geo_backup_key_uri: Identifier of the user assigned managed identity used to access the
+     key in Azure Key Vault for data encryption of the geographically redundant storage associated
+     to a server that is configured to support geographically redundant backups.
+    :vartype geo_backup_key_uri: str
+    :ivar geo_backup_user_assigned_identity_id: Identifier of the user assigned managed identity
+     used to access the key in Azure Key Vault for data encryption of the geographically redundant
+     storage associated to a server that is configured to support geographically redundant backups.
+    :vartype geo_backup_user_assigned_identity_id: str
+    :ivar type: Data encryption type used by a server. Known values are: "SystemManaged" and
+     "AzureKeyVault".
+    :vartype type: str or ~azure.mgmt.postgresqlflexibleservers.models.DataEncryptionType
+    :ivar primary_encryption_key_status: Status of key used by a server configured with data
+     encryption based on customer managed key, to encrypt the primary storage associated to the
+     server. Known values are: "Valid" and "Invalid".
+    :vartype primary_encryption_key_status: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.EncryptionKeyStatus
+    :ivar geo_backup_encryption_key_status: Status of key used by a server configured with data
+     encryption based on customer managed key, to encrypt the geographically redundant storage
+     associated to the server when it is configured to support geographically redundant backups.
+     Known values are: "Valid" and "Invalid".
+    :vartype geo_backup_encryption_key_status: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.EncryptionKeyStatus
+    """
+
+    _attribute_map = {
+        "primary_key_uri": {"key": "primaryKeyURI", "type": "str"},
+        "primary_user_assigned_identity_id": {"key": "primaryUserAssignedIdentityId", "type": "str"},
+        "geo_backup_key_uri": {"key": "geoBackupKeyURI", "type": "str"},
+        "geo_backup_user_assigned_identity_id": {"key": "geoBackupUserAssignedIdentityId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "primary_encryption_key_status": {"key": "primaryEncryptionKeyStatus", "type": "str"},
+        "geo_backup_encryption_key_status": {"key": "geoBackupEncryptionKeyStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        primary_key_uri: Optional[str] = None,
+        primary_user_assigned_identity_id: Optional[str] = None,
+        geo_backup_key_uri: Optional[str] = None,
+        geo_backup_user_assigned_identity_id: Optional[str] = None,
+        type: Optional[Union[str, "_models.DataEncryptionType"]] = None,
+        primary_encryption_key_status: Optional[Union[str, "_models.EncryptionKeyStatus"]] = None,
+        geo_backup_encryption_key_status: Optional[Union[str, "_models.EncryptionKeyStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword primary_key_uri: URI of the key in Azure Key Vault used for data encryption of the
+         primary storage associated to a server.
+        :paramtype primary_key_uri: str
+        :keyword primary_user_assigned_identity_id: Identifier of the user assigned managed identity
+         used to access the key in Azure Key Vault for data encryption of the primary storage associated
+         to a server.
+        :paramtype primary_user_assigned_identity_id: str
+        :keyword geo_backup_key_uri: Identifier of the user assigned managed identity used to access
+         the key in Azure Key Vault for data encryption of the geographically redundant storage
+         associated to a server that is configured to support geographically redundant backups.
+        :paramtype geo_backup_key_uri: str
+        :keyword geo_backup_user_assigned_identity_id: Identifier of the user assigned managed identity
+         used to access the key in Azure Key Vault for data encryption of the geographically redundant
+         storage associated to a server that is configured to support geographically redundant backups.
+        :paramtype geo_backup_user_assigned_identity_id: str
+        :keyword type: Data encryption type used by a server. Known values are: "SystemManaged" and
+         "AzureKeyVault".
+        :paramtype type: str or ~azure.mgmt.postgresqlflexibleservers.models.DataEncryptionType
+        :keyword primary_encryption_key_status: Status of key used by a server configured with data
+         encryption based on customer managed key, to encrypt the primary storage associated to the
+         server. Known values are: "Valid" and "Invalid".
+        :paramtype primary_encryption_key_status: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.EncryptionKeyStatus
+        :keyword geo_backup_encryption_key_status: Status of key used by a server configured with data
+         encryption based on customer managed key, to encrypt the geographically redundant storage
+         associated to the server when it is configured to support geographically redundant backups.
+         Known values are: "Valid" and "Invalid".
+        :paramtype geo_backup_encryption_key_status: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.EncryptionKeyStatus
+        """
+        super().__init__(**kwargs)
+        self.primary_key_uri = primary_key_uri
+        self.primary_user_assigned_identity_id = primary_user_assigned_identity_id
+        self.geo_backup_key_uri = geo_backup_key_uri
+        self.geo_backup_user_assigned_identity_id = geo_backup_user_assigned_identity_id
+        self.type = type
+        self.primary_encryption_key_status = primary_encryption_key_status
+        self.geo_backup_encryption_key_status = geo_backup_encryption_key_status
+
+
+class DbLevelValidationStatus(_serialization.Model):
+    """Validation status summary for a database.
+
+    :ivar database_name: Name of database.
+    :vartype database_name: str
+    :ivar started_on: Start time of a database level validation.
+    :vartype started_on: ~datetime.datetime
+    :ivar ended_on: End time of a database level validation.
+    :vartype ended_on: ~datetime.datetime
+    :ivar summary: Summary of database level validations.
+    :vartype summary: list[~azure.mgmt.postgresqlflexibleservers.models.ValidationSummaryItem]
+    """
+
+    _attribute_map = {
+        "database_name": {"key": "databaseName", "type": "str"},
+        "started_on": {"key": "startedOn", "type": "iso-8601"},
+        "ended_on": {"key": "endedOn", "type": "iso-8601"},
+        "summary": {"key": "summary", "type": "[ValidationSummaryItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        database_name: Optional[str] = None,
+        started_on: Optional[datetime.datetime] = None,
+        ended_on: Optional[datetime.datetime] = None,
+        summary: Optional[list["_models.ValidationSummaryItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword database_name: Name of database.
+        :paramtype database_name: str
+        :keyword started_on: Start time of a database level validation.
+        :paramtype started_on: ~datetime.datetime
+        :keyword ended_on: End time of a database level validation.
+        :paramtype ended_on: ~datetime.datetime
+        :keyword summary: Summary of database level validations.
+        :paramtype summary: list[~azure.mgmt.postgresqlflexibleservers.models.ValidationSummaryItem]
+        """
+        super().__init__(**kwargs)
+        self.database_name = database_name
+        self.started_on = started_on
+        self.ended_on = ended_on
+        self.summary = summary
+
+
+class DbServerMetadata(_serialization.Model):
+    """Database server metadata.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Location of database server.
+    :vartype location: str
+    :ivar version: Major version of PostgreSQL database engine.
+    :vartype version: str
+    :ivar storage_mb: Storage size (in MB) for database server.
+    :vartype storage_mb: int
+    :ivar sku: Compute tier and size of the database server. This object is empty for an Azure
+     Database for PostgreSQL single server.
+    :vartype sku: ~azure.mgmt.postgresqlflexibleservers.models.ServerSku
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "version": {"key": "version", "type": "str"},
+        "storage_mb": {"key": "storageMb", "type": "int"},
+        "sku": {"key": "sku", "type": "ServerSku"},
+    }
+
+    def __init__(
+        self,
+        *,
+        version: Optional[str] = None,
+        storage_mb: Optional[int] = None,
+        sku: Optional["_models.ServerSku"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword version: Major version of PostgreSQL database engine.
+        :paramtype version: str
+        :keyword storage_mb: Storage size (in MB) for database server.
+        :paramtype storage_mb: int
+        :keyword sku: Compute tier and size of the database server. This object is empty for an Azure
+         Database for PostgreSQL single server.
+        :paramtype sku: ~azure.mgmt.postgresqlflexibleservers.models.ServerSku
+        """
+        super().__init__(**kwargs)
+        self.location: Optional[str] = None
+        self.version = version
+        self.storage_mb = storage_mb
+        self.sku = sku
+
+
+class DelegatedSubnetUsage(_serialization.Model):
+    """Delegated subnet usage data.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar subnet_name: Name of the delegated subnet for which IP addresses are in use.
+    :vartype subnet_name: str
+    :ivar usage: Number of IP addresses used by the delegated subnet.
+    :vartype usage: int
+    """
+
+    _validation = {
+        "subnet_name": {"readonly": True},
+        "usage": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "subnet_name": {"key": "subnetName", "type": "str"},
+        "usage": {"key": "usage", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.subnet_name: Optional[str] = None
+        self.usage: Optional[int] = None
+
+
+class ErrorAdditionalInfo(_serialization.Model):
+    """The resource management error additional info.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: JSON
+    """
+
+    _validation = {
+        "type": {"readonly": True},
+        "info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
+
+
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.postgresqlflexibleservers.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info:
+     list[~azure.mgmt.postgresqlflexibleservers.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.postgresqlflexibleservers.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.postgresqlflexibleservers.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class FastProvisioningEditionCapability(CapabilityBase):
+    """Capability of a fast provisioning compute tier.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
+     "Default", and "Disabled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
+    :ivar supported_tier: Compute tier supporting fast provisioning.
+    :vartype supported_tier: str
+    :ivar supported_sku: Compute name (SKU) supporting fast provisioning.
+    :vartype supported_sku: str
+    :ivar supported_storage_gb: Storage size (in GB) supporting fast provisioning.
+    :vartype supported_storage_gb: int
+    :ivar supported_server_versions: Major version of PostgreSQL database engine supporting fast
+     provisioning.
+    :vartype supported_server_versions: str
+    :ivar server_count: Count of servers in cache matching this specification.
+    :vartype server_count: int
+    """
+
+    _validation = {
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
+        "supported_tier": {"readonly": True},
+        "supported_sku": {"readonly": True},
+        "supported_storage_gb": {"readonly": True},
+        "supported_server_versions": {"readonly": True},
+        "server_count": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+        "supported_tier": {"key": "supportedTier", "type": "str"},
+        "supported_sku": {"key": "supportedSku", "type": "str"},
+        "supported_storage_gb": {"key": "supportedStorageGb", "type": "int"},
+        "supported_server_versions": {"key": "supportedServerVersions", "type": "str"},
+        "server_count": {"key": "serverCount", "type": "int"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.supported_tier: Optional[str] = None
+        self.supported_sku: Optional[str] = None
+        self.supported_storage_gb: Optional[int] = None
+        self.supported_server_versions: Optional[str] = None
+        self.server_count: Optional[int] = None
+
+
+class FirewallRule(ProxyResource):
+    """Firewall rule.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar start_ip_address: IP address defining the start of the range of addresses of a firewall
+     rule. Must be expressed in IPv4 format. Required.
+    :vartype start_ip_address: str
+    :ivar end_ip_address: IP address defining the end of the range of addresses of a firewall rule.
+     Must be expressed in IPv4 format. Required.
+    :vartype end_ip_address: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "start_ip_address": {
+            "required": True,
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
+        },
+        "end_ip_address": {
+            "required": True,
+            "pattern": r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$",
+        },
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "start_ip_address": {"key": "properties.startIpAddress", "type": "str"},
+        "end_ip_address": {"key": "properties.endIpAddress", "type": "str"},
+    }
+
+    def __init__(self, *, start_ip_address: str, end_ip_address: str, **kwargs: Any) -> None:
+        """
+        :keyword start_ip_address: IP address defining the start of the range of addresses of a
+         firewall rule. Must be expressed in IPv4 format. Required.
+        :paramtype start_ip_address: str
+        :keyword end_ip_address: IP address defining the end of the range of addresses of a firewall
+         rule. Must be expressed in IPv4 format. Required.
+        :paramtype end_ip_address: str
+        """
+        super().__init__(**kwargs)
+        self.start_ip_address = start_ip_address
+        self.end_ip_address = end_ip_address
+
+
+class FirewallRuleList(_serialization.Model):
+    """List of firewall rules.
+
+    :ivar value: List of firewall rules in a server.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.FirewallRule]
+    :ivar next_link: Link to retrieve next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[FirewallRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.FirewallRule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of firewall rules in a server.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.FirewallRule]
+        :keyword next_link: Link to retrieve next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class HighAvailability(_serialization.Model):
+    """High availability properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: High availability mode for a server. Known values are: "ZoneRedundant" and
+     "SameZone".
+    :vartype mode: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode
+    :ivar state: Possible states of the standby server created when high availability is set to
+     SameZone or ZoneRedundant. Known values are: "NotEnabled", "CreatingStandby",
+     "ReplicatingData", "FailingOver", "Healthy", and "RemovingStandby".
+    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityState
+    :ivar standby_availability_zone: Availability zone associated to the standby server created
+     when high availability is set to SameZone or ZoneRedundant.
+    :vartype standby_availability_zone: str
+    """
+
+    _validation = {
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "standby_availability_zone": {"key": "standbyAvailabilityZone", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.HighAvailabilityMode"]] = None,
+        standby_availability_zone: str = "",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: High availability mode for a server. Known values are: "ZoneRedundant" and
+         "SameZone".
+        :paramtype mode: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode
+        :keyword standby_availability_zone: Availability zone associated to the standby server created
+         when high availability is set to SameZone or ZoneRedundant.
+        :paramtype standby_availability_zone: str
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.state: Optional[Union[str, "_models.HighAvailabilityState"]] = None
+        self.standby_availability_zone = standby_availability_zone
+
+
+class HighAvailabilityForPatch(_serialization.Model):
+    """High availability properties of a server.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar mode: High availability mode for a server. Known values are: "ZoneRedundant" and
+     "SameZone".
+    :vartype mode: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode
+    :ivar state: Possible states of the standby server created when high availability is set to
+     SameZone or ZoneRedundant. Known values are: "NotEnabled", "CreatingStandby",
+     "ReplicatingData", "FailingOver", "Healthy", and "RemovingStandby".
+    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityState
+    :ivar standby_availability_zone: Availability zone associated to the standby server created
+     when high availability is set to SameZone or ZoneRedundant.
+    :vartype standby_availability_zone: str
+    """
+
+    _validation = {
+        "state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "mode": {"key": "mode", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "standby_availability_zone": {"key": "standbyAvailabilityZone", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.HighAvailabilityMode"]] = None,
+        standby_availability_zone: str = "",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mode: High availability mode for a server. Known values are: "ZoneRedundant" and
+         "SameZone".
+        :paramtype mode: str or ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode
+        :keyword standby_availability_zone: Availability zone associated to the standby server created
+         when high availability is set to SameZone or ZoneRedundant.
+        :paramtype standby_availability_zone: str
+        """
+        super().__init__(**kwargs)
+        self.mode = mode
+        self.state: Optional[Union[str, "_models.HighAvailabilityState"]] = None
+        self.standby_availability_zone = standby_availability_zone
+
+
+class ImpactRecord(_serialization.Model):
+    """Impact on some metric if this recommended action is applied.
+
+    :ivar dimension_name: Dimension name.
+    :vartype dimension_name: str
+    :ivar unit: Dimension unit.
+    :vartype unit: str
+    :ivar query_id: Optional property that can be used to store the identifier of the query, if the
+     metric is for a specific query.
+    :vartype query_id: int
+    :ivar absolute_value: Absolute value.
+    :vartype absolute_value: float
+    """
+
+    _attribute_map = {
+        "dimension_name": {"key": "dimensionName", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "query_id": {"key": "queryId", "type": "int"},
+        "absolute_value": {"key": "absoluteValue", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        dimension_name: Optional[str] = None,
+        unit: Optional[str] = None,
+        query_id: Optional[int] = None,
+        absolute_value: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword dimension_name: Dimension name.
+        :paramtype dimension_name: str
+        :keyword unit: Dimension unit.
+        :paramtype unit: str
+        :keyword query_id: Optional property that can be used to store the identifier of the query, if
+         the metric is for a specific query.
+        :paramtype query_id: int
+        :keyword absolute_value: Absolute value.
+        :paramtype absolute_value: float
+        """
+        super().__init__(**kwargs)
+        self.dimension_name = dimension_name
+        self.unit = unit
+        self.query_id = query_id
+        self.absolute_value = absolute_value
+
+
+class LtrPreBackupRequest(BackupRequestBase):
+    """A request that is made for pre-backup.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar backup_settings: Backup Settings. Required.
+    :vartype backup_settings: ~azure.mgmt.postgresqlflexibleservers.models.BackupSettings
+    """
+
+
+class LtrPreBackupResponse(_serialization.Model):
+    """Response for the LTR pre-backup API call.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar number_of_containers: Number of storage containers the plugin will use during backup.
+     More than one containers may be used for size limitations, parallelism, or redundancy etc.
+     Required.
+    :vartype number_of_containers: int
+    """
+
+    _validation = {
+        "number_of_containers": {"required": True},
+    }
+
+    _attribute_map = {
+        "number_of_containers": {"key": "properties.numberOfContainers", "type": "int"},
+    }
+
+    def __init__(self, *, number_of_containers: int, **kwargs: Any) -> None:
+        """
+        :keyword number_of_containers: Number of storage containers the plugin will use during backup.
+         More than one containers may be used for size limitations, parallelism, or redundancy etc.
+         Required.
+        :paramtype number_of_containers: int
+        """
+        super().__init__(**kwargs)
+        self.number_of_containers = number_of_containers
+
+
 class LtrServerBackupOperationList(_serialization.Model):
     """A list of long term retention backup operations for server.
 
     :ivar value: The list of long term retention server backup operations.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.LtrServerBackupOperation]
+    :vartype value:
+     list[~azure.mgmt.postgresqlflexibleservers.models.BackupsLongTermRetentionOperation]
     :ivar next_link: The link used to get the next page of operations.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[LtrServerBackupOperation]"},
+        "value": {"key": "value", "type": "[BackupsLongTermRetentionOperation]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.LtrServerBackupOperation"]] = None,
+        value: Optional[list["_models.BackupsLongTermRetentionOperation"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of long term retention server backup operations.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.LtrServerBackupOperation]
+        :paramtype value:
+         list[~azure.mgmt.postgresqlflexibleservers.models.BackupsLongTermRetentionOperation]
         :keyword next_link: The link used to get the next page of operations.
         :paramtype next_link: str
         """
@@ -2462,13 +2487,13 @@ class LtrServerBackupOperationList(_serialization.Model):
 class MaintenanceWindow(_serialization.Model):
     """Maintenance window properties of a server.
 
-    :ivar custom_window: indicates whether custom window is enabled or disabled.
+    :ivar custom_window: Indicates whether custom window is enabled or disabled.
     :vartype custom_window: str
-    :ivar start_hour: start hour for maintenance window.
+    :ivar start_hour: Start hour to be used for maintenance window.
     :vartype start_hour: int
-    :ivar start_minute: start minute for maintenance window.
+    :ivar start_minute: Start minute to be used for maintenance window.
     :vartype start_minute: int
-    :ivar day_of_week: day of week for maintenance window.
+    :ivar day_of_week: Day of the week to be used for maintenance window.
     :vartype day_of_week: int
     """
 
@@ -2489,13 +2514,13 @@ class MaintenanceWindow(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword custom_window: indicates whether custom window is enabled or disabled.
+        :keyword custom_window: Indicates whether custom window is enabled or disabled.
         :paramtype custom_window: str
-        :keyword start_hour: start hour for maintenance window.
+        :keyword start_hour: Start hour to be used for maintenance window.
         :paramtype start_hour: int
-        :keyword start_minute: start minute for maintenance window.
+        :keyword start_minute: Start minute to be used for maintenance window.
         :paramtype start_minute: int
-        :keyword day_of_week: day of week for maintenance window.
+        :keyword day_of_week: Day of the week to be used for maintenance window.
         :paramtype day_of_week: int
         """
         super().__init__(**kwargs)
@@ -2505,56 +2530,50 @@ class MaintenanceWindow(_serialization.Model):
         self.day_of_week = day_of_week
 
 
-class MigrationNameAvailabilityResource(_serialization.Model):
-    """Represents a migration name's availability.
+class MaintenanceWindowForPatch(_serialization.Model):
+    """Maintenance window properties of a server.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: The resource name to verify. Required.
-    :vartype name: str
-    :ivar type: The type of the resource. Required.
-    :vartype type: str
-    :ivar name_available: Indicates whether the resource name is available.
-    :vartype name_available: bool
-    :ivar reason: Migration name availability reason. Known values are: "Invalid" and
-     "AlreadyExists".
-    :vartype reason: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailabilityReason
-    :ivar message: Migration name availability message.
-    :vartype message: str
+    :ivar custom_window: Indicates whether custom window is enabled or disabled.
+    :vartype custom_window: str
+    :ivar start_hour: Start hour to be used for maintenance window.
+    :vartype start_hour: int
+    :ivar start_minute: Start minute to be used for maintenance window.
+    :vartype start_minute: int
+    :ivar day_of_week: Day of the week to be used for maintenance window.
+    :vartype day_of_week: int
     """
 
-    _validation = {
-        "name": {"required": True},
-        "type": {"required": True},
-        "name_available": {"readonly": True},
-        "reason": {"readonly": True},
-        "message": {"readonly": True},
-    }
-
     _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "name_available": {"key": "nameAvailable", "type": "bool"},
-        "reason": {"key": "reason", "type": "str"},
-        "message": {"key": "message", "type": "str"},
+        "custom_window": {"key": "customWindow", "type": "str"},
+        "start_hour": {"key": "startHour", "type": "int"},
+        "start_minute": {"key": "startMinute", "type": "int"},
+        "day_of_week": {"key": "dayOfWeek", "type": "int"},
     }
 
-    def __init__(self, *, name: str, type: str, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        custom_window: Optional[str] = None,
+        start_hour: Optional[int] = None,
+        start_minute: Optional[int] = None,
+        day_of_week: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword name: The resource name to verify. Required.
-        :paramtype name: str
-        :keyword type: The type of the resource. Required.
-        :paramtype type: str
+        :keyword custom_window: Indicates whether custom window is enabled or disabled.
+        :paramtype custom_window: str
+        :keyword start_hour: Start hour to be used for maintenance window.
+        :paramtype start_hour: int
+        :keyword start_minute: Start minute to be used for maintenance window.
+        :paramtype start_minute: int
+        :keyword day_of_week: Day of the week to be used for maintenance window.
+        :paramtype day_of_week: int
         """
         super().__init__(**kwargs)
-        self.name = name
-        self.type = type
-        self.name_available: Optional[bool] = None
-        self.reason: Optional[Union[str, "_models.MigrationNameAvailabilityReason"]] = None
-        self.message: Optional[str] = None
+        self.custom_window = custom_window
+        self.start_hour = start_hour
+        self.start_minute = start_minute
+        self.day_of_week = day_of_week
 
 
 class TrackedResource(Resource):
@@ -2599,7 +2618,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -2611,8 +2630,8 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class MigrationResource(TrackedResource):
-    """Represents a migration resource.
+class Migration(TrackedResource):
+    """Properties of a migration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -2633,91 +2652,91 @@ class MigrationResource(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar migration_id: ID for migration, a GUID.
+    :ivar migration_id: Identifier of a migration.
     :vartype migration_id: str
-    :ivar current_status: Current status of migration.
+    :ivar current_status: Current status of a migration.
     :vartype current_status: ~azure.mgmt.postgresqlflexibleservers.models.MigrationStatus
-    :ivar migration_instance_resource_id: ResourceId of the private endpoint migration instance.
+    :ivar migration_instance_resource_id: Identifier of the private endpoint migration instance.
     :vartype migration_instance_resource_id: str
-    :ivar migration_mode: There are two types of migration modes Online and Offline. Known values
-     are: "Offline" and "Online".
+    :ivar migration_mode: Mode used to perform the migration: Online or Offline. Known values are:
+     "Offline" and "Online".
     :vartype migration_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationMode
-    :ivar migration_option: This indicates the supported Migration option for the migration. Known
-     values are: "Validate", "Migrate", and "ValidateAndMigrate".
+    :ivar migration_option: Supported option for a migration. Known values are: "Validate",
+     "Migrate", and "ValidateAndMigrate".
     :vartype migration_option: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationOption
-    :ivar source_type: migration source server type : OnPremises, AWS, GCP, AzureVM,
-     PostgreSQLSingleServer, AWS_RDS, AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute,
-     EDB, EDB_Oracle_Server, EDB_PostgreSQL, PostgreSQLFlexibleServer, PostgreSQLCosmosDB,
-     Huawei_RDS, Huawei_Compute, Heroku_PostgreSQL, Crunchy_PostgreSQL, ApsaraDB_RDS,
-     Digital_Ocean_Droplets, Digital_Ocean_PostgreSQL, or Supabase_PostgreSQL. Known values are:
-     "OnPremises", "AWS", "GCP", "AzureVM", "PostgreSQLSingleServer", "AWS_RDS", "AWS_AURORA",
-     "AWS_EC2", "GCP_CloudSQL", "GCP_AlloyDB", "GCP_Compute", "EDB", "EDB_Oracle_Server",
-     "EDB_PostgreSQL", "PostgreSQLFlexibleServer", "PostgreSQLCosmosDB", "Huawei_RDS",
-     "Huawei_Compute", "Heroku_PostgreSQL", "Crunchy_PostgreSQL", "ApsaraDB_RDS",
+    :ivar source_type: Source server type used for the migration: ApsaraDB_RDS, AWS, AWS_AURORA,
+     AWS_EC2, AWS_RDS, AzureVM, Crunchy_PostgreSQL, Digital_Ocean_Droplets,
+     Digital_Ocean_PostgreSQL, EDB, EDB_Oracle_Server, EDB_PostgreSQL, GCP, GCP_AlloyDB,
+     GCP_CloudSQL, GCP_Compute, Heroku_PostgreSQL, Huawei_Compute, Huawei_RDS, OnPremises,
+     PostgreSQLCosmosDB, PostgreSQLFlexibleServer, PostgreSQLSingleServer, or Supabase_PostgreSQL.
+     Known values are: "OnPremises", "AWS", "GCP", "AzureVM", "PostgreSQLSingleServer", "AWS_RDS",
+     "AWS_AURORA", "AWS_EC2", "GCP_CloudSQL", "GCP_AlloyDB", "GCP_Compute", "EDB",
+     "EDB_Oracle_Server", "EDB_PostgreSQL", "PostgreSQLFlexibleServer", "PostgreSQLCosmosDB",
+     "Huawei_RDS", "Huawei_Compute", "Heroku_PostgreSQL", "Crunchy_PostgreSQL", "ApsaraDB_RDS",
      "Digital_Ocean_Droplets", "Digital_Ocean_PostgreSQL", and "Supabase_PostgreSQL".
     :vartype source_type: str or ~azure.mgmt.postgresqlflexibleservers.models.SourceType
-    :ivar ssl_mode: SSL modes for migration. Default SSL mode for PostgreSQLSingleServer is
-     VerifyFull and Prefer for other source types. Known values are: "Prefer", "Require",
-     "VerifyCA", and "VerifyFull".
+    :ivar ssl_mode: SSL mode used by a migration. Default SSL mode for 'PostgreSQLSingleServer' is
+     'VerifyFull'. Default SSL mode for other source types is 'Prefer'. Known values are: "Prefer",
+     "Require", "VerifyCA", and "VerifyFull".
     :vartype ssl_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.SslMode
-    :ivar source_db_server_metadata: Metadata of the source database server.
+    :ivar source_db_server_metadata: Metadata of source database server.
     :vartype source_db_server_metadata:
      ~azure.mgmt.postgresqlflexibleservers.models.DbServerMetadata
-    :ivar target_db_server_metadata: Metadata of the target database server.
+    :ivar target_db_server_metadata: Metadata of target database server.
     :vartype target_db_server_metadata:
      ~azure.mgmt.postgresqlflexibleservers.models.DbServerMetadata
-    :ivar source_db_server_resource_id: ResourceId of the source database server in case the
-     sourceType is PostgreSQLSingleServer. For other source types this should be
+    :ivar source_db_server_resource_id: Identifier of the source database server resource, when
+     'sourceType' is 'PostgreSQLSingleServer'. For other source types this must be set to
      ipaddress:port@username or hostname:port@username.
     :vartype source_db_server_resource_id: str
-    :ivar source_db_server_fully_qualified_domain_name: Source server fully qualified domain name
-     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
-     always use it for connection.
+    :ivar source_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+     address of the source server. This property is optional. When provided, the migration service
+     will always use it to connect to the source server.
     :vartype source_db_server_fully_qualified_domain_name: str
-    :ivar target_db_server_resource_id: ResourceId of the source database server.
+    :ivar target_db_server_resource_id: Identifier of the target database server resource.
     :vartype target_db_server_resource_id: str
-    :ivar target_db_server_fully_qualified_domain_name: Target server fully qualified domain name
-     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
-     always use it for connection.
+    :ivar target_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+     address of the target server. This property is optional. When provided, the migration service
+     will always use it to connect to the target server.
     :vartype target_db_server_fully_qualified_domain_name: str
     :ivar secret_parameters: Migration secret parameters.
     :vartype secret_parameters:
      ~azure.mgmt.postgresqlflexibleservers.models.MigrationSecretParameters
-    :ivar dbs_to_migrate: Number of databases to migrate.
+    :ivar dbs_to_migrate: Names of databases to migrate.
     :vartype dbs_to_migrate: list[str]
-    :ivar setup_logical_replication_on_source_db_if_needed: Indicates whether to setup
-     LogicalReplicationOnSourceDb, if needed. Known values are: "True" and "False".
+    :ivar setup_logical_replication_on_source_db_if_needed: Indicates whether to setup logical
+     replication on source server, if needed. Known values are: "True" and "False".
     :vartype setup_logical_replication_on_source_db_if_needed: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceDbEnum
-    :ivar overwrite_dbs_in_target: Indicates whether the databases on the target server can be
-     overwritten, if already present. If set to False, the migration workflow will wait for a
-     confirmation, if it detects that the database already exists. Known values are: "True" and
-     "False".
+     ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceServer
+    :ivar overwrite_dbs_in_target: Indicates if databases on the target server can be overwritten
+     when already present. If set to 'False', when the migration workflow detects that the database
+     already exists on the target server, it will wait for a confirmation. Known values are: "True"
+     and "False".
     :vartype overwrite_dbs_in_target: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDbsInTargetEnum
-    :ivar migration_window_start_time_in_utc: Start time in UTC for migration window.
+     ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDatabasesOnTargetServer
+    :ivar migration_window_start_time_in_utc: Start time (UTC) for migration window.
     :vartype migration_window_start_time_in_utc: ~datetime.datetime
-    :ivar migration_window_end_time_in_utc: End time in UTC for migration window.
+    :ivar migration_window_end_time_in_utc: End time (UTC) for migration window.
     :vartype migration_window_end_time_in_utc: ~datetime.datetime
-    :ivar migrate_roles: To migrate roles and permissions we need to send this flag as True. Known
-     values are: "True" and "False".
-    :vartype migrate_roles: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesEnum
-    :ivar start_data_migration: Indicates whether the data migration should start right away. Known
-     values are: "True" and "False".
+    :ivar migrate_roles: Indicates if roles and permissions must be migrated. Known values are:
+     "True" and "False".
+    :vartype migrate_roles: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesAndPermissions
+    :ivar start_data_migration: Indicates if data migration must start right away. Known values
+     are: "True" and "False".
     :vartype start_data_migration: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigrationEnum
-    :ivar trigger_cutover: To trigger cutover for entire migration we need to send this flag as
-     True. Known values are: "True" and "False".
-    :vartype trigger_cutover: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutoverEnum
-    :ivar dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases send
-     triggerCutover flag as True and database names in this array.
-    :vartype dbs_to_trigger_cutover_on: list[str]
-    :ivar cancel: To trigger cancel for entire migration we need to send this flag as True. Known
+     ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigration
+    :ivar trigger_cutover: Indicates if cutover must be triggered for the entire migration. Known
      values are: "True" and "False".
-    :vartype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.CancelEnum
-    :ivar dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases send
-     cancel flag as True and database names in this array.
+    :vartype trigger_cutover: str or ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutover
+    :ivar dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases set
+     'triggerCutover' to 'True' and the names of the specific databases in this array.
+    :vartype dbs_to_trigger_cutover_on: list[str]
+    :ivar cancel: Indicates if cancel must be triggered for the entire migration. Known values are:
+     "True" and "False".
+    :vartype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.Cancel
+    :ivar dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases set
+     'triggerCutover' to 'True' and the names of the specific databases in this array.
     :vartype dbs_to_cancel_migration_on: list[str]
     """
 
@@ -2782,7 +2801,7 @@ class MigrationResource(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         migration_instance_resource_id: Optional[str] = None,
         migration_mode: Optional[Union[str, "_models.MigrationMode"]] = None,
         migration_option: Optional[Union[str, "_models.MigrationOption"]] = None,
@@ -2792,19 +2811,19 @@ class MigrationResource(TrackedResource):
         source_db_server_fully_qualified_domain_name: Optional[str] = None,
         target_db_server_fully_qualified_domain_name: Optional[str] = None,
         secret_parameters: Optional["_models.MigrationSecretParameters"] = None,
-        dbs_to_migrate: Optional[List[str]] = None,
+        dbs_to_migrate: Optional[list[str]] = None,
         setup_logical_replication_on_source_db_if_needed: Optional[
-            Union[str, "_models.LogicalReplicationOnSourceDbEnum"]
+            Union[str, "_models.LogicalReplicationOnSourceServer"]
         ] = None,
-        overwrite_dbs_in_target: Optional[Union[str, "_models.OverwriteDbsInTargetEnum"]] = None,
+        overwrite_dbs_in_target: Optional[Union[str, "_models.OverwriteDatabasesOnTargetServer"]] = None,
         migration_window_start_time_in_utc: Optional[datetime.datetime] = None,
         migration_window_end_time_in_utc: Optional[datetime.datetime] = None,
-        migrate_roles: Optional[Union[str, "_models.MigrateRolesEnum"]] = None,
-        start_data_migration: Optional[Union[str, "_models.StartDataMigrationEnum"]] = None,
-        trigger_cutover: Optional[Union[str, "_models.TriggerCutoverEnum"]] = None,
-        dbs_to_trigger_cutover_on: Optional[List[str]] = None,
-        cancel: Optional[Union[str, "_models.CancelEnum"]] = None,
-        dbs_to_cancel_migration_on: Optional[List[str]] = None,
+        migrate_roles: Optional[Union[str, "_models.MigrateRolesAndPermissions"]] = None,
+        start_data_migration: Optional[Union[str, "_models.StartDataMigration"]] = None,
+        trigger_cutover: Optional[Union[str, "_models.TriggerCutover"]] = None,
+        dbs_to_trigger_cutover_on: Optional[list[str]] = None,
+        cancel: Optional[Union[str, "_models.Cancel"]] = None,
+        dbs_to_cancel_migration_on: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2812,80 +2831,80 @@ class MigrationResource(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword migration_instance_resource_id: ResourceId of the private endpoint migration instance.
+        :keyword migration_instance_resource_id: Identifier of the private endpoint migration instance.
         :paramtype migration_instance_resource_id: str
-        :keyword migration_mode: There are two types of migration modes Online and Offline. Known
-         values are: "Offline" and "Online".
+        :keyword migration_mode: Mode used to perform the migration: Online or Offline. Known values
+         are: "Offline" and "Online".
         :paramtype migration_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationMode
-        :keyword migration_option: This indicates the supported Migration option for the migration.
-         Known values are: "Validate", "Migrate", and "ValidateAndMigrate".
+        :keyword migration_option: Supported option for a migration. Known values are: "Validate",
+         "Migrate", and "ValidateAndMigrate".
         :paramtype migration_option: str or
          ~azure.mgmt.postgresqlflexibleservers.models.MigrationOption
-        :keyword source_type: migration source server type : OnPremises, AWS, GCP, AzureVM,
-         PostgreSQLSingleServer, AWS_RDS, AWS_AURORA, AWS_EC2, GCP_CloudSQL, GCP_AlloyDB, GCP_Compute,
-         EDB, EDB_Oracle_Server, EDB_PostgreSQL, PostgreSQLFlexibleServer, PostgreSQLCosmosDB,
-         Huawei_RDS, Huawei_Compute, Heroku_PostgreSQL, Crunchy_PostgreSQL, ApsaraDB_RDS,
-         Digital_Ocean_Droplets, Digital_Ocean_PostgreSQL, or Supabase_PostgreSQL. Known values are:
-         "OnPremises", "AWS", "GCP", "AzureVM", "PostgreSQLSingleServer", "AWS_RDS", "AWS_AURORA",
-         "AWS_EC2", "GCP_CloudSQL", "GCP_AlloyDB", "GCP_Compute", "EDB", "EDB_Oracle_Server",
-         "EDB_PostgreSQL", "PostgreSQLFlexibleServer", "PostgreSQLCosmosDB", "Huawei_RDS",
-         "Huawei_Compute", "Heroku_PostgreSQL", "Crunchy_PostgreSQL", "ApsaraDB_RDS",
+        :keyword source_type: Source server type used for the migration: ApsaraDB_RDS, AWS, AWS_AURORA,
+         AWS_EC2, AWS_RDS, AzureVM, Crunchy_PostgreSQL, Digital_Ocean_Droplets,
+         Digital_Ocean_PostgreSQL, EDB, EDB_Oracle_Server, EDB_PostgreSQL, GCP, GCP_AlloyDB,
+         GCP_CloudSQL, GCP_Compute, Heroku_PostgreSQL, Huawei_Compute, Huawei_RDS, OnPremises,
+         PostgreSQLCosmosDB, PostgreSQLFlexibleServer, PostgreSQLSingleServer, or Supabase_PostgreSQL.
+         Known values are: "OnPremises", "AWS", "GCP", "AzureVM", "PostgreSQLSingleServer", "AWS_RDS",
+         "AWS_AURORA", "AWS_EC2", "GCP_CloudSQL", "GCP_AlloyDB", "GCP_Compute", "EDB",
+         "EDB_Oracle_Server", "EDB_PostgreSQL", "PostgreSQLFlexibleServer", "PostgreSQLCosmosDB",
+         "Huawei_RDS", "Huawei_Compute", "Heroku_PostgreSQL", "Crunchy_PostgreSQL", "ApsaraDB_RDS",
          "Digital_Ocean_Droplets", "Digital_Ocean_PostgreSQL", and "Supabase_PostgreSQL".
         :paramtype source_type: str or ~azure.mgmt.postgresqlflexibleservers.models.SourceType
-        :keyword ssl_mode: SSL modes for migration. Default SSL mode for PostgreSQLSingleServer is
-         VerifyFull and Prefer for other source types. Known values are: "Prefer", "Require",
-         "VerifyCA", and "VerifyFull".
+        :keyword ssl_mode: SSL mode used by a migration. Default SSL mode for 'PostgreSQLSingleServer'
+         is 'VerifyFull'. Default SSL mode for other source types is 'Prefer'. Known values are:
+         "Prefer", "Require", "VerifyCA", and "VerifyFull".
         :paramtype ssl_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.SslMode
-        :keyword source_db_server_resource_id: ResourceId of the source database server in case the
-         sourceType is PostgreSQLSingleServer. For other source types this should be
+        :keyword source_db_server_resource_id: Identifier of the source database server resource, when
+         'sourceType' is 'PostgreSQLSingleServer'. For other source types this must be set to
          ipaddress:port@username or hostname:port@username.
         :paramtype source_db_server_resource_id: str
-        :keyword source_db_server_fully_qualified_domain_name: Source server fully qualified domain
-         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
-         will always use it for connection.
+        :keyword source_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+         address of the source server. This property is optional. When provided, the migration service
+         will always use it to connect to the source server.
         :paramtype source_db_server_fully_qualified_domain_name: str
-        :keyword target_db_server_fully_qualified_domain_name: Target server fully qualified domain
-         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
-         will always use it for connection.
+        :keyword target_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+         address of the target server. This property is optional. When provided, the migration service
+         will always use it to connect to the target server.
         :paramtype target_db_server_fully_qualified_domain_name: str
         :keyword secret_parameters: Migration secret parameters.
         :paramtype secret_parameters:
          ~azure.mgmt.postgresqlflexibleservers.models.MigrationSecretParameters
-        :keyword dbs_to_migrate: Number of databases to migrate.
+        :keyword dbs_to_migrate: Names of databases to migrate.
         :paramtype dbs_to_migrate: list[str]
-        :keyword setup_logical_replication_on_source_db_if_needed: Indicates whether to setup
-         LogicalReplicationOnSourceDb, if needed. Known values are: "True" and "False".
+        :keyword setup_logical_replication_on_source_db_if_needed: Indicates whether to setup logical
+         replication on source server, if needed. Known values are: "True" and "False".
         :paramtype setup_logical_replication_on_source_db_if_needed: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceDbEnum
-        :keyword overwrite_dbs_in_target: Indicates whether the databases on the target server can be
-         overwritten, if already present. If set to False, the migration workflow will wait for a
-         confirmation, if it detects that the database already exists. Known values are: "True" and
-         "False".
+         ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceServer
+        :keyword overwrite_dbs_in_target: Indicates if databases on the target server can be
+         overwritten when already present. If set to 'False', when the migration workflow detects that
+         the database already exists on the target server, it will wait for a confirmation. Known values
+         are: "True" and "False".
         :paramtype overwrite_dbs_in_target: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDbsInTargetEnum
-        :keyword migration_window_start_time_in_utc: Start time in UTC for migration window.
+         ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDatabasesOnTargetServer
+        :keyword migration_window_start_time_in_utc: Start time (UTC) for migration window.
         :paramtype migration_window_start_time_in_utc: ~datetime.datetime
-        :keyword migration_window_end_time_in_utc: End time in UTC for migration window.
+        :keyword migration_window_end_time_in_utc: End time (UTC) for migration window.
         :paramtype migration_window_end_time_in_utc: ~datetime.datetime
-        :keyword migrate_roles: To migrate roles and permissions we need to send this flag as True.
-         Known values are: "True" and "False".
-        :paramtype migrate_roles: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesEnum
-        :keyword start_data_migration: Indicates whether the data migration should start right away.
-         Known values are: "True" and "False".
+        :keyword migrate_roles: Indicates if roles and permissions must be migrated. Known values are:
+         "True" and "False".
+        :paramtype migrate_roles: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesAndPermissions
+        :keyword start_data_migration: Indicates if data migration must start right away. Known values
+         are: "True" and "False".
         :paramtype start_data_migration: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigrationEnum
-        :keyword trigger_cutover: To trigger cutover for entire migration we need to send this flag as
-         True. Known values are: "True" and "False".
-        :paramtype trigger_cutover: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutoverEnum
-        :keyword dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases
-         send triggerCutover flag as True and database names in this array.
-        :paramtype dbs_to_trigger_cutover_on: list[str]
-        :keyword cancel: To trigger cancel for entire migration we need to send this flag as True.
+         ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigration
+        :keyword trigger_cutover: Indicates if cutover must be triggered for the entire migration.
          Known values are: "True" and "False".
-        :paramtype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.CancelEnum
-        :keyword dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases
-         send cancel flag as True and database names in this array.
+        :paramtype trigger_cutover: str or ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutover
+        :keyword dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases set
+         'triggerCutover' to 'True' and the names of the specific databases in this array.
+        :paramtype dbs_to_trigger_cutover_on: list[str]
+        :keyword cancel: Indicates if cancel must be triggered for the entire migration. Known values
+         are: "True" and "False".
+        :paramtype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.Cancel
+        :keyword dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases set
+         'triggerCutover' to 'True' and the names of the specific databases in this array.
         :paramtype dbs_to_cancel_migration_on: list[str]
         """
         super().__init__(tags=tags, location=location, **kwargs)
@@ -2916,60 +2935,144 @@ class MigrationResource(TrackedResource):
         self.dbs_to_cancel_migration_on = dbs_to_cancel_migration_on
 
 
+class MigrationList(_serialization.Model):
+    """List of migrations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of migrations.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Migration]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Migration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Migration"]] = None
+        self.next_link = next_link
+
+
+class MigrationNameAvailability(_serialization.Model):
+    """Availability of a migration name.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: Name of the migration to check for validity and availability. Required.
+    :vartype name: str
+    :ivar type: Type of resource. Required.
+    :vartype type: str
+    :ivar name_available: Indicates if the migration name is available.
+    :vartype name_available: bool
+    :ivar reason: Migration name availability reason. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrationNameAvailabilityReason
+    :ivar message: Migration name availability message.
+    :vartype message: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "type": {"required": True},
+        "name_available": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, type: str, **kwargs: Any) -> None:
+        """
+        :keyword name: Name of the migration to check for validity and availability. Required.
+        :paramtype name: str
+        :keyword type: Type of resource. Required.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[Union[str, "_models.MigrationNameAvailabilityReason"]] = None
+        self.message: Optional[str] = None
+
+
 class MigrationResourceForPatch(_serialization.Model):
-    """Represents a migration resource for patch.
+    """Migration.
 
     :ivar tags: Application-specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
-    :ivar source_db_server_resource_id: ResourceId of the source database server.
+    :ivar source_db_server_resource_id: Identifier of the source database server resource, when
+     'sourceType' is 'PostgreSQLSingleServer'. For other source types this must be set to
+     ipaddress:port@username or hostname:port@username.
     :vartype source_db_server_resource_id: str
-    :ivar source_db_server_fully_qualified_domain_name: Source server fully qualified domain name
-     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
-     always use it for connection.
+    :ivar source_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+     address of the source server. This property is optional. When provided, the migration service
+     will always use it to connect to the source server.
     :vartype source_db_server_fully_qualified_domain_name: str
-    :ivar target_db_server_fully_qualified_domain_name: Target server fully qualified domain name
-     (FQDN) or IP address. It is a optional value, if customer provide it, migration service will
-     always use it for connection.
+    :ivar target_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+     address of the target server. This property is optional. When provided, the migration service
+     will always use it to connect to the target server.
     :vartype target_db_server_fully_qualified_domain_name: str
     :ivar secret_parameters: Migration secret parameters.
     :vartype secret_parameters:
-     ~azure.mgmt.postgresqlflexibleservers.models.MigrationSecretParameters
-    :ivar dbs_to_migrate: Number of databases to migrate.
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrationSecretParametersForPatch
+    :ivar dbs_to_migrate: Names of databases to migrate.
     :vartype dbs_to_migrate: list[str]
-    :ivar setup_logical_replication_on_source_db_if_needed: Indicates whether to setup
-     LogicalReplicationOnSourceDb, if needed. Known values are: "True" and "False".
+    :ivar setup_logical_replication_on_source_db_if_needed: Indicates whether to setup logical
+     replication on source server, if needed. Known values are: "True" and "False".
     :vartype setup_logical_replication_on_source_db_if_needed: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceDbEnum
-    :ivar overwrite_dbs_in_target: Indicates whether the databases on the target server can be
-     overwritten, if already present. If set to False, the migration workflow will wait for a
-     confirmation, if it detects that the database already exists. Known values are: "True" and
-     "False".
+     ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceServer
+    :ivar overwrite_dbs_in_target: Indicates if databases on the target server can be overwritten
+     when already present. If set to 'False', when the migration workflow detects that the database
+     already exists on the target server, it will wait for a confirmation. Known values are: "True"
+     and "False".
     :vartype overwrite_dbs_in_target: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDbsInTargetEnum
-    :ivar migration_window_start_time_in_utc: Start time in UTC for migration window.
+     ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDatabasesOnTargetServer
+    :ivar migration_window_start_time_in_utc: Start time (UTC) for migration window.
     :vartype migration_window_start_time_in_utc: ~datetime.datetime
-    :ivar migrate_roles: To migrate roles and permissions we need to send this flag as True. Known
-     values are: "True" and "False".
-    :vartype migrate_roles: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesEnum
-    :ivar start_data_migration: Indicates whether the data migration should start right away. Known
-     values are: "True" and "False".
+    :ivar migrate_roles: Indicates if roles and permissions must be migrated. Known values are:
+     "True" and "False".
+    :vartype migrate_roles: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesAndPermissions
+    :ivar start_data_migration: Indicates if data migration must start right away. Known values
+     are: "True" and "False".
     :vartype start_data_migration: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigrationEnum
-    :ivar trigger_cutover: To trigger cutover for entire migration we need to send this flag as
-     True. Known values are: "True" and "False".
-    :vartype trigger_cutover: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutoverEnum
-    :ivar dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases send
-     triggerCutover flag as True and database names in this array.
-    :vartype dbs_to_trigger_cutover_on: list[str]
-    :ivar cancel: To trigger cancel for entire migration we need to send this flag as True. Known
+     ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigration
+    :ivar trigger_cutover: Indicates if cutover must be triggered for the entire migration. Known
      values are: "True" and "False".
-    :vartype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.CancelEnum
-    :ivar dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases send
-     cancel flag as True and database names in this array.
+    :vartype trigger_cutover: str or ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutover
+    :ivar dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases set
+     'triggerCutover' to 'True' and the names of the specific databases in this array.
+    :vartype dbs_to_trigger_cutover_on: list[str]
+    :ivar cancel: Indicates if cancel must be triggered for the entire migration. Known values are:
+     "True" and "False".
+    :vartype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.Cancel
+    :ivar dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases set
+     'triggerCutover' to 'True' and the names of the specific databases in this array.
     :vartype dbs_to_cancel_migration_on: list[str]
-    :ivar migration_mode: There are two types of migration modes Online and Offline. Known values
-     are: "Offline" and "Online".
+    :ivar migration_mode: Mode used to perform the migration: Online or Offline. Known values are:
+     "Offline" and "Online".
     :vartype migration_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationMode
     """
 
@@ -2988,7 +3091,7 @@ class MigrationResourceForPatch(_serialization.Model):
             "key": "properties.targetDbServerFullyQualifiedDomainName",
             "type": "str",
         },
-        "secret_parameters": {"key": "properties.secretParameters", "type": "MigrationSecretParameters"},
+        "secret_parameters": {"key": "properties.secretParameters", "type": "MigrationSecretParametersForPatch"},
         "dbs_to_migrate": {"key": "properties.dbsToMigrate", "type": "[str]"},
         "setup_logical_replication_on_source_db_if_needed": {
             "key": "properties.setupLogicalReplicationOnSourceDbIfNeeded",
@@ -3008,78 +3111,80 @@ class MigrationResourceForPatch(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         source_db_server_resource_id: Optional[str] = None,
         source_db_server_fully_qualified_domain_name: Optional[str] = None,
         target_db_server_fully_qualified_domain_name: Optional[str] = None,
-        secret_parameters: Optional["_models.MigrationSecretParameters"] = None,
-        dbs_to_migrate: Optional[List[str]] = None,
+        secret_parameters: Optional["_models.MigrationSecretParametersForPatch"] = None,
+        dbs_to_migrate: Optional[list[str]] = None,
         setup_logical_replication_on_source_db_if_needed: Optional[
-            Union[str, "_models.LogicalReplicationOnSourceDbEnum"]
+            Union[str, "_models.LogicalReplicationOnSourceServer"]
         ] = None,
-        overwrite_dbs_in_target: Optional[Union[str, "_models.OverwriteDbsInTargetEnum"]] = None,
+        overwrite_dbs_in_target: Optional[Union[str, "_models.OverwriteDatabasesOnTargetServer"]] = None,
         migration_window_start_time_in_utc: Optional[datetime.datetime] = None,
-        migrate_roles: Optional[Union[str, "_models.MigrateRolesEnum"]] = None,
-        start_data_migration: Optional[Union[str, "_models.StartDataMigrationEnum"]] = None,
-        trigger_cutover: Optional[Union[str, "_models.TriggerCutoverEnum"]] = None,
-        dbs_to_trigger_cutover_on: Optional[List[str]] = None,
-        cancel: Optional[Union[str, "_models.CancelEnum"]] = None,
-        dbs_to_cancel_migration_on: Optional[List[str]] = None,
+        migrate_roles: Optional[Union[str, "_models.MigrateRolesAndPermissions"]] = None,
+        start_data_migration: Optional[Union[str, "_models.StartDataMigration"]] = None,
+        trigger_cutover: Optional[Union[str, "_models.TriggerCutover"]] = None,
+        dbs_to_trigger_cutover_on: Optional[list[str]] = None,
+        cancel: Optional[Union[str, "_models.Cancel"]] = None,
+        dbs_to_cancel_migration_on: Optional[list[str]] = None,
         migration_mode: Optional[Union[str, "_models.MigrationMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tags: Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword source_db_server_resource_id: ResourceId of the source database server.
+        :keyword source_db_server_resource_id: Identifier of the source database server resource, when
+         'sourceType' is 'PostgreSQLSingleServer'. For other source types this must be set to
+         ipaddress:port@username or hostname:port@username.
         :paramtype source_db_server_resource_id: str
-        :keyword source_db_server_fully_qualified_domain_name: Source server fully qualified domain
-         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
-         will always use it for connection.
+        :keyword source_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+         address of the source server. This property is optional. When provided, the migration service
+         will always use it to connect to the source server.
         :paramtype source_db_server_fully_qualified_domain_name: str
-        :keyword target_db_server_fully_qualified_domain_name: Target server fully qualified domain
-         name (FQDN) or IP address. It is a optional value, if customer provide it, migration service
-         will always use it for connection.
+        :keyword target_db_server_fully_qualified_domain_name: Fully qualified domain name (FQDN) or IP
+         address of the target server. This property is optional. When provided, the migration service
+         will always use it to connect to the target server.
         :paramtype target_db_server_fully_qualified_domain_name: str
         :keyword secret_parameters: Migration secret parameters.
         :paramtype secret_parameters:
-         ~azure.mgmt.postgresqlflexibleservers.models.MigrationSecretParameters
-        :keyword dbs_to_migrate: Number of databases to migrate.
+         ~azure.mgmt.postgresqlflexibleservers.models.MigrationSecretParametersForPatch
+        :keyword dbs_to_migrate: Names of databases to migrate.
         :paramtype dbs_to_migrate: list[str]
-        :keyword setup_logical_replication_on_source_db_if_needed: Indicates whether to setup
-         LogicalReplicationOnSourceDb, if needed. Known values are: "True" and "False".
+        :keyword setup_logical_replication_on_source_db_if_needed: Indicates whether to setup logical
+         replication on source server, if needed. Known values are: "True" and "False".
         :paramtype setup_logical_replication_on_source_db_if_needed: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceDbEnum
-        :keyword overwrite_dbs_in_target: Indicates whether the databases on the target server can be
-         overwritten, if already present. If set to False, the migration workflow will wait for a
-         confirmation, if it detects that the database already exists. Known values are: "True" and
-         "False".
+         ~azure.mgmt.postgresqlflexibleservers.models.LogicalReplicationOnSourceServer
+        :keyword overwrite_dbs_in_target: Indicates if databases on the target server can be
+         overwritten when already present. If set to 'False', when the migration workflow detects that
+         the database already exists on the target server, it will wait for a confirmation. Known values
+         are: "True" and "False".
         :paramtype overwrite_dbs_in_target: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDbsInTargetEnum
-        :keyword migration_window_start_time_in_utc: Start time in UTC for migration window.
+         ~azure.mgmt.postgresqlflexibleservers.models.OverwriteDatabasesOnTargetServer
+        :keyword migration_window_start_time_in_utc: Start time (UTC) for migration window.
         :paramtype migration_window_start_time_in_utc: ~datetime.datetime
-        :keyword migrate_roles: To migrate roles and permissions we need to send this flag as True.
-         Known values are: "True" and "False".
-        :paramtype migrate_roles: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesEnum
-        :keyword start_data_migration: Indicates whether the data migration should start right away.
-         Known values are: "True" and "False".
+        :keyword migrate_roles: Indicates if roles and permissions must be migrated. Known values are:
+         "True" and "False".
+        :paramtype migrate_roles: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.MigrateRolesAndPermissions
+        :keyword start_data_migration: Indicates if data migration must start right away. Known values
+         are: "True" and "False".
         :paramtype start_data_migration: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigrationEnum
-        :keyword trigger_cutover: To trigger cutover for entire migration we need to send this flag as
-         True. Known values are: "True" and "False".
-        :paramtype trigger_cutover: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutoverEnum
-        :keyword dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases
-         send triggerCutover flag as True and database names in this array.
-        :paramtype dbs_to_trigger_cutover_on: list[str]
-        :keyword cancel: To trigger cancel for entire migration we need to send this flag as True.
+         ~azure.mgmt.postgresqlflexibleservers.models.StartDataMigration
+        :keyword trigger_cutover: Indicates if cutover must be triggered for the entire migration.
          Known values are: "True" and "False".
-        :paramtype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.CancelEnum
-        :keyword dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases
-         send cancel flag as True and database names in this array.
+        :paramtype trigger_cutover: str or ~azure.mgmt.postgresqlflexibleservers.models.TriggerCutover
+        :keyword dbs_to_trigger_cutover_on: When you want to trigger cutover for specific databases set
+         'triggerCutover' to 'True' and the names of the specific databases in this array.
+        :paramtype dbs_to_trigger_cutover_on: list[str]
+        :keyword cancel: Indicates if cancel must be triggered for the entire migration. Known values
+         are: "True" and "False".
+        :paramtype cancel: str or ~azure.mgmt.postgresqlflexibleservers.models.Cancel
+        :keyword dbs_to_cancel_migration_on: When you want to trigger cancel for specific databases set
+         'triggerCutover' to 'True' and the names of the specific databases in this array.
         :paramtype dbs_to_cancel_migration_on: list[str]
-        :keyword migration_mode: There are two types of migration modes Online and Offline. Known
-         values are: "Offline" and "Online".
+        :keyword migration_mode: Mode used to perform the migration: Online or Offline. Known values
+         are: "Offline" and "Online".
         :paramtype migration_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationMode
         """
         super().__init__(**kwargs)
@@ -3101,46 +3206,19 @@ class MigrationResourceForPatch(_serialization.Model):
         self.migration_mode = migration_mode
 
 
-class MigrationResourceListResult(_serialization.Model):
-    """A list of migration resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: A list of migration resources.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.MigrationResource]
-    :ivar next_link: The link used to get the next page of migrations.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[MigrationResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.MigrationResource"]] = None
-        self.next_link: Optional[str] = None
-
-
 class MigrationSecretParameters(_serialization.Model):
     """Migration secret parameters.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar admin_credentials: Admin credentials for source and target servers. Required.
+    :ivar admin_credentials: Credentials of administrator users for source and target servers.
+     Required.
     :vartype admin_credentials: ~azure.mgmt.postgresqlflexibleservers.models.AdminCredentials
-    :ivar source_server_username: Gets or sets the username for the source server. This user need
-     not be an admin.
+    :ivar source_server_username: Gets or sets the name of the user for the source server. This
+     user doesn't need to be an administrator.
     :vartype source_server_username: str
-    :ivar target_server_username: Gets or sets the username for the target server. This user need
-     not be an admin.
+    :ivar target_server_username: Gets or sets the name of the user for the target server. This
+     user doesn't need to be an administrator.
     :vartype target_server_username: str
     """
 
@@ -3163,13 +3241,59 @@ class MigrationSecretParameters(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword admin_credentials: Admin credentials for source and target servers. Required.
+        :keyword admin_credentials: Credentials of administrator users for source and target servers.
+         Required.
         :paramtype admin_credentials: ~azure.mgmt.postgresqlflexibleservers.models.AdminCredentials
-        :keyword source_server_username: Gets or sets the username for the source server. This user
-         need not be an admin.
+        :keyword source_server_username: Gets or sets the name of the user for the source server. This
+         user doesn't need to be an administrator.
         :paramtype source_server_username: str
-        :keyword target_server_username: Gets or sets the username for the target server. This user
-         need not be an admin.
+        :keyword target_server_username: Gets or sets the name of the user for the target server. This
+         user doesn't need to be an administrator.
+        :paramtype target_server_username: str
+        """
+        super().__init__(**kwargs)
+        self.admin_credentials = admin_credentials
+        self.source_server_username = source_server_username
+        self.target_server_username = target_server_username
+
+
+class MigrationSecretParametersForPatch(_serialization.Model):
+    """Migration secret parameters.
+
+    :ivar admin_credentials: Credentials of administrator users for source and target servers.
+    :vartype admin_credentials:
+     ~azure.mgmt.postgresqlflexibleservers.models.AdminCredentialsForPatch
+    :ivar source_server_username: Gets or sets the name of the user for the source server. This
+     user doesn't need to be an administrator.
+    :vartype source_server_username: str
+    :ivar target_server_username: Gets or sets the name of the user for the target server. This
+     user doesn't need to be an administrator.
+    :vartype target_server_username: str
+    """
+
+    _attribute_map = {
+        "admin_credentials": {"key": "adminCredentials", "type": "AdminCredentialsForPatch"},
+        "source_server_username": {"key": "sourceServerUsername", "type": "str"},
+        "target_server_username": {"key": "targetServerUsername", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        admin_credentials: Optional["_models.AdminCredentialsForPatch"] = None,
+        source_server_username: Optional[str] = None,
+        target_server_username: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword admin_credentials: Credentials of administrator users for source and target servers.
+        :paramtype admin_credentials:
+         ~azure.mgmt.postgresqlflexibleservers.models.AdminCredentialsForPatch
+        :keyword source_server_username: Gets or sets the name of the user for the source server. This
+         user doesn't need to be an administrator.
+        :paramtype source_server_username: str
+        :keyword target_server_username: Gets or sets the name of the user for the target server. This
+         user doesn't need to be an administrator.
         :paramtype target_server_username: str
         """
         super().__init__(**kwargs)
@@ -3179,7 +3303,7 @@ class MigrationSecretParameters(_serialization.Model):
 
 
 class MigrationStatus(_serialization.Model):
-    """Migration status.
+    """State of migration.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3188,9 +3312,9 @@ class MigrationStatus(_serialization.Model):
     :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.MigrationState
     :ivar error: Error message, if any, for the migration state.
     :vartype error: str
-    :ivar current_sub_state_details: Current Migration sub state details.
+    :ivar current_sub_state_details: Current migration sub state details.
     :vartype current_sub_state_details:
-     ~azure.mgmt.postgresqlflexibleservers.models.MigrationSubStateDetails
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrationSubstateDetails
     """
 
     _validation = {
@@ -3202,7 +3326,7 @@ class MigrationStatus(_serialization.Model):
     _attribute_map = {
         "state": {"key": "state", "type": "str"},
         "error": {"key": "error", "type": "str"},
-        "current_sub_state_details": {"key": "currentSubStateDetails", "type": "MigrationSubStateDetails"},
+        "current_sub_state_details": {"key": "currentSubStateDetails", "type": "MigrationSubstateDetails"},
     }
 
     def __init__(self, **kwargs: Any) -> None:
@@ -3210,24 +3334,25 @@ class MigrationStatus(_serialization.Model):
         super().__init__(**kwargs)
         self.state: Optional[Union[str, "_models.MigrationState"]] = None
         self.error: Optional[str] = None
-        self.current_sub_state_details: Optional["_models.MigrationSubStateDetails"] = None
+        self.current_sub_state_details: Optional["_models.MigrationSubstateDetails"] = None
 
 
-class MigrationSubStateDetails(_serialization.Model):
-    """Migration sub state details.
+class MigrationSubstateDetails(_serialization.Model):
+    """Details of migration substate.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar current_sub_state: Migration sub state. Known values are: "PerformingPreRequisiteSteps",
-     "WaitingForLogicalReplicationSetupRequestOnSourceDB", "WaitingForDBsToMigrateSpecification",
-     "WaitingForTargetDBOverwriteConfirmation", "WaitingForDataMigrationScheduling",
-     "WaitingForDataMigrationWindow", "MigratingData", "WaitingForCutoverTrigger",
-     "CompletingMigration", "Completed", "CancelingRequestedDBMigrations", and
-     "ValidationInProgress".
+    :ivar current_sub_state: Substate of migration. Known values are:
+     "PerformingPreRequisiteSteps", "WaitingForLogicalReplicationSetupRequestOnSourceDB",
+     "WaitingForDBsToMigrateSpecification", "WaitingForTargetDBOverwriteConfirmation",
+     "WaitingForDataMigrationScheduling", "WaitingForDataMigrationWindow", "MigratingData",
+     "WaitingForCutoverTrigger", "CompletingMigration", "Completed",
+     "CancelingRequestedDBMigrations", and "ValidationInProgress".
     :vartype current_sub_state: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.MigrationSubState
-    :ivar db_details: Dictionary of :code:`<DbMigrationStatus>`.
-    :vartype db_details: dict[str, ~azure.mgmt.postgresqlflexibleservers.models.DbMigrationStatus]
+     ~azure.mgmt.postgresqlflexibleservers.models.MigrationSubstate
+    :ivar db_details: Dictionary of :code:`<DatabaseMigrationState>`.
+    :vartype db_details: dict[str,
+     ~azure.mgmt.postgresqlflexibleservers.models.DatabaseMigrationState]
     :ivar validation_details: Details for the validation for migration.
     :vartype validation_details: ~azure.mgmt.postgresqlflexibleservers.models.ValidationDetails
     """
@@ -3238,32 +3363,32 @@ class MigrationSubStateDetails(_serialization.Model):
 
     _attribute_map = {
         "current_sub_state": {"key": "currentSubState", "type": "str"},
-        "db_details": {"key": "dbDetails", "type": "{DbMigrationStatus}"},
+        "db_details": {"key": "dbDetails", "type": "{DatabaseMigrationState}"},
         "validation_details": {"key": "validationDetails", "type": "ValidationDetails"},
     }
 
     def __init__(
         self,
         *,
-        db_details: Optional[Dict[str, "_models.DbMigrationStatus"]] = None,
+        db_details: Optional[dict[str, "_models.DatabaseMigrationState"]] = None,
         validation_details: Optional["_models.ValidationDetails"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword db_details: Dictionary of :code:`<DbMigrationStatus>`.
+        :keyword db_details: Dictionary of :code:`<DatabaseMigrationState>`.
         :paramtype db_details: dict[str,
-         ~azure.mgmt.postgresqlflexibleservers.models.DbMigrationStatus]
+         ~azure.mgmt.postgresqlflexibleservers.models.DatabaseMigrationState]
         :keyword validation_details: Details for the validation for migration.
         :paramtype validation_details: ~azure.mgmt.postgresqlflexibleservers.models.ValidationDetails
         """
         super().__init__(**kwargs)
-        self.current_sub_state: Optional[Union[str, "_models.MigrationSubState"]] = None
+        self.current_sub_state: Optional[Union[str, "_models.MigrationSubstate"]] = None
         self.db_details = db_details
         self.validation_details = validation_details
 
 
-class NameAvailability(CheckNameAvailabilityResponse):
-    """Represents a resource name availability.
+class NameAvailabilityModel(CheckNameAvailabilityResponse):
+    """Availability of a name.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3275,9 +3400,10 @@ class NameAvailability(CheckNameAvailabilityResponse):
      ~azure.mgmt.postgresqlflexibleservers.models.CheckNameAvailabilityReason
     :ivar message: Detailed reason why the given name is available.
     :vartype message: str
-    :ivar name: name of the PostgreSQL server.
+    :ivar name: Name for which validity and availability was checked.
     :vartype name: str
-    :ivar type: type of the server.
+    :ivar type: Type of resource. It can be 'Microsoft.DBforPostgreSQL/flexibleServers' or
+     'Microsoft.DBforPostgreSQL/flexibleServers/virtualendpoints'.
     :vartype type: str
     """
 
@@ -3346,17 +3472,20 @@ class NameProperty(_serialization.Model):
 class Network(_serialization.Model):
     """Network properties of a server.
 
-    :ivar public_network_access: public network access is enabled or not. Known values are:
-     "Enabled" and "Disabled".
+    :ivar public_network_access: Indicates if public network access is enabled or not. This is only
+     supported for servers that are not integrated into a virtual network which is owned and
+     provided by customer when server is deployed. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.postgresqlflexibleservers.models.ServerPublicNetworkAccessState
-    :ivar delegated_subnet_resource_id: Delegated subnet arm resource id. This is required to be
-     passed during create, in case we want the server to be VNET injected, i.e. Private access
-     server. During update, pass this only if we want to update the value for Private DNS zone.
+    :ivar delegated_subnet_resource_id: Resource identifier of the delegated subnet. Required
+     during creation of a new server, in case you want the server to be integrated into your own
+     virtual network. For an update operation, you only have to provide this property if you want to
+     change the value assigned for the private DNS zone.
     :vartype delegated_subnet_resource_id: str
-    :ivar private_dns_zone_arm_resource_id: Private dns zone arm resource id. This is required to
-     be passed during create, in case we want the server to be VNET injected, i.e. Private access
-     server. During update, pass this only if we want to update the value for Private DNS zone.
+    :ivar private_dns_zone_arm_resource_id: Identifier of the private DNS zone. Required during
+     creation of a new server, in case you want the server to be integrated into your own virtual
+     network. For an update operation, you only have to provide this property if you want to change
+     the value assigned for the private DNS zone.
     :vartype private_dns_zone_arm_resource_id: str
     """
 
@@ -3375,17 +3504,20 @@ class Network(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword public_network_access: public network access is enabled or not. Known values are:
-         "Enabled" and "Disabled".
+        :keyword public_network_access: Indicates if public network access is enabled or not. This is
+         only supported for servers that are not integrated into a virtual network which is owned and
+         provided by customer when server is deployed. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ServerPublicNetworkAccessState
-        :keyword delegated_subnet_resource_id: Delegated subnet arm resource id. This is required to be
-         passed during create, in case we want the server to be VNET injected, i.e. Private access
-         server. During update, pass this only if we want to update the value for Private DNS zone.
+        :keyword delegated_subnet_resource_id: Resource identifier of the delegated subnet. Required
+         during creation of a new server, in case you want the server to be integrated into your own
+         virtual network. For an update operation, you only have to provide this property if you want to
+         change the value assigned for the private DNS zone.
         :paramtype delegated_subnet_resource_id: str
-        :keyword private_dns_zone_arm_resource_id: Private dns zone arm resource id. This is required
-         to be passed during create, in case we want the server to be VNET injected, i.e. Private access
-         server. During update, pass this only if we want to update the value for Private DNS zone.
+        :keyword private_dns_zone_arm_resource_id: Identifier of the private DNS zone. Required during
+         creation of a new server, in case you want the server to be integrated into your own virtual
+         network. For an update operation, you only have to provide this property if you want to change
+         the value assigned for the private DNS zone.
         :paramtype private_dns_zone_arm_resource_id: str
         """
         super().__init__(**kwargs)
@@ -3394,19 +3526,325 @@ class Network(_serialization.Model):
         self.private_dns_zone_arm_resource_id = private_dns_zone_arm_resource_id
 
 
+class ObjectRecommendation(ProxyResource):
+    """Object recommendation properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
+    :ivar kind: Always empty.
+    :vartype kind: str
+    :ivar initial_recommended_time: Creation time (UTC) of this recommendation.
+    :vartype initial_recommended_time: ~datetime.datetime
+    :ivar last_recommended_time: Last time (UTC) that this recommendation was produced.
+    :vartype last_recommended_time: ~datetime.datetime
+    :ivar times_recommended: Number of times this recommendation has been produced.
+    :vartype times_recommended: int
+    :ivar improved_query_ids: List of identifiers for all queries identified as targets for
+     improvement if the recommendation is applied. The list is only populated for CREATE INDEX
+     recommendations.
+    :vartype improved_query_ids: list[int]
+    :ivar recommendation_reason: Reason for this recommendation.
+    :vartype recommendation_reason: str
+    :ivar current_state: Current state.
+    :vartype current_state: str
+    :ivar recommendation_type: Type for this recommendation. Known values are: "CreateIndex",
+     "DropIndex", "ReIndex", and "AnalyzeTable".
+    :vartype recommendation_type: str or
+     ~azure.mgmt.postgresqlflexibleservers.models.RecommendationTypeEnum
+    :ivar implementation_details: Implementation details for the recommended action.
+    :vartype implementation_details:
+     ~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendationPropertiesImplementationDetails
+    :ivar analyzed_workload: Workload information for the recommended action.
+    :vartype analyzed_workload:
+     ~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendationPropertiesAnalyzedWorkload
+    :ivar estimated_impact: Estimated impact of this recommended action.
+    :vartype estimated_impact: list[~azure.mgmt.postgresqlflexibleservers.models.ImpactRecord]
+    :ivar details: Recommendation details for the recommended action.
+    :vartype details: ~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendationDetails
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "estimated_impact": {"readonly": True},
+        "details": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "kind", "type": "str"},
+        "initial_recommended_time": {"key": "properties.initialRecommendedTime", "type": "iso-8601"},
+        "last_recommended_time": {"key": "properties.lastRecommendedTime", "type": "iso-8601"},
+        "times_recommended": {"key": "properties.timesRecommended", "type": "int"},
+        "improved_query_ids": {"key": "properties.improvedQueryIds", "type": "[int]"},
+        "recommendation_reason": {"key": "properties.recommendationReason", "type": "str"},
+        "current_state": {"key": "properties.currentState", "type": "str"},
+        "recommendation_type": {"key": "properties.recommendationType", "type": "str"},
+        "implementation_details": {
+            "key": "properties.implementationDetails",
+            "type": "ObjectRecommendationPropertiesImplementationDetails",
+        },
+        "analyzed_workload": {
+            "key": "properties.analyzedWorkload",
+            "type": "ObjectRecommendationPropertiesAnalyzedWorkload",
+        },
+        "estimated_impact": {"key": "properties.estimatedImpact", "type": "[ImpactRecord]"},
+        "details": {"key": "properties.details", "type": "ObjectRecommendationDetails"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[str] = None,
+        initial_recommended_time: Optional[datetime.datetime] = None,
+        last_recommended_time: Optional[datetime.datetime] = None,
+        times_recommended: Optional[int] = None,
+        improved_query_ids: Optional[list[int]] = None,
+        recommendation_reason: Optional[str] = None,
+        current_state: Optional[str] = None,
+        recommendation_type: Optional[Union[str, "_models.RecommendationTypeEnum"]] = None,
+        implementation_details: Optional["_models.ObjectRecommendationPropertiesImplementationDetails"] = None,
+        analyzed_workload: Optional["_models.ObjectRecommendationPropertiesAnalyzedWorkload"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: Always empty.
+        :paramtype kind: str
+        :keyword initial_recommended_time: Creation time (UTC) of this recommendation.
+        :paramtype initial_recommended_time: ~datetime.datetime
+        :keyword last_recommended_time: Last time (UTC) that this recommendation was produced.
+        :paramtype last_recommended_time: ~datetime.datetime
+        :keyword times_recommended: Number of times this recommendation has been produced.
+        :paramtype times_recommended: int
+        :keyword improved_query_ids: List of identifiers for all queries identified as targets for
+         improvement if the recommendation is applied. The list is only populated for CREATE INDEX
+         recommendations.
+        :paramtype improved_query_ids: list[int]
+        :keyword recommendation_reason: Reason for this recommendation.
+        :paramtype recommendation_reason: str
+        :keyword current_state: Current state.
+        :paramtype current_state: str
+        :keyword recommendation_type: Type for this recommendation. Known values are: "CreateIndex",
+         "DropIndex", "ReIndex", and "AnalyzeTable".
+        :paramtype recommendation_type: str or
+         ~azure.mgmt.postgresqlflexibleservers.models.RecommendationTypeEnum
+        :keyword implementation_details: Implementation details for the recommended action.
+        :paramtype implementation_details:
+         ~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendationPropertiesImplementationDetails
+        :keyword analyzed_workload: Workload information for the recommended action.
+        :paramtype analyzed_workload:
+         ~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendationPropertiesAnalyzedWorkload
+        """
+        super().__init__(**kwargs)
+        self.kind = kind
+        self.initial_recommended_time = initial_recommended_time
+        self.last_recommended_time = last_recommended_time
+        self.times_recommended = times_recommended
+        self.improved_query_ids = improved_query_ids
+        self.recommendation_reason = recommendation_reason
+        self.current_state = current_state
+        self.recommendation_type = recommendation_type
+        self.implementation_details = implementation_details
+        self.analyzed_workload = analyzed_workload
+        self.estimated_impact: Optional[list["_models.ImpactRecord"]] = None
+        self.details: Optional["_models.ObjectRecommendationDetails"] = None
+
+
+class ObjectRecommendationDetails(_serialization.Model):
+    """Recommendation details for the recommended action.
+
+    :ivar database_name: Database name.
+    :vartype database_name: str
+    :ivar schema: Schema name.
+    :vartype schema: str
+    :ivar table: Table name.
+    :vartype table: str
+    :ivar index_type: Index type.
+    :vartype index_type: str
+    :ivar index_name: Index name.
+    :vartype index_name: str
+    :ivar index_columns: Index columns.
+    :vartype index_columns: list[str]
+    :ivar included_columns: Index included columns.
+    :vartype included_columns: list[str]
+    """
+
+    _attribute_map = {
+        "database_name": {"key": "databaseName", "type": "str"},
+        "schema": {"key": "schema", "type": "str"},
+        "table": {"key": "table", "type": "str"},
+        "index_type": {"key": "indexType", "type": "str"},
+        "index_name": {"key": "indexName", "type": "str"},
+        "index_columns": {"key": "indexColumns", "type": "[str]"},
+        "included_columns": {"key": "includedColumns", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        database_name: Optional[str] = None,
+        schema: Optional[str] = None,
+        table: Optional[str] = None,
+        index_type: Optional[str] = None,
+        index_name: Optional[str] = None,
+        index_columns: Optional[list[str]] = None,
+        included_columns: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword database_name: Database name.
+        :paramtype database_name: str
+        :keyword schema: Schema name.
+        :paramtype schema: str
+        :keyword table: Table name.
+        :paramtype table: str
+        :keyword index_type: Index type.
+        :paramtype index_type: str
+        :keyword index_name: Index name.
+        :paramtype index_name: str
+        :keyword index_columns: Index columns.
+        :paramtype index_columns: list[str]
+        :keyword included_columns: Index included columns.
+        :paramtype included_columns: list[str]
+        """
+        super().__init__(**kwargs)
+        self.database_name = database_name
+        self.schema = schema
+        self.table = table
+        self.index_type = index_type
+        self.index_name = index_name
+        self.index_columns = index_columns
+        self.included_columns = included_columns
+
+
+class ObjectRecommendationList(_serialization.Model):
+    """List of available object recommendations.
+
+    :ivar value: List of available object recommendations.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendation]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ObjectRecommendation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.ObjectRecommendation"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of available object recommendations.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.ObjectRecommendation]
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class ObjectRecommendationPropertiesAnalyzedWorkload(_serialization.Model):  # pylint: disable=name-too-long
+    """Workload information for the recommended action.
+
+    :ivar start_time: Start time (UTC) of the workload analyzed.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: End time (UTC) of the workload analyzed.
+    :vartype end_time: ~datetime.datetime
+    :ivar query_count: Number of queries from the workload that were examined to produce this
+     recommendation. For DROP INDEX recommendations it's 0 (zero).
+    :vartype query_count: int
+    """
+
+    _attribute_map = {
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "query_count": {"key": "queryCount", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        query_count: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_time: Start time (UTC) of the workload analyzed.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: End time (UTC) of the workload analyzed.
+        :paramtype end_time: ~datetime.datetime
+        :keyword query_count: Number of queries from the workload that were examined to produce this
+         recommendation. For DROP INDEX recommendations it's 0 (zero).
+        :paramtype query_count: int
+        """
+        super().__init__(**kwargs)
+        self.start_time = start_time
+        self.end_time = end_time
+        self.query_count = query_count
+
+
+class ObjectRecommendationPropertiesImplementationDetails(_serialization.Model):  # pylint: disable=name-too-long
+    """Implementation details for the recommended action.
+
+    :ivar method: Method of implementation for recommended action.
+    :vartype method: str
+    :ivar script: Implementation script for the recommended action.
+    :vartype script: str
+    """
+
+    _attribute_map = {
+        "method": {"key": "method", "type": "str"},
+        "script": {"key": "script", "type": "str"},
+    }
+
+    def __init__(self, *, method: Optional[str] = None, script: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword method: Method of implementation for recommended action.
+        :paramtype method: str
+        :keyword script: Implementation script for the recommended action.
+        :paramtype script: str
+        """
+        super().__init__(**kwargs)
+        self.method = method
+        self.script = script
+
+
 class Operation(_serialization.Model):
     """REST API operation definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: The name of the operation being performed on this particular object.
+    :ivar name: Name of the operation being performed on this particular object.
     :vartype name: str
-    :ivar display: The localized display information for this particular operation or action.
+    :ivar display: Localized display information for this particular operation or action.
     :vartype display: ~azure.mgmt.postgresqlflexibleservers.models.OperationDisplay
-    :ivar is_data_action: Indicates whether the operation is a data action.
+    :ivar is_data_action: Indicates if the operation is a data action.
     :vartype is_data_action: bool
-    :ivar origin: The intended executor of the operation. Known values are: "NotSpecified", "user",
-     and "system".
+    :ivar origin: Intended executor of the operation. Known values are: "NotSpecified", "user", and
+     "system".
     :vartype origin: str or ~azure.mgmt.postgresqlflexibleservers.models.OperationOrigin
     :ivar properties: Additional descriptions for the operation.
     :vartype properties: dict[str, JSON]
@@ -3429,7 +3867,7 @@ class Operation(_serialization.Model):
 
     def __init__(self, *, is_data_action: Optional[bool] = None, **kwargs: Any) -> None:
         """
-        :keyword is_data_action: Indicates whether the operation is a data action.
+        :keyword is_data_action: Indicates if the operation is a data action.
         :paramtype is_data_action: bool
         """
         super().__init__(**kwargs)
@@ -3437,7 +3875,7 @@ class Operation(_serialization.Model):
         self.display: Optional["_models.OperationDisplay"] = None
         self.is_data_action = is_data_action
         self.origin: Optional[Union[str, "_models.OperationOrigin"]] = None
-        self.properties: Optional[Dict[str, JSON]] = None
+        self.properties: Optional[dict[str, JSON]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -3445,13 +3883,13 @@ class OperationDisplay(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provider: Operation resource provider name.
+    :ivar provider: Name of the resource provider.
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
+    :ivar resource: Type of resource on which the operation is performed.
     :vartype resource: str
-    :ivar operation: Localized friendly name for the operation.
+    :ivar operation: Name of the operation.
     :vartype operation: str
-    :ivar description: Operation description.
+    :ivar description: Description of the operation.
     :vartype description: str
     """
 
@@ -3478,13 +3916,12 @@ class OperationDisplay(_serialization.Model):
         self.description: Optional[str] = None
 
 
-class OperationListResult(_serialization.Model):
-    """A list of resource provider operations.
+class OperationList(_serialization.Model):
+    """List of resource provider operations.
 
     :ivar value: Collection of available operation details.
     :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Operation]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
+    :ivar next_link: Link used to get the next page of results.
     :vartype next_link: str
     """
 
@@ -3494,13 +3931,12 @@ class OperationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Collection of available operation details.
         :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.Operation]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
+        :keyword next_link: Link used to get the next page of results.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -3600,26 +4036,25 @@ class PrivateEndpointConnection(Resource):
          ~azure.mgmt.postgresqlflexibleservers.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.group_ids: Optional[List[str]] = None
+        self.group_ids: Optional[list[str]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
-class PrivateEndpointConnectionListResult(_serialization.Model):
-    """A list of private endpoint connections.
+class PrivateEndpointConnectionList(_serialization.Model):
+    """List of private endpoint connections.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Array of results.
     :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointConnection]
-    :ivar next_link: The URL to get the next set of results.
+    :ivar next_link: Link used to get the next page of results.
     :vartype next_link: str
     """
 
     _validation = {
         "value": {"readonly": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3627,11 +4062,14 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.PrivateEndpointConnection"]] = None
-        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.next_link = next_link
 
 
 class PrivateLinkResource(Resource):
@@ -3677,18 +4115,18 @@ class PrivateLinkResource(Resource):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourceListResult(_serialization.Model):
+class PrivateLinkResourceList(_serialization.Model):
     """A list of private link resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3701,7 +4139,6 @@ class PrivateLinkResourceListResult(_serialization.Model):
 
     _validation = {
         "value": {"readonly": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3709,11 +4146,14 @@ class PrivateLinkResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link to retrieve next page of results.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.PrivateLinkResource"]] = None
-        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.PrivateLinkResource"]] = None
+        self.next_link = next_link
 
 
 class PrivateLinkServiceConnectionState(_serialization.Model):
@@ -3763,9 +4203,9 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
 
 
 class QuotaUsage(_serialization.Model):
-    """Quota usage for flexible servers.
+    """Quota usage for servers.
 
-    :ivar name: Name of quota usage for flexible servers.
+    :ivar name: Name of quota usage for servers.
     :vartype name: ~azure.mgmt.postgresqlflexibleservers.models.NameProperty
     :ivar limit: Quota limit.
     :vartype limit: int
@@ -3796,7 +4236,7 @@ class QuotaUsage(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: Name of quota usage for flexible servers.
+        :keyword name: Name of quota usage for servers.
         :paramtype name: ~azure.mgmt.postgresqlflexibleservers.models.NameProperty
         :keyword limit: Quota limit.
         :paramtype limit: int
@@ -3815,7 +4255,7 @@ class QuotaUsage(_serialization.Model):
         self.id = id
 
 
-class QuotaUsagesListResult(_serialization.Model):
+class QuotaUsageList(_serialization.Model):
     """Capability for the PostgreSQL server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3828,7 +4268,6 @@ class QuotaUsagesListResult(_serialization.Model):
 
     _validation = {
         "value": {"readonly": True},
-        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3836,11 +4275,14 @@ class QuotaUsagesListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link to retrieve next page of results.
+        :paramtype next_link: str
+        """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.QuotaUsage"]] = None
-        self.next_link: Optional[str] = None
+        self.value: Optional[list["_models.QuotaUsage"]] = None
+        self.next_link = next_link
 
 
 class Replica(_serialization.Model):
@@ -3848,25 +4290,28 @@ class Replica(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar role: Used to indicate role of the server in replication set. Known values are: "None",
-     "Primary", "AsyncReplica", and "GeoAsyncReplica".
+    :ivar role: Role of the server in a replication set. Known values are: "None", "Primary",
+     "AsyncReplica", and "GeoAsyncReplica".
     :vartype role: str or ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
-    :ivar capacity: Replicas allowed for a server.
+    :ivar capacity: Maximum number of read replicas allowed for a server.
     :vartype capacity: int
-    :ivar replication_state: Gets the replication state of a replica server. This property is
-     returned only for replicas api call. Supported values are Active, Catchup, Provisioning,
-     Updating, Broken, Reconfiguring. Known values are: "Active", "Catchup", "Provisioning",
-     "Updating", "Broken", and "Reconfiguring".
+    :ivar replication_state: Indicates the replication state of a read replica. This property is
+     returned only when the target server is a read replica. Possible  values are Active, Broken,
+     Catchup, Provisioning, Reconfiguring, and Updating. Known values are: "Active", "Catchup",
+     "Provisioning", "Updating", "Broken", and "Reconfiguring".
     :vartype replication_state: str or
      ~azure.mgmt.postgresqlflexibleservers.models.ReplicationState
-    :ivar promote_mode: Sets the promote mode for a replica server. This is a write only property.
-     Known values are: "standalone" and "switchover".
+    :ivar promote_mode: Type of operation to apply on the read replica. This property is write
+     only. Standalone means that the read replica will be promoted to a standalone server, and will
+     become a completely independent entity from the replication set. Switchover means that the read
+     replica will roles with the primary server. Known values are: "Standalone" and "Switchover".
     :vartype promote_mode: str or
      ~azure.mgmt.postgresqlflexibleservers.models.ReadReplicaPromoteMode
-    :ivar promote_option: Sets the promote options for a replica server. This is a write only
-     property. Known values are: "planned" and "forced".
+    :ivar promote_option: Data synchronization option to use when processing the operation
+     specified in the promoteMode property. This property is write only. Known values are: "Planned"
+     and "Forced".
     :vartype promote_option: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.ReplicationPromoteOption
+     ~azure.mgmt.postgresqlflexibleservers.models.ReadReplicaPromoteOption
     """
 
     _validation = {
@@ -3887,21 +4332,24 @@ class Replica(_serialization.Model):
         *,
         role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         promote_mode: Optional[Union[str, "_models.ReadReplicaPromoteMode"]] = None,
-        promote_option: Optional[Union[str, "_models.ReplicationPromoteOption"]] = None,
+        promote_option: Optional[Union[str, "_models.ReadReplicaPromoteOption"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword role: Used to indicate role of the server in replication set. Known values are:
-         "None", "Primary", "AsyncReplica", and "GeoAsyncReplica".
+        :keyword role: Role of the server in a replication set. Known values are: "None", "Primary",
+         "AsyncReplica", and "GeoAsyncReplica".
         :paramtype role: str or ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
-        :keyword promote_mode: Sets the promote mode for a replica server. This is a write only
-         property. Known values are: "standalone" and "switchover".
+        :keyword promote_mode: Type of operation to apply on the read replica. This property is write
+         only. Standalone means that the read replica will be promoted to a standalone server, and will
+         become a completely independent entity from the replication set. Switchover means that the read
+         replica will roles with the primary server. Known values are: "Standalone" and "Switchover".
         :paramtype promote_mode: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ReadReplicaPromoteMode
-        :keyword promote_option: Sets the promote options for a replica server. This is a write only
-         property. Known values are: "planned" and "forced".
+        :keyword promote_option: Data synchronization option to use when processing the operation
+         specified in the promoteMode property. This property is write only. Known values are: "Planned"
+         and "Forced".
         :paramtype promote_option: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.ReplicationPromoteOption
+         ~azure.mgmt.postgresqlflexibleservers.models.ReadReplicaPromoteOption
         """
         super().__init__(**kwargs)
         self.role = role
@@ -3912,9 +4360,11 @@ class Replica(_serialization.Model):
 
 
 class RestartParameter(_serialization.Model):
-    """Represents server restart parameters.
+    """PostgreSQL database engine restart parameters.
 
-    :ivar restart_with_failover: Indicates whether to restart the server with failover.
+    :ivar restart_with_failover: Indicates if restart the PostgreSQL database engine should
+     failover or switch over from primary to standby. This only works if server has high
+     availability enabled.
     :vartype restart_with_failover: bool
     :ivar failover_mode: Failover mode. Known values are: "PlannedFailover", "ForcedFailover",
      "PlannedSwitchover", and "ForcedSwitchover".
@@ -3934,7 +4384,9 @@ class RestartParameter(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword restart_with_failover: Indicates whether to restart the server with failover.
+        :keyword restart_with_failover: Indicates if restart the PostgreSQL database engine should
+         failover or switch over from primary to standby. This only works if server has high
+         availability enabled.
         :paramtype restart_with_failover: bool
         :keyword failover_mode: Failover mode. Known values are: "PlannedFailover", "ForcedFailover",
          "PlannedSwitchover", and "ForcedSwitchover".
@@ -3946,7 +4398,7 @@ class RestartParameter(_serialization.Model):
 
 
 class Server(TrackedResource):
-    """Represents a server.
+    """Properties of a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3967,65 +4419,68 @@ class Server(TrackedResource):
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar sku: The SKU (pricing tier) of the server.
+    :ivar sku: Compute tier and size of a server.
     :vartype sku: ~azure.mgmt.postgresqlflexibleservers.models.Sku
-    :ivar identity: Describes the identity of the application.
+    :ivar identity: User assigned managed identities assigned to the server.
     :vartype identity: ~azure.mgmt.postgresqlflexibleservers.models.UserAssignedIdentity
-    :ivar administrator_login: The administrator's login name of a server. Can only be specified
-     when the server is being created (and is required for creation).
+    :ivar administrator_login: Name of the login designated as the first password based
+     administrator assigned to your instance of PostgreSQL. Must be specified the first time that
+     you enable password based authentication on a server. Once set to a given value, it cannot be
+     changed for the rest of the life of a server. If you disable password based authentication on a
+     server which had it enabled, this password based role isn't deleted.
     :vartype administrator_login: str
-    :ivar administrator_login_password: The administrator login password (required for server
-     creation).
+    :ivar administrator_login_password: Password assigned to the administrator login. As long as
+     password authentication is enabled, this password can be changed at any time.
     :vartype administrator_login_password: str
-    :ivar version: PostgreSQL Server version. Known values are: "17", "16", "15", "14", "13", "12",
-     and "11".
-    :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
-    :ivar minor_version: The minor version of the server.
+    :ivar version: Major version of PostgreSQL database engine. Known values are: "18", "17", "16",
+     "15", "14", "13", "12", and "11".
+    :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
+    :ivar minor_version: Minor version of PostgreSQL database engine.
     :vartype minor_version: str
-    :ivar state: A state of a server that is visible to user. Known values are: "Ready",
-     "Dropping", "Disabled", "Starting", "Stopping", "Stopped", "Updating", "Restarting",
-     "Inaccessible", and "Provisioning".
+    :ivar state: Possible states of a server. Known values are: "Ready", "Dropping", "Disabled",
+     "Starting", "Stopping", "Stopped", "Updating", "Restarting", "Inaccessible", and
+     "Provisioning".
     :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerState
-    :ivar fully_qualified_domain_name: The fully qualified domain name of a server.
+    :ivar fully_qualified_domain_name: Fully qualified domain name of a server.
     :vartype fully_qualified_domain_name: str
     :ivar storage: Storage properties of a server.
     :vartype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
-    :ivar auth_config: AuthConfig properties of a server.
+    :ivar auth_config: Authentication configuration properties of a server.
     :vartype auth_config: ~azure.mgmt.postgresqlflexibleservers.models.AuthConfig
     :ivar data_encryption: Data encryption properties of a server.
     :vartype data_encryption: ~azure.mgmt.postgresqlflexibleservers.models.DataEncryption
     :ivar backup: Backup properties of a server.
     :vartype backup: ~azure.mgmt.postgresqlflexibleservers.models.Backup
-    :ivar network: Network properties of a server. This Network property is required to be passed
-     only in case you want the server to be Private access server.
+    :ivar network: Network properties of a server. Only required if you want your server to be
+     integrated into a virtual network provided by customer.
     :vartype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
     :ivar high_availability: High availability properties of a server.
     :vartype high_availability: ~azure.mgmt.postgresqlflexibleservers.models.HighAvailability
     :ivar maintenance_window: Maintenance window properties of a server.
     :vartype maintenance_window: ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceWindow
-    :ivar source_server_resource_id: The source server resource ID to restore from. It's required
-     when 'createMode' is 'PointInTimeRestore' or 'GeoRestore' or 'Replica' or 'ReviveDropped'. This
-     property is returned only for Replica server.
+    :ivar source_server_resource_id: Identifier of the server to be used as the source of the new
+     server. Required when 'createMode' is 'PointInTimeRestore', 'GeoRestore', 'Replica', or
+     'ReviveDropped'. This property is returned only when the target server is a read replica.
     :vartype source_server_resource_id: str
-    :ivar point_in_time_utc: Restore point creation time (ISO8601 format), specifying the time to
-     restore from. It's required when 'createMode' is 'PointInTimeRestore' or 'GeoRestore' or
-     'ReviveDropped'.
+    :ivar point_in_time_utc: Creation time (in ISO8601 format) of the backup which you want to
+     restore in the new server. It's required when 'createMode' is 'PointInTimeRestore',
+     'GeoRestore', or 'ReviveDropped'.
     :vartype point_in_time_utc: ~datetime.datetime
-    :ivar availability_zone: availability zone information of the server.
+    :ivar availability_zone: Availability zone of a server.
     :vartype availability_zone: str
-    :ivar replication_role: Replication role of the server. Known values are: "None", "Primary",
-     "AsyncReplica", and "GeoAsyncReplica".
+    :ivar replication_role: Role of the server in a replication set. Known values are: "None",
+     "Primary", "AsyncReplica", and "GeoAsyncReplica".
     :vartype replication_role: str or ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
-    :ivar replica_capacity: Replicas allowed for a server.
+    :ivar replica_capacity: Maximum number of read replicas allowed for a server.
     :vartype replica_capacity: int
-    :ivar replica: Replica properties of a server. These Replica properties are required to be
-     passed only in case you want to Promote a server.
+    :ivar replica: Read replica properties of a server. Required only in case that you want to
+     promote a server.
     :vartype replica: ~azure.mgmt.postgresqlflexibleservers.models.Replica
-    :ivar create_mode: The mode to create a new PostgreSQL server. Known values are: "Default",
-     "Create", "Update", "PointInTimeRestore", "GeoRestore", "Replica", and "ReviveDropped".
+    :ivar create_mode: Creation mode of a new server. Known values are: "Default", "Create",
+     "Update", "PointInTimeRestore", "GeoRestore", "Replica", and "ReviveDropped".
     :vartype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateMode
     :ivar private_endpoint_connections: List of private endpoint connections associated with the
-     specified resource.
+     specified server.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.postgresqlflexibleservers.models.PrivateEndpointConnection]
     :ivar cluster: Cluster properties of a server.
@@ -4085,12 +4540,12 @@ class Server(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.UserAssignedIdentity"] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
-        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
         storage: Optional["_models.Storage"] = None,
         auth_config: Optional["_models.AuthConfig"] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
@@ -4112,53 +4567,56 @@ class Server(TrackedResource):
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword sku: The SKU (pricing tier) of the server.
+        :keyword sku: Compute tier and size of a server.
         :paramtype sku: ~azure.mgmt.postgresqlflexibleservers.models.Sku
-        :keyword identity: Describes the identity of the application.
+        :keyword identity: User assigned managed identities assigned to the server.
         :paramtype identity: ~azure.mgmt.postgresqlflexibleservers.models.UserAssignedIdentity
-        :keyword administrator_login: The administrator's login name of a server. Can only be specified
-         when the server is being created (and is required for creation).
+        :keyword administrator_login: Name of the login designated as the first password based
+         administrator assigned to your instance of PostgreSQL. Must be specified the first time that
+         you enable password based authentication on a server. Once set to a given value, it cannot be
+         changed for the rest of the life of a server. If you disable password based authentication on a
+         server which had it enabled, this password based role isn't deleted.
         :paramtype administrator_login: str
-        :keyword administrator_login_password: The administrator login password (required for server
-         creation).
+        :keyword administrator_login_password: Password assigned to the administrator login. As long as
+         password authentication is enabled, this password can be changed at any time.
         :paramtype administrator_login_password: str
-        :keyword version: PostgreSQL Server version. Known values are: "17", "16", "15", "14", "13",
-         "12", and "11".
-        :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
+        :keyword version: Major version of PostgreSQL database engine. Known values are: "18", "17",
+         "16", "15", "14", "13", "12", and "11".
+        :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
         :keyword storage: Storage properties of a server.
         :paramtype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
-        :keyword auth_config: AuthConfig properties of a server.
+        :keyword auth_config: Authentication configuration properties of a server.
         :paramtype auth_config: ~azure.mgmt.postgresqlflexibleservers.models.AuthConfig
         :keyword data_encryption: Data encryption properties of a server.
         :paramtype data_encryption: ~azure.mgmt.postgresqlflexibleservers.models.DataEncryption
         :keyword backup: Backup properties of a server.
         :paramtype backup: ~azure.mgmt.postgresqlflexibleservers.models.Backup
-        :keyword network: Network properties of a server. This Network property is required to be
-         passed only in case you want the server to be Private access server.
+        :keyword network: Network properties of a server. Only required if you want your server to be
+         integrated into a virtual network provided by customer.
         :paramtype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
         :keyword high_availability: High availability properties of a server.
         :paramtype high_availability: ~azure.mgmt.postgresqlflexibleservers.models.HighAvailability
         :keyword maintenance_window: Maintenance window properties of a server.
         :paramtype maintenance_window: ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceWindow
-        :keyword source_server_resource_id: The source server resource ID to restore from. It's
-         required when 'createMode' is 'PointInTimeRestore' or 'GeoRestore' or 'Replica' or
-         'ReviveDropped'. This property is returned only for Replica server.
+        :keyword source_server_resource_id: Identifier of the server to be used as the source of the
+         new server. Required when 'createMode' is 'PointInTimeRestore', 'GeoRestore', 'Replica', or
+         'ReviveDropped'. This property is returned only when the target server is a read replica.
         :paramtype source_server_resource_id: str
-        :keyword point_in_time_utc: Restore point creation time (ISO8601 format), specifying the time
-         to restore from. It's required when 'createMode' is 'PointInTimeRestore' or 'GeoRestore' or
-         'ReviveDropped'.
+        :keyword point_in_time_utc: Creation time (in ISO8601 format) of the backup which you want to
+         restore in the new server. It's required when 'createMode' is 'PointInTimeRestore',
+         'GeoRestore', or 'ReviveDropped'.
         :paramtype point_in_time_utc: ~datetime.datetime
-        :keyword availability_zone: availability zone information of the server.
+        :keyword availability_zone: Availability zone of a server.
         :paramtype availability_zone: str
-        :keyword replication_role: Replication role of the server. Known values are: "None", "Primary",
-         "AsyncReplica", and "GeoAsyncReplica".
+        :keyword replication_role: Role of the server in a replication set. Known values are: "None",
+         "Primary", "AsyncReplica", and "GeoAsyncReplica".
         :paramtype replication_role: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
-        :keyword replica: Replica properties of a server. These Replica properties are required to be
-         passed only in case you want to Promote a server.
+        :keyword replica: Read replica properties of a server. Required only in case that you want to
+         promote a server.
         :paramtype replica: ~azure.mgmt.postgresqlflexibleservers.models.Replica
-        :keyword create_mode: The mode to create a new PostgreSQL server. Known values are: "Default",
-         "Create", "Update", "PointInTimeRestore", "GeoRestore", "Replica", and "ReviveDropped".
+        :keyword create_mode: Creation mode of a new server. Known values are: "Default", "Create",
+         "Update", "PointInTimeRestore", "GeoRestore", "Replica", and "ReviveDropped".
         :paramtype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateMode
         :keyword cluster: Cluster properties of a server.
         :paramtype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
@@ -4186,160 +4644,126 @@ class Server(TrackedResource):
         self.replica_capacity: Optional[int] = None
         self.replica = replica
         self.create_mode = create_mode
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
         self.cluster = cluster
 
 
-class ServerBackup(ProxyResource):
-    """Server backup properties.
+class ServerEditionCapability(CapabilityBase):
+    """Capabilities in terms of compute tier.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
+    :ivar status: The status of the capability. Known values are: "Visible", "Available",
+     "Default", and "Disabled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
+    :ivar reason: The reason for the capability not being available.
+    :vartype reason: str
+    :ivar name: Name of compute tier.
     :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar backup_type: Backup type. Known values are: "Full" and "Customer On-Demand".
-    :vartype backup_type: str or ~azure.mgmt.postgresqlflexibleservers.models.Origin
-    :ivar completed_time: Backup completed time (ISO8601 format).
-    :vartype completed_time: ~datetime.datetime
-    :ivar source: Backup source.
-    :vartype source: str
+    :ivar default_sku_name: Default compute name (SKU) for this computer tier.
+    :vartype default_sku_name: str
+    :ivar supported_storage_editions: List of storage editions supported by this compute tier and
+     compute name.
+    :vartype supported_storage_editions:
+     list[~azure.mgmt.postgresqlflexibleservers.models.StorageEditionCapability]
+    :ivar supported_server_skus: List of supported compute names (SKUs).
+    :vartype supported_server_skus:
+     list[~azure.mgmt.postgresqlflexibleservers.models.ServerSkuCapability]
     """
 
     _validation = {
-        "id": {"readonly": True},
+        "status": {"readonly": True},
+        "reason": {"readonly": True},
         "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
+        "default_sku_name": {"readonly": True},
+        "supported_storage_editions": {"readonly": True},
+        "supported_server_skus": {"readonly": True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "backup_type": {"key": "properties.backupType", "type": "str"},
-        "completed_time": {"key": "properties.completedTime", "type": "iso-8601"},
-        "source": {"key": "properties.source", "type": "str"},
+        "default_sku_name": {"key": "defaultSkuName", "type": "str"},
+        "supported_storage_editions": {"key": "supportedStorageEditions", "type": "[StorageEditionCapability]"},
+        "supported_server_skus": {"key": "supportedServerSkus", "type": "[ServerSkuCapability]"},
     }
 
-    def __init__(
-        self,
-        *,
-        backup_type: Optional[Union[str, "_models.Origin"]] = None,
-        completed_time: Optional[datetime.datetime] = None,
-        source: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword backup_type: Backup type. Known values are: "Full" and "Customer On-Demand".
-        :paramtype backup_type: str or ~azure.mgmt.postgresqlflexibleservers.models.Origin
-        :keyword completed_time: Backup completed time (ISO8601 format).
-        :paramtype completed_time: ~datetime.datetime
-        :keyword source: Backup source.
-        :paramtype source: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.backup_type = backup_type
-        self.completed_time = completed_time
-        self.source = source
+        self.name: Optional[str] = None
+        self.default_sku_name: Optional[str] = None
+        self.supported_storage_editions: Optional[list["_models.StorageEditionCapability"]] = None
+        self.supported_server_skus: Optional[list["_models.ServerSkuCapability"]] = None
 
 
-class ServerBackupListResult(_serialization.Model):
-    """A list of server backups.
-
-    :ivar value: The list of backups of a server.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.ServerBackup]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ServerBackup]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.ServerBackup"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of backups of a server.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.ServerBackup]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ServerForUpdate(_serialization.Model):
+class ServerForPatch(_serialization.Model):
     """Represents a server to be updated.
 
-    :ivar sku: The SKU (pricing tier) of the server.
-    :vartype sku: ~azure.mgmt.postgresqlflexibleservers.models.Sku
+    :ivar sku: Compute tier and size of a server.
+    :vartype sku: ~azure.mgmt.postgresqlflexibleservers.models.SkuForPatch
     :ivar identity: Describes the identity of the application.
     :vartype identity: ~azure.mgmt.postgresqlflexibleservers.models.UserAssignedIdentity
     :ivar tags: Application-specific metadata in the form of key-value pairs.
     :vartype tags: dict[str, str]
-    :ivar administrator_login: The administrator's login name of a server. Can only be specified
-     when the server is trying to switch to password authentication and does not have default
-     administrator login.
+    :ivar administrator_login: Name of the login designated as the first password based
+     administrator assigned to your instance of PostgreSQL. Must be specified the first time that
+     you enable password based authentication on a server. Once set to a given value, it cannot be
+     changed for the rest of the life of a server. If you disable password based authentication on a
+     server which had it enabled, this password based role isn't deleted.
     :vartype administrator_login: str
-    :ivar administrator_login_password: The password of the administrator login.
+    :ivar administrator_login_password: Password assigned to the administrator login. As long as
+     password authentication is enabled, this password can be changed at any time.
     :vartype administrator_login_password: str
-    :ivar version: PostgreSQL Server version. Version 17 is currently not supported for MVU. Known
-     values are: "17", "16", "15", "14", "13", "12", and "11".
-    :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
+    :ivar version: Major version of PostgreSQL database engine. Known values are: "18", "17", "16",
+     "15", "14", "13", "12", and "11".
+    :vartype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
     :ivar storage: Storage properties of a server.
     :vartype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
     :ivar backup: Backup properties of a server.
-    :vartype backup: ~azure.mgmt.postgresqlflexibleservers.models.Backup
+    :vartype backup: ~azure.mgmt.postgresqlflexibleservers.models.BackupForPatch
     :ivar high_availability: High availability properties of a server.
-    :vartype high_availability: ~azure.mgmt.postgresqlflexibleservers.models.HighAvailability
+    :vartype high_availability:
+     ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityForPatch
     :ivar maintenance_window: Maintenance window properties of a server.
-    :vartype maintenance_window: ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceWindow
-    :ivar auth_config: AuthConfig properties of a server.
-    :vartype auth_config: ~azure.mgmt.postgresqlflexibleservers.models.AuthConfig
+    :vartype maintenance_window:
+     ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceWindowForPatch
+    :ivar auth_config: Authentication configuration properties of a server.
+    :vartype auth_config: ~azure.mgmt.postgresqlflexibleservers.models.AuthConfigForPatch
     :ivar data_encryption: Data encryption properties of a server.
     :vartype data_encryption: ~azure.mgmt.postgresqlflexibleservers.models.DataEncryption
-    :ivar create_mode: The mode to update a new PostgreSQL server. Known values are: "Default" and
-     "Update".
-    :vartype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateModeForUpdate
-    :ivar replication_role: Replication role of the server. Known values are: "None", "Primary",
-     "AsyncReplica", and "GeoAsyncReplica".
+    :ivar availability_zone: Availability zone of a server.
+    :vartype availability_zone: str
+    :ivar create_mode: Update mode of an existing server. Known values are: "Default" and "Update".
+    :vartype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateModeForPatch
+    :ivar replication_role: Role of the server in a replication set. Known values are: "None",
+     "Primary", "AsyncReplica", and "GeoAsyncReplica".
     :vartype replication_role: str or ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
-    :ivar replica: Replica properties of a server. These Replica properties are required to be
-     passed only in case you want to Promote a server.
+    :ivar replica: Read replica properties of a server. Required only in case that you want to
+     promote a server.
     :vartype replica: ~azure.mgmt.postgresqlflexibleservers.models.Replica
-    :ivar network: Network properties of a server. These are required to be passed only in case if
-     server is a private access server.
+    :ivar network: Network properties of a server. Only required if you want your server to be
+     integrated into a virtual network provided by customer.
     :vartype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
     :ivar cluster: Cluster properties of a server.
     :vartype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
     """
 
     _attribute_map = {
-        "sku": {"key": "sku", "type": "Sku"},
+        "sku": {"key": "sku", "type": "SkuForPatch"},
         "identity": {"key": "identity", "type": "UserAssignedIdentity"},
         "tags": {"key": "tags", "type": "{str}"},
         "administrator_login": {"key": "properties.administratorLogin", "type": "str"},
         "administrator_login_password": {"key": "properties.administratorLoginPassword", "type": "str"},
         "version": {"key": "properties.version", "type": "str"},
         "storage": {"key": "properties.storage", "type": "Storage"},
-        "backup": {"key": "properties.backup", "type": "Backup"},
-        "high_availability": {"key": "properties.highAvailability", "type": "HighAvailability"},
-        "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindow"},
-        "auth_config": {"key": "properties.authConfig", "type": "AuthConfig"},
+        "backup": {"key": "properties.backup", "type": "BackupForPatch"},
+        "high_availability": {"key": "properties.highAvailability", "type": "HighAvailabilityForPatch"},
+        "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindowForPatch"},
+        "auth_config": {"key": "properties.authConfig", "type": "AuthConfigForPatch"},
         "data_encryption": {"key": "properties.dataEncryption", "type": "DataEncryption"},
+        "availability_zone": {"key": "properties.availabilityZone", "type": "str"},
         "create_mode": {"key": "properties.createMode", "type": "str"},
         "replication_role": {"key": "properties.replicationRole", "type": "str"},
         "replica": {"key": "properties.replica", "type": "Replica"},
@@ -4350,19 +4774,20 @@ class ServerForUpdate(_serialization.Model):
     def __init__(
         self,
         *,
-        sku: Optional["_models.Sku"] = None,
+        sku: Optional["_models.SkuForPatch"] = None,
         identity: Optional["_models.UserAssignedIdentity"] = None,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         administrator_login: Optional[str] = None,
         administrator_login_password: Optional[str] = None,
-        version: Optional[Union[str, "_models.ServerVersion"]] = None,
+        version: Optional[Union[str, "_models.PostgresMajorVersion"]] = None,
         storage: Optional["_models.Storage"] = None,
-        backup: Optional["_models.Backup"] = None,
-        high_availability: Optional["_models.HighAvailability"] = None,
-        maintenance_window: Optional["_models.MaintenanceWindow"] = None,
-        auth_config: Optional["_models.AuthConfig"] = None,
+        backup: Optional["_models.BackupForPatch"] = None,
+        high_availability: Optional["_models.HighAvailabilityForPatch"] = None,
+        maintenance_window: Optional["_models.MaintenanceWindowForPatch"] = None,
+        auth_config: Optional["_models.AuthConfigForPatch"] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
-        create_mode: Optional[Union[str, "_models.CreateModeForUpdate"]] = None,
+        availability_zone: str = "",
+        create_mode: Optional[Union[str, "_models.CreateModeForPatch"]] = None,
         replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         replica: Optional["_models.Replica"] = None,
         network: Optional["_models.Network"] = None,
@@ -4370,45 +4795,52 @@ class ServerForUpdate(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword sku: The SKU (pricing tier) of the server.
-        :paramtype sku: ~azure.mgmt.postgresqlflexibleservers.models.Sku
+        :keyword sku: Compute tier and size of a server.
+        :paramtype sku: ~azure.mgmt.postgresqlflexibleservers.models.SkuForPatch
         :keyword identity: Describes the identity of the application.
         :paramtype identity: ~azure.mgmt.postgresqlflexibleservers.models.UserAssignedIdentity
         :keyword tags: Application-specific metadata in the form of key-value pairs.
         :paramtype tags: dict[str, str]
-        :keyword administrator_login: The administrator's login name of a server. Can only be specified
-         when the server is trying to switch to password authentication and does not have default
-         administrator login.
+        :keyword administrator_login: Name of the login designated as the first password based
+         administrator assigned to your instance of PostgreSQL. Must be specified the first time that
+         you enable password based authentication on a server. Once set to a given value, it cannot be
+         changed for the rest of the life of a server. If you disable password based authentication on a
+         server which had it enabled, this password based role isn't deleted.
         :paramtype administrator_login: str
-        :keyword administrator_login_password: The password of the administrator login.
+        :keyword administrator_login_password: Password assigned to the administrator login. As long as
+         password authentication is enabled, this password can be changed at any time.
         :paramtype administrator_login_password: str
-        :keyword version: PostgreSQL Server version. Version 17 is currently not supported for MVU.
-         Known values are: "17", "16", "15", "14", "13", "12", and "11".
-        :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.ServerVersion
+        :keyword version: Major version of PostgreSQL database engine. Known values are: "18", "17",
+         "16", "15", "14", "13", "12", and "11".
+        :paramtype version: str or ~azure.mgmt.postgresqlflexibleservers.models.PostgresMajorVersion
         :keyword storage: Storage properties of a server.
         :paramtype storage: ~azure.mgmt.postgresqlflexibleservers.models.Storage
         :keyword backup: Backup properties of a server.
-        :paramtype backup: ~azure.mgmt.postgresqlflexibleservers.models.Backup
+        :paramtype backup: ~azure.mgmt.postgresqlflexibleservers.models.BackupForPatch
         :keyword high_availability: High availability properties of a server.
-        :paramtype high_availability: ~azure.mgmt.postgresqlflexibleservers.models.HighAvailability
+        :paramtype high_availability:
+         ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityForPatch
         :keyword maintenance_window: Maintenance window properties of a server.
-        :paramtype maintenance_window: ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceWindow
-        :keyword auth_config: AuthConfig properties of a server.
-        :paramtype auth_config: ~azure.mgmt.postgresqlflexibleservers.models.AuthConfig
+        :paramtype maintenance_window:
+         ~azure.mgmt.postgresqlflexibleservers.models.MaintenanceWindowForPatch
+        :keyword auth_config: Authentication configuration properties of a server.
+        :paramtype auth_config: ~azure.mgmt.postgresqlflexibleservers.models.AuthConfigForPatch
         :keyword data_encryption: Data encryption properties of a server.
         :paramtype data_encryption: ~azure.mgmt.postgresqlflexibleservers.models.DataEncryption
-        :keyword create_mode: The mode to update a new PostgreSQL server. Known values are: "Default"
-         and "Update".
-        :paramtype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateModeForUpdate
-        :keyword replication_role: Replication role of the server. Known values are: "None", "Primary",
-         "AsyncReplica", and "GeoAsyncReplica".
+        :keyword availability_zone: Availability zone of a server.
+        :paramtype availability_zone: str
+        :keyword create_mode: Update mode of an existing server. Known values are: "Default" and
+         "Update".
+        :paramtype create_mode: str or ~azure.mgmt.postgresqlflexibleservers.models.CreateModeForPatch
+        :keyword replication_role: Role of the server in a replication set. Known values are: "None",
+         "Primary", "AsyncReplica", and "GeoAsyncReplica".
         :paramtype replication_role: str or
          ~azure.mgmt.postgresqlflexibleservers.models.ReplicationRole
-        :keyword replica: Replica properties of a server. These Replica properties are required to be
-         passed only in case you want to Promote a server.
+        :keyword replica: Read replica properties of a server. Required only in case that you want to
+         promote a server.
         :paramtype replica: ~azure.mgmt.postgresqlflexibleservers.models.Replica
-        :keyword network: Network properties of a server. These are required to be passed only in case
-         if server is a private access server.
+        :keyword network: Network properties of a server. Only required if you want your server to be
+         integrated into a virtual network provided by customer.
         :paramtype network: ~azure.mgmt.postgresqlflexibleservers.models.Network
         :keyword cluster: Cluster properties of a server.
         :paramtype cluster: ~azure.mgmt.postgresqlflexibleservers.models.Cluster
@@ -4426,6 +4858,7 @@ class ServerForUpdate(_serialization.Model):
         self.maintenance_window = maintenance_window
         self.auth_config = auth_config
         self.data_encryption = data_encryption
+        self.availability_zone = availability_zone
         self.create_mode = create_mode
         self.replication_role = replication_role
         self.replica = replica
@@ -4433,10 +4866,10 @@ class ServerForUpdate(_serialization.Model):
         self.cluster = cluster
 
 
-class ServerListResult(_serialization.Model):
+class ServerList(_serialization.Model):
     """A list of servers.
 
-    :ivar value: The list of flexible servers.
+    :ivar value: The list of servers.
     :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.Server]
     :ivar next_link: The link used to get the next page of operations.
     :vartype next_link: str
@@ -4448,10 +4881,10 @@ class ServerListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Server"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Server"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of flexible servers.
+        :keyword value: The list of servers.
         :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.Server]
         :keyword next_link: The link used to get the next page of operations.
         :paramtype next_link: str
@@ -4462,11 +4895,12 @@ class ServerListResult(_serialization.Model):
 
 
 class ServerSku(_serialization.Model):
-    """Sku information related properties of a server.
+    """Compute information of a server.
 
-    :ivar name: The name of the sku, typically, tier + family + cores, e.g. Standard_D4s_v3.
+    :ivar name: Compute tier and size of the database server. This object is empty for an Azure
+     Database for PostgreSQL single server.
     :vartype name: str
-    :ivar tier: The tier of the particular SKU, e.g. Burstable. Known values are: "Burstable",
+    :ivar tier: Tier of the compute assigned to a server. Known values are: "Burstable",
      "GeneralPurpose", and "MemoryOptimized".
     :vartype tier: str or ~azure.mgmt.postgresqlflexibleservers.models.SkuTier
     """
@@ -4480,9 +4914,10 @@ class ServerSku(_serialization.Model):
         self, *, name: Optional[str] = None, tier: Optional[Union[str, "_models.SkuTier"]] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword name: The name of the sku, typically, tier + family + cores, e.g. Standard_D4s_v3.
+        :keyword name: Compute tier and size of the database server. This object is empty for an Azure
+         Database for PostgreSQL single server.
         :paramtype name: str
-        :keyword tier: The tier of the particular SKU, e.g. Burstable. Known values are: "Burstable",
+        :keyword tier: Tier of the compute assigned to a server. Known values are: "Burstable",
          "GeneralPurpose", and "MemoryOptimized".
         :paramtype tier: str or ~azure.mgmt.postgresqlflexibleservers.models.SkuTier
         """
@@ -4492,7 +4927,7 @@ class ServerSku(_serialization.Model):
 
 
 class ServerSkuCapability(CapabilityBase):
-    """Sku capability.
+    """Capabilities in terms of compute.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4501,22 +4936,25 @@ class ServerSkuCapability(CapabilityBase):
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
     :ivar reason: The reason for the capability not being available.
     :vartype reason: str
-    :ivar name: Sku name.
+    :ivar name: Name of the compute (SKU).
     :vartype name: str
-    :ivar v_cores: Supported vCores.
+    :ivar v_cores: vCores available for this compute.
     :vartype v_cores: int
-    :ivar supported_iops: Supported IOPS.
+    :ivar supported_iops: Maximum IOPS supported by this compute.
     :vartype supported_iops: int
-    :ivar supported_memory_per_vcore_mb: Supported memory per vCore in MB.
+    :ivar supported_memory_per_vcore_mb: Supported memory (in MB) per virtual core assigned to this
+     compute.
     :vartype supported_memory_per_vcore_mb: int
-    :ivar supported_zones: List of supported Availability Zones. E.g. "1", "2", "3".
+    :ivar supported_zones: List of supported availability zones. E.g. '1', '2', '3'.
     :vartype supported_zones: list[str]
-    :ivar supported_ha_mode: Supported high availability mode.
-    :vartype supported_ha_mode: list[str or ~azure.mgmt.postgresqlflexibleservers.models.HaMode]
-    :ivar supported_features: The supported features.
+    :ivar supported_ha_mode: Modes of high availability supported for this compute.
+    :vartype supported_ha_mode: list[str or
+     ~azure.mgmt.postgresqlflexibleservers.models.HighAvailabilityMode]
+    :ivar supported_features: Features supported.
     :vartype supported_features:
      list[~azure.mgmt.postgresqlflexibleservers.models.SupportedFeature]
-    :ivar security_profile: The value of security profile indicating if its confidential vm.
+    :ivar security_profile: Security profile of the compute. Indicates if it's a Confidential
+     Compute virtual machine.
     :vartype security_profile: str
     """
 
@@ -4553,96 +4991,14 @@ class ServerSkuCapability(CapabilityBase):
         self.v_cores: Optional[int] = None
         self.supported_iops: Optional[int] = None
         self.supported_memory_per_vcore_mb: Optional[int] = None
-        self.supported_zones: Optional[List[str]] = None
-        self.supported_ha_mode: Optional[List[Union[str, "_models.HaMode"]]] = None
-        self.supported_features: Optional[List["_models.SupportedFeature"]] = None
+        self.supported_zones: Optional[list[str]] = None
+        self.supported_ha_mode: Optional[list[Union[str, "_models.HighAvailabilityMode"]]] = None
+        self.supported_features: Optional[list["_models.SupportedFeature"]] = None
         self.security_profile: Optional[str] = None
 
 
-class ServerThreatProtectionListResult(_serialization.Model):
-    """A list of the server's Advanced Threat Protection settings.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
-    :vartype value:
-     list[~azure.mgmt.postgresqlflexibleservers.models.ServerThreatProtectionSettingsModel]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ServerThreatProtectionSettingsModel]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.ServerThreatProtectionSettingsModel"]] = None
-        self.next_link: Optional[str] = None
-
-
-class ServerThreatProtectionSettingsModel(ProxyResource):
-    """Server's Advanced Threat Protection settings.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar state: Specifies the state of the Threat Protection, whether it is enabled or disabled or
-     a state has not been applied yet on the specific server. Known values are: "Enabled" and
-     "Disabled".
-    :vartype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionState
-    :ivar creation_time: Specifies the UTC creation time of the policy.
-    :vartype creation_time: ~datetime.datetime
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "creation_time": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "state": {"key": "properties.state", "type": "str"},
-        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
-    }
-
-    def __init__(self, *, state: Optional[Union[str, "_models.ThreatProtectionState"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword state: Specifies the state of the Threat Protection, whether it is enabled or disabled
-         or a state has not been applied yet on the specific server. Known values are: "Enabled" and
-         "Disabled".
-        :paramtype state: str or ~azure.mgmt.postgresqlflexibleservers.models.ThreatProtectionState
-        """
-        super().__init__(**kwargs)
-        self.state = state
-        self.creation_time: Optional[datetime.datetime] = None
-
-
 class ServerVersionCapability(CapabilityBase):
-    """Server version capabilities.
+    """Capabilities in terms of major versions of PostgreSQL database engine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4651,11 +5007,12 @@ class ServerVersionCapability(CapabilityBase):
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
     :ivar reason: The reason for the capability not being available.
     :vartype reason: str
-    :ivar name: Server version.
+    :ivar name: Major version of PostgreSQL database engine.
     :vartype name: str
-    :ivar supported_versions_to_upgrade: Supported servers versions to upgrade.
+    :ivar supported_versions_to_upgrade: Major versions of PostgreSQL database engine to which this
+     version can be automatically upgraded.
     :vartype supported_versions_to_upgrade: list[str]
-    :ivar supported_features: The supported features.
+    :ivar supported_features: Features supported.
     :vartype supported_features:
      list[~azure.mgmt.postgresqlflexibleservers.models.SupportedFeature]
     """
@@ -4680,211 +5037,19 @@ class ServerVersionCapability(CapabilityBase):
         """ """
         super().__init__(**kwargs)
         self.name: Optional[str] = None
-        self.supported_versions_to_upgrade: Optional[List[str]] = None
-        self.supported_features: Optional[List["_models.SupportedFeature"]] = None
-
-
-class SessionDetailsListResult(_serialization.Model):
-    """A list of tuning configuration sessions.
-
-    :ivar value: A list of details of the session.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionDetailsResource]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SessionDetailsResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SessionDetailsResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of details of the session.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionDetailsResource]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class SessionDetailsResource(_serialization.Model):
-    """Session details properties.
-
-    :ivar iteration_id: Iteration id.
-    :vartype iteration_id: str
-    :ivar session_id: Session id.
-    :vartype session_id: str
-    :ivar applied_configuration: Applied configuration for the iteration.
-    :vartype applied_configuration: str
-    :ivar iteration_start_time: Iteration start time.
-    :vartype iteration_start_time: str
-    :ivar average_query_runtime_ms: The aqr for the iteration.
-    :vartype average_query_runtime_ms: str
-    :ivar transactions_per_second: The tps for the iteration.
-    :vartype transactions_per_second: str
-    """
-
-    _attribute_map = {
-        "iteration_id": {"key": "iterationId", "type": "str"},
-        "session_id": {"key": "sessionId", "type": "str"},
-        "applied_configuration": {"key": "appliedConfiguration", "type": "str"},
-        "iteration_start_time": {"key": "iterationStartTime", "type": "str"},
-        "average_query_runtime_ms": {"key": "averageQueryRuntimeMs", "type": "str"},
-        "transactions_per_second": {"key": "transactionsPerSecond", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        iteration_id: Optional[str] = None,
-        session_id: Optional[str] = None,
-        applied_configuration: Optional[str] = None,
-        iteration_start_time: Optional[str] = None,
-        average_query_runtime_ms: Optional[str] = None,
-        transactions_per_second: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword iteration_id: Iteration id.
-        :paramtype iteration_id: str
-        :keyword session_id: Session id.
-        :paramtype session_id: str
-        :keyword applied_configuration: Applied configuration for the iteration.
-        :paramtype applied_configuration: str
-        :keyword iteration_start_time: Iteration start time.
-        :paramtype iteration_start_time: str
-        :keyword average_query_runtime_ms: The aqr for the iteration.
-        :paramtype average_query_runtime_ms: str
-        :keyword transactions_per_second: The tps for the iteration.
-        :paramtype transactions_per_second: str
-        """
-        super().__init__(**kwargs)
-        self.iteration_id = iteration_id
-        self.session_id = session_id
-        self.applied_configuration = applied_configuration
-        self.iteration_start_time = iteration_start_time
-        self.average_query_runtime_ms = average_query_runtime_ms
-        self.transactions_per_second = transactions_per_second
-
-
-class SessionResource(_serialization.Model):
-    """Session resource properties.
-
-    :ivar session_start_time: the tuning session start time.
-    :vartype session_start_time: str
-    :ivar session_id: Session id.
-    :vartype session_id: str
-    :ivar status: The status of the tuning session.
-    :vartype status: str
-    :ivar pre_tuning_aqr: The pre tuning aqr.
-    :vartype pre_tuning_aqr: str
-    :ivar post_tuning_aqr: The post tuning aqr.
-    :vartype post_tuning_aqr: str
-    :ivar pre_tuning_tps: The pre tuning tps.
-    :vartype pre_tuning_tps: str
-    :ivar post_tuning_tps: The post tuning tps.
-    :vartype post_tuning_tps: str
-    """
-
-    _attribute_map = {
-        "session_start_time": {"key": "sessionStartTime", "type": "str"},
-        "session_id": {"key": "sessionId", "type": "str"},
-        "status": {"key": "status", "type": "str"},
-        "pre_tuning_aqr": {"key": "preTuningAqr", "type": "str"},
-        "post_tuning_aqr": {"key": "postTuningAqr", "type": "str"},
-        "pre_tuning_tps": {"key": "preTuningTps", "type": "str"},
-        "post_tuning_tps": {"key": "postTuningTps", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        session_start_time: Optional[str] = None,
-        session_id: Optional[str] = None,
-        status: Optional[str] = None,
-        pre_tuning_aqr: Optional[str] = None,
-        post_tuning_aqr: Optional[str] = None,
-        pre_tuning_tps: Optional[str] = None,
-        post_tuning_tps: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword session_start_time: the tuning session start time.
-        :paramtype session_start_time: str
-        :keyword session_id: Session id.
-        :paramtype session_id: str
-        :keyword status: The status of the tuning session.
-        :paramtype status: str
-        :keyword pre_tuning_aqr: The pre tuning aqr.
-        :paramtype pre_tuning_aqr: str
-        :keyword post_tuning_aqr: The post tuning aqr.
-        :paramtype post_tuning_aqr: str
-        :keyword pre_tuning_tps: The pre tuning tps.
-        :paramtype pre_tuning_tps: str
-        :keyword post_tuning_tps: The post tuning tps.
-        :paramtype post_tuning_tps: str
-        """
-        super().__init__(**kwargs)
-        self.session_start_time = session_start_time
-        self.session_id = session_id
-        self.status = status
-        self.pre_tuning_aqr = pre_tuning_aqr
-        self.post_tuning_aqr = post_tuning_aqr
-        self.pre_tuning_tps = pre_tuning_tps
-        self.post_tuning_tps = post_tuning_tps
-
-
-class SessionsListResult(_serialization.Model):
-    """A list of tuning configuration sessions.
-
-    :ivar value: A list of tuning configuration sessions.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionResource]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SessionResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.SessionResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of tuning configuration sessions.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.SessionResource]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.supported_versions_to_upgrade: Optional[list[str]] = None
+        self.supported_features: Optional[list["_models.SupportedFeature"]] = None
 
 
 class Sku(_serialization.Model):
-    """Sku information related properties of a server.
+    """Compute information of a server.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar name: The name of the sku, typically, tier + family + cores, e.g. Standard_D4s_v3.
-     Required.
+    :ivar name: Name by which is known a given compute size assigned to a server. Required.
     :vartype name: str
-    :ivar tier: The tier of the particular SKU, e.g. Burstable. Required. Known values are:
-     "Burstable", "GeneralPurpose", and "MemoryOptimized".
+    :ivar tier: Tier of the compute assigned to a server. Required. Known values are: "Burstable",
+     "GeneralPurpose", and "MemoryOptimized".
     :vartype tier: str or ~azure.mgmt.postgresqlflexibleservers.models.SkuTier
     """
 
@@ -4900,11 +5065,40 @@ class Sku(_serialization.Model):
 
     def __init__(self, *, name: str, tier: Union[str, "_models.SkuTier"], **kwargs: Any) -> None:
         """
-        :keyword name: The name of the sku, typically, tier + family + cores, e.g. Standard_D4s_v3.
-         Required.
+        :keyword name: Name by which is known a given compute size assigned to a server. Required.
         :paramtype name: str
-        :keyword tier: The tier of the particular SKU, e.g. Burstable. Required. Known values are:
+        :keyword tier: Tier of the compute assigned to a server. Required. Known values are:
          "Burstable", "GeneralPurpose", and "MemoryOptimized".
+        :paramtype tier: str or ~azure.mgmt.postgresqlflexibleservers.models.SkuTier
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.tier = tier
+
+
+class SkuForPatch(_serialization.Model):
+    """Compute information of a server.
+
+    :ivar name: Name by which is known a given compute size assigned to a server.
+    :vartype name: str
+    :ivar tier: Tier of the compute assigned to a server. Known values are: "Burstable",
+     "GeneralPurpose", and "MemoryOptimized".
+    :vartype tier: str or ~azure.mgmt.postgresqlflexibleservers.models.SkuTier
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+    }
+
+    def __init__(
+        self, *, name: Optional[str] = None, tier: Optional[Union[str, "_models.SkuTier"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name by which is known a given compute size assigned to a server.
+        :paramtype name: str
+        :keyword tier: Tier of the compute assigned to a server. Known values are: "Burstable",
+         "GeneralPurpose", and "MemoryOptimized".
         :paramtype tier: str or ~azure.mgmt.postgresqlflexibleservers.models.SkuTier
         """
         super().__init__(**kwargs)
@@ -4915,24 +5109,25 @@ class Sku(_serialization.Model):
 class Storage(_serialization.Model):
     """Storage properties of a server.
 
-    :ivar storage_size_gb: Max storage allowed for a server.
+    :ivar storage_size_gb: Size of storage assigned to a server.
     :vartype storage_size_gb: int
-    :ivar auto_grow: Flag to enable / disable Storage Auto grow for flexible server. Known values
-     are: "Enabled" and "Disabled".
+    :ivar auto_grow: Flag to enable or disable the automatic growth of storage size of a server
+     when available space is nearing zero and conditions allow for automatically growing storage
+     size. Known values are: "Enabled" and "Disabled".
     :vartype auto_grow: str or ~azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrow
-    :ivar tier: Name of storage tier for IOPS. Known values are: "P1", "P2", "P3", "P4", "P6",
-     "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
+    :ivar tier: Storage tier of a server. Known values are: "P1", "P2", "P3", "P4", "P6", "P10",
+     "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
     :vartype tier: str or
-     ~azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTiers
-    :ivar iops: Storage IOPS quantity. This property is required to be set for storage Type
-     PremiumV2_LRS and UltraSSD_LRS.
+     ~azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTier
+    :ivar iops: Maximum IOPS supported for storage. Required when type of storage is PremiumV2_LRS
+     or UltraSSD_LRS.
     :vartype iops: int
-    :ivar throughput: Storage throughput for the server. This is required to be set for storage
-     Type PremiumV2_LRS and UltraSSD_LRS.
+    :ivar throughput: Maximum throughput supported for storage. Required when type of storage is
+     PremiumV2_LRS or UltraSSD_LRS.
     :vartype throughput: int
-    :ivar type: Storage type for the server. Allowed values are Premium_LRS, PremiumV2_LRS, and
-     UltraSSD_LRS. Default is Premium_LRS if not specified. Known values are: "Premium_LRS",
-     "PremiumV2_LRS", and "UltraSSD_LRS".
+    :ivar type: Type of storage assigned to a server. Allowed values are Premium_LRS,
+     PremiumV2_LRS, or UltraSSD_LRS. If not specified, it defaults to Premium_LRS. Known values are:
+     "Premium_LRS", "PremiumV2_LRS", and "UltraSSD_LRS".
     :vartype type: str or ~azure.mgmt.postgresqlflexibleservers.models.StorageType
     """
 
@@ -4950,31 +5145,32 @@ class Storage(_serialization.Model):
         *,
         storage_size_gb: Optional[int] = None,
         auto_grow: Optional[Union[str, "_models.StorageAutoGrow"]] = None,
-        tier: Optional[Union[str, "_models.AzureManagedDiskPerformanceTiers"]] = None,
+        tier: Optional[Union[str, "_models.AzureManagedDiskPerformanceTier"]] = None,
         iops: Optional[int] = None,
         throughput: Optional[int] = None,
         type: Optional[Union[str, "_models.StorageType"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword storage_size_gb: Max storage allowed for a server.
+        :keyword storage_size_gb: Size of storage assigned to a server.
         :paramtype storage_size_gb: int
-        :keyword auto_grow: Flag to enable / disable Storage Auto grow for flexible server. Known
-         values are: "Enabled" and "Disabled".
+        :keyword auto_grow: Flag to enable or disable the automatic growth of storage size of a server
+         when available space is nearing zero and conditions allow for automatically growing storage
+         size. Known values are: "Enabled" and "Disabled".
         :paramtype auto_grow: str or ~azure.mgmt.postgresqlflexibleservers.models.StorageAutoGrow
-        :keyword tier: Name of storage tier for IOPS. Known values are: "P1", "P2", "P3", "P4", "P6",
-         "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
+        :keyword tier: Storage tier of a server. Known values are: "P1", "P2", "P3", "P4", "P6", "P10",
+         "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80".
         :paramtype tier: str or
-         ~azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTiers
-        :keyword iops: Storage IOPS quantity. This property is required to be set for storage Type
-         PremiumV2_LRS and UltraSSD_LRS.
+         ~azure.mgmt.postgresqlflexibleservers.models.AzureManagedDiskPerformanceTier
+        :keyword iops: Maximum IOPS supported for storage. Required when type of storage is
+         PremiumV2_LRS or UltraSSD_LRS.
         :paramtype iops: int
-        :keyword throughput: Storage throughput for the server. This is required to be set for storage
-         Type PremiumV2_LRS and UltraSSD_LRS.
+        :keyword throughput: Maximum throughput supported for storage. Required when type of storage is
+         PremiumV2_LRS or UltraSSD_LRS.
         :paramtype throughput: int
-        :keyword type: Storage type for the server. Allowed values are Premium_LRS, PremiumV2_LRS, and
-         UltraSSD_LRS. Default is Premium_LRS if not specified. Known values are: "Premium_LRS",
-         "PremiumV2_LRS", and "UltraSSD_LRS".
+        :keyword type: Type of storage assigned to a server. Allowed values are Premium_LRS,
+         PremiumV2_LRS, or UltraSSD_LRS. If not specified, it defaults to Premium_LRS. Known values are:
+         "Premium_LRS", "PremiumV2_LRS", and "UltraSSD_LRS".
         :paramtype type: str or ~azure.mgmt.postgresqlflexibleservers.models.StorageType
         """
         super().__init__(**kwargs)
@@ -4987,7 +5183,7 @@ class Storage(_serialization.Model):
 
 
 class StorageEditionCapability(CapabilityBase):
-    """Storage edition capability.
+    """Capabilities in terms of storage tier.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4996,11 +5192,11 @@ class StorageEditionCapability(CapabilityBase):
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
     :ivar reason: The reason for the capability not being available.
     :vartype reason: str
-    :ivar name: Storage edition name.
+    :ivar name: Name of storage tier.
     :vartype name: str
-    :ivar default_storage_size_mb: Default storage size in MB for storage edition.
+    :ivar default_storage_size_mb: Default storage size (in MB) for this storage tier.
     :vartype default_storage_size_mb: int
-    :ivar supported_storage_mb: Flexible server supported storage range in MB.
+    :ivar supported_storage_mb: Configurations of storage supported for this storage tier.
     :vartype supported_storage_mb:
      list[~azure.mgmt.postgresqlflexibleservers.models.StorageMbCapability]
     """
@@ -5026,11 +5222,11 @@ class StorageEditionCapability(CapabilityBase):
         super().__init__(**kwargs)
         self.name: Optional[str] = None
         self.default_storage_size_mb: Optional[int] = None
-        self.supported_storage_mb: Optional[List["_models.StorageMbCapability"]] = None
+        self.supported_storage_mb: Optional[list["_models.StorageMbCapability"]] = None
 
 
 class StorageMbCapability(CapabilityBase):
-    """storage size in MB capability.
+    """Storage size (in MB) capability.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5039,22 +5235,21 @@ class StorageMbCapability(CapabilityBase):
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
     :ivar reason: The reason for the capability not being available.
     :vartype reason: str
-    :ivar supported_iops: Supported IOPS.
+    :ivar supported_iops: Minimum IOPS supported by the storage size.
     :vartype supported_iops: int
-    :ivar supported_maximum_iops: Maximum IOPS supported by this #Vcores or PremiumV2_LRS Storage
-     Size.
+    :ivar supported_maximum_iops: Maximum IOPS supported by the storage size.
     :vartype supported_maximum_iops: int
-    :ivar storage_size_mb: Storage size in MB.
+    :ivar storage_size_mb: Minimum supported size (in MB) of storage.
     :vartype storage_size_mb: int
-    :ivar maximum_storage_size_mb: Maximum value of Storage size in MB.
+    :ivar maximum_storage_size_mb: Maximum supported size (in MB) of storage.
     :vartype maximum_storage_size_mb: int
-    :ivar supported_throughput: Values of throughput in MB/s.
+    :ivar supported_throughput: Minimum supported throughput (in MB/s) of storage.
     :vartype supported_throughput: int
-    :ivar supported_maximum_throughput: Maximum values of throughput in MB/s.
+    :ivar supported_maximum_throughput: Maximum supported throughput (in MB/s) of storage.
     :vartype supported_maximum_throughput: int
-    :ivar default_iops_tier: Default tier for IOPS.
+    :ivar default_iops_tier: Default IOPS for this tier and storage size.
     :vartype default_iops_tier: str
-    :ivar supported_iops_tiers: List of available options to upgrade the storage performance.
+    :ivar supported_iops_tiers: List of all supported storage tiers for this tier and storage size.
     :vartype supported_iops_tiers:
      list[~azure.mgmt.postgresqlflexibleservers.models.StorageTierCapability]
     """
@@ -5095,11 +5290,11 @@ class StorageMbCapability(CapabilityBase):
         self.supported_throughput: Optional[int] = None
         self.supported_maximum_throughput: Optional[int] = None
         self.default_iops_tier: Optional[str] = None
-        self.supported_iops_tiers: Optional[List["_models.StorageTierCapability"]] = None
+        self.supported_iops_tiers: Optional[list["_models.StorageTierCapability"]] = None
 
 
 class StorageTierCapability(CapabilityBase):
-    """Represents capability of a storage tier.
+    """Capability of a storage tier.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5108,9 +5303,9 @@ class StorageTierCapability(CapabilityBase):
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.CapabilityStatus
     :ivar reason: The reason for the capability not being available.
     :vartype reason: str
-    :ivar name: Name to represent Storage tier capability.
+    :ivar name: Name of the storage tier.
     :vartype name: str
-    :ivar iops: Supported IOPS for this storage tier.
+    :ivar iops: Supported IOPS for the storage tier.
     :vartype iops: int
     """
 
@@ -5136,14 +5331,15 @@ class StorageTierCapability(CapabilityBase):
 
 
 class SupportedFeature(_serialization.Model):
-    """The supported features.
+    """Features supported.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: Name of feature.
+    :ivar name: Name of the feature.
     :vartype name: str
-    :ivar status: Status of feature. Known values are: "Enabled" and "Disabled".
-    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.SupportedFeatureStatusEnum
+    :ivar status: Status of the feature. Indicates if the feature is enabled or not. Known values
+     are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.FeatureStatus
     """
 
     _validation = {
@@ -5160,7 +5356,7 @@ class SupportedFeature(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.name: Optional[str] = None
-        self.status: Optional[Union[str, "_models.SupportedFeatureStatusEnum"]] = None
+        self.status: Optional[Union[str, "_models.FeatureStatus"]] = None
 
 
 class SystemData(_serialization.Model):
@@ -5229,42 +5425,8 @@ class SystemData(_serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TuningOptionsListResult(_serialization.Model):
-    """A list of server tuning options.
-
-    :ivar value: A list of available tuning options.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.TuningOptionsResource]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[TuningOptionsResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.TuningOptionsResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of available tuning options.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.TuningOptionsResource]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class TuningOptionsResource(ProxyResource):
-    """Stores property that features impact on some metric if this recommended action is applied.
+class TuningOptions(ProxyResource):
+    """Impact on some metric if this recommended action is applied.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5282,22 +5444,51 @@ class TuningOptionsResource(ProxyResource):
     """
 
 
+class TuningOptionsList(_serialization.Model):
+    """List of server tuning options.
+
+    :ivar value: List of available tuning options.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.TuningOptions]
+    :ivar next_link: Link used to get the next page of results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[TuningOptions]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.TuningOptions"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of available tuning options.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.TuningOptions]
+        :keyword next_link: Link used to get the next page of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
 class UserAssignedIdentity(_serialization.Model):
-    """Information describing the identities associated with this application.
+    """Identities associated with a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar user_assigned_identities: represents user assigned identities map.
+    :ivar user_assigned_identities: Map of user assigned managed identities.
     :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.postgresqlflexibleservers.models.UserIdentity]
-    :ivar principal_id: the identity principal Id of the server.
+    :ivar principal_id: Identifier of the object of the service principal associated to the user
+     assigned managed identity.
     :vartype principal_id: str
-    :ivar type: the types of identities associated with this resource. Required. Known values are:
-     "None", "UserAssigned", "SystemAssigned", and "SystemAssigned,UserAssigned".
+    :ivar type: Types of identities associated with a server. Required. Known values are: "None",
+     "UserAssigned", "SystemAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: str or ~azure.mgmt.postgresqlflexibleservers.models.IdentityType
-    :ivar tenant_id: Tenant id of the server.
+    :ivar tenant_id: Identifier of the tenant of a server.
     :vartype tenant_id: str
     """
 
@@ -5317,18 +5508,19 @@ class UserAssignedIdentity(_serialization.Model):
         self,
         *,
         type: Union[str, "_models.IdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserIdentity"]] = None,
         principal_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword user_assigned_identities: represents user assigned identities map.
+        :keyword user_assigned_identities: Map of user assigned managed identities.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.postgresqlflexibleservers.models.UserIdentity]
-        :keyword principal_id: the identity principal Id of the server.
+        :keyword principal_id: Identifier of the object of the service principal associated to the user
+         assigned managed identity.
         :paramtype principal_id: str
-        :keyword type: the types of identities associated with this resource. Required. Known values
-         are: "None", "UserAssigned", "SystemAssigned", and "SystemAssigned,UserAssigned".
+        :keyword type: Types of identities associated with a server. Required. Known values are:
+         "None", "UserAssigned", "SystemAssigned", and "SystemAssigned,UserAssigned".
         :paramtype type: str or ~azure.mgmt.postgresqlflexibleservers.models.IdentityType
         """
         super().__init__(**kwargs)
@@ -5339,12 +5531,13 @@ class UserAssignedIdentity(_serialization.Model):
 
 
 class UserIdentity(_serialization.Model):
-    """Describes a single user-assigned identity associated with the application.
+    """User assigned managed identity associated with a server.
 
-    :ivar principal_id: the object identifier of the Service Principal which this identity
-     represents.
+    :ivar principal_id: Identifier of the object of the service principal associated to the user
+     assigned managed identity.
     :vartype principal_id: str
-    :ivar client_id: the client identifier of the Service Principal which this identity represents.
+    :ivar client_id: Identifier of the client of the service principal associated to the user
+     assigned managed identity.
     :vartype client_id: str
     """
 
@@ -5355,11 +5548,11 @@ class UserIdentity(_serialization.Model):
 
     def __init__(self, *, principal_id: Optional[str] = None, client_id: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword principal_id: the object identifier of the Service Principal which this identity
-         represents.
+        :keyword principal_id: Identifier of the object of the service principal associated to the user
+         assigned managed identity.
         :paramtype principal_id: str
-        :keyword client_id: the client identifier of the Service Principal which this identity
-         represents.
+        :keyword client_id: Identifier of the client of the service principal associated to the user
+         assigned managed identity.
         :paramtype client_id: str
         """
         super().__init__(**kwargs)
@@ -5373,9 +5566,9 @@ class ValidationDetails(_serialization.Model):
     :ivar status: Validation status for migration. Known values are: "Failed", "Succeeded", and
      "Warning".
     :vartype status: str or ~azure.mgmt.postgresqlflexibleservers.models.ValidationState
-    :ivar validation_start_time_in_utc: Validation Start date-time in UTC.
+    :ivar validation_start_time_in_utc: Start time (UTC) for validation.
     :vartype validation_start_time_in_utc: ~datetime.datetime
-    :ivar validation_end_time_in_utc: Validation End date-time in UTC.
+    :ivar validation_end_time_in_utc: End time (UTC) for validation.
     :vartype validation_end_time_in_utc: ~datetime.datetime
     :ivar server_level_validation_details: Details of server level validations.
     :vartype server_level_validation_details:
@@ -5399,17 +5592,17 @@ class ValidationDetails(_serialization.Model):
         status: Optional[Union[str, "_models.ValidationState"]] = None,
         validation_start_time_in_utc: Optional[datetime.datetime] = None,
         validation_end_time_in_utc: Optional[datetime.datetime] = None,
-        server_level_validation_details: Optional[List["_models.ValidationSummaryItem"]] = None,
-        db_level_validation_details: Optional[List["_models.DbLevelValidationStatus"]] = None,
+        server_level_validation_details: Optional[list["_models.ValidationSummaryItem"]] = None,
+        db_level_validation_details: Optional[list["_models.DbLevelValidationStatus"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword status: Validation status for migration. Known values are: "Failed", "Succeeded", and
          "Warning".
         :paramtype status: str or ~azure.mgmt.postgresqlflexibleservers.models.ValidationState
-        :keyword validation_start_time_in_utc: Validation Start date-time in UTC.
+        :keyword validation_start_time_in_utc: Start time (UTC) for validation.
         :paramtype validation_start_time_in_utc: ~datetime.datetime
-        :keyword validation_end_time_in_utc: Validation End date-time in UTC.
+        :keyword validation_end_time_in_utc: End time (UTC) for validation.
         :paramtype validation_end_time_in_utc: ~datetime.datetime
         :keyword server_level_validation_details: Details of server level validations.
         :paramtype server_level_validation_details:
@@ -5483,7 +5676,7 @@ class ValidationSummaryItem(_serialization.Model):
         *,
         type: Optional[str] = None,
         state: Optional[Union[str, "_models.ValidationState"]] = None,
-        messages: Optional[List["_models.ValidationMessage"]] = None,
+        messages: Optional[list["_models.ValidationMessage"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -5502,13 +5695,13 @@ class ValidationSummaryItem(_serialization.Model):
 
 
 class VirtualEndpointResourceForPatch(_serialization.Model):
-    """Represents a virtual endpoint for a server.
+    """Pair of virtual endpoints for a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar endpoint_type: The endpoint type for the virtual endpoint. "ReadWrite"
+    :ivar endpoint_type: Type of endpoint for the virtual endpoints. "ReadWrite"
     :vartype endpoint_type: str or ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointType
-    :ivar members: List of members for a virtual endpoint.
+    :ivar members: List of servers that one of the virtual endpoints can refer to.
     :vartype members: list[str]
     :ivar virtual_endpoints: List of virtual endpoints for a server.
     :vartype virtual_endpoints: list[str]
@@ -5528,24 +5721,24 @@ class VirtualEndpointResourceForPatch(_serialization.Model):
         self,
         *,
         endpoint_type: Optional[Union[str, "_models.VirtualEndpointType"]] = None,
-        members: Optional[List[str]] = None,
+        members: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword endpoint_type: The endpoint type for the virtual endpoint. "ReadWrite"
+        :keyword endpoint_type: Type of endpoint for the virtual endpoints. "ReadWrite"
         :paramtype endpoint_type: str or
          ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointType
-        :keyword members: List of members for a virtual endpoint.
+        :keyword members: List of servers that one of the virtual endpoints can refer to.
         :paramtype members: list[str]
         """
         super().__init__(**kwargs)
         self.endpoint_type = endpoint_type
         self.members = members
-        self.virtual_endpoints: Optional[List[str]] = None
+        self.virtual_endpoints: Optional[list[str]] = None
 
 
-class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
-    """Represents a virtual endpoint for a server.
+class VirtualEndpoint(VirtualEndpointResourceForPatch, Resource):
+    """Pair of virtual endpoints for a server.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -5560,9 +5753,9 @@ class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.postgresqlflexibleservers.models.SystemData
-    :ivar endpoint_type: The endpoint type for the virtual endpoint. "ReadWrite"
+    :ivar endpoint_type: Type of endpoint for the virtual endpoints. "ReadWrite"
     :vartype endpoint_type: str or ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointType
-    :ivar members: List of members for a virtual endpoint.
+    :ivar members: List of servers that one of the virtual endpoints can refer to.
     :vartype members: list[str]
     :ivar virtual_endpoints: List of virtual endpoints for a server.
     :vartype virtual_endpoints: list[str]
@@ -5590,14 +5783,14 @@ class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
         self,
         *,
         endpoint_type: Optional[Union[str, "_models.VirtualEndpointType"]] = None,
-        members: Optional[List[str]] = None,
+        members: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword endpoint_type: The endpoint type for the virtual endpoint. "ReadWrite"
+        :keyword endpoint_type: Type of endpoint for the virtual endpoints. "ReadWrite"
         :paramtype endpoint_type: str or
          ~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointType
-        :keyword members: List of members for a virtual endpoint.
+        :keyword members: List of servers that one of the virtual endpoints can refer to.
         :paramtype members: list[str]
         """
         super().__init__(endpoint_type=endpoint_type, members=members, **kwargs)
@@ -5607,34 +5800,30 @@ class VirtualEndpointResource(VirtualEndpointResourceForPatch, Resource):
         self.system_data: Optional["_models.SystemData"] = None
         self.endpoint_type = endpoint_type
         self.members = members
-        self.virtual_endpoints: Optional[List[str]] = None
+        self.virtual_endpoints: Optional[list[str]] = None
 
 
-class VirtualEndpointsListResult(_serialization.Model):
-    """A list of virtual endpoints.
+class VirtualEndpointsList(_serialization.Model):
+    """List of virtual endpoints.
 
-    :ivar value: The list of virtual endpoints.
-    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar value: List of virtual endpoints.
+    :vartype value: list[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint]
+    :ivar next_link: Link used to get the next page of results.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[VirtualEndpointResource]"},
+        "value": {"key": "value", "type": "[VirtualEndpoint]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.VirtualEndpointResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
+        self, *, value: Optional[list["_models.VirtualEndpoint"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of virtual endpoints.
-        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpointResource]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword value: List of virtual endpoints.
+        :paramtype value: list[~azure.mgmt.postgresqlflexibleservers.models.VirtualEndpoint]
+        :keyword next_link: Link used to get the next page of results.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -5642,27 +5831,7 @@ class VirtualEndpointsListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class VirtualNetworkSubnetUsageParameter(_serialization.Model):
-    """Virtual network subnet usage parameter.
-
-    :ivar virtual_network_arm_resource_id: Virtual network resource id.
-    :vartype virtual_network_arm_resource_id: str
-    """
-
-    _attribute_map = {
-        "virtual_network_arm_resource_id": {"key": "virtualNetworkArmResourceId", "type": "str"},
-    }
-
-    def __init__(self, *, virtual_network_arm_resource_id: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword virtual_network_arm_resource_id: Virtual network resource id.
-        :paramtype virtual_network_arm_resource_id: str
-        """
-        super().__init__(**kwargs)
-        self.virtual_network_arm_resource_id = virtual_network_arm_resource_id
-
-
-class VirtualNetworkSubnetUsageResult(_serialization.Model):
+class VirtualNetworkSubnetUsageModel(_serialization.Model):
     """Virtual network subnet usage data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5691,6 +5860,26 @@ class VirtualNetworkSubnetUsageResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.delegated_subnets_usage: Optional[List["_models.DelegatedSubnetUsage"]] = None
+        self.delegated_subnets_usage: Optional[list["_models.DelegatedSubnetUsage"]] = None
         self.location: Optional[str] = None
         self.subscription_id: Optional[str] = None
+
+
+class VirtualNetworkSubnetUsageParameter(_serialization.Model):
+    """Virtual network subnet usage parameter.
+
+    :ivar virtual_network_arm_resource_id: Virtual network resource id.
+    :vartype virtual_network_arm_resource_id: str
+    """
+
+    _attribute_map = {
+        "virtual_network_arm_resource_id": {"key": "virtualNetworkArmResourceId", "type": "str"},
+    }
+
+    def __init__(self, *, virtual_network_arm_resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword virtual_network_arm_resource_id: Virtual network resource id.
+        :paramtype virtual_network_arm_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.virtual_network_arm_resource_id = virtual_network_arm_resource_id

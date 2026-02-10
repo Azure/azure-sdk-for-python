@@ -54,6 +54,7 @@ def create_text_translation_client_with_credential():
     # [END create_text_translation_client_with_credential]
     return text_translator
 
+
 def create_text_translation_client_custom_with_credential():
     from azure.ai.translation.text import TextTranslationClient
     from azure.core.credentials import AzureKeyCredential
@@ -65,6 +66,7 @@ def create_text_translation_client_custom_with_credential():
     text_translator = TextTranslationClient(credential=credential, endpoint=endpoint)
     # [END create_text_translation_client_custom_with_credential]
     return text_translator
+
 
 def create_text_translation_client_with_cognitive_services_token():
     from azure.ai.translation.text import TextTranslationClient
@@ -79,6 +81,7 @@ def create_text_translation_client_with_cognitive_services_token():
     client = TextTranslationClient(credential=credential, audience="https://api.microsofttranslator.com/")
     # [END create_text_translation_client_with_cognitive_services_token]
 
+
 def create_text_translation_client_with_entra_id_token():
     from azure.ai.translation.text import TextTranslationClient
     from azure.identity import DefaultAzureCredential
@@ -90,6 +93,7 @@ def create_text_translation_client_with_entra_id_token():
     credential = DefaultAzureCredential()
     client = TextTranslationClient(credential=credential, region=region, resource_id=resource_id)
     # [END create_text_translation_client_with_entra_id_token]
+
 
 def create_text_translation_client_custom_with_entra_id_token():
     from azure.ai.translation.text import TextTranslationClient

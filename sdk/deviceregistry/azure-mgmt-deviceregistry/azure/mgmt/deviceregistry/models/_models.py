@@ -9,19 +9,17 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .. import _model_base
-from .._model_base import rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from ._enums import DatasetDestinationTarget, EventDestinationTarget, StreamDestinationTarget
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Resource(_model_base.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+class Resource(_Model):
+    """Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -49,11 +47,7 @@ class Resource(_model_base.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
+    """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -72,7 +66,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -82,7 +76,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -98,9 +92,6 @@ class TrackedResource(Resource):
 
 class Asset(TrackedResource):
     """Asset definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -136,7 +127,7 @@ class Asset(TrackedResource):
         *,
         location: str,
         extended_location: "_models.ExtendedLocation",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssetProperties"] = None,
     ) -> None: ...
 
@@ -153,9 +144,6 @@ class Asset(TrackedResource):
 
 class AssetEndpointProfile(TrackedResource):
     """Asset Endpoint Profile definition.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -191,7 +179,7 @@ class AssetEndpointProfile(TrackedResource):
         *,
         location: str,
         extended_location: "_models.ExtendedLocation",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssetEndpointProfileProperties"] = None,
     ) -> None: ...
 
@@ -206,11 +194,8 @@ class AssetEndpointProfile(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class AssetEndpointProfileProperties(_model_base.Model):
+class AssetEndpointProfileProperties(_Model):
     """Defines the Asset Endpoint Profile properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar uuid: Globally unique, immutable, non-reusable id.
     :vartype uuid: str
@@ -295,23 +280,19 @@ class AssetEndpointProfileProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetEndpointProfileStatus(_model_base.Model):
+class AssetEndpointProfileStatus(_Model):
     """Defines the asset endpoint profile status properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar errors: Array object to transfer and persist errors that originate from the Edge.
     :vartype errors: list[~azure.mgmt.deviceregistry.models.AssetEndpointProfileStatusError]
     """
 
-    errors: Optional[List["_models.AssetEndpointProfileStatusError"]] = rest_field(visibility=["read"])
+    errors: Optional[list["_models.AssetEndpointProfileStatusError"]] = rest_field(visibility=["read"])
     """Array object to transfer and persist errors that originate from the Edge."""
 
 
-class AssetEndpointProfileStatusError(_model_base.Model):
+class AssetEndpointProfileStatusError(_Model):
     """Defines the asset endpoint profile status error properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: Error code for classification of errors (ex: 400, 404, 500, etc.).
     :vartype code: int
@@ -327,7 +308,7 @@ class AssetEndpointProfileStatusError(_model_base.Model):
      “targetAddress 'foo' is not a valid url”)."""
 
 
-class AssetEndpointProfileUpdate(_model_base.Model):
+class AssetEndpointProfileUpdate(_Model):
     """The type used for update operations of the AssetEndpointProfile.
 
     :ivar tags: Resource tags.
@@ -336,7 +317,7 @@ class AssetEndpointProfileUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.deviceregistry.models.AssetEndpointProfileUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.AssetEndpointProfileUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -347,7 +328,7 @@ class AssetEndpointProfileUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssetEndpointProfileUpdateProperties"] = None,
     ) -> None: ...
 
@@ -362,7 +343,7 @@ class AssetEndpointProfileUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetEndpointProfileUpdateProperties(_model_base.Model):
+class AssetEndpointProfileUpdateProperties(_Model):
     """The updatable properties of the AssetEndpointProfile.
 
     :ivar target_address: The local valid URI specifying the network address/DNS name of a
@@ -420,11 +401,8 @@ class AssetEndpointProfileUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetProperties(_model_base.Model):
+class AssetProperties(_Model):
     """Defines the asset properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar uuid: Globally unique, immutable, non-reusable id.
     :vartype uuid: str
@@ -533,9 +511,9 @@ class AssetProperties(_model_base.Model):
         name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
     )
     """Asset serial number."""
-    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of key-value pairs that contain custom attributes set by the customer."""
-    discovered_asset_refs: Optional[List[str]] = rest_field(name="discoveredAssetRefs", visibility=["read", "create"])
+    discovered_asset_refs: Optional[list[str]] = rest_field(name="discoveredAssetRefs", visibility=["read", "create"])
     """Reference to a list of discovered assets. Populated only if the asset has been created from
      discovery flow. Discovered asset names must be provided."""
     default_datasets_configuration: Optional[str] = rest_field(
@@ -552,10 +530,10 @@ class AssetProperties(_model_base.Model):
         name="defaultTopic", visibility=["read", "create", "update", "delete", "query"]
     )
     """Object that describes the default topic information for the asset."""
-    datasets: Optional[List["_models.Dataset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    datasets: Optional[list["_models.Dataset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of datasets that are part of the asset. Each dataset describes the data points that make
      up the set."""
-    events: Optional[List["_models.Event"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    events: Optional[list["_models.Event"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of events that are part of the asset. Each event can have per-event configuration."""
     status: Optional["_models.AssetStatus"] = rest_field(visibility=["read"])
     """Read only object to reflect changes that have occurred on the Edge. Similar to Kubernetes
@@ -583,13 +561,13 @@ class AssetProperties(_model_base.Model):
         software_revision: Optional[str] = None,
         documentation_uri: Optional[str] = None,
         serial_number: Optional[str] = None,
-        attributes: Optional[Dict[str, Any]] = None,
-        discovered_asset_refs: Optional[List[str]] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        discovered_asset_refs: Optional[list[str]] = None,
         default_datasets_configuration: Optional[str] = None,
         default_events_configuration: Optional[str] = None,
         default_topic: Optional["_models.Topic"] = None,
-        datasets: Optional[List["_models.Dataset"]] = None,
-        events: Optional[List["_models.Event"]] = None,
+        datasets: Optional[list["_models.Dataset"]] = None,
+        events: Optional[list["_models.Event"]] = None,
     ) -> None: ...
 
     @overload
@@ -603,10 +581,8 @@ class AssetProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetStatus(_model_base.Model):
+class AssetStatus(_Model):
     """Defines the asset status properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar errors: Array object to transfer and persist errors that originate from the Edge.
     :vartype errors: list[~azure.mgmt.deviceregistry.models.AssetStatusError]
@@ -621,24 +597,21 @@ class AssetStatus(_model_base.Model):
     :vartype events: list[~azure.mgmt.deviceregistry.models.AssetStatusEvent]
     """
 
-    errors: Optional[List["_models.AssetStatusError"]] = rest_field(visibility=["read"])
+    errors: Optional[list["_models.AssetStatusError"]] = rest_field(visibility=["read"])
     """Array object to transfer and persist errors that originate from the Edge."""
     version: Optional[int] = rest_field(visibility=["read"])
     """A read only incremental counter indicating the number of times the configuration has been
      modified from the perspective of the current actual (Edge) state of the Asset. Edge would be
      the only writer of this value and would sync back up to the cloud. In steady state, this should
      equal version."""
-    datasets: Optional[List["_models.AssetStatusDataset"]] = rest_field(visibility=["read"])
+    datasets: Optional[list["_models.AssetStatusDataset"]] = rest_field(visibility=["read"])
     """Array of dataset statuses that describe the status of each dataset."""
-    events: Optional[List["_models.AssetStatusEvent"]] = rest_field(visibility=["read"])
+    events: Optional[list["_models.AssetStatusEvent"]] = rest_field(visibility=["read"])
     """Array of event statuses that describe the status of each event."""
 
 
-class AssetStatusDataset(_model_base.Model):
+class AssetStatusDataset(_Model):
     """Defines the asset status dataset properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: The name of the dataset. Must be unique within the status.datasets array. This name
      is used to correlate between the spec and status dataset information. Required.
@@ -656,10 +629,8 @@ class AssetStatusDataset(_model_base.Model):
     """The message schema reference object."""
 
 
-class AssetStatusError(_model_base.Model):
+class AssetStatusError(_Model):
     """Defines the asset status error properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: Error code for classification of errors (ex: 400, 404, 500, etc.).
     :vartype code: int
@@ -675,11 +646,8 @@ class AssetStatusError(_model_base.Model):
      Id 'foo' does not exist”)."""
 
 
-class AssetStatusEvent(_model_base.Model):
+class AssetStatusEvent(_Model):
     """Defines the asset status event properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar name: The name of the event. Must be unique within the status.events array. This name is
      used to correlate between the spec and status event information. Required.
@@ -697,7 +665,7 @@ class AssetStatusEvent(_model_base.Model):
     """The message schema reference object."""
 
 
-class AssetUpdate(_model_base.Model):
+class AssetUpdate(_Model):
     """The type used for update operations of the Asset.
 
     :ivar tags: Resource tags.
@@ -706,7 +674,7 @@ class AssetUpdate(_model_base.Model):
     :vartype properties: ~azure.mgmt.deviceregistry.models.AssetUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.AssetUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -717,7 +685,7 @@ class AssetUpdate(_model_base.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.AssetUpdateProperties"] = None,
     ) -> None: ...
 
@@ -732,7 +700,7 @@ class AssetUpdate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class AssetUpdateProperties(_model_base.Model):
+class AssetUpdateProperties(_Model):
     """The updatable properties of the Asset.
 
     :ivar enabled: Enabled/Disabled status of the asset.
@@ -813,7 +781,7 @@ class AssetUpdateProperties(_model_base.Model):
         name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
     )
     """Asset serial number."""
-    attributes: Optional[Dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A set of key-value pairs that contain custom attributes set by the customer."""
     default_datasets_configuration: Optional[str] = rest_field(
         name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
@@ -829,10 +797,10 @@ class AssetUpdateProperties(_model_base.Model):
         name="defaultTopic", visibility=["read", "create", "update", "delete", "query"]
     )
     """Object that describes the default topic information for the asset."""
-    datasets: Optional[List["_models.Dataset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    datasets: Optional[list["_models.Dataset"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of datasets that are part of the asset. Each dataset describes the data points that make
      up the set."""
-    events: Optional[List["_models.Event"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    events: Optional[list["_models.Event"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Array of events that are part of the asset. Each event can have per-event configuration."""
 
     @overload
@@ -850,12 +818,12 @@ class AssetUpdateProperties(_model_base.Model):
         software_revision: Optional[str] = None,
         documentation_uri: Optional[str] = None,
         serial_number: Optional[str] = None,
-        attributes: Optional[Dict[str, Any]] = None,
+        attributes: Optional[dict[str, Any]] = None,
         default_datasets_configuration: Optional[str] = None,
         default_events_configuration: Optional[str] = None,
         default_topic: Optional["_models.Topic"] = None,
-        datasets: Optional[List["_models.Dataset"]] = None,
-        events: Optional[List["_models.Event"]] = None,
+        datasets: Optional[list["_models.Dataset"]] = None,
+        events: Optional[list["_models.Event"]] = None,
     ) -> None: ...
 
     @overload
@@ -869,9 +837,8 @@ class AssetUpdateProperties(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Authentication(_model_base.Model):
+class Authentication(_Model):
     """Definition of the client authentication mechanism to the server.
-
 
     :ivar method: Defines the method to authenticate the user of the client at the server.
      Required. Known values are: "Anonymous", "Certificate", and "UsernamePassword".
@@ -921,10 +888,7 @@ class Authentication(_model_base.Model):
 
 
 class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+    """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -943,8 +907,6 @@ class ProxyResource(Resource):
 class BillingContainer(ProxyResource):
     """billingContainer Model as Azure resource whose sole purpose is to keep track of billables
     resources under a subscription.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -988,10 +950,8 @@ class BillingContainer(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class BillingContainerProperties(_model_base.Model):
+class BillingContainerProperties(_Model):
     """Defines the billingContainer properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
      "Failed", "Canceled", "Accepted", and "Deleting".
@@ -1005,9 +965,36 @@ class BillingContainerProperties(_model_base.Model):
      \"Accepted\", and \"Deleting\"."""
 
 
-class DataPointBase(_model_base.Model):
-    """Defines the data point properties.
+class BrokerStateStoreDestinationConfiguration(_Model):
+    """The configuration for a MQTT broker state store destination.
 
+    :ivar key: The MQTT broker state store destination key. Required.
+    :vartype key: str
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The MQTT broker state store destination key. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DataPointBase(_Model):
+    """Defines the data point properties.
 
     :ivar name: The name of the data point. Required.
     :vartype name: str
@@ -1054,7 +1041,6 @@ class DataPointBase(_model_base.Model):
 class DataPoint(DataPointBase):
     """Defines the data point properties.
 
-
     :ivar name: The name of the data point. Required.
     :vartype name: str
     :ivar data_source: The address of the source of the data in the asset (e.g. URL) so that a
@@ -1097,9 +1083,8 @@ class DataPoint(DataPointBase):
         super().__init__(*args, **kwargs)
 
 
-class Dataset(_model_base.Model):
+class Dataset(_Model):
     """Defines the dataset properties.
-
 
     :ivar name: Name of the dataset. Required.
     :vartype name: str
@@ -1122,7 +1107,7 @@ class Dataset(_model_base.Model):
      the specific dataset."""
     topic: Optional["_models.Topic"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Object that describes the topic information for the specific dataset."""
-    data_points: Optional[List["_models.DataPoint"]] = rest_field(
+    data_points: Optional[list["_models.DataPoint"]] = rest_field(
         name="dataPoints", visibility=["read", "create", "update", "delete", "query"]
     )
     """Array of data points that are part of the dataset. Each data point can have per-data point
@@ -1135,7 +1120,7 @@ class Dataset(_model_base.Model):
         name: str,
         dataset_configuration: Optional[str] = None,
         topic: Optional["_models.Topic"] = None,
-        data_points: Optional[List["_models.DataPoint"]] = None,
+        data_points: Optional[list["_models.DataPoint"]] = None,
     ) -> None: ...
 
     @overload
@@ -1149,10 +1134,385 @@ class Dataset(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorAdditionalInfo(_model_base.Model):
-    """The resource management error additional info.
+class DatasetDestination(_Model):
+    """The type of the destination.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DatasetBrokerStateStoreDestination, DatasetMqttDestination, DatasetStorageDestination
+
+    :ivar target: Target destination. Known values are: "Mqtt", "BrokerStateStore", and "Storage".
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.DatasetDestinationTarget
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    target: str = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])
+    """Target destination. Known values are: \"Mqtt\", \"BrokerStateStore\", and \"Storage\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: str = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DatasetBrokerStateStoreDestination(DatasetDestination, discriminator="BrokerStateStore"):
+    """The type for a MQTT broker state store destination.
+
+    :ivar target: The MQTT broker state store destination target. Required. Broker State Store
+     target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.BROKER_STATE_STORE
+    :ivar configuration: The MQTT broker state store destination configuration. Required.
+    :vartype configuration:
+     ~azure.mgmt.deviceregistry.models.BrokerStateStoreDestinationConfiguration
+    """
+
+    target: Literal[DatasetDestinationTarget.BROKER_STATE_STORE] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The MQTT broker state store destination target. Required. Broker State Store target."""
+    configuration: "_models.BrokerStateStoreDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MQTT broker state store destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.BrokerStateStoreDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = DatasetDestinationTarget.BROKER_STATE_STORE  # type: ignore
+
+
+class DatasetMqttDestination(DatasetDestination, discriminator="Mqtt"):
+    """The type for a MQTT destination.
+
+    :ivar target: The MQTT destination type. Required. MQTT target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.MQTT
+    :ivar configuration: The MQTT destination configuration. Required.
+    :vartype configuration: ~azure.mgmt.deviceregistry.models.MqttDestinationConfiguration
+    """
+
+    target: Literal[DatasetDestinationTarget.MQTT] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The MQTT destination type. Required. MQTT target."""
+    configuration: "_models.MqttDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MQTT destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.MqttDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = DatasetDestinationTarget.MQTT  # type: ignore
+
+
+class DatasetStorageDestination(DatasetDestination, discriminator="Storage"):
+    """The type for a storage destination.
+
+    :ivar target: The storage destination type. Required. Storage target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.STORAGE
+    :ivar configuration: The storage destination configuration. Required.
+    :vartype configuration: ~azure.mgmt.deviceregistry.models.StorageDestinationConfiguration
+    """
+
+    target: Literal[DatasetDestinationTarget.STORAGE] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The storage destination type. Required. Storage target."""
+    configuration: "_models.StorageDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.StorageDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = DatasetDestinationTarget.STORAGE  # type: ignore
+
+
+class DeviceMessagingEndpoint(_Model):
+    """Device messaging endpoint model.
+
+    :ivar endpoint_type: Type of connection used for the messaging endpoint.
+    :vartype endpoint_type: str
+    :ivar address: The endpoint address to connect to. Required.
+    :vartype address: str
+    """
+
+    endpoint_type: Optional[str] = rest_field(
+        name="endpointType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of connection used for the messaging endpoint."""
+    address: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint address to connect to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        address: str,
+        endpoint_type: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceRef(_Model):
+    """Defines which device and endpoint to use for this asset.
+
+    :ivar device_name: Name of the device resource. Required.
+    :vartype device_name: str
+    :ivar endpoint_name: The name of endpoint to use. Required.
+    :vartype endpoint_name: str
+    """
+
+    device_name: str = rest_field(name="deviceName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the device resource. Required."""
+    endpoint_name: str = rest_field(name="endpointName", visibility=["read", "create", "update", "delete", "query"])
+    """The name of endpoint to use. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        device_name: str,
+        endpoint_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DeviceStatus(_Model):
+    """Defines the device status properties.
+
+    :ivar config: Defines the device status config properties.
+    :vartype config: ~azure.mgmt.deviceregistry.models.StatusConfig
+    :ivar endpoints: Defines the device status for inbound/outbound endpoints.
+    :vartype endpoints: ~azure.mgmt.deviceregistry.models.DeviceStatusEndpoints
+    """
+
+    config: Optional["_models.StatusConfig"] = rest_field(visibility=["read"])
+    """Defines the device status config properties."""
+    endpoints: Optional["_models.DeviceStatusEndpoints"] = rest_field(visibility=["read"])
+    """Defines the device status for inbound/outbound endpoints."""
+
+
+class DeviceStatusEndpoint(_Model):
+    """Defines the device status properties.
+
+    :ivar error: Defines the error related to this endpoint.
+    :vartype error: ~azure.mgmt.deviceregistry.models.StatusError
+    """
+
+    error: Optional["_models.StatusError"] = rest_field(visibility=["read"])
+    """Defines the error related to this endpoint."""
+
+
+class DeviceStatusEndpoints(_Model):
+    """Defines the device status for inbound/outbound endpoints.
+
+    :ivar inbound: KeyValue pair representing status of inbound endpoints.
+    :vartype inbound: dict[str, ~azure.mgmt.deviceregistry.models.DeviceStatusEndpoint]
+    """
+
+    inbound: Optional[dict[str, "_models.DeviceStatusEndpoint"]] = rest_field(visibility=["read"])
+    """KeyValue pair representing status of inbound endpoints."""
+
+
+class DiscoveredInboundEndpoints(_Model):
+    """An endpoint to connect to the device.
+
+    :ivar endpoint_type: Type of connection endpoint. Required.
+    :vartype endpoint_type: str
+    :ivar address: The endpoint address & port. This can be either an IP address (e.g.,
+     192.168.1.1) or a fully qualified domain name (FQDN, e.g., server.example.com). Required.
+    :vartype address: str
+    :ivar version: Protocol version associated with the endpoint e.g. 1 or 2 for endpointType
+     Microsoft.HTTP, and 3.5 or 5.0 for endpointType Microsoft.Mqtt etc.
+    :vartype version: str
+    :ivar supported_authentication_methods: List of supported authentication methods supported by
+     device for Inbound connections.
+    :vartype supported_authentication_methods: list[str or
+     ~azure.mgmt.deviceregistry.models.AuthenticationMethod]
+    :ivar additional_configuration: Stringified JSON that contains configuration to be used by the
+     connector (e.g., OPC UA, ONVIF).
+    :vartype additional_configuration: str
+    :ivar last_updated_on: The timestamp (in UTC) when the endpoint was discovered.
+    :vartype last_updated_on: ~datetime.datetime
+    """
+
+    endpoint_type: str = rest_field(name="endpointType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of connection endpoint. Required."""
+    address: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint address & port. This can be either an IP address (e.g., 192.168.1.1) or a fully
+     qualified domain name (FQDN, e.g., server.example.com). Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Protocol version associated with the endpoint e.g. 1 or 2 for endpointType Microsoft.HTTP, and
+     3.5 or 5.0 for endpointType Microsoft.Mqtt etc."""
+    supported_authentication_methods: Optional[list[Union[str, "_models.AuthenticationMethod"]]] = rest_field(
+        name="supportedAuthenticationMethods", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of supported authentication methods supported by device for Inbound connections."""
+    additional_configuration: Optional[str] = rest_field(
+        name="additionalConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains configuration to be used by the connector (e.g., OPC UA, ONVIF)."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The timestamp (in UTC) when the endpoint was discovered."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint_type: str,
+        address: str,
+        version: Optional[str] = None,
+        supported_authentication_methods: Optional[list[Union[str, "_models.AuthenticationMethod"]]] = None,
+        additional_configuration: Optional[str] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiscoveredMessagingEndpoints(_Model):
+    """Connection endpoint URL a device can use to connect to a service.
+
+    :ivar inbound: Set of endpoints to connect to the device.
+    :vartype inbound: dict[str, ~azure.mgmt.deviceregistry.models.DiscoveredInboundEndpoints]
+    :ivar outbound: Set of endpoints a device can connect to.
+    :vartype outbound: ~azure.mgmt.deviceregistry.models.DiscoveredOutboundEndpoints
+    """
+
+    inbound: Optional[dict[str, "_models.DiscoveredInboundEndpoints"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of endpoints to connect to the device."""
+    outbound: Optional["_models.DiscoveredOutboundEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of endpoints a device can connect to."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inbound: Optional[dict[str, "_models.DiscoveredInboundEndpoints"]] = None,
+        outbound: Optional["_models.DiscoveredOutboundEndpoints"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DiscoveredOutboundEndpoints(_Model):
+    """Property bag contains the device's outbound endpoints.
+
+    :ivar assigned: Endpoints the device can connect to. Required.
+    :vartype assigned: dict[str, ~azure.mgmt.deviceregistry.models.DeviceMessagingEndpoint]
+    """
+
+    assigned: dict[str, "_models.DeviceMessagingEndpoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoints the device can connect to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        assigned: dict[str, "_models.DeviceMessagingEndpoint"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ErrorAdditionalInfo(_Model):
+    """The resource management error additional info.
 
     :ivar type: The additional info type.
     :vartype type: str
@@ -1166,10 +1526,8 @@ class ErrorAdditionalInfo(_model_base.Model):
     """The additional info."""
 
 
-class ErrorDetail(_model_base.Model):
+class ErrorDetail(_Model):
     """The error detail.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar code: The error code.
     :vartype code: str
@@ -1189,17 +1547,44 @@ class ErrorDetail(_model_base.Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_model_base.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations.
+class ErrorDetails(_Model):
+    """Defines the error details properties.
+
+    :ivar code: Multi-part error code for classification and root causing of errors (ex:
+     400.200.100.432).
+    :vartype code: str
+    :ivar message: Human-readable helpful error message to provide additional context for error
+     (ex: “Authentication method not supported”).
+    :vartype message: str
+    :ivar info: Human-readable helpful detailed text context for debugging (ex: “The following
+     mechanisms are supported...”).
+    :vartype info: str
+    :ivar correlation_id: Unique identifier for the transaction to aid in debugging.
+    :vartype correlation_id: str
+    """
+
+    code: Optional[str] = rest_field(visibility=["read"])
+    """Multi-part error code for classification and root causing of errors (ex: 400.200.100.432)."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """Human-readable helpful error message to provide additional context for error (ex:
+     “Authentication method not supported”)."""
+    info: Optional[str] = rest_field(visibility=["read"])
+    """Human-readable helpful detailed text context for debugging (ex: “The following mechanisms are
+     supported...”)."""
+    correlation_id: Optional[str] = rest_field(name="correlationId", visibility=["read"])
+    """Unique identifier for the transaction to aid in debugging."""
+
+
+class ErrorResponse(_Model):
+    """Error response.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.deviceregistry.models.ErrorDetail
@@ -1226,9 +1611,8 @@ class ErrorResponse(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class EventBase(_model_base.Model):
+class EventBase(_Model):
     """Defines the event properties.
-
 
     :ivar name: The name of the event. Required.
     :vartype name: str
@@ -1280,7 +1664,6 @@ class EventBase(_model_base.Model):
 class Event(EventBase):
     """Defines the event properties.
 
-
     :ivar name: The name of the event. Required.
     :vartype name: str
     :ivar event_notifier: The address of the notifier of the event in the asset (e.g. URL) so that
@@ -1325,9 +1708,110 @@ class Event(EventBase):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_model_base.Model):
-    """The extended location.
+class EventDestination(_Model):
+    """The type of the destination.
 
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EventMqttDestination, EventStorageDestination
+
+    :ivar target: Target destination. Known values are: "Mqtt" and "Storage".
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.EventDestinationTarget
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    target: str = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])
+    """Target destination. Known values are: \"Mqtt\" and \"Storage\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: str = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EventMqttDestination(EventDestination, discriminator="Mqtt"):
+    """The type for a MQTT destination.
+
+    :ivar target: The MQTT destination type. Required. MQTT target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.MQTT
+    :ivar configuration: The MQTT destination configuration. Required.
+    :vartype configuration: ~azure.mgmt.deviceregistry.models.MqttDestinationConfiguration
+    """
+
+    target: Literal[EventDestinationTarget.MQTT] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The MQTT destination type. Required. MQTT target."""
+    configuration: "_models.MqttDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MQTT destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.MqttDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = EventDestinationTarget.MQTT  # type: ignore
+
+
+class EventStorageDestination(EventDestination, discriminator="Storage"):
+    """The type for a storage destination.
+
+    :ivar target: The storage destination type. Required. Storage target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.STORAGE
+    :ivar configuration: The storage destination configuration. Required.
+    :vartype configuration: ~azure.mgmt.deviceregistry.models.StorageDestinationConfiguration
+    """
+
+    target: Literal[EventDestinationTarget.STORAGE] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The storage destination type. Required. Storage target."""
+    configuration: "_models.StorageDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.StorageDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = EventDestinationTarget.STORAGE  # type: ignore
+
+
+class ExtendedLocation(_Model):
+    """The extended location.
 
     :ivar type: The extended location type. Required.
     :vartype type: str
@@ -1359,11 +1843,261 @@ class ExtendedLocation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class MessageSchemaReference(_model_base.Model):
+class HostAuthentication(_Model):
+    """Definition of the client authentication mechanism to the host.
+
+    :ivar method: Defines the method to authenticate the user of the client at the server.
+     Required. Known values are: "Anonymous", "Certificate", and "UsernamePassword".
+    :vartype method: str or ~azure.mgmt.deviceregistry.models.AuthenticationMethod
+    :ivar username_password_credentials: Defines the username and password references when
+     UsernamePassword user authentication mode is selected.
+    :vartype username_password_credentials:
+     ~azure.mgmt.deviceregistry.models.UsernamePasswordCredentials
+    :ivar x509_credentials: Defines the certificate reference when Certificate user authentication
+     mode is selected.
+    :vartype x509_credentials: ~azure.mgmt.deviceregistry.models.X509CertificateCredentials
+    """
+
+    method: Union[str, "_models.AuthenticationMethod"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the method to authenticate the user of the client at the server. Required. Known values
+     are: \"Anonymous\", \"Certificate\", and \"UsernamePassword\"."""
+    username_password_credentials: Optional["_models.UsernamePasswordCredentials"] = rest_field(
+        name="usernamePasswordCredentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the username and password references when UsernamePassword user authentication mode is
+     selected."""
+    x509_credentials: Optional["_models.X509CertificateCredentials"] = rest_field(
+        name="x509Credentials", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the certificate reference when Certificate user authentication mode is selected."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        method: Union[str, "_models.AuthenticationMethod"],
+        username_password_credentials: Optional["_models.UsernamePasswordCredentials"] = None,
+        x509_credentials: Optional["_models.X509CertificateCredentials"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InboundEndpoints(_Model):
+    """An endpoint to connect to the device.
+
+    :ivar endpoint_type: Type of connection endpoint. Required.
+    :vartype endpoint_type: str
+    :ivar address: The endpoint address & port. This can be either an IP address (e.g.,
+     192.168.1.1) or a fully qualified domain name (FQDN, e.g., server.example.com). Required.
+    :vartype address: str
+    :ivar version: Protocol version associated with the endpoint e.g. 1 or 2 for endpointType
+     Microsoft.HTTP, and 3.5 or 5.0 for endpointType Microsoft.Mqtt etc.
+    :vartype version: str
+    :ivar authentication: Defines the client authentication mechanism to the server.
+    :vartype authentication: ~azure.mgmt.deviceregistry.models.HostAuthentication
+    :ivar trust_settings: Defines server trust settings for the endpoint.
+    :vartype trust_settings: ~azure.mgmt.deviceregistry.models.TrustSettings
+    :ivar additional_configuration: Stringified JSON that contains configuration to be used by the
+     connector (e.g., OPC UA, ONVIF).
+    :vartype additional_configuration: str
+    """
+
+    endpoint_type: str = rest_field(name="endpointType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of connection endpoint. Required."""
+    address: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint address & port. This can be either an IP address (e.g., 192.168.1.1) or a fully
+     qualified domain name (FQDN, e.g., server.example.com). Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Protocol version associated with the endpoint e.g. 1 or 2 for endpointType Microsoft.HTTP, and
+     3.5 or 5.0 for endpointType Microsoft.Mqtt etc."""
+    authentication: Optional["_models.HostAuthentication"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines the client authentication mechanism to the server."""
+    trust_settings: Optional["_models.TrustSettings"] = rest_field(
+        name="trustSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Defines server trust settings for the endpoint."""
+    additional_configuration: Optional[str] = rest_field(
+        name="additionalConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains configuration to be used by the connector (e.g., OPC UA, ONVIF)."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoint_type: str,
+        address: str,
+        version: Optional[str] = None,
+        authentication: Optional["_models.HostAuthentication"] = None,
+        trust_settings: Optional["_models.TrustSettings"] = None,
+        additional_configuration: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagementAction(_Model):
+    """Defines the action properties.
+
+    :ivar name: Name of the action. Required.
+    :vartype name: str
+    :ivar action_configuration: Stringified JSON that contains connector-specific configuration for
+     the action.
+    :vartype action_configuration: str
+    :ivar target_uri: The target URI on which a client can invoke the specific action. Required.
+    :vartype target_uri: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar topic: The MQTT topic path on which a client will receive the request for the action.
+    :vartype topic: str
+    :ivar action_type: The type of the action. Known values are: "Call", "Read", and "Write".
+    :vartype action_type: str or ~azure.mgmt.deviceregistry.models.ManagementActionType
+    :ivar timeout_in_seconds: Response timeout for the action.
+    :vartype timeout_in_seconds: int
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the action. Required."""
+    action_configuration: Optional[str] = rest_field(
+        name="actionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the action."""
+    target_uri: str = rest_field(name="targetUri", visibility=["read", "create", "update", "delete", "query"])
+    """The target URI on which a client can invoke the specific action. Required."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    topic: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The MQTT topic path on which a client will receive the request for the action."""
+    action_type: Optional[Union[str, "_models.ManagementActionType"]] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the action. Known values are: \"Call\", \"Read\", and \"Write\"."""
+    timeout_in_seconds: Optional[int] = rest_field(
+        name="timeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response timeout for the action."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        target_uri: str,
+        action_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        topic: Optional[str] = None,
+        action_type: Optional[Union[str, "_models.ManagementActionType"]] = None,
+        timeout_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagementGroup(_Model):
+    """Defines the management group properties.
+
+    :ivar name: Name of the management group. Required.
+    :vartype name: str
+    :ivar data_source: Reference to a data source for a given management group.
+    :vartype data_source: str
+    :ivar management_group_configuration: Stringified JSON that contains connector-specific
+     configuration for the management group.
+    :vartype management_group_configuration: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar default_topic: Default MQTT topic path on which a client will receive the request for all
+     actions that are part of the management group.
+    :vartype default_topic: str
+    :ivar default_timeout_in_seconds: Default response timeout for all actions that are part of the
+     management group.
+    :vartype default_timeout_in_seconds: int
+    :ivar actions: Array of actions that are part of the management group. Each action can have an
+     individual configuration.
+    :vartype actions: list[~azure.mgmt.deviceregistry.models.ManagementAction]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the management group. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to a data source for a given management group."""
+    management_group_configuration: Optional[str] = rest_field(
+        name="managementGroupConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the management group."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    default_topic: Optional[str] = rest_field(
+        name="defaultTopic", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default MQTT topic path on which a client will receive the request for all actions that are
+     part of the management group."""
+    default_timeout_in_seconds: Optional[int] = rest_field(
+        name="defaultTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default response timeout for all actions that are part of the management group."""
+    actions: Optional[list["_models.ManagementAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of actions that are part of the management group. Each action can have an individual
+     configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        management_group_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        default_topic: Optional[str] = None,
+        default_timeout_in_seconds: Optional[int] = None,
+        actions: Optional[list["_models.ManagementAction"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessageSchemaReference(_Model):
     """Defines the message schema reference properties.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar schema_registry_namespace: The message schema registry namespace. Required.
     :vartype schema_registry_namespace: str
@@ -1381,10 +2115,2877 @@ class MessageSchemaReference(_model_base.Model):
     """The message schema version. Required."""
 
 
-class Operation(_model_base.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
+class Messaging(_Model):
+    """The namespace messaging endpoints model.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
+    :ivar endpoints: Dictionary of messaging endpoints.
+    :vartype endpoints: dict[str, ~azure.mgmt.deviceregistry.models.MessagingEndpoint]
+    """
+
+    endpoints: Optional[dict[str, "_models.MessagingEndpoint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Dictionary of messaging endpoints."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoints: Optional[dict[str, "_models.MessagingEndpoint"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessagingEndpoint(_Model):
+    """Namespace messaging endpoint model used by a device to connect to a service.
+
+    :ivar endpoint_type: Type of connection used for messaging endpoint.
+    :vartype endpoint_type: str
+    :ivar address: The endpoint address to connect to. Required.
+    :vartype address: str
+    :ivar resource_id: The messaging endpoint Azure resource Id.
+    :vartype resource_id: str
+    """
+
+    endpoint_type: Optional[str] = rest_field(
+        name="endpointType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of connection used for messaging endpoint."""
+    address: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The endpoint address to connect to. Required."""
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The messaging endpoint Azure resource Id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        address: str,
+        endpoint_type: Optional[str] = None,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MessagingEndpoints(_Model):
+    """Connection endpoint URL a device can use to connect to a service.
+
+    :ivar inbound: Set of endpoints to connect to the device.
+    :vartype inbound: dict[str, ~azure.mgmt.deviceregistry.models.InboundEndpoints]
+    :ivar outbound: Set of endpoints a device can connect to.
+    :vartype outbound: ~azure.mgmt.deviceregistry.models.OutboundEndpoints
+    """
+
+    inbound: Optional[dict[str, "_models.InboundEndpoints"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of endpoints to connect to the device."""
+    outbound: Optional["_models.OutboundEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of endpoints a device can connect to."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        inbound: Optional[dict[str, "_models.InboundEndpoints"]] = None,
+        outbound: Optional["_models.OutboundEndpoints"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MqttDestinationConfiguration(_Model):
+    """The configuration for a MQTT destination.
+
+    :ivar topic: The MQTT topic. Required.
+    :vartype topic: str
+    :ivar retain: When set to 'Keep', messages published to an MQTT broker will have the retain
+     flag set. Default: 'Never'. Known values are: "Keep" and "Never".
+    :vartype retain: str or ~azure.mgmt.deviceregistry.models.TopicRetainType
+    :ivar qos: The MQTT QoS setting. Defaults to QoS 1. Known values are: "Qos0" and "Qos1".
+    :vartype qos: str or ~azure.mgmt.deviceregistry.models.MqttDestinationQos
+    :ivar ttl: The MQTT TTL setting.
+    :vartype ttl: int
+    """
+
+    topic: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The MQTT topic. Required."""
+    retain: Optional[Union[str, "_models.TopicRetainType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """When set to 'Keep', messages published to an MQTT broker will have the retain flag set.
+     Default: 'Never'. Known values are: \"Keep\" and \"Never\"."""
+    qos: Optional[Union[str, "_models.MqttDestinationQos"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MQTT QoS setting. Defaults to QoS 1. Known values are: \"Qos0\" and \"Qos1\"."""
+    ttl: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The MQTT TTL setting."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        topic: str,
+        retain: Optional[Union[str, "_models.TopicRetainType"]] = None,
+        qos: Optional[Union[str, "_models.MqttDestinationQos"]] = None,
+        ttl: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Namespace(TrackedResource):
+    """Namespace definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentity
+    """
+
+    properties: Optional["_models.NamespaceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceProperties"] = None,
+        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceAsset(TrackedResource):
+    """Asset definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceAssetProperties
+    :ivar extended_location: The extended location. Required.
+    :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.NamespaceAssetProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """The extended location. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        extended_location: "_models.ExtendedLocation",
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceAssetProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceAssetProperties(_Model):
+    """Defines the asset properties.
+
+    :ivar uuid: Globally unique, immutable, non-reusable ID.
+    :vartype uuid: str
+    :ivar enabled: Enabled/disabled status of the asset.
+    :vartype enabled: bool
+    :ivar external_asset_id: Asset ID provided by the customer.
+    :vartype external_asset_id: str
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar description: Human-readable description of the asset.
+    :vartype description: str
+    :ivar device_ref: Reference to the device that provides data for this asset. Must provide
+     device name & endpoint on the device to use. Required.
+    :vartype device_ref: ~azure.mgmt.deviceregistry.models.DeviceRef
+    :ivar asset_type_refs: URIs or type definition IDs.
+    :vartype asset_type_refs: list[str]
+    :ivar version: An integer that is incremented each time the resource is modified.
+    :vartype version: int
+    :ivar last_transition_time: A timestamp (in UTC) that is updated each time the resource is
+     modified.
+    :vartype last_transition_time: ~datetime.datetime
+    :ivar manufacturer: Asset manufacturer.
+    :vartype manufacturer: str
+    :ivar manufacturer_uri: Asset manufacturer URI.
+    :vartype manufacturer_uri: str
+    :ivar model: Asset model.
+    :vartype model: str
+    :ivar product_code: Asset product code.
+    :vartype product_code: str
+    :ivar hardware_revision: Asset hardware revision number.
+    :vartype hardware_revision: str
+    :ivar software_revision: Asset software revision number.
+    :vartype software_revision: str
+    :ivar documentation_uri: Asset documentation reference.
+    :vartype documentation_uri: str
+    :ivar serial_number: Asset serial number.
+    :vartype serial_number: str
+    :ivar attributes: A set of key-value pairs that contain custom attributes set by the customer.
+    :vartype attributes: dict[str, any]
+    :ivar discovered_asset_refs: Reference to a list of discovered assets. Populated only if the
+     asset has been created from discovery flow. Discovered asset names must be provided.
+    :vartype discovered_asset_refs: list[str]
+    :ivar default_datasets_configuration: Stringified JSON that contains connector-specific default
+     configuration for all datasets. Each dataset can have its own configuration that overrides the
+     default settings here.
+    :vartype default_datasets_configuration: str
+    :ivar default_events_configuration: Stringified JSON that contains connector-specific default
+     configuration for all events. Each event can have its own configuration that overrides the
+     default settings here.
+    :vartype default_events_configuration: str
+    :ivar default_streams_configuration: Stringified JSON that contains connector-specific default
+     configuration for all streams. Each stream can have its own configuration that overrides the
+     default settings here.
+    :vartype default_streams_configuration: str
+    :ivar default_management_groups_configuration: Stringified JSON that contains
+     connector-specific default configuration for all management groups. Each management group can
+     have its own configuration that overrides the default settings here.
+    :vartype default_management_groups_configuration: str
+    :ivar default_datasets_destinations: Default destinations for a dataset.
+    :vartype default_datasets_destinations:
+     list[~azure.mgmt.deviceregistry.models.DatasetDestination]
+    :ivar default_events_destinations: Default destinations for an event.
+    :vartype default_events_destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar default_streams_destinations: Default destinations for a stream.
+    :vartype default_streams_destinations:
+     list[~azure.mgmt.deviceregistry.models.StreamDestination]
+    :ivar datasets: Array of datasets that are part of the asset. Each dataset describes the data
+     points that make up the set.
+    :vartype datasets: list[~azure.mgmt.deviceregistry.models.NamespaceDataset]
+    :ivar event_groups: Array of event groups that are part of the asset. Each event group can have
+     per-event group configuration.
+    :vartype event_groups: list[~azure.mgmt.deviceregistry.models.NamespaceEventGroup]
+    :ivar streams: Array of streams that are part of the asset. Each stream can have a per-stream
+     configuration.
+    :vartype streams: list[~azure.mgmt.deviceregistry.models.NamespaceStream]
+    :ivar management_groups: Array of management groups that are part of the asset. Each management
+     group can have a per-group configuration.
+    :vartype management_groups: list[~azure.mgmt.deviceregistry.models.ManagementGroup]
+    :ivar status: Read only object to reflect changes that have occurred on the Edge. Similar to
+     Kubernetes status property for custom resources.
+    :vartype status: ~azure.mgmt.deviceregistry.models.NamespaceAssetStatus
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    uuid: Optional[str] = rest_field(visibility=["read"])
+    """Globally unique, immutable, non-reusable ID."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Enabled/disabled status of the asset."""
+    external_asset_id: Optional[str] = rest_field(name="externalAssetId", visibility=["read", "create"])
+    """Asset ID provided by the customer."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the asset."""
+    device_ref: "_models.DeviceRef" = rest_field(name="deviceRef", visibility=["read", "create"])
+    """Reference to the device that provides data for this asset. Must provide device name & endpoint
+     on the device to use. Required."""
+    asset_type_refs: Optional[list[str]] = rest_field(
+        name="assetTypeRefs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URIs or type definition IDs."""
+    version: Optional[int] = rest_field(visibility=["read"])
+    """An integer that is incremented each time the resource is modified."""
+    last_transition_time: Optional[datetime.datetime] = rest_field(
+        name="lastTransitionTime", visibility=["read"], format="rfc3339"
+    )
+    """A timestamp (in UTC) that is updated each time the resource is modified."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset manufacturer."""
+    manufacturer_uri: Optional[str] = rest_field(
+        name="manufacturerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset manufacturer URI."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset model."""
+    product_code: Optional[str] = rest_field(
+        name="productCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset product code."""
+    hardware_revision: Optional[str] = rest_field(
+        name="hardwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset hardware revision number."""
+    software_revision: Optional[str] = rest_field(
+        name="softwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset software revision number."""
+    documentation_uri: Optional[str] = rest_field(
+        name="documentationUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset documentation reference."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset serial number."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes set by the customer."""
+    discovered_asset_refs: Optional[list[str]] = rest_field(name="discoveredAssetRefs", visibility=["read", "create"])
+    """Reference to a list of discovered assets. Populated only if the asset has been created from
+     discovery flow. Discovered asset names must be provided."""
+    default_datasets_configuration: Optional[str] = rest_field(
+        name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all datasets. Each
+     dataset can have its own configuration that overrides the default settings here."""
+    default_events_configuration: Optional[str] = rest_field(
+        name="defaultEventsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all events. Each
+     event can have its own configuration that overrides the default settings here."""
+    default_streams_configuration: Optional[str] = rest_field(
+        name="defaultStreamsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all streams. Each
+     stream can have its own configuration that overrides the default settings here."""
+    default_management_groups_configuration: Optional[str] = rest_field(
+        name="defaultManagementGroupsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all management
+     groups. Each management group can have its own configuration that overrides the default
+     settings here."""
+    default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = rest_field(
+        name="defaultDatasetsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a dataset."""
+    default_events_destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        name="defaultEventsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for an event."""
+    default_streams_destinations: Optional[list["_models.StreamDestination"]] = rest_field(
+        name="defaultStreamsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a stream."""
+    datasets: Optional[list["_models.NamespaceDataset"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of datasets that are part of the asset. Each dataset describes the data points that make
+     up the set."""
+    event_groups: Optional[list["_models.NamespaceEventGroup"]] = rest_field(
+        name="eventGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of event groups that are part of the asset. Each event group can have per-event group
+     configuration."""
+    streams: Optional[list["_models.NamespaceStream"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of streams that are part of the asset. Each stream can have a per-stream configuration."""
+    management_groups: Optional[list["_models.ManagementGroup"]] = rest_field(
+        name="managementGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of management groups that are part of the asset. Each management group can have a
+     per-group configuration."""
+    status: Optional["_models.NamespaceAssetStatus"] = rest_field(visibility=["read"])
+    """Read only object to reflect changes that have occurred on the Edge. Similar to Kubernetes
+     status property for custom resources."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        device_ref: "_models.DeviceRef",
+        enabled: Optional[bool] = None,
+        external_asset_id: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        asset_type_refs: Optional[list[str]] = None,
+        manufacturer: Optional[str] = None,
+        manufacturer_uri: Optional[str] = None,
+        model: Optional[str] = None,
+        product_code: Optional[str] = None,
+        hardware_revision: Optional[str] = None,
+        software_revision: Optional[str] = None,
+        documentation_uri: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        discovered_asset_refs: Optional[list[str]] = None,
+        default_datasets_configuration: Optional[str] = None,
+        default_events_configuration: Optional[str] = None,
+        default_streams_configuration: Optional[str] = None,
+        default_management_groups_configuration: Optional[str] = None,
+        default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = None,
+        default_events_destinations: Optional[list["_models.EventDestination"]] = None,
+        default_streams_destinations: Optional[list["_models.StreamDestination"]] = None,
+        datasets: Optional[list["_models.NamespaceDataset"]] = None,
+        event_groups: Optional[list["_models.NamespaceEventGroup"]] = None,
+        streams: Optional[list["_models.NamespaceStream"]] = None,
+        management_groups: Optional[list["_models.ManagementGroup"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceAssetStatus(_Model):
+    """Defines the asset status properties.
+
+    :ivar config: Defines the asset status config properties.
+    :vartype config: ~azure.mgmt.deviceregistry.models.StatusConfig
+    :ivar datasets: Array of dataset statuses that describe the status of each dataset.
+    :vartype datasets: list[~azure.mgmt.deviceregistry.models.NamespaceAssetStatusDataset]
+    :ivar event_groups: Array of event group statuses that describe the status of each event group.
+    :vartype event_groups: list[~azure.mgmt.deviceregistry.models.NamespaceAssetStatusEventGroup]
+    :ivar streams: Array of stream statuses that describe the status of each stream.
+    :vartype streams: list[~azure.mgmt.deviceregistry.models.NamespaceAssetStatusStream]
+    :ivar management_groups: Array of management group statuses that describe the status of each
+     management group.
+    :vartype management_groups:
+     list[~azure.mgmt.deviceregistry.models.NamespaceAssetStatusManagementGroup]
+    """
+
+    config: Optional["_models.StatusConfig"] = rest_field(visibility=["read"])
+    """Defines the asset status config properties."""
+    datasets: Optional[list["_models.NamespaceAssetStatusDataset"]] = rest_field(visibility=["read"])
+    """Array of dataset statuses that describe the status of each dataset."""
+    event_groups: Optional[list["_models.NamespaceAssetStatusEventGroup"]] = rest_field(
+        name="eventGroups", visibility=["read"]
+    )
+    """Array of event group statuses that describe the status of each event group."""
+    streams: Optional[list["_models.NamespaceAssetStatusStream"]] = rest_field(visibility=["read"])
+    """Array of stream statuses that describe the status of each stream."""
+    management_groups: Optional[list["_models.NamespaceAssetStatusManagementGroup"]] = rest_field(
+        name="managementGroups", visibility=["read"]
+    )
+    """Array of management group statuses that describe the status of each management group."""
+
+
+class NamespaceAssetStatusDataset(_Model):
+    """Defines the asset status dataset properties.
+
+    :ivar name: The name of the dataset. Must be unique within the status.datasets array. This name
+     is used to correlate between the spec and status dataset information. Required.
+    :vartype name: str
+    :ivar message_schema_reference: The message schema reference object.
+    :vartype message_schema_reference:
+     ~azure.mgmt.deviceregistry.models.NamespaceMessageSchemaReference
+    :ivar error: Object to transfer and persist errors that originate from the edge.
+    :vartype error: ~azure.mgmt.deviceregistry.models.StatusError
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the dataset. Must be unique within the status.datasets array. This name is used to
+     correlate between the spec and status dataset information. Required."""
+    message_schema_reference: Optional["_models.NamespaceMessageSchemaReference"] = rest_field(
+        name="messageSchemaReference", visibility=["read"]
+    )
+    """The message schema reference object."""
+    error: Optional["_models.StatusError"] = rest_field(visibility=["read"])
+    """Object to transfer and persist errors that originate from the edge."""
+
+
+class NamespaceAssetStatusEvent(_Model):
+    """Defines the asset status event properties.
+
+    :ivar name: The name of the event. Must be unique within the status.events array. This name is
+     used to correlate between the spec and status event information. Required.
+    :vartype name: str
+    :ivar message_schema_reference: The message schema reference object.
+    :vartype message_schema_reference:
+     ~azure.mgmt.deviceregistry.models.NamespaceMessageSchemaReference
+    :ivar error: Object to transfer and persist errors that originate from the edge.
+    :vartype error: ~azure.mgmt.deviceregistry.models.StatusError
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the event. Must be unique within the status.events array. This name is used to
+     correlate between the spec and status event information. Required."""
+    message_schema_reference: Optional["_models.NamespaceMessageSchemaReference"] = rest_field(
+        name="messageSchemaReference", visibility=["read"]
+    )
+    """The message schema reference object."""
+    error: Optional["_models.StatusError"] = rest_field(visibility=["read"])
+    """Object to transfer and persist errors that originate from the edge."""
+
+
+class NamespaceAssetStatusEventGroup(_Model):
+    """Defines the asset status event group properties.
+
+    :ivar name: The name of the event group. Must be unique within the status.eventGroups array.
+     This name is used to correlate between the spec and status event group information. Required.
+    :vartype name: str
+    :ivar events: Array of event statuses that describe the status of each event in the event
+     group.
+    :vartype events: list[~azure.mgmt.deviceregistry.models.NamespaceAssetStatusEvent]
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the event group. Must be unique within the status.eventGroups array. This name is
+     used to correlate between the spec and status event group information. Required."""
+    events: Optional[list["_models.NamespaceAssetStatusEvent"]] = rest_field(visibility=["read"])
+    """Array of event statuses that describe the status of each event in the event group."""
+
+
+class NamespaceAssetStatusManagementAction(_Model):
+    """Defines the asset status action properties.
+
+    :ivar name: The name of the action. Must be unique within the status.actions array. This name
+     is used to correlate between the spec and status event information. Required.
+    :vartype name: str
+    :ivar request_message_schema_reference: The request message schema reference object for the
+     action.
+    :vartype request_message_schema_reference:
+     ~azure.mgmt.deviceregistry.models.NamespaceMessageSchemaReference
+    :ivar response_message_schema_reference: The response message schema reference object for the
+     action.
+    :vartype response_message_schema_reference:
+     ~azure.mgmt.deviceregistry.models.NamespaceMessageSchemaReference
+    :ivar error: Object to transfer and persist errors that originate from the edge.
+    :vartype error: ~azure.mgmt.deviceregistry.models.StatusError
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the action. Must be unique within the status.actions array. This name is used to
+     correlate between the spec and status event information. Required."""
+    request_message_schema_reference: Optional["_models.NamespaceMessageSchemaReference"] = rest_field(
+        name="requestMessageSchemaReference", visibility=["read"]
+    )
+    """The request message schema reference object for the action."""
+    response_message_schema_reference: Optional["_models.NamespaceMessageSchemaReference"] = rest_field(
+        name="responseMessageSchemaReference", visibility=["read"]
+    )
+    """The response message schema reference object for the action."""
+    error: Optional["_models.StatusError"] = rest_field(visibility=["read"])
+    """Object to transfer and persist errors that originate from the edge."""
+
+
+class NamespaceAssetStatusManagementGroup(_Model):
+    """Defines the asset status management group properties.
+
+    :ivar name: The name of the management group. Must be unique within the status.managementGroups
+     array. This name is used to correlate between the spec and status event information. Required.
+    :vartype name: str
+    :ivar actions: Array of action statuses that describe the status of each action.
+    :vartype actions: list[~azure.mgmt.deviceregistry.models.NamespaceAssetStatusManagementAction]
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the management group. Must be unique within the status.managementGroups array. This
+     name is used to correlate between the spec and status event information. Required."""
+    actions: Optional[list["_models.NamespaceAssetStatusManagementAction"]] = rest_field(visibility=["read"])
+    """Array of action statuses that describe the status of each action."""
+
+
+class NamespaceAssetStatusStream(_Model):
+    """Defines the asset status stream properties.
+
+    :ivar name: The name of the stream. Must be unique within the status.streams array. This name
+     is used to correlate between the spec and status event information. Required.
+    :vartype name: str
+    :ivar message_schema_reference: The message schema reference object.
+    :vartype message_schema_reference:
+     ~azure.mgmt.deviceregistry.models.NamespaceMessageSchemaReference
+    :ivar error: Object to transfer and persist errors that originate from the edge.
+    :vartype error: ~azure.mgmt.deviceregistry.models.StatusError
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the stream. Must be unique within the status.streams array. This name is used to
+     correlate between the spec and status event information. Required."""
+    message_schema_reference: Optional["_models.NamespaceMessageSchemaReference"] = rest_field(
+        name="messageSchemaReference", visibility=["read"]
+    )
+    """The message schema reference object."""
+    error: Optional["_models.StatusError"] = rest_field(visibility=["read"])
+    """Object to transfer and persist errors that originate from the edge."""
+
+
+class NamespaceAssetUpdate(_Model):
+    """The type used for update operations of the NamespaceAsset.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceAssetUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.NamespaceAssetUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceAssetUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceAssetUpdateProperties(_Model):
+    """The updatable properties of the NamespaceAsset.
+
+    :ivar enabled: Enabled/disabled status of the asset.
+    :vartype enabled: bool
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar description: Human-readable description of the asset.
+    :vartype description: str
+    :ivar asset_type_refs: URIs or type definition IDs.
+    :vartype asset_type_refs: list[str]
+    :ivar manufacturer: Asset manufacturer.
+    :vartype manufacturer: str
+    :ivar manufacturer_uri: Asset manufacturer URI.
+    :vartype manufacturer_uri: str
+    :ivar model: Asset model.
+    :vartype model: str
+    :ivar product_code: Asset product code.
+    :vartype product_code: str
+    :ivar hardware_revision: Asset hardware revision number.
+    :vartype hardware_revision: str
+    :ivar software_revision: Asset software revision number.
+    :vartype software_revision: str
+    :ivar documentation_uri: Asset documentation reference.
+    :vartype documentation_uri: str
+    :ivar serial_number: Asset serial number.
+    :vartype serial_number: str
+    :ivar attributes: A set of key-value pairs that contain custom attributes set by the customer.
+    :vartype attributes: dict[str, any]
+    :ivar default_datasets_configuration: Stringified JSON that contains connector-specific default
+     configuration for all datasets. Each dataset can have its own configuration that overrides the
+     default settings here.
+    :vartype default_datasets_configuration: str
+    :ivar default_events_configuration: Stringified JSON that contains connector-specific default
+     configuration for all events. Each event can have its own configuration that overrides the
+     default settings here.
+    :vartype default_events_configuration: str
+    :ivar default_streams_configuration: Stringified JSON that contains connector-specific default
+     configuration for all streams. Each stream can have its own configuration that overrides the
+     default settings here.
+    :vartype default_streams_configuration: str
+    :ivar default_management_groups_configuration: Stringified JSON that contains
+     connector-specific default configuration for all management groups. Each management group can
+     have its own configuration that overrides the default settings here.
+    :vartype default_management_groups_configuration: str
+    :ivar default_datasets_destinations: Default destinations for a dataset.
+    :vartype default_datasets_destinations:
+     list[~azure.mgmt.deviceregistry.models.DatasetDestination]
+    :ivar default_events_destinations: Default destinations for an event.
+    :vartype default_events_destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar default_streams_destinations: Default destinations for a stream.
+    :vartype default_streams_destinations:
+     list[~azure.mgmt.deviceregistry.models.StreamDestination]
+    :ivar datasets: Array of datasets that are part of the asset. Each dataset describes the data
+     points that make up the set.
+    :vartype datasets: list[~azure.mgmt.deviceregistry.models.NamespaceDataset]
+    :ivar event_groups: Array of event groups that are part of the asset. Each event group can have
+     per-event group configuration.
+    :vartype event_groups: list[~azure.mgmt.deviceregistry.models.NamespaceEventGroup]
+    :ivar streams: Array of streams that are part of the asset. Each stream can have a per-stream
+     configuration.
+    :vartype streams: list[~azure.mgmt.deviceregistry.models.NamespaceStream]
+    :ivar management_groups: Array of management groups that are part of the asset. Each management
+     group can have a per-group configuration.
+    :vartype management_groups: list[~azure.mgmt.deviceregistry.models.ManagementGroup]
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Enabled/disabled status of the asset."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the asset."""
+    asset_type_refs: Optional[list[str]] = rest_field(
+        name="assetTypeRefs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URIs or type definition IDs."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset manufacturer."""
+    manufacturer_uri: Optional[str] = rest_field(
+        name="manufacturerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset manufacturer URI."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset model."""
+    product_code: Optional[str] = rest_field(
+        name="productCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset product code."""
+    hardware_revision: Optional[str] = rest_field(
+        name="hardwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset hardware revision number."""
+    software_revision: Optional[str] = rest_field(
+        name="softwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset software revision number."""
+    documentation_uri: Optional[str] = rest_field(
+        name="documentationUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset documentation reference."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset serial number."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes set by the customer."""
+    default_datasets_configuration: Optional[str] = rest_field(
+        name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all datasets. Each
+     dataset can have its own configuration that overrides the default settings here."""
+    default_events_configuration: Optional[str] = rest_field(
+        name="defaultEventsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all events. Each
+     event can have its own configuration that overrides the default settings here."""
+    default_streams_configuration: Optional[str] = rest_field(
+        name="defaultStreamsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all streams. Each
+     stream can have its own configuration that overrides the default settings here."""
+    default_management_groups_configuration: Optional[str] = rest_field(
+        name="defaultManagementGroupsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all management
+     groups. Each management group can have its own configuration that overrides the default
+     settings here."""
+    default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = rest_field(
+        name="defaultDatasetsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a dataset."""
+    default_events_destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        name="defaultEventsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for an event."""
+    default_streams_destinations: Optional[list["_models.StreamDestination"]] = rest_field(
+        name="defaultStreamsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a stream."""
+    datasets: Optional[list["_models.NamespaceDataset"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of datasets that are part of the asset. Each dataset describes the data points that make
+     up the set."""
+    event_groups: Optional[list["_models.NamespaceEventGroup"]] = rest_field(
+        name="eventGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of event groups that are part of the asset. Each event group can have per-event group
+     configuration."""
+    streams: Optional[list["_models.NamespaceStream"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of streams that are part of the asset. Each stream can have a per-stream configuration."""
+    management_groups: Optional[list["_models.ManagementGroup"]] = rest_field(
+        name="managementGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of management groups that are part of the asset. Each management group can have a
+     per-group configuration."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        asset_type_refs: Optional[list[str]] = None,
+        manufacturer: Optional[str] = None,
+        manufacturer_uri: Optional[str] = None,
+        model: Optional[str] = None,
+        product_code: Optional[str] = None,
+        hardware_revision: Optional[str] = None,
+        software_revision: Optional[str] = None,
+        documentation_uri: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        default_datasets_configuration: Optional[str] = None,
+        default_events_configuration: Optional[str] = None,
+        default_streams_configuration: Optional[str] = None,
+        default_management_groups_configuration: Optional[str] = None,
+        default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = None,
+        default_events_destinations: Optional[list["_models.EventDestination"]] = None,
+        default_streams_destinations: Optional[list["_models.StreamDestination"]] = None,
+        datasets: Optional[list["_models.NamespaceDataset"]] = None,
+        event_groups: Optional[list["_models.NamespaceEventGroup"]] = None,
+        streams: Optional[list["_models.NamespaceStream"]] = None,
+        management_groups: Optional[list["_models.ManagementGroup"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDataset(_Model):
+    """Defines the dataset properties.
+
+    :ivar name: Name of the dataset. Required.
+    :vartype name: str
+    :ivar data_source: Reference to a data source for a given dataset.
+    :vartype data_source: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar dataset_configuration: Stringified JSON that contains connector-specific JSON string that
+     describes configuration for the specific dataset.
+    :vartype dataset_configuration: str
+    :ivar destinations: Destinations for a dataset.
+    :vartype destinations: list[~azure.mgmt.deviceregistry.models.DatasetDestination]
+    :ivar data_points: Array of data points that are part of the dataset. Each data point can have
+     per-data point configuration.
+    :vartype data_points: list[~azure.mgmt.deviceregistry.models.NamespaceDatasetDataPoint]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the dataset. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to a data source for a given dataset."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    dataset_configuration: Optional[str] = rest_field(
+        name="datasetConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific JSON string that describes configuration for
+     the specific dataset."""
+    destinations: Optional[list["_models.DatasetDestination"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for a dataset."""
+    data_points: Optional[list["_models.NamespaceDatasetDataPoint"]] = rest_field(
+        name="dataPoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of data points that are part of the dataset. Each data point can have per-data point
+     configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        dataset_configuration: Optional[str] = None,
+        destinations: Optional[list["_models.DatasetDestination"]] = None,
+        data_points: Optional[list["_models.NamespaceDatasetDataPoint"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDatasetDataPoint(_Model):
+    """Defines the dataset data point properties.
+
+    :ivar name: The name of the data point. Required.
+    :vartype name: str
+    :ivar data_source: The address of the source of the data in the asset (e.g. URL) so that a
+     client can access the data source on the asset. Required.
+    :vartype data_source: str
+    :ivar data_point_configuration: Stringified JSON that contains connector-specific configuration
+     for the data point. For OPC UA, this could include configuration like, publishingInterval,
+     samplingInterval, and queueSize.
+    :vartype data_point_configuration: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the data point. Required."""
+    data_source: str = rest_field(name="dataSource", visibility=["read", "create", "update", "delete", "query"])
+    """The address of the source of the data in the asset (e.g. URL) so that a client can access the
+     data source on the asset. Required."""
+    data_point_configuration: Optional[str] = rest_field(
+        name="dataPointConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the data point. For OPC UA,
+     this could include configuration like, publishingInterval, samplingInterval, and queueSize."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: str,
+        data_point_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDevice(TrackedResource):
+    """Device definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceDeviceProperties
+    :ivar etag: Resource Tag.
+    :vartype etag: str
+    :ivar extended_location: The extended location.
+    :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.NamespaceDeviceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource Tag."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create"]
+    )
+    """The extended location."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceDeviceProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDeviceProperties(_Model):
+    """Defines the device properties.
+
+    :ivar uuid: A unique identifier for the device.
+    :vartype uuid: str
+    :ivar enabled: Indicates if the resource is enabled or not.
+    :vartype enabled: bool
+    :ivar external_device_id: The Device ID provided by the customer.
+    :vartype external_device_id: str
+    :ivar discovered_device_ref: Reference to a device. Populated only if the device had been
+     created from discovery flow. Discovered device name must be provided.
+    :vartype discovered_device_ref: str
+    :ivar manufacturer: Device manufacturer.
+    :vartype manufacturer: str
+    :ivar model: Device model.
+    :vartype model: str
+    :ivar operating_system: Device operating system.
+    :vartype operating_system: str
+    :ivar operating_system_version: Device operating system version.
+    :vartype operating_system_version: str
+    :ivar endpoints: Property bag containing the device's unassigned and assigned endpoints.
+    :vartype endpoints: ~azure.mgmt.deviceregistry.models.MessagingEndpoints
+    :ivar attributes: A set of key-value pairs that contain custom attributes set by the customer.
+    :vartype attributes: dict[str, any]
+    :ivar status: Device status updates.
+    :vartype status: ~azure.mgmt.deviceregistry.models.DeviceStatus
+    :ivar version: An integer that is incremented each time the resource is modified.
+    :vartype version: int
+    :ivar last_transition_time: A timestamp (in UTC) that is updated each time the resource is
+     modified.
+    :vartype last_transition_time: ~datetime.datetime
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    uuid: Optional[str] = rest_field(visibility=["read"])
+    """A unique identifier for the device."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates if the resource is enabled or not."""
+    external_device_id: Optional[str] = rest_field(name="externalDeviceId", visibility=["read", "create"])
+    """The Device ID provided by the customer."""
+    discovered_device_ref: Optional[str] = rest_field(name="discoveredDeviceRef", visibility=["read", "create"])
+    """Reference to a device. Populated only if the device had been created from discovery flow.
+     Discovered device name must be provided."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create"])
+    """Device manufacturer."""
+    model: Optional[str] = rest_field(visibility=["read", "create"])
+    """Device model."""
+    operating_system: Optional[str] = rest_field(name="operatingSystem", visibility=["read", "create"])
+    """Device operating system."""
+    operating_system_version: Optional[str] = rest_field(
+        name="operatingSystemVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Device operating system version."""
+    endpoints: Optional["_models.MessagingEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Property bag containing the device's unassigned and assigned endpoints."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes set by the customer."""
+    status: Optional["_models.DeviceStatus"] = rest_field(visibility=["read"])
+    """Device status updates."""
+    version: Optional[int] = rest_field(visibility=["read"])
+    """An integer that is incremented each time the resource is modified."""
+    last_transition_time: Optional[datetime.datetime] = rest_field(
+        name="lastTransitionTime", visibility=["read"], format="rfc3339"
+    )
+    """A timestamp (in UTC) that is updated each time the resource is modified."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        external_device_id: Optional[str] = None,
+        discovered_device_ref: Optional[str] = None,
+        manufacturer: Optional[str] = None,
+        model: Optional[str] = None,
+        operating_system: Optional[str] = None,
+        operating_system_version: Optional[str] = None,
+        endpoints: Optional["_models.MessagingEndpoints"] = None,
+        attributes: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDeviceUpdate(_Model):
+    """The type used for update operations of the NamespaceDevice.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceDeviceUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.NamespaceDeviceUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceDeviceUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDeviceUpdateProperties(_Model):
+    """The updatable properties of the NamespaceDevice.
+
+    :ivar operating_system_version: Device operating system version.
+    :vartype operating_system_version: str
+    :ivar endpoints: Property bag containing the device's unassigned and assigned endpoints.
+    :vartype endpoints: ~azure.mgmt.deviceregistry.models.MessagingEndpoints
+    :ivar attributes: A set of key-value pairs that contain custom attributes set by the customer.
+    :vartype attributes: dict[str, any]
+    :ivar enabled: Indicates if the resource and identity are enabled or not. A disabled device
+     cannot authenticate with Microsoft Entra ID.
+    :vartype enabled: bool
+    """
+
+    operating_system_version: Optional[str] = rest_field(
+        name="operatingSystemVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Device operating system version."""
+    endpoints: Optional["_models.MessagingEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Property bag containing the device's unassigned and assigned endpoints."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes set by the customer."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates if the resource and identity are enabled or not. A disabled device cannot
+     authenticate with Microsoft Entra ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operating_system_version: Optional[str] = None,
+        endpoints: Optional["_models.MessagingEndpoints"] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredAsset(TrackedResource):
+    """Discovered asset definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceDiscoveredAssetProperties
+    :ivar extended_location: The extended location. Required.
+    :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.NamespaceDiscoveredAssetProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """The extended location. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        extended_location: "_models.ExtendedLocation",
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceDiscoveredAssetProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredAssetProperties(_Model):
+    """Defines the discovered asset properties.
+
+    :ivar device_ref: Reference to the device that provides data for this asset. Must provide
+     device name & endpoint on the device to use. Required.
+    :vartype device_ref: ~azure.mgmt.deviceregistry.models.DeviceRef
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar asset_type_refs: URIs or type definition IDs.
+    :vartype asset_type_refs: list[str]
+    :ivar description: Human-readable description of the asset.
+    :vartype description: str
+    :ivar discovery_id: Identifier used to detect changes in the asset. Required.
+    :vartype discovery_id: str
+    :ivar external_asset_id: Asset ID provided by the customer.
+    :vartype external_asset_id: str
+    :ivar version: An integer that is incremented each time the resource is modified. Required.
+    :vartype version: int
+    :ivar manufacturer: Asset manufacturer.
+    :vartype manufacturer: str
+    :ivar manufacturer_uri: Asset manufacturer URI.
+    :vartype manufacturer_uri: str
+    :ivar model: Asset model.
+    :vartype model: str
+    :ivar product_code: Asset product code.
+    :vartype product_code: str
+    :ivar hardware_revision: Asset hardware revision number.
+    :vartype hardware_revision: str
+    :ivar software_revision: Asset software revision number.
+    :vartype software_revision: str
+    :ivar documentation_uri: Asset documentation reference.
+    :vartype documentation_uri: str
+    :ivar serial_number: Asset serial number.
+    :vartype serial_number: str
+    :ivar attributes: A set of key-value pairs that contain custom attributes.
+    :vartype attributes: dict[str, any]
+    :ivar default_datasets_configuration: Stringified JSON that contains connector-specific default
+     configuration for all datasets. Each dataset can have its own configuration that overrides the
+     default settings here.
+    :vartype default_datasets_configuration: str
+    :ivar default_events_configuration: Stringified JSON that contains connector-specific default
+     configuration for all events. Each event can have its own configuration that overrides the
+     default settings here.
+    :vartype default_events_configuration: str
+    :ivar default_streams_configuration: Stringified JSON that contains connector-specific default
+     configuration for all streams. Each stream can have its own configuration that overrides the
+     default settings here.
+    :vartype default_streams_configuration: str
+    :ivar default_management_groups_configuration: Stringified JSON that contains
+     connector-specific default configuration for all management groups. Each management group can
+     have its own configuration that overrides the default settings here.
+    :vartype default_management_groups_configuration: str
+    :ivar default_datasets_destinations: Default destinations for a dataset.
+    :vartype default_datasets_destinations:
+     list[~azure.mgmt.deviceregistry.models.DatasetDestination]
+    :ivar default_events_destinations: Default destinations for an event.
+    :vartype default_events_destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar default_streams_destinations: Default destinations for a stream.
+    :vartype default_streams_destinations:
+     list[~azure.mgmt.deviceregistry.models.StreamDestination]
+    :ivar datasets: Array of datasets that are part of the asset. Each dataset spec describes the
+     data points that make up the set.
+    :vartype datasets: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredDataset]
+    :ivar event_groups: Array of event groups that are part of the asset. Each event group can have
+     per-event group configuration.
+    :vartype event_groups: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredEventGroup]
+    :ivar streams: Array of streams that are part of the asset. Each stream can have a per-stream
+     configuration.
+    :vartype streams: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredStream]
+    :ivar management_groups: Array of management groups that are part of the asset. Each management
+     group can have a per-group configuration.
+    :vartype management_groups:
+     list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredManagementGroup]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    device_ref: "_models.DeviceRef" = rest_field(
+        name="deviceRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to the device that provides data for this asset. Must provide device name & endpoint
+     on the device to use. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    asset_type_refs: Optional[list[str]] = rest_field(
+        name="assetTypeRefs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URIs or type definition IDs."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the asset."""
+    discovery_id: str = rest_field(name="discoveryId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier used to detect changes in the asset. Required."""
+    external_asset_id: Optional[str] = rest_field(name="externalAssetId", visibility=["read", "create"])
+    """Asset ID provided by the customer."""
+    version: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An integer that is incremented each time the resource is modified. Required."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset manufacturer."""
+    manufacturer_uri: Optional[str] = rest_field(
+        name="manufacturerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset manufacturer URI."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset model."""
+    product_code: Optional[str] = rest_field(
+        name="productCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset product code."""
+    hardware_revision: Optional[str] = rest_field(
+        name="hardwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset hardware revision number."""
+    software_revision: Optional[str] = rest_field(
+        name="softwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset software revision number."""
+    documentation_uri: Optional[str] = rest_field(
+        name="documentationUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset documentation reference."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset serial number."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes."""
+    default_datasets_configuration: Optional[str] = rest_field(
+        name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all datasets. Each
+     dataset can have its own configuration that overrides the default settings here."""
+    default_events_configuration: Optional[str] = rest_field(
+        name="defaultEventsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all events. Each
+     event can have its own configuration that overrides the default settings here."""
+    default_streams_configuration: Optional[str] = rest_field(
+        name="defaultStreamsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all streams. Each
+     stream can have its own configuration that overrides the default settings here."""
+    default_management_groups_configuration: Optional[str] = rest_field(
+        name="defaultManagementGroupsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all management
+     groups. Each management group can have its own configuration that overrides the default
+     settings here."""
+    default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = rest_field(
+        name="defaultDatasetsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a dataset."""
+    default_events_destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        name="defaultEventsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for an event."""
+    default_streams_destinations: Optional[list["_models.StreamDestination"]] = rest_field(
+        name="defaultStreamsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a stream."""
+    datasets: Optional[list["_models.NamespaceDiscoveredDataset"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of datasets that are part of the asset. Each dataset spec describes the data points that
+     make up the set."""
+    event_groups: Optional[list["_models.NamespaceDiscoveredEventGroup"]] = rest_field(
+        name="eventGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of event groups that are part of the asset. Each event group can have per-event group
+     configuration."""
+    streams: Optional[list["_models.NamespaceDiscoveredStream"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of streams that are part of the asset. Each stream can have a per-stream configuration."""
+    management_groups: Optional[list["_models.NamespaceDiscoveredManagementGroup"]] = rest_field(
+        name="managementGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of management groups that are part of the asset. Each management group can have a
+     per-group configuration."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        device_ref: "_models.DeviceRef",
+        discovery_id: str,
+        version: int,
+        display_name: Optional[str] = None,
+        asset_type_refs: Optional[list[str]] = None,
+        description: Optional[str] = None,
+        external_asset_id: Optional[str] = None,
+        manufacturer: Optional[str] = None,
+        manufacturer_uri: Optional[str] = None,
+        model: Optional[str] = None,
+        product_code: Optional[str] = None,
+        hardware_revision: Optional[str] = None,
+        software_revision: Optional[str] = None,
+        documentation_uri: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        default_datasets_configuration: Optional[str] = None,
+        default_events_configuration: Optional[str] = None,
+        default_streams_configuration: Optional[str] = None,
+        default_management_groups_configuration: Optional[str] = None,
+        default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = None,
+        default_events_destinations: Optional[list["_models.EventDestination"]] = None,
+        default_streams_destinations: Optional[list["_models.StreamDestination"]] = None,
+        datasets: Optional[list["_models.NamespaceDiscoveredDataset"]] = None,
+        event_groups: Optional[list["_models.NamespaceDiscoveredEventGroup"]] = None,
+        streams: Optional[list["_models.NamespaceDiscoveredStream"]] = None,
+        management_groups: Optional[list["_models.NamespaceDiscoveredManagementGroup"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredAssetUpdate(_Model):
+    """The type used for update operations of the NamespaceDiscoveredAsset.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceDiscoveredAssetUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.NamespaceDiscoveredAssetUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceDiscoveredAssetUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredAssetUpdateProperties(_Model):
+    """The updatable properties of the NamespaceDiscoveredAsset.
+
+    :ivar device_ref: Reference to the device that provides data for this asset. Must provide
+     device name & endpoint on the device to use.
+    :vartype device_ref: ~azure.mgmt.deviceregistry.models.DeviceRef
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar asset_type_refs: URIs or type definition IDs.
+    :vartype asset_type_refs: list[str]
+    :ivar description: Human-readable description of the asset.
+    :vartype description: str
+    :ivar discovery_id: Identifier used to detect changes in the asset.
+    :vartype discovery_id: str
+    :ivar version: An integer that is incremented each time the resource is modified.
+    :vartype version: int
+    :ivar manufacturer: Asset manufacturer.
+    :vartype manufacturer: str
+    :ivar manufacturer_uri: Asset manufacturer URI.
+    :vartype manufacturer_uri: str
+    :ivar model: Asset model.
+    :vartype model: str
+    :ivar product_code: Asset product code.
+    :vartype product_code: str
+    :ivar hardware_revision: Asset hardware revision number.
+    :vartype hardware_revision: str
+    :ivar software_revision: Asset software revision number.
+    :vartype software_revision: str
+    :ivar documentation_uri: Asset documentation reference.
+    :vartype documentation_uri: str
+    :ivar serial_number: Asset serial number.
+    :vartype serial_number: str
+    :ivar attributes: A set of key-value pairs that contain custom attributes.
+    :vartype attributes: dict[str, any]
+    :ivar default_datasets_configuration: Stringified JSON that contains connector-specific default
+     configuration for all datasets. Each dataset can have its own configuration that overrides the
+     default settings here.
+    :vartype default_datasets_configuration: str
+    :ivar default_events_configuration: Stringified JSON that contains connector-specific default
+     configuration for all events. Each event can have its own configuration that overrides the
+     default settings here.
+    :vartype default_events_configuration: str
+    :ivar default_streams_configuration: Stringified JSON that contains connector-specific default
+     configuration for all streams. Each stream can have its own configuration that overrides the
+     default settings here.
+    :vartype default_streams_configuration: str
+    :ivar default_management_groups_configuration: Stringified JSON that contains
+     connector-specific default configuration for all management groups. Each management group can
+     have its own configuration that overrides the default settings here.
+    :vartype default_management_groups_configuration: str
+    :ivar default_datasets_destinations: Default destinations for a dataset.
+    :vartype default_datasets_destinations:
+     list[~azure.mgmt.deviceregistry.models.DatasetDestination]
+    :ivar default_events_destinations: Default destinations for an event.
+    :vartype default_events_destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar default_streams_destinations: Default destinations for a stream.
+    :vartype default_streams_destinations:
+     list[~azure.mgmt.deviceregistry.models.StreamDestination]
+    :ivar datasets: Array of datasets that are part of the asset. Each dataset spec describes the
+     data points that make up the set.
+    :vartype datasets: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredDataset]
+    :ivar event_groups: Array of event groups that are part of the asset. Each event group can have
+     per-event group configuration.
+    :vartype event_groups: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredEventGroup]
+    :ivar streams: Array of streams that are part of the asset. Each stream can have a per-stream
+     configuration.
+    :vartype streams: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredStream]
+    :ivar management_groups: Array of management groups that are part of the asset. Each management
+     group can have a per-group configuration.
+    :vartype management_groups:
+     list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredManagementGroup]
+    """
+
+    device_ref: Optional["_models.DeviceRef"] = rest_field(
+        name="deviceRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to the device that provides data for this asset. Must provide device name & endpoint
+     on the device to use."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    asset_type_refs: Optional[list[str]] = rest_field(
+        name="assetTypeRefs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URIs or type definition IDs."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the asset."""
+    discovery_id: Optional[str] = rest_field(
+        name="discoveryId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identifier used to detect changes in the asset."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An integer that is incremented each time the resource is modified."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset manufacturer."""
+    manufacturer_uri: Optional[str] = rest_field(
+        name="manufacturerUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset manufacturer URI."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Asset model."""
+    product_code: Optional[str] = rest_field(
+        name="productCode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset product code."""
+    hardware_revision: Optional[str] = rest_field(
+        name="hardwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset hardware revision number."""
+    software_revision: Optional[str] = rest_field(
+        name="softwareRevision", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset software revision number."""
+    documentation_uri: Optional[str] = rest_field(
+        name="documentationUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset documentation reference."""
+    serial_number: Optional[str] = rest_field(
+        name="serialNumber", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Asset serial number."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes."""
+    default_datasets_configuration: Optional[str] = rest_field(
+        name="defaultDatasetsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all datasets. Each
+     dataset can have its own configuration that overrides the default settings here."""
+    default_events_configuration: Optional[str] = rest_field(
+        name="defaultEventsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all events. Each
+     event can have its own configuration that overrides the default settings here."""
+    default_streams_configuration: Optional[str] = rest_field(
+        name="defaultStreamsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all streams. Each
+     stream can have its own configuration that overrides the default settings here."""
+    default_management_groups_configuration: Optional[str] = rest_field(
+        name="defaultManagementGroupsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific default configuration for all management
+     groups. Each management group can have its own configuration that overrides the default
+     settings here."""
+    default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = rest_field(
+        name="defaultDatasetsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a dataset."""
+    default_events_destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        name="defaultEventsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for an event."""
+    default_streams_destinations: Optional[list["_models.StreamDestination"]] = rest_field(
+        name="defaultStreamsDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default destinations for a stream."""
+    datasets: Optional[list["_models.NamespaceDiscoveredDataset"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of datasets that are part of the asset. Each dataset spec describes the data points that
+     make up the set."""
+    event_groups: Optional[list["_models.NamespaceDiscoveredEventGroup"]] = rest_field(
+        name="eventGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of event groups that are part of the asset. Each event group can have per-event group
+     configuration."""
+    streams: Optional[list["_models.NamespaceDiscoveredStream"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of streams that are part of the asset. Each stream can have a per-stream configuration."""
+    management_groups: Optional[list["_models.NamespaceDiscoveredManagementGroup"]] = rest_field(
+        name="managementGroups", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of management groups that are part of the asset. Each management group can have a
+     per-group configuration."""
+
+    @overload
+    def __init__(  # pylint: disable=too-many-locals
+        self,
+        *,
+        device_ref: Optional["_models.DeviceRef"] = None,
+        display_name: Optional[str] = None,
+        asset_type_refs: Optional[list[str]] = None,
+        description: Optional[str] = None,
+        discovery_id: Optional[str] = None,
+        version: Optional[int] = None,
+        manufacturer: Optional[str] = None,
+        manufacturer_uri: Optional[str] = None,
+        model: Optional[str] = None,
+        product_code: Optional[str] = None,
+        hardware_revision: Optional[str] = None,
+        software_revision: Optional[str] = None,
+        documentation_uri: Optional[str] = None,
+        serial_number: Optional[str] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        default_datasets_configuration: Optional[str] = None,
+        default_events_configuration: Optional[str] = None,
+        default_streams_configuration: Optional[str] = None,
+        default_management_groups_configuration: Optional[str] = None,
+        default_datasets_destinations: Optional[list["_models.DatasetDestination"]] = None,
+        default_events_destinations: Optional[list["_models.EventDestination"]] = None,
+        default_streams_destinations: Optional[list["_models.StreamDestination"]] = None,
+        datasets: Optional[list["_models.NamespaceDiscoveredDataset"]] = None,
+        event_groups: Optional[list["_models.NamespaceDiscoveredEventGroup"]] = None,
+        streams: Optional[list["_models.NamespaceDiscoveredStream"]] = None,
+        management_groups: Optional[list["_models.NamespaceDiscoveredManagementGroup"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredDataset(_Model):
+    """Defines the dataset properties.
+
+    :ivar name: Name of the dataset. Required.
+    :vartype name: str
+    :ivar data_source: Reference to a data source for a given dataset.
+    :vartype data_source: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar dataset_configuration: Stringified JSON that contains connector-specific properties that
+     describes configuration for the specific dataset.
+    :vartype dataset_configuration: str
+    :ivar destinations: Destinations for a dataset.
+    :vartype destinations: list[~azure.mgmt.deviceregistry.models.DatasetDestination]
+    :ivar data_points: Array of data points that are part of the dataset. Each data point can have
+     per-data point configuration.
+    :vartype data_points:
+     list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredDatasetDataPoint]
+    :ivar last_updated_on: Timestamp (in UTC) indicating when the dataset was added or modified.
+    :vartype last_updated_on: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the dataset. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to a data source for a given dataset."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    dataset_configuration: Optional[str] = rest_field(
+        name="datasetConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific properties that describes configuration for
+     the specific dataset."""
+    destinations: Optional[list["_models.DatasetDestination"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for a dataset."""
+    data_points: Optional[list["_models.NamespaceDiscoveredDatasetDataPoint"]] = rest_field(
+        name="dataPoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of data points that are part of the dataset. Each data point can have per-data point
+     configuration."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp (in UTC) indicating when the dataset was added or modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        dataset_configuration: Optional[str] = None,
+        destinations: Optional[list["_models.DatasetDestination"]] = None,
+        data_points: Optional[list["_models.NamespaceDiscoveredDatasetDataPoint"]] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredDatasetDataPoint(_Model):
+    """Defines the discovered dataset data point properties.
+
+    :ivar name: The name of the data point. Required.
+    :vartype name: str
+    :ivar data_source: The address of the source of the data in the asset (e.g. URL) so that a
+     client can access the data source on the asset. Required.
+    :vartype data_source: str
+    :ivar data_point_configuration: Stringified JSON that contains connector-specific configuration
+     for the data point. For OPC UA, this could include configuration like, publishingInterval,
+     samplingInterval, and queueSize.
+    :vartype data_point_configuration: str
+    :ivar last_updated_on: UTC timestamp indicating when the data point was added or modified.
+    :vartype last_updated_on: ~datetime.datetime
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the data point. Required."""
+    data_source: str = rest_field(name="dataSource", visibility=["read", "create", "update", "delete", "query"])
+    """The address of the source of the data in the asset (e.g. URL) so that a client can access the
+     data source on the asset. Required."""
+    data_point_configuration: Optional[str] = rest_field(
+        name="dataPointConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the data point. For OPC UA,
+     this could include configuration like, publishingInterval, samplingInterval, and queueSize."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """UTC timestamp indicating when the data point was added or modified."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: str,
+        data_point_configuration: Optional[str] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+        type_ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredDevice(TrackedResource):
+    """Discovered device definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceDiscoveredDeviceProperties
+    :ivar extended_location: The extended location. Required.
+    :vartype extended_location: ~azure.mgmt.deviceregistry.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.NamespaceDiscoveredDeviceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: "_models.ExtendedLocation" = rest_field(name="extendedLocation", visibility=["read", "create"])
+    """The extended location. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        extended_location: "_models.ExtendedLocation",
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceDiscoveredDeviceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredDeviceProperties(_Model):
+    """Defines the discovered device properties.
+
+    :ivar external_device_id: A device ID that represents the device in a system external to Azure.
+     Unique within scope of an Azure tenant.
+    :vartype external_device_id: str
+    :ivar endpoints: Endpoints for discovered devices.
+    :vartype endpoints: ~azure.mgmt.deviceregistry.models.DiscoveredMessagingEndpoints
+    :ivar manufacturer: Device manufacturer.
+    :vartype manufacturer: str
+    :ivar model: Device model.
+    :vartype model: str
+    :ivar operating_system: Device operating system name.
+    :vartype operating_system: str
+    :ivar operating_system_version: Device operating system version.
+    :vartype operating_system_version: str
+    :ivar attributes: A set of key-value pairs that contain custom attributes.
+    :vartype attributes: dict[str, any]
+    :ivar discovery_id: Identifier used to detect changes in the discovered device. Required.
+    :vartype discovery_id: str
+    :ivar version: An integer that is incremented each time the resource is modified. Required.
+    :vartype version: int
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    external_device_id: Optional[str] = rest_field(
+        name="externalDeviceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A device ID that represents the device in a system external to Azure. Unique within scope of an
+     Azure tenant."""
+    endpoints: Optional["_models.DiscoveredMessagingEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoints for discovered devices."""
+    manufacturer: Optional[str] = rest_field(visibility=["read", "create"])
+    """Device manufacturer."""
+    model: Optional[str] = rest_field(visibility=["read", "create"])
+    """Device model."""
+    operating_system: Optional[str] = rest_field(name="operatingSystem", visibility=["read", "create"])
+    """Device operating system name."""
+    operating_system_version: Optional[str] = rest_field(
+        name="operatingSystemVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Device operating system version."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes."""
+    discovery_id: str = rest_field(name="discoveryId", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier used to detect changes in the discovered device. Required."""
+    version: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An integer that is incremented each time the resource is modified. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        discovery_id: str,
+        version: int,
+        external_device_id: Optional[str] = None,
+        endpoints: Optional["_models.DiscoveredMessagingEndpoints"] = None,
+        manufacturer: Optional[str] = None,
+        model: Optional[str] = None,
+        operating_system: Optional[str] = None,
+        operating_system_version: Optional[str] = None,
+        attributes: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredDeviceUpdate(_Model):
+    """The type used for update operations of the NamespaceDiscoveredDevice.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties:
+     ~azure.mgmt.deviceregistry.models.NamespaceDiscoveredDeviceUpdateProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.NamespaceDiscoveredDeviceUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceDiscoveredDeviceUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredDeviceUpdateProperties(_Model):  # pylint: disable=name-too-long
+    """The updatable properties of the NamespaceDiscoveredDevice.
+
+    :ivar external_device_id: A device ID that represents the device in a system external to Azure.
+     Unique within scope of an Azure tenant.
+    :vartype external_device_id: str
+    :ivar endpoints: Endpoints for discovered devices.
+    :vartype endpoints: ~azure.mgmt.deviceregistry.models.DiscoveredMessagingEndpoints
+    :ivar operating_system_version: Device operating system version.
+    :vartype operating_system_version: str
+    :ivar attributes: A set of key-value pairs that contain custom attributes.
+    :vartype attributes: dict[str, any]
+    :ivar discovery_id: Identifier used to detect changes in the discovered device.
+    :vartype discovery_id: str
+    :ivar version: An integer that is incremented each time the resource is modified.
+    :vartype version: int
+    """
+
+    external_device_id: Optional[str] = rest_field(
+        name="externalDeviceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A device ID that represents the device in a system external to Azure. Unique within scope of an
+     Azure tenant."""
+    endpoints: Optional["_models.DiscoveredMessagingEndpoints"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoints for discovered devices."""
+    operating_system_version: Optional[str] = rest_field(
+        name="operatingSystemVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Device operating system version."""
+    attributes: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A set of key-value pairs that contain custom attributes."""
+    discovery_id: Optional[str] = rest_field(
+        name="discoveryId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Identifier used to detect changes in the discovered device."""
+    version: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An integer that is incremented each time the resource is modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        external_device_id: Optional[str] = None,
+        endpoints: Optional["_models.DiscoveredMessagingEndpoints"] = None,
+        operating_system_version: Optional[str] = None,
+        attributes: Optional[dict[str, Any]] = None,
+        discovery_id: Optional[str] = None,
+        version: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredEvent(_Model):
+    """Defines the event properties.
+
+    :ivar name: The name of the event. Required.
+    :vartype name: str
+    :ivar data_source: Reference to a data source for a given event.
+    :vartype data_source: str
+    :ivar event_configuration: Stringified JSON that contains connector-specific configuration for
+     the event. For OPC UA, this could include configuration like, publishingInterval,
+     samplingInterval, and queueSize.
+    :vartype event_configuration: str
+    :ivar destinations: Destinations for an event.
+    :vartype destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar last_updated_on: UTC timestamp indicating when the event was added or modified.
+    :vartype last_updated_on: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the event. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to a data source for a given event."""
+    event_configuration: Optional[str] = rest_field(
+        name="eventConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the event. For OPC UA, this
+     could include configuration like, publishingInterval, samplingInterval, and queueSize."""
+    destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for an event."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """UTC timestamp indicating when the event was added or modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        event_configuration: Optional[str] = None,
+        destinations: Optional[list["_models.EventDestination"]] = None,
+        type_ref: Optional[str] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredEventGroup(_Model):
+    """Defines the discovered event group properties.
+
+    :ivar name: The name of the event group. Required.
+    :vartype name: str
+    :ivar data_source: The address of the notifier of the event group in the asset (e.g. URL) so
+     that a client can access the event group on the asset.
+    :vartype data_source: str
+    :ivar event_group_configuration: Stringified JSON that contains connector-specific
+     configuration for the event group. For OPC UA, this could include configuration like,
+     publishingInterval, samplingInterval, and queueSize.
+    :vartype event_group_configuration: str
+    :ivar default_destinations: Destinations for events. Default destinations when destinations is
+     not defined at the event level.
+    :vartype default_destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar events: Array of events that are part of the event group.
+    :vartype events: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredEvent]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the event group. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The address of the notifier of the event group in the asset (e.g. URL) so that a client can
+     access the event group on the asset."""
+    event_group_configuration: Optional[str] = rest_field(
+        name="eventGroupConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the event group. For OPC
+     UA, this could include configuration like, publishingInterval, samplingInterval, and queueSize."""
+    default_destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        name="defaultDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for events. Default destinations when destinations is not defined at the event
+     level."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    events: Optional[list["_models.NamespaceDiscoveredEvent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of events that are part of the event group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        event_group_configuration: Optional[str] = None,
+        default_destinations: Optional[list["_models.EventDestination"]] = None,
+        type_ref: Optional[str] = None,
+        events: Optional[list["_models.NamespaceDiscoveredEvent"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredManagementAction(_Model):
+    """Defines the action properties.
+
+    :ivar name: Name of the action. Required.
+    :vartype name: str
+    :ivar action_configuration: Stringified JSON that contains connector-specific configuration for
+     the action.
+    :vartype action_configuration: str
+    :ivar target_uri: The target URI on which a client can invoke the specific action. Required.
+    :vartype target_uri: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar topic: The MQTT topic path on which a client will receive the request for the action.
+    :vartype topic: str
+    :ivar action_type: The type of the action. Known values are: "Call", "Read", and "Write".
+    :vartype action_type: str or
+     ~azure.mgmt.deviceregistry.models.NamespaceDiscoveredManagementActionType
+    :ivar timeout_in_seconds: Response timeout for the action.
+    :vartype timeout_in_seconds: int
+    :ivar last_updated_on: Timestamp (in UTC) indicating when the management action was added or
+     modified.
+    :vartype last_updated_on: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the action. Required."""
+    action_configuration: Optional[str] = rest_field(
+        name="actionConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the action."""
+    target_uri: str = rest_field(name="targetUri", visibility=["read", "create", "update", "delete", "query"])
+    """The target URI on which a client can invoke the specific action. Required."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    topic: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The MQTT topic path on which a client will receive the request for the action."""
+    action_type: Optional[Union[str, "_models.NamespaceDiscoveredManagementActionType"]] = rest_field(
+        name="actionType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the action. Known values are: \"Call\", \"Read\", and \"Write\"."""
+    timeout_in_seconds: Optional[int] = rest_field(
+        name="timeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Response timeout for the action."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp (in UTC) indicating when the management action was added or modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        target_uri: str,
+        action_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        topic: Optional[str] = None,
+        action_type: Optional[Union[str, "_models.NamespaceDiscoveredManagementActionType"]] = None,
+        timeout_in_seconds: Optional[int] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredManagementGroup(_Model):
+    """Defines the management group properties.
+
+    :ivar name: Name of the management group. Required.
+    :vartype name: str
+    :ivar management_group_configuration: Stringified JSON that contains connector-specific
+     configuration for the management group.
+    :vartype management_group_configuration: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar data_source: Reference to a data source for a given management group.
+    :vartype data_source: str
+    :ivar default_topic: Default MQTT topic path on which a client will receive the request for all
+     actions that are part of the management group.
+    :vartype default_topic: str
+    :ivar default_timeout_in_seconds: Default response timeout for all actions that are part of the
+     management group.
+    :vartype default_timeout_in_seconds: int
+    :ivar actions: Array of actions that are part of the management group. Each action can have an
+     individual configuration.
+    :vartype actions: list[~azure.mgmt.deviceregistry.models.NamespaceDiscoveredManagementAction]
+    :ivar last_updated_on: Timestamp (in UTC) indicating when the management group was added or
+     modified.
+    :vartype last_updated_on: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the management group. Required."""
+    management_group_configuration: Optional[str] = rest_field(
+        name="managementGroupConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the management group."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to a data source for a given management group."""
+    default_topic: Optional[str] = rest_field(
+        name="defaultTopic", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default MQTT topic path on which a client will receive the request for all actions that are
+     part of the management group."""
+    default_timeout_in_seconds: Optional[int] = rest_field(
+        name="defaultTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default response timeout for all actions that are part of the management group."""
+    actions: Optional[list["_models.NamespaceDiscoveredManagementAction"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of actions that are part of the management group. Each action can have an individual
+     configuration."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp (in UTC) indicating when the management group was added or modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        management_group_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        data_source: Optional[str] = None,
+        default_topic: Optional[str] = None,
+        default_timeout_in_seconds: Optional[int] = None,
+        actions: Optional[list["_models.NamespaceDiscoveredManagementAction"]] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceDiscoveredStream(_Model):
+    """Defines the stream properties.
+
+    :ivar name: Name of the stream definition. Required.
+    :vartype name: str
+    :ivar stream_configuration: Stringified JSON that contains connector-specific configuration for
+     the specific stream.
+    :vartype stream_configuration: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar destinations: Destinations for a stream.
+    :vartype destinations: list[~azure.mgmt.deviceregistry.models.StreamDestination]
+    :ivar last_updated_on: Timestamp (in UTC) indicating when the stream was added or modified.
+    :vartype last_updated_on: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the stream definition. Required."""
+    stream_configuration: Optional[str] = rest_field(
+        name="streamConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the specific stream."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    destinations: Optional[list["_models.StreamDestination"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for a stream."""
+    last_updated_on: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedOn", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp (in UTC) indicating when the stream was added or modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        stream_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        destinations: Optional[list["_models.StreamDestination"]] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceEvent(_Model):
+    """Defines the event properties.
+
+    :ivar name: The name of the event. Required.
+    :vartype name: str
+    :ivar data_source: Reference to a data source for a given event.
+    :vartype data_source: str
+    :ivar event_configuration: Stringified JSON that contains connector-specific configuration for
+     the event. For OPC UA, this could include configuration like, publishingInterval,
+     samplingInterval, and queueSize.
+    :vartype event_configuration: str
+    :ivar destinations: Destinations for an event.
+    :vartype destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the event. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to a data source for a given event."""
+    event_configuration: Optional[str] = rest_field(
+        name="eventConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the event. For OPC UA, this
+     could include configuration like, publishingInterval, samplingInterval, and queueSize."""
+    destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for an event."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        event_configuration: Optional[str] = None,
+        destinations: Optional[list["_models.EventDestination"]] = None,
+        type_ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceEventGroup(_Model):
+    """Defines the event group properties.
+
+    :ivar name: The name of the event group. Required.
+    :vartype name: str
+    :ivar data_source: The address of the notifier of the event group in the asset (e.g. URL) so
+     that a client can access the event group on the asset.
+    :vartype data_source: str
+    :ivar event_group_configuration: Stringified JSON that contains connector-specific
+     configuration for the event group. For OPC UA, this could include configuration like,
+     publishingInterval, samplingInterval, and queueSize.
+    :vartype event_group_configuration: str
+    :ivar default_destinations: Destinations for events. Default destinations when destinations is
+     not defined at the event level.
+    :vartype default_destinations: list[~azure.mgmt.deviceregistry.models.EventDestination]
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar events: Array of events that are part of the event group.
+    :vartype events: list[~azure.mgmt.deviceregistry.models.NamespaceEvent]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the event group. Required."""
+    data_source: Optional[str] = rest_field(
+        name="dataSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The address of the notifier of the event group in the asset (e.g. URL) so that a client can
+     access the event group on the asset."""
+    event_group_configuration: Optional[str] = rest_field(
+        name="eventGroupConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the event group. For OPC
+     UA, this could include configuration like, publishingInterval, samplingInterval, and queueSize."""
+    default_destinations: Optional[list["_models.EventDestination"]] = rest_field(
+        name="defaultDestinations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for events. Default destinations when destinations is not defined at the event
+     level."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    events: Optional[list["_models.NamespaceEvent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Array of events that are part of the event group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        data_source: Optional[str] = None,
+        event_group_configuration: Optional[str] = None,
+        default_destinations: Optional[list["_models.EventDestination"]] = None,
+        type_ref: Optional[str] = None,
+        events: Optional[list["_models.NamespaceEvent"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceMessageSchemaReference(_Model):
+    """Defines the message schema reference properties.
+
+    :ivar schema_registry_namespace: The message schema registry namespace. Required.
+    :vartype schema_registry_namespace: str
+    :ivar schema_name: The message schema name. Required.
+    :vartype schema_name: str
+    :ivar schema_version: The message schema version. Required.
+    :vartype schema_version: str
+    """
+
+    schema_registry_namespace: str = rest_field(name="schemaRegistryNamespace", visibility=["read"])
+    """The message schema registry namespace. Required."""
+    schema_name: str = rest_field(name="schemaName", visibility=["read"])
+    """The message schema name. Required."""
+    schema_version: str = rest_field(name="schemaVersion", visibility=["read"])
+    """The message schema version. Required."""
+
+
+class NamespaceMigrateRequest(_Model):
+    """Request body for the migrate resources operation in to Namespace resource.
+
+    :ivar scope: Scope of the migrate resources operation. "Resources"
+    :vartype scope: str or ~azure.mgmt.deviceregistry.models.Scope
+    :ivar resource_ids: List of asset resources to be migrated.
+    :vartype resource_ids: list[str]
+    """
+
+    scope: Optional[Union[str, "_models.Scope"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scope of the migrate resources operation. \"Resources\""""
+    resource_ids: Optional[list[str]] = rest_field(
+        name="resourceIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of asset resources to be migrated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        scope: Optional[Union[str, "_models.Scope"]] = None,
+        resource_ids: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceProperties(_Model):
+    """The namespace properties model.
+
+    :ivar uuid: Globally unique, immutable, non-reusable ID.
+    :vartype uuid: str
+    :ivar messaging: Assigned and unassigned messaging endpoints.
+    :vartype messaging: ~azure.mgmt.deviceregistry.models.Messaging
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    uuid: Optional[str] = rest_field(visibility=["read"])
+    """Globally unique, immutable, non-reusable ID."""
+    messaging: Optional["_models.Messaging"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Assigned and unassigned messaging endpoints."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        messaging: Optional["_models.Messaging"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceStream(_Model):
+    """Defines the stream properties.
+
+    :ivar name: Name of the stream definition. Required.
+    :vartype name: str
+    :ivar stream_configuration: Stringified JSON that contains connector-specific configuration for
+     the specific stream.
+    :vartype stream_configuration: str
+    :ivar type_ref: URI or type definition ID.
+    :vartype type_ref: str
+    :ivar destinations: Destinations for a stream.
+    :vartype destinations: list[~azure.mgmt.deviceregistry.models.StreamDestination]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the stream definition. Required."""
+    stream_configuration: Optional[str] = rest_field(
+        name="streamConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stringified JSON that contains connector-specific configuration for the specific stream."""
+    type_ref: Optional[str] = rest_field(name="typeRef", visibility=["read", "create", "update", "delete", "query"])
+    """URI or type definition ID."""
+    destinations: Optional[list["_models.StreamDestination"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Destinations for a stream."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        stream_configuration: Optional[str] = None,
+        type_ref: Optional[str] = None,
+        destinations: Optional[list["_models.StreamDestination"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceUpdate(_Model):
+    """The type used for update operations of the Namespace.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.NamespaceUpdateProperties
+    """
+
+    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.NamespaceUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NamespaceUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NamespaceUpdateProperties(_Model):
+    """The updatable properties of the Namespace.
+
+    :ivar messaging: Assigned and unassigned messaging endpoints.
+    :vartype messaging: ~azure.mgmt.deviceregistry.models.Messaging
+    """
+
+    messaging: Optional["_models.Messaging"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Assigned and unassigned messaging endpoints."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        messaging: Optional["_models.Messaging"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Operation(_Model):
+    """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
      "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
@@ -1440,10 +5041,8 @@ class Operation(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_model_base.Model):
+class OperationDisplay(_Model):
     """Localized display information for and operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -1473,11 +5072,8 @@ class OperationDisplay(_model_base.Model):
      views."""
 
 
-class OperationStatusResult(_model_base.Model):
+class OperationStatusResult(_Model):
     """The current status of an async operation.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Fully qualified ID for the async operation.
     :vartype id: str
@@ -1518,7 +5114,7 @@ class OperationStatusResult(_model_base.Model):
         name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The end time of the operation."""
-    operations: Optional[List["_models.OperationStatusResult"]] = rest_field(
+    operations: Optional[list["_models.OperationStatusResult"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The operations list."""
@@ -1537,7 +5133,7 @@ class OperationStatusResult(_model_base.Model):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
         error: Optional["_models.ErrorDetail"] = None,
     ) -> None: ...
 
@@ -1552,7 +5148,654 @@ class OperationStatusResult(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_model_base.Model):
+class OutboundEndpoints(_Model):
+    """Property bag contains the device's outbound endpoints.
+
+    :ivar assigned: Endpoints the device can connect to. Required.
+    :vartype assigned: dict[str, ~azure.mgmt.deviceregistry.models.DeviceMessagingEndpoint]
+    :ivar unassigned: Set of most recently removed endpoints.
+    :vartype unassigned: dict[str, ~azure.mgmt.deviceregistry.models.DeviceMessagingEndpoint]
+    """
+
+    assigned: dict[str, "_models.DeviceMessagingEndpoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Endpoints the device can connect to. Required."""
+    unassigned: Optional[dict[str, "_models.DeviceMessagingEndpoint"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Set of most recently removed endpoints."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        assigned: dict[str, "_models.DeviceMessagingEndpoint"],
+        unassigned: Optional[dict[str, "_models.DeviceMessagingEndpoint"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Schema(ProxyResource):
+    """Schema definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaProperties
+    """
+
+    properties: Optional["_models.SchemaProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SchemaProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaProperties(_Model):
+    """Defines the schema properties.
+
+    :ivar uuid: Globally unique, immutable, non-reusable id.
+    :vartype uuid: str
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar description: Human-readable description of the schema.
+    :vartype description: str
+    :ivar format: Format of the schema. Required. Known values are: "JsonSchema/draft-07" and
+     "Delta/1.0".
+    :vartype format: str or ~azure.mgmt.deviceregistry.models.Format
+    :ivar schema_type: Type of the schema. Required. "MessageSchema"
+    :vartype schema_type: str or ~azure.mgmt.deviceregistry.models.SchemaType
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    :ivar tags: Schema tags.
+    :vartype tags: dict[str, str]
+    """
+
+    uuid: Optional[str] = rest_field(visibility=["read"])
+    """Globally unique, immutable, non-reusable id."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the schema."""
+    format: Union[str, "_models.Format"] = rest_field(visibility=["read", "create"])
+    """Format of the schema. Required. Known values are: \"JsonSchema/draft-07\" and \"Delta/1.0\"."""
+    schema_type: Union[str, "_models.SchemaType"] = rest_field(name="schemaType", visibility=["read", "create"])
+    """Type of the schema. Required. \"MessageSchema\""""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Schema tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        format: Union[str, "_models.Format"],
+        schema_type: Union[str, "_models.SchemaType"],
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaRegistry(TrackedResource):
+    """Schema registry definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaRegistryProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentity
+    """
+
+    properties: Optional["_models.SchemaRegistryProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SchemaRegistryProperties"] = None,
+        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaRegistryProperties(_Model):
+    """Defines the schema registry properties.
+
+    :ivar uuid: Globally unique, immutable, non-reusable id.
+    :vartype uuid: str
+    :ivar namespace: Schema registry namespace. Uniquely identifies a schema registry within a
+     tenant. Required.
+    :vartype namespace: str
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar description: Human-readable description of the schema registry.
+    :vartype description: str
+    :ivar storage_account_container_url: The Storage Account's Container URL where schemas will be
+     stored. Required.
+    :vartype storage_account_container_url: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    uuid: Optional[str] = rest_field(visibility=["read"])
+    """Globally unique, immutable, non-reusable id."""
+    namespace: str = rest_field(visibility=["read", "create"])
+    """Schema registry namespace. Uniquely identifies a schema registry within a tenant. Required."""
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the schema registry."""
+    storage_account_container_url: str = rest_field(name="storageAccountContainerUrl", visibility=["read", "create"])
+    """The Storage Account's Container URL where schemas will be stored. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace: str,
+        storage_account_container_url: str,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaRegistryUpdate(_Model):
+    """The type used for update operations of the SchemaRegistry.
+
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentity
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaRegistryUpdateProperties
+    """
+
+    identity: Optional["_models.SystemAssignedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.SchemaRegistryUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SchemaRegistryUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaRegistryUpdateProperties(_Model):
+    """The updatable properties of the SchemaRegistry.
+
+    :ivar display_name: Human-readable display name.
+    :vartype display_name: str
+    :ivar description: Human-readable description of the schema registry.
+    :vartype description: str
+    """
+
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Human-readable display name."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the schema registry."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaVersion(ProxyResource):
+    """Schema version's definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.deviceregistry.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.deviceregistry.models.SchemaVersionProperties
+    """
+
+    properties: Optional["_models.SchemaVersionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SchemaVersionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SchemaVersionProperties(_Model):
+    """Defines the schema version properties.
+
+    :ivar uuid: Globally unique, immutable, non-reusable id.
+    :vartype uuid: str
+    :ivar description: Human-readable description of the schema.
+    :vartype description: str
+    :ivar schema_content: Schema content. Required.
+    :vartype schema_content: str
+    :ivar hash: Hash of the schema content.
+    :vartype hash: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Succeeded",
+     "Failed", "Canceled", "Accepted", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.deviceregistry.models.ProvisioningState
+    """
+
+    uuid: Optional[str] = rest_field(visibility=["read"])
+    """Globally unique, immutable, non-reusable id."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable description of the schema."""
+    schema_content: str = rest_field(name="schemaContent", visibility=["read", "create"])
+    """Schema content. Required."""
+    hash: Optional[str] = rest_field(visibility=["read"])
+    """Hash of the schema content."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     \"Accepted\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        schema_content: str,
+        description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StatusConfig(_Model):
+    """Defines the status config properties.
+
+    :ivar version: A read-only incremental counter indicating the number of times the configuration
+     has been modified from the perspective of the current actual (edge) state of the CRD. Edge
+     would be the only writer of this value and would sync back up to the cloud. In steady state,
+     this should equal version.
+    :vartype version: int
+    :ivar last_transition_time: A read-only timestamp indicating the last time the configuration
+     has been modified from the perspective of the current actual (edge) state of the CRD. Edge
+     would be the only writer of this value and would sync back up to the cloud.
+    :vartype last_transition_time: ~datetime.datetime
+    :ivar error: Object to transfer and persist errors that originate from the edge.
+    :vartype error: ~azure.mgmt.deviceregistry.models.StatusError
+    """
+
+    version: Optional[int] = rest_field(visibility=["read"])
+    """A read-only incremental counter indicating the number of times the configuration has been
+     modified from the perspective of the current actual (edge) state of the CRD. Edge would be the
+     only writer of this value and would sync back up to the cloud. In steady state, this should
+     equal version."""
+    last_transition_time: Optional[datetime.datetime] = rest_field(
+        name="lastTransitionTime", visibility=["read"], format="rfc3339"
+    )
+    """A read-only timestamp indicating the last time the configuration has been modified from the
+     perspective of the current actual (edge) state of the CRD. Edge would be the only writer of
+     this value and would sync back up to the cloud."""
+    error: Optional["_models.StatusError"] = rest_field(visibility=["read"])
+    """Object to transfer and persist errors that originate from the edge."""
+
+
+class StatusError(_Model):
+    """Defines the status config error properties.
+
+    :ivar code: Error code for classification of errors (ex: '400', '404', '500', etc.).
+    :vartype code: str
+    :ivar message: Human-readable helpful error message to provide additional context for error
+     (e.g.,: “Capability ID 'foo' does not exist”).
+    :vartype message: str
+    :ivar details: Array of error details that describe the status of each error.
+    :vartype details: list[~azure.mgmt.deviceregistry.models.ErrorDetails]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read"])
+    """Error code for classification of errors (ex: '400', '404', '500', etc.)."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """Human-readable helpful error message to provide additional context for error (e.g.,:
+     “Capability ID 'foo' does not exist”)."""
+    details: Optional[list["_models.ErrorDetails"]] = rest_field(visibility=["read"])
+    """Array of error details that describe the status of each error."""
+
+
+class StorageDestinationConfiguration(_Model):
+    """The configuration for a storage destination.
+
+    :ivar path: The storage destination path. Required.
+    :vartype path: str
+    """
+
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The storage destination path. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StreamDestination(_Model):
+    """The type of the destination.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    StreamMqttDestination, StreamStorageDestination
+
+    :ivar target: Target destination. Known values are: "Mqtt" and "Storage".
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.StreamDestinationTarget
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    target: str = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])
+    """Target destination. Known values are: \"Mqtt\" and \"Storage\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: str = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StreamMqttDestination(StreamDestination, discriminator="Mqtt"):
+    """The type for a MQTT destination.
+
+    :ivar target: The MQTT destination type. Required. MQTT target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.MQTT
+    :ivar configuration: The MQTT destination configuration. Required.
+    :vartype configuration: ~azure.mgmt.deviceregistry.models.MqttDestinationConfiguration
+    """
+
+    target: Literal[StreamDestinationTarget.MQTT] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The MQTT destination type. Required. MQTT target."""
+    configuration: "_models.MqttDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The MQTT destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.MqttDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = StreamDestinationTarget.MQTT  # type: ignore
+
+
+class StreamStorageDestination(StreamDestination, discriminator="Storage"):
+    """The type for a storage destination.
+
+    :ivar target: The storage destination type. Required. Storage target.
+    :vartype target: str or ~azure.mgmt.deviceregistry.models.STORAGE
+    :ivar configuration: The storage destination configuration. Required.
+    :vartype configuration: ~azure.mgmt.deviceregistry.models.StorageDestinationConfiguration
+    """
+
+    target: Literal[StreamDestinationTarget.STORAGE] = rest_discriminator(name="target", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The storage destination type. Required. Storage target."""
+    configuration: "_models.StorageDestinationConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage destination configuration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.StorageDestinationConfiguration",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.target = StreamDestinationTarget.STORAGE  # type: ignore
+
+
+class SystemAssignedServiceIdentity(_Model):
+    """Managed service identity (either system assigned, or none).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None" and "SystemAssigned".
+    :vartype type: str or ~azure.mgmt.deviceregistry.models.SystemAssignedServiceIdentityType
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.SystemAssignedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\"
+     and \"SystemAssigned\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.SystemAssignedServiceIdentityType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SystemData(_Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1619,9 +5862,8 @@ class SystemData(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class Topic(_model_base.Model):
+class Topic(_Model):
     """Object that describes the topic information.
-
 
     :ivar path: The topic path for messages published to an MQTT broker. Required.
     :vartype path: str
@@ -1657,9 +5899,36 @@ class Topic(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class UsernamePasswordCredentials(_model_base.Model):
-    """The credentials for authentication mode UsernamePassword.
+class TrustSettings(_Model):
+    """Defines server trust settings for an endpoint.
 
+    :ivar trust_list: Defines a secret reference for certificates to trust.
+    :vartype trust_list: str
+    """
+
+    trust_list: Optional[str] = rest_field(name="trustList", visibility=["read", "create", "update", "delete", "query"])
+    """Defines a secret reference for certificates to trust."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        trust_list: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UsernamePasswordCredentials(_Model):
+    """The credentials for authentication mode UsernamePassword.
 
     :ivar username_secret_name: The name of the secret containing the username. Required.
     :vartype username_secret_name: str
@@ -1695,9 +5964,56 @@ class UsernamePasswordCredentials(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class X509Credentials(_model_base.Model):
+class X509CertificateCredentials(_Model):
     """The x509 certificate for authentication mode Certificate.
 
+    :ivar certificate_secret_name: The name of the secret containing the certificate and private
+     key (e.g. stored as .der/.pem or .der/.pfx). Required.
+    :vartype certificate_secret_name: str
+    :ivar key_secret_name: The name of the secret containing the certificate private key in PEM or
+     DER format.
+    :vartype key_secret_name: str
+    :ivar intermediate_certificates_secret_name: The name of the secret containing the combined
+     intermediate certificates in PEM format.
+    :vartype intermediate_certificates_secret_name: str
+    """
+
+    certificate_secret_name: str = rest_field(
+        name="certificateSecretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret containing the certificate and private key (e.g. stored as .der/.pem or
+     .der/.pfx). Required."""
+    key_secret_name: Optional[str] = rest_field(
+        name="keySecretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret containing the certificate private key in PEM or DER format."""
+    intermediate_certificates_secret_name: Optional[str] = rest_field(
+        name="intermediateCertificatesSecretName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The name of the secret containing the combined intermediate certificates in PEM format."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        certificate_secret_name: str,
+        key_secret_name: Optional[str] = None,
+        intermediate_certificates_secret_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class X509Credentials(_Model):
+    """The x509 certificate for authentication mode Certificate.
 
     :ivar certificate_secret_name: The name of the secret containing the certificate and private
      key (e.g. stored as .der/.pem or .der/.pfx). Required.

@@ -21,12 +21,12 @@ class TestMicrosoftElasticDetachTrafficFilterOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_detach_traffic_filter_begin_update(self, resource_group):
         response = await (
             await self.client.detach_traffic_filter.begin_update(
                 resource_group_name=resource_group.name,
                 monitor_name="str",
-                api_version="2024-06-15-preview",
+                api_version="2025-06-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

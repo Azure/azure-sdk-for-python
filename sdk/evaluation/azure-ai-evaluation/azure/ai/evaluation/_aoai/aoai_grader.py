@@ -18,8 +18,9 @@ if TYPE_CHECKING:
 
 @experimental
 class AzureOpenAIGrader:
-    """
-    Base class for Azure OpenAI grader wrappers, recommended only for use by experienced OpenAI API users.
+    """Base class for Azure OpenAI grader wrappers.
+
+    Recommended only for use by experienced OpenAI API users.
     Combines a model configuration and any grader configuration
     into a singular object that can be used in evaluations.
 
@@ -28,20 +29,16 @@ class AzureOpenAIGrader:
     evaluation results.
 
     :param model_config: The model configuration to use for the grader.
-    :type model_config: Union[
-        ~azure.ai.evaluation.AzureOpenAIModelConfiguration,
-        ~azure.ai.evaluation.OpenAIModelConfiguration
-    ]
+    :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
+        ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param grader_config: The grader configuration to use for the grader. This is expected
         to be formatted as a dictionary that matches the specifications of the sub-types of
-        the TestingCriterion alias specified in (OpenAI's SDK)[https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_create_params.py#L151].
+        the TestingCriterion alias specified in `OpenAI's SDK <https://github.com/openai/openai-python/blob/ed53107e10e6c86754866b48f8bd862659134ca8/src/openai/types/eval_create_params.py#L151>`_.
     :type grader_config: Dict[str, Any]
     :param credential: The credential to use to authenticate to the model. Only applicable to AzureOpenAI models.
     :type credential: ~azure.core.credentials.TokenCredential
     :param kwargs: Additional keyword arguments to pass to the grader.
     :type kwargs: Any
-
-
     """
 
     id = "azureai://built-in/evaluators/azure-openai/custom_grader"

@@ -269,12 +269,17 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.metrics[0].value, 31)
         self.assertEqual(envelope.data.base_data.metrics[0].count, 7)
 
-    @mock.patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": " foo, otlp, bar",
-        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
-    })
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "OTEL_METRICS_EXPORTER": " foo, otlp, bar",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+        },
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_point_to_envelope_aks_amw(self, attach_mock, aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
@@ -284,12 +289,17 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 2)
         self.assertEqual(envelope.data.base_data.properties["_MS.SentToAMW"], "True")
 
-    @mock.patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": " foo, otlp, bar",
-        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
-    })
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "OTEL_METRICS_EXPORTER": " foo, otlp, bar",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+        },
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_point_to_envelope_statsbeat(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter(
             is_sdkstats=True,
@@ -299,12 +309,17 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
 
-    @mock.patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
-        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
-    })
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+        },
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=False)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_point_to_envelope_otlp_no_aks(self, attach_mock, aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
@@ -313,12 +328,17 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
 
-    @mock.patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
-        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
-    })
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+        },
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False
+    )
     def test_point_to_envelope_otlp_aks_no_attach(self, attach_mock, aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
@@ -327,12 +347,17 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 1)
         self.assertNotIn("_MS.SentToAMW", envelope.data.base_data.properties)
 
-    @mock.patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": " foo, bar",
-        "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
-    })
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "OTEL_METRICS_EXPORTER": " foo, bar",
+            "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT": "TEST_ENDPOINT",
+        },
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_point_to_envelope_aks_attach_no_otlp(self, attach_mock, aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
@@ -342,11 +367,16 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertEqual(len(envelope.data.base_data.properties), 2)
         self.assertEqual(envelope.data.base_data.properties["_MS.SentToAMW"], "False")
 
-    @mock.patch.dict("os.environ", {
-        "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
-    })
+    @mock.patch.dict(
+        "os.environ",
+        {
+            "OTEL_METRICS_EXPORTER": " foo ,otlp ,bar",
+        },
+    )
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_point_to_envelope_aks_attach_no_endpoint(self, attach_mock, aks_mock):
         exporter = self._exporter
         resource = Resource.create(attributes={"asd": "test_resource"})
@@ -763,80 +793,84 @@ class TestAzureMetricExporter(unittest.TestCase):
         self.assertIsNone(envelope)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_enabled_default_aks(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=False)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_enabled_default_off_aks(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " TRUE"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " TRUE"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_enabled_env_var(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=False)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_disabled_env_var_off_aks(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         # APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED is currently only specified for AKS Attach
         self.assertTrue(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=False
+    )
     def test_constructor_log_analytics_disabled_env_var_manual_aks(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         # APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED is currently only specified for AKS Attach
         self.assertTrue(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_disabled_env_var(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         self.assertFalse(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": " false "})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_statsbeat(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter(
             is_sdkstats=True,
         )
         self.assertTrue(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": "falser"
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": "falser"})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_invalid_env_var(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)
 
-    @mock.patch.dict("os.environ", {
-        "APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": ""
-    })
+    @mock.patch.dict("os.environ", {"APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED": ""})
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_on_aks", return_value=True)
-    @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True)
+    @mock.patch(
+        "azure.monitor.opentelemetry.exporter.export.metrics._exporter._utils._is_attach_enabled", return_value=True
+    )
     def test_constructor_log_analytics_blank_env_var(self, attach_mock, aks_mock):
         exporter = AzureMonitorMetricExporter()
         self.assertTrue(exporter._metrics_to_log_analytics)

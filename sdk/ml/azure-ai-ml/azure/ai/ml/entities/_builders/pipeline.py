@@ -103,11 +103,11 @@ class Pipeline(BaseNode):
         return self._settings
 
     @settings.setter
-    def settings(self, value: Union[PipelineJobSettings, Dict]) -> None:
+    def settings(self, value: Optional[Union[PipelineJobSettings, Dict]]) -> None:
         """Set the settings of the pipeline.
 
         :param value: The settings of the pipeline.
-        :type value: Union[~azure.ai.ml.entities.PipelineJobSettings, dict]
+        :type value: Optional[Union[~azure.ai.ml.entities.PipelineJobSettings, dict]]
         :raises TypeError: If the value is not an instance of PipelineJobSettings or a dict.
         """
         if value is not None:

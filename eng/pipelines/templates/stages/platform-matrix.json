@@ -27,10 +27,10 @@
     },
     {
       "PyPyConfig": {
-        "ubuntu2404_pypy39": {
+        "ubuntu2404_pypy311": {
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
-          "PythonVersion": "pypy3.9",
+          "PythonVersion": "pypy3.11",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }
@@ -53,6 +53,17 @@
           "OSVmImage": "env:LINUXVMIMAGE",
           "Pool": "env:LINUXPOOL",
           "PythonVersion": "3.13",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
+    },
+    {
+      "Config": {
+        "Ubuntu2404_314": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.14",
           "CoverageArg": "--disablecov",
           "TestSamples": "false"
         }

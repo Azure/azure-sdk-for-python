@@ -1,14 +1,29 @@
 # Release History
 
-## 1.2.0b2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 2.0.0b2 (2026-01-29)
 
 ### Bugs Fixed
 
+- Fixed authentication failure on HTTP redirects by preserving sensitive headers during service-managed redirects within the Confidential Ledger endpoint.
+
+## 2.0.0b1 (2025-10-20)
+
+### Features Added
+
+- Added models.
+
+### Breaking Changes
+
+- Changed the input parameter on `create_user_defined_role` from a list of roles to a `Roles` model.
+- Changed the input parameter on `update_user_defined_role` from a list of roles to a `Roles` model.
+- `get_user_defined_role()` returns a `Roles` model instead of a list of roles.
+- Removed the `azure.confidentialledger.certificate` namespace and the `ConfidentialLedgerCertificateClient` (see the `azure-confidentialledger-certificate` package to access client).
+
 ### Other Changes
+
+- Added new dependency `azure-confidentialledger-certificate`.
+
+**The `ConfidentialLedgerCertificateClient` can now be used through the `azure-confidentialledger-certificate` package.**
 
 ## 1.2.0b1 (2025-04-23)
 

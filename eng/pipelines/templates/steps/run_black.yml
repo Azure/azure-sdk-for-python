@@ -9,13 +9,16 @@ steps:
   - task: PythonScript@0
     displayName: 'Run Black'
     inputs:
-      scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
+      scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
-        --toxenv="black"
+        --checks="black"
+        --disable-compatibility-filter
         --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
-    env: ${{ parameters.EnvVars }}
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
     condition: and(succeededOrFailed(), ne(variables['Skip.Black'],'true'))

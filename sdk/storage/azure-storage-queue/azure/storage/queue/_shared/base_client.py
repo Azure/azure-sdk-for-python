@@ -35,8 +35,16 @@ from azure.core.pipeline.policies import (
 )
 
 from .authentication import SharedKeyCredentialPolicy
-from .constants import CONNECTION_TIMEOUT, DEFAULT_OAUTH_SCOPE, READ_TIMEOUT, SERVICE_HOST_BASE, STORAGE_OAUTH_SCOPE
+from .constants import (
+    CONNECTION_TIMEOUT,
+    DATA_BLOCK_SIZE,
+    DEFAULT_OAUTH_SCOPE,
+    READ_TIMEOUT,
+    SERVICE_HOST_BASE,
+    STORAGE_OAUTH_SCOPE,
+)
 from .models import LocationMode, StorageConfiguration
+from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
@@ -267,6 +275,7 @@ class StorageAccountHostsMixin(object):
         transport = kwargs.get("transport")
         kwargs.setdefault("connection_timeout", CONNECTION_TIMEOUT)
         kwargs.setdefault("read_timeout", READ_TIMEOUT)
+        kwargs.setdefault("connection_data_block_size", DATA_BLOCK_SIZE)
         if not transport:
             transport = RequestsTransport(**kwargs)
         policies = [
@@ -407,6 +416,8 @@ def parse_connection_str(
     if any(len(tup) != 2 for tup in conn_settings_list):
         raise ValueError("Connection string is either blank or malformed.")
     conn_settings = dict((key.upper(), val) for key, val in conn_settings_list)
+    if conn_settings.get("USEDEVELOPMENTSTORAGE") == "true":
+        return _get_development_storage_endpoint(service), None, DEVSTORE_ACCOUNT_KEY
     endpoints = _SERVICE_PARAMS[service]
     primary = None
     secondary = None

@@ -25,7 +25,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.mongo_db_resources.list_mongo_db_databases(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -84,7 +84,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,7 +98,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -131,7 +131,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -146,7 +146,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -161,7 +161,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 database_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -175,7 +175,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             database_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -189,7 +189,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             account_name="str",
             database_name="str",
             collection_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -224,7 +224,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -240,7 +240,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 account_name="str",
                 database_name="str",
                 collection_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -255,7 +255,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             account_name="str",
             database_name="str",
             collection_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -289,7 +289,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -305,7 +305,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 account_name="str",
                 database_name="str",
                 collection_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -321,7 +321,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 account_name="str",
                 database_name="str",
                 collection_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -335,7 +335,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             mongo_role_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -356,7 +356,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "roles": [{"db": "str", "role": "str"}],
                     "type": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -371,7 +371,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 mongo_role_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -384,7 +384,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.mongo_db_resources.list_mongo_role_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -397,7 +397,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
             mongo_user_definition_id="str",
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -419,7 +419,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                     "roles": [{"db": "str", "role": "str"}],
                     "userName": "str",
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -434,7 +434,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 mongo_user_definition_id="str",
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -447,7 +447,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
         response = self.client.mongo_db_resources.list_mongo_user_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -463,7 +463,7 @@ class TestCosmosDBManagementMongoDBResourcesOperationsAsync(AzureMgmtRecordedTes
                 database_name="str",
                 collection_name="str",
                 location={"location": "str"},
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 

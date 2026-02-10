@@ -24,7 +24,7 @@ class TestContainerRegistryManagementTokensOperations(AzureMgmtRecordedTestCase)
         response = self.client.tokens.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerRegistryManagementTokensOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             registry_name="str",
             token_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -85,20 +85,7 @@ class TestContainerRegistryManagementTokensOperations(AzureMgmtRecordedTestCase)
                 },
                 "type": "str",
             },
-            api_version="2025-05-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_tokens_begin_delete(self, resource_group):
-        response = self.client.tokens.begin_delete(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            token_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -133,7 +120,20 @@ class TestContainerRegistryManagementTokensOperations(AzureMgmtRecordedTestCase)
                 "scopeMapId": "str",
                 "status": "str",
             },
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_tokens_begin_delete(self, resource_group):
+        response = self.client.tokens.begin_delete(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            token_name="str",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

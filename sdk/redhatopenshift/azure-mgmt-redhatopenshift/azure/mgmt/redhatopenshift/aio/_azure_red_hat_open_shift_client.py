@@ -7,33 +7,33 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
 from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.settings import settings
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPolicy
+from azure.mgmt.core.tools import get_arm_endpoints
 
 from .. import models as _models
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AzureRedHatOpenShiftClientConfiguration
 from .operations import (
-    MachinePoolsOperations,
     OpenShiftClustersOperations,
     OpenShiftVersionsOperations,
     Operations,
-    SecretsOperations,
-    SyncIdentityProvidersOperations,
-    SyncSetsOperations,
+    PlatformWorkloadIdentityRoleSetOperations,
+    PlatformWorkloadIdentityRoleSetsOperations,
 )
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureRedHatOpenShiftClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class AzureRedHatOpenShiftClient:
     """Rest API for Azure Red Hat OpenShift 4.
 
     :ivar operations: Operations operations
@@ -41,25 +41,26 @@ class AzureRedHatOpenShiftClient:  # pylint: disable=client-accepts-api-version-
     :ivar open_shift_versions: OpenShiftVersionsOperations operations
     :vartype open_shift_versions:
      azure.mgmt.redhatopenshift.aio.operations.OpenShiftVersionsOperations
+    :ivar platform_workload_identity_role_sets: PlatformWorkloadIdentityRoleSetsOperations
+     operations
+    :vartype platform_workload_identity_role_sets:
+     azure.mgmt.redhatopenshift.aio.operations.PlatformWorkloadIdentityRoleSetsOperations
+    :ivar platform_workload_identity_role_set: PlatformWorkloadIdentityRoleSetOperations operations
+    :vartype platform_workload_identity_role_set:
+     azure.mgmt.redhatopenshift.aio.operations.PlatformWorkloadIdentityRoleSetOperations
     :ivar open_shift_clusters: OpenShiftClustersOperations operations
     :vartype open_shift_clusters:
      azure.mgmt.redhatopenshift.aio.operations.OpenShiftClustersOperations
-    :ivar machine_pools: MachinePoolsOperations operations
-    :vartype machine_pools: azure.mgmt.redhatopenshift.aio.operations.MachinePoolsOperations
-    :ivar secrets: SecretsOperations operations
-    :vartype secrets: azure.mgmt.redhatopenshift.aio.operations.SecretsOperations
-    :ivar sync_identity_providers: SyncIdentityProvidersOperations operations
-    :vartype sync_identity_providers:
-     azure.mgmt.redhatopenshift.aio.operations.SyncIdentityProvidersOperations
-    :ivar sync_sets: SyncSetsOperations operations
-    :vartype sync_sets: azure.mgmt.redhatopenshift.aio.operations.SyncSetsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2023-11-22". Note that overriding this
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: Api Version. Default value is "2025-07-25". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -70,12 +71,24 @@ class AzureRedHatOpenShiftClient:  # pylint: disable=client-accepts-api-version-
         self,
         credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
+        _endpoints = get_arm_endpoints(_cloud)
+        if not base_url:
+            base_url = _endpoints["resource_manager"]
+        credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = AzureRedHatOpenShiftClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -94,7 +107,9 @@ class AzureRedHatOpenShiftClient:  # pylint: disable=client-accepts-api-version-
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(base_url=base_url, policies=_policies, **kwargs)
+        self._client: AsyncARMPipelineClient = AsyncARMPipelineClient(
+            base_url=cast(str, base_url), policies=_policies, **kwargs
+        )
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -104,15 +119,15 @@ class AzureRedHatOpenShiftClient:  # pylint: disable=client-accepts-api-version-
         self.open_shift_versions = OpenShiftVersionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.platform_workload_identity_role_sets = PlatformWorkloadIdentityRoleSetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.platform_workload_identity_role_set = PlatformWorkloadIdentityRoleSetOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.open_shift_clusters = OpenShiftClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.machine_pools = MachinePoolsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.secrets = SecretsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sync_identity_providers = SyncIdentityProvidersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.sync_sets = SyncSetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

@@ -24,7 +24,7 @@ Azure AI Project Configuration Options:
    - AZURE_AI_PROJECT_ENDPOINT
 2. Hub-based project (legacy):
    - AZURE_SUBSCRIPTION_ID
-   - AZURE_RESOURCE_GROUP_NAME  
+   - AZURE_RESOURCE_GROUP_NAME
    - AZURE_PROJECT_NAME
 """
 
@@ -193,7 +193,7 @@ def demonstrate_score_model_grader():
         # 1. Configure Azure OpenAI model using environment variables
         model_config = AzureOpenAIModelConfiguration(
             azure_endpoint=os.environ.get("endpoint"),
-            api_key=os.environ.get("key"),
+            api_key=os.environ.get("api_key"),
             azure_deployment=os.environ.get("deployment_name"),
             api_version="2024-12-01-preview",
         )

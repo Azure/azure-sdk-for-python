@@ -24,7 +24,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
         response = self.client.connected_environments_storages.list(
             resource_group_name=resource_group.name,
             connected_environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -63,14 +63,6 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
                     },
                     "deploymentErrors": "str",
                     "provisioningState": "str",
-                    "smb": {
-                        "accessMode": "str",
-                        "domain": "str",
-                        "host": "str",
-                        "password": "str",
-                        "shareName": "str",
-                        "username": "str",
-                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -82,7 +74,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
                 },
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,7 +87,7 @@ class TestContainerAppsAPIConnectedEnvironmentsStoragesOperations(AzureMgmtRecor
             resource_group_name=resource_group.name,
             connected_environment_name="str",
             storage_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

@@ -1,7 +1,7 @@
 import time
 from azure.mgmt.resource import ResourceManagementClient
 from devtools_testutils import AzureMgmtRecordedTestCase, recorded_by_proxy
-from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch
+from azure.mgmt.netapp.models import CapacityPool, CapacityPoolPatch, PoolPatchProperties
 from test_account import create_account, delete_account
 import setup
 import azure.mgmt.netapp.models
@@ -147,7 +147,8 @@ class TestNetAppCapacityPool(AzureMgmtRecordedTestCase):
         pool = create_pool(self.client, setup.TEST_RG, account_name1, setup.TEST_POOL_1)
         assert pool.qos_type == "Auto"
 
-        pool_body = CapacityPoolPatch(qos_type="Manual", size=DEFAULT_SIZE, location=setup.LOCATION)
+        pool_patchProperties = PoolPatchProperties(qos_type="Manual")
+        pool_body = CapacityPoolPatch(properties=pool_patchProperties, location=setup.LOCATION)
         pool = self.client.pools.begin_create_or_update(
             setup.TEST_RG, account_name1, setup.TEST_POOL_1, pool_body
         ).result()
@@ -164,7 +165,8 @@ class TestNetAppCapacityPool(AzureMgmtRecordedTestCase):
         create_pool(self.client, setup.TEST_RG, account_name1, setup.TEST_POOL_1)
 
         tag = {"Tag2": "Value1"}
-        capacity_pool_patch = CapacityPoolPatch(qos_type="Manual", tags=tag)
+        pool_patchProperties = PoolPatchProperties(qos_type="Manual")
+        capacity_pool_patch = CapacityPoolPatch(properties=pool_patchProperties, tags=tag)
 
         print("Updating pool")
         self.client.pools.begin_update(setup.TEST_RG, account_name1, setup.TEST_POOL_1, capacity_pool_patch).result()

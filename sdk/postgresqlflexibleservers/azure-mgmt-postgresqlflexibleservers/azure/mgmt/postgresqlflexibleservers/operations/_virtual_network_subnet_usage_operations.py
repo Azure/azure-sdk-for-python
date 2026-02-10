@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -30,17 +30,18 @@ from .._configuration import PostgreSQLManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_execute_request(location_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_list_request(location_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-08-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -79,7 +80,7 @@ class VirtualNetworkSubnetUsageOperations:
 
     models = _models
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config: PostgreSQLManagementClientConfiguration = (
@@ -89,15 +90,15 @@ class VirtualNetworkSubnetUsageOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def execute(
+    def list(
         self,
         location_name: str,
         parameters: _models.VirtualNetworkSubnetUsageParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VirtualNetworkSubnetUsageResult:
-        """Get virtual network subnet usage for a given vNet resource id.
+    ) -> _models.VirtualNetworkSubnetUsageModel:
+        """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
@@ -107,16 +108,16 @@ class VirtualNetworkSubnetUsageOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VirtualNetworkSubnetUsageResult or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageResult
+        :return: VirtualNetworkSubnetUsageModel or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def execute(
+    def list(
         self, location_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.VirtualNetworkSubnetUsageResult:
-        """Get virtual network subnet usage for a given vNet resource id.
+    ) -> _models.VirtualNetworkSubnetUsageModel:
+        """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
@@ -125,19 +126,19 @@ class VirtualNetworkSubnetUsageOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VirtualNetworkSubnetUsageResult or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageResult
+        :return: VirtualNetworkSubnetUsageModel or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def execute(
+    def list(
         self,
         location_name: str,
         parameters: Union[_models.VirtualNetworkSubnetUsageParameter, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VirtualNetworkSubnetUsageResult:
-        """Get virtual network subnet usage for a given vNet resource id.
+    ) -> _models.VirtualNetworkSubnetUsageModel:
+        """Lists the virtual network subnet usage for a given virtual network.
 
         :param location_name: The name of the location. Required.
         :type location_name: str
@@ -145,8 +146,8 @@ class VirtualNetworkSubnetUsageOperations:
          VirtualNetworkSubnetUsageParameter type or a IO[bytes] type. Required.
         :type parameters:
          ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageParameter or IO[bytes]
-        :return: VirtualNetworkSubnetUsageResult or the result of cls(response)
-        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageResult
+        :return: VirtualNetworkSubnetUsageModel or the result of cls(response)
+        :rtype: ~azure.mgmt.postgresqlflexibleservers.models.VirtualNetworkSubnetUsageModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -162,7 +163,7 @@ class VirtualNetworkSubnetUsageOperations:
 
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VirtualNetworkSubnetUsageResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.VirtualNetworkSubnetUsageModel] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -172,7 +173,7 @@ class VirtualNetworkSubnetUsageOperations:
         else:
             _json = self._serialize.body(parameters, "VirtualNetworkSubnetUsageParameter")
 
-        _request = build_execute_request(
+        _request = build_list_request(
             location_name=location_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -193,10 +194,13 @@ class VirtualNetworkSubnetUsageOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VirtualNetworkSubnetUsageResult", pipeline_response.http_response)
+        deserialized = self._deserialize("VirtualNetworkSubnetUsageModel", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

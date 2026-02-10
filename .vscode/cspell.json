@@ -103,6 +103,7 @@
     "sdk/eventhub/azure-eventhub-checkpointstoreblob/azure/eventhub/extensions/checkpointstoreblob/_vendor/**",
     "sdk/eventhub/azure-eventhub-checkpointstoreblob-aio/azure/eventhub/extensions/checkpointstoreblobaio/_vendor/**",
     "sdk/storage/azure-storage-extensions/**",
+    "sdk/storage/azure-storage-file-datalake/tests/**",
     "sdk/projects/azure-projects/tests/test_infra/**",
     "sdk/projects/azure-projects/samples/**/*.html",
     "sdk/projects/azure-projects/azure/projects/resources/**/types.py",
@@ -155,6 +156,7 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
+    "qnas",
     "msedge",
     "spinup",
     "cibuildwheel",
@@ -356,6 +358,7 @@
     "nbsp",
     "noarch",
     "NOPERM",
+    "norecursedirs",
     "northcentralus",
     "nspkg",
     "OAEP",
@@ -446,6 +449,7 @@
     "toxenv",
     "tzname",
     "tzutc",
+    "uami",
     "uamqp",
     "uksouth",
     "ukwest",
@@ -529,7 +533,7 @@
     "logprobs",
     "pyaudio",
     "PyAudio",
-	"libasound",
+    "libasound",
     "ingraph"
   ],
   "overrides": [
@@ -907,12 +911,12 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [ "unassigning" ],
+      "words": [ "unassigning", "unassignment" ],
       "caseSensitive": false
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO" ],
+      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram", "kwoa" ],
       "caseSensitive": false
     },
     {
@@ -1209,6 +1213,8 @@
         "ikey",
         "msecs",
         "mycontainer",
+        "pclp",
+        "pcsp",
         "semconv",
         "updown",
         "uvicorn"
@@ -1674,7 +1680,26 @@
         "getopenidmetadata",
         "getopenidmetadataasync",
         "aikcert",
-        "shareduks"
+        "shareduks",
+        "PKIX",
+        "tcbbaselines",
+        "Iiwg",
+        "Ijog",
+        "Ghvc",
+        "MCIs",
+        "Mdxl",
+        "Dxxf",
+        "PYSN",
+        "Aiandr",
+        "Ijoic",
+        "Jjcn",
+        "QLTI",
+        "Hhnc",
+        "Mkxzellr",
+        "Sjhual",
+        "Inki",
+        "NGZZN",
+        "Igog",
       ]
     },
     {
@@ -1869,6 +1894,14 @@
         "moduleid",
         "onvif",
         "Onvif"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
+      "words": [
+        "mrenclave",
+        "MRENCLAVE",
+        "oeverify"
       ]
     },
     {
@@ -2156,7 +2189,7 @@
     },
     {
       "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound"]
+      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
     }
   ],
   "allowCompoundWords": true

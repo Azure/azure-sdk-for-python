@@ -41,7 +41,8 @@ def main():
                     {
                         "id": "/subscriptions/{subscription-id}/resourceGroups/myResourceGroup/providers/Microsoft.Compute/disks/disk123"
                     }
-                ]
+                ],
+                "instantAccessDurationMinutes": 120,
             }
         },
     ).result()

@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2024-02-05-preview/CodeSigningAccounts_Delete.json
+# x-ms-original-file: 2025-10-13/CodeSigningAccounts_Delete.json
 if __name__ == "__main__":
     main()

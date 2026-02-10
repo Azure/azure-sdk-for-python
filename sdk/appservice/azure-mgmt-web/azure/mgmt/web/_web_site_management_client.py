@@ -54,28 +54,15 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
-    """WebSite Management Client.
+class WebSiteManagementClient(
+    _WebSiteManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """AppService Management Client.
 
-    :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
-    :vartype app_service_certificate_orders:
-     azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
-    :ivar certificate_orders_diagnostics: CertificateOrdersDiagnosticsOperations operations
-    :vartype certificate_orders_diagnostics:
-     azure.mgmt.web.operations.CertificateOrdersDiagnosticsOperations
-    :ivar certificate_registration_provider: CertificateRegistrationProviderOperations operations
-    :vartype certificate_registration_provider:
-     azure.mgmt.web.operations.CertificateRegistrationProviderOperations
-    :ivar domain_registration_provider: DomainRegistrationProviderOperations operations
-    :vartype domain_registration_provider:
-     azure.mgmt.web.operations.DomainRegistrationProviderOperations
-    :ivar domains: DomainsOperations operations
-    :vartype domains: azure.mgmt.web.operations.DomainsOperations
-    :ivar top_level_domains: TopLevelDomainsOperations operations
-    :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
     :ivar app_service_environments: AppServiceEnvironmentsOperations operations
     :vartype app_service_environments: azure.mgmt.web.operations.AppServiceEnvironmentsOperations
     :ivar app_service_plans: AppServicePlansOperations operations
@@ -128,6 +115,22 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
      azure.mgmt.web.operations.WorkflowTriggerHistoriesOperations
     :ivar workflow_versions: WorkflowVersionsOperations operations
     :vartype workflow_versions: azure.mgmt.web.operations.WorkflowVersionsOperations
+    :ivar app_service_certificate_orders: AppServiceCertificateOrdersOperations operations
+    :vartype app_service_certificate_orders:
+     azure.mgmt.web.operations.AppServiceCertificateOrdersOperations
+    :ivar certificate_orders_diagnostics: CertificateOrdersDiagnosticsOperations operations
+    :vartype certificate_orders_diagnostics:
+     azure.mgmt.web.operations.CertificateOrdersDiagnosticsOperations
+    :ivar certificate_registration_provider: CertificateRegistrationProviderOperations operations
+    :vartype certificate_registration_provider:
+     azure.mgmt.web.operations.CertificateRegistrationProviderOperations
+    :ivar domain_registration_provider: DomainRegistrationProviderOperations operations
+    :vartype domain_registration_provider:
+     azure.mgmt.web.operations.DomainRegistrationProviderOperations
+    :ivar domains: DomainsOperations operations
+    :vartype domains: azure.mgmt.web.operations.DomainsOperations
+    :ivar top_level_domains: TopLevelDomainsOperations operations
+    :vartype top_level_domains: azure.mgmt.web.operations.TopLevelDomainsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Your Azure subscription ID. This is a GUID-formatted string (e.g.
@@ -135,23 +138,33 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-11-01". Note that overriding this
-     default value may result in unsupported behavior.
-    :paramtype api_version: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = WebSiteManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -178,22 +191,6 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate_orders_diagnostics = CertificateOrdersDiagnosticsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.certificate_registration_provider = CertificateRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.domain_registration_provider = DomainRegistrationProviderOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.top_level_domains = TopLevelDomainsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.app_service_environments = AppServiceEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -241,6 +238,22 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
             self._client, self._config, self._serialize, self._deserialize
         )
         self.workflow_versions = WorkflowVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.app_service_certificate_orders = AppServiceCertificateOrdersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.certificate_orders_diagnostics = CertificateOrdersDiagnosticsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.certificate_registration_provider = CertificateRegistrationProviderOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.domain_registration_provider = DomainRegistrationProviderOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.domains = DomainsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.top_level_domains = TopLevelDomainsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

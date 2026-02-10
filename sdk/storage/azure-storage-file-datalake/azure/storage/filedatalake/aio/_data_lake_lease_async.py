@@ -18,7 +18,8 @@ from azure.storage.blob.aio import BlobLeaseClient
 if TYPE_CHECKING:
     from datetime import datetime
     from azure.storage.filedatalake.aio import FileSystemClient
-    from ._path_client_async import PathClient
+    from ._data_lake_directory_client_async import DataLakeDirectoryClient
+    from ._data_lake_file_client_async import DataLakeFileClient
 
 
 class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -48,7 +49,7 @@ class DataLakeLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         This will be `None` if no lease has yet been acquired or modified."""
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self, client: Union["FileSystemClient", "PathClient"],
+        self, client: Union["FileSystemClient", "DataLakeDirectoryClient", "DataLakeFileClient"],
         lease_id: Optional[str] = None
     ) -> None:
         self.id = lease_id or str(uuid.uuid4())

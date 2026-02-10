@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
+from azure.core import MatchConditions
 from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
 from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
 from azure.storage.blob.aio import BlobServiceClient
@@ -24,7 +25,7 @@ TEST_BLOB_PREFIX = 'blob'
 class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -315,7 +316,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             source_blob.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True, tag=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -357,7 +358,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             source_blob.blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
@@ -433,4 +434,55 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         assert len(items_on_page2[0]['tags']) == 2
         assert items_on_page2[0]['tags']['tag1'] == 'firsttag'
         assert items_on_page2[0]['tags']['tag2'] == 'secondtag'
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_blob_tags_conditional_headers(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self._get_blob_reference()
+        blob = self.bsc.get_blob_client(self.container_name, blob_name)
+        first_resp = await blob.upload_blob(b"abc123", overwrite=True)
+        early = (await blob.get_blob_properties()).last_modified
+        first_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
+        second_tags = {"tag4": "fourthtag", "tag5": "fifthtag", "tag6": "sixthtag"}
+
+        if self.is_live:
+            sleep(10)
+
+        with pytest.raises(ResourceModifiedError):
+            await blob.set_blob_tags(first_tags, if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await blob.get_blob_tags(if_modified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await blob.set_blob_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+
+        await blob.set_blob_tags(first_tags, if_unmodified_since=early)
+        tags = await blob.get_blob_tags(if_unmodified_since=early)
+        assert tags == first_tags
+
+        await blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        tags = await blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+        assert tags == second_tags
+
+        await blob.upload_blob(b"def456", overwrite=True)
+
+        with pytest.raises(ResourceModifiedError):
+            await blob.set_blob_tags(first_tags, if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await blob.get_blob_tags(if_unmodified_since=early)
+        with pytest.raises(ResourceModifiedError):
+            await blob.set_blob_tags(first_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfNotModified)
+
+        await blob.set_blob_tags(first_tags, if_modified_since=early)
+        tags = await blob.get_blob_tags(if_modified_since=early)
+        assert tags == first_tags
+
+        await blob.set_blob_tags(second_tags, etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        tags = await blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
+        assert tags == second_tags
+
 #------------------------------------------------------------------------------

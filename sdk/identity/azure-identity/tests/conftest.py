@@ -63,6 +63,8 @@ def record_imds_test(request):
 @pytest.fixture()
 def live_service_principal():
     """Fixture for live Identity tests. Skips them when environment configuration is incomplete."""
+    if os.environ.get("AZURE_SKIP_SP_LIVE_TESTS", "False").lower() == "true":
+        pytest.skip("Skipping live service principal tests as per AZURE_SKIP_SP_LIVE_TESTS environment variable.")
     missing_variables = [
         v
         for v in (

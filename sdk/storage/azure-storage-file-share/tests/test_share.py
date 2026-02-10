@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import jwt
 import os
 import time
 import unittest
@@ -20,7 +21,9 @@ from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.fileshare import (
     AccessPolicy,
     AccountSasPermissions,
+    FileSasPermissions,
     generate_account_sas,
+    generate_file_sas,
     generate_share_sas,
     Metrics,
     ResourceTypes,
@@ -48,7 +51,7 @@ class TestStorageShare(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials.secret)
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -168,7 +171,7 @@ class TestStorageShare(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         snapshot_props = snapshot_client.get_share_properties()
         # Assert
@@ -241,7 +244,7 @@ class TestStorageShare(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
 
         share_lease = share.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -554,7 +557,7 @@ class TestStorageShare(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=share.share_name,
             snapshot=snapshot,
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
 
         deleted = snapshot_client.delete_share()
@@ -962,7 +965,7 @@ class TestStorageShare(StorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() + timedelta(hours=1),
@@ -990,7 +993,7 @@ class TestStorageShare(StorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            storage_account_key,
+            storage_account_key.secret,
             ResourceTypes(service=True),
             AccountSasPermissions(list=True),
             datetime.utcnow() - timedelta(hours=1)
@@ -1613,7 +1616,7 @@ class TestStorageShare(StorageRecordedTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        with ShareServiceClient(url, credential=credential.secret, transport=transport) as fsc:
             fsc.get_service_properties()
             assert transport.session is not None
             with fsc.get_share_client(share_name) as fc:
@@ -1861,6 +1864,124 @@ class TestStorageShare(StorageRecordedTestCase):
             assert shares[0].next_provisioned_bandwidth_downgrade is not None
         finally:
             self._delete_shares()
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_get_user_delegation_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(ShareServiceClient)
+        service = ShareServiceClient(
+            self.account_url(storage_account_name, "file"),
+            credential=token_credential,
+            token_intent="backup"
+        )
+        start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key_1 = service.get_user_delegation_key(start=start, expiry=expiry)
+        user_delegation_key_2 = service.get_user_delegation_key(start=start, expiry=expiry)
+
+        # Assert key1 is valid
+        assert user_delegation_key_1.signed_oid is not None
+        assert user_delegation_key_1.signed_tid is not None
+        assert user_delegation_key_1.signed_start is not None
+        assert user_delegation_key_1.signed_expiry is not None
+        assert user_delegation_key_1.signed_version is not None
+        assert user_delegation_key_1.signed_service is not None
+        assert user_delegation_key_1.value is not None
+
+        # Assert key1 and key2 are equal, since they have the exact same start and end times
+        assert user_delegation_key_1.signed_oid == user_delegation_key_2.signed_oid
+        assert user_delegation_key_1.signed_tid == user_delegation_key_2.signed_tid
+        assert user_delegation_key_1.signed_start == user_delegation_key_2.signed_start
+        assert user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
+        assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
+        assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        assert user_delegation_key_1.value == user_delegation_key_2.value
+
+        return variables
+
+    @pytest.mark.live_test_only
+    @FileSharePreparer()
+    def test_share_cross_tenant_sas(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        token_credential = self.get_credential(ShareServiceClient)
+        service = ShareServiceClient(
+            self.account_url(storage_account_name, "file"),
+            credential=token_credential,
+            token_intent="backup"
+        )
+        start = datetime.utcnow()
+        expiry = datetime.utcnow() + timedelta(hours=1)
+        token = token_credential.get_token("https://storage.azure.com/.default")
+        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        user_delegation_oid = decoded.get("oid")
+        delegated_user_tid = decoded.get("tid")
+        user_delegation_key = service.get_user_delegation_key(
+            start=start,
+            expiry=expiry,
+            delegated_user_tid=delegated_user_tid
+        )
+
+        assert user_delegation_key is not None
+        assert user_delegation_key.signed_delegated_user_tid == delegated_user_tid
+
+        share_name = self.get_resource_name("oauthshare")
+        directory_name = self.get_resource_name("oauthdir")
+        file_name = self.get_resource_name("oauthfile")
+        share = service.create_share(share_name)
+        directory = share.create_directory(directory_name)
+        data = b"abc123"
+        file = directory.upload_file(file_name, data, length=len(data))
+
+        share_token = self.generate_sas(
+            generate_share_sas,
+            share.account_name,
+            share.share_name,
+            storage_account_key.secret,
+            permission=ShareSasPermissions(read=True, list=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+
+        assert "sduoid=" + user_delegation_oid in share_token
+        assert "skdutid=" + delegated_user_tid in share_token
+
+        share_client = ShareClient.from_share_url(
+            f"{share.url}?{share_token}",
+            credential=token_credential,
+            token_intent="backup"
+        )
+        structure = list(share_client.list_directories_and_files())
+        assert structure is not None
+
+        file_token = self.generate_sas(
+            generate_file_sas,
+            file.account_name,
+            file.share_name,
+            file.file_path,
+            storage_account_key.secret,
+            permission=FileSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            user_delegation_key=user_delegation_key,
+            user_delegation_oid=user_delegation_oid
+        )
+
+        assert "sduoid=" + user_delegation_oid in file_token
+        assert "skdutid=" + delegated_user_tid in file_token
+
+        file_client = ShareFileClient.from_file_url(
+            f"{file.url}?{file_token}",
+            credential=token_credential,
+            token_intent="backup"
+        )
+        content = file_client.download_file().readall()
+        assert content == data
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':

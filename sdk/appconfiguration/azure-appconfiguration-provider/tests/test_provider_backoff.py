@@ -21,12 +21,12 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         assert min_backoff == client._refresh_timer._calculate_backoff()
 
         attempts = 2
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
         attempts = 3
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
@@ -42,12 +42,12 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
         # When attempts is > 30 then it acts as if it was 30
         attempts = 30
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << attempts))
 
         attempts = 31
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff >= min_backoff and backoff <= (min_backoff * (1 << 30))
 
@@ -94,12 +94,12 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
         # When attempts is < 1 then it acts as if it was 1
         attempts = 0
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff
 
         attempts = -1
-        client._refresh_timer.attempts = attempts
+        client._refresh_timer._attempts = attempts
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff
 
@@ -114,6 +114,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         )
 
         # When attempts is < 1 then it acts as if it was 1
-        client._refresh_timer.attempts = 0
+        client._refresh_timer._attempts = 0
         backoff = client._refresh_timer._calculate_backoff()
         assert backoff == min_backoff

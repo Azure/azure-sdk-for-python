@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -38,7 +38,8 @@ from ...operations._maintenance_configurations_operations import (
 from .._configuration import ContainerServiceClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class MaintenanceConfigurationsOperations:
@@ -141,7 +142,11 @@ class MaintenanceConfigurationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -160,7 +165,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :return: MaintenanceConfiguration or the result of cls(response)
         :rtype: ~azure.mgmt.containerservice.models.MaintenanceConfiguration
@@ -200,7 +206,11 @@ class MaintenanceConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response.http_response)
 
@@ -229,7 +239,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update. Required.
         :type parameters: ~azure.mgmt.containerservice.models.MaintenanceConfiguration
@@ -261,7 +272,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update. Required.
         :type parameters: IO[bytes]
@@ -291,7 +303,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :param parameters: The maintenance configuration to create or update. Is either a
          MaintenanceConfiguration type or a IO[bytes] type. Required.
@@ -346,7 +359,11 @@ class MaintenanceConfigurationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("MaintenanceConfiguration", pipeline_response.http_response)
 
@@ -366,7 +383,8 @@ class MaintenanceConfigurationsOperations:
         :type resource_group_name: str
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
-        :param config_name: The name of the maintenance configuration. Required.
+        :param config_name: The name of the maintenance configuration. Supported values are 'default',
+         'aksManagedAutoUpgradeSchedule', or 'aksManagedNodeOSUpgradeSchedule'. Required.
         :type config_name: str
         :return: None or the result of cls(response)
         :rtype: None
@@ -406,7 +424,11 @@ class MaintenanceConfigurationsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore

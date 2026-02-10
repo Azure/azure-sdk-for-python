@@ -24,7 +24,7 @@ class TestNetworkManagementDdosCustomPoliciesOperations(AzureMgmtRecordedTestCas
         response = self.client.ddos_custom_policies.begin_delete(
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestNetworkManagementDdosCustomPoliciesOperations(AzureMgmtRecordedTestCas
         response = self.client.ddos_custom_policies.get(
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself
@@ -49,7 +49,19 @@ class TestNetworkManagementDdosCustomPoliciesOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
             parameters={
+                "detectionRules": [
+                    {
+                        "detectionMode": "str",
+                        "etag": "str",
+                        "id": "str",
+                        "name": "str",
+                        "provisioningState": "str",
+                        "trafficDetectionRule": {"packetsPerSecond": 0, "trafficType": "str"},
+                        "type": "str",
+                    }
+                ],
                 "etag": "str",
+                "frontEndIpConfiguration": [{"id": "str"}],
                 "id": "str",
                 "location": "str",
                 "name": "str",
@@ -58,7 +70,7 @@ class TestNetworkManagementDdosCustomPoliciesOperations(AzureMgmtRecordedTestCas
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,7 +83,7 @@ class TestNetworkManagementDdosCustomPoliciesOperations(AzureMgmtRecordedTestCas
             resource_group_name=resource_group.name,
             ddos_custom_policy_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-07-01",
+            api_version="2025-03-01",
         )
 
         # please add some check logic here by yourself

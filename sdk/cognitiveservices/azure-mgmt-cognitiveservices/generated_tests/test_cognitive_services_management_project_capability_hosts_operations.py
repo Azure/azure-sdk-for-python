@@ -26,7 +26,7 @@ class TestCognitiveServicesManagementProjectCapabilityHostsOperations(AzureMgmtR
             account_name="str",
             project_name="str",
             capability_host_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestCognitiveServicesManagementProjectCapabilityHostsOperations(AzureMgmtR
             account_name="str",
             project_name="str",
             capability_host_name="str",
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -68,9 +68,17 @@ class TestCognitiveServicesManagementProjectCapabilityHostsOperations(AzureMgmtR
                 },
                 "id": "str",
                 "name": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "type": "str",
             },
-            api_version="2025-06-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

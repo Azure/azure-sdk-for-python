@@ -10,11 +10,10 @@ from unittest import TestCase
 from unittest.mock import patch
 
 from azure.monitor.opentelemetry import _utils
-from azure.monitor.opentelemetry.exporter._constants import _AKS_ARM_NAMESPACE_ID
 
 TEST_VALUE = "TEST_VALUE"
 TEST_IKEY = "1234abcd-ab12-34cd-ab12-a23456abcdef"
-TEST_CONN_STR = f"InstrumentationKey={TEST_IKEY};IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/"
+TEST_CONN_STR = f"InstrumentationKey={TEST_IKEY};IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/"  # pylint: disable=line-too-long
 
 
 def clear_env_var(env_var):
@@ -22,6 +21,7 @@ def clear_env_var(env_var):
         del environ[env_var]
 
 
+# pylint: disable=unused-argument
 class TestUtils(TestCase):
     @patch.dict(
         "os.environ",
@@ -62,9 +62,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=False,
     )
-    def test_diagnostics_app_service_attach(
-        self, attach_mock, app_service_mock, aks_mock, functions_mock
-    ):
+    def test_diagnostics_app_service_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -84,9 +82,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=False,
     )
-    def test_diagnostics_aks_attach(
-        self, attach_mock, app_service_mock, aks_mock, functions_mock
-    ):
+    def test_diagnostics_aks_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
         reload(_utils)
         self.assertTrue(_utils._is_diagnostics_enabled())
 
@@ -108,9 +104,7 @@ class TestUtils(TestCase):
         "azure.monitor.opentelemetry.exporter._utils._is_on_functions",
         return_value=True,
     )
-    def test_diagnostics_functions_attach(
-        self, attach_mock, app_service_mock, aks_mock, functions_mock
-    ):
+    def test_diagnostics_functions_attach(self, attach_mock, app_service_mock, aks_mock, functions_mock):
         reload(_utils)
         # Functions attach does not currently enable diagnostics
         self.assertFalse(_utils._is_diagnostics_enabled())

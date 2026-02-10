@@ -25,7 +25,7 @@ class TestIotHubIotHubOperations(AzureMgmtRecordedTestCase):
             iot_hub_name="str",
             resource_group_name=resource_group.name,
             failover_input={"failoverRegion": "str"},
-            api_version="2023-06-30-preview",
+            api_version="2025-08-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

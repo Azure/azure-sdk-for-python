@@ -422,6 +422,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     def _get_encryption_data_request(self) -> None:
         # Save current request cls
         download_cls = self._request_options.pop('cls', None)
+
+        # Temporarily removing this for the get properties request
+        decompress = self._request_options.pop('decompress', None)
+
         # Adjust cls for get_properties
         self._request_options['cls'] = deserialize_blob_properties
 
@@ -433,6 +437,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
+
+        # Decompression does not work with client-side encryption
+        if decompress is not None:
+            self._request_options['decompress'] = decompress
 
     @property
     def _download_complete(self):

@@ -7,13 +7,14 @@ from typing import Iterable, Union, Optional, Any
 
 from azure.core.credentials import AccessTokenInfo
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from .aad_client_base import AadClientBase
 from .aadclient_certificate import AadClientCertificate
 from .pipeline import build_pipeline
 
 
 class AadClient(AadClientBase):
+
     def __enter__(self) -> "AadClient":
         self._pipeline.__enter__()
         return self

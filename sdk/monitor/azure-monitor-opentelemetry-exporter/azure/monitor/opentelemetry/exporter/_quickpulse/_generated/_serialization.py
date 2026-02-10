@@ -73,7 +73,6 @@ JSON = MutableMapping[str, Any]
 
 
 class RawDeserializer:
-
     # Accept "text" because we're open minded people...
     JSON_REGEXP = re.compile(r"^(application|text)/([a-z+.]+\+)?json$")
 
@@ -115,7 +114,6 @@ class RawDeserializer:
                 raise DeserializationError("JSON is invalid: {}".format(err), err)
         elif "xml" in (content_type or []):
             try:
-
                 try:
                     if isinstance(data, unicode):  # type: ignore
                         # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
@@ -603,7 +601,6 @@ class Serializer(object):
                         serialized.update(target_obj.additional_properties)
                     continue
                 try:
-
                     orig_attr = getattr(target_obj, attr)
                     if is_xml_model_serialization:
                         pass  # Don't provide "transformer" for XML for now. Keep "orig_attr"

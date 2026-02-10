@@ -25,7 +25,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.database_accounts.get(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -61,6 +61,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                     ],
                     "customerManagedKeyStatus": "str",
                     "defaultIdentity": "str",
+                    "defaultPriorityLevel": "str",
                     "disableKeyBasedMetadataWriteAccess": bool,
                     "disableLocalAuth": bool,
                     "enableAnalyticalStorage": bool,
@@ -71,6 +72,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                     "enableMultipleWriteLocations": bool,
                     "enablePartitionMerge": bool,
                     "enablePerRegionPerPartitionAutoscale": bool,
+                    "enablePriorityBasedExecution": bool,
                     "identity": {
                         "principalId": "str",
                         "tenantId": "str",
@@ -104,7 +106,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                     "tags": {"str": "str"},
                     "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -153,6 +155,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                     "createMode": "Default",
                     "customerManagedKeyStatus": "str",
                     "defaultIdentity": "str",
+                    "defaultPriorityLevel": "str",
                     "disableKeyBasedMetadataWriteAccess": bool,
                     "disableLocalAuth": bool,
                     "enableAnalyticalStorage": bool,
@@ -163,6 +166,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                     "enableMultipleWriteLocations": bool,
                     "enablePartitionMerge": bool,
                     "enablePerRegionPerPartitionAutoscale": bool,
+                    "enablePriorityBasedExecution": bool,
                     "id": "str",
                     "identity": {
                         "principalId": "str",
@@ -193,13 +197,14 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "restoreSource": "str",
                         "restoreTimestampInUtc": "2020-02-20 00:00:00",
                         "restoreWithTtlDisabled": bool,
+                        "sourceBackupLocation": "str",
                         "tablesToRestore": ["str"],
                     },
                     "tags": {"str": "str"},
                     "type": "str",
                     "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                 },
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -213,7 +218,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
             await self.client.database_accounts.begin_delete(
                 resource_group_name=resource_group.name,
                 account_name="str",
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -228,7 +233,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 failover_parameters={"failoverPolicies": [{"failoverPriority": 0, "id": "str", "locationName": "str"}]},
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -239,7 +244,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
     @recorded_by_proxy_async
     async def test_database_accounts_list(self, resource_group):
         response = self.client.database_accounts.list(
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -250,7 +255,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
     async def test_database_accounts_list_by_resource_group(self, resource_group):
         response = self.client.database_accounts.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -262,7 +267,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.database_accounts.list_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -274,7 +279,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.database_accounts.list_connection_strings(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -288,7 +293,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 region_parameter_for_offline={"region": "str"},
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -303,7 +308,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 region_parameter_for_online={"region": "str"},
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -316,7 +321,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.database_accounts.get_read_only_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -328,7 +333,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = await self.client.database_accounts.list_read_only_keys(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -342,7 +347,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                 resource_group_name=resource_group.name,
                 account_name="str",
                 key_to_regenerate={"keyKind": "str"},
-                api_version="2025-04-15",
+                api_version="2025-10-15",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -354,7 +359,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
     async def test_database_accounts_check_name_exists(self, resource_group):
         response = await self.client.database_accounts.check_name_exists(
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
 
         # please add some check logic here by yourself
@@ -367,7 +372,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             account_name="str",
             filter="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -379,7 +384,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = self.client.database_accounts.list_usages(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -391,7 +396,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
         response = self.client.database_accounts.list_metric_definitions(
             resource_group_name=resource_group.name,
             account_name="str",
-            api_version="2025-04-15",
+            api_version="2025-10-15",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

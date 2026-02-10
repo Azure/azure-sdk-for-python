@@ -24,7 +24,7 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
         response = self.client.cache_rules.list(
             resource_group_name=resource_group.name,
             registry_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
             resource_group_name=resource_group.name,
             registry_name="str",
             cache_rule_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         )
 
         # please add some check logic here by yourself
@@ -68,20 +68,7 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
                 "targetRepository": "str",
                 "type": "str",
             },
-            api_version="2025-05-01-preview",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_cache_rules_begin_delete(self, resource_group):
-        response = self.client.cache_rules.begin_delete(
-            resource_group_name=resource_group.name,
-            registry_name="str",
-            cache_rule_name="str",
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -95,7 +82,20 @@ class TestContainerRegistryManagementCacheRulesOperations(AzureMgmtRecordedTestC
             registry_name="str",
             cache_rule_name="str",
             cache_rule_update_parameters={"credentialSetResourceId": "str"},
-            api_version="2025-05-01-preview",
+            api_version="2025-11-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_cache_rules_begin_delete(self, resource_group):
+        response = self.client.cache_rules.begin_delete(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            cache_rule_name="str",
+            api_version="2025-11-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

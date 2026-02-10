@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, IO, Optional, TypeVar, Union, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -38,7 +38,8 @@ from ...operations._runs_operations import (
 from .._configuration import ContainerRegistryManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class RunsOperations:
@@ -73,10 +74,10 @@ class RunsOperations:
     ) -> AsyncItemPaged["_models.Run"]:
         """Gets all the runs for a registry.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param filter: The runs filter to apply on the operation. Arithmetic operators are not
          supported. The allowed string function is 'contains'. All logical operators except 'Not',
@@ -142,7 +143,10 @@ class RunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -153,10 +157,10 @@ class RunsOperations:
     async def get(self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any) -> _models.Run:
         """Gets the detailed information for a given run.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -198,7 +202,10 @@ class RunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Run", pipeline_response.http_response)
@@ -221,10 +228,10 @@ class RunsOperations:
     ) -> _models.Run:
         """Patch the run properties.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -251,10 +258,10 @@ class RunsOperations:
     ) -> _models.Run:
         """Patch the run properties.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -279,10 +286,10 @@ class RunsOperations:
     ) -> _models.Run:
         """Patch the run properties.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -340,7 +347,10 @@ class RunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Run", pipeline_response.http_response)
@@ -351,74 +361,13 @@ class RunsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_log_sas_url(
-        self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any
-    ) -> _models.RunGetLogResult:
-        """Gets a link to download the run logs.
-
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
-        :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
-        :type registry_name: str
-        :param run_id: The run ID. Required.
-        :type run_id: str
-        :return: RunGetLogResult or the result of cls(response)
-        :rtype: ~azure.mgmt.containerregistry.models.RunGetLogResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
-        cls: ClsType[_models.RunGetLogResult] = kwargs.pop("cls", None)
-
-        _request = build_get_log_sas_url_request(
-            resource_group_name=resource_group_name,
-            registry_name=registry_name,
-            run_id=run_id,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("RunGetLogResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
     async def cancel(self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any) -> None:
         """Cancel an existing run.
 
-        :param resource_group_name: The name of the resource group to which the container registry
-         belongs. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param registry_name: The name of the container registry. Required.
+        :param registry_name: The name of the Registry. Required.
         :type registry_name: str
         :param run_id: The run ID. Required.
         :type run_id: str
@@ -460,8 +409,75 @@ class RunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def get_log_sas_url(
+        self, resource_group_name: str, registry_name: str, run_id: str, **kwargs: Any
+    ) -> _models.RunGetLogResult:
+        """Gets a link to download the run logs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param registry_name: The name of the Registry. Required.
+        :type registry_name: str
+        :param run_id: The run ID. Required.
+        :type run_id: str
+        :return: RunGetLogResult or the result of cls(response)
+        :rtype: ~azure.mgmt.containerregistry.models.RunGetLogResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01-preview"))
+        cls: ClsType[_models.RunGetLogResult] = kwargs.pop("cls", None)
+
+        _request = build_get_log_sas_url_request(
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            run_id=run_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RunGetLogResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

@@ -5,22 +5,17 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
 """Customize generated code here.
-
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from ._project_op_patch import ProjectOperations
-from ._trained_model_op_patch import TrainedModelOperations
 from ._deployment_op_patch import DeploymentOperations
-from ._exported_model_op_patch import ExportedModelOperations
-
 
 def patch_sdk():
     """Do not remove from this file.
-
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
 
 
-__all__ = ["ProjectOperations", "DeploymentOperations", "ExportedModelOperations", "TrainedModelOperations"]
+__all__ = ["ProjectOperations", "DeploymentOperations"]

@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.1 (Unreleased)
+## 2.3.2 (Unreleased)
 
 ### Features Added
 
@@ -8,7 +8,34 @@
 
 ### Bugs Fixed
 
+- Fixes a bug where `feature_flag_selects` could be passed in as `None` which resulted in an exception on load, doing this now results in loading the default feature flags.
+- Fixes a bug where `feature_flag_selects` couldn't load snapshots.
+
 ### Other Changes
+
+## 2.3.1 (2025-11-13)
+
+### Bugs Fixed
+
+* Fixed a bug where calling the refresh method would always trigger it.
+
+## 2.3.0 (2025-11-12)
+
+### Features Added
+
+* Added support for Azure App Configuration Snapshots, `SettingSelector` now has a `snapshot_name` parameter.
+* Added support for forced refresh of configurations when using Key Vault references. Adds `secret_refresh_interval` to the `AzureAppConfigurationProvider` `load` method. This allows the provider to refresh Key Vault secrets at a specified interval. Is set to 60 seconds by default, and can only be set if using Key Vault references.
+* Added support for async `on_refresh_success`.
+* Added support for Configuration Setting Mapping, new `configuration_mapper` parameter to the `load` method, allows for a callback to be added to modify configurations.
+
+### Bugs Fixed
+
+* Fixed a bug where feature flags were using the configuration refresh timer instead of the feature flag refresh timer.
+* When loading duplicate configurations only the priority configuration will be processed.
+
+### Other Changes
+
+* Updated Request Tracing
 
 ## 2.2.0 (2025-08-08)
 

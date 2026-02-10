@@ -28,7 +28,7 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class AggregationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the criteria time aggregation types."""
+    """The criteria time aggregation types. Previously undocumented values might be returned."""
 
     AVERAGE = "Average"
     COUNT = "Count"
@@ -95,7 +95,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CriterionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of threshold criteria."""
+    """Specifies the type of threshold criteria. Previously undocumented values might be returned."""
 
     STATIC_THRESHOLD_CRITERION = "StaticThresholdCriterion"
     DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
@@ -127,7 +127,9 @@ class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DynamicThresholdOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operator used to compare the metric value against the threshold."""
+    """The operator used to compare the metric value against the threshold. Previously undocumented
+    values might be returned.
+    """
 
     GREATER_THAN = "GreaterThan"
     LESS_THAN = "LessThan"
@@ -136,7 +138,7 @@ class DynamicThresholdOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extent of deviation required to trigger an alert. This will affect how tight the threshold
-    is to the metric series pattern.
+    is to the metric series pattern. Previously undocumented values might be returned.
     """
 
     LOW = "Low"
@@ -486,7 +488,7 @@ class NamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """specifies the type of the alert criteria."""
+    """Specifies the type of the alert criteria. Previously undocumented values might be returned."""
 
     MICROSOFT_AZURE_MONITOR_SINGLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = (
         "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
@@ -497,6 +499,7 @@ class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA = (
         "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
     )
+    MICROSOFT_AZURE_MONITOR_PROM_QL_CRITERIA = "Microsoft.Azure.Monitor.PromQLCriteria"
 
 
 class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -510,7 +513,7 @@ class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the criteria operator."""
+    """The criteria operator. Previously undocumented values might be returned."""
 
     EQUALS = "Equals"
     GREATER_THAN = "GreaterThan"

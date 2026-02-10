@@ -21,7 +21,6 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
-
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
 from azure.cosmos._routing import routing_range
@@ -162,7 +161,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         )
 
     async def _get_target_partition_key_range(self):
-
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return await self._routing_provider.get_overlapping_ranges(
             self._resource_link,

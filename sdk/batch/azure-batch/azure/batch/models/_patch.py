@@ -7,17 +7,16 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import List, Any, Optional
+from typing import List, Optional
 
 from azure.core.exceptions import HttpResponseError
 
-from ._models import BatchPoolReplaceContent as BatchPoolReplaceContentGenerated
-from .._model_base import rest_field
 
 __all__: List[str] = [
     "CreateTasksError",
     "BatchFileProperties",
 ]  # Add all objects you want publicly available to users at this package level
+
 
 class CreateTasksError(HttpResponseError):
     """Aggregate Exception containing details for any failures from a task add operation.
@@ -28,7 +27,13 @@ class CreateTasksError(HttpResponseError):
     :param [~Exception] errors: List of unknown errors forcing early termination
     """
 
-    def __init__(self, pending_tasks=[], failure_tasks=[], errors=[]):
+    def __init__(self, pending_tasks=None, failure_tasks=None, errors=None) -> None:
+        if pending_tasks is None:
+            pending_tasks = []
+        if failure_tasks is None:
+            failure_tasks = []
+        if errors is None:
+            errors = []
         self.pending_tasks = pending_tasks
         self.failure_tasks = failure_tasks
         self.errors = errors
@@ -62,8 +67,8 @@ class CreateTasksError(HttpResponseError):
                 )
         super(CreateTasksError, self).__init__(self.message)
 
-class BatchFileProperties:
 
+class BatchFileProperties:
     """Information about a file or directory on a Compute Node with additional properties.
 
     :ivar url: The URL of the file.
@@ -71,7 +76,7 @@ class BatchFileProperties:
     :ivar is_directory: Whether the object represents a directory.
     :vartype is_directory: bool
     :ivar creation_time: The file creation time. The creation time is not returned for files on
-    Linux Compute Nodes.
+     Linux Compute Nodes.
     :vartype creation_time: ~datetime.datetime
     :ivar last_modified: The time at which the file was last modified. Required.
     :vartype last_modified: ~datetime.datetime
@@ -84,7 +89,7 @@ class BatchFileProperties:
     :vartype file_mode: str
     """
 
-    url: Optional[str] 
+    url: Optional[str]
     """The URL of the file."""
     is_directory: Optional[bool]
     """Whether the object represents a directory."""
@@ -118,6 +123,7 @@ class BatchFileProperties:
         self.content_length = content_length
         self.content_type = content_type
         self.file_mode = file_mode
+
 
 def patch_sdk():
     """Do not remove from this file.

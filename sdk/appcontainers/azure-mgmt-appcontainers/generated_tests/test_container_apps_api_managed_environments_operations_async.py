@@ -23,7 +23,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
     @recorded_by_proxy_async
     async def test_managed_environments_list_by_subscription(self, resource_group):
         response = self.client.managed_environments.list_by_subscription(
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
     async def test_managed_environments_list_by_resource_group(self, resource_group):
         response = self.client.managed_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.managed_environments.get(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -61,16 +61,10 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                 environment_name="str",
                 environment_envelope={
                     "location": "str",
-                    "appInsightsConfiguration": {"connectionString": "str"},
                     "appLogsConfiguration": {
                         "destination": "str",
-                        "logAnalyticsConfiguration": {
-                            "customerId": "str",
-                            "dynamicJsonColumns": bool,
-                            "sharedKey": "str",
-                        },
+                        "logAnalyticsConfiguration": {"customerId": "str", "sharedKey": "str"},
                     },
-                    "availabilityZones": ["str"],
                     "customDomainConfiguration": {
                         "certificateKeyVaultProperties": {"identity": "str", "keyVaultUrl": "str"},
                         "certificatePassword": "str",
@@ -86,9 +80,6 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                     "daprConfiguration": {"version": "str"},
                     "defaultDomain": "str",
                     "deploymentErrors": "str",
-                    "diskEncryptionConfiguration": {
-                        "keyVaultConfiguration": {"auth": {"identity": "str"}, "keyUrl": "str"}
-                    },
                     "eventStreamEndpoint": "str",
                     "id": "str",
                     "identity": {
@@ -101,29 +92,12 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                     "ingressConfiguration": {
                         "headerCountLimit": 0,
                         "requestIdleTimeout": 0,
-                        "scale": {"maxReplicas": 0, "minReplicas": 0},
                         "terminationGracePeriodSeconds": 0,
                         "workloadProfileName": "str",
                     },
                     "kedaConfiguration": {"version": "str"},
                     "kind": "str",
                     "name": "str",
-                    "openTelemetryConfiguration": {
-                        "destinationsConfiguration": {
-                            "dataDogConfiguration": {"key": "str", "site": "str"},
-                            "otlpConfigurations": [
-                                {
-                                    "endpoint": "str",
-                                    "headers": [{"key": "str", "value": "str"}],
-                                    "insecure": bool,
-                                    "name": "str",
-                                }
-                            ],
-                        },
-                        "logsConfiguration": {"destinations": ["str"]},
-                        "metricsConfiguration": {"destinations": ["str"], "includeKeda": bool},
-                        "tracesConfiguration": {"destinations": ["str"], "includeDapr": bool},
-                    },
                     "peerAuthentication": {"mtls": {"enabled": bool}},
                     "peerTrafficConfiguration": {"encryption": {"enabled": bool}},
                     "privateEndpointConnections": [
@@ -149,7 +123,6 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                             "type": "str",
                         }
                     ],
-                    "privateLinkDefaultDomain": "str",
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
                     "staticIp": "str",
@@ -171,17 +144,11 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                         "platformReservedDnsIP": "str",
                     },
                     "workloadProfiles": [
-                        {
-                            "name": "str",
-                            "workloadProfileType": "str",
-                            "enableFips": False,
-                            "maximumCount": 0,
-                            "minimumCount": 0,
-                        }
+                        {"name": "str", "workloadProfileType": "str", "maximumCount": 0, "minimumCount": 0}
                     ],
                     "zoneRedundant": bool,
                 },
-                api_version="2025-02-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -195,7 +162,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
             await self.client.managed_environments.begin_delete(
                 resource_group_name=resource_group.name,
                 environment_name="str",
-                api_version="2025-02-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -211,16 +178,10 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                 environment_name="str",
                 environment_envelope={
                     "location": "str",
-                    "appInsightsConfiguration": {"connectionString": "str"},
                     "appLogsConfiguration": {
                         "destination": "str",
-                        "logAnalyticsConfiguration": {
-                            "customerId": "str",
-                            "dynamicJsonColumns": bool,
-                            "sharedKey": "str",
-                        },
+                        "logAnalyticsConfiguration": {"customerId": "str", "sharedKey": "str"},
                     },
-                    "availabilityZones": ["str"],
                     "customDomainConfiguration": {
                         "certificateKeyVaultProperties": {"identity": "str", "keyVaultUrl": "str"},
                         "certificatePassword": "str",
@@ -236,9 +197,6 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                     "daprConfiguration": {"version": "str"},
                     "defaultDomain": "str",
                     "deploymentErrors": "str",
-                    "diskEncryptionConfiguration": {
-                        "keyVaultConfiguration": {"auth": {"identity": "str"}, "keyUrl": "str"}
-                    },
                     "eventStreamEndpoint": "str",
                     "id": "str",
                     "identity": {
@@ -251,29 +209,12 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                     "ingressConfiguration": {
                         "headerCountLimit": 0,
                         "requestIdleTimeout": 0,
-                        "scale": {"maxReplicas": 0, "minReplicas": 0},
                         "terminationGracePeriodSeconds": 0,
                         "workloadProfileName": "str",
                     },
                     "kedaConfiguration": {"version": "str"},
                     "kind": "str",
                     "name": "str",
-                    "openTelemetryConfiguration": {
-                        "destinationsConfiguration": {
-                            "dataDogConfiguration": {"key": "str", "site": "str"},
-                            "otlpConfigurations": [
-                                {
-                                    "endpoint": "str",
-                                    "headers": [{"key": "str", "value": "str"}],
-                                    "insecure": bool,
-                                    "name": "str",
-                                }
-                            ],
-                        },
-                        "logsConfiguration": {"destinations": ["str"]},
-                        "metricsConfiguration": {"destinations": ["str"], "includeKeda": bool},
-                        "tracesConfiguration": {"destinations": ["str"], "includeDapr": bool},
-                    },
                     "peerAuthentication": {"mtls": {"enabled": bool}},
                     "peerTrafficConfiguration": {"encryption": {"enabled": bool}},
                     "privateEndpointConnections": [
@@ -299,7 +240,6 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                             "type": "str",
                         }
                     ],
-                    "privateLinkDefaultDomain": "str",
                     "provisioningState": "str",
                     "publicNetworkAccess": "str",
                     "staticIp": "str",
@@ -321,17 +261,11 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
                         "platformReservedDnsIP": "str",
                     },
                     "workloadProfiles": [
-                        {
-                            "name": "str",
-                            "workloadProfileType": "str",
-                            "enableFips": False,
-                            "maximumCount": 0,
-                            "minimumCount": 0,
-                        }
+                        {"name": "str", "workloadProfileType": "str", "maximumCount": 0, "minimumCount": 0}
                     ],
                     "zoneRedundant": bool,
                 },
-                api_version="2025-02-02-preview",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -344,7 +278,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
         response = await self.client.managed_environments.get_auth_token(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -356,7 +290,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperationsAsync(AzureMgmtRecordedTe
         response = self.client.managed_environments.list_workload_profile_states(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

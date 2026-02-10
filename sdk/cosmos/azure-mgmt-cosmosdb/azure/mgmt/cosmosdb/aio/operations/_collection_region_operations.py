@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -31,7 +31,8 @@ from ...operations._collection_region_operations import build_list_metrics_reque
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class CollectionRegionOperations:
@@ -63,7 +64,7 @@ class CollectionRegionOperations:
         collection_rid: str,
         filter: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.Metric"]:
+    ) -> AsyncItemPaged["_models.Metric"]:
         """Retrieves the metrics determined by the given filter for the given database account, collection
         and region.
 

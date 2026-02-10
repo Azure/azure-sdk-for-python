@@ -1,6 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.core.credentials import AzureKeyCredential
@@ -35,7 +34,7 @@ class TestConversationsGetModelEvaluationSummarySync(TestConversations):
         # Basic assertion the call returned something shaped like a summary
         assert eval_summary is not None
 
-         # ----- Entities evaluation (micro/macro) -----
+        # ----- Entities evaluation (micro/macro) -----
         entities_summary = eval_summary.entities_evaluation
         if entities_summary is not None:
             print(

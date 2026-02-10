@@ -21,15 +21,12 @@ from opentelemetry.sdk.trace.sampling import (
 from opentelemetry.semconv.trace import DbSystemValues, SpanAttributes
 from opentelemetry.util.types import Attributes
 
-# pylint:disable=no-name-in-module
-from fixedint import Int32
-
 from azure.monitor.opentelemetry.exporter._constants import _SAMPLE_RATE_KEY
 
 from azure.monitor.opentelemetry.exporter._constants import (
     _SAMPLING_HASH,
-    _INTEGER_MAX,
-    _INTEGER_MIN,
+    _INT32_MAX,
+    _INT32_MIN,
 )
 
 
@@ -98,8 +95,7 @@ def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
 
 def _get_http_scheme(attributes: Attributes) -> Optional[str]:
     if attributes:
-        scheme = attributes.get(url_attributes.URL_SCHEME) or \
-            attributes.get(SpanAttributes.HTTP_SCHEME)
+        scheme = attributes.get(url_attributes.URL_SCHEME) or attributes.get(SpanAttributes.HTTP_SCHEME)
         if scheme:
             return str(scheme)
     return None
@@ -163,8 +159,9 @@ def _get_target_for_dependency_from_peer(attributes: Attributes) -> Optional[str
                 port = attributes[SpanAttributes.NET_PEER_PORT]
                 # TODO: check default port for rpc
                 # This logic assumes default ports never conflict across dependency types
-                if port != _get_default_port_http(attributes) and \
-                    port != _get_default_port_db(str(attributes.get(SpanAttributes.DB_SYSTEM))):
+                if port != _get_default_port_http(attributes) and port != _get_default_port_db(
+                    str(attributes.get(SpanAttributes.DB_SYSTEM))
+                ):
                     target = "{}:{}".format(target, port)
     return target
 
@@ -267,17 +264,19 @@ def _get_target_for_rpc_dependency(target: Optional[str], attributes: Attributes
 
 # Request
 
+
 @no_type_check
 def _get_location_ip(attributes: Attributes) -> Optional[str]:
-    return attributes.get(client_attributes.CLIENT_ADDRESS) or \
-        attributes.get(SpanAttributes.HTTP_CLIENT_IP) or \
-        attributes.get(SpanAttributes.NET_PEER_IP) # We assume non-http spans don't have http related attributes
+    return (
+        attributes.get(client_attributes.CLIENT_ADDRESS)
+        or attributes.get(SpanAttributes.HTTP_CLIENT_IP)
+        or attributes.get(SpanAttributes.NET_PEER_IP)
+    )  # We assume non-http spans don't have http related attributes
 
 
 @no_type_check
 def _get_user_agent(attributes: Attributes) -> Optional[str]:
-    return attributes.get(user_agent_attributes.USER_AGENT_ORIGINAL) or \
-        attributes.get(SpanAttributes.HTTP_USER_AGENT)
+    return attributes.get(user_agent_attributes.USER_AGENT_ORIGINAL) or attributes.get(SpanAttributes.HTTP_USER_AGENT)
 
 
 @no_type_check
@@ -296,10 +295,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
         if url_attributes.URL_PATH in attributes:
             http_target = attributes.get(url_attributes.URL_PATH, "")
             if http_target and url_attributes.URL_QUERY in attributes:
-                http_target = "{}?{}".format(
-                    http_target,
-                    attributes.get(url_attributes.URL_QUERY, "")
-                )
+                http_target = "{}?{}".format(http_target, attributes.get(url_attributes.URL_QUERY, ""))
         elif SpanAttributes.HTTP_TARGET in attributes:
             http_target = attributes.get(SpanAttributes.HTTP_TARGET)
         if scheme and http_target:
@@ -308,10 +304,7 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
             if server_attributes.SERVER_ADDRESS in attributes:
                 http_host = attributes.get(server_attributes.SERVER_ADDRESS, "")
                 if http_host and server_attributes.SERVER_PORT in attributes:
-                    http_host = "{}:{}".format(
-                        http_host,
-                        attributes.get(server_attributes.SERVER_PORT, "")
-                    )
+                    http_host = "{}:{}".format(http_host, attributes.get(server_attributes.SERVER_PORT, ""))
             elif SpanAttributes.HTTP_HOST in attributes:
                 http_host = attributes.get(SpanAttributes.HTTP_HOST, "")
             if http_host:
@@ -340,37 +333,40 @@ def _get_url_for_http_request(attributes: Attributes) -> Optional[str]:
                 )
     return url
 
+
 def _get_DJB2_sample_score(trace_id_hex: str) -> float:
     # This algorithm uses 32bit integers
-    hash_value = Int32(_SAMPLING_HASH)
+    hash_value = _SAMPLING_HASH
     for char in trace_id_hex:
         hash_value = ((hash_value << 5) + hash_value) + ord(char)
+        # Correctly emulate signed 32-bit integer overflow using two's complement
+        hash_value = ((hash_value + 2**31) % 2**32) - 2**31
 
-    if hash_value == _INTEGER_MIN:
-        hash_value = int(_INTEGER_MAX)
+    if hash_value == _INT32_MIN:
+        hash_value = int(_INT32_MAX)
     else:
         hash_value = abs(hash_value)
 
-    # divide by _INTEGER_MAX for value between 0 and 1 for sampling score
-    return float(hash_value) / _INTEGER_MAX
+    # divide by _INT32_MAX for value between 0 and 1 for sampling score
+    return float(hash_value) / _INT32_MAX
+
 
 def _round_down_to_nearest(sampling_percentage: float) -> float:
     if sampling_percentage == 0:
         return 0
     # Handle extremely small percentages that would cause overflow
-    if sampling_percentage <= _INTEGER_MIN:  # Extremely small threshold
+    if sampling_percentage <= _INT32_MIN:  # Extremely small threshold
         return 0.0
     item_count = 100.0 / sampling_percentage
     # Handle case where item_count is infinity or too large for math.ceil
-    if not math.isfinite(item_count) or item_count >= _INTEGER_MAX:
+    if not math.isfinite(item_count) or item_count >= _INT32_MAX:
         return 0.0
     return 100.0 / math.ceil(item_count)
 
-def parent_context_sampling(
-    parent_context: Optional[Context],
-    attributes: Attributes = None
-) -> Optional["SamplingResult"]:
 
+def parent_context_sampling(
+    parent_context: Optional[Context], attributes: Attributes = None
+) -> Optional["SamplingResult"]:
     if parent_context is not None:
         parent_span = get_current_span(parent_context)
         parent_span_context = parent_span.get_span_context()
@@ -386,7 +382,7 @@ def parent_context_sampling(
                     _get_parent_trace_state(parent_context),
                 )
 
-            parent_attributes = getattr(parent_span, 'attributes', {})
+            parent_attributes = getattr(parent_span, "attributes", {})
             parent_sample_rate = parent_attributes.get(_SAMPLE_RATE_KEY)
 
             if parent_sample_rate is not None:

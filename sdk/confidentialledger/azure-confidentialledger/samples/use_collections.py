@@ -41,8 +41,7 @@ def main():
         ledger_endpoint = os.environ["CONFIDENTIALLEDGER_ENDPOINT"]
     except KeyError:
         LOG.error(
-            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - "
-            "please set it before running the example"
+            "Missing environment variable 'CONFIDENTIALLEDGER_ENDPOINT' - " "please set it before running the example"
         )
         sys.exit(1)
 
@@ -90,14 +89,13 @@ def main():
                     msg = f"{sender}'s message {msg_idx}"
 
                 post_poller = ledger_client.begin_create_ledger_entry(  # type: ignore[attr-defined]
-                    entry={"contents": msg}, collection_id=sender,
+                    entry={"contents": msg},
+                    collection_id=sender,
                 )
                 post_result = post_poller.result()
 
                 if sender is None:
-                    print(
-                        f"Wrote '{msg}' to the default collection at {post_result['transactionId']}"
-                    )
+                    print(f"Wrote '{msg}' to the default collection at {post_result['transactionId']}")
                 else:
                     print(f"Wrote '{msg}' to collection {sender} at {post_result['transactionId']}")
 
@@ -110,7 +108,7 @@ def main():
         print("Let's retrieve the latest entry in each collection")
         for sender in senders:
             current_entry = ledger_client.get_current_ledger_entry()
-            
+
             output = "Current entry in {0} is {1}"
             print(
                 output.format(
@@ -122,11 +120,10 @@ def main():
         print("Let's retrieve the first entry in each collection")
         for sender in senders:
             get_poller = ledger_client.begin_get_ledger_entry(  # type: ignore[attr-defined]
-                tids[sender]["first"],
-                collection_id=sender
+                tids[sender]["first"], collection_id=sender
             )
             first_entry = get_poller.result()
-            
+
             output = "First entry in {0} is {1}"
             print(
                 output.format(
@@ -142,7 +139,7 @@ def main():
                 from_transaction_id=tids[sender]["first"],
                 to_transaction_id=tids[sender]["last"],
             )
-            
+
             for entry in entries_list:
                 output = "Entry in {0}: {1}"
                 print(
@@ -158,8 +155,7 @@ def main():
             collection_ids.append(collection["collectionId"])
 
         print(
-            "In conclusion, these are all the collections in the Confidential Ledger:\n" +
-            "\n\t".join(collection_ids)
+            "In conclusion, these are all the collections in the Confidential Ledger:\n" + "\n\t".join(collection_ids)
         )
 
 

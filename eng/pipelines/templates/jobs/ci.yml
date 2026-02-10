@@ -64,6 +64,9 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: PythonVersionForAnalyze
+    type: string
+    default: ''
 
 jobs:
   - job: 'Build_Linux'
@@ -144,10 +147,6 @@ jobs:
       image: $(LINUXVMIMAGE)
       os: linux
 
-    variables:
-      # default to true just in this job until #42714 can be completed
-      InstallPortAudio: true
-
     steps:
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
@@ -206,10 +205,6 @@ jobs:
     dependsOn:
       - 'Build_Extended'
 
-    variables:
-      # default to true just in this job until #42714 can be completed
-      InstallPortAudio: true
-
     pool:
       name: $(LINUXPOOL)
       image: $(LINUXVMIMAGE)
@@ -217,11 +212,10 @@ jobs:
 
     steps:
     - task: UsePythonVersion@0
-      displayName: 'Use Python $(PythonVersion)'
+      displayName: "Use Python ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}"
       condition: succeededOrFailed()
       inputs:
-        versionSpec: '$(PythonVersion)'
-
+        versionSpec: ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
@@ -311,43 +305,44 @@ jobs:
         UnsupportedToxEnvironments: ${{ parameters.UnsupportedToxEnvironments }}
         TestProxy: ${{ parameters.TestProxy }}
 
-  - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
-    parameters:
-      JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
-      OsVmImage: ubuntu-24.04
-      Pool: azsdk-pool
-      GenerateJobName: generate_regression_matrix
-      SparseCheckoutPaths: [ "scripts/", "sdk/", "eng/tools/azure-sdk-tools/" ]
-      MatrixConfigs:
-          - Name: Python_regression_envs
-            Path: eng/pipelines/templates/stages/regression-job-matrix.json
-            Selection: sparse
-            GenerateVMJobs: true
-      PreGenerationSteps:
-        - task: UsePythonVersion@0
-          inputs:
-            versionSpec: '3.12'
-        - template: /eng/pipelines/templates/steps/use-venv.yml
-        - pwsh: |
-            $ErrorActionPreference = 'Stop'
-            $PSNativeCommandUseErrorActionPreference = $true
-            $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
-          displayName: 'Prep Environment'
-        - task: PythonScript@0
-          displayName: 'Ensure service coverage'
-          inputs:
-            scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
-            arguments: >-
-              "azure*"
-              --service="${{ parameters.ServiceDirectory }}"
-              --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
-      CloudConfig:
-        Cloud: Public
-      DependsOn:
-        - 'Build_Linux'
-        - 'Build_Windows'
-        - 'Build_MacOS'
-      AdditionalParameters:
-        BuildTargetingString: ${{ parameters.BuildTargetingString }}
-        ServiceDirectory: ${{ parameters.ServiceDirectory }}
-        TestTimeoutInMinutes: 90
+  - ${{ if ne(parameters.ServiceDirectory, 'auto') }}:
+    - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml
+      parameters:
+        JobTemplatePath: /eng/pipelines/templates/jobs/regression.yml
+        OsVmImage: ubuntu-24.04
+        Pool: azsdk-pool
+        GenerateJobName: generate_regression_matrix
+        SparseCheckoutPaths: [ "scripts/", "sdk/", "eng/tools/azure-sdk-tools/" ]
+        MatrixConfigs:
+            - Name: Python_regression_envs
+              Path: eng/pipelines/templates/stages/regression-job-matrix.json
+              Selection: sparse
+              GenerateVMJobs: true
+        PreGenerationSteps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '3.12'
+          - template: /eng/pipelines/templates/steps/use-venv.yml
+          - pwsh: |
+              $ErrorActionPreference = 'Stop'
+              $PSNativeCommandUseErrorActionPreference = $true
+              $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
+            displayName: 'Prep Environment'
+          - task: PythonScript@0
+            displayName: 'Ensure service coverage'
+            inputs:
+              scriptPath: '$(Build.SourcesDirectory)/scripts/devops_tasks/update_regression_services.py'
+              arguments: >-
+                "azure*"
+                --service="${{ parameters.ServiceDirectory }}"
+                --json=$(Build.SourcesDirectory)/eng/pipelines/templates/stages/regression-job-matrix.json
+        CloudConfig:
+          Cloud: Public
+        DependsOn:
+          - 'Build_Linux'
+          - 'Build_Windows'
+          - 'Build_MacOS'
+        AdditionalParameters:
+          BuildTargetingString: ${{ parameters.BuildTargetingString }}
+          ServiceDirectory: ${{ parameters.ServiceDirectory }}
+          TestTimeoutInMinutes: 90

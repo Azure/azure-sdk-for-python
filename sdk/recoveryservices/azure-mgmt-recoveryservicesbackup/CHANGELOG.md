@@ -1,5 +1,12 @@
 # Release History
 
+## 10.0.0 (2025-10-16)
+
+### Breaking Changes
+
+  - Split module "passivestamp" into independent package [azure-mgmt-recoveryservicesbackup-passivestamp](https://pypi.org/project/azure-mgmt-recoveryservicesbackup-passivestamp/). Just add it as a dependency then no other code changes required.
+  - Removed sub-namespace "activestamp" and just need update import from `from azure.mgmt.recoveryservicesbackup.activestamp import XXX` to `from azure.mgmt.recoveryservicesbackup import XXX`.
+
 ## 9.2.0 (2025-04-17)
 
 ### Features Added

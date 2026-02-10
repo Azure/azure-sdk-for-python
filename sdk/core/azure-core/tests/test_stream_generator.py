@@ -9,6 +9,7 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
+from azure.core.exceptions import ServiceResponseError
 
 try:
     from unittest import mock
@@ -73,7 +74,7 @@ def test_connection_error_response(http_request, http_response):
     http_response.internal_response = MockInternalResponse()
     stream = StreamDownloadGenerator(pipeline, http_response, decompress=False)
     with mock.patch("time.sleep", return_value=None):
-        with pytest.raises(requests.exceptions.ConnectionError):
+        with pytest.raises(ServiceResponseError):
             stream.__next__()
 
 
@@ -133,5 +134,5 @@ def test_response_streaming_error_behavior(http_response):
     pipeline = Pipeline(transport)
     pipeline.run = mock_run
     downloader = response.stream_download(pipeline, decompress=False)
-    with pytest.raises(requests.exceptions.ConnectionError):
+    with pytest.raises(ServiceResponseError):
         full_response = b"".join(downloader)
