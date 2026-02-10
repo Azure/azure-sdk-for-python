@@ -1,0 +1,308 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Feed Management Service APIs",
+    "version": "v1.0",
+    "description": "Feed Management Service APIs for registry discovery.",
+    "x-typespec-generated": [
+      {
+        "emitter": "@azure-tools/typespec-autorest"
+      }
+    ]
+  },
+  "schemes": [
+    "https"
+  ],
+  "x-ms-parameterized-host": {
+    "hostTemplate": "{endpoint}/registrymanagement/v1.0",
+    "useSchemePrefix": false,
+    "parameters": [
+      {
+        "name": "endpoint",
+        "in": "path",
+        "description": "The endpoint of the Feed Management Service.",
+        "required": true,
+        "type": "string",
+        "format": "uri",
+        "x-ms-skip-url-encoding": true
+      }
+    ]
+  },
+  "produces": [
+    "application/json"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "security": [
+    {
+      "OAuth2Auth": [
+        "https://management.azure.com/.default"
+      ]
+    }
+  ],
+  "securityDefinitions": {
+    "OAuth2Auth": {
+      "type": "oauth2",
+      "flow": "implicit",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "scopes": {
+        "https://management.azure.com/.default": ""
+      }
+    }
+  },
+  "tags": [],
+  "paths": {
+    "/operations/{operationId}": {
+      "get": {
+        "operationId": "AsyncOperations_GetAsyncOperation",
+        "description": "Get the status of an async operation.",
+        "parameters": [
+          {
+            "name": "operationId",
+            "in": "path",
+            "description": "The operation ID.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded."
+          }
+        }
+      }
+    },
+    "/registries/{registryName}/discovery": {
+      "get": {
+        "operationId": "RegistryManagementNonWorkspace_GetRegistryDiscovery",
+        "description": "Discover registry information by registry name.",
+        "parameters": [
+          {
+            "name": "registryName",
+            "in": "path",
+            "description": "The registry name.",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "schema": {
+              "$ref": "#/definitions/RegistryDiscoveryDto"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "DebugInfoResponse": {
+      "type": "object",
+      "description": "Debug information for error responses.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The exception type."
+        },
+        "message": {
+          "type": "string",
+          "description": "The exception message."
+        },
+        "stackTrace": {
+          "type": "string",
+          "description": "The stack trace."
+        },
+        "innerException": {
+          "$ref": "#/definitions/DebugInfoResponse",
+          "description": "The inner exception."
+        },
+        "data": {
+          "type": "object",
+          "description": "Additional untyped data about the exception.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "errorResponse": {
+          "$ref": "#/definitions/ErrorResponse",
+          "description": "The error response."
+        }
+      }
+    },
+    "ErrorAdditionalInfo": {
+      "type": "object",
+      "description": "The resource management error additional info.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "The additional info type."
+        },
+        "info": {
+          "type": "object",
+          "description": "The additional info.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "description": "The error response.",
+      "properties": {
+        "error": {
+          "$ref": "#/definitions/RootError",
+          "description": "The root error."
+        },
+        "correlation": {
+          "type": "object",
+          "description": "Correlation information for the error.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "environment": {
+          "type": "string",
+          "description": "The hosting environment."
+        },
+        "location": {
+          "type": "string",
+          "description": "The error location."
+        },
+        "time": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The error timestamp."
+        },
+        "componentName": {
+          "type": "string",
+          "description": "The component name."
+        }
+      }
+    },
+    "InnerErrorResponse": {
+      "type": "object",
+      "description": "A nested structure of errors.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The error code."
+        },
+        "innerError": {
+          "$ref": "#/definitions/InnerErrorResponse",
+          "description": "The inner error."
+        }
+      }
+    },
+    "RegistryDiscoveryDto": {
+      "type": "object",
+      "description": "Registry discovery information.",
+      "properties": {
+        "registryName": {
+          "type": "string",
+          "description": "The registry name."
+        },
+        "tenantId": {
+          "type": "string",
+          "description": "The tenant ID."
+        },
+        "primaryRegion": {
+          "type": "string",
+          "description": "The primary region."
+        },
+        "regions": {
+          "type": "array",
+          "description": "The list of regions.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "subscriptionId": {
+          "type": "string",
+          "description": "The subscription ID."
+        },
+        "resourceGroup": {
+          "type": "string",
+          "description": "The resource group name."
+        },
+        "workspaceName": {
+          "type": "string",
+          "description": "The workspace name."
+        },
+        "primaryRegionResourceProviderUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "The primary region resource provider URI."
+        }
+      }
+    },
+    "RootError": {
+      "type": "object",
+      "description": "The root error.",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "The error code."
+        },
+        "severity": {
+          "type": "integer",
+          "format": "int32",
+          "description": "The error severity."
+        },
+        "message": {
+          "type": "string",
+          "description": "The error message."
+        },
+        "messageFormat": {
+          "type": "string",
+          "description": "The error message format."
+        },
+        "messageParameters": {
+          "type": "object",
+          "description": "The error message parameters.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "referenceCode": {
+          "type": "string",
+          "description": "The error reference code."
+        },
+        "detailsUri": {
+          "type": "string",
+          "format": "uri",
+          "description": "The URI for error details."
+        },
+        "target": {
+          "type": "string",
+          "description": "The error target."
+        },
+        "details": {
+          "type": "array",
+          "description": "The error details.",
+          "items": {
+            "$ref": "#/definitions/RootError"
+          }
+        },
+        "innerError": {
+          "$ref": "#/definitions/InnerErrorResponse",
+          "description": "The inner error."
+        },
+        "debugInfo": {
+          "$ref": "#/definitions/DebugInfoResponse",
+          "description": "Debug information for the error."
+        },
+        "additionalInfo": {
+          "type": "array",
+          "description": "The error additional info.",
+          "items": {
+            "$ref": "#/definitions/ErrorAdditionalInfo"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {}
+}

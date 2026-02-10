@@ -1,0 +1,15 @@
+{
+  "name": "azure-ai-ml-registry-discovery-typespec",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@azure-tools/typespec-autorest": "latest",
+    "@azure-tools/typespec-azure-core": "latest",
+    "@azure-tools/typespec-client-generator-core": "latest",
+    "@azure-tools/typespec-python": "^0.60.0",
+    "@typespec/compiler": "latest",
+    "@typespec/http": "latest",
+    "@typespec/rest": "latest",
+    "@typespec/versioning": "latest"
+  }
+}

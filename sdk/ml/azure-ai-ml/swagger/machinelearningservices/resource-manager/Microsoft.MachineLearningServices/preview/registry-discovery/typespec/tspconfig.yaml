@@ -1,0 +1,22 @@
+parameters:
+  "service-dir":
+    default: "sdk/ml"
+
+emit:
+  - "@azure-tools/typespec-autorest"
+  - "@azure-tools/typespec-python"
+
+options:
+  "@azure-tools/typespec-autorest":
+    emitter-output-dir: "{project-root}/.."
+    azure-resource-provider-folder: "."
+    output-file: "{azure-resource-provider-folder}/registry-discovery.openapi.json"
+    use-read-only-status-schema: true
+  "@azure-tools/typespec-python":
+    emitter-output-dir: "{output-dir}/{service-dir}/azure-ai-ml"
+    namespace: "azure.ai.ml._restclient.registry_discovery"
+    flavor: "azure"
+
+linter:
+  extends:
+    - "@azure-tools/typespec-azure-core/all"
