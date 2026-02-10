@@ -48,7 +48,9 @@ class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WARNING = "Warning"
 
 
-class NginxDeploymentWafPolicyApplyingStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class NginxDeploymentWafPolicyApplyingStatusCode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Machine readable code indicating the applying status code of a WAF Policy."""
 
     NOT_APPLIED = "NotApplied"
@@ -64,7 +66,9 @@ class NginxDeploymentWafPolicyApplyingStatusCode(str, Enum, metaclass=CaseInsens
     nginx config."""
 
 
-class NginxDeploymentWafPolicyCompilingStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class NginxDeploymentWafPolicyCompilingStatusCode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Machine readable code indicating the compilation status of a WAF Policy."""
 
     NOT_STARTED = "NotStarted"
