@@ -4,7 +4,7 @@ aiohttp
 python-dotenv
 isodate
 websockets
-pyaudio; platform_python_implementation == 'CPython' and python_version < '3.13'
+pyaudio; platform_python_implementation == 'CPython' and python_version < '3.13' and sys_platform == 'win32'
 azure.identity
 pytest-rerunfailures>=13.0
 pytest-asyncio

@@ -8,10 +8,11 @@
 An example to show an application using Opentelemetry tracing api and sdk with a Azure Client Secret
 Credential. Credentials are used for Azure Active Directory/EntraId Authentication.
 """
+from opentelemetry import trace
+
 # You will need to install azure-identity
 from azure.identity import ClientSecretCredential
 from azure.monitor.opentelemetry import configure_azure_monitor
-from opentelemetry import trace
 
 credential = ClientSecretCredential(
     tenant_id="<tenant_id",

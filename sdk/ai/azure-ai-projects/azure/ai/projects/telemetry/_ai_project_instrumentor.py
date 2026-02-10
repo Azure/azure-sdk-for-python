@@ -21,15 +21,17 @@ from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
 from ._utils import (
-    AZURE_AI_AGENTS_PROVIDER,
+    AGENTS_PROVIDER,
     ERROR_TYPE,
     GEN_AI_AGENT_DESCRIPTION,
     GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
     GEN_AI_EVENT_CONTENT,
+    GEN_AI_INPUT_MESSAGES,
     GEN_AI_MESSAGE_ID,
     GEN_AI_MESSAGE_STATUS,
     GEN_AI_OPERATION_NAME,
+    GEN_AI_OUTPUT_MESSAGES,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_SYSTEM_MESSAGE,
     GEN_AI_THREAD_ID,
@@ -53,6 +55,7 @@ from ._utils import (
     ERROR_MESSAGE,
     OperationName,
     start_span,
+    _get_use_message_events,
 )
 from ._responses_instrumentor import _ResponsesInstrumentorPreview
 
@@ -76,14 +79,101 @@ __all__ = [
     "AIProjectInstrumentor",
 ]
 
-_agents_traces_enabled: bool = False
+_projects_traces_enabled: bool = False
 _trace_agents_content: bool = False
+_trace_context_propagation_enabled: bool = False
+_trace_context_baggage_propagation_enabled: bool = False
+
+
+def _inject_trace_context_sync(request):
+    """Synchronous event hook to inject trace context (traceparent) into outgoing requests.
+
+    :param request: The httpx Request object.
+    :type request: httpx.Request
+    """
+    try:
+        from opentelemetry import propagate
+
+        carrier = dict(request.headers)
+        propagate.inject(carrier)
+        for key, value in carrier.items():
+            key_lower = key.lower()
+            # Always include traceparent and tracestate
+            # Only include baggage if explicitly enabled
+            if key_lower in ("traceparent", "tracestate"):
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
+                    request.headers[key] = value
+            elif key_lower == "baggage" and _trace_context_baggage_propagation_enabled:
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
+                    request.headers[key] = value
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.debug("Failed to inject trace context: %s", e)
+
+
+async def _inject_trace_context_async(request):
+    """Async event hook to inject trace context (traceparent) into outgoing requests.
+
+    :param request: The httpx Request object.
+    :type request: httpx.Request
+    """
+    try:
+        from opentelemetry import propagate
+
+        carrier = dict(request.headers)
+        propagate.inject(carrier)
+        for key, value in carrier.items():
+            key_lower = key.lower()
+            # Always include traceparent and tracestate
+            # Only include baggage if explicitly enabled
+            if key_lower in ("traceparent", "tracestate"):
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
+                    request.headers[key] = value
+            elif key_lower == "baggage" and _trace_context_baggage_propagation_enabled:
+                if key_lower not in [h.lower() for h in request.headers.keys()]:
+                    request.headers[key] = value
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.debug("Failed to inject trace context: %s", e)
+
+
+def _enable_trace_propagation_for_openai_client(openai_client):
+    """Enable trace context propagation for an OpenAI client.
+
+    This function hooks into the httpx client used by the OpenAI SDK to inject
+    trace context headers (traceparent, tracestate) into outgoing HTTP requests.
+    This ensures that client-side spans and server-side spans share the same trace ID.
+
+    :param openai_client: The OpenAI client instance.
+    :type openai_client: Any
+    """
+    try:
+        # Access the underlying httpx client
+        if hasattr(openai_client, "_client"):
+            httpx_client = openai_client._client  # pylint: disable=protected-access
+
+            # Check if the client has event hooks support
+            if hasattr(httpx_client, "_event_hooks"):
+                event_hooks = httpx_client._event_hooks  # pylint: disable=protected-access
+
+                # Determine if this is an async client
+                is_async = hasattr(httpx_client, "__aenter__")
+
+                # Add appropriate hook based on client type
+                if "request" in event_hooks:
+                    hook_to_add = _inject_trace_context_async if is_async else _inject_trace_context_sync
+
+                    # Check if our hook is already registered to avoid duplicates
+                    if hook_to_add not in event_hooks["request"]:
+                        event_hooks["request"].append(hook_to_add)
+                        logger.debug("Enabled trace propagation for %s OpenAI client", "async" if is_async else "sync")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        logger.debug("Failed to enable trace propagation for OpenAI client: %s", e)
 
 
 class TraceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):  # pylint: disable=C4747
     """An enumeration class to represent different types of traces."""
 
     AGENTS = "Agents"
+    PROJECT = "Project"
 
 
 class AIProjectInstrumentor:
@@ -106,7 +196,12 @@ class AIProjectInstrumentor:
         self._impl = _AIAgentsInstrumentorPreview()
         self._responses_impl = _ResponsesInstrumentorPreview()
 
-    def instrument(self, enable_content_recording: Optional[bool] = None) -> None:
+    def instrument(
+        self,
+        enable_content_recording: Optional[bool] = None,
+        enable_trace_context_propagation: Optional[bool] = None,
+        enable_baggage_propagation: Optional[bool] = None,
+    ) -> None:
         """
         Enable trace instrumentation for AIProjectClient.
 
@@ -123,9 +218,24 @@ class AIProjectInstrumentor:
           if the environment variable is not found), even if instrument was already previously
           called without uninstrument being called in between the instrument calls.
         :type enable_content_recording: bool, optional
+        :param enable_trace_context_propagation: Whether to enable automatic trace context propagation
+          to OpenAI SDK HTTP requests. When enabled, traceparent and tracestate headers will be injected
+          into requests made by OpenAI clients obtained via get_openai_client(), allowing server-side
+          spans to be correlated with client-side spans. `True` will enable it, `False` will
+          disable it. If no value is provided, then the value read from environment variable
+          AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION is used. If the environment
+          variable is not found, then the value will default to `False`.
+        :type enable_trace_context_propagation: bool, optional
+        :param enable_baggage_propagation: Whether to include baggage headers in trace context propagation.
+          Only applies when enable_trace_context_propagation is True. `True` will enable baggage propagation,
+          `False` will disable it. If no value is provided, then the value read from environment variable
+          AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the environment
+          variable is not found, then the value will default to `False`.
+          Note: Baggage may contain sensitive application data.
+        :type enable_baggage_propagation: bool, optional
 
         """
-        self._impl.instrument(enable_content_recording)
+        self._impl.instrument(enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation)
         self._responses_impl.instrument(enable_content_recording)
 
     def uninstrument(self) -> None:
@@ -170,7 +280,12 @@ class _AIAgentsInstrumentorPreview:
             return False
         return str(s).lower() == "true"
 
-    def instrument(self, enable_content_recording: Optional[bool] = None):
+    def instrument(
+        self,
+        enable_content_recording: Optional[bool] = None,
+        enable_trace_context_propagation: Optional[bool] = None,
+        enable_baggage_propagation: Optional[bool] = None,
+    ):
         """
         Enable trace instrumentation for AI Agents.
 
@@ -187,6 +302,17 @@ class _AIAgentsInstrumentorPreview:
           if the environment variable is not found), even if instrument was already previously
           called without uninstrument being called in between the instrument calls.
         :type enable_content_recording: bool, optional
+        :param enable_trace_context_propagation: Whether to enable automatic trace context propagation.
+          `True` will enable it, `False` will disable it. If no value is provided, then the
+          value read from environment variable AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION
+          is used. If the environment variable is not found, then the value will default to `False`.
+        :type enable_trace_context_propagation: bool, optional
+        :param enable_baggage_propagation: Whether to include baggage in trace context propagation.
+          Only applies when enable_trace_context_propagation is True. `True` will enable it, `False`
+          will disable it. If no value is provided, then the value read from environment variable
+          AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE is used. If the
+          environment variable is not found, then the value will default to `False`.
+        :type enable_baggage_propagation: bool, optional
 
         """
         if enable_content_recording is None:
@@ -194,24 +320,38 @@ class _AIAgentsInstrumentorPreview:
             var_value = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")
             enable_content_recording = self._str_to_bool(var_value)
 
+        if enable_trace_context_propagation is None:
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION")
+            enable_trace_context_propagation = self._str_to_bool(var_value)
+
+        if enable_baggage_propagation is None:
+            var_value = os.environ.get("AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE")
+            enable_baggage_propagation = self._str_to_bool(var_value)
+
         if not self.is_instrumented():
-            self._instrument_agents(enable_content_recording)
+            self._instrument_projects(
+                enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation
+            )
         else:
             self._set_enable_content_recording(enable_content_recording=enable_content_recording)
+            self._set_enable_trace_context_propagation(
+                enable_trace_context_propagation=enable_trace_context_propagation
+            )
+            self._set_enable_baggage_propagation(enable_baggage_propagation=enable_baggage_propagation)
 
     def uninstrument(self):
         """
-        Disable trace instrumentation for AI Agents.
+        Disable trace instrumentation for AI Projects.
 
         This method removes any active instrumentation, stopping the tracing
-        of AI Agents.
+        of AI Projects.
         """
         if self.is_instrumented():
-            self._uninstrument_agents()
+            self._uninstrument_projects()
 
     def is_instrumented(self):
         """
-        Check if trace instrumentation for AI Agents is currently enabled.
+        Check if trace instrumentation for AI Projects is currently enabled.
 
         :return: True if instrumentation is active, False otherwise.
         :rtype: bool
@@ -275,7 +415,7 @@ class _AIAgentsInstrumentorPreview:
         run_step_last_error: Optional[Any] = None,
         usage: Optional[Any] = None,
     ) -> Dict[str, Any]:
-        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AZURE_AI_AGENTS_PROVIDER}
+        attrs: Dict[str, Any] = {GEN_AI_PROVIDER_NAME: AGENTS_PROVIDER}
         if thread_id:
             attrs[GEN_AI_THREAD_ID] = thread_id
 
@@ -366,7 +506,7 @@ class _AIAgentsInstrumentorPreview:
             usage=usage,
         )
 
-    def _add_message_event(
+    def _add_message_event(  # pylint: disable=too-many-branches,too-many-statements
         self,
         span,
         role: str,
@@ -423,30 +563,52 @@ class _AIAgentsInstrumentorPreview:
             # No metadata, use content array directly as the event data
             event_data = content_array if isinstance(content_array, list) else {}
 
-        attributes = self._create_event_attributes(
-            thread_id=thread_id,
-            agent_id=agent_id,
-            thread_run_id=thread_run_id,
-            message_id=message_id,
-            message_status=message_status,
-            usage=usage,
-        )
-        # Store as JSON - either array or object depending on metadata
-        if not metadata and content_array:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-        else:
-            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_data, ensure_ascii=False)
+        use_events = _get_use_message_events()
 
-        event_name = None
-        if role == "user":
-            event_name = "gen_ai.input.message"
-        elif role == "system":
-            event_name = "gen_ai.system_instruction"
-        else:
-            event_name = "gen_ai.input.message"
+        if use_events:
+            # Use events for message tracing
+            attributes = self._create_event_attributes(
+                thread_id=thread_id,
+                agent_id=agent_id,
+                thread_run_id=thread_run_id,
+                message_id=message_id,
+                message_status=message_status,
+                usage=usage,
+            )
+            # Store as JSON - either array or object depending on metadata
+            if not metadata and content_array:
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+            else:
+                attributes[GEN_AI_EVENT_CONTENT] = json.dumps(event_data, ensure_ascii=False)
 
-        # span.span_instance.add_event(name=f"gen_ai.{role}.message", attributes=attributes)
-        span.span_instance.add_event(name=event_name, attributes=attributes)
+            event_name = None
+            if role == "user":
+                event_name = "gen_ai.input.message"
+            elif role == "system":
+                event_name = "gen_ai.system_instruction"
+            else:
+                event_name = "gen_ai.input.message"
+
+            span.span_instance.add_event(name=event_name, attributes=attributes)
+        else:
+            # Use attributes for message tracing
+            # Prepare message content as JSON
+            message_json = json.dumps(
+                [{"role": role, "parts": content_array}] if content_array else [{"role": role}], ensure_ascii=False
+            )
+
+            # Determine which attribute to use based on role
+            if role == "user":
+                attribute_name = GEN_AI_INPUT_MESSAGES
+            elif role == "assistant":
+                attribute_name = GEN_AI_OUTPUT_MESSAGES
+            else:
+                # Default to input messages for other roles (including system)
+                attribute_name = GEN_AI_INPUT_MESSAGES
+
+            # Set the attribute on the span
+            if span and span.span_instance.is_recording:
+                span.add_attribute(attribute_name, message_json)
 
     def _get_field(self, obj: Any, field: str) -> Any:
         if not obj:
@@ -502,10 +664,23 @@ class _AIAgentsInstrumentorPreview:
 
                 content_array.append({"type": "response_schema", "content": schema_str})
 
-        attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
-        # Store as JSON array directly without outer wrapper
-        attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-        span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
+        use_events = _get_use_message_events()
+
+        if use_events:
+            # Use events for instructions tracing
+            attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
+            # Store as JSON array directly without outer wrapper
+            attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
+            span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
+        else:
+            # Use attributes for instructions tracing
+            # System instructions use the same attribute name as the event
+            message_json = json.dumps(
+                [{"role": "system", "parts": content_array}] if content_array else [{"role": "system"}],
+                ensure_ascii=False,
+            )
+            if span and span.span_instance.is_recording:
+                span.add_attribute(GEN_AI_SYSTEM_MESSAGE, message_json)
 
     def _status_to_string(self, status: Any) -> str:
         return status.value if hasattr(status, "value") else status
@@ -1106,10 +1281,63 @@ class _AIAgentsInstrumentorPreview:
         )
         return sync_apis, async_apis
 
+    def _project_apis(self):
+        """Define AIProjectClient APIs to instrument for trace propagation.
+
+        :return: A tuple containing sync and async API tuples.
+        :rtype: Tuple[Tuple, Tuple]
+        """
+        sync_apis = (
+            (
+                "azure.ai.projects",
+                "AIProjectClient",
+                "get_openai_client",
+                TraceType.PROJECT,
+                "get_openai_client",
+            ),
+        )
+        async_apis = (
+            (
+                "azure.ai.projects.aio",
+                "AIProjectClient",
+                "get_openai_client",
+                TraceType.PROJECT,
+                "get_openai_client",
+            ),
+        )
+        return sync_apis, async_apis
+
+    def _inject_openai_client(self, f, _trace_type, _name):
+        """Injector for get_openai_client that enables trace context propagation if opted in.
+
+        :return: The wrapped function with trace context propagation enabled.
+        :rtype: Callable
+        """
+
+        @functools.wraps(f)
+        def wrapper(*args, **kwargs):
+            openai_client = f(*args, **kwargs)
+            if _trace_context_propagation_enabled:
+                _enable_trace_propagation_for_openai_client(openai_client)
+            return openai_client
+
+        wrapper._original = f  # type: ignore # pylint: disable=protected-access
+        return wrapper
+
     def _agents_api_list(self):
         sync_apis, async_apis = self._agents_apis()
         yield sync_apis, self._inject_sync
         yield async_apis, self._inject_async
+
+    def _project_api_list(self):
+        """Generate project API list with custom injector.
+
+        :return: A generator yielding API tuples with injectors.
+        :rtype: Generator
+        """
+        sync_apis, async_apis = self._project_apis()
+        yield sync_apis, self._inject_openai_client
+        yield async_apis, self._inject_openai_client
 
     def _generate_api_and_injector(self, apis):
         for api, injector in apis:
@@ -1134,18 +1362,24 @@ class _AIAgentsInstrumentorPreview:
                         "An unexpected error occurred: '%s'", str(e)
                     )
 
-    def _available_agents_apis_and_injectors(self):
+    def _available_projects_apis_and_injectors(self):
         """
-        Generates a sequence of tuples containing Agents API classes, method names, and
+        Generates a sequence of tuples containing Agents and Project API classes, method names, and
         corresponding injector functions.
 
         :return: A generator yielding tuples.
         :rtype: tuple
         """
         yield from self._generate_api_and_injector(self._agents_api_list())
+        yield from self._generate_api_and_injector(self._project_api_list())
 
-    def _instrument_agents(self, enable_content_tracing: bool = False):
-        """This function modifies the methods of the Agents API classes to
+    def _instrument_projects(
+        self,
+        enable_content_tracing: bool = False,
+        enable_trace_context_propagation: bool = False,
+        enable_baggage_propagation: bool = False,
+    ):
+        """This function modifies the methods of the Projects API classes to
         inject logic before calling the original methods.
         The original methods are stored as _original attributes of the methods.
 
@@ -1153,48 +1387,60 @@ class _AIAgentsInstrumentorPreview:
                                     This also controls whether function call tool function names,
                                     parameter names and parameter values are traced.
         :type enable_content_tracing: bool
+        :param enable_trace_context_propagation: Whether to enable automatic trace context propagation.
+        :type enable_trace_context_propagation: bool
+        :param enable_baggage_propagation: Whether to include baggage in trace context propagation.
+        :type enable_baggage_propagation: bool
         """
         # pylint: disable=W0603
-        global _agents_traces_enabled
+        global _projects_traces_enabled
         global _trace_agents_content
-        if _agents_traces_enabled:
+        global _trace_context_propagation_enabled
+        global _trace_context_baggage_propagation_enabled
+        if _projects_traces_enabled:
             raise RuntimeError("Traces already started for AI Agents")
 
-        _agents_traces_enabled = True
+        _projects_traces_enabled = True
         _trace_agents_content = enable_content_tracing
+        _trace_context_propagation_enabled = enable_trace_context_propagation
+        _trace_context_baggage_propagation_enabled = enable_baggage_propagation
         for (
             api,
             method,
             trace_type,
             injector,
             name,
-        ) in self._available_agents_apis_and_injectors():
+        ) in self._available_projects_apis_and_injectors():
             # Check if the method of the api class has already been modified
             if not hasattr(getattr(api, method), "_original"):
                 setattr(api, method, injector(getattr(api, method), trace_type, name))
 
-    def _uninstrument_agents(self):
-        """This function restores the original methods of the Agents API classes
+    def _uninstrument_projects(self):
+        """This function restores the original methods of the Projects API classes
         by assigning them back from the _original attributes of the modified methods.
         """
         # pylint: disable=W0603
-        global _agents_traces_enabled
+        global _projects_traces_enabled
         global _trace_agents_content
+        global _trace_context_propagation_enabled
+        global _trace_context_baggage_propagation_enabled
         _trace_agents_content = False
-        for api, method, _, _, _ in self._available_agents_apis_and_injectors():
+        _trace_context_propagation_enabled = False
+        _trace_context_baggage_propagation_enabled = False
+        for api, method, _, _, _ in self._available_projects_apis_and_injectors():
             if hasattr(getattr(api, method), "_original"):
                 setattr(api, method, getattr(getattr(api, method), "_original"))
 
-        _agents_traces_enabled = False
+        _projects_traces_enabled = False
 
     def _is_instrumented(self):
-        """This function returns True if Agents API has already been instrumented
+        """This function returns True if Projects API has already been instrumented
         for tracing and False if it has not been instrumented.
 
-        :return: A value indicating whether the Agents API is currently instrumented or not.
+        :return: A value indicating whether the Projects API is currently instrumented or not.
         :rtype: bool
         """
-        return _agents_traces_enabled
+        return _projects_traces_enabled
 
     def _set_enable_content_recording(self, enable_content_recording: bool = False) -> None:
         """This function sets the content recording value.
@@ -1214,6 +1460,24 @@ class _AIAgentsInstrumentorPreview:
         :rtype bool
         """
         return _trace_agents_content
+
+    def _set_enable_trace_context_propagation(self, enable_trace_context_propagation: bool = False) -> None:
+        """This function sets the trace context propagation value.
+
+        :param enable_trace_context_propagation: Indicates whether automatic trace context propagation should be enabled.
+        :type enable_trace_context_propagation: bool
+        """
+        global _trace_context_propagation_enabled  # pylint: disable=W0603
+        _trace_context_propagation_enabled = enable_trace_context_propagation
+
+    def _set_enable_baggage_propagation(self, enable_baggage_propagation: bool = False) -> None:
+        """This function sets the baggage propagation value.
+
+        :param enable_baggage_propagation: Indicates whether baggage should be included in trace context propagation.
+        :type enable_baggage_propagation: bool
+        """
+        global _trace_context_baggage_propagation_enabled  # pylint: disable=W0603
+        _trace_context_baggage_propagation_enabled = enable_baggage_propagation
 
     def record_error(self, span, exc):
         # Set the span status to error

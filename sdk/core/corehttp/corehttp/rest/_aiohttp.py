@@ -38,6 +38,7 @@ from ..exceptions import (
     ServiceRequestError,
     ServiceResponseError,
     IncompleteReadError,
+    ServiceResponseTimeoutError,
 )
 from ..runtime.pipeline import AsyncPipeline
 from ..transport._base_async import _ResponseStopIteration
@@ -224,7 +225,18 @@ class RestAioHttpTransportResponse(AsyncHttpResponseImpl):
         """
         if not self._content:
             self._stream_download_check()
-            self._content = await self._internal_response.read()
+            try:
+                self._content = await self._internal_response.read()
+            except aiohttp.client_exceptions.ClientPayloadError as err:
+                # This is the case that server closes connection before we finish the reading. aiohttp library
+                # raises ClientPayloadError.
+                raise IncompleteReadError(err, error=err) from err
+            except aiohttp.client_exceptions.ClientResponseError as err:
+                raise ServiceResponseError(err, error=err) from err
+            except asyncio.TimeoutError as err:
+                raise ServiceResponseTimeoutError(err, error=err) from err
+            except aiohttp.client_exceptions.ClientError as err:
+                raise ServiceRequestError(err, error=err) from err
         await self._set_read_checks()
         return _aiohttp_content_helper(self)
 
@@ -306,7 +318,7 @@ class AioHttpStreamDownloadGenerator(collections.abc.AsyncIterator):
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            raise ServiceResponseError(err, error=err) from err
+            raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         except Exception:

@@ -9,6 +9,12 @@ Async tests for ResponsesInstrumentor with browser automation agents.
 import os
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+    RESPONSES_PROVIDER,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -40,6 +46,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_non_streaming_with_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with non-streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -101,14 +108,14 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
                 assert len(response.output) > 0
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -171,6 +178,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_non_streaming_without_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with non-streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -228,14 +236,14 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
                 )
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -296,6 +304,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_streaming_with_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "True", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
         )
@@ -348,7 +357,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
                     pass
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
@@ -359,8 +368,8 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -420,6 +429,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
     async def test_async_browser_automation_streaming_without_content_recording(self, **kwargs):
         """Test asynchronous browser automation agent with streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {CONTENT_TRACING_ENV_VARIABLE: "False", "AZURE_TRACING_GEN_AI_INSTRUMENT_RESPONSES_API": "True"}
         )
@@ -470,7 +480,7 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
                     pass
 
                 self.exporter.force_flush()
-                spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+                spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
                 assert len(spans) == 1
                 span = spans[0]
 
@@ -481,8 +491,8 @@ class TestResponsesInstrumentorBrowserAutomationAsync(TestAiAgentsInstrumentorBa
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
