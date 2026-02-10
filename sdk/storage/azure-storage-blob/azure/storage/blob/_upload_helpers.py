@@ -22,7 +22,6 @@ from ._encryption import (
 from ._generated.azure.storage.blobs.models import (
     AppendPositionAccessConditions,
     BlockLookupList,
-    ModifiedAccessConditions
 )
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import process_storage_error, return_response_headers

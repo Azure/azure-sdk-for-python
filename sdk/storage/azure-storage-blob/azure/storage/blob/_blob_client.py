@@ -2059,7 +2059,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             **kwargs)
         try:
             body = options.pop('body')
-            return cast(Dict[str, Any], self._client.block_blob.stage_block(body, **options))
+            return cast(Dict[str, Any], self._client.block_blob.stage_block(body=body, **options)) # pylint: disable=repeated-keyword
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2826,9 +2826,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        # options = _resize_blob_options(size=size, **kwargs) TODO: is this needed?
+        options = _resize_blob_options(size=size, **kwargs)
         try:
-            return cast(Dict[str, Any], self._client.page_blob.resize(size=size, **kwargs))
+            return cast(Dict[str, Any], self._client.page_blob.resize(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 

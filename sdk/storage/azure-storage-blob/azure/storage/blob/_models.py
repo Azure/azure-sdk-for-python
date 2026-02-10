@@ -1066,7 +1066,6 @@ class AccessPolicy(GenAccessPolicy):
         self.start = start
         self.expiry = expiry
         self.permission = permission
-        
 
 
 class BlobSasPermissions(object):

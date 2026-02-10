@@ -2110,7 +2110,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             **kwargs)
         try:
             body = options.pop('body')
-            return cast(Dict[str, Any], await self._client.block_blob.stage_block(body, **options))
+            return cast(Dict[str, Any], await self._client.block_blob.stage_block(body=body, **options)) # pylint: disable=repeated-keyword
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2877,7 +2877,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _resize_blob_options(size=size, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.resize(size=size, **options))
+            return cast(Dict[str, Any], await self._client.page_blob.resize(**options))
         except HttpResponseError as error:
             process_storage_error(error)
 
