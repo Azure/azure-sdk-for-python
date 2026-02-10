@@ -39,7 +39,7 @@ class TestStorageBlobRetry(StorageRecordedTestCase):
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             retry_policy=retry
         )
 
@@ -79,7 +79,7 @@ class TestStorageBlobRetry(StorageRecordedTestCase):
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             retry_policy=retry
         )
 

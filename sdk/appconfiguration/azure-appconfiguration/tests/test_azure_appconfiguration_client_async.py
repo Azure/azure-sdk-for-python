@@ -3,12 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import copy
 import json
 import re
 import time
+from uuid import uuid4
 from datetime import datetime, timezone
+from devtools_testutils import set_custom_default_matcher
+from devtools_testutils.aio import recorded_by_proxy_async
+from async_preparers import app_config_decorator_async
+import pytest
+from asynctestcase import AsyncAppConfigTestCase
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ResourceModifiedError,
@@ -17,7 +31,6 @@ from azure.core.exceptions import (
     AzureError,
     HttpResponseError,
 )
-from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     ConfigurationSetting,
@@ -29,23 +42,9 @@ from azure.appconfiguration import (
     FILTER_TIME_WINDOW,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
-from asynctestcase import AsyncAppConfigTestCase
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
-)
-from devtools_testutils import set_custom_default_matcher
-from devtools_testutils.aio import recorded_by_proxy_async
-from async_preparers import app_config_decorator_async
-from uuid import uuid4
 
 
-class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
+class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -241,9 +240,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
-        assert (
-            str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -253,9 +251,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         )
         with pytest.raises(TypeError) as ex:
             await self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
-        assert (
-            str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
 
         await self.tear_down()
@@ -1013,10 +1010,11 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.name == snapshot_name
         assert created_snapshot.status == "ready"
+        assert created_snapshot.retention_period == 3600
         assert len(created_snapshot.filters) == 1
         assert created_snapshot.filters[0].key == KEY
         assert created_snapshot.filters[0].label == LABEL
@@ -1040,7 +1038,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
@@ -1066,7 +1064,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name = f"{self.get_resource_name('snapshot')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
 
         # test update with wrong etag
@@ -1098,11 +1096,15 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
 
         filters1 = [ConfigurationSettingsFilter(key=KEY)]
-        response1 = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters1)
+        response1 = await self.client.begin_create_snapshot(
+            name=snapshot_name1, filters=filters1, retention_period=3600
+        )
         created_snapshot1 = await response1.result()
         assert created_snapshot1.status == "ready"
         filters2 = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response2 = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters2)
+        response2 = await self.client.begin_create_snapshot(
+            name=snapshot_name2, filters=filters2, retention_period=3600
+        )
         created_snapshot2 = await response2.result()
         assert created_snapshot2.status == "ready"
 
@@ -1125,7 +1127,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name1 = f"{self.get_resource_name('snapshot1')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL)]
-        response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name1, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
@@ -1135,7 +1137,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         snapshot_name2 = f"{self.get_resource_name('snapshot2')}_{dynamic_snapshot_name_postfix}"
 
         filters = [ConfigurationSettingsFilter(key=KEY, label=LABEL, tags=["tag1=invalid"])]
-        response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters)
+        response = await self.client.begin_create_snapshot(name=snapshot_name2, filters=filters, retention_period=3600)
         created_snapshot = await response.result()
         assert created_snapshot.status == "ready"
 
@@ -1150,116 +1152,72 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
     async def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        async with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
-            self.client = client
-            # prepare 200 configuration settings
-            for i in range(200):
-                await client.add_configuration_setting(
-                    ConfigurationSetting(
-                        key=f"async_sample_key_{str(i)}",
-                        label=f"async_sample_label_{str(i)}",
-                    )
-                )
-            # there will have 2 pages while listing, there are 100 configuration settings per page.
-
-            # get page etags
-            page_etags = []
-            items = client.list_configuration_settings(
-                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
-            )
-            iterator = items.by_page()
-            async for page in iterator:
-                etag = iterator.etag
-                page_etags.append(etag)
-
-            # monitor page updates without changes
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
-            )
-            first_page_response = await client.send_request(request)
-            assert first_page_response.status_code == 304
-
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
-                assert response.status_code == 304
-
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
-
-            # do some changes
-            await client.add_configuration_setting(
+        await self.set_up(appconfiguration_connection_string)
+        # prepare 200 configuration settings
+        for i in range(200):
+            await self.client.set_configuration_setting(
                 ConfigurationSetting(
-                    key="async_sample_key_201",
-                    label="async_sample_label_202",
+                    key=f"async_sample_key_{str(i)}",
+                    label=f"async_sample_label_{str(i)}",
                 )
             )
-            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+        # there will have 2 pages while listing, there are 100 configuration settings per page.
 
-            # get page etags after updates
-            new_page_etags = []
-            items = client.list_configuration_settings(
-                key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        # get page etags
+        match_conditions = []
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page()
+        async for _ in iterator:
+            etag = iterator.etag
+            match_conditions.append(etag)
+
+        # monitor page updates without changes - only changed pages will be yielded
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page(match_conditions=match_conditions)
+        changed_pages = [page async for page in iterator]
+        # No pages should be yielded since nothing changed
+        assert len(changed_pages) == 0
+
+        # do some changes
+        await self.client.set_configuration_setting(
+            ConfigurationSetting(
+                key="async_sample_key_201",
+                label="async_sample_label_202",
             )
-            iterator = items.by_page()
-            async for page in iterator:
-                etag = iterator.etag
-                new_page_etags.append(etag)
+        )
+        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
 
-            assert page_etags[0] == new_page_etags[0]
-            assert page_etags[1] != new_page_etags[1]
-            assert page_etags[2] != new_page_etags[2]
+        # get page etags after updates
+        new_match_conditions = []
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page()
+        async for _ in iterator:
+            etag = iterator.etag
+            new_match_conditions.append(etag)
 
-            # monitor page after updates
-            continuation_token = None
-            index = 0
-            request = HttpRequest(
-                method="GET",
-                url="/kv?key=async_sample_key_%2A&label=async_sample_label_%2A&api-version=2023-10-01",
-                headers={
-                    "If-None-Match": page_etags[index],
-                    "Accept": "application/vnd.microsoft.appconfig.kvset+json, application/problem+json",
-                },
-            )
-            first_page_response = await client.send_request(request)
-            # 304 means the page doesn't have changes.
-            assert first_page_response.status_code == 304
+        assert match_conditions[0] == new_match_conditions[0]
+        assert match_conditions[1] != new_match_conditions[1]
+        assert match_conditions[2] != new_match_conditions[2]
+        assert len(new_match_conditions) == 3
 
-            link = first_page_response.headers.get("Link", None)
-            continuation_token = link[1 : link.index(">")] if link else None
-            index += 1
-            while continuation_token:
-                request = HttpRequest(
-                    method="GET", url=f"{continuation_token}", headers={"If-None-Match": page_etags[index]}
-                )
-                index += 1
-                response = await client.send_request(request)
+        # monitor pages after updates - only changed pages will be yielded
+        items = self.client.list_configuration_settings(
+            key_filter="async_sample_key_*", label_filter="async_sample_label_*"
+        )
+        iterator = items.by_page(match_conditions=new_match_conditions)
+        changed_pages = [page async for page in iterator]
 
-                # 200 means the page has changes.
-                assert response.status_code == 200
-                items = response.json()["items"]
-                for item in items:
-                    # Read the keys
-                    pass
+        # Should yield 0 pages
+        assert len(changed_pages) == 0
 
-                link = response.headers.get("Link", None)
-                continuation_token = link[1 : link.index(">")] if link else None
-
-            # clean up
-            await self.tear_down()
+        # clean up
+        await self.tear_down()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -1317,7 +1275,8 @@ class TestAppConfigurationClientUnitTest:
                 response.status_code = 429
                 return response
 
-        def new_method(self, request):
+        @staticmethod
+        def new_method(request):
             request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy

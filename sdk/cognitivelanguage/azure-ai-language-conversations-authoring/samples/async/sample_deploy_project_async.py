@@ -40,13 +40,11 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_deploy_project_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     CreateDeploymentDetails,
-    AssignedProjectResource,
-    # DataGenerationConnectionInfo,  # uncomment if you need AOAI data generation settings
 )
 
 

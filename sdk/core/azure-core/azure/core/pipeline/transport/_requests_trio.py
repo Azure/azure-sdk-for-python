@@ -236,7 +236,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
             try:
                 response = await trio.to_thread.run_sync(
                     functools.partial(
-                        self.session.request,
+                        self.session.request,  # type: ignore
                         request.method,
                         request.url,
                         headers=request.headers,
@@ -254,7 +254,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
             except AttributeError:  # trio < 0.12.1
                 response = await trio.run_sync_in_worker_thread(  # type: ignore # pylint:disable=no-member
                     functools.partial(
-                        self.session.request,
+                        self.session.request,  # type: ignore
                         request.method,
                         request.url,
                         headers=request.headers,
