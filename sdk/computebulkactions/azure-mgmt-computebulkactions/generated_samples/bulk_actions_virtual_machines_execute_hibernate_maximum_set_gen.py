@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.computebulkactions import ComputeBulkActionsClient
+from azure.mgmt.computebulkactions import ComputeBulkActionsMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.computebulkactions import ComputeBulkActionsClient
 
 
 def main():
-    client = ComputeBulkActionsClient(
+    client = ComputeBulkActionsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

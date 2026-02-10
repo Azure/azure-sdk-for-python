@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import ComputeBulkActionsClientConfiguration
+from ._configuration import ComputeBulkActionsMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import BulkActionsOperations, Operations
 
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ComputeBulkActionsClient:
+class ComputeBulkActionsMgmtClient:
     """Microsoft.ComputeBulkActions Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -65,7 +65,7 @@ class ComputeBulkActionsClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ComputeBulkActionsClientConfiguration(
+        self._config = ComputeBulkActionsMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

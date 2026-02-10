@@ -325,7 +325,7 @@ class LocalStorageDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HDD = "HDD"
     """HDD DiskType."""
     SSD = "SSD"
-    """SDD DiskType."""
+    """SSD DiskType."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

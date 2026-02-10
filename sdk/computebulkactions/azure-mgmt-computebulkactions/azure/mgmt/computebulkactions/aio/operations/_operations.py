@@ -54,7 +54,7 @@ from ...operations._operations import (
     build_bulk_actions_virtual_machines_get_operation_status_request,
     build_operations_list_request,
 )
-from .._configuration import ComputeBulkActionsClientConfiguration
+from .._configuration import ComputeBulkActionsMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -68,14 +68,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computebulkactions.aio.ComputeBulkActionsClient`'s
+        :class:`~azure.mgmt.computebulkactions.aio.ComputeBulkActionsMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeBulkActionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -173,14 +175,16 @@ class BulkActionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.computebulkactions.aio.ComputeBulkActionsClient`'s
+        :class:`~azure.mgmt.computebulkactions.aio.ComputeBulkActionsMgmtClient`'s
         :attr:`bulk_actions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ComputeBulkActionsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ComputeBulkActionsMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
