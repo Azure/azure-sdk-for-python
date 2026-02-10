@@ -6,24 +6,11 @@
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
 from typing import Optional
+from xml.etree.ElementTree import Element
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
 from azure.core.pipeline.policies import UserAgentPolicy
-from xml.etree.ElementTree import Element
-
-
-def _get_xml_text(value):
-    """Extract text from an XML Element if needed, otherwise return value as-is.
-
-    This is needed because the generated code's XML deserialization may return
-    XML Element objects instead of text content for some fields.
-    """
-    if value is None:
-        return None
-    if isinstance(value, Element):
-        return value.text
-    return value
 
 
 def get_enum_value(value):
