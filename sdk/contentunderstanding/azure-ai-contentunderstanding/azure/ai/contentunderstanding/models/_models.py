@@ -1187,18 +1187,42 @@ class ContentSpan(_Model):
 
 
 class ContentUnderstandingDefaults(_Model):
-    """default settings for this Content Understanding resource.
+    """Default settings for this Content Understanding resource. Can include multiple kinds of
+    settings; for example, mapping required large language models to model deployment names in
+    Microsoft Foundry (see modelDeployments).
 
-    :ivar model_deployments: Mapping of model names to deployments. Ex. { "gpt-4.1":
-     "myGpt41Deployment", "text-embedding-3-large": "myTextEmbedding3LargeDeployment" }. Required.
+    :ivar model_deployments: Dictionary of supported large language model (LLM) name (key) to your
+     model deployment name in Microsoft Foundry (value). Both keys and values are strings. Prebuilt
+     and custom analyzers that use large language models require model deployment names in Microsoft
+     Foundry for their supported models. The mapping applies to all analyzers you intend to use:
+     ensure each supported model for those analyzers is mapped. To get supported model names for a
+     given analyzer, call Get Analyzer (GET /analyzers/{analyzerId}); the response includes
+     supportedModels. Deploy the required models in your Microsoft Foundry resource (portal or API);
+     each deployment has a model name and a model deployment name. Call Update Defaults (PATCH
+     /defaults) with this dictionary to map each supported LLM name to your model deployment name in
+     Microsoft Foundry. To get more information for a quickstart for REST API, see
+     `https://aka.ms/cudoc-quickstart-rest <https://aka.ms/cudoc-quickstart-rest>`_. Example: {
+     "gpt-4.1": "myGpt41Deployment", "gpt-4.1-mini": "myGpt41MiniDeployment",
+     "text-embedding-3-large": "myEmbeddingDeployment" }. Required.
     :vartype model_deployments: dict[str, str]
     """
 
     model_deployments: dict[str, str] = rest_field(
         name="modelDeployments", visibility=["read", "create", "update"]
     )
-    """Mapping of model names to deployments. Ex. { \"gpt-4.1\": \"myGpt41Deployment\",
-     \"text-embedding-3-large\": \"myTextEmbedding3LargeDeployment\" }. Required."""
+    """Dictionary of supported large language model (LLM) name (key) to your model deployment name in
+     Microsoft Foundry (value). Both keys and values are strings. Prebuilt and custom analyzers that
+     use large language models require model deployment names in Microsoft Foundry for their
+     supported models. The mapping applies to all analyzers you intend to use: ensure each supported
+     model for those analyzers is mapped. To get supported model names for a given analyzer, call
+     Get Analyzer (GET /analyzers/{analyzerId}); the response includes supportedModels. Deploy the
+     required models in your Microsoft Foundry resource (portal or API); each deployment has a model
+     name and a model deployment name. Call Update Defaults (PATCH /defaults) with this dictionary
+     to map each supported LLM name to your model deployment name in Microsoft Foundry. To get more
+     information for a quickstart for REST API, see `https://aka.ms/cudoc-quickstart-rest
+     <https://aka.ms/cudoc-quickstart-rest>`_. Example: { \"gpt-4.1\": \"myGpt41Deployment\",
+     \"gpt-4.1-mini\": \"myGpt41MiniDeployment\", \"text-embedding-3-large\":
+     \"myEmbeddingDeployment\" }. Required."""
 
     @overload
     def __init__(
