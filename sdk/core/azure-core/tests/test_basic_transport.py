@@ -126,8 +126,7 @@ def test_http_request_serialization(http_request):
     assert serialized == expected
 
 
-@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-def test_url_join(http_request):
+def test_url_join():
     assert _urljoin("devstoreaccount1", "?testdir") == "devstoreaccount1?testdir"
     assert _urljoin("devstoreaccount1", "") == "devstoreaccount1"
     assert _urljoin("devstoreaccount1", "testdir/") == "devstoreaccount1/testdir/"
