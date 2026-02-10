@@ -1,4 +1,4 @@
--e ../../core/azure-core
+../../core/azure-core
 azure-identity~=1.17.0
 -e ../../../eng/tools/azure-sdk-tools
 azure-mgmt-servicebus~=8.0.0

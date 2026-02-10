@@ -42,7 +42,10 @@ from concurrent.futures import ThreadPoolExecutor
 try:
     import pyaudio
 except ImportError:
-    print("This sample requires pyaudio. Install with: pip install pyaudio")
+    print("This sample requires pyaudio. Install with:")
+    print("  Linux: sudo apt-get install -y portaudio19-dev libasound2-dev && pip install pyaudio")
+    print("  macOS: brew install portaudio && pip install pyaudio")
+    print("  Windows: pip install pyaudio")
     sys.exit(1)
 
 # Environment variable loading
@@ -707,7 +710,12 @@ if __name__ == "__main__":
         print("❌ Missing required dependencies:")
         for dep in missing_deps:
             print(f"  - {dep}")
-        print("\nInstall with: pip install azure-ai-voicelive pyaudio python-dotenv")
+        print("\nInstall with:")
+        print("  pip install azure-ai-voicelive python-dotenv")
+        print("  For PyAudio:")
+        print("    Linux: sudo apt-get install -y portaudio19-dev libasound2-dev && pip install pyaudio")
+        print("    macOS: brew install portaudio && pip install pyaudio")
+        print("    Windows: pip install pyaudio")
         sys.exit(1)
 
     # Check audio system
