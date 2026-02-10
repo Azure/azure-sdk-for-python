@@ -25,8 +25,8 @@ from ._models import ContainerPropertiesPaged, FilteredBlobPaged
 from .._blob_service_client_helpers import _parse_url
 from .._deserialize import service_properties_deserialize, service_stats_deserialize
 from .._encryption import StorageEncryptionMixin
-from .._generated.aio import AzureBlobStorage
-from .._generated.models import StorageServiceProperties, KeyInfo
+from .._generated.azure.storage.blobs.aio import AzureBlobStorage
+from .._generated.azure.storage.blobs.models import StorageServiceProperties, KeyInfo
 from .._models import BlobProperties, ContainerProperties, CorsRule
 from .._serialize import get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
@@ -135,7 +135,7 @@ class BlobServiceClient(  # type: ignore [misc]
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -701,7 +701,7 @@ class BlobServiceClient(  # type: ignore [misc]
         except AttributeError:
             kwargs['source_lease_id'] = lease
         try:
-            await renamed_container._client.container.rename(name, **kwargs)   # pylint: disable = protected-access
+            await renamed_container._client.container.rename(source_container_name=name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)

@@ -29,8 +29,8 @@ from ._container_client_helpers import (
 from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
-from ._generated import AzureBlobStorage
-from ._generated.models import SignedIdentifier
+from ._generated.azure.storage.blobs import AzureBlobStorage
+from ._generated.azure.storage.blobs.models import SignedIdentifier, SignedIdentifiers
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     BlobNamesPaged,
@@ -167,7 +167,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
+        return AzureBlobStorage(self.url, version=self._api_version, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
@@ -323,11 +323,12 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         timeout = kwargs.pop('timeout', None)
         headers.update(add_metadata_headers(metadata)) # type: ignore
         container_cpk_scope_info = get_container_cpk_scope_info(kwargs)
+        if container_cpk_scope_info:
+            kwargs.update(container_cpk_scope_info)
         try:
             return self._client.container.create( # type: ignore
                 timeout=timeout,
                 access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -367,7 +368,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 _pipeline=self._pipeline, _location_mode=self._location_mode, _hosts=self._hosts,
                 require_encryption=self.require_encryption, encryption_version=self.encryption_version,
                 key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
-            renamed_container._client.container.rename(self.container_name, **kwargs)   # pylint: disable = protected-access
+            renamed_container._client.container.rename(source_container_name=self.container_name, **kwargs)   # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -425,8 +426,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             self._client.container.delete(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **access_conditions,
+                **mod_conditions,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -539,7 +540,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             response = self._client.container.get_properties(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                **access_conditions,
                 cls=deserialize_container_properties,
                 **kwargs)
         except HttpResponseError as error:
@@ -630,8 +631,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             return self._client.container.set_metadata( # type: ignore
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **access_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
                 **kwargs)
@@ -704,14 +705,14 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         try:
             response, identifiers = self._client.container.get_access_policy(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
+                **access_conditions,
                 cls=return_headers_and_deserialized,
                 **kwargs)
         except HttpResponseError as error:
             process_storage_error(error)
         return {
             'public_access': response.get('blob_public_access'),
-            'signed_identifiers': identifiers or []
+            'signed_identifiers': identifiers.items_property or []
         }
 
     @distributed_trace
@@ -775,7 +776,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 value.start = serialize_iso(value.start)
                 value.expiry = serialize_iso(value.expiry)
             identifiers.append(SignedIdentifier(id=key, access_policy=value)) # type: ignore
-        signed_identifiers = identifiers # type: ignore
+        signed_identifiers = SignedIdentifiers(items_property=identifiers) # type: ignore
         lease = kwargs.pop('lease', None)
         mod_conditions = get_modify_conditions(kwargs)
         access_conditions = get_access_conditions(lease)
@@ -785,8 +786,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                 container_acl=signed_identifiers or None,
                 timeout=timeout,
                 access=public_access,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                **access_conditions,
+                **mod_conditions,
                 cls=return_response_headers,
                 **kwargs))
         except HttpResponseError as error:

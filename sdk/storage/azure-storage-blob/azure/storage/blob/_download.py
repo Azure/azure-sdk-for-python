@@ -15,6 +15,7 @@ from typing import (
     overload, Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
+from azure.core import MatchConditions
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
 
@@ -32,8 +33,8 @@ from ._encryption import (
 if TYPE_CHECKING:
     from codecs import IncrementalDecoder
     from ._encryption import _EncryptionData
-    from ._generated import AzureBlobStorage
-    from ._generated.operations import BlobOperations
+    from ._generated.azure.storage.blobs import AzureBlobStorage
+    from ._generated.azure.storage.blobs.operations import BlobOperations
     from ._models import BlobProperties
     from ._shared.models import StorageConfiguration
 
@@ -244,8 +245,9 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
 
             # This makes sure that if_match is set so that we can validate
             # that subsequent downloads are to an unmodified blob
-            if self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = response.properties.etag
+            if response.properties.etag and not self.request_options.get('etag'):
+                self.request_options['etag'] = response.properties.etag
+                self.request_options['match_condition'] = MatchConditions.IfNotModified
 
         return chunk_data, content_length
 
@@ -542,8 +544,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             except HttpResponseError:
                 pass
 
-        if not self._download_complete and self._request_options.get("modified_access_conditions"):
-            self._request_options["modified_access_conditions"].if_match = response.properties.etag
+        if not self._download_complete and response.properties.etag and not self._request_options.get('etag'):
+            self._request_options['etag'] = response.properties.etag
+            self._request_options['match_condition'] = MatchConditions.IfNotModified
 
         return response
 

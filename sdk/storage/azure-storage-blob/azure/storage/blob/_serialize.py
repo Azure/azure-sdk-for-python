@@ -12,7 +12,7 @@ except ImportError:
 
 from azure.core import MatchConditions
 
-from ._generated.models import (
+from ._generated.azure.storage.blobs.models import (
     ArrowConfiguration,
     BlobModifiedAccessConditions,
     BlobTag,
@@ -26,7 +26,8 @@ from ._generated.models import (
     QueryFormat,
     QueryFormatType,
     QuerySerialization,
-    SourceModifiedAccessConditions
+    SourceModifiedAccessConditions,
+    ParquetConfiguration
 )
 from ._models import ContainerEncryptionScope, DelimitedJsonDialect
 
@@ -95,50 +96,85 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> LeaseAccessConditions:
     try:
         lease_id = lease.id # type: ignore
     except AttributeError:
         lease_id = lease # type: ignore
-    return LeaseAccessConditions(lease_id=lease_id) if lease_id else None
+    if lease_id:
+        return LeaseAccessConditions(lease_id=lease_id)
+    return LeaseAccessConditions()
 
 
 def get_modify_conditions(kwargs: Dict[str, Any]) -> ModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
-    return ModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
-        if_tags=kwargs.pop('if_tags_match_condition', None)
-    )
+    conditions: ModifiedAccessConditions = {}
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.get('etag', None)
+    match_condition = kwargs.get('match_condition', None)
+    if_tags = kwargs.pop('if_tags_match_condition', None)
+    # Call _get_match_headers to validate etag/match_condition combinations
+    _get_match_headers(kwargs, 'match_condition', 'etag')
+    if if_modified_since is not None:
+        conditions['if_modified_since'] = if_modified_since
+    if if_unmodified_since is not None:
+        conditions['if_unmodified_since'] = if_unmodified_since
+    if etag is not None:
+        conditions['etag'] = etag
+    if match_condition is not None:
+        conditions['match_condition'] = match_condition
+    if if_tags is not None:
+        conditions['if_tags'] = if_tags
+    return conditions
 
 
 def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'match_condition', 'etag')
-    return BlobModifiedAccessConditions(
-        if_modified_since=kwargs.pop('if_modified_since', None),
-        if_unmodified_since=kwargs.pop('if_unmodified_since', None),
-        if_match=if_match or kwargs.pop('if_match', None),
-        if_none_match=if_none_match or kwargs.pop('if_none_match', None),
-    )
+    conditions: BlobModifiedAccessConditions = {}
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.pop('etag', None)
+    match_condition = kwargs.pop('match_condition', None)
+    # Call _get_match_headers to validate etag/match_condition combinations
+    _get_match_headers(kwargs, 'match_condition', 'etag')
+    if if_modified_since is not None:
+        conditions['if_modified_since'] = if_modified_since
+    if if_unmodified_since is not None:
+        conditions['if_unmodified_since'] = if_unmodified_since
+    if etag is not None:
+        conditions['etag'] = etag
+    if match_condition is not None:
+        conditions['match_condition'] = match_condition
+    return conditions
 
 
 def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
-    return SourceModifiedAccessConditions(
-        source_if_modified_since=kwargs.pop('source_if_modified_since', None),
-        source_if_unmodified_since=kwargs.pop('source_if_unmodified_since', None),
-        source_if_match=if_match or kwargs.pop('source_if_match', None),
-        source_if_none_match=if_none_match or kwargs.pop('source_if_none_match', None),
-        source_if_tags=kwargs.pop('source_if_tags_match_condition', None)
-    )
+    conditions: SourceModifiedAccessConditions = {}
+    source_if_modified_since = kwargs.pop('source_if_modified_since', None)
+    source_if_unmodified_since = kwargs.pop('source_if_unmodified_since', None)
+    source_etag = kwargs.pop('source_etag', None)
+    source_match_condition = kwargs.pop('source_match_condition', None)
+    source_if_tags = kwargs.pop('source_if_tags_match_condition', None)
+    # Call _get_match_headers to validate etag/match_condition combinations
+    _get_match_headers(kwargs, 'source_match_condition', 'source_etag')
+    if source_if_modified_since is not None:
+        conditions['source_if_modified_since'] = source_if_modified_since
+    if source_if_unmodified_since is not None:
+        conditions['source_if_unmodified_since'] = source_if_unmodified_since
+    # Convert source_etag + source_match_condition to source_if_match/source_if_none_match
+    if source_etag is not None and source_match_condition is not None:
+        if source_match_condition == MatchConditions.IfNotModified:
+            conditions['source_if_match'] = source_etag
+        elif source_match_condition == MatchConditions.IfModified:
+            conditions['source_if_none_match'] = source_etag
+    if source_if_tags is not None:
+        conditions['source_if_tags'] = source_if_tags
+    return conditions
 
 
-def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
+def get_cpk_scope_info(kwargs: Dict[str, Any]) -> CpkScopeInfo:
     if 'encryption_scope' in kwargs:
         return CpkScopeInfo(encryption_scope=kwargs.pop('encryption_scope'))
-    return None
+    return CpkScopeInfo()
 
 
 def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
@@ -197,7 +233,8 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
 
 def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
-        qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=' ')  #type: ignore [arg-type]
+        qq_format = QueryFormat(type=QueryFormatType.PARQUET,
+                                 parquet_text_configuration=ParquetConfiguration(' '))  #type: ignore [arg-type]
     elif isinstance(formater, DelimitedJsonDialect):
         json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
         qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
@@ -221,7 +258,7 @@ def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Option
         )
     elif isinstance(formater, list):
         arrow_serialization_settings = ArrowConfiguration(schema=formater)
-        qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)
+        qq_format = QueryFormat(type=QueryFormatType.ARROW, arrow_configuration=arrow_serialization_settings)
     elif not formater:
         return None
     else:

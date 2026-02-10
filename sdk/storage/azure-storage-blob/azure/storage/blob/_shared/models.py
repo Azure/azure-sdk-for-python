@@ -6,6 +6,7 @@
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
 from typing import Optional
+from xml.etree.ElementTree import Element
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
@@ -15,6 +16,9 @@ from azure.core.pipeline.policies import UserAgentPolicy
 def get_enum_value(value):
     if value is None or value in ["None", ""]:
         return None
+    # Handle XML Element objects (from generated code XML deserialization)
+    if isinstance(value, Element):
+        return value.text
     try:
         return value.value
     except AttributeError:

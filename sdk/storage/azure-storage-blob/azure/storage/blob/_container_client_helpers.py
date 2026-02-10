@@ -10,14 +10,13 @@ from urllib.parse import quote, urlparse
 from azure.core import MatchConditions
 from azure.core.pipeline.transport import HttpRequest
 from ._blob_client_helpers import _generic_delete_blob_options
-from ._generated import AzureBlobStorage
+from ._generated.azure.storage.blobs import AzureBlobStorage
 from ._models import BlobProperties
 from ._shared.base_client import parse_query
 
 if TYPE_CHECKING:
     from azure.storage.blob import RehydratePriority
     from urllib.parse import ParseResult
-    from ._generated.models import LeaseAccessConditions, ModifiedAccessConditions
     from ._models import PremiumPageBlobTier, StandardBlobTier
 
 
@@ -49,28 +48,27 @@ def _generate_delete_blobs_subrequest_options(
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     delete_snapshots: Optional[str] = None,
-    lease_access_conditions: Optional["LeaseAccessConditions"] = None,
-    modified_access_conditions: Optional["ModifiedAccessConditions"] = None,
     **kwargs
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
-    lease_id = None
-    if lease_access_conditions is not None:
-        lease_id = lease_access_conditions.lease_id
-    if_modified_since = None
-    if modified_access_conditions is not None:
-        if_modified_since = modified_access_conditions.if_modified_since
-    if_unmodified_since = None
-    if modified_access_conditions is not None:
-        if_unmodified_since = modified_access_conditions.if_unmodified_since
+    # Extract flat kwargs (from unpacked TypedDicts)
+    lease_id = kwargs.pop('lease_id', None)
+    if_modified_since = kwargs.pop('if_modified_since', None)
+    if_unmodified_since = kwargs.pop('if_unmodified_since', None)
+    etag = kwargs.pop('etag', None)
+    match_condition = kwargs.pop('match_condition', None)
+    if_tags = kwargs.pop('if_tags', None)
+
+    # Convert etag/match_condition to if_match/if_none_match headers
     if_match = None
-    if modified_access_conditions is not None:
-        if_match = modified_access_conditions.if_match
     if_none_match = None
-    if modified_access_conditions is not None:
-        if_none_match = modified_access_conditions.if_none_match
-    if_tags = None
-    if modified_access_conditions is not None:
-        if_tags = modified_access_conditions.if_tags
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = etag
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = '*'
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = etag
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = '*'
 
     # Construct parameters
     timeout = kwargs.pop('timeout', None)
@@ -176,7 +174,6 @@ def _generate_set_tiers_subrequest_options(
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     rehydrate_priority: Optional["RehydratePriority"] = None,
-    lease_access_conditions: Optional["LeaseAccessConditions"] = None,
     **kwargs: Any
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     if not tier:
@@ -184,10 +181,7 @@ def _generate_set_tiers_subrequest_options(
     if snapshot and version_id:
         raise ValueError("Snapshot and version_id cannot be set at the same time")
     if_tags = kwargs.pop('if_tags', None)
-
-    lease_id = None
-    if lease_access_conditions is not None:
-        lease_id = lease_access_conditions.lease_id
+    lease_id = kwargs.pop('lease_id', None)
 
     comp = "tier"
     timeout = kwargs.pop('timeout', None)
@@ -245,7 +239,7 @@ def _generate_set_tiers_options(
                 snapshot=blob.get('snapshot'),
                 version_id=blob.get('version_id'),
                 rehydrate_priority=rehydrate_priority or blob.get('rehydrate_priority'),
-                lease_access_conditions=blob.get('lease_id'),
+                lease_id=blob.get('lease_id'),
                 if_tags=if_tags or blob.get('if_tags_match_condition'),
                 timeout=timeout or blob.get('timeout')
             )

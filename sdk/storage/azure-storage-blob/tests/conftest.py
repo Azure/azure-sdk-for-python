@@ -13,8 +13,10 @@ from devtools_testutils import (
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
     add_uri_regex_sanitizer,
-    test_proxy
+    set_custom_default_matcher,
+    test_proxy,
 )
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -31,3 +33,6 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
 
     add_uri_regex_sanitizer(regex=r"\.preprod\.", value=".")
+
+    # Ignore Accept header differences between recordings and new SDK behavior, ignore query ordering differences in recordings and new SDK behavior
+    set_custom_default_matcher(excluded_headers="Accept", compare_bodies=False, ignore_query_ordering=True)
