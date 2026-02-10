@@ -24,7 +24,7 @@ async def test():
 # Exceptions that are raised within the request are automatically captured
 @app.get("/exception")
 async def exception():
-    raise Exception("Hit an exception")
+    raise Exception("Hit an exception")  # pylint: disable=broad-exception-raised
 
 
 # Set the OTEL_PYTHON_EXCLUDED_URLS environment variable to "http://127.0.0.1:8000/exclude"
