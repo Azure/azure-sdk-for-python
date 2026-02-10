@@ -53,7 +53,6 @@ class TestNotApplicableAggregation:
         # Mean: (1 + 0 + 1) / 3 ≈ 0.67
         assert abs(result_df["tool_selection"].mean() - 2.0 / 3) < 0.0001
 
-
     def test_aggregate_metrics_with_not_applicable(self):
         """Test complete aggregation pipeline with not-applicable scores."""
         df = pd.DataFrame(
