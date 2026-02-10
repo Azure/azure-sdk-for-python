@@ -13,5 +13,9 @@ filelock
 promptflow-core>=1.17.1
 promptflow-devkit>=1.17.1
 # Note: redteam extra is installed separately via dev_requirements_redteam.txt
-# to avoid pillow version conflicts with promptflow-devkit
+# to avoid pillow version conflicts with promptflow-devkit (pillow<=11.3.0 vs >=12.1.0)
+# TODO: Once eng sys delivers InjectedPackages support for conflicting deps,
+# move promptflow-devkit into InjectedPackages on standard matrix entries in
+# platform-matrix.json, and add a redteam matrix entry with
+# InjectedPackages: ../azure-ai-evaluation[redteam] (without promptflow-devkit).
 ../azure-ai-evaluation

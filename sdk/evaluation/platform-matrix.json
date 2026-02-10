@@ -60,5 +60,6 @@
         }
       }
     }
-  ]
+  ],
+  "_comment_todo": "TODO: Add redteam CI job once eng sys delivers InjectedPackages support for conflicting deps. Add an include entry like: { Config: { redteam_Ubuntu2404_310: { OSVmImage: env:LINUXVMIMAGE, Pool: env:LINUXPOOL, PythonVersion: 3.10, CoverageArg: --disablecov, TestSamples: false, InjectedPackages: ../azure-ai-evaluation[redteam], UnsupportedToxEnvironments: whl,sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples } } }. Will also need to move promptflow-devkit from dev_requirements.txt into InjectedPackages on all standard matrix entries."
 }
