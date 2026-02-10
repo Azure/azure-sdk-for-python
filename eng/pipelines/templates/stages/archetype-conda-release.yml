@@ -43,32 +43,32 @@ stages:
                     workingDirectory: $(Pipeline.Workspace)
                     displayName: Output Visible Conda Artifacts
 
-                  - script: |
-                      set -e
-                      python -m pip install anaconda-client
-                    displayName: Install anaconda-client
+                  # - script: |
+                  #     set -e
+                  #     python -m pip install anaconda-client
+                  #   displayName: Install anaconda-client
 
-                  - pwsh: |
-                      $packages = Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/noarch" -Filter "*.conda"
-                      foreach ($package in $packages) {
-                        Write-Host "Uploading: $($package.FullName)"
-                        $success = $false
-                        for ($attempt = 1; $attempt -le 3; $attempt++) {
-                          anaconda upload --user $env:CONDA_USERNAME --skip-existing --private $package.FullName
-                          if ($LASTEXITCODE -eq 0) {
-                            $success = $true
-                            break
-                          }
-                          Write-Host "Attempt $attempt failed, retrying..."
-                          Start-Sleep -Seconds 5
-                        }
-                        if (-not $success) {
-                          Write-Error "Failed to upload $($package.Name) after 3 attempts"
-                          exit 1
-                        }
-                      }
-                      Write-Host "Uploaded all conda packages to Anaconda"
-                    displayName: 'Publish all Conda packages to Anaconda'
-                    env:
-                      ANACONDA_API_TOKEN: $(conda-release-apikey)
-                      CONDA_USERNAME: Microsoft
+                  # - pwsh: |
+                  #     $packages = Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/noarch" -Filter "*.conda"
+                  #     foreach ($package in $packages) {
+                  #       Write-Host "Uploading: $($package.FullName)"
+                  #       $success = $false
+                  #       for ($attempt = 1; $attempt -le 3; $attempt++) {
+                  #         anaconda upload --user $env:CONDA_USERNAME --skip-existing --private $package.FullName
+                  #         if ($LASTEXITCODE -eq 0) {
+                  #           $success = $true
+                  #           break
+                  #         }
+                  #         Write-Host "Attempt $attempt failed, retrying..."
+                  #         Start-Sleep -Seconds 5
+                  #       }
+                  #       if (-not $success) {
+                  #         Write-Error "Failed to upload $($package.Name) after 3 attempts"
+                  #         exit 1
+                  #       }
+                  #     }
+                  #     Write-Host "Uploaded all conda packages to Anaconda"
+                  #   displayName: 'Publish all Conda packages to Anaconda'
+                  #   env:
+                  #     ANACONDA_API_TOKEN: $(conda-release-apikey)
+                  #     CONDA_USERNAME: Microsoft
