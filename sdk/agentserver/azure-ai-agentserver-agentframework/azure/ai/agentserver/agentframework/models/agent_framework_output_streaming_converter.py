@@ -458,6 +458,7 @@ class AgentFrameworkOutputStreamingConverter:
             "status": status,
             "created_at": self._response_created_at,
             "conversation": self._context.get_conversation_object(),
+            "output": [] # ensure output is always set
         }
 
         # set output even if _completed_output_items is empty, never leave the output as null
