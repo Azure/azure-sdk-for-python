@@ -25,7 +25,7 @@ class TestJsonUtils(unittest.TestCase):
 
     def test_remove_json_comments_single_line(self):
         # Test removing single line comments
-        input_json = """{ 
+        input_json = """{
             "key": "value" // this is a comment
         }"""
         result = remove_json_comments(input_json)

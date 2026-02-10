@@ -8,13 +8,13 @@ from unittest import mock
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from requests import ReadTimeout
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
     _format_storage_telemetry_item,
     _get_auth_policy,
     _get_authentication_credential,
+    _is_sampling_rejection,
     BaseExporter,
     ExportResult,
     _get_storage_directory,
@@ -25,7 +25,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
-from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
@@ -34,9 +33,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
-    RetryCode,
-    _UNKNOWN,
-    _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -75,12 +71,12 @@ def clean_folder(folder):
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
-# pylint: disable=W0212
-# pylint: disable=R0904
+# pylint: disable=W0212, R0915
+# pylint: disable=R0904, C0301
 class TestBaseExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -731,6 +727,97 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
         exporter.storage.put.assert_not_called()
 
+    def test_transmission_206_sampling_rejection_not_retried(self):
+        """Test that items rejected due to ingestion sampling are not retried or persisted."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+            TelemetryItem(name="Test3", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(
+                items_received=3,
+                items_accepted=0,
+                errors=[
+                    # This item should NOT be retried due to sampling rejection
+                    TelemetryErrorDetails(
+                        index=0,
+                        status_code=500,
+                        message="Telemetry sampled out.",
+                    ),
+                    # This item should NOT be retried due to sampling rejection
+                    TelemetryErrorDetails(
+                        index=1,
+                        status_code=500,
+                        message="Telemetry sampled out.",
+                    ),
+                    # This item should be retried (normal timeout error)
+                    TelemetryErrorDetails(
+                        index=2,
+                        status_code=408,
+                        message="Timeout error",
+                    ),
+                ],
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+        # Should still attempt storage for the non-sampling rejection error
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # Storage should be called only for the non-sampling error (index=2)
+        exporter.storage.put.assert_called_once()
+        # Verify only one envelope was stored (the one with non-sampling error)
+        stored_envelopes = exporter.storage.put.call_args[0][0]
+        self.assertEqual(len(stored_envelopes), 1)
+
+    def test_transmission_206_all_sampling_rejections_no_storage(self):
+        """Test that when all items are rejected due to sampling, nothing is persisted."""
+        exporter = BaseExporter(disable_offline_storage=True)
+        exporter.storage = mock.Mock()
+        custom_envelopes_to_export = [
+            TelemetryItem(name="Test1", time=datetime.now()),
+            TelemetryItem(name="Test2", time=datetime.now()),
+        ]
+        with mock.patch.object(AzureMonitorClient, "track") as post:
+            post.return_value = TrackResponse(
+                items_received=2,
+                items_accepted=0,
+                errors=[
+                    TelemetryErrorDetails(
+                        index=0,
+                        status_code=500,
+                        message="Telemetry sampled out.",
+                    ),
+                    TelemetryErrorDetails(
+                        index=1,
+                        status_code=500,
+                        message="Telemetry sampled out.",
+                    ),
+                ],
+            )
+            result = exporter._transmit(custom_envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+        # Storage should NOT be called since all errors are sampling rejections
+        exporter.storage.put.assert_not_called()
+
+    def test_is_sampling_rejection_true(self):
+        """Test that _is_sampling_rejection correctly identifies sampling rejection messages."""
+        self.assertTrue(_is_sampling_rejection("Telemetry sampled out."))
+        self.assertTrue(_is_sampling_rejection("telemetry sampled out."))
+        self.assertTrue(_is_sampling_rejection("TELEMETRY SAMPLED OUT."))
+        self.assertTrue(_is_sampling_rejection("Telemetry Sampled Out."))
+
+    def test_is_sampling_rejection_false(self):
+        """Test that _is_sampling_rejection returns False for non-sampling messages."""
+        self.assertFalse(_is_sampling_rejection("Internal server error"))
+        self.assertFalse(_is_sampling_rejection("Bad request"))
+        self.assertFalse(_is_sampling_rejection("Timeout error"))
+        self.assertFalse(_is_sampling_rejection(""))
+        self.assertFalse(_is_sampling_rejection(None))
+        # Similar messages that don't match exactly should return False
+        self.assertFalse(_is_sampling_rejection("Telemetry sampled out"))  # Missing period
+        self.assertFalse(_is_sampling_rejection("Sampled out"))
+
     def test_transmission_400(self):
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
@@ -1168,7 +1255,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_get_auth_policy_invalid_credential(self):
         class InvalidTestCredential:
-            def invalid_get_token():
+            def invalid_get_token(self):
                 return "TEST_TOKEN"
 
         self.assertRaises(
@@ -1177,7 +1264,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_get_auth_policy_audience(self):
         class TestCredential:
-            def get_token():
+            def get_token(self):
                 return "TEST_TOKEN"
 
         credential = TestCredential()
@@ -1283,10 +1370,10 @@ def validate_telemetry_item(item1, item2):
 
 
 class MockResponse:
-    def __init__(self, status_code, text, headers={}, reason="test", content="{}"):
+    def __init__(self, status_code, text, headers=None, reason="test", content="{}"):
         self.status_code = status_code
         self.text = text
-        self.headers = headers
+        self.headers = headers or {}
         self.reason = reason
         self.content = content
         self.raw = MockRaw()
