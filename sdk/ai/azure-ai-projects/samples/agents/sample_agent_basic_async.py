@@ -62,7 +62,6 @@ async def main() -> None:
         response = await openai_client.responses.create(
             conversation=conversation.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",
         )
         print(f"Response output: {response.output_text}")
 
@@ -75,7 +74,6 @@ async def main() -> None:
         response = await openai_client.responses.create(
             conversation=conversation.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",
         )
         print(f"Response output: {response.output_text}")
 

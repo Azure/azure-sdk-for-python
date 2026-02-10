@@ -60,7 +60,6 @@ with (
     with openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
         stream=True,
     ) as response_stream_events:
 

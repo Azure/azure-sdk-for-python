@@ -82,7 +82,7 @@ with (
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    continuous_eval_rule = project_client.evaluation_rules.create_or_update(
+    continuous_eval_rule = project_client.beta.evaluation_rules.create_or_update(
         id="my-continuous-eval-rule",
         evaluation_rule=EvaluationRule(
             display_name="My Continuous Eval Rule",
@@ -107,7 +107,6 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
     )
     print(f"Response output: {response.output_text}")
 
@@ -124,7 +123,6 @@ with (
         response = openai_client.responses.create(
             conversation=conversation.id,
             extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",
         )
         print(f"Response output: {response.output_text}")
 

@@ -21,12 +21,12 @@ from ...models import (
     AsyncUpdateMemoriesLROPoller,
     AsyncUpdateMemoriesLROPollingMethod,
 )
-from ._operations import JSON, _Unset, ClsType, MemoryStoresOperations as GenerateMemoryStoresOperations
+from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from ..._validation import api_version_validation
 from ..._utils.model_base import _deserialize
 
 
-class MemoryStoresOperations(GenerateMemoryStoresOperations):
+class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
     @overload
     async def begin_update_memories(
@@ -45,9 +45,6 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword foundry_features: A feature flag opt-in required when using preview operations or
          modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
         :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW

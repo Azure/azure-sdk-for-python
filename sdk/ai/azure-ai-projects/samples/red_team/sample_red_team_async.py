@@ -69,7 +69,7 @@ async def sample_red_team_async() -> None:
         )
 
         # Create and run the Red Team scan
-        red_team_response = await project_client.red_teams.create(
+        red_team_response = await project_client.beta.red_teams.create(
             red_team=red_team,
             headers={
                 "model-endpoint": model_endpoint,
@@ -80,11 +80,11 @@ async def sample_red_team_async() -> None:
 
         print("Getting Red Team scan details")
         # Use the name returned by the create operation for the get call
-        get_red_team_response = await project_client.red_teams.get(name=red_team_response.name)
+        get_red_team_response = await project_client.beta.red_teams.get(name=red_team_response.name)
         print(f"Red Team scan status: {get_red_team_response.status}")
 
         print("Listing all Red Team scans")
-        async for scan in project_client.red_teams.list():
+        async for scan in project_client.beta.red_teams.list():
             print(f"Found scan: {scan.name}, Status: {scan.status}")
         # [END red_team_sample]
 

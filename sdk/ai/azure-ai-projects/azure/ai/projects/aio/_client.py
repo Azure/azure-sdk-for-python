@@ -18,26 +18,22 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import AIProjectClientConfiguration
 from .operations import (
     AgentsOperations,
+    BetaOperations,
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
-    EvaluationRulesOperations,
-    EvaluationTaxonomiesOperations,
-    EvaluatorsOperations,
     IndexesOperations,
-    InsightsOperations,
-    MemoryStoresOperations,
-    RedTeamsOperations,
-    SchedulesOperations,
 )
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIProjectClient:  # pylint: disable=too-many-instance-attributes
+class AIProjectClient:
     """AIProjectClient.
 
+    :ivar beta: BetaOperations operations
+    :vartype beta: azure.ai.projects.aio.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
     :ivar connections: ConnectionsOperations operations
@@ -46,22 +42,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
-    :ivar evaluation_taxonomies: EvaluationTaxonomiesOperations operations
-    :vartype evaluation_taxonomies: azure.ai.projects.aio.operations.EvaluationTaxonomiesOperations
-    :ivar evaluation_rules: EvaluationRulesOperations operations
-    :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
-    :ivar evaluators: EvaluatorsOperations operations
-    :vartype evaluators: azure.ai.projects.aio.operations.EvaluatorsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
-    :ivar insights: InsightsOperations operations
-    :vartype insights: azure.ai.projects.aio.operations.InsightsOperations
-    :ivar memory_stores: MemoryStoresOperations operations
-    :vartype memory_stores: azure.ai.projects.aio.operations.MemoryStoresOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.aio.operations.RedTeamsOperations
-    :ivar schedules: SchedulesOperations operations
-    :vartype schedules: azure.ai.projects.aio.operations.SchedulesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -101,22 +83,12 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
+        self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluation_taxonomies = EvaluationTaxonomiesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.evaluation_rules = EvaluationRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.evaluators = EvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.insights = InsightsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.memory_stores = MemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.red_teams = RedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

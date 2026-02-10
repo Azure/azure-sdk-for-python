@@ -57,7 +57,7 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        project_client.memory_stores.delete(
+        project_client.beta.memory_stores.delete(
             memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
         print(f"Memory store `{memory_store_name}` deleted")
@@ -75,7 +75,7 @@ with (
         embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
         options=options,
     )
-    memory_store = project_client.memory_stores.create(
+    memory_store = project_client.beta.memory_stores.create(
         name=memory_store_name,
         description="Example memory store for conversations",
         definition=definition,
@@ -91,7 +91,7 @@ with (
     user_message = EasyInputMessage(
         role="user", content="I prefer dark roast coffee and usually drink it in the morning"
     )
-    update_poller = project_client.memory_stores.begin_update_memories(
+    update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
         items=[user_message],  # Pass conversation items that you want to add to memory
@@ -102,7 +102,7 @@ with (
 
     # Extend the previous update with another update and more messages
     new_message = EasyInputMessage(role="user", content="I also like cappuccinos in the afternoon")
-    new_update_poller = project_client.memory_stores.begin_update_memories(
+    new_update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
         items=[new_message],
@@ -130,7 +130,7 @@ with (
 
     # Retrieve memories from the memory store
     query_message = EasyInputMessage(role="user", content="What are my morning coffee preferences?")
-    search_response = project_client.memory_stores.search_memories(
+    search_response = project_client.beta.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,
         items=[query_message],
@@ -146,7 +146,7 @@ with (
         role="assistant", content="You previously indicated a preference for dark roast coffee in the morning."
     )
     followup_query = EasyInputMessage(role="user", content="What about afternoon?")
-    followup_search_response = project_client.memory_stores.search_memories(
+    followup_search_response = project_client.beta.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,
         items=[agent_message, followup_query],
@@ -159,13 +159,13 @@ with (
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Delete memories for the current scope
-    project_client.memory_stores.delete_scope(
+    project_client.beta.memory_stores.delete_scope(
         name=memory_store.name, scope=scope, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
     )
     print(f"Deleted memories for scope '{scope}'")
 
     # Delete memory store
-    project_client.memory_stores.delete(
+    project_client.beta.memory_stores.delete(
         memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
     )
     print(f"Deleted memory store `{memory_store.name}`")

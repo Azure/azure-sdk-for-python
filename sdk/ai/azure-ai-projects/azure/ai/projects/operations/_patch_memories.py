@@ -21,12 +21,12 @@ from ..models import (
     UpdateMemoriesLROPoller,
     UpdateMemoriesLROPollingMethod,
 )
-from ._operations import JSON, _Unset, ClsType, MemoryStoresOperations as GenerateMemoryStoresOperations
+from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
 from .._utils.model_base import _deserialize
 
 
-class MemoryStoresOperations(GenerateMemoryStoresOperations):
+class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
     @overload
     def begin_update_memories(

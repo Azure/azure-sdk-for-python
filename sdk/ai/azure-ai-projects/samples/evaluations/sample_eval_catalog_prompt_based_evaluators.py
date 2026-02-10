@@ -85,7 +85,7 @@ with (
 ):
 
     print("Creating a single evaluator version - Prompt based (json style)")
-    prompt_evaluator = project_client.evaluators.create_version(
+    prompt_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_prompt",
         evaluator_version={
             "name": "my_custom_evaluator_prompt",
@@ -266,7 +266,7 @@ with (
         print("Waiting for eval run to complete...")
 
     print("Deleting the created evaluator version")
-    project_client.evaluators.delete_version(
+    project_client.beta.evaluators.delete_version(
         name=prompt_evaluator.name,
         version=prompt_evaluator.version,
         foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW,
