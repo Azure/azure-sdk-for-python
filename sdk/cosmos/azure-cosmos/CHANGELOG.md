@@ -8,6 +8,7 @@
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
+* Renamed `availability_strategy_config` introduced in 4.15.0b1 to `availability_strategy` for both sync and async clients. See [PR 45086](https://github.com/Azure/azure-sdk-for-python/pull/45086).
 
 ### 4.14.6 (2026-02-02)
 
