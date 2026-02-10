@@ -32,8 +32,8 @@ from ._encryption import (
 if TYPE_CHECKING:
     from codecs import IncrementalDecoder
     from ._encryption import _EncryptionData
-    from ._generated import AzureBlobStorage
-    from ._generated.operations import BlobOperations
+    from ._generated.azure.storage.blobs import AzureBlobStorage
+    from ._generated.azure.storage.blobs._operations import _BlobClientOperationsMixin as BlobOperations
     from ._models import BlobProperties
     from ._shared.models import StorageConfiguration
 

@@ -191,7 +191,7 @@ def _extract_blob_modified_access_conditions(
 def extract_parameter_groups(kwargs: dict[str, Any]) -> None:
     """
     Extract all parameter group objects from kwargs and flatten their fields.
-    
+
     This function supports backward compatibility with the old API that accepted
     parameter group objects like BlobHTTPHeaders, LeaseAccessConditions, etc.
     """
@@ -248,40 +248,48 @@ class _ParameterGroupExtractionMixin:
         attr = super().__getattribute__(name)
         # Only wrap public methods (not private/magic and must be callable)
         if not name.startswith("_") and callable(attr):
+
             def wrapper(*args, **kwargs):
                 extract_parameter_groups(kwargs)
                 return attr(*args, **kwargs)
+
             return wrapper
         return attr
 
 
 class _ServiceClientOperationsMixin(_ParameterGroupExtractionMixin, _ServiceClientOperationsMixinGenerated):
     """Wrapper for ServiceClient operations with parameter group support."""
+
     pass
 
 
 class _ContainerClientOperationsMixin(_ParameterGroupExtractionMixin, _ContainerClientOperationsMixinGenerated):
     """Wrapper for ContainerClient operations with parameter group support."""
+
     pass
 
 
 class _BlobClientOperationsMixin(_ParameterGroupExtractionMixin, _BlobClientOperationsMixinGenerated):
     """Wrapper for BlobClient operations with parameter group support."""
+
     pass
 
 
 class _PageBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _PageBlobClientOperationsMixinGenerated):
     """Wrapper for PageBlobClient operations with parameter group support."""
+
     pass
 
 
 class _AppendBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _AppendBlobClientOperationsMixinGenerated):
     """Wrapper for AppendBlobClient operations with parameter group support."""
+
     pass
 
 
 class _BlockBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _BlockBlobClientOperationsMixinGenerated):
     """Wrapper for BlockBlobClient operations with parameter group support."""
+
     pass
 
 

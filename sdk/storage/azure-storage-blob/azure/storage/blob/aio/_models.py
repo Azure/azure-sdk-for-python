@@ -11,7 +11,7 @@ from azure.core.async_paging import AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 
 from .._deserialize import parse_tags
-from .._generated.models import FilterBlobItem
+from .._generated.azure.storage.blobs.models import FilterBlobItem
 from .._models import ContainerProperties, FilteredBlob, parse_page_list
 from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
 

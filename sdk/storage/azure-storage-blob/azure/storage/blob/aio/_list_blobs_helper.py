@@ -16,7 +16,7 @@ from .._deserialize import (
     load_xml_int,
     load_xml_string
 )
-from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
+from .._generated.azure.storage.blobs.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
 from .._models import BlobProperties
 from .._shared.models import DictMixin
 from .._shared.response_handlers import (
