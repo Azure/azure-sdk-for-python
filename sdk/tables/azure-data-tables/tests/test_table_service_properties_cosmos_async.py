@@ -5,6 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from packaging.version import Version
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase
@@ -12,6 +13,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 
 from azure.data.tables import TableAnalyticsLogging, TableMetrics, TableRetentionPolicy, TableCorsRule
 from azure.data.tables.aio import TableServiceClient
+from azure.core import VERSION as core_version
 from azure.core.exceptions import HttpResponseError
 
 from _shared.asynctestcase import AsyncTableTestCase
@@ -71,15 +73,18 @@ class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTes
         assert ("Server failed to authenticate the request") in str(exc.value)
         assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(HttpResponseError) as exc:
-            await tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
-        assert ("Server failed to authenticate the request") in str(exc.value)
-        assert ("Please check your account URL.") in str(exc.value)
+        # Azure Core 1.38.1 introduced a change to URL formatting which can cause recording mismatches in
+        # mindependency checks.
+        if Version(core_version) >= Version("1.38.1"):
+            with pytest.raises(HttpResponseError) as exc:
+                await tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
+            assert ("Server failed to authenticate the request") in str(exc.value)
+            assert ("Please check your account URL.") in str(exc.value)
 
-        with pytest.raises(HttpResponseError) as exc:
-            await tsc.get_service_properties()
-        assert ("Server failed to authenticate the request") in str(exc.value)
-        assert ("Please check your account URL.") in str(exc.value)
+            with pytest.raises(HttpResponseError) as exc:
+                await tsc.get_service_properties()
+            assert ("Server failed to authenticate the request") in str(exc.value)
+            assert ("Please check your account URL.") in str(exc.value)
 
         with pytest.raises(HttpResponseError) as exc:
             await tsc.delete_table(table_name)
