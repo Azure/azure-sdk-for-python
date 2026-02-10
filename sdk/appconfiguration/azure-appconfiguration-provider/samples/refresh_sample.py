@@ -3,7 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.appconfiguration.provider import load, WatchKey
+import os
+import time
+from sample_utilities import get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
@@ -12,6 +14,7 @@ from sample_utilities import get_client_modifications
 import os
 import time
 import random
+from azure.appconfiguration.provider import load, WatchKey
 
 kwargs = get_client_modifications()
 connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
@@ -24,14 +27,15 @@ configuration_setting = ConfigurationSetting(key="message", value="Hello World!"
 client.set_configuration_setting(configuration_setting=configuration_setting)
 
 
-def my_callback_on_fail(error):
+def my_callback_on_fail(_):
     print("Refresh failed!")
 
 
 rand = random.random()
 watch_key = WatchKey("message" + str(rand))
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message changes
+# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
+# changes
 config = load(
     connection_string=connection_string,
     refresh_on=[watch_key],

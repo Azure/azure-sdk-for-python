@@ -5,6 +5,7 @@
 import abc
 import base64
 import json
+import logging
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
@@ -13,7 +14,7 @@ from msal import TokenCache
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.exceptions import ClientAuthenticationError
 from .utils import get_default_authority, normalize_authority, resolve_tenant
@@ -32,6 +33,8 @@ if TYPE_CHECKING:
 
 JWT_BEARER_ASSERTION = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"
 
+_LOGGER = logging.getLogger(__name__)
+
 
 class AadClientBase(abc.ABC):
     _POST = ["POST"]
@@ -45,7 +48,7 @@ class AadClientBase(abc.ABC):
         cae_cache: Optional[TokenCache] = None,
         *,
         additionally_allowed_tenants: Optional[List[str]] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._authority = normalize_authority(authority) if authority else get_default_authority()
 
@@ -91,14 +94,25 @@ class AadClientBase(abc.ABC):
         )
 
         cache = self._get_cache(**kwargs)
+        now = int(time.time())
         for token in cache.search(
             TokenCache.CredentialType.ACCESS_TOKEN,
             target=list(scopes),
             query={"client_id": self._client_id, "realm": tenant},
         ):
             expires_on = int(token["expires_on"])
-            if expires_on > int(time.time()):
+            if expires_on > now:
                 refresh_on = int(token["refresh_on"]) if "refresh_on" in token else None
+                expires_in = expires_on - now
+                refresh_on_msg = f", refresh in {refresh_on - now}s" if refresh_on else ""
+                _LOGGER.debug(
+                    "Access token found in cache for scopes %s (tenant: %s, expires in %ss%s, cache ID: %s)",
+                    list(scopes),
+                    tenant,
+                    expires_in,
+                    refresh_on_msg,
+                    id(cache),
+                )
                 return AccessTokenInfo(
                     token["secret"], expires_on, token_type=token.get("token_type", "Bearer"), refresh_on=refresh_on
                 )
@@ -301,7 +315,7 @@ class AadClientBase(abc.ABC):
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         user_assertion: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> HttpRequest:
         data = {
             "assertion": user_assertion,
@@ -356,7 +370,7 @@ class AadClientBase(abc.ABC):
         scopes: Iterable[str],
         client_credential: Union[str, AadClientCertificate, Dict[str, Any]],
         refresh_token: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> HttpRequest:
         data = {
             "grant_type": "refresh_token",
