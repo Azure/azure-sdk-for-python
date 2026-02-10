@@ -178,7 +178,9 @@ class _GlobalEndpointManager(object): # pylint: disable=too-many-instance-attrib
                     # in background
                     self.refresh_task = asyncio.create_task(self._refresh_database_account_and_health())
                 else:
-                    if not self._aenter_used:
+                    # Fetch database account if not provided via async with pattern OR if explicitly None
+                    # This ensures callers can pass None and still get correct behavior
+                    if not self._aenter_used or database_account is None:
                         database_account = await self._GetDatabaseAccount(**kwargs)
                     self.location_cache.perform_on_database_account_read(database_account)
                     # this will perform only calls to check endpoint health

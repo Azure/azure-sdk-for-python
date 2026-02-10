@@ -8,6 +8,15 @@ import os
 import json
 import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_CHAT,
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_CHAT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+    _set_use_simple_tool_format,
+    RESPONSES_PROVIDER,
+)
 from azure.ai.projects.models import FunctionTool, PromptAgentDefinition
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
@@ -31,12 +40,14 @@ _utils._span_impl_type = settings.tracing_implementation()
 class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with real endpoints (async)."""
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_non_streaming_with_content_recording(self, **kwargs):
-        """Test asynchronous non-streaming responses with content recording enabled."""
+    async def _test_async_non_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous non-streaming responses with content recording.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -71,16 +82,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -88,37 +99,61 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events (only in events mode)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "user",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_streaming_with_content_recording(self, **kwargs):
-        """Test asynchronous streaming responses with content recording enabled."""
+    async def test_async_non_streaming_with_content_recording_events(self, **kwargs):
+        """Test asynchronous non-streaming responses with content recording enabled (event-based messages)."""
+        await self._test_async_non_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_non_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test asynchronous non-streaming responses with content recording enabled (attribute-based messages)."""
+        await self._test_async_non_streaming_with_content_recording_impl(False, **kwargs)
+
+    async def _test_async_streaming_with_content_recording_impl(self, use_events, **kwargs):
+        """Implementation for testing asynchronous streaming responses with content recording.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -161,16 +196,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -178,30 +213,52 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
 
-        # Check span events (should include assistant message for streaming)
-        expected_events = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+        # Check span events (only in events mode)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "user",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short poem about AI"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        # "gen_ai.message.role": "assistant",  # Commented out - now in event content
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_streaming_with_content_recording_events(self, **kwargs):
+        """Test asynchronous streaming responses with content recording enabled (event-based messages)."""
+        await self._test_async_streaming_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_streaming_with_content_recording_attributes(self, **kwargs):
+        """Test asynchronous streaming responses with content recording enabled (attribute-based messages)."""
+        await self._test_async_streaming_with_content_recording_impl(False, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -243,7 +300,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "create_conversation"),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
         ]
@@ -256,6 +313,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_list_conversation_items_with_content_recording(self, **kwargs):
         """Test asynchronous list_conversation_items with content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -301,7 +359,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
             ("gen_ai.operation.name", "list_conversation_items"),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
         ]
@@ -313,7 +371,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.conversation.item",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     "gen_ai.conversation.item.id": "*",
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}]}]',
                 },
@@ -321,7 +379,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.conversation.item",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     "gen_ai.conversation.item.id": "*",
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -330,14 +388,19 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_function_tool_with_content_recording_streaming(self, **kwargs):
-        """Test asynchronous function tool usage with content recording enabled (streaming)."""
+    async def _test_async_function_tool_with_content_recording_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
+        """Implementation for testing asynchronous function tool usage with content recording (streaming).
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
+        """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -345,6 +408,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -447,16 +511,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -464,38 +528,50 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes_1.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span - user message and assistant tool call
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+        # Check events for first span - user message and assistant tool call (only in events mode)
+        if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*", "name": "get_weather", "arguments": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
 
         # Validate second span (tool output + final response)
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -503,39 +579,89 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            # Span2 has both input messages (tool output) and output messages (assistant response)
+            expected_attributes_2.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
         assert attributes_match == True
 
-        # Check events for second span - tool output and assistant response
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+        # Check events for second span - tool output and assistant response (only in events mode)
+        if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*", "result": {"temperature": "72°F", "condition": "sunny"}}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]'
 
-    @pytest.mark.usefixtures("instrument_without_content")
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_output_content,
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_function_tool_without_content_recording_streaming(self, **kwargs):
-        """Test asynchronous function tool usage without content recording (streaming)."""
+    async def test_async_function_tool_with_content_recording_streaming_events(self, **kwargs):
+        """Test asynchronous function tool usage with content recording enabled (streaming, event-based messages)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_with_content_recording_streaming_attributes(self, **kwargs):
+        """Test asynchronous function tool usage with content recording enabled (streaming, attribute-based messages)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_with_content_recording_streaming_simple_format_events(self, **kwargs):
+        """Test async function tool with content recording, streaming, simple OTEL format (event mode)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_with_content_recording_streaming_simple_format_attributes(self, **kwargs):
+        """Test async function tool with content recording, streaming, simple OTEL format (attribute mode)."""
+        await self._test_async_function_tool_with_content_recording_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    async def _test_async_function_tool_without_content_recording_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
+        """Implementation for testing asynchronous function tool usage without content recording (streaming).
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
+        """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -543,6 +669,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -639,16 +766,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call) - no content
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -656,38 +783,50 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes_1.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span - tool call ID included but no function details, role and finish_reason included
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+        # Check events for first span - tool call ID included but no function details (only in events mode)
+        if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
 
         # Validate second span (tool output + final response) - no content
         span2 = spans[1]
         expected_attributes_2 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -695,30 +834,75 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            # Span2 has both input messages (tool output) and output messages (assistant response)
+            expected_attributes_2.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
         assert attributes_match == True
 
-        # Check events for second span - should include parts with tool output metadata (type, id) but no output field
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
+        # Check events for second span - tool output metadata and response (only in events mode)
+        if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*"}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]'
+
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_output_content,
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_events(self, **kwargs):
+        """Test asynchronous function tool usage without content recording (streaming, event-based messages)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
+        """Test asynchronous function tool usage without content recording (streaming, attribute-based messages)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_simple_format_events(self, **kwargs):
+        """Test async function tool without content recording, streaming, simple OTEL format (event mode)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_function_tool_without_content_recording_streaming_simple_format_attributes(self, **kwargs):
+        """Test async function tool without content recording, streaming, simple OTEL format (attribute mode)."""
+        await self._test_async_function_tool_without_content_recording_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -726,6 +910,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_with_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -766,16 +951,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -791,7 +976,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -799,7 +984,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a haiku about Python"}]}]',
                 },
@@ -807,7 +992,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -822,6 +1007,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_with_content_recording_streaming(self, **kwargs):
         """Test asynchronous streaming responses with multiple text inputs and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -870,16 +1056,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -895,7 +1081,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Hello"}]}]',
                 },
@@ -903,7 +1089,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a haiku about Python"}]}]',
                 },
@@ -911,7 +1097,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -926,6 +1112,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_multiple_text_inputs_without_content_recording_non_streaming(self, **kwargs):
         """Test asynchronous non-streaming responses with multiple text inputs and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -966,16 +1153,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -991,7 +1178,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -999,7 +1186,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -1007,7 +1194,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1026,6 +1213,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1065,7 +1253,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1074,7 +1262,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1082,7 +1270,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1097,6 +1285,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1135,7 +1324,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1144,7 +1333,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1152,7 +1341,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1167,6 +1356,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_off_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1205,7 +1395,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1214,7 +1404,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
@@ -1222,7 +1412,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1237,6 +1427,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_on_non_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1275,7 +1466,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1284,7 +1475,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1292,7 +1483,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1311,6 +1502,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1354,7 +1546,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1363,7 +1555,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1371,7 +1563,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1386,6 +1578,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1428,7 +1621,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1437,7 +1630,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1445,7 +1638,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1460,6 +1653,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_off_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1502,7 +1696,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1511,7 +1705,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
@@ -1519,7 +1713,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1534,6 +1728,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_on_non_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (non-streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1576,7 +1771,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert result.output is not None
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1585,7 +1780,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1593,7 +1788,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1612,6 +1807,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_off_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1659,7 +1855,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1668,7 +1864,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1676,7 +1872,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1691,6 +1887,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_off_binary_on_streaming(self, **kwargs):
         """Test image only with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1737,7 +1934,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1746,7 +1943,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "image"}]}]',
                 },
@@ -1754,7 +1951,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -1769,6 +1966,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_off_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1815,7 +2013,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1824,7 +2022,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"image"}]}]',
                 },
@@ -1832,7 +2030,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1847,6 +2045,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_image_only_content_on_binary_on_streaming(self, **kwargs):
         """Test image only with content recording ON and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -1893,7 +2092,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1902,7 +2101,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -1910,7 +2109,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -1929,6 +2128,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -1979,7 +2179,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -1988,7 +2188,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -1996,7 +2196,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2011,6 +2211,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_off_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording OFF and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -2061,7 +2262,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2070,7 +2271,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}, {"type": "image"}]}]',
                 },
@@ -2078,7 +2279,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2093,6 +2294,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_off_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data OFF (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2143,7 +2345,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2152,7 +2354,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role":"user","parts":[{"type":"text","content":"What is shown in this image?"},{"type":"image"}]}]',
                 },
@@ -2160,7 +2362,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2175,6 +2377,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_text_and_image_content_on_binary_on_streaming(self, **kwargs):
         """Test text + image with content recording ON and binary data ON (streaming)."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2225,7 +2428,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(full_content) > 0
 
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
@@ -2234,7 +2437,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": f'[{{"role":"user","parts":[{{"type":"text","content":"What is shown in this image?"}},{{"type":"image","content":"data:image/png;base64,{TEST_IMAGE_BASE64}"}}]}}]',
                 },
@@ -2242,7 +2445,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2305,16 +2508,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2330,7 +2533,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2338,7 +2541,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2346,7 +2549,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2365,6 +2568,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     async def test_async_responses_stream_method_with_content_recording(self, **kwargs):
         """Test async responses.stream() method with content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)  # Use event-based mode for this test
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2397,16 +2601,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2422,7 +2626,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "Write a short haiku about testing"}]}]',
                 },
@@ -2430,7 +2634,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
                 },
@@ -2477,16 +2681,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 1
         span = spans[0]
 
         # Check span attributes
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2502,7 +2706,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.input.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "user",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
                 },
@@ -2510,7 +2714,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             {
                 "name": "gen_ai.output.messages",
                 "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
+                    "gen_ai.provider.name": RESPONSES_PROVIDER,
                     # "gen_ai.message.role": "assistant",  # Commented out - now in event content
                     "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
                 },
@@ -2519,14 +2723,19 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
         assert events_match == True
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_with_content_recording(self, **kwargs):
-        """Test async responses.stream() method with function tools and content recording enabled."""
+    async def _test_async_responses_stream_method_with_tools_with_content_recording_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
+        """Implementation for testing async responses.stream() method with function tools and content recording.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
+        """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -2534,6 +2743,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -2608,16 +2818,16 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
         # Validate first span (user message + tool call)
         span1 = spans[0]
         expected_attributes_1 = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
             ("gen_ai.request.model", deployment_name),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -2625,62 +2835,138 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes_1.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Boston?"}]}]',
+        # Check events for first span - tool call format depends on use_simple_tool_call_format flag (only in events mode)
+        if use_events:
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*", "name": "get_weather", "arguments": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Boston?"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
 
         # Validate second span (tool output + final response)
         span2 = spans[1]
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
-                },
-            },
+        expected_attributes_2 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
         ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+        if not use_events:
+            expected_attributes_2.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
+        assert attributes_match == True
 
-    @pytest.mark.usefixtures("instrument_without_content")
+        # Check events for second span (only in events mode)
+        if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*", "result": {"temperature": "65°F", "condition": "cloudy"}}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "65°F", "condition": "cloudy"}}}]}]'
+
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_output_content,
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_without_content_recording(self, **kwargs):
-        """Test async responses.stream() method with function tools without content recording."""
+    async def test_async_responses_stream_method_with_tools_with_content_recording_events(self, **kwargs):
+        """Test async responses.stream() with tools and content recording (event-based messages)."""
+        await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_with_content_recording_attributes(self, **kwargs):
+        """Test async responses.stream() with tools and content recording (attribute-based messages)."""
+        await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_events(self, **kwargs):
+        """Test async responses.stream() with tools, content recording, simple OTEL format (event mode)."""
+        await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(self, **kwargs):
+        """Test async responses.stream() with tools, content recording, simple OTEL format (attribute mode)."""
+        await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    async def _test_async_responses_stream_method_with_tools_without_content_recording_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
+        """Implementation for testing async responses.stream() method with function tools without content recording.
+
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
+        """
         from openai.types.responses.response_input_param import FunctionCallOutput
 
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -2688,6 +2974,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -2762,54 +3049,141 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check spans - should have 2 responses spans
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {deployment_name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_CHAT} {deployment_name}")
         assert len(spans) == 2
 
-        # Validate first span - should have events with tool call structure but no details
+        # Validate first span
         span1 = spans[0]
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
-                },
-            },
+        expected_attributes_1 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
         ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+        if not use_events:
+            expected_attributes_1.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
+        assert attributes_match == True
 
-        # Validate second span - should include parts with tool output metadata (type, id) but no output field
+        # Check events for first span - tool call format depends on use_simple_tool_call_format flag (only in events mode)
+        if use_events:
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
+
+        # Validate second span
         span2 = spans[1]
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": "azure.openai",
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
-                },
-            },
+        expected_attributes_2 = [
+            ("az.namespace", "Microsoft.CognitiveServices"),
+            ("gen_ai.operation.name", OPERATION_NAME_CHAT),
+            ("gen_ai.request.model", deployment_name),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
+            ("server.address", ""),
+            ("gen_ai.conversation.id", conversation.id),
+            ("gen_ai.response.model", deployment_name),
+            ("gen_ai.response.id", ""),
+            ("gen_ai.usage.input_tokens", "+"),
+            ("gen_ai.usage.output_tokens", "+"),
         ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+        if not use_events:
+            expected_attributes_2.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span2, expected_attributes_2)
+        assert attributes_match == True
+
+        # Check events for second span (only in events mode)
+        if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*"}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]'
+
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_output_content,
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_without_content_recording_events(self, **kwargs):
+        """Test async responses.stream() with tools, without content recording (event-based messages)."""
+        await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_without_content_recording_attributes(self, **kwargs):
+        """Test async responses.stream() with tools, without content recording (attribute-based messages)."""
+        await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(self, **kwargs):
+        """Test async responses.stream() with tools, without content recording, simple OTEL format (event mode)."""
+        await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.HTTPX)
+    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(self, **kwargs):
+        """Test async responses.stream() with tools, without content recording, simple OTEL format (attribute mode)."""
+        await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
 
     # ========================================
     # Workflow Agent Tracing Tests (Async)
@@ -2877,7 +3251,7 @@ trigger:
 
         # Verify workflow action events
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -2993,7 +3367,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3121,7 +3495,7 @@ trigger:
 
         # Verify workflow action events in streaming mode
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3242,7 +3616,7 @@ trigger:
 
         # Verify workflow action events (content recording off)
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {workflow_agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {workflow_agent.name}")
         assert len(spans) >= 1
         span = spans[0]
 
@@ -3304,12 +3678,17 @@ trigger:
                     ), "previous_action_id should not be present when content recording is disabled"
         assert found_workflow_item, "Should have found workflow items in conversation items"
 
-    @pytest.mark.usefixtures("instrument_with_content")
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_prompt_agent_with_responses_non_streaming(self, **kwargs):
-        """Test prompt agent with responses API (async non-streaming) and verify agent id in traces."""
+    async def _test_async_prompt_agent_with_responses_non_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
+        """Implementation for testing async prompt agent with responses API (non-streaming).
+        
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -3317,6 +3696,9 @@ trigger:
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
         deployment_name = kwargs.get("azure_ai_model_deployment_name")
@@ -3353,17 +3735,17 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -3371,15 +3753,80 @@ trigger:
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
+
+        # Check events (only in events mode)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What is the capital of France?"}]}]',
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_async_prompt_agent_with_responses_streaming(self, **kwargs):
-        """Test prompt agent with responses API (async streaming) and verify agent id in traces."""
+    async def test_async_prompt_agent_with_responses_non_streaming_events(self, **kwargs):
+        """Test async prompt agent with responses (non-streaming, event-based messages)."""
+        await self._test_async_prompt_agent_with_responses_non_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_non_streaming_attributes(self, **kwargs):
+        """Test async prompt agent with responses (non-streaming, attribute-based messages)."""
+        await self._test_async_prompt_agent_with_responses_non_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_non_streaming_simple_format_events(self, **kwargs):
+        """Test async prompt agent with responses (non-streaming, simple OTEL format, event mode)."""
+        await self._test_async_prompt_agent_with_responses_non_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_non_streaming_simple_format_attributes(self, **kwargs):
+        """Test async prompt agent with responses (non-streaming, simple OTEL format, attribute mode)."""
+        await self._test_async_prompt_agent_with_responses_non_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    async def _test_async_prompt_agent_with_responses_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
+        """Implementation for testing async prompt agent with responses API (streaming).
+        
+        Args:
+            use_events: If True, use event-based message tracing. If False, use attribute-based.
+            use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
+        """
         self.cleanup()
+        _set_use_message_events(use_events)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -3387,6 +3834,9 @@ trigger:
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
+        assert True == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
 
         project_client = self.create_async_client(operation_group="tracing", **kwargs)
         deployment_name = kwargs.get("azure_ai_model_deployment_name")
@@ -3432,17 +3882,17 @@ trigger:
 
         # Verify traces contain agent name and id
         self.exporter.force_flush()
-        spans = self.exporter.get_spans_by_name(f"responses {agent.name}")
+        spans = self.exporter.get_spans_by_name(f"{SPAN_NAME_INVOKE_AGENT} {agent.name}")
         assert len(spans) >= 1
 
         # Validate span attributes
         span = spans[0]
         expected_attributes = [
             ("az.namespace", "Microsoft.CognitiveServices"),
-            ("gen_ai.operation.name", "responses"),
+            ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
             ("gen_ai.agent.name", agent.name),
             ("gen_ai.agent.id", agent.id),
-            ("gen_ai.provider.name", "azure.openai"),
+            ("gen_ai.provider.name", RESPONSES_PROVIDER),
             ("server.address", ""),
             ("gen_ai.conversation.id", conversation.id),
             ("gen_ai.response.model", deployment_name),
@@ -3450,5 +3900,65 @@ trigger:
             ("gen_ai.usage.input_tokens", "+"),
             ("gen_ai.usage.output_tokens", "+"),
         ]
+        if not use_events:
+            expected_attributes.extend(
+                [
+                    ("gen_ai.input.messages", ""),
+                    ("gen_ai.output.messages", ""),
+                ]
+            )
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
         assert attributes_match == True
+
+        # Check events (only in events mode)
+        if use_events:
+            expected_events = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What is the capital of France?"}]}]',
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span, expected_events)
+            assert events_match == True
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_streaming_events(self, **kwargs):
+        """Test async prompt agent with responses (streaming, event-based messages)."""
+        await self._test_async_prompt_agent_with_responses_streaming_impl(True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_streaming_attributes(self, **kwargs):
+        """Test async prompt agent with responses (streaming, attribute-based messages)."""
+        await self._test_async_prompt_agent_with_responses_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_streaming_simple_format_events(self, **kwargs):
+        """Test async prompt agent with responses (streaming, simple OTEL format, event mode)."""
+        await self._test_async_prompt_agent_with_responses_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_async_prompt_agent_with_responses_streaming_simple_format_attributes(self, **kwargs):
+        """Test async prompt agent with responses (streaming, simple OTEL format, attribute mode)."""
+        await self._test_async_prompt_agent_with_responses_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
