@@ -10,8 +10,16 @@
 Script to regenerate restclient from TypeSpec definitions.
 
 Usage:
-    python regenerate_restclient.py -a v2025_10_01_preview --spec-repo C:\\Repos\\azure-rest-api-specs
-    python regenerate_restclient.py -a v2025_10_01_preview --spec-repo C:\\Repos\\azure-rest-api-specs -v
+    Control-plane:
+        python regenerate_restclient.py -a v2025_10_01_preview --spec-repo C:\\Repos\\azure-rest-api-specs
+
+    Data-plane:
+        python regenerate_restclient.py -a v2024_04_01 --data-plane --spec-repo C:\\Repos\\azure-rest-api-specs
+        python regenerate_restclient.py -a v2024_04_01_preview --data-plane --spec-repo C:\\Repos\\azure-rest-api-specs
+
+Output folder naming:
+    Control-plane: v2025_10_01_preview
+    Data-plane:    v2024_04_01_dataplane or v2024_04_01_dataplanepreview
 
 This script:
 1. Compiles TypeSpec from azure-rest-api-specs repo
@@ -35,9 +43,19 @@ from platform import system
 
 module_logger = logging.getLogger(__name__)
 
-# Paths relative to the spec repo
-TYPESPEC_PROJECT_PATH = "specification/machinelearningservices/MachineLearningServices.Management"
-RESTCLIENT_RELATIVE_PATH = "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient"
+# TypeSpec project configurations
+TYPESPEC_PROJECTS = {
+    "control-plane": {
+        "path": "specification/machinelearningservices/MachineLearningServices.Management",
+        "output_relative_path": "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient",
+        "description": "Control-plane (ARM) APIs for Azure ML workspaces, compute, etc.",
+    },
+    "data-plane": {
+        "path": "specification/machinelearningservices/AzureAI.Assets",
+        "output_relative_path": "sdk/ml/azure-ai-ml/azure/ai/ml/_restclient",
+        "description": "Data-plane APIs for Azure AI assets, indexes, etc.",
+    },
+}
 
 
 class Color:
@@ -161,22 +179,45 @@ def fix_duplicate_api_version(file_path: Path, verbose: bool = False) -> int:
     return count
 
 
-def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = False):
+def regenerate_restclient(
+    spec_repo: Path,
+    api_version: str,
+    data_plane: bool = False,
+    verbose: bool = False,
+):
     """
     Regenerate restclient from TypeSpec definitions.
 
     Args:
-        api_version: The API version to generate (e.g., "v2025_10_01_preview")
         spec_repo: Path to the azure-rest-api-specs repository
+        api_version: The API version to generate (e.g., "v2025_10_01_preview")
+        data_plane: If True, generate data-plane restclient (AzureAI.Assets)
         verbose: Whether to show verbose output
     """
+    # Select project configuration
+    project_key = "data-plane" if data_plane else "control-plane"
+    project_config = TYPESPEC_PROJECTS[project_key]
+
     # Normalize api_version format (support both v2025_10_01_preview and v2025-10-01-preview)
     api_version_normalized = api_version.lower().replace("-", "_")
     if not api_version_normalized.startswith("v"):
         api_version_normalized = "v" + api_version_normalized
 
+    # Determine target folder name
+    if data_plane:
+        # Data-plane uses _dataplane or _dataplanepreview suffix
+        if "preview" in api_version_normalized:
+            # v2024_04_01_preview -> v2024_04_01_dataplanepreview
+            target_folder = api_version_normalized.replace("_preview", "_dataplanepreview1")
+        else:
+            # v2024_04_01 -> v2024_04_01_dataplane
+            target_folder = api_version_normalized + "_dataplane1"
+    else:
+        # Control-plane uses api_version as-is
+        target_folder = api_version_normalized
+
     # Paths
-    typespec_project_dir = spec_repo / TYPESPEC_PROJECT_PATH
+    typespec_project_dir = spec_repo / project_config["path"]
     tspconfig_path = typespec_project_dir / "tspconfig.yaml"
     main_tsp_path = typespec_project_dir / "main.tsp"
 
@@ -184,7 +225,7 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
     script_dir = Path(__file__).parent.absolute()
     sdk_package_dir = script_dir.parent  # azure-ai-ml directory
     restclient_base_path = sdk_package_dir / "azure" / "ai" / "ml" / "_restclient"
-    target_restclient_path = restclient_base_path / api_version_normalized
+    target_restclient_path = restclient_base_path / target_folder
 
     command_args = {"shell": system() == "Windows", "stream_stdout": verbose}
 
@@ -193,7 +234,10 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
     # =========================================================================
     step_banner(1, "Validating inputs")
 
+    print_blue(f"  Project type: {project_key}")
+    print_blue(f"  Description: {project_config['description']}")
     print_blue(f"  API Version: {api_version_normalized}")
+    print_blue(f"  Target folder: {target_folder}")
     print_blue(f"  Spec repo: {spec_repo}")
     print_blue(f"  TypeSpec project: {typespec_project_dir}")
     print_blue(f"  Target restclient path: {target_restclient_path}")
@@ -232,6 +276,8 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
         print_blue(f"  Output directory: {temp_dir}")
 
         # Build the tsp compile command
+        # Override emitter-output-dir to ensure consistent output location
+        emitter_output = str(temp_dir / project_config["output_relative_path"] / api_version_normalized)
         commands = [
             "npx",
             "tsp",
@@ -241,6 +287,8 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
             "@azure-tools/typespec-python",
             "--output-dir",
             str(temp_dir),
+            "--option",
+            f"@azure-tools/typespec-python.emitter-output-dir={emitter_output}",
         ]
 
         print_blue(f"  Command: {' '.join(commands)}")
@@ -261,31 +309,30 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
         step_banner(4, "Finding generated restclient")
 
         # The TypeSpec emitter generates to: {output-dir}/{service-dir}/...
-        # Based on tspconfig.yaml, service-dir is "sdk/ml/azure-ai-ml"
-        generated_restclient_base = temp_dir / RESTCLIENT_RELATIVE_PATH
+        generated_output_base = temp_dir / project_config["output_relative_path"]
 
-        print_blue(f"  Looking in: {generated_restclient_base}")
+        print_blue(f"  Looking in: {generated_output_base}")
 
-        if not generated_restclient_base.exists():
-            print_red(f"ERROR: Generated restclient path not found: {generated_restclient_base}")
+        if not generated_output_base.exists():
+            print_red(f"ERROR: Generated output path not found: {generated_output_base}")
             print_yellow("  Listing temp directory contents:")
             for item in temp_dir.rglob("*"):
                 if item.is_dir():
                     print(f"    [DIR] {item.relative_to(temp_dir)}")
             sys.exit(1)
 
-        # Find the version folder
-        generated_version_path = generated_restclient_base / api_version_normalized
+        # Find the generated folder
+        generated_version_path = generated_output_base / api_version_normalized
 
         if not generated_version_path.exists():
             print_yellow(f"  Version folder {api_version_normalized} not found")
-            print_yellow("  Available folders in restclient directory:")
-            for item in generated_restclient_base.iterdir():
+            print_yellow("  Available folders in generated output:")
+            for item in generated_output_base.iterdir():
                 if item.is_dir():
                     print(f"    - {item.name}")
 
             # Try to find any version folder
-            version_folders = [d for d in generated_restclient_base.iterdir() if d.is_dir() and d.name.startswith("v")]
+            version_folders = [d for d in generated_output_base.iterdir() if d.is_dir() and d.name.startswith("v")]
             if len(version_folders) == 1:
                 generated_version_path = version_folders[0]
                 print_yellow(f"  Using found version folder: {generated_version_path.name}")
@@ -293,7 +340,30 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
                 print_red("ERROR: Could not determine which version folder to use")
                 sys.exit(1)
 
-        print_green(f"  ✓ Found generated restclient at: {generated_version_path}")
+        print_green(f"  ✓ Found generated output at: {generated_version_path}")
+
+        # TypeSpec generates a deeply nested structure that mirrors the full package path
+        # We need to extract from the correct nested location
+        if data_plane:
+            # Data-plane: azure/ai/resources/autogen
+            nested_path = generated_version_path / "azure" / "ai" / "resources" / "autogen"
+        else:
+            # Control-plane: azure/ai/ml/_restclient/{version}
+            nested_path = generated_version_path / "azure" / "ai" / "ml" / "_restclient" / api_version_normalized
+
+        if nested_path.exists():
+            generated_version_path = nested_path
+            print_blue(f"  Using nested restclient path: {generated_version_path}")
+        else:
+            print_yellow(f"  Nested path not found: {nested_path}")
+            print_yellow("  Listing generated structure:")
+            for item in generated_version_path.rglob("_client.py"):
+                print(f"    Found _client.py at: {item.parent}")
+            # Try to find _client.py to determine the correct path
+            client_files = list(generated_version_path.rglob("_client.py"))
+            if client_files:
+                generated_version_path = client_files[0].parent
+                print_yellow(f"  Auto-detected restclient path: {generated_version_path}")
 
         # =====================================================================
         # STEP 5: Fix TypeSpec emitter bugs
@@ -347,7 +417,7 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
         print()
         print_blue("  Next steps:")
         print_blue("    1. Review the generated code")
-        print_blue("    3. Commit the changes")
+        print_blue("    2. Commit the changes")
 
     finally:
         # =====================================================================
@@ -362,26 +432,41 @@ def regenerate_restclient(api_version: str, spec_repo: Path, verbose: bool = Fal
 if __name__ == "__main__":
     parser = ArgumentParser(
         description="Regenerate restclient from TypeSpec definitions",
-        epilog="Example: python regenerate_restclient.py -a v2025_10_01_preview --spec-repo C:\\Repos\\azure-rest-api-specs -v",
+        epilog="""
+Examples:
+  Control-plane:
+    python regenerate_restclient.py -a v2025_10_01_preview --spec-repo C:\\Repos\\azure-rest-api-specs
+
+  Data-plane:
+    python regenerate_restclient.py -a v2024_04_01 --data-plane --spec-repo C:\\Repos\\azure-rest-api-specs
+    python regenerate_restclient.py -a v2024_04_01_preview --data-plane --spec-repo C:\\Repos\\azure-rest-api-specs
+        """,
     )
 
     parser.add_argument(
         "-a",
         "--api-version",
         required=True,
-        help=(
-            "Specifies which API version to generate (e.g., v2025_10_01_preview).\n"
-            "This should match a version defined in the TypeSpec project."
-        ),
+        help="API version to generate (e.g., v2025_10_01_preview, v2024_04_01)",
+    )
+    parser.add_argument(
+        "--data-plane",
+        action="store_true",
+        help="Generate data-plane restclient (AzureAI.Assets) instead of control-plane",
     )
     parser.add_argument(
         "--spec-repo",
         type=Path,
         required=True,
-        help="Path to the azure-rest-api-specs repository (e.g., C:\\Repos\\azure-rest-api-specs)",
+        help="Path to the azure-rest-api-specs repository",
     )
-    parser.add_argument("-v", "--verbose", action="store_true", required=False, help="Turn on verbose output")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Turn on verbose output")
 
     args = parser.parse_args()
 
-    regenerate_restclient(args.api_version, args.spec_repo, args.verbose)
+    regenerate_restclient(
+        spec_repo=args.spec_repo,
+        api_version=args.api_version,
+        data_plane=args.data_plane,
+        verbose=args.verbose,
+    )
