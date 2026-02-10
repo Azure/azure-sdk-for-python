@@ -192,14 +192,12 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :return: The loaded AgentThread if available, None otherwise.
         :rtype: Optional[AgentThread]
         """
-        if self._thread_repository:
+        if self._thread_repository and context.conversation_id:
             conversation_id = context.conversation_id
             agent_thread = await self._thread_repository.get(conversation_id, agent=agent)
             if agent_thread:
                 logger.info(f"Loaded agent thread for conversation: {conversation_id}")
                 return agent_thread
-            if self._thread_repository.message_store:
-                return AgentThread(message_store=self._thread_repository.message_store)
             return agent.get_new_thread()
         return None
 
