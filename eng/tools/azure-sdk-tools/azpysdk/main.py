@@ -123,6 +123,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     Returns:
         Exit code to return to the OS.
     """
+    original_cwd = os.getcwd()
+
     parser = build_parser()
     args = parser.parse_args(argv)
 
@@ -148,6 +150,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     except Exception as exc:  # pragma: no cover - simple top-level error handling
         logger.error(f"Error: {exc}")
         return 2
+    finally:
+        os.chdir(original_cwd)
 
 
 if __name__ == "__main__":

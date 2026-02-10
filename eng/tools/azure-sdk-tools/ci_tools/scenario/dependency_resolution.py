@@ -142,7 +142,7 @@ def install_dependent_packages(
     install_set = released_packages + list(set(override_added_packages))
 
     if install_set or dev_req_file_path:
-        install_packages(install_set, dev_req_file_path, python_exe)
+        install_packages(install_set, dev_req_file_path, python_exe, cwd=setup_py_file_path)
 
     if released_packages:
         pkgs_file_path = os.path.join(temp_dir, PKGS_TXT_FILE)
@@ -321,7 +321,7 @@ def filter_dev_requirements(
     return new_dev_req_path
 
 
-def install_packages(packages: List[str], req_file: str, python_executable: str) -> None:
+def install_packages(packages: List[str], req_file: str, python_executable: str, cwd: Optional[str] = None) -> None:
     """Install resolved packages (and optionally a requirements file) into the target environment."""
 
     python_exe = python_executable or sys.executable
@@ -338,4 +338,4 @@ def install_packages(packages: List[str], req_file: str, python_executable: str)
         commands.extend(["-r", req_file])
 
     logger.info("Installing packages. Command: %s", commands)
-    subprocess.check_call(commands)
+    subprocess.check_call(commands, cwd=cwd)
