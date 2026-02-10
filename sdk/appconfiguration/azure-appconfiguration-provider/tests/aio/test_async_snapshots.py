@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pytest
 import time
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_MANAGEMENT_KEY, FEATURE_FLAG_KEY
