@@ -86,7 +86,9 @@ def create_tense_converter(
     return TenseConverter(converter_target=converter_target, tense="past")
 
 
-def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
+def strategy_converter_map() -> (
+    Dict[Any, Union[PromptConverter, List[PromptConverter], None]]
+):
     """
     Returns a mapping of attack strategies to their corresponding converters.
     """
@@ -135,7 +137,9 @@ def get_converter_for_strategy(
 
     def _resolve_converter(strategy):
         converter_or_factory = factory_map[strategy]
-        if callable(converter_or_factory) and not isinstance(converter_or_factory, PromptConverter):
+        if callable(converter_or_factory) and not isinstance(
+            converter_or_factory, PromptConverter
+        ):
             # It's a factory function, call it with dependencies
             return converter_or_factory(generated_rai_client, is_one_dp_project, logger)
         return converter_or_factory
@@ -185,7 +189,6 @@ def get_chat_target(
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
             api_key = target.get("api_key", None)
-            api_version = target.get("api_version", "2024-06-01")
             # Check for credential in target dict or use passed credential parameter
             target_credential = target.get("credential", None) or credential
             if api_key:
@@ -194,7 +197,6 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=api_key,
-                    api_version=api_version,
                 )
             elif target_credential:
                 # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
@@ -203,23 +205,21 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=token_provider,  # PyRIT accepts callable that returns token
-                    api_version=api_version,
                 )
             else:
-                # Fall back to DefaultAzureCredential via PyRIT's use_aad_auth
-                # This works in local dev environments where DefaultAzureCredential has access
+                # Fall back to DefaultAzureCredential via PyRIT's auth helpers
+                from pyrit.auth import get_azure_openai_auth
+
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
-                    use_aad_auth=True,
-                    api_version=api_version,
+                    api_key=get_azure_openai_auth(target["azure_endpoint"]),
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
-                api_version=target.get("api_version", "2024-06-01"),
             )
     else:
         # Target is callable
