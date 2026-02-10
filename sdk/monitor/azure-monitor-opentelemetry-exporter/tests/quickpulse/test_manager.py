@@ -42,7 +42,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _QuickpulseExporter,
     _QuickpulseMetricReader,
 )
-from azure.monitor.opentelemetry.exporter._quickpulse._generated.models import (
+from azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics.models import (
     TelemetryType,
 )
 from azure.monitor.opentelemetry.exporter._quickpulse._manager import (
