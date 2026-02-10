@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-
 import time
 from unittest.mock import patch, call
+import pytest
 from azure.appconfiguration.provider.aio._async_client_manager import AsyncConfigurationClientManager
 
 
@@ -26,7 +25,8 @@ class TestAsyncConfigurationClientManager:
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
     @patch(
-        "azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_connection_string"
+        "azure.appconfiguration.provider.aio._async_client_manager"
+        "._AsyncConfigurationClientWrapper.from_connection_string"
     )
     async def test_create_client_manager_connection_string(self, mock_client, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
@@ -56,7 +56,8 @@ class TestAsyncConfigurationClientManager:
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
     @patch(
-        "azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_connection_string"
+        "azure.appconfiguration.provider.aio._async_client_manager"
+        "._AsyncConfigurationClientWrapper.from_connection_string"
     )
     async def test_failover_create_client_manager_connection_string(self, mock_client, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
@@ -221,7 +222,8 @@ class TestAsyncConfigurationClientManager:
     @pytest.mark.asyncio
     @patch("azure.appconfiguration.provider.aio._async_client_manager.find_auto_failover_endpoints")
     @patch(
-        "azure.appconfiguration.provider.aio._async_client_manager._AsyncConfigurationClientWrapper.from_connection_string"
+        "azure.appconfiguration.provider.aio._async_client_manager"
+        "._AsyncConfigurationClientWrapper.from_connection_string"
     )
     async def test_refresh_clients_connection_string(self, mock_client, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"

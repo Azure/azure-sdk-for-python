@@ -16,7 +16,6 @@ from opentelemetry.sdk.metrics import (
 )
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.semconv.resource import ResourceAttributes
-from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
@@ -67,6 +66,8 @@ from azure.monitor.opentelemetry.exporter._utils import (
 )
 
 
+# pylint: disable=unused-argument, too-many-public-methods
+# pylint: disable=protected-access, line-too-long
 class TestQuickpulseManager(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
@@ -82,7 +83,7 @@ class TestQuickpulseManager(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         _set_global_quickpulse_state(_QuickpulseState.PING_SHORT)
-        cls.connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+        cls.connection_string = "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"  # pylint: disable=line-too-long
         cls.resource = Resource.create(
             {
                 ResourceAttributes.SERVICE_INSTANCE_ID: "test_instance",

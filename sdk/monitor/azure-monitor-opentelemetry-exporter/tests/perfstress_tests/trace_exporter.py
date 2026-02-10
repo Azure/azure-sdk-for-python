@@ -6,8 +6,6 @@
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 
-from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
-
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 
