@@ -28,9 +28,13 @@ from ._rest_py3 import (
     HttpResponse,
     AsyncHttpResponse,
 )
+from ..streaming import Stream, ServerSentEvent, JSONLEvent
 
 __all__ = [
     "HttpRequest",
     "HttpResponse",
     "AsyncHttpResponse",
+    "Stream",
+    "ServerSentEvent",
+    "JSONLEvent",
 ]
