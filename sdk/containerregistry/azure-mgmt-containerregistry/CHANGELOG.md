@@ -28,6 +28,7 @@
 
 ### Breaking Changes
 
+  - This version moved some APIs to a more focused package. Please follow https://aka.ms/azsdk/python/migrate/azure-mgmt-containerregistry for migration.
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Model `Resource` deleted or renamed its instance variable `location`
