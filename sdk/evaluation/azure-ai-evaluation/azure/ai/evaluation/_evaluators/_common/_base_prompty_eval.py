@@ -324,21 +324,31 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
     def _not_applicable_result(
         self, error_message: str, threshold: Union[int, float]
-    ) -> Dict[str, Union[str, float, Dict]]:
+    ) -> Dict[str, Union[str, int, float, Dict]]:
         """Return a result indicating that the evaluation is not applicable.
+
+        When evaluation cannot be performed (e.g., no tool calls, missing definitions),
+        this returns the threshold value as the score with a "pass" result.
 
         :param error_message: The error message explaining why evaluation is not applicable.
         :type error_message: str
-        :param threshold: The threshold value for the evaluator.
+        :param threshold: The threshold value for the evaluator, used as the score.
         :type threshold: Union[int, float]
-        :return: A dictionary containing the result of the evaluation.
-        :rtype: Dict[str, Union[str, float, Dict]]
+        :return: A dictionary containing the result with score set to threshold and result as "pass".
+        :rtype: Dict[str, Union[str, int, float, Dict]]
         """
-        # If no tool calls were made or tool call type is not supported, return not applicable result
+        # If no tool calls were made or tool call type is not supported, return threshold as score with pass result
         return {
-            self._result_key: self._NOT_APPLICABLE_RESULT,
+            self._result_key: threshold,
             f"{self._result_key}_result": "pass",
             f"{self._result_key}_threshold": threshold,
-            f"{self._result_key}_reason": error_message,
+            f"{self._result_key}_reason": f"Not applicable: {error_message}",
             f"{self._result_key}_details": {},
+            f"{self._result_key}_prompt_tokens": 0,
+            f"{self._result_key}_completion_tokens": 0,
+            f"{self._result_key}_total_tokens": 0,
+            f"{self._result_key}_finish_reason": "",
+            f"{self._result_key}_model": "",
+            f"{self._result_key}_sample_input": "",
+            f"{self._result_key}_sample_output": "",
         }

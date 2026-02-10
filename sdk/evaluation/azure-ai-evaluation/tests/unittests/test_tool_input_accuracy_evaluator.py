@@ -427,7 +427,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
 
@@ -456,7 +456,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in result[f"{key}_reason"]
 
@@ -485,7 +485,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
 
@@ -537,7 +537,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert "Response parameter is required" in result[f"{key}_reason"]
 
