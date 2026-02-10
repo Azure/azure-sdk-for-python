@@ -30,8 +30,11 @@ logger = get_logger()
 class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
     def __init__(self, agent: AgentProtocol,
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
-                 thread_repository: Optional[AgentThreadRepository] = None) -> None:
-        super().__init__(credentials, thread_repository)
+                 thread_repository: Optional[AgentThreadRepository] = None,
+                 *,
+                 project_endpoint: Optional[str] = None,
+                 **kwargs) -> None:
+        super().__init__(credentials, thread_repository, project_endpoint=project_endpoint, **kwargs)
         self._agent = agent
 
     async def agent_run(  # pylint: disable=too-many-statements
@@ -45,6 +48,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             request_input = context.request.get("input")
 
             agent_thread = await self._load_agent_thread(context, self._agent)
+            logger.info(f"agent thread loaded with {len(await agent_thread.message_store.list_messages())} messages")
 
             input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
             message = await input_converter.transform_input(
