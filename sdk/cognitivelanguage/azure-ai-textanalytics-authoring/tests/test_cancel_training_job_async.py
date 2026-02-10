@@ -1,6 +1,5 @@
 # pylint: disable=line-too-long,useless-suppression
 import functools
-import json
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
@@ -15,7 +14,7 @@ ConversationsPreparer = functools.partial(
     authoring_key="fake_key",
 )
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCancelTrainingAsync(AzureRecordedTestCase):
     @ConversationsPreparer()
     @recorded_by_proxy_async

@@ -1,11 +1,20 @@
 # Release History
 
+## 25.0.0 (2026-02-04)
+
+### Breaking Changes
+
+  - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
+  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need to change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
+  - The following modules have been separated from `azure-mgmt-resource` into independent packages: `subscriptions`, `features`, `links`, `locks`, `policy`, `managedapplications`, `databoundaries`, `changes`, and `privatelinks`. Each module is now available as `azure-mgmt-resource-{module}`.
+  - For separated modules, if you previously imported them using statements like `from azure.mgmt.resource import SubscriptionClient`, you'll need to update your code to `from azure.mgmt.resource.subscriptions import SubscriptionClient`. If you were already using the fully qualified import path, no changes are required.
+
 ## 25.0.0b1 (2025-07-16)
 
 ### Breaking Changes
 
   - This package now only targets the latest Api-Version available on Azure and removes APIs of other Api-Version. After this change, the package can have much smaller size. If your application requires a specific and non-latest Api-Version, it's recommended to pin this package to the previous released version; If your application always only use latest Api-Version, please ignore this change.
-  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
+  - Operation Group `Deployments` and `DeploymentOperations` of `ResourceManagementClient` are moved to `DeploymentsMgmtClient` of independent package `azure-mgmt-resource-deployments`. If you called `ResourceManagementClient(...).deployments.xx(...)` before, just need to change to `DeploymentsMgmtClient(...).deployments.xx(...)`. And same for `DeploymentOperations`.
 
 ## 24.0.0 (2025-06-16)
 

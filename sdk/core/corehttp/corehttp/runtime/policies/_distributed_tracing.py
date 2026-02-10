@@ -55,6 +55,11 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
         self._instrumentation_config = instrumentation_config
 
     def on_request(self, request: PipelineRequest[HttpRequest]) -> None:
+        """Starts a span for the network call.
+
+        :param request: The PipelineRequest object.
+        :type request: ~corehttp.runtime.pipeline.PipelineRequest
+        """
         ctxt = request.context.options
         try:
             tracing_options: TracingOptions = ctxt.pop("tracing_options", {})
@@ -103,6 +108,13 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
         request: PipelineRequest[HttpRequest],
         response: PipelineResponse[HttpRequest, SansIOHttpResponse],
     ) -> None:
+        """Ends the span for the network call and updates its status.
+
+        :param request: The PipelineRequest object.
+        :type request: ~corehttp.runtime.pipeline.PipelineRequest
+        :param response: The PipelineResponse object.
+        :type response: ~corehttp.runtime.pipeline.PipelineResponse
+        """
         if self.TRACING_CONTEXT not in request.context:
             return
 
@@ -127,6 +139,7 @@ class DistributedHttpTracingPolicy(SansIOHTTPPolicy[HttpRequest, SansIOHttpRespo
         response: Optional[SansIOHttpResponse] = None,
     ) -> None:
         """Add attributes to an HTTP client span.
+
         :param span: The span to add attributes to.
         :type span: ~opentelemetry.trace.Span
         :param request: The request made

@@ -7,7 +7,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
-from azure.ai.textanalytics.authoring.models import CreateDeploymentDetails, DeploymentState
+from azure.ai.textanalytics.authoring.models import CreateDeploymentDetails
 
 ConversationsPreparer = functools.partial(
     EnvironmentVariableLoader,
