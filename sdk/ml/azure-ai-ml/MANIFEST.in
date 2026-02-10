@@ -1,10 +1,9 @@
 include *.md
 include LICENSE
-include azure/ai/ml/_restclient/azure_ai_assets_v2024_04_01/azureaiassetsv20240401/py.typed
+include azure/ai/ml/_restclient/v2024_04_01_dataplanepreview/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/ai/__init__.py
 include azure/ai/ml/__init__.py
 include azure/ai/ml/_restclient/__init__.py
-include azure/ai/ml/_restclient/azure_ai_assets_v2024_04_01/__init__.py

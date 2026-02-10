@@ -10,11 +10,11 @@ requires = ["setuptools>=77.0.3", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-ai-ml-_restclient-azure_ai_assets_v2024_04_01-azureaiassetsv20240401"
+name = "azure-ai-ml-_restclient-v2024_04_01_dataplanepreview"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Corporation Azure Ai Ml _restclient Azure_ai_assets_v2024_04_01 Azureaiassetsv20240401 Client Library for Python"
+description = "Microsoft Corporation Azure Ai Ml _restclient V2024_04_01_dataplanepreview Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -43,7 +43,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic]
-version = {attr = "azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401._version.VERSION"}
+version = {attr = "azure.ai.ml._restclient.v2024_04_01_dataplanepreview._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
@@ -57,7 +57,6 @@ exclude = [
     "azure.ai",
     "azure.ai.ml",
     "azure.ai.ml._restclient",
-    "azure.ai.ml._restclient.azure_ai_assets_v2024_04_01",
 ]
 
 [tool.setuptools.package-data]

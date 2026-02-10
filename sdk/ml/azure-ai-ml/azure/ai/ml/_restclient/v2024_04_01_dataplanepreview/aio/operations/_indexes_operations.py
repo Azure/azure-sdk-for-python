@@ -9,7 +9,13 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,9 +25,18 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._indexes_operations import build_create_or_update_request, build_get_latest_request, build_get_next_version_request, build_get_request, build_list_latest_request, build_list_request
-T = TypeVar('T')
+from ...operations._indexes_operations import (
+    build_create_or_update_request,
+    build_get_latest_request,
+    build_get_next_version_request,
+    build_get_request,
+    build_list_latest_request,
+    build_list_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class IndexesOperations:
     """IndexesOperations async operations.
@@ -79,34 +94,33 @@ class IndexesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PagedIndex]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2024-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedIndex"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PagedIndex"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_latest_request(
                     workspace_name=workspace_name,
                     api_version=api_version,
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.list_latest.metadata['url'],
+                    template_url=self.list_latest.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_latest_request(
                     workspace_name=workspace_name,
                     api_version=api_version,
@@ -117,16 +131,16 @@ class IndexesOperations:
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 request.method = "GET"
             return request
@@ -142,24 +156,22 @@ class IndexesOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.AzureCoreFoundationsErrorResponse, pipeline_response
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list_latest.metadata = {'url': "/workspaces/{workspaceName}/indexes"}  # type: ignore
+    list_latest.metadata = {"url": "/workspaces/{workspaceName}/indexes"}  # type: ignore
 
     @distributed_trace_async
     async def get_latest(
@@ -188,33 +200,28 @@ class IndexesOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.Index
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Index"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Index"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2024-04-01-preview")  # type: str
 
-        
         request = build_get_latest_request(
             workspace_name=workspace_name,
             name=name,
             api_version=api_version,
-            template_url=self.get_latest.metadata['url'],
+            template_url=self.get_latest.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-            "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -223,15 +230,14 @@ class IndexesOperations:
             error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Index', pipeline_response)
+        deserialized = self._deserialize("Index", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_latest.metadata = {'url': "/workspaces/{workspaceName}/indexes/{name}"}  # type: ignore
-
+    get_latest.metadata = {"url": "/workspaces/{workspaceName}/indexes/{name}"}  # type: ignore
 
     @distributed_trace_async
     async def get_next_version(
@@ -263,33 +269,28 @@ class IndexesOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.VersionInfo
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.VersionInfo"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.VersionInfo"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2024-04-01-preview")  # type: str
 
-        
         request = build_get_next_version_request(
             workspace_name=workspace_name,
             name=name,
             api_version=api_version,
-            template_url=self.get_next_version.metadata['url'],
+            template_url=self.get_next_version.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-            "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -298,15 +299,14 @@ class IndexesOperations:
             error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('VersionInfo', pipeline_response)
+        deserialized = self._deserialize("VersionInfo", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_next_version.metadata = {'url': "/workspaces/{workspaceName}/indexes/{name}:getNextVersion"}  # type: ignore
-
+    get_next_version.metadata = {"url": "/workspaces/{workspaceName}/indexes/{name}:getNextVersion"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -356,16 +356,15 @@ class IndexesOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PagedIndex]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2024-04-01-preview")  # type: str
 
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PagedIndex"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PagedIndex"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     workspace_name=workspace_name,
                     name=name,
@@ -376,18 +375,18 @@ class IndexesOperations:
                     top=top,
                     skip=skip,
                     maxpagesize=maxpagesize,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                
+
                 request = build_list_request(
                     workspace_name=workspace_name,
                     name=name,
@@ -402,16 +401,16 @@ class IndexesOperations:
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)
 
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+                    "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+                    "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+                    "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
                 }
                 request.method = "GET"
             return request
@@ -427,24 +426,22 @@ class IndexesOperations:
             request = prepare_request(next_link)
 
             pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.AzureCoreFoundationsErrorResponse, pipeline_response
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/workspaces/{workspaceName}/indexes/{name}/versions"}  # type: ignore
+    list.metadata = {"url": "/workspaces/{workspaceName}/indexes/{name}/versions"}  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -476,34 +473,29 @@ class IndexesOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.Index
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Index"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Index"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
+        api_version = kwargs.pop("api_version", "2024-04-01-preview")  # type: str
 
-        
         request = build_get_request(
             workspace_name=workspace_name,
             name=name,
             version=version,
             api_version=api_version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-            "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -512,15 +504,14 @@ class IndexesOperations:
             error = self._deserialize.failsafe_deserialize(_models.AzureCoreFoundationsErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Index', pipeline_response)
+        deserialized = self._deserialize("Index", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/workspaces/{workspaceName}/indexes/{name}/versions/{version}"}  # type: ignore
-
+    get.metadata = {"url": "/workspaces/{workspaceName}/indexes/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def create_or_update(
@@ -555,16 +546,14 @@ class IndexesOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.Index
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Index"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Index"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        api_version = kwargs.pop('api_version', "2024-04-01-preview")  # type: str
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        api_version = kwargs.pop("api_version", "2024-04-01-preview")  # type: str
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, 'Index')
+        _json = self._serialize.body(body, "Index")
 
         request = build_create_or_update_request(
             workspace_name=workspace_name,
@@ -573,20 +562,18 @@ class IndexesOperations:
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.create_or_update.metadata['url'],
+            template_url=self.create_or_update.metadata["url"],
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("endpoint", endpoint, 'str', skip_quote=True),
-            "subscriptionId": self._serialize.url("subscription_id", subscription_id, 'str'),
-            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, 'str'),
+            "endpoint": self._serialize.url("endpoint", endpoint, "str", skip_quote=True),
+            "subscriptionId": self._serialize.url("subscription_id", subscription_id, "str"),
+            "resourceGroupName": self._serialize.url("resource_group_name", resource_group_name, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)
 
         pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -596,15 +583,14 @@ class IndexesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('Index', pipeline_response)
+            deserialized = self._deserialize("Index", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Index', pipeline_response)
+            deserialized = self._deserialize("Index", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_or_update.metadata = {'url': "/workspaces/{workspaceName}/indexes/{name}/versions/{version}"}  # type: ignore
-
+    create_or_update.metadata = {"url": "/workspaces/{workspaceName}/indexes/{name}/versions/{version}"}  # type: ignore

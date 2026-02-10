@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,17 +39,17 @@ class AssetVersion(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"required": True, "readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "stage": {"key": "stage", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
     }
 
     def __init__(
@@ -100,16 +101,16 @@ class AzureCoreFoundationsError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[AzureCoreFoundationsError]'},
-        'innererror': {'key': 'innererror', 'type': 'AzureCoreFoundationsInnerError'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[AzureCoreFoundationsError]"},
+        "innererror": {"key": "innererror", "type": "AzureCoreFoundationsInnerError"},
     }
 
     def __init__(
@@ -154,19 +155,14 @@ class AzureCoreFoundationsErrorResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'required': True},
+        "error": {"required": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'AzureCoreFoundationsError'},
+        "error": {"key": "error", "type": "AzureCoreFoundationsError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: "AzureCoreFoundationsError",
-        **kwargs
-    ):
+    def __init__(self, *, error: "AzureCoreFoundationsError", **kwargs):
         """
         :keyword error: Required. The error object.
         :paramtype error: ~azure.mgmt.machinelearningservices.models.AzureCoreFoundationsError
@@ -185,16 +181,12 @@ class AzureCoreFoundationsInnerError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'innererror': {'key': 'innererror', 'type': 'AzureCoreFoundationsInnerError'},
+        "code": {"key": "code", "type": "str"},
+        "innererror": {"key": "innererror", "type": "AzureCoreFoundationsInnerError"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        innererror: Optional["AzureCoreFoundationsInnerError"] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, innererror: Optional["AzureCoreFoundationsInnerError"] = None, **kwargs
     ):
         """
         :keyword code: One of a server-defined set of error codes.
@@ -260,35 +252,35 @@ class DeploymentTemplate(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
-        'system_data': {'readonly': True},
-        'deployment_template_type': {'required': True},
-        'environment_id': {'required': True},
-        'allowed_instance_types': {'required': True},
-        'default_instance_type': {'required': True},
-        'instance_count': {'required': True},
+        "id": {"required": True, "readonly": True},
+        "system_data": {"readonly": True},
+        "deployment_template_type": {"required": True},
+        "environment_id": {"required": True},
+        "allowed_instance_types": {"required": True},
+        "default_instance_type": {"required": True},
+        "instance_count": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'deployment_template_type': {'key': 'deploymentTemplateType', 'type': 'str'},
-        'environment_id': {'key': 'environmentId', 'type': 'str'},
-        'environment_variables': {'key': 'environmentVariables', 'type': '{str}'},
-        'allowed_environment_variable_overrides': {'key': 'allowedEnvironmentVariableOverrides', 'type': '[str]'},
-        'model_mount_path': {'key': 'modelMountPath', 'type': 'str'},
-        'request_settings': {'key': 'requestSettings', 'type': 'OnlineRequestSettings'},
-        'liveness_probe': {'key': 'livenessProbe', 'type': 'ProbeSettings'},
-        'readiness_probe': {'key': 'readinessProbe', 'type': 'ProbeSettings'},
-        'allowed_instance_types': {'key': 'allowedInstanceTypes', 'type': '[str]'},
-        'default_instance_type': {'key': 'defaultInstanceType', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'scoring_path': {'key': 'scoringPath', 'type': 'str'},
-        'scoring_port': {'key': 'scoringPort', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "stage": {"key": "stage", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "deployment_template_type": {"key": "deploymentTemplateType", "type": "str"},
+        "environment_id": {"key": "environmentId", "type": "str"},
+        "environment_variables": {"key": "environmentVariables", "type": "{str}"},
+        "allowed_environment_variable_overrides": {"key": "allowedEnvironmentVariableOverrides", "type": "[str]"},
+        "model_mount_path": {"key": "modelMountPath", "type": "str"},
+        "request_settings": {"key": "requestSettings", "type": "OnlineRequestSettings"},
+        "liveness_probe": {"key": "livenessProbe", "type": "ProbeSettings"},
+        "readiness_probe": {"key": "readinessProbe", "type": "ProbeSettings"},
+        "allowed_instance_types": {"key": "allowedInstanceTypes", "type": "[str]"},
+        "default_instance_type": {"key": "defaultInstanceType", "type": "str"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "scoring_path": {"key": "scoringPath", "type": "str"},
+        "scoring_port": {"key": "scoringPort", "type": "int"},
     }
 
     def __init__(
@@ -402,19 +394,19 @@ class Index(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True, 'readonly': True},
-        'system_data': {'readonly': True},
-        'storage_uri': {'required': True},
+        "id": {"required": True, "readonly": True},
+        "system_data": {"readonly": True},
+        "storage_uri": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'stage': {'key': 'stage', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'storage_uri': {'key': 'storageUri', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "stage": {"key": "stage", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "{str}"},
+        "storage_uri": {"key": "storageUri", "type": "str"},
     }
 
     def __init__(
@@ -462,19 +454,14 @@ class LongRunningNullResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'location': {'required': True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, **kwargs):
         """
         :keyword location: Required. Polling Uri.
         :paramtype location: str
@@ -496,22 +483,16 @@ class OnlineRequestSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'request_timeout': {'required': True},
-        'max_concurrent_requests_per_instance': {'required': True},
+        "request_timeout": {"required": True},
+        "max_concurrent_requests_per_instance": {"required": True},
     }
 
     _attribute_map = {
-        'request_timeout': {'key': 'requestTimeout', 'type': 'duration'},
-        'max_concurrent_requests_per_instance': {'key': 'maxConcurrentRequestsPerInstance', 'type': 'int'},
+        "request_timeout": {"key": "requestTimeout", "type": "duration"},
+        "max_concurrent_requests_per_instance": {"key": "maxConcurrentRequestsPerInstance", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        request_timeout: datetime.timedelta,
-        max_concurrent_requests_per_instance: int,
-        **kwargs
-    ):
+    def __init__(self, *, request_timeout: datetime.timedelta, max_concurrent_requests_per_instance: int, **kwargs):
         """
         :keyword request_timeout: Required. The timeout duration for requests.
         :paramtype request_timeout: ~datetime.timedelta
@@ -536,21 +517,15 @@ class PagedDeploymentTemplate(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DeploymentTemplate]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DeploymentTemplate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["DeploymentTemplate"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["DeploymentTemplate"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required. The list of Deployment Templates.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.DeploymentTemplate]
@@ -574,21 +549,15 @@ class PagedIndex(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Index]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Index]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: List["Index"],
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: List["Index"], next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Required. The list of Indexes.
         :paramtype value: list[~azure.mgmt.machinelearningservices.models.Index]
@@ -628,26 +597,26 @@ class ProbeSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'period': {'required': True},
-        'timeout': {'required': True},
-        'failure_threshold': {'required': True},
-        'success_threshold': {'required': True},
-        'path': {'required': True},
-        'port': {'required': True},
-        'scheme': {'required': True},
-        'http_method': {'required': True},
+        "period": {"required": True},
+        "timeout": {"required": True},
+        "failure_threshold": {"required": True},
+        "success_threshold": {"required": True},
+        "path": {"required": True},
+        "port": {"required": True},
+        "scheme": {"required": True},
+        "http_method": {"required": True},
     }
 
     _attribute_map = {
-        'initial_delay': {'key': 'initialDelay', 'type': 'duration'},
-        'period': {'key': 'period', 'type': 'duration'},
-        'timeout': {'key': 'timeout', 'type': 'duration'},
-        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
-        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
-        'path': {'key': 'path', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'scheme': {'key': 'scheme', 'type': 'str'},
-        'http_method': {'key': 'httpMethod', 'type': 'str'},
+        "initial_delay": {"key": "initialDelay", "type": "duration"},
+        "period": {"key": "period", "type": "duration"},
+        "timeout": {"key": "timeout", "type": "duration"},
+        "failure_threshold": {"key": "failureThreshold", "type": "int"},
+        "success_threshold": {"key": "successThreshold", "type": "int"},
+        "path": {"key": "path", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "scheme": {"key": "scheme", "type": "str"},
+        "http_method": {"key": "httpMethod", "type": "str"},
     }
 
     def __init__(
@@ -708,19 +677,14 @@ class PutAssetLROResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'asset_id': {'required': True},
+        "asset_id": {"required": True},
     }
 
     _attribute_map = {
-        'asset_id': {'key': 'assetId', 'type': 'str'},
+        "asset_id": {"key": "assetId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        asset_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, asset_id: str, **kwargs):
         """
         :keyword asset_id: Required. Response of completed put asset lro.
         :paramtype asset_id: str
@@ -745,25 +709,21 @@ class SystemData(msrest.serialization.Model):
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'created_by_type': {'readonly': True},
-        'last_modified_at': {'readonly': True},
+        "created_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "created_by_type": {"readonly": True},
+        "last_modified_at": {"readonly": True},
     }
 
     _attribute_map = {
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super(SystemData, self).__init__(**kwargs)
         self.created_at = None
         self.created_by = None
@@ -786,21 +746,15 @@ class VersionInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'latest_version': {'required': True},
+        "latest_version": {"required": True},
     }
 
     _attribute_map = {
-        'next_version': {'key': 'nextVersion', 'type': 'long'},
-        'latest_version': {'key': 'latestVersion', 'type': 'str'},
+        "next_version": {"key": "nextVersion", "type": "long"},
+        "latest_version": {"key": "latestVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        latest_version: str,
-        next_version: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, latest_version: str, next_version: Optional[int] = None, **kwargs):
         """
         :keyword next_version: Next version as defined by the server. The server keeps track of all
          versions that are string-representations of integers. If one exists, the nextVersion will be a

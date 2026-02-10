@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
+
 class AzureMachineLearningWorkspaces:
     """AzureMachineLearningWorkspaces.
 
@@ -39,12 +41,8 @@ class AzureMachineLearningWorkspaces:
      Retry-After header is present.
     """
 
-    def __init__(
-        self,
-        credential: "AsyncTokenCredential",
-        **kwargs: Any
-    ) -> None:
-        _base_url = '{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices'
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+        _base_url = "{endpoint}/genericasset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices"
         self._config = AzureMachineLearningWorkspacesConfiguration(credential=credential, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=_base_url, config=self._config, **kwargs)
 
@@ -52,15 +50,12 @@ class AzureMachineLearningWorkspaces:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.deployment_templates = DeploymentTemplatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.deployment_templates = DeploymentTemplatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
