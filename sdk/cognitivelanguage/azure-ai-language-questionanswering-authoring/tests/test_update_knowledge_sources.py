@@ -9,37 +9,36 @@ from azure.ai.language.questionanswering.authoring import models as _models
 
 
 class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
-    def test_add_chitchat(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
+    def test_add_source(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
             qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
         )
         project_name = "IsaacNewton"
         AuthoringTestHelper.create_test_project(client, project_name=project_name)
-        question = "Hello"
-        answer = "Hi! How can I help you today?"
-        update_qna_ops = [
-            _models.UpdateQnaRecord(
+        source_display_name = "SurfaceBookUserGuide"
+        update_source_ops = [
+            _models.UpdateSourceRecord(
                 {
                     "op": "add",
                     "value": {
-                        "id": 0,
-                        "answer": answer,
-                        "questions": [question],
+                        "displayName": source_display_name,
+                        "source": "https://download.microsoft.com/download/7/B/1/7B10C82E-F520-4080-8516-5CF0D803EEE0/surface-book-user-guide-EN.pdf",
+                        "sourceUri": "https://download.microsoft.com/download/7/B/1/7B10C82E-F520-4080-8516-5CF0D803EEE0/surface-book-user-guide-EN.pdf",
+                        "sourceKind": "url",
+                        "contentStructureKind": "unstructured",
+                        "refresh": False,
                     },
                 }
             )
         ]
-        poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+        poller = client.begin_update_sources( # pylint: disable=no-value-for-parameter
             project_name=project_name,
-            qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
+            sources=cast(list[_models.UpdateSourceRecord], update_source_ops),
             content_type="application/json",
             polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
         )
         poller.result()
-        assert any(
-            (q.get("answer") == answer and question in q.get("questions", []))
-            for q in client.list_qnas(project_name=project_name)
-        )
+        assert any(s.get("displayName") == source_display_name for s in client.list_sources(project_name=project_name))
 
     def test_add_qna(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
         client = QuestionAnsweringAuthoringClient(
@@ -92,4 +91,41 @@ class TestSourcesQnasSynonyms(QuestionAnsweringAuthoringTestCase):
         assert any(
             ("qnamaker" in s.get("alterations", []) and "qna maker" in s.get("alterations", []))
             for s in client.list_synonyms(project_name=project_name)
+        )
+
+    def test_add_qna_with_explicitlytaggedheading(self, recorded_test, qna_authoring_creds):  # type: ignore[name-defined] # pylint: disable=unused-argument
+        client = QuestionAnsweringAuthoringClient(
+            qna_authoring_creds["endpoint"], AzureKeyCredential(qna_authoring_creds["key"])
+        )
+        project_name = "IsaacNewton"
+        AuthoringTestHelper.create_test_project(client, project_name=project_name)
+        update_qna_ops = [
+            _models.UpdateQnaRecord(
+                {
+                    "op": "add",
+                    "value": {
+                        "id": 0,
+                        "answer": "Check the battery level in Settings.",
+                        "questions": ["How do I check the battery level?"],
+                        "metadata": {"explicitlytaggedheading": "check the battery level"},
+                    },
+                }
+            )
+        ]
+        poller = client.begin_update_qnas( # pylint: disable=no-value-for-parameter
+            project_name=project_name,
+            qnas=cast(list[_models.UpdateQnaRecord], update_qna_ops),
+            content_type="application/json",
+            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
+        )
+        poller.result()
+        deploy_poller = client.begin_deploy_project(
+            project_name=project_name,
+            deployment_name="production",
+            polling_interval=0 if self.is_playback else None,  # type: ignore[arg-type] # pylint: disable=using-constant-test
+        )
+        deploy_poller.result()
+        assert any(
+            (q.get("metadata") or {}).get("explicitlytaggedheading") == "check the battery level"
+            for q in client.list_qnas(project_name=project_name)
         )
