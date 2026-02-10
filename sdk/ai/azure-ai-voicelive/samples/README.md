@@ -15,10 +15,29 @@ This directory contains sample applications demonstrating various capabilities o
 1. **Install dependencies**:
 
    ```bash
-   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
+   pip install azure-ai-voicelive[aiohttp] python-dotenv
    ```
 
-2. **Configure environment variables**:
+2. **Install PyAudio** (required for audio samples):
+
+   PyAudio requires PortAudio to be installed on your system:
+
+   - **Linux (Ubuntu/Debian)**:
+     ```bash
+     sudo apt-get install -y portaudio19-dev libasound2-dev
+     pip install pyaudio
+     ```
+   - **macOS**:
+     ```bash
+     brew install portaudio
+     pip install pyaudio
+     ```
+   - **Windows**:
+     ```bash
+     pip install pyaudio
+     ```
+
+3. **Configure environment variables**:
 
    Create a `.env` file at the root of the azure-ai-voicelive directory or in the samples directory with the following variables:
 

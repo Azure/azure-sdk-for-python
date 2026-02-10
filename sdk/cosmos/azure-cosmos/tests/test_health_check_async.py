@@ -89,7 +89,11 @@ class TestHealthCheckAsync:
             client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
             # this will setup the location cache
             await client.__aenter__()
-            await asyncio.sleep(10) # give some time for the background health check to complete
+            # Poll until the background health check marks endpoints as unavailable
+            start_time = time.time()
+            while (len(client.client_connection._global_endpoint_manager.location_cache.location_unavailability_info_by_endpoint) < len(REGIONS)
+                   and time.time() - start_time < 10):
+                await asyncio.sleep(0.1)
         finally:
             _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
         expected_endpoints = []
@@ -276,6 +280,112 @@ class TestHealthCheckAsync:
             db_acc._EnableMultipleWritableLocations = multi_write
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
+
+
+    async def test_force_refresh_on_startup_with_none_should_fetch_database_account(self, setup):
+        """Verifies that calling force_refresh_on_startup(None) fetches the database account
+        instead of crashing with AttributeError on NoneType._WritableLocations.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        mock_get_db_account = self.MockGetDatabaseAccount(REGIONS)
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = mock_get_db_account
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+
+            # Simulate the startup state
+            gem.startup = True
+            gem.refresh_needed = True
+            gem._aenter_used = True  # Simulate that __aenter__ was used
+
+            # This should NOT crash - it should fetch the database account
+            await gem.force_refresh_on_startup(None)
+
+            # Verify the location cache was properly populated
+            read_contexts = gem.location_cache.read_regional_routing_contexts
+            assert len(read_contexts) > 0, "Location cache should have read endpoints after startup refresh"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+    async def test_force_refresh_on_startup_with_valid_account_uses_provided_account(self, setup):
+        """Verifies that when a valid database account is provided to force_refresh_on_startup,
+        it uses that account directly without making another network call.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        call_counter = {'count': 0}
+
+        async def counting_mock(self_gem, endpoint, **kwargs):
+            call_counter['count'] += 1
+            return await self.MockGetDatabaseAccount(REGIONS)(endpoint)
+
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = counting_mock
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+
+            # Get a valid database account first
+            db_account = await gem._GetDatabaseAccount()
+            initial_call_count = call_counter['count']
+
+            # Reset startup state
+            gem.startup = True
+            gem.refresh_needed = True
+            gem._aenter_used = True
+
+            # Call with valid account - should NOT make another network call
+            await gem.force_refresh_on_startup(db_account)
+
+            # Since we provided a valid account, no additional GetDatabaseAccount call should be made
+
+            assert call_counter['count'] == initial_call_count, \
+                "Should not call _GetDatabaseAccount when valid account is provided"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+    async def test_aenter_used_flag_with_none_still_fetches_account(self, setup):
+        """Verifies that even when _aenter_used=True, passing None to force_refresh_on_startup
+        still fetches the database account.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub
+        fetch_was_called = {'called': False}
+
+        async def tracking_mock(self_gem, endpoint, **kwargs):
+            fetch_was_called['called'] = True
+            return await self.MockGetDatabaseAccount(REGIONS)(endpoint)
+
+        _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = tracking_mock
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            await client.__aenter__()
+            gem = client.client_connection._global_endpoint_manager
+
+            # Reset state to simulate the buggy scenario
+            gem.startup = True
+            gem.refresh_needed = True
+            gem._aenter_used = True  # This was causing the bug to skip fetching
+            fetch_was_called['called'] = False  # Reset tracking
+
+            # Call with None - should still fetch database account (this is the fix)
+            await gem.force_refresh_on_startup(None)
+
+            # This ensures that even with _aenter_used=True, if database_account is None,
+            # it fetches the database account
+            assert fetch_was_called['called'], \
+                "With _aenter_used=True and database_account=None, should still fetch database account"
+
+            await client.close()
+        finally:
+            _global_endpoint_manager_async._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
 
 if __name__ == '__main__':
     unittest.main()

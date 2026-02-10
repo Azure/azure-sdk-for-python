@@ -1,8 +1,13 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 import warnings
 from unittest import TestCase
 from unittest.mock import patch
 
-from azure.core.tracing.ext.opentelemetry_span import OpenTelemetrySpan
 from azure.monitor.opentelemetry._autoinstrumentation.configurator import (
     AzureMonitorConfigurator,
 )
@@ -12,6 +17,7 @@ from azure.monitor.opentelemetry._diagnostics.diagnostic_logging import (
 )
 
 
+# pylint: disable=unused-argument
 @patch.dict("os.environ", {}, clear=True)
 class TestConfigurator(TestCase):
     @patch("azure.monitor.opentelemetry._autoinstrumentation.configurator.super")

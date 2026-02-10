@@ -25,7 +25,7 @@ class TestComputeManagementGalleryApplicationsOperationsAsync(AzureMgmtRecordedT
         response = self.client.gallery_applications.list_by_gallery(
             resource_group_name=resource_group.name,
             gallery_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestComputeManagementGalleryApplicationsOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             gallery_name="str",
             gallery_application_name="str",
-            api_version="2024-03-03",
+            api_version="2025-03-03",
         )
 
         # please add some check logic here by yourself
@@ -89,7 +89,7 @@ class TestComputeManagementGalleryApplicationsOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -132,7 +132,7 @@ class TestComputeManagementGalleryApplicationsOperationsAsync(AzureMgmtRecordedT
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -147,7 +147,7 @@ class TestComputeManagementGalleryApplicationsOperationsAsync(AzureMgmtRecordedT
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 gallery_application_name="str",
-                api_version="2024-03-03",
+                api_version="2025-03-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 

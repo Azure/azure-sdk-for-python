@@ -45,3 +45,21 @@ extends:
       safeName: azuremgmtresourcedeploymentscripts
     - name: azure-mgmt-resource-bicep
       safeName: azuremgmtresourcebicep
+    - name: azure-mgmt-resource-changes
+      safeName: azuremgmtresourcechanges
+    - name: azure-mgmt-resource-databoundaries
+      safeName: azuremgmtresourcedataboundaries
+    - name: azure-mgmt-resource-features
+      safeName: azuremgmtresourcefeatures
+    - name: azure-mgmt-resource-links
+      safeName: azuremgmtresourcelinks
+    - name: azure-mgmt-resource-locks
+      safeName: azuremgmtresourcelocks
+    - name: azure-mgmt-resource-managedapplications
+      safeName: azuremgmtresourcemanagedapplications
+    - name: azure-mgmt-resource-policy
+      safeName: azuremgmtresourcepolicy
+    - name: azure-mgmt-resource-privatelinks
+      safeName: azuremgmtresourceprivatelinks
+    - name: azure-mgmt-resource-subscriptions
+      safeName: azuremgmtresourcesubscriptions
