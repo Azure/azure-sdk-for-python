@@ -14,7 +14,10 @@ from ._models import SearchIndexerDataSourceConnection as _SearchIndexerDataSour
 from ._models import KnowledgeBase as _KnowledgeBase
 from ._enums import (
     LexicalAnalyzerName,
+    OcrSkillLanguage,
     SearchFieldDataType as _SearchFieldDataType,
+    SplitSkillLanguage,
+    TextTranslationSkillLanguage,
 )
 from ...knowledgebases.models import (
     KnowledgeRetrievalReasoningEffort,
@@ -169,6 +172,11 @@ SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-d
 SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
 SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
 SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+
+# Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
+OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+SplitSkillLanguage.IS = SplitSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+TextTranslationSkillLanguage.IS = TextTranslationSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
 
 
 def Collection(typ: Any) -> str:
@@ -437,12 +445,15 @@ def ComplexField(
 
 __all__: list[str] = [
     "KnowledgeBase",
+    "OcrSkillLanguage",
     "SearchField",
     "SearchFieldDataType",
     "SearchIndexerDataSourceConnection",
     "SimpleField",
     "SearchableField",
     "ComplexField",
+    "SplitSkillLanguage",
+    "TextTranslationSkillLanguage",
 ]  # Add all objects you want publicly available to users at this package level
 
 
