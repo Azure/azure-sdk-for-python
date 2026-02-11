@@ -63,9 +63,7 @@ class TestRemoteSharePointKnowledgeSourceLiveAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
-    async def test_remote_sharepoint_knowledge_source_create(
-        self, endpoint: str
-    ) -> None:
+    async def test_remote_sharepoint_knowledge_source_create(self, endpoint: str) -> None:
         ctx = await self._create_context(endpoint)
         try:
             assert ctx.created_revision.name == ctx.source_name
@@ -81,9 +79,7 @@ class TestRemoteSharePointKnowledgeSourceLiveAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
-    async def test_remote_sharepoint_knowledge_source_update(
-        self, endpoint: str
-    ) -> None:
+    async def test_remote_sharepoint_knowledge_source_update(self, endpoint: str) -> None:
         ctx = await self._create_context(endpoint)
         try:
             update_model = RemoteSharePointKnowledgeSource(
@@ -121,18 +117,14 @@ class TestRemoteSharePointKnowledgeSourceLiveAsync(AzureRecordedTestCase):
     @SearchEnvVarPreparer()
     @search_decorator(schema=None, index_batch=None)
     @recorded_by_proxy_async
-    async def test_remote_sharepoint_knowledge_source_delete(
-        self, endpoint: str
-    ) -> None:
+    async def test_remote_sharepoint_knowledge_source_delete(self, endpoint: str) -> None:
         ctx = await self._create_context(endpoint)
         try:
             await ctx.index_client.delete_knowledge_source(
                 ctx.created_revision,
                 match_condition=MatchConditions.IfNotModified,
             )
-            remaining = [
-                item async for item in ctx.index_client.list_knowledge_sources()
-            ]
+            remaining = [item async for item in ctx.index_client.list_knowledge_sources()]
             assert all(item.name != ctx.source_name for item in remaining)
         finally:
             await ctx.index_client.close()

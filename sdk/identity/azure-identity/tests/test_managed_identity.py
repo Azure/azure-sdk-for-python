@@ -37,6 +37,18 @@ ALL_ENVIRONMENTS = (
     {},  # IMDS
     {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # Azure ML
 )
+# Environments where MSAL-based managed identity clients are used
+MSAL_MANAGED_IDENTITY_ENVIRON = (
+    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IDENTITY_HEADER: "..."},  # App Service
+    {  # Service Fabric
+        EnvironmentVariables.IDENTITY_ENDPOINT: "...",
+        EnvironmentVariables.IDENTITY_HEADER: "...",
+        EnvironmentVariables.IDENTITY_SERVER_THUMBPRINT: "...",
+    },
+    {EnvironmentVariables.IDENTITY_ENDPOINT: "...", EnvironmentVariables.IMDS_ENDPOINT: "..."},  # Arc
+    {EnvironmentVariables.MSI_ENDPOINT: "...", EnvironmentVariables.MSI_SECRET: "..."},  # Azure ML
+    {},  # IMDS
+)
 
 
 @pytest.mark.parametrize("environ", ALL_ENVIRONMENTS)
@@ -1168,3 +1180,36 @@ def test_log(caplog):
         with mock.patch.dict("os.environ", mock_environ, clear=True):
             ManagedIdentityCredential(client_id="foo")
             assert "workload identity with client_id: foo" in caplog.text
+
+
+@pytest.mark.parametrize("environ,get_token_method", product(MSAL_MANAGED_IDENTITY_ENVIRON, GET_TOKEN_METHODS))
+def test_claims_propagated(environ, get_token_method):
+    """Test that claims passed are forwarded to MSAL's acquire_token_for_client."""
+    from azure.identity import ManagedIdentityCredential
+
+    expected_claims = '{"access_token": {"xms_cc": {"values": ["cp1"]}}}'
+    expected_token = "test_token"
+    expires_in = 3600
+
+    mock_msal_client = mock.Mock()
+    mock_msal_client.acquire_token_for_client.return_value = {
+        "access_token": expected_token,
+        "expires_in": expires_in,
+        "token_type": "Bearer",
+    }
+
+    with mock.patch("msal.ManagedIdentityClient", return_value=mock_msal_client):
+        with mock.patch.dict(MANAGED_IDENTITY_ENVIRON, environ, clear=True):
+            credential = ManagedIdentityCredential()
+            kwargs = {"claims": expected_claims}
+            if get_token_method == "get_token_info":
+                kwargs = {"options": {"claims": expected_claims}}
+            token = getattr(credential, get_token_method)("scope", **kwargs)
+
+    # Verify the token was returned correctly
+    assert token.token == expected_token
+
+    # Verify acquire_token_for_client was called with the claims
+    mock_msal_client.acquire_token_for_client.assert_called_once()
+    call_kwargs = mock_msal_client.acquire_token_for_client.call_args
+    assert call_kwargs.kwargs.get("claims_challenge") == expected_claims

@@ -2,7 +2,7 @@
 
 # init env
 python -m pip install -U pip > /dev/null
-python -m pip install eng/tools/azure-sdk-tools[build,ghtools,sdkgenerator] > /dev/null
+python -m pip install eng/tools/azure-sdk-tools[ghtools,sdkgenerator] > /dev/null
 
 # install tsp-client
 echo Install tsp-client

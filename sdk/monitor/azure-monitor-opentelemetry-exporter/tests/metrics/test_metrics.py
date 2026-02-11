@@ -40,9 +40,9 @@ def throw(exc_type, *args, **kwargs):
     return func
 
 
-# pylint: disable=import-error
-# pylint: disable=protected-access
-# pylint: disable=too-many-lines
+# pylint: disable=import-error, too-many-public-methods
+# pylint: disable=protected-access, too-many-statements
+# pylint: disable=too-many-lines, unused-argument
 class TestAzureMetricExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

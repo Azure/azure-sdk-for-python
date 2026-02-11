@@ -12,7 +12,7 @@ keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "azure-core>=1.31.0",
     "cryptography>=2.5",
-    "msal>=1.30.0",
+    "msal>=1.31.0",
     "msal-extensions>=1.2.0",
     "typing-extensions>=4.0.0",
 ]
@@ -49,3 +49,6 @@ pytyped = ["py.typed"]
 pyright = false
 verifytypes = true
 black = true
+
+[tool.azure-sdk-conda]
+in_bundle = false

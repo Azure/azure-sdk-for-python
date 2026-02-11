@@ -65,7 +65,7 @@ class ImdsCredential(AsyncContextManager, GetTokenMixin):
         await self._client.close()
 
     async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessTokenInfo]:
-        return self._client.get_cached_token(*scopes)
+        return self._client.get_cached_token(*scopes, **kwargs)
 
     async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessTokenInfo:
 

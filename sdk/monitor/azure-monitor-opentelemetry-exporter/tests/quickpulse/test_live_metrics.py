@@ -78,7 +78,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_with_all_parameters(self, manager_mock, statsbeat_mock):
+    def test_enable_live_metrics_with_all_parameters(
+        self, manager_mock, statsbeat_mock  # pylint: disable=unused-argument
+    ):
         """Test enable_live_metrics with all possible parameters."""
         mock_resource = Resource.create(
             {"service.name": "test-service", "service.version": "1.0.0", "deployment.environment": "test"}
@@ -108,7 +110,9 @@ class TestLiveMetrics(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
-    def test_enable_live_metrics_with_none_values(self, manager_mock, statsbeat_mock):
+    def test_enable_live_metrics_with_none_values(
+        self, manager_mock, statsbeat_mock
+    ):  # pylint: disable=unused-argument
         """Test enable_live_metrics with None values for optional parameters."""
         mock_manager_instance = mock.Mock()
         mock_manager_instance.initialize.return_value = True
