@@ -808,7 +808,7 @@ class Serializer:  # pylint: disable=too-many-public-methods
             # If dependencies is empty, try with current data class
             # It has to be a subclass of Enum anyway
             enum_type = self.dependencies.get(data_type, data.__class__)
-            if issubclass(enum_type, Enum):
+            if issubclass(enum_type, Enum):  # type: ignore[arg-type]
                 return Serializer.serialize_enum(data, enum_obj=enum_type)
 
             iter_type = data_type[0] + data_type[-1]

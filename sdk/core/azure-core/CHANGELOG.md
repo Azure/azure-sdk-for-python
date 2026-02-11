@@ -1,14 +1,10 @@
 # Release History
 
-## 1.38.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.38.1 (2026-02-10)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters.  #45044
 
 ## 1.38.0 (2026-01-12)
 
@@ -22,19 +18,20 @@
 
 - Added `get_backcompat_attr_name` to `azure.core.serialization`. `get_backcompat_attr_name` gets the backcompat name of an attribute using backcompat attribute access.  #44084
 
+### Bugs Fixed
+
+- Fixed leaked requests and aiohttp exceptions for streamed responses #43200
+- Improved granularity of ServiceRequestError and ServiceResponseError exceptions raised in timeout scenarios from the requests and aiohttp transports #43200
+
 ## 1.36.0 (2025-10-14)
 
 ### Features Added
 
 - Added `TypeHandlerRegistry` to `azure.core.serialization` to allow developers to register custom serializers and deserializers for specific types or conditions.  #43051
 
-### Breaking Changes
-
 ### Bugs Fixed
 
 - Fixed repeated import attempts of cchardet and chardet when charset_normalizer is used #43092
-- Fixed leaked requests and aiohttp exceptions for streamed responses #43200
-- Improved granularity of ServiceRequestError and ServiceResponseError exceptions raised in timeout scenarios from the requests and aiohttp transports #43200
 
 ### Other Changes
 

@@ -168,16 +168,17 @@ def _default_resource(configurations):
 # pylint: disable=too-many-statements,too-many-branches
 def _default_sampling_ratio(configurations):
     default_value = 1.0
+    default_value_for_rate_limited_sampler = 5.0
     sampler_type = environ.get(OTEL_TRACES_SAMPLER)
     sampler_arg = environ.get(OTEL_TRACES_SAMPLER_ARG)
 
     # Handle rate-limited sampler
     if sampler_type == RATE_LIMITED_SAMPLER:
         try:
-            sampler_value = float(sampler_arg)
+            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value_for_rate_limited_sampler
             if sampler_value < 0.0:
                 _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
-                sampler_value = default_value
+                sampler_value = default_value_for_rate_limited_sampler
             else:
                 _logger.info("Using rate limited sampler: %s traces per second", sampler_value)
             configurations[SAMPLING_TRACES_PER_SECOND_ARG] = sampler_value
@@ -185,17 +186,17 @@ def _default_sampling_ratio(configurations):
             _logger.error(  # pylint: disable=C
                 _INVALID_TRACES_PER_SECOND_MESSAGE,
                 OTEL_TRACES_SAMPLER_ARG,
-                default_value,
+                default_value_for_rate_limited_sampler,
                 e,
             )
-            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value
+            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value_for_rate_limited_sampler
 
     # Handle fixed percentage sampler
-    elif sampler_type == FIXED_PERCENTAGE_SAMPLER:
+    elif sampler_type in (FIXED_PERCENTAGE_SAMPLER, "microsoft.fixed.percentage"):  # to support older string
         try:
-            sampler_value = float(sampler_arg)
-            if sampler_value < 0.0:
-                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a non-negative number.")
+            sampler_value = float(sampler_arg) if sampler_arg is not None else default_value
+            if sampler_value < 0.0 or sampler_value > 1.0:
+                _logger.error("Invalid value for OTEL_TRACES_SAMPLER_ARG. It should be a value between 0 and 1.")
                 sampler_value = default_value
             else:
                 _logger.info("Using sampling ratio: %s", sampler_value)
@@ -271,15 +272,15 @@ def _default_sampling_ratio(configurations):
 
     # Handle all other cases (no sampler type specified or unsupported sampler type)
     else:
-        if configurations.get(SAMPLING_RATIO_ARG) is None:
-            configurations[SAMPLING_RATIO_ARG] = default_value
+        if configurations.get(SAMPLING_TRACES_PER_SECOND_ARG) is None:
+            configurations[SAMPLING_TRACES_PER_SECOND_ARG] = default_value_for_rate_limited_sampler
         if sampler_type is not None:
             _logger.error(  # pylint: disable=C
                 "Invalid argument for the sampler to be used for tracing. "
                 "Supported values are %s. Defaulting to %s: %s",
                 SUPPORTED_OTEL_SAMPLERS,
-                FIXED_PERCENTAGE_SAMPLER,
-                configurations[SAMPLING_RATIO_ARG],
+                RATE_LIMITED_SAMPLER,
+                configurations[SAMPLING_TRACES_PER_SECOND_ARG],
             )
 
 
@@ -314,7 +315,7 @@ def _default_metric_readers(configurations):
 
 
 def _default_enable_live_metrics(configurations):
-    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, False)
+    configurations.setdefault(ENABLE_LIVE_METRICS_ARG, True)
 
 
 def _default_enable_performance_counters(configurations):

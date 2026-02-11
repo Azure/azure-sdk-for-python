@@ -14,6 +14,7 @@ from typing import (
     Callable,
     Dict,
     IO,
+    Iterable,
     Literal,
     Optional,
     Union,
@@ -134,7 +135,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace_async
     async def upload_data(
         self,
-        data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         *,
@@ -159,7 +160,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace_async
     async def append_data(
         self,
-        data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
         *,

@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Optional, TypeVar, MutableMapping, Any, Union
 from ...credentials import TokenRequestOptions
 from ...rest import HttpResponse, HttpRequest
 from . import HTTPPolicy, SansIOHTTPPolicy
-from ...exceptions import ServiceRequestError
+from ...exceptions import ServiceRequestError, HttpResponseError
 
 if TYPE_CHECKING:
 
@@ -93,7 +93,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
     :param str scopes: Lets you specify the type of access needed.
     :keyword auth_flows: A list of authentication flows to use for the credential.
     :paramtype auth_flows: list[dict[str, Union[str, list[dict[str, str]]]]]
-    :raises: :class:`~corehttp.exceptions.ServiceRequestError`
+    :raises ~corehttp.exceptions.ServiceRequestError: If the request fails.
     """
 
     def on_request(
@@ -158,7 +158,19 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy[H
         if response.http_response.status_code == 401:
             self._token = None  # any cached token is invalid
             if "WWW-Authenticate" in response.http_response.headers:
-                request_authorized = self.on_challenge(request, response)
+                try:
+                    request_authorized = self.on_challenge(request, response)
+                except Exception as ex:
+                    # If the response is streamed, read it so the error message is immediately available to the user.
+                    # Otherwise, a generic error message will be given and the user will have to read the response
+                    # body to see the actual error.
+                    if response.context.options.get("stream"):
+                        try:
+                            response.http_response.read()  # type: ignore
+                        except Exception:  # pylint:disable=broad-except
+                            pass
+                    # Raise the exception from the token request with the original 401 response.
+                    raise ex from HttpResponseError(response=response.http_response)
                 if request_authorized:
                     try:
                         response = self.next.send(request)
@@ -215,7 +227,8 @@ class ServiceKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseT
     :type credential: ~corehttp.credentials.ServiceKeyCredential
     :param str name: The name of the key header used for the credential.
     :keyword str prefix: The name of the prefix for the header value if any.
-    :raises: ValueError or TypeError
+    :raises ValueError: if name is None or empty.
+    :raises TypeError: if name is not a string or if credential is not an instance of ServiceKeyCredential.
     """
 
     def __init__(  # pylint: disable=unused-argument
@@ -238,4 +251,9 @@ class ServiceKeyCredentialPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseT
         self._prefix = prefix + " " if prefix else ""
 
     def on_request(self, request: PipelineRequest[HTTPRequestType]) -> None:
+        """Called before the policy sends a request.
+
+        :param request: The request to be modified before sending.
+        :type request: ~corehttp.runtime.pipeline.PipelineRequest
+        """
         request.http_request.headers[self._name] = f"{self._prefix}{self._credential.key}"
