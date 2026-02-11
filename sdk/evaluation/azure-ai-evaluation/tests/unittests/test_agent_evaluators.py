@@ -10,47 +10,41 @@ class TestEvaluate:
         tool_call_accuracy = ToolCallAccuracyEvaluator(model_config=mock_model_config)
 
         # Test with missing tool_calls and response
-        result = tool_call_accuracy(
-            query="Where is the Eiffel Tower?",
-            tool_definitions=[
-                {
-                    "name": "fetch_weather",
-                    "description": "Fetches the weather information for the specified location.",
-                    "parameters": {
-                        "type": "object",
-                        "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "The location to fetch weather for.",
-                            }
+        with pytest.raises(EvaluationException) as exc_info:
+            tool_call_accuracy(
+                query="Where is the Eiffel Tower?",
+                tool_definitions=[
+                    {
+                        "name": "fetch_weather",
+                        "description": "Fetches the weather information for the specified location.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "location": {
+                                    "type": "string",
+                                    "description": "The location to fetch weather for.",
+                                }
+                            },
                         },
-                    },
-                }
-            ],
-        )
-        assert result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert (
-            ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE
-            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
-        )
+                    }
+                ],
+            )
+        assert ToolCallAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in str(exc_info.value)
 
         # Test with missing tool_definitions
-        result = tool_call_accuracy(
-            query="Where is the Eiffel Tower?",
-            tool_definitions=[],
-            tool_calls=[
-                {
-                    "type": "tool_call",
-                    "name": "fetch_weather",
-                    "arguments": {"location": "Tokyo"},
-                }
-            ],
-        )
-        assert result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
-        assert (
-            ToolCallAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE
-            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
-        )
+        with pytest.raises(EvaluationException) as exc_info:
+            tool_call_accuracy(
+                query="Where is the Eiffel Tower?",
+                tool_definitions=[],
+                tool_calls=[
+                    {
+                        "type": "tool_call",
+                        "name": "fetch_weather",
+                        "arguments": {"location": "Tokyo"},
+                    }
+                ],
+            )
+        assert ToolCallAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in str(exc_info.value)
 
         # Test with response that has no tool calls
         result = tool_call_accuracy(
@@ -81,7 +75,7 @@ class TestEvaluate:
         # Test with tool call for which definition is not provided
         result = tool_call_accuracy(
             query="Where is the Eiffel Tower?",
-            tool_calls=[{"type": "tool_call", "name": "some_other_tool", "arguments": {}}],
+            tool_calls=[{"type": "tool_call", "name": "some_other_tool", "tool_call_id": "1", "arguments": {}}],
             tool_definitions=[
                 {
                     "name": "fetch_weather",
