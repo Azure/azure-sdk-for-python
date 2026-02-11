@@ -67,14 +67,6 @@ from ...operations._operations import (
     build_policy_definitions_list_built_in_request,
     build_policy_definitions_list_by_management_group_request,
     build_policy_definitions_list_request,
-    build_policy_exemptions_create_or_update_request,
-    build_policy_exemptions_delete_request,
-    build_policy_exemptions_get_request,
-    build_policy_exemptions_list_for_management_group_request,
-    build_policy_exemptions_list_for_resource_group_request,
-    build_policy_exemptions_list_for_resource_request,
-    build_policy_exemptions_list_request,
-    build_policy_exemptions_update_request,
     build_policy_set_definition_versions_create_or_update_at_management_group_request,
     build_policy_set_definition_versions_create_or_update_request,
     build_policy_set_definition_versions_delete_at_management_group_request,
@@ -98,3900 +90,14 @@ from ...operations._operations import (
     build_policy_set_definitions_list_built_in_request,
     build_policy_set_definitions_list_by_management_group_request,
     build_policy_set_definitions_list_request,
-    build_variable_values_create_or_update_at_management_group_request,
-    build_variable_values_create_or_update_request,
-    build_variable_values_delete_at_management_group_request,
-    build_variable_values_delete_request,
-    build_variable_values_get_at_management_group_request,
-    build_variable_values_get_request,
-    build_variable_values_list_for_management_group_request,
-    build_variable_values_list_request,
-    build_variables_create_or_update_at_management_group_request,
-    build_variables_create_or_update_request,
-    build_variables_delete_at_management_group_request,
-    build_variables_delete_request,
-    build_variables_get_at_management_group_request,
-    build_variables_get_request,
-    build_variables_list_for_management_group_request,
-    build_variables_list_request,
+    build_policy_tokens_acquire_at_management_group_request,
+    build_policy_tokens_acquire_request,
 )
 from .._configuration import PolicyClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
-
-
-class DataPolicyManifestsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`data_policy_manifests` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get_by_policy_mode(self, policy_mode: str, **kwargs: Any) -> _models.DataPolicyManifest:
-        """Retrieves a data policy manifest.
-
-        This operation retrieves the data policy manifest with the given policy mode.
-
-        :param policy_mode: The policy mode of the data policy manifest to get. Required.
-        :type policy_mode: str
-        :return: DataPolicyManifest or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.DataPolicyManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-09-01"))
-        cls: ClsType[_models.DataPolicyManifest] = kwargs.pop("cls", None)
-
-        _request = build_data_policy_manifests_get_by_policy_mode_request(
-            policy_mode=policy_mode,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("DataPolicyManifest", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.DataPolicyManifest"]:
-        """Retrieves data policy manifests.
-
-        This operation retrieves a list of all the data policy manifests that match the optional given
-        $filter. Valid values for $filter are: "$filter=namespace eq '{0}'". If $filter is not
-        provided, the unfiltered list includes all data policy manifests for data resource types. If
-        $filter=namespace is provided, the returned list only includes all data policy manifests that
-        have a namespace matching the provided value.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are: "namespace
-         eq '{value}'". If $filter is not provided, no filtering is performed. If $filter=namespace eq
-         '{value}' is provided, the returned list only includes all data policy manifests that have a
-         namespace matching the provided value. Default value is None.
-        :type filter: str
-        :return: An iterator like instance of either DataPolicyManifest or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.DataPolicyManifest]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-09-01"))
-        cls: ClsType[_models.DataPolicyManifestListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_data_policy_manifests_list_request(
-                    filter=filter,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("DataPolicyManifestListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicyDefinitionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_definitions` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_definition_name: str,
-        parameters: _models.PolicyDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Creates or updates a policy definition in a subscription.
-
-        This operation creates or updates a policy definition in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition to create. Required.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_definition_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Creates or updates a policy definition in a subscription.
-
-        This operation creates or updates a policy definition in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition to create. Required.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self, policy_definition_name: str, parameters: Union[_models.PolicyDefinition, IO[bytes]], **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Creates or updates a policy definition in a subscription.
-
-        This operation creates or updates a policy definition in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition to create. Required.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or IO[bytes]
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyDefinition")
-
-        _request = build_policy_definitions_create_or_update_request(
-            policy_definition_name=policy_definition_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, policy_definition_name: str, **kwargs: Any) -> None:
-        """Deletes a policy definition in a subscription.
-
-        This operation deletes the policy definition in the given subscription with the given name.
-
-        :param policy_definition_name: The name of the policy definition to delete. Required.
-        :type policy_definition_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_definitions_delete_request(
-            policy_definition_name=policy_definition_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, policy_definition_name: str, **kwargs: Any) -> _models.PolicyDefinition:
-        """Retrieves a policy definition in a subscription.
-
-        This operation retrieves the policy definition in the given subscription with the given name.
-
-        :param policy_definition_name: The name of the policy definition to get. Required.
-        :type policy_definition_name: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
-
-        _request = build_policy_definitions_get_request(
-            policy_definition_name=policy_definition_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_built_in(self, policy_definition_name: str, **kwargs: Any) -> _models.PolicyDefinition:
-        """Retrieves a built-in policy definition.
-
-        This operation retrieves the built-in policy definition with the given name.
-
-        :param policy_definition_name: The name of the built-in policy definition to get. Required.
-        :type policy_definition_name: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
-
-        _request = build_policy_definitions_get_built_in_request(
-            policy_definition_name=policy_definition_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        policy_definition_name: str,
-        parameters: _models.PolicyDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Creates or updates a policy definition in a management group.
-
-        This operation creates or updates a policy definition in the given management group with the
-        given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_definition_name: The name of the policy definition to create. Required.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        policy_definition_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Creates or updates a policy definition in a management group.
-
-        This operation creates or updates a policy definition in the given management group with the
-        given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_definition_name: The name of the policy definition to create. Required.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        policy_definition_name: str,
-        parameters: Union[_models.PolicyDefinition, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Creates or updates a policy definition in a management group.
-
-        This operation creates or updates a policy definition in the given management group with the
-        given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_definition_name: The name of the policy definition to create. Required.
-        :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or IO[bytes]
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyDefinition")
-
-        _request = build_policy_definitions_create_or_update_at_management_group_request(
-            management_group_id=management_group_id,
-            policy_definition_name=policy_definition_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_at_management_group(
-        self, management_group_id: str, policy_definition_name: str, **kwargs: Any
-    ) -> None:
-        """Deletes a policy definition in a management group.
-
-        This operation deletes the policy definition in the given management group with the given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_definition_name: The name of the policy definition to delete. Required.
-        :type policy_definition_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_definitions_delete_at_management_group_request(
-            management_group_id=management_group_id,
-            policy_definition_name=policy_definition_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_at_management_group(
-        self, management_group_id: str, policy_definition_name: str, **kwargs: Any
-    ) -> _models.PolicyDefinition:
-        """Retrieve a policy definition in a management group.
-
-        This operation retrieves the policy definition in the given management group with the given
-        name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_definition_name: The name of the policy definition to get. Required.
-        :type policy_definition_name: str
-        :return: PolicyDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
-
-        _request = build_policy_definitions_get_at_management_group_request(
-            management_group_id=management_group_id,
-            policy_definition_name=policy_definition_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyDefinition"]:
-        """Retrieves policy definitions in a subscription.
-
-        This operation retrieves a list of all the policy definitions in a given subscription that
-        match the optional given $filter. Valid values for $filter are: 'atExactScope()', 'policyType
-        -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered list
-        includes all policy definitions associated with the subscription, including those that apply
-        directly or from management groups that contain the given subscription. If
-        $filter=atExactScope() is provided, the returned list only includes all policy definitions that
-        at the given subscription. If $filter='policyType -eq {value}' is provided, the returned list
-        only includes all policy definitions whose type match the {value}. Possible policyType values
-        are NotSpecified, BuiltIn, Custom, and Static. If $filter='category -eq {value}' is provided,
-        the returned list only includes all policy definitions whose category match the {value}.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are:
-         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
-         only includes all policy definitions that at the given scope. If $filter='policyType -eq
-         {value}' is provided, the returned list only includes all policy definitions whose type match
-         the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
-         $filter='category -eq {value}' is provided, the returned list only includes all policy
-         definitions whose category match the {value}. Default value is None.
-        :type filter: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_definitions_list_request(
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_built_in(
-        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyDefinition"]:
-        """Retrieve built-in policy definitions.
-
-        This operation retrieves a list of all the built-in policy definitions that match the optional
-        given $filter. If $filter='policyType -eq {value}' is provided, the returned list only includes
-        all built-in policy definitions whose type match the {value}. Possible policyType values are
-        NotSpecified, BuiltIn, Custom, and Static. If $filter='category -eq {value}' is provided, the
-        returned list only includes all built-in policy definitions whose category match the {value}.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are:
-         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
-         only includes all policy definitions that at the given scope. If $filter='policyType -eq
-         {value}' is provided, the returned list only includes all policy definitions whose type match
-         the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
-         $filter='category -eq {value}' is provided, the returned list only includes all policy
-         definitions whose category match the {value}. Default value is None.
-        :type filter: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_definitions_list_built_in_request(
-                    filter=filter,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_by_management_group(
-        self, management_group_id: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyDefinition"]:
-        """Retrieve policy definitions in a management group.
-
-        This operation retrieves a list of all the policy definitions in a given management group that
-        match the optional given $filter. Valid values for $filter are: 'atExactScope()', 'policyType
-        -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered list
-        includes all policy definitions associated with the management group, including those that
-        apply directly or from management groups that contain the given management group. If
-        $filter=atExactScope() is provided, the returned list only includes all policy definitions that
-        at the given management group. If $filter='policyType -eq {value}' is provided, the returned
-        list only includes all policy definitions whose type match the {value}. Possible policyType
-        values are NotSpecified, BuiltIn, Custom, and Static. If $filter='category -eq {value}' is
-        provided, the returned list only includes all policy definitions whose category match the
-        {value}.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are:
-         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
-         only includes all policy definitions that at the given scope. If $filter='policyType -eq
-         {value}' is provided, the returned list only includes all policy definitions whose type match
-         the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
-         $filter='category -eq {value}' is provided, the returned list only includes all policy
-         definitions whose category match the {value}. Default value is None.
-        :type filter: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_definitions_list_by_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicyDefinitionVersionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_definition_versions` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def list_all_builtins(self, **kwargs: Any) -> _models.PolicyDefinitionVersionListResult:
-        """Lists all built-in policy definition versions.
-
-        This operation lists all the built-in policy definition versions for all built-in policy
-        definitions.
-
-        :return: PolicyDefinitionVersionListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersionListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_list_all_builtins_request(
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_all_at_management_group(
-        self, management_group_name: str, **kwargs: Any
-    ) -> _models.PolicyDefinitionVersionListResult:
-        """Lists all policy definition versions at management group scope.
-
-        This operation lists all the policy definition versions for all policy definitions at the
-        management group scope.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :return: PolicyDefinitionVersionListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersionListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_list_all_at_management_group_request(
-            management_group_name=management_group_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_all(self, **kwargs: Any) -> _models.PolicyDefinitionVersionListResult:
-        """Lists all policy definition versions within a subscription.
-
-        This operation lists all the policy definition versions for all policy definitions within a
-        subscription.
-
-        :return: PolicyDefinitionVersionListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersionListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_list_all_request(
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_definition_name: str,
-        policy_definition_version: str,
-        parameters: _models.PolicyDefinitionVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Creates or updates a policy definition in a subscription.
-
-        This operation creates or updates a policy definition in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_definition_name: str,
-        policy_definition_version: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Creates or updates a policy definition in a subscription.
-
-        This operation creates or updates a policy definition in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self,
-        policy_definition_name: str,
-        policy_definition_version: str,
-        parameters: Union[_models.PolicyDefinitionVersion, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Creates or updates a policy definition in a subscription.
-
-        This operation creates or updates a policy definition in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
-         or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or IO[bytes]
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyDefinitionVersion")
-
-        _request = build_policy_definition_versions_create_or_update_request(
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any) -> None:
-        """Deletes a policy definition version in a subscription.
-
-        This operation deletes the policy definition version in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_delete_request(
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Retrieves a policy definition version in a subscription.
-
-        This operation retrieves the policy definition version in the given subscription with the given
-        name.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_get_request(
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_built_in(
-        self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Retrieves a built-in policy definition version.
-
-        This operation retrieves the built-in policy definition version with the given name.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_get_built_in_request(
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_name: str,
-        policy_definition_name: str,
-        policy_definition_version: str,
-        parameters: _models.PolicyDefinitionVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Creates or updates a policy definition version in a management group.
-
-        This operation creates or updates a policy definition version in the given management group
-        with the given name.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_name: str,
-        policy_definition_name: str,
-        policy_definition_version: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Creates or updates a policy definition version in a management group.
-
-        This operation creates or updates a policy definition version in the given management group
-        with the given name.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update_at_management_group(
-        self,
-        management_group_name: str,
-        policy_definition_name: str,
-        policy_definition_version: str,
-        parameters: Union[_models.PolicyDefinitionVersion, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Creates or updates a policy definition version in a management group.
-
-        This operation creates or updates a policy definition version in the given management group
-        with the given name.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
-         or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or IO[bytes]
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyDefinitionVersion")
-
-        _request = build_policy_definition_versions_create_or_update_at_management_group_request(
-            management_group_name=management_group_name,
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_at_management_group(
-        self, management_group_name: str, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> None:
-        """Deletes a policy definition in a management group.
-
-        This operation deletes the policy definition in the given management group with the given name.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_delete_at_management_group_request(
-            management_group_name=management_group_name,
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_at_management_group(
-        self, management_group_name: str, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> _models.PolicyDefinitionVersion:
-        """Retrieve a policy definition version in a management group.
-
-        This operation retrieves the policy definition version in the given management group with the
-        given name.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
-         is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: PolicyDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
-
-        _request = build_policy_definition_versions_get_at_management_group_request(
-            management_group_name=management_group_name,
-            policy_definition_name=policy_definition_name,
-            policy_definition_version=policy_definition_version,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, policy_definition_name: str, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyDefinitionVersion"]:
-        """Retrieves policy definition versions for a given policy definition in a subscription.
-
-        This operation retrieves a list of all the policy definition versions for the given policy
-        definition.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyDefinitionVersion or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinitionVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_definition_versions_list_request(
-                    policy_definition_name=policy_definition_name,
-                    subscription_id=self._config.subscription_id,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_built_in(
-        self, policy_definition_name: str, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyDefinitionVersion"]:
-        """Retrieve built-in policy definition versions.
-
-        This operation retrieves a list of all the built-in policy definition versions for the given
-        policy definition.
-
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyDefinitionVersion or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinitionVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_definition_versions_list_built_in_request(
-                    policy_definition_name=policy_definition_name,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_by_management_group(
-        self, management_group_name: str, policy_definition_name: str, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyDefinitionVersion"]:
-        """Retrieve policy definition versions in a management group policy definition.
-
-        This operation retrieves a list of all the policy definition versions for the given policy
-        definition in the given management group.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_definition_name: The name of the policy definition. Required.
-        :type policy_definition_name: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyDefinitionVersion or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinitionVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_definition_versions_list_by_management_group_request(
-                    management_group_name=management_group_name,
-                    policy_definition_name=policy_definition_name,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicySetDefinitionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_set_definitions` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_set_definition_name: str,
-        parameters: _models.PolicySetDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Creates or updates a policy set definition.
-
-        This operation creates or updates a policy set definition in the given subscription with the
-        given name.
-
-        :param policy_set_definition_name: The name of the policy set definition to create. Required.
-        :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_set_definition_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Creates or updates a policy set definition.
-
-        This operation creates or updates a policy set definition in the given subscription with the
-        given name.
-
-        :param policy_set_definition_name: The name of the policy set definition to create. Required.
-        :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self, policy_set_definition_name: str, parameters: Union[_models.PolicySetDefinition, IO[bytes]], **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Creates or updates a policy set definition.
-
-        This operation creates or updates a policy set definition in the given subscription with the
-        given name.
-
-        :param policy_set_definition_name: The name of the policy set definition to create. Required.
-        :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
-         or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or IO[bytes]
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicySetDefinition")
-
-        _request = build_policy_set_definitions_create_or_update_request(
-            policy_set_definition_name=policy_set_definition_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, policy_set_definition_name: str, **kwargs: Any) -> None:
-        """Deletes a policy set definition.
-
-        This operation deletes the policy set definition in the given subscription with the given name.
-
-        :param policy_set_definition_name: The name of the policy set definition to delete. Required.
-        :type policy_set_definition_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definitions_delete_request(
-            policy_set_definition_name=policy_set_definition_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Retrieves a policy set definition.
-
-        This operation retrieves the policy set definition in the given subscription with the given
-        name.
-
-        :param policy_set_definition_name: The name of the policy set definition to get. Required.
-        :type policy_set_definition_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definitions_get_request(
-            policy_set_definition_name=policy_set_definition_name,
-            subscription_id=self._config.subscription_id,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_built_in(
-        self, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Retrieves a built in policy set definition.
-
-        This operation retrieves the built-in policy set definition with the given name.
-
-        :param policy_set_definition_name: The name of the policy set definition to get. Required.
-        :type policy_set_definition_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definitions_get_built_in_request(
-            policy_set_definition_name=policy_set_definition_name,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicySetDefinition"]:
-        """Retrieves the policy set definitions for a subscription.
-
-        This operation retrieves a list of all the policy set definitions in a given subscription that
-        match the optional given $filter. Valid values for $filter are: 'atExactScope()', 'policyType
-        -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered list
-        includes all policy set definitions associated with the subscription, including those that
-        apply directly or from management groups that contain the given subscription. If
-        $filter=atExactScope() is provided, the returned list only includes all policy set definitions
-        that at the given subscription. If $filter='policyType -eq {value}' is provided, the returned
-        list only includes all policy set definitions whose type match the {value}. Possible policyType
-        values are NotSpecified, BuiltIn and Custom. If $filter='category -eq {value}' is provided, the
-        returned list only includes all policy set definitions whose category match the {value}.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are:
-         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
-         only includes all policy set definitions that at the given scope. If $filter='policyType -eq
-         {value}' is provided, the returned list only includes all policy set definitions whose type
-         match the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
-         $filter='category -eq {value}' is provided, the returned list only includes all policy set
-         definitions whose category match the {value}. Default value is None.
-        :type filter: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_set_definitions_list_request(
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicySetDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_built_in(
-        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicySetDefinition"]:
-        """Retrieves built-in policy set definitions.
-
-        This operation retrieves a list of all the built-in policy set definitions that match the
-        optional given $filter. If $filter='category -eq {value}' is provided, the returned list only
-        includes all built-in policy set definitions whose category match the {value}.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are:
-         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
-         only includes all policy set definitions that at the given scope. If $filter='policyType -eq
-         {value}' is provided, the returned list only includes all policy set definitions whose type
-         match the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
-         $filter='category -eq {value}' is provided, the returned list only includes all policy set
-         definitions whose category match the {value}. Default value is None.
-        :type filter: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_set_definitions_list_built_in_request(
-                    filter=filter,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicySetDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        policy_set_definition_name: str,
-        parameters: _models.PolicySetDefinition,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Creates or updates a policy set definition.
-
-        This operation creates or updates a policy set definition in the given management group with
-        the given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_set_definition_name: The name of the policy set definition to create. Required.
-        :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        policy_set_definition_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Creates or updates a policy set definition.
-
-        This operation creates or updates a policy set definition in the given management group with
-        the given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_set_definition_name: The name of the policy set definition to create. Required.
-        :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        policy_set_definition_name: str,
-        parameters: Union[_models.PolicySetDefinition, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Creates or updates a policy set definition.
-
-        This operation creates or updates a policy set definition in the given management group with
-        the given name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_set_definition_name: The name of the policy set definition to create. Required.
-        :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
-         or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or IO[bytes]
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicySetDefinition")
-
-        _request = build_policy_set_definitions_create_or_update_at_management_group_request(
-            management_group_id=management_group_id,
-            policy_set_definition_name=policy_set_definition_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_at_management_group(
-        self, management_group_id: str, policy_set_definition_name: str, **kwargs: Any
-    ) -> None:
-        """Deletes a policy set definition.
-
-        This operation deletes the policy set definition in the given management group with the given
-        name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_set_definition_name: The name of the policy set definition to delete. Required.
-        :type policy_set_definition_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definitions_delete_at_management_group_request(
-            management_group_id=management_group_id,
-            policy_set_definition_name=policy_set_definition_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_at_management_group(
-        self, management_group_id: str, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
-    ) -> _models.PolicySetDefinition:
-        """Retrieves a policy set definition.
-
-        This operation retrieves the policy set definition in the given management group with the given
-        name.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param policy_set_definition_name: The name of the policy set definition to get. Required.
-        :type policy_set_definition_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicySetDefinition or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definitions_get_at_management_group_request(
-            management_group_id=management_group_id,
-            policy_set_definition_name=policy_set_definition_name,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_by_management_group(
-        self,
-        management_group_id: str,
-        filter: Optional[str] = None,
-        expand: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicySetDefinition"]:
-        """Retrieves all policy set definitions in management group.
-
-        This operation retrieves a list of all the policy set definitions in a given management group
-        that match the optional given $filter. Valid values for $filter are: 'atExactScope()',
-        'policyType -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered
-        list includes all policy set definitions associated with the management group, including those
-        that apply directly or from management groups that contain the given management group. If
-        $filter=atExactScope() is provided, the returned list only includes all policy set definitions
-        that at the given management group. If $filter='policyType -eq {value}' is provided, the
-        returned list only includes all policy set definitions whose type match the {value}. Possible
-        policyType values are NotSpecified, BuiltIn and Custom. If $filter='category -eq {value}' is
-        provided, the returned list only includes all policy set definitions whose category match the
-        {value}.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are:
-         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
-         only includes all policy set definitions that at the given scope. If $filter='policyType -eq
-         {value}' is provided, the returned list only includes all policy set definitions whose type
-         match the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
-         $filter='category -eq {value}' is provided, the returned list only includes all policy set
-         definitions whose category match the {value}. Default value is None.
-        :type filter: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinition]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_set_definitions_list_by_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicySetDefinitionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class PolicySetDefinitionVersionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_set_definition_versions` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def list_all_builtins(self, **kwargs: Any) -> _models.PolicySetDefinitionVersionListResult:
-        """Lists all built-in policy set definition versions.
-
-        This operation lists all the built-in policy set definition versions for all built-in policy
-        set definitions.
-
-        :return: PolicySetDefinitionVersionListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersionListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_list_all_builtins_request(
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_all_at_management_group(
-        self, management_group_name: str, **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersionListResult:
-        """Lists all policy set definition versions at management group scope.
-
-        This operation lists all the policy set definition versions for all policy set definitions at
-        the management group scope.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :return: PolicySetDefinitionVersionListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersionListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_list_all_at_management_group_request(
-            management_group_name=management_group_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_all(self, **kwargs: Any) -> _models.PolicySetDefinitionVersionListResult:
-        """Lists all policy set definition versions within a subscription.
-
-        This operation lists all the policy set definition versions for all policy set definitions
-        within a subscription.
-
-        :return: PolicySetDefinitionVersionListResult or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersionListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_list_all_request(
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        parameters: _models.PolicySetDefinitionVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Creates or updates a policy set definition version.
-
-        This operation creates or updates a policy set definition version in the given subscription
-        with the given name and version.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy set definition properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Creates or updates a policy set definition version.
-
-        This operation creates or updates a policy set definition version in the given subscription
-        with the given name and version.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy set definition properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        parameters: Union[_models.PolicySetDefinitionVersion, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Creates or updates a policy set definition version.
-
-        This operation creates or updates a policy set definition version in the given subscription
-        with the given name and version.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy set definition properties. Is either a PolicySetDefinitionVersion
-         type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or IO[bytes]
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicySetDefinitionVersion")
-
-        _request = build_policy_set_definition_versions_create_or_update_request(
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any) -> None:
-        """Deletes a policy set definition version.
-
-        This operation deletes the policy set definition version in the given subscription with the
-        given name and version.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_delete_request(
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        expand: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Retrieves a policy set definition version.
-
-        This operation retrieves the policy set definition version in the given subscription with the
-        given name and version.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_get_request(
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            subscription_id=self._config.subscription_id,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_built_in(
-        self,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        expand: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Retrieves a built in policy set definition version.
-
-        This operation retrieves the built-in policy set definition version with the given name and
-        version.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_get_built_in_request(
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, policy_set_definition_name: str, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicySetDefinitionVersion"]:
-        """Retrieves the policy set definition versions for a given policy set definition in a
-        subscription.
-
-        This operation retrieves a list of all the policy set definition versions for the given policy
-        set definition.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicySetDefinitionVersion or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_set_definition_versions_list_request(
-                    policy_set_definition_name=policy_set_definition_name,
-                    subscription_id=self._config.subscription_id,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_built_in(
-        self, policy_set_definition_name: str, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicySetDefinitionVersion"]:
-        """Retrieves built-in policy set definition versions.
-
-        This operation retrieves a list of all the built-in policy set definition versions for the
-        given built-in policy set definition.
-
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicySetDefinitionVersion or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_set_definition_versions_list_built_in_request(
-                    policy_set_definition_name=policy_set_definition_name,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_name: str,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        parameters: _models.PolicySetDefinitionVersion,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Creates or updates a policy set definition version.
-
-        This operation creates or updates a policy set definition version in the given management group
-        with the given name and version.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy set definition version properties. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_name: str,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Creates or updates a policy set definition version.
-
-        This operation creates or updates a policy set definition version in the given management group
-        with the given name and version.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy set definition version properties. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update_at_management_group(
-        self,
-        management_group_name: str,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        parameters: Union[_models.PolicySetDefinitionVersion, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Creates or updates a policy set definition version.
-
-        This operation creates or updates a policy set definition version in the given management group
-        with the given name and version.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param parameters: The policy set definition version properties. Is either a
-         PolicySetDefinitionVersion type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or IO[bytes]
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicySetDefinitionVersion")
-
-        _request = build_policy_set_definition_versions_create_or_update_at_management_group_request(
-            management_group_name=management_group_name,
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_at_management_group(
-        self, management_group_name: str, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
-    ) -> None:
-        """Deletes a policy set definition version.
-
-        This operation deletes the policy set definition version in the given management group with the
-        given name and version.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_delete_at_management_group_request(
-            management_group_name=management_group_name,
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def get_at_management_group(
-        self,
-        management_group_name: str,
-        policy_set_definition_name: str,
-        policy_definition_version: str,
-        expand: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.PolicySetDefinitionVersion:
-        """Retrieves a policy set definition version.
-
-        This operation retrieves the policy set definition version in the given management group with
-        the given name and version.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
-         x is the major version number, y is the minor version number, and z is the patch number.
-         Required.
-        :type policy_definition_version: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicySetDefinitionVersion or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
-
-        _request = build_policy_set_definition_versions_get_at_management_group_request(
-            management_group_name=management_group_name,
-            policy_set_definition_name=policy_set_definition_name,
-            policy_definition_version=policy_definition_version,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list_by_management_group(
-        self,
-        management_group_name: str,
-        policy_set_definition_name: str,
-        expand: Optional[str] = None,
-        top: Optional[int] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicySetDefinitionVersion"]:
-        """Retrieves all policy set definition versions for a given policy set definition in a management
-        group.
-
-        This operation retrieves a list of all the policy set definition versions for the given policy
-        set definition in a given management group.
-
-        :param management_group_name: The name of the management group. The name is case insensitive.
-         Required.
-        :type management_group_name: str
-        :param policy_set_definition_name: The name of the policy set definition. Required.
-        :type policy_set_definition_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicySetDefinitionVersion or the result of
-         cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_set_definition_versions_list_by_management_group_request(
-                    management_group_name=management_group_name,
-                    policy_set_definition_name=policy_set_definition_name,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
 
 
 class PolicyAssignmentsOperations:
@@ -4014,26 +120,22 @@ class PolicyAssignmentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def delete(
-        self, scope: str, policy_assignment_name: str, **kwargs: Any
-    ) -> Optional[_models.PolicyAssignment]:
-        """Deletes a policy assignment.
+    async def get(
+        self, scope: str, policy_assignment_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicyAssignment:
+        """This operation retrieves a single policy assignment, given its name and the scope it was
+        created at.
 
-        This operation deletes a policy assignment, given its name and the scope it was created in. The
-        scope of a policy assignment is the part of its ID preceding
-        '/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'.
-
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment to delete. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
-        :return: PolicyAssignment or None or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment or None
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicyAssignment or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -4047,12 +149,13 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[Optional[_models.PolicyAssignment]] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
-        _request = build_policy_assignments_delete_request(
+        _request = build_policy_assignments_get_request(
             scope=scope,
             policy_assignment_name=policy_assignment_name,
+            expand=expand,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -4066,13 +169,15 @@ class PolicyAssignmentsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = None
-        if response.status_code == 200:
-            deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4089,20 +194,13 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
-        """Creates or updates a policy assignment.
-
-        This operation creates or updates a policy assignment with the given scope and name. Policy
+        """This operation creates or updates a policy assignment with the given scope and name. Policy
         assignments apply to all resources contained within their scope. For example, when you assign a
         policy at resource group scope, that policy applies to all resources in the group.
 
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Required.
         :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignment
@@ -4124,20 +222,13 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
-        """Creates or updates a policy assignment.
-
-        This operation creates or updates a policy assignment with the given scope and name. Policy
+        """This operation creates or updates a policy assignment with the given scope and name. Policy
         assignments apply to all resources contained within their scope. For example, when you assign a
         policy at resource group scope, that policy applies to all resources in the group.
 
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Required.
         :type parameters: IO[bytes]
@@ -4157,20 +248,13 @@ class PolicyAssignmentsOperations:
         parameters: Union[_models.PolicyAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
-        """Creates or updates a policy assignment.
-
-        This operation creates or updates a policy assignment with the given scope and name. Policy
+        """This operation creates or updates a policy assignment with the given scope and name. Policy
         assignments apply to all resources contained within their scope. For example, when you assign a
         policy at resource group scope, that policy applies to all resources in the group.
 
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for the policy assignment. Is either a PolicyAssignment type or a
          IO[bytes] type. Required.
@@ -4190,7 +274,7 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -4223,75 +307,11 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(
-        self, scope: str, policy_assignment_name: str, expand: Optional[str] = None, **kwargs: Any
-    ) -> _models.PolicyAssignment:
-        """Retrieves a policy assignment.
-
-        This operation retrieves a single policy assignment, given its name and the scope it was
-        created at.
-
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_assignment_name: The name of the policy assignment to get. Required.
-        :type policy_assignment_name: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :return: PolicyAssignment or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
-
-        _request = build_policy_assignments_get_request(
-            scope=scope,
-            policy_assignment_name=policy_assignment_name,
-            expand=expand,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
 
@@ -4310,20 +330,13 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
-        """Updates a policy assignment.
-
-        This operation updates a policy assignment with the given scope and name. Policy assignments
+        """This operation updates a policy assignment with the given scope and name. Policy assignments
         apply to all resources contained within their scope. For example, when you assign a policy at
         resource group scope, that policy applies to all resources in the group.
 
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for policy assignment patch request. Required.
         :type parameters: ~azure.mgmt.resource.policy.models.PolicyAssignmentUpdate
@@ -4345,20 +358,13 @@ class PolicyAssignmentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.PolicyAssignment:
-        """Updates a policy assignment.
-
-        This operation updates a policy assignment with the given scope and name. Policy assignments
+        """This operation updates a policy assignment with the given scope and name. Policy assignments
         apply to all resources contained within their scope. For example, when you assign a policy at
         resource group scope, that policy applies to all resources in the group.
 
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for policy assignment patch request. Required.
         :type parameters: IO[bytes]
@@ -4378,20 +384,13 @@ class PolicyAssignmentsOperations:
         parameters: Union[_models.PolicyAssignmentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PolicyAssignment:
-        """Updates a policy assignment.
-
-        This operation updates a policy assignment with the given scope and name. Policy assignments
+        """This operation updates a policy assignment with the given scope and name. Policy assignments
         apply to all resources contained within their scope. For example, when you assign a policy at
         resource group scope, that policy applies to all resources in the group.
 
-        :param scope: The scope of the policy assignment. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
         :type scope: str
-        :param policy_assignment_name: The name of the policy assignment. Required.
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
         :type policy_assignment_name: str
         :param parameters: Parameters for policy assignment patch request. Is either a
          PolicyAssignmentUpdate type or a IO[bytes] type. Required.
@@ -4411,7 +410,7 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -4444,7 +443,11 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
 
@@ -4453,33 +456,91 @@ class PolicyAssignmentsOperations:
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def delete(
+        self, scope: str, policy_assignment_name: str, **kwargs: Any
+    ) -> Optional[_models.PolicyAssignment]:
+        """This operation deletes a policy assignment, given its name and the scope it was created in. The
+        scope of a policy assignment is the part of its ID preceding
+        '/providers/Microsoft.Authorization/policyAssignments/{policyAssignmentName}'.
+
+        :param scope: The fully qualified Azure Resource manager identifier of the resource. Required.
+        :type scope: str
+        :param policy_assignment_name: The name of the policy assignment to get. Required.
+        :type policy_assignment_name: str
+        :return: PolicyAssignment or None or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyAssignment or None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[Optional[_models.PolicyAssignment]] = kwargs.pop("cls", None)
+
+        _request = build_policy_assignments_delete_request(
+            scope=scope,
+            policy_assignment_name=policy_assignment_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @distributed_trace
-    def list_for_resource_group(
+    def list_for_management_group(
         self,
-        resource_group_name: str,
+        management_group_id: str,
         filter: Optional[str] = None,
         expand: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.PolicyAssignment"]:
-        """Retrieves all policy assignments that apply to a resource group.
+        """Retrieves all policy assignments that apply to a management group.
 
-        This operation retrieves the list of all policy assignments associated with the given resource
-        group in the given subscription that match the optional given $filter. Valid values for $filter
-        are: 'atScope()', 'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not
-        provided, the unfiltered list includes all policy assignments associated with the resource
-        group, including those that apply directly or apply from containing scopes, as well as any
-        applied to resources contained within the resource group. If $filter=atScope() is provided, the
-        returned list includes all policy assignments that apply to the resource group, which is
-        everything in the unfiltered list except those applied to resources contained within the
-        resource group. If $filter=atExactScope() is provided, the returned list only includes all
-        policy assignments that at the resource group. If $filter=policyDefinitionId eq '{value}' is
+        This operation retrieves the list of all policy assignments applicable to the management group
+        that match the given $filter. Valid values for $filter are: 'atScope()', 'atExactScope()' or
+        'policyDefinitionId eq '{value}''. If $filter=atScope() is provided, the returned list includes
+        all policy assignments that are assigned to the management group or the management group's
+        ancestors. If $filter=atExactScope() is provided, the returned list only includes all policy
+        assignments that at the management group. If $filter=policyDefinitionId eq '{value}' is
         provided, the returned list includes all policy assignments of the policy definition whose id
-        is {value} that apply to the resource group.
+        is {value} that apply to the management group.
 
-        :param resource_group_name: The name of the resource group that contains policy assignments.
-         Required.
-        :type resource_group_name: str
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
         :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
          'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering
          is performed. If $filter=atScope() is provided, the returned list only includes all policy
@@ -4504,7 +565,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4518,8 +579,108 @@ class PolicyAssignmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_policy_assignments_list_for_resource_group_request(
-                    resource_group_name=resource_group_name,
+                _request = build_policy_assignments_list_for_management_group_request(
+                    management_group_id=management_group_id,
+                    filter=filter,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicyAssignmentListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list(
+        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyAssignment"]:
+        """Retrieves all policy assignments that apply to a subscription.
+
+        This operation retrieves the list of all policy assignments associated with the given
+        subscription that match the optional given $filter. Valid values for $filter are: 'atScope()',
+        'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not provided, the
+        unfiltered list includes all policy assignments associated with the subscription, including
+        those that apply directly or from management groups that contain the given subscription, as
+        well as any applied to objects contained within the subscription. If $filter=atScope() is
+        provided, the returned list includes all policy assignments that apply to the subscription,
+        which is everything in the unfiltered list except those applied to objects contained within the
+        subscription. If $filter=atExactScope() is provided, the returned list only includes all policy
+        assignments that at the subscription. If $filter=policyDefinitionId eq '{value}' is provided,
+        the returned list includes all policy assignments of the policy definition whose id is {value}.
+
+        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
+         'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering
+         is performed. If $filter=atScope() is provided, the returned list only includes all policy
+         assignments that apply to the scope, which is everything in the unfiltered list except those
+         applied to sub scopes contained within the given scope. If $filter=atExactScope() is provided,
+         the returned list only includes all policy assignments that at the given scope. If
+         $filter=policyDefinitionId eq '{value}' is provided, the returned list includes all policy
+         assignments of the policy definition whose id is {value}. Default value is None.
+        :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyAssignment or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyAssignment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_assignments_list_request(
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     expand=expand,
@@ -4554,7 +715,11 @@ class PolicyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -4599,7 +764,8 @@ class PolicyAssignmentsOperations:
         {parentResourcePath} == '', {resourceType} == 'Microsoft.Web/sites', {resourceName} ==
         'MyWebApp').
 
-        :param resource_group_name: The name of the resource group containing the resource. Required.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
         :param resource_provider_namespace: The namespace of the resource provider. For example, the
          namespace of a virtual machine is Microsoft.Compute (from Microsoft.Compute/virtualMachines).
@@ -4637,7 +803,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4691,34 +857,41 @@ class PolicyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_for_management_group(
+    def list_for_resource_group(
         self,
-        management_group_id: str,
+        resource_group_name: str,
         filter: Optional[str] = None,
         expand: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.PolicyAssignment"]:
-        """Retrieves all policy assignments that apply to a management group.
-
-        This operation retrieves the list of all policy assignments applicable to the management group
-        that match the given $filter. Valid values for $filter are: 'atScope()', 'atExactScope()' or
-        'policyDefinitionId eq '{value}''. If $filter=atScope() is provided, the returned list includes
-        all policy assignments that are assigned to the management group or the management group's
-        ancestors. If $filter=atExactScope() is provided, the returned list only includes all policy
-        assignments that at the management group. If $filter=policyDefinitionId eq '{value}' is
+        """This operation retrieves the list of all policy assignments associated with the given resource
+        group in the given subscription that match the optional given $filter. Valid values for $filter
+        are: 'atScope()', 'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not
+        provided, the unfiltered list includes all policy assignments associated with the resource
+        group, including those that apply directly or apply from containing scopes, as well as any
+        applied to resources contained within the resource group. If $filter=atScope() is provided, the
+        returned list includes all policy assignments that apply to the resource group, which is
+        everything in the unfiltered list except those applied to resources contained within the
+        resource group. If $filter=atExactScope() is provided, the returned list only includes all
+        policy assignments that at the resource group. If $filter=policyDefinitionId eq '{value}' is
         provided, the returned list includes all policy assignments of the policy definition whose id
-        is {value} that apply to the management group.
+        is {value} that apply to the resource group.
 
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
         :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
          'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering
          is performed. If $filter=atScope() is provided, the returned list only includes all policy
@@ -4743,7 +916,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4757,104 +930,8 @@ class PolicyAssignmentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_policy_assignments_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    expand=expand,
-                    top=top,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyAssignmentListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list(
-        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyAssignment"]:
-        """Retrieves all policy assignments that apply to a subscription.
-
-        This operation retrieves the list of all policy assignments associated with the given
-        subscription that match the optional given $filter. Valid values for $filter are: 'atScope()',
-        'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not provided, the
-        unfiltered list includes all policy assignments associated with the subscription, including
-        those that apply directly or from management groups that contain the given subscription, as
-        well as any applied to objects contained within the subscription. If $filter=atScope() is
-        provided, the returned list includes all policy assignments that apply to the subscription,
-        which is everything in the unfiltered list except those applied to objects contained within the
-        subscription. If $filter=atExactScope() is provided, the returned list only includes all policy
-        assignments that at the subscription. If $filter=policyDefinitionId eq '{value}' is provided,
-        the returned list includes all policy assignments of the policy definition whose id is {value}.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()' or 'policyDefinitionId eq '{value}''. If $filter is not provided, no filtering
-         is performed. If $filter=atScope() is provided, the returned list only includes all policy
-         assignments that apply to the scope, which is everything in the unfiltered list except those
-         applied to sub scopes contained within the given scope. If $filter=atExactScope() is provided,
-         the returned list only includes all policy assignments that at the given scope. If
-         $filter=policyDefinitionId eq '{value}' is provided, the returned list includes all policy
-         assignments of the policy definition whose id is {value}. Default value is None.
-        :type filter: str
-        :param expand: Comma-separated list of additional properties to be included in the response.
-         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
-         None.
-        :type expand: str
-        :param top: Maximum number of records to return. When the $top filter is not provided, it will
-         return 500 records. Default value is None.
-        :type top: int
-        :return: An iterator like instance of either PolicyAssignment or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyAssignment]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
-        cls: ClsType[_models.PolicyAssignmentListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_assignments_list_request(
+                _request = build_policy_assignments_list_for_resource_group_request(
+                    resource_group_name=resource_group_name,
                     subscription_id=self._config.subscription_id,
                     filter=filter,
                     expand=expand,
@@ -4889,7 +966,11 @@ class PolicyAssignmentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
@@ -4925,7 +1006,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[Optional[_models.PolicyAssignment]] = kwargs.pop("cls", None)
 
         _request = build_policy_assignments_delete_by_id_request(
@@ -4945,7 +1026,11 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = None
         if response.status_code == 200:
@@ -5059,7 +1144,7 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -5091,7 +1176,11 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
 
@@ -5137,7 +1226,7 @@ class PolicyAssignmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
         _request = build_policy_assignments_get_by_id_request(
@@ -5158,7 +1247,11 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
 
@@ -5270,7 +1363,7 @@ class PolicyAssignmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-04-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PolicyAssignment] = kwargs.pop("cls", None)
 
@@ -5302,7 +1395,11 @@ class PolicyAssignmentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PolicyAssignment", pipeline_response.http_response)
 
@@ -5312,14 +1409,14 @@ class PolicyAssignmentsOperations:
         return deserialized  # type: ignore
 
 
-class PolicyExemptionsOperations:
+class PolicyDefinitionVersionsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`policy_exemptions` attribute.
+        :attr:`policy_definition_versions` attribute.
     """
 
     models = _models
@@ -5332,24 +1429,14 @@ class PolicyExemptionsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def delete(self, scope: str, policy_exemption_name: str, **kwargs: Any) -> None:
-        """Deletes a policy exemption.
+    async def list_all_builtins(self, **kwargs: Any) -> _models.PolicyDefinitionVersionListResult:
+        """Lists all built-in policy definition versions.
 
-        This operation deletes a policy exemption, given its name and the scope it was created in. The
-        scope of a policy exemption is the part of its ID preceding
-        '/providers/Microsoft.Authorization/policyExemptions/{policyExemptionName}'.
+        This operation lists all the built-in policy definition versions for all built-in policy
+        definitions.
 
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: PolicyDefinitionVersionListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -5363,225 +1450,10 @@ class PolicyExemptionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        _request = build_policy_exemptions_delete_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: _models.PolicyExemption,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: Union[_models.PolicyExemption, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Creates or updates a policy exemption.
-
-        This operation creates or updates a policy exemption with the given scope and name. Policy
-        exemptions apply to all resources contained within their scope. For example, when you create a
-        policy exemption at resource group scope for a policy assignment at the same or above level,
-        the exemption exempts to all applicable resources in the resource group.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for the policy exemption. Is either a PolicyExemption type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemption or IO[bytes]
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyExemption")
-
-        _request = build_policy_exemptions_create_or_update_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyExemption", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, scope: str, policy_exemption_name: str, **kwargs: Any) -> _models.PolicyExemption:
-        """Retrieves a policy exemption.
-
-        This operation retrieves a single policy exemption, given its name and the scope it was created
-        at.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        _request = build_policy_exemptions_get_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
+        _request = build_policy_definition_versions_list_all_builtins_request(
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -5597,156 +1469,13 @@ class PolicyExemptionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("PolicyExemption", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: _models.PolicyExemptionUpdate,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdate
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(
-        self,
-        scope: str,
-        policy_exemption_name: str,
-        parameters: Union[_models.PolicyExemptionUpdate, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.PolicyExemption:
-        """Updates a policy exemption.
-
-        This operation updates a policy exemption with the given scope and name.
-
-        :param scope: The scope of the policy exemption. Valid scopes are: management group (format:
-         '/providers/Microsoft.Management/managementGroups/{managementGroup}'), subscription (format:
-         '/subscriptions/{subscriptionId}'), resource group (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}', or resource (format:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/[{parentResourcePath}/]{resourceType}/{resourceName}'.
-         Required.
-        :type scope: str
-        :param policy_exemption_name: The name of the policy exemption to delete. Required.
-        :type policy_exemption_name: str
-        :param parameters: Parameters for policy exemption patch request. Is either a
-         PolicyExemptionUpdate type or a IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.PolicyExemptionUpdate or IO[bytes]
-        :return: PolicyExemption or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.PolicyExemption
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PolicyExemption] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "PolicyExemptionUpdate")
-
-        _request = build_policy_exemptions_update_request(
-            scope=scope,
-            policy_exemption_name=policy_exemption_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("PolicyExemption", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -5754,39 +1483,28 @@ class PolicyExemptionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a subscription.
+    def list_built_in(
+        self, policy_definition_name: str, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyDefinitionVersion"]:
+        """This operation retrieves a list of all the built-in policy definition versions for the given
+        policy definition.
 
-        This operation retrieves the list of all policy exemptions associated with the given
-        subscription that match the optional given $filter. Valid values for $filter are: 'atScope()',
-        'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-        provided, the unfiltered list includes all policy exemptions associated with the subscription,
-        including those that apply directly or from management groups that contain the given
-        subscription, as well as any applied to objects contained within the subscription.
-
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyDefinitionVersion or the result of
+         cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinitionVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5799,9 +1517,9 @@ class PolicyExemptionsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_policy_exemptions_list_request(
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
+                _request = build_policy_definition_versions_list_built_in_request(
+                    policy_definition_name=policy_definition_name,
+                    top=top,
                     api_version=api_version,
                     headers=_headers,
                     params=_params,
@@ -5815,7 +1533,7 @@ class PolicyExemptionsOperations:
             return _request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
+            deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -5832,510 +1550,30 @@ class PolicyExemptionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_for_resource_group(
-        self, resource_group_name: str, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a resource group.
-
-        This operation retrieves the list of all policy exemptions associated with the given resource
-        group in the given subscription that match the optional given $filter. Valid values for $filter
-        are: 'atScope()', 'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If
-        $filter is not provided, the unfiltered list includes all policy exemptions associated with the
-        resource group, including those that apply directly or apply from containing scopes, as well as
-        any applied to resources contained within the resource group.
-
-        :param resource_group_name: The name of the resource group containing the resource. Required.
-        :type resource_group_name: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_for_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
                 )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_for_resource(
-        self,
-        resource_group_name: str,
-        resource_provider_namespace: str,
-        parent_resource_path: str,
-        resource_type: str,
-        resource_name: str,
-        filter: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a resource.
-
-        This operation retrieves the list of all policy exemptions associated with the specified
-        resource in the given resource group and subscription that match the optional given $filter.
-        Valid values for $filter are: 'atScope()', 'atExactScope()', 'excludeExpired()' or
-        'policyAssignmentId eq '{value}''. If $filter is not provided, the unfiltered list includes all
-        policy exemptions associated with the resource, including those that apply directly or from all
-        containing scopes, as well as any applied to resources contained within the resource. Three
-        parameters plus the resource name are used to identify a specific resource. If the resource is
-        not part of a parent resource (the more common case), the parent resource path should not be
-        provided (or provided as ''). For example a web app could be specified as
-        ({resourceProviderNamespace} == 'Microsoft.Web', {parentResourcePath} == '', {resourceType} ==
-        'sites', {resourceName} == 'MyWebApp'). If the resource is part of a parent resource, then all
-        parameters should be provided. For example a virtual machine DNS name could be specified as
-        ({resourceProviderNamespace} == 'Microsoft.Compute', {parentResourcePath} ==
-        'virtualMachines/MyVirtualMachine', {resourceType} == 'domainNames', {resourceName} ==
-        'MyComputerName'). A convenient alternative to providing the namespace and type name separately
-        is to provide both in the {resourceType} parameter, format: ({resourceProviderNamespace} == '',
-        {parentResourcePath} == '', {resourceType} == 'Microsoft.Web/sites', {resourceName} ==
-        'MyWebApp').
-
-        :param resource_group_name: The name of the resource group containing the resource. Required.
-        :type resource_group_name: str
-        :param resource_provider_namespace: The namespace of the resource provider. For example, the
-         namespace of a virtual machine is Microsoft.Compute (from Microsoft.Compute/virtualMachines).
-         Required.
-        :type resource_provider_namespace: str
-        :param parent_resource_path: The parent resource path. Use empty string if there is none.
-         Required.
-        :type parent_resource_path: str
-        :param resource_type: The resource type name. For example the type name of a web app is 'sites'
-         (from Microsoft.Web/sites). Required.
-        :type resource_type: str
-        :param resource_name: The name of the resource. Required.
-        :type resource_name: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_for_resource_request(
-                    resource_group_name=resource_group_name,
-                    resource_provider_namespace=resource_provider_namespace,
-                    parent_resource_path=parent_resource_path,
-                    resource_type=resource_type,
-                    resource_name=resource_name,
-                    subscription_id=self._config.subscription_id,
-                    filter=filter,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_for_management_group(
-        self, management_group_id: str, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PolicyExemption"]:
-        """Retrieves all policy exemptions that apply to a management group.
-
-        This operation retrieves the list of all policy exemptions applicable to the management group
-        that match the given $filter. Valid values for $filter are: 'atScope()', 'atExactScope()',
-        'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter=atScope() is provided, the
-        returned list includes all policy exemptions that are assigned to the management group or the
-        management group's ancestors.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param filter: The filter to apply on the operation. Valid values for $filter are: 'atScope()',
-         'atExactScope()', 'excludeExpired()' or 'policyAssignmentId eq '{value}''. If $filter is not
-         provided, no filtering is performed. If $filter is not provided, the unfiltered list includes
-         all policy exemptions associated with the scope, including those that apply directly or apply
-         from containing scopes. If $filter=atScope() is provided, the returned list only includes all
-         policy exemptions that apply to the scope, which is everything in the unfiltered list except
-         those applied to sub scopes contained within the given scope. If $filter=atExactScope() is
-         provided, the returned list only includes all policy exemptions that at the given scope. If
-         $filter=excludeExpired() is provided, the returned list only includes all policy exemptions
-         that either haven't expired or didn't set expiration date. If $filter=policyAssignmentId eq
-         '{value}' is provided. the returned list only includes all policy exemptions that are
-         associated with the give policyAssignmentId. Default value is None.
-        :type filter: str
-        :return: An iterator like instance of either PolicyExemption or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyExemption]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-07-01-preview"))
-        cls: ClsType[_models.PolicyExemptionListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_policy_exemptions_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    filter=filter,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("PolicyExemptionListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class VariablesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`variables` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def delete(self, variable_name: str, **kwargs: Any) -> None:
-        """Deletes a variable.
+    async def get_built_in(
+        self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation retrieves the built-in policy definition version with the given name.
 
-        This operation deletes a variable, given its name and the subscription it was created in. The
-        scope of a variable is the part of its ID preceding
-        '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_variables_delete_request(
-            variable_name=variable_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    async def create_or_update(
-        self, variable_name: str, parameters: _models.Variable, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self, variable_name: str, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self, variable_name: str, parameters: Union[_models.Variable, IO[bytes]], **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given subscription and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Is either a Variable type or a IO[bytes] type.
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
          Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable or IO[bytes]
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "Variable")
-
-        _request = build_variables_create_or_update_request(
-            variable_name=variable_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("Variable", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, variable_name: str, **kwargs: Any) -> _models.Variable:
-        """Retrieves a variable.
-
-        This operation retrieves a single variable, given its name and the subscription it was created
-        at.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
+        :type policy_definition_version: str
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6349,12 +1587,12 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
 
-        _request = build_variables_get_request(
-            variable_name=variable_name,
-            subscription_id=self._config.subscription_id,
+        _request = build_policy_definition_versions_get_built_in_request(
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -6370,9 +1608,13 @@ class VariablesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Variable", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6380,19 +1622,19 @@ class VariablesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete_at_management_group(self, management_group_id: str, variable_name: str, **kwargs: Any) -> None:
-        """Deletes a variable.
+    async def list_all_at_management_group(
+        self, management_group_name: str, **kwargs: Any
+    ) -> _models.PolicyDefinitionVersionListResult:
+        """Lists all policy definition versions at management group scope.
 
-        This operation deletes a variable, given its name and the management group it was created in.
-        The scope of a variable is the part of its ID preceding
-        '/providers/Microsoft.Authorization/variables/{variableName}'.
+        This operation lists all the policy definition versions for all policy definitions at the
+        management group scope.
 
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :return: PolicyDefinitionVersionListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersionListResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6406,12 +1648,11 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
 
-        _request = build_variables_delete_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
+        _request = build_policy_definition_versions_list_all_at_management_group_request(
+            management_group_name=management_group_name,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -6425,95 +1666,48 @@ class VariablesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response.http_response)
 
         if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: _models.Variable,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
+        return deserialized  # type: ignore
 
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
+    @distributed_trace
+    def list_by_management_group(
+        self, management_group_name: str, policy_definition_name: str, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyDefinitionVersion"]:
+        """This operation retrieves a list of all the policy definition versions for the given policy
+        definition in the given management group.
 
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Required.
-        :type parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update_at_management_group(
-        self,
-        management_group_id: str,
-        variable_name: str,
-        parameters: Union[_models.Variable, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Variable:
-        """Creates or updates a variable.
-
-        This operation creates or updates a variable with the given  management group and name. Policy
-        variables can only be used by a policy definition at the scope they are created or below.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param parameters: Parameters for the variable. Is either a Variable type or a IO[bytes] type.
+        :param management_group_name: The name of the management group. The name is case insensitive.
          Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.Variable or IO[bytes]
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
+        :type management_group_name: str
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyDefinitionVersion or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinitionVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6522,66 +1716,71 @@ class VariablesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
+                _request = build_policy_definition_versions_list_by_management_group_request(
+                    management_group_name=management_group_name,
+                    policy_definition_name=policy_definition_name,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
 
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IOBase, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "Variable")
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
-        _request = build_variables_create_or_update_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
 
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        response = pipeline_response.http_response
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Variable", pipeline_response.http_response)
+            return pipeline_response
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def get_at_management_group(
-        self, management_group_id: str, variable_name: str, **kwargs: Any
-    ) -> _models.Variable:
-        """Retrieves a variable.
+        self, management_group_name: str, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation retrieves the policy definition version in the given management group with the
+        given name.
 
-        This operation retrieves a single variable, given its name and the  management group it was
-        created at.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: Variable or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.Variable
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6595,12 +1794,13 @@ class VariablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.Variable] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
 
-        _request = build_variables_get_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
+        _request = build_policy_definition_versions_get_at_management_group_request(
+            management_group_name=management_group_name,
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -6616,301 +1816,111 @@ class VariablesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("Variable", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Variable"]:
-        """Retrieves all variables that are at this subscription level.
-
-        This operation retrieves the list of all variables associated with the given subscription.
-
-        :return: An iterator like instance of either Variable or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.Variable]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variables_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("VariableListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_for_management_group(self, management_group_id: str, **kwargs: Any) -> AsyncItemPaged["_models.Variable"]:
-        """Retrieves all variables that are at this management group level.
-
-        This operation retrieves the list of all variables applicable to the management group.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :return: An iterator like instance of either Variable or the result of cls(response)
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.Variable]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.VariableListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variables_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("VariableListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class VariableValuesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
-        :attr:`variable_values` attribute.
-    """
-
-    models = _models
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def delete(self, variable_name: str, variable_value_name: str, **kwargs: Any) -> None:
-        """Deletes a variable value.
-
-        This operation deletes a variable value, given its name, the subscription it was created in,
-        and the variable it belongs to. The scope of a variable value is the part of its ID preceding
-        '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_variable_values_delete_request(
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
     @overload
-    async def create_or_update(
+    async def create_or_update_at_management_group(
         self,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: _models.VariableValue,
+        management_group_name: str,
+        policy_definition_name: str,
+        policy_definition_version: str,
+        parameters: _models.PolicyDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation creates or updates a policy definition version in the given management group
+        with the given name.
 
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update(
+    async def create_or_update_at_management_group(
         self,
-        variable_name: str,
-        variable_value_name: str,
+        management_group_name: str,
+        policy_definition_name: str,
+        policy_definition_version: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation creates or updates a policy definition version in the given management group
+        with the given name.
 
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy definition properties. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_or_update(
+    async def create_or_update_at_management_group(
         self,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: Union[_models.VariableValue, IO[bytes]],
+        management_group_name: str,
+        policy_definition_name: str,
+        policy_definition_version: str,
+        parameters: Union[_models.PolicyDefinitionVersion, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation creates or updates a policy definition version in the given management group
+        with the given name.
 
-        This operation creates or updates a variable value with the given subscription and name for a
-        given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is either a VariableValue type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or IO[bytes]
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or IO[bytes]
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6924,9 +1934,9 @@ class VariableValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -6934,12 +1944,12 @@ class VariableValuesOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "VariableValue")
+            _json = self._serialize.body(parameters, "PolicyDefinitionVersion")
 
-        _request = build_variable_values_create_or_update_request(
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            subscription_id=self._config.subscription_id,
+        _request = build_policy_definition_versions_create_or_update_at_management_group_request(
+            management_group_name=management_group_name,
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -6958,232 +1968,34 @@ class VariableValuesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VariableValue", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, variable_name: str, variable_value_name: str, **kwargs: Any) -> _models.VariableValue:
-        """Retrieves a variable value.
-
-        This operation retrieves a single variable value; given its name, subscription it was created
-        at and the variable it's created for.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
-
-        _request = build_variable_values_get_request(
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("VariableValue", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, variable_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VariableValue"]:
-        """List variable values for a variable.
-
-        This operation retrieves the list of all variable values associated with the given variable
-        that is at a subscription level.
-
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: An iterator like instance of either VariableValue or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.VariableValue]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variable_values_list_request(
-                    variable_name=variable_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("VariableValueListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_for_management_group(
-        self, management_group_id: str, variable_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.VariableValue"]:
-        """List variable values at management group level.
-
-        This operation retrieves the list of all variable values applicable the variable indicated at
-        the management group scope.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :return: An iterator like instance of either VariableValue or the result of cls(response)
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.VariableValue]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.VariableValueListResult] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_variable_values_list_for_management_group_request(
-                    management_group_id=management_group_id,
-                    variable_name=variable_name,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
-
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize("VariableValueListResult", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def delete_at_management_group(
-        self, management_group_id: str, variable_name: str, variable_value_name: str, **kwargs: Any
+        self, management_group_name: str, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
     ) -> None:
-        """Deletes a variable value.
+        """This operation deletes the policy definition in the given management group with the given name.
 
-        This operation deletes a variable value, given its name, the management group it was created
-        in, and the variable it belongs to. The scope of a variable value is the part of its ID
-        preceding '/providers/Microsoft.Authorization/variables/{variableName}'.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7199,13 +2011,13 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_variable_values_delete_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
+        _request = build_policy_definition_versions_delete_at_management_group_request(
+            management_group_name=management_group_name,
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -7221,100 +2033,292 @@ class VariableValuesOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
+    @distributed_trace_async
+    async def list_all(self, **kwargs: Any) -> _models.PolicyDefinitionVersionListResult:
+        """Lists all policy definition versions within a subscription.
+
+        This operation lists all the policy definition versions for all policy definitions within a
+        subscription.
+
+        :return: PolicyDefinitionVersionListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersionListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        _request = build_policy_definition_versions_list_all_request(
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, policy_definition_name: str, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyDefinitionVersion"]:
+        """This operation retrieves a list of all the policy definition versions for the given policy
+        definition.
+
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyDefinitionVersion or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinitionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_definition_versions_list_request(
+                    policy_definition_name=policy_definition_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicyDefinitionVersionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(
+        self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation retrieves the policy definition version in the given subscription with the given
+        name.
+
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
+
+        _request = build_policy_definition_versions_get_request(
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @overload
-    async def create_or_update_at_management_group(
+    async def create_or_update(
         self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: _models.VariableValue,
+        policy_definition_name: str,
+        policy_definition_version: str,
+        parameters: _models.PolicyDefinitionVersion,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation creates or updates a policy definition in the given subscription with the given
+        name.
 
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_or_update_at_management_group(
+    async def create_or_update(
         self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
+        policy_definition_name: str,
+        policy_definition_version: str,
         parameters: IO[bytes],
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation creates or updates a policy definition in the given subscription with the given
+        name.
 
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Required.
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy definition properties. Required.
         :type parameters: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_or_update_at_management_group(
+    async def create_or_update(
         self,
-        management_group_id: str,
-        variable_name: str,
-        variable_value_name: str,
-        parameters: Union[_models.VariableValue, IO[bytes]],
+        policy_definition_name: str,
+        policy_definition_version: str,
+        parameters: Union[_models.PolicyDefinitionVersion, IO[bytes]],
         **kwargs: Any
-    ) -> _models.VariableValue:
-        """Creates or updates a variable value.
+    ) -> _models.PolicyDefinitionVersion:
+        """This operation creates or updates a policy definition in the given subscription with the given
+        name.
 
-        This operation creates or updates a variable value with the given management group and name for
-        a given variable. Variable values are scoped to the variable for which they are created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :param parameters: Parameters for the variable value. Is either a VariableValue type or a
-         IO[bytes] type. Required.
-        :type parameters: ~azure.mgmt.resource.policy.models.VariableValue or IO[bytes]
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy definition properties. Is either a PolicyDefinitionVersion type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion or IO[bytes]
+        :return: PolicyDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinitionVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7328,9 +2332,9 @@ class VariableValuesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
+        cls: ClsType[_models.PolicyDefinitionVersion] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -7338,12 +2342,12 @@ class VariableValuesOperations:
         if isinstance(parameters, (IOBase, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "VariableValue")
+            _json = self._serialize.body(parameters, "PolicyDefinitionVersion")
 
-        _request = build_variable_values_create_or_update_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
+        _request = build_policy_definition_versions_create_or_update_request(
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
+            subscription_id=self._config.subscription_id,
             api_version=api_version,
             content_type=content_type,
             json=_json,
@@ -7362,9 +2366,13 @@ class VariableValuesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VariableValue", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicyDefinitionVersion", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7372,22 +2380,18 @@ class VariableValuesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_at_management_group(
-        self, management_group_id: str, variable_name: str, variable_value_name: str, **kwargs: Any
-    ) -> _models.VariableValue:
-        """Retrieves a variable value.
+    async def delete(self, policy_definition_name: str, policy_definition_version: str, **kwargs: Any) -> None:
+        """This operation deletes the policy definition version in the given subscription with the given
+        name.
 
-        This operation retrieves a single variable value; given its name,  management group it was
-        created at and the variable it's created for.
-
-        :param management_group_id: The ID of the management group. Required.
-        :type management_group_id: str
-        :param variable_name: The name of the variable to operate on. Required.
-        :type variable_name: str
-        :param variable_value_name: The name of the variable value to operate on. Required.
-        :type variable_value_name: str
-        :return: VariableValue or the result of cls(response)
-        :rtype: ~azure.mgmt.resource.policy.models.VariableValue
+        :param policy_definition_name: The name of the policy definition. Required.
+        :type policy_definition_name: str
+        :param policy_definition_version: The policy definition version.  The format is x.y.z where x
+         is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :return: None or the result of cls(response)
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7401,13 +2405,83 @@ class VariableValuesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01-preview"))
-        cls: ClsType[_models.VariableValue] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_variable_values_get_at_management_group_request(
-            management_group_id=management_group_id,
-            variable_name=variable_name,
-            variable_value_name=variable_value_name,
+        _request = build_policy_definition_versions_delete_request(
+            policy_definition_name=policy_definition_name,
+            policy_definition_version=policy_definition_version,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class PolicySetDefinitionVersionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
+        :attr:`policy_set_definition_versions` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def list_all_builtins(self, **kwargs: Any) -> _models.PolicySetDefinitionVersionListResult:
+        """Lists all built-in policy set definition versions.
+
+        This operation lists all the built-in policy set definition versions for all built-in policy
+        set definitions.
+
+        :return: PolicySetDefinitionVersionListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersionListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_list_all_builtins_request(
             api_version=api_version,
             headers=_headers,
             params=_params,
@@ -7423,11 +2497,3119 @@ class VariableValuesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("VariableValue", pipeline_response.http_response)
+        deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response.http_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_built_in(
+        self, policy_set_definition_name: str, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicySetDefinitionVersion"]:
+        """This operation retrieves a list of all the built-in policy set definition versions for the
+        given built-in policy set definition.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicySetDefinitionVersion or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_set_definition_versions_list_built_in_request(
+                    policy_set_definition_name=policy_set_definition_name,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_built_in(
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation retrieves the built-in policy set definition version with the given name and
+        version.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_get_built_in_request(
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_all_at_management_group(
+        self, management_group_name: str, **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersionListResult:
+        """Lists all policy set definition versions at management group scope.
+
+        This operation lists all the policy set definition versions for all policy set definitions at
+        the management group scope.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :return: PolicySetDefinitionVersionListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersionListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_list_all_at_management_group_request(
+            management_group_name=management_group_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_management_group(
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicySetDefinitionVersion"]:
+        """This operation retrieves a list of all the policy set definition versions for the given policy
+        set definition in a given management group.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicySetDefinitionVersion or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_set_definition_versions_list_by_management_group_request(
+                    management_group_name=management_group_name,
+                    policy_set_definition_name=policy_set_definition_name,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_at_management_group(
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation retrieves the policy set definition version in the given management group with
+        the given name and version.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_get_at_management_group_request(
+            management_group_name=management_group_name,
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update_at_management_group(
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        parameters: _models.PolicySetDefinitionVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation creates or updates a policy set definition version in the given management group
+        with the given name and version.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy set definition version properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_at_management_group(
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation creates or updates a policy set definition version in the given management group
+        with the given name and version.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy set definition version properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update_at_management_group(
+        self,
+        management_group_name: str,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        parameters: Union[_models.PolicySetDefinitionVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation creates or updates a policy set definition version in the given management group
+        with the given name and version.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy set definition version properties. Is either a
+         PolicySetDefinitionVersion type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or IO[bytes]
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicySetDefinitionVersion")
+
+        _request = build_policy_set_definition_versions_create_or_update_at_management_group_request(
+            management_group_name=management_group_name,
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_at_management_group(
+        self, management_group_name: str, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any
+    ) -> None:
+        """This operation deletes the policy set definition version in the given management group with the
+        given name and version.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_delete_at_management_group_request(
+            management_group_name=management_group_name,
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_all(self, **kwargs: Any) -> _models.PolicySetDefinitionVersionListResult:
+        """Lists all policy set definition versions within a subscription.
+
+        This operation lists all the policy set definition versions for all policy set definitions
+        within a subscription.
+
+        :return: PolicySetDefinitionVersionListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersionListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_list_all_request(
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, policy_set_definition_name: str, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicySetDefinitionVersion"]:
+        """This operation retrieves a list of all the policy set definition versions for the given policy
+        set definition.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicySetDefinitionVersion or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_set_definition_versions_list_request(
+                    policy_set_definition_name=policy_set_definition_name,
+                    subscription_id=self._config.subscription_id,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicySetDefinitionVersionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        expand: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation retrieves the policy set definition version in the given subscription with the
+        given name and version.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_get_request(
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            subscription_id=self._config.subscription_id,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        parameters: _models.PolicySetDefinitionVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation creates or updates a policy set definition version in the given subscription
+        with the given name and version.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy set definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation creates or updates a policy set definition version in the given subscription
+        with the given name and version.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy set definition properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update(
+        self,
+        policy_set_definition_name: str,
+        policy_definition_version: str,
+        parameters: Union[_models.PolicySetDefinitionVersion, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PolicySetDefinitionVersion:
+        """This operation creates or updates a policy set definition version in the given subscription
+        with the given name and version.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinitionVersion
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion or IO[bytes]
+        :return: PolicySetDefinitionVersion or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinitionVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicySetDefinitionVersion] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicySetDefinitionVersion")
+
+        _request = build_policy_set_definition_versions_create_or_update_request(
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinitionVersion", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, policy_set_definition_name: str, policy_definition_version: str, **kwargs: Any) -> None:
+        """This operation deletes the policy set definition version in the given subscription with the
+        given name and version.
+
+        :param policy_set_definition_name: The name of the policy set definition. Required.
+        :type policy_set_definition_name: str
+        :param policy_definition_version: The policy set definition version.  The format is x.y.z where
+         x is the major version number, y is the minor version number, and z is the patch number.
+         Required.
+        :type policy_definition_version: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definition_versions_delete_request(
+            policy_set_definition_name=policy_set_definition_name,
+            policy_definition_version=policy_definition_version,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class PolicyDefinitionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
+        :attr:`policy_definitions` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_built_in(
+        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyDefinition"]:
+        """This operation retrieves a list of all the built-in policy definitions that match the optional
+        given $filter. If $filter='policyType -eq {value}' is provided, the returned list only includes
+        all built-in policy definitions whose type match the {value}. Possible policyType values are
+        NotSpecified, BuiltIn, Custom, and Static. If $filter='category -eq {value}' is provided, the
+        returned list only includes all built-in policy definitions whose category match the {value}.
+
+        :param filter: The filter to apply on the operation. Valid values for $filter are:
+         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
+         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
+         only includes all policy definitions that at the given scope. If $filter='policyType -eq
+         {value}' is provided, the returned list only includes all policy definitions whose type match
+         the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
+         $filter='category -eq {value}' is provided, the returned list only includes all policy
+         definitions whose category match the {value}. Default value is None.
+        :type filter: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_definitions_list_built_in_request(
+                    filter=filter,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_built_in(self, policy_definition_name: str, **kwargs: Any) -> _models.PolicyDefinition:
+        """This operation retrieves the built-in policy definition with the given name.
+
+        :param policy_definition_name: The name of the built-in policy definition to get. Required.
+        :type policy_definition_name: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
+
+        _request = build_policy_definitions_get_built_in_request(
+            policy_definition_name=policy_definition_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_management_group(
+        self, management_group_id: str, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyDefinition"]:
+        """This operation retrieves a list of all the policy definitions in a given management group that
+        match the optional given $filter. Valid values for $filter are: 'atExactScope()', 'policyType
+        -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered list
+        includes all policy definitions associated with the management group, including those that
+        apply directly or from management groups that contain the given management group. If
+        $filter=atExactScope() is provided, the returned list only includes all policy definitions that
+        at the given management group. If $filter='policyType -eq {value}' is provided, the returned
+        list only includes all policy definitions whose type match the {value}. Possible policyType
+        values are NotSpecified, BuiltIn, Custom, and Static. If $filter='category -eq {value}' is
+        provided, the returned list only includes all policy definitions whose category match the
+        {value}.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param filter: The filter to apply on the operation. Valid values for $filter are:
+         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
+         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
+         only includes all policy definitions that at the given scope. If $filter='policyType -eq
+         {value}' is provided, the returned list only includes all policy definitions whose type match
+         the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
+         $filter='category -eq {value}' is provided, the returned list only includes all policy
+         definitions whose category match the {value}. Default value is None.
+        :type filter: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_definitions_list_by_management_group_request(
+                    management_group_id=management_group_id,
+                    filter=filter,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_at_management_group(
+        self, management_group_id: str, policy_definition_name: str, **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation retrieves the policy definition in the given management group with the given
+        name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
+
+        _request = build_policy_definitions_get_at_management_group_request(
+            management_group_id=management_group_id,
+            policy_definition_name=policy_definition_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update_at_management_group(
+        self,
+        management_group_id: str,
+        policy_definition_name: str,
+        parameters: _models.PolicyDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation creates or updates a policy definition in the given management group with the
+        given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_at_management_group(
+        self,
+        management_group_id: str,
+        policy_definition_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation creates or updates a policy definition in the given management group with the
+        given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update_at_management_group(
+        self,
+        management_group_id: str,
+        policy_definition_name: str,
+        parameters: Union[_models.PolicyDefinition, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation creates or updates a policy definition in the given management group with the
+        given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or IO[bytes]
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicyDefinition")
+
+        _request = build_policy_definitions_create_or_update_at_management_group_request(
+            management_group_id=management_group_id,
+            policy_definition_name=policy_definition_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_at_management_group(
+        self, management_group_id: str, policy_definition_name: str, **kwargs: Any
+    ) -> None:
+        """This operation deletes the policy definition in the given management group with the given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_policy_definitions_delete_at_management_group_request(
+            management_group_id=management_group_id,
+            policy_definition_name=policy_definition_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicyDefinition"]:
+        """This operation retrieves a list of all the policy definitions in a given subscription that
+        match the optional given $filter. Valid values for $filter are: 'atExactScope()', 'policyType
+        -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered list
+        includes all policy definitions associated with the subscription, including those that apply
+        directly or from management groups that contain the given subscription. If
+        $filter=atExactScope() is provided, the returned list only includes all policy definitions that
+        at the given subscription. If $filter='policyType -eq {value}' is provided, the returned list
+        only includes all policy definitions whose type match the {value}. Possible policyType values
+        are NotSpecified, BuiltIn, Custom, and Static. If $filter='category -eq {value}' is provided,
+        the returned list only includes all policy definitions whose category match the {value}.
+
+        :param filter: The filter to apply on the operation. Valid values for $filter are:
+         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
+         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
+         only includes all policy definitions that at the given scope. If $filter='policyType -eq
+         {value}' is provided, the returned list only includes all policy definitions whose type match
+         the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
+         $filter='category -eq {value}' is provided, the returned list only includes all policy
+         definitions whose category match the {value}. Default value is None.
+        :type filter: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicyDefinition or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicyDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinitionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_definitions_list_request(
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicyDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(self, policy_definition_name: str, **kwargs: Any) -> _models.PolicyDefinition:
+        """This operation retrieves the policy definition in the given subscription with the given name.
+
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
+
+        _request = build_policy_definitions_get_request(
+            policy_definition_name=policy_definition_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        policy_definition_name: str,
+        parameters: _models.PolicyDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation creates or updates a policy definition in the given subscription with the given
+        name.
+
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        policy_definition_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation creates or updates a policy definition in the given subscription with the given
+        name.
+
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update(
+        self, policy_definition_name: str, parameters: Union[_models.PolicyDefinition, IO[bytes]], **kwargs: Any
+    ) -> _models.PolicyDefinition:
+        """This operation creates or updates a policy definition in the given subscription with the given
+        name.
+
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyDefinition or IO[bytes]
+        :return: PolicyDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyDefinition] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicyDefinition")
+
+        _request = build_policy_definitions_create_or_update_request(
+            policy_definition_name=policy_definition_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, policy_definition_name: str, **kwargs: Any) -> None:
+        """This operation deletes the policy definition in the given subscription with the given name.
+
+        :param policy_definition_name: The name of the policy definition to get. Required.
+        :type policy_definition_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_policy_definitions_delete_request(
+            policy_definition_name=policy_definition_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class PolicySetDefinitionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
+        :attr:`policy_set_definitions` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_built_in(
+        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicySetDefinition"]:
+        """This operation retrieves a list of all the built-in policy set definitions that match the
+        optional given $filter. If $filter='category -eq {value}' is provided, the returned list only
+        includes all built-in policy set definitions whose category match the {value}.
+
+        :param filter: The filter to apply on the operation. Valid values for $filter are:
+         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
+         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
+         only includes all policy set definitions that at the given scope. If $filter='policyType -eq
+         {value}' is provided, the returned list only includes all policy set definitions whose type
+         match the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
+         $filter='category -eq {value}' is provided, the returned list only includes all policy set
+         definitions whose category match the {value}. Default value is None.
+        :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_set_definitions_list_built_in_request(
+                    filter=filter,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicySetDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_built_in(
+        self, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation retrieves the built-in policy set definition with the given name.
+
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definitions_get_built_in_request(
+            policy_set_definition_name=policy_set_definition_name,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_management_group(
+        self,
+        management_group_id: str,
+        filter: Optional[str] = None,
+        expand: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicySetDefinition"]:
+        """This operation retrieves a list of all the policy set definitions in a given management group
+        that match the optional given $filter. Valid values for $filter are: 'atExactScope()',
+        'policyType -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered
+        list includes all policy set definitions associated with the management group, including those
+        that apply directly or from management groups that contain the given management group. If
+        $filter=atExactScope() is provided, the returned list only includes all policy set definitions
+        that at the given management group. If $filter='policyType -eq {value}' is provided, the
+        returned list only includes all policy set definitions whose type match the {value}. Possible
+        policyType values are NotSpecified, BuiltIn and Custom. If $filter='category -eq {value}' is
+        provided, the returned list only includes all policy set definitions whose category match the
+        {value}.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param filter: The filter to apply on the operation. Valid values for $filter are:
+         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
+         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
+         only includes all policy set definitions that at the given scope. If $filter='policyType -eq
+         {value}' is provided, the returned list only includes all policy set definitions whose type
+         match the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
+         $filter='category -eq {value}' is provided, the returned list only includes all policy set
+         definitions whose category match the {value}. Default value is None.
+        :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_set_definitions_list_by_management_group_request(
+                    management_group_id=management_group_id,
+                    filter=filter,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicySetDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_at_management_group(
+        self, management_group_id: str, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation retrieves the policy set definition in the given management group with the given
+        name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definitions_get_at_management_group_request(
+            management_group_id=management_group_id,
+            policy_set_definition_name=policy_set_definition_name,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update_at_management_group(
+        self,
+        management_group_id: str,
+        policy_set_definition_name: str,
+        parameters: _models.PolicySetDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation creates or updates a policy set definition in the given management group with
+        the given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_at_management_group(
+        self,
+        management_group_id: str,
+        policy_set_definition_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation creates or updates a policy set definition in the given management group with
+        the given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update_at_management_group(
+        self,
+        management_group_id: str,
+        policy_set_definition_name: str,
+        parameters: Union[_models.PolicySetDefinition, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation creates or updates a policy set definition in the given management group with
+        the given name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or IO[bytes]
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicySetDefinition")
+
+        _request = build_policy_set_definitions_create_or_update_at_management_group_request(
+            management_group_id=management_group_id,
+            policy_set_definition_name=policy_set_definition_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_at_management_group(
+        self, management_group_id: str, policy_set_definition_name: str, **kwargs: Any
+    ) -> None:
+        """This operation deletes the policy set definition in the given management group with the given
+        name.
+
+        :param management_group_id: The ID of the management group. Required.
+        :type management_group_id: str
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definitions_delete_at_management_group_request(
+            management_group_id=management_group_id,
+            policy_set_definition_name=policy_set_definition_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list(
+        self, filter: Optional[str] = None, expand: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PolicySetDefinition"]:
+        """This operation retrieves a list of all the policy set definitions in a given subscription that
+        match the optional given $filter. Valid values for $filter are: 'atExactScope()', 'policyType
+        -eq {value}' or 'category eq '{value}''. If $filter is not provided, the unfiltered list
+        includes all policy set definitions associated with the subscription, including those that
+        apply directly or from management groups that contain the given subscription. If
+        $filter=atExactScope() is provided, the returned list only includes all policy set definitions
+        that at the given subscription. If $filter='policyType -eq {value}' is provided, the returned
+        list only includes all policy set definitions whose type match the {value}. Possible policyType
+        values are NotSpecified, BuiltIn and Custom. If $filter='category -eq {value}' is provided, the
+        returned list only includes all policy set definitions whose category match the {value}.
+
+        :param filter: The filter to apply on the operation. Valid values for $filter are:
+         'atExactScope()', 'policyType -eq {value}' or 'category eq '{value}''. If $filter is not
+         provided, no filtering is performed. If $filter=atExactScope() is provided, the returned list
+         only includes all policy set definitions that at the given scope. If $filter='policyType -eq
+         {value}' is provided, the returned list only includes all policy set definitions whose type
+         match the {value}. Possible policyType values are NotSpecified, BuiltIn, Custom, and Static. If
+         $filter='category -eq {value}' is provided, the returned list only includes all policy set
+         definitions whose category match the {value}. Default value is None.
+        :type filter: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :param top: Maximum number of records to return. When the $top filter is not provided, it will
+         return 500 records. Default value is None.
+        :type top: int
+        :return: An iterator like instance of either PolicySetDefinition or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.PolicySetDefinition]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinitionListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_set_definitions_list_request(
+                    subscription_id=self._config.subscription_id,
+                    filter=filter,
+                    expand=expand,
+                    top=top,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("PolicySetDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get(
+        self, policy_set_definition_name: str, expand: Optional[str] = None, **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation retrieves the policy set definition in the given subscription with the given
+        name.
+
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param expand: Comma-separated list of additional properties to be included in the response.
+         Supported values are 'LatestDefinitionVersion, EffectiveDefinitionVersion'. Default value is
+         None.
+        :type expand: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definitions_get_request(
+            policy_set_definition_name=policy_set_definition_name,
+            subscription_id=self._config.subscription_id,
+            expand=expand,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        policy_set_definition_name: str,
+        parameters: _models.PolicySetDefinition,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation creates or updates a policy set definition in the given subscription with the
+        given name.
+
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        policy_set_definition_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation creates or updates a policy set definition in the given subscription with the
+        given name.
+
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update(
+        self, policy_set_definition_name: str, parameters: Union[_models.PolicySetDefinition, IO[bytes]], **kwargs: Any
+    ) -> _models.PolicySetDefinition:
+        """This operation creates or updates a policy set definition in the given subscription with the
+        given name.
+
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicySetDefinition or IO[bytes]
+        :return: PolicySetDefinition or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicySetDefinition
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicySetDefinition] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicySetDefinition")
+
+        _request = build_policy_set_definitions_create_or_update_request(
+            policy_set_definition_name=policy_set_definition_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicySetDefinition", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, policy_set_definition_name: str, **kwargs: Any) -> None:
+        """This operation deletes the policy set definition in the given subscription with the given name.
+
+        :param policy_set_definition_name: The name of the policy set definition to get. Required.
+        :type policy_set_definition_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_policy_set_definitions_delete_request(
+            policy_set_definition_name=policy_set_definition_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class PolicyTokensOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
+        :attr:`policy_tokens` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def acquire_at_management_group(
+        self,
+        management_group_name: str,
+        parameters: _models.PolicyTokenRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at management group level.
+
+        This operation acquires a policy token in the given management group for the given request
+        body.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param parameters: The policy token properties. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def acquire_at_management_group(
+        self,
+        management_group_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at management group level.
+
+        This operation acquires a policy token in the given management group for the given request
+        body.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param parameters: The policy token properties. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def acquire_at_management_group(
+        self, management_group_name: str, parameters: Union[_models.PolicyTokenRequest, IO[bytes]], **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token at management group level.
+
+        This operation acquires a policy token in the given management group for the given request
+        body.
+
+        :param management_group_name: The name of the management group. The name is case insensitive.
+         Required.
+        :type management_group_name: str
+        :param parameters: The policy token properties. Is either a PolicyTokenRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or IO[bytes]
+        :return: PolicyTokenResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyTokenResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicyTokenRequest")
+
+        _request = build_policy_tokens_acquire_at_management_group_request(
+            management_group_name=management_group_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyTokenResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def acquire(
+        self, parameters: _models.PolicyTokenRequest, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token.
+
+        This operation acquires a policy token in the given subscription for the given request body.
+
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def acquire(
+        self, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token.
+
+        This operation acquires a policy token in the given subscription for the given request body.
+
+        :param parameters: The request body. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PolicyTokenResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def acquire(
+        self, parameters: Union[_models.PolicyTokenRequest, IO[bytes]], **kwargs: Any
+    ) -> _models.PolicyTokenResponse:
+        """Acquires a policy token.
+
+        This operation acquires a policy token in the given subscription for the given request body.
+
+        :param parameters: The request body. Is either a PolicyTokenRequest type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.policy.models.PolicyTokenRequest or IO[bytes]
+        :return: PolicyTokenResponse or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.PolicyTokenResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyTokenResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "PolicyTokenRequest")
+
+        _request = build_policy_tokens_acquire_request(
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("PolicyTokenResponse", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class DataPolicyManifestsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.resource.policy.aio.PolicyClient`'s
+        :attr:`data_policy_manifests` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PolicyClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_by_policy_mode(self, policy_mode: str, **kwargs: Any) -> _models.DataPolicyManifest:
+        """Retrieves a data policy manifest.
+
+        This operation retrieves the data policy manifest with the given policy mode.
+
+        :param policy_mode: The policy mode of the data policy manifest to get. Required.
+        :type policy_mode: str
+        :return: DataPolicyManifest or the result of cls(response)
+        :rtype: ~azure.mgmt.resource.policy.models.DataPolicyManifest
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-09-01"))
+        cls: ClsType[_models.DataPolicyManifest] = kwargs.pop("cls", None)
+
+        _request = build_data_policy_manifests_get_by_policy_mode_request(
+            policy_mode=policy_mode,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("DataPolicyManifest", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.DataPolicyManifest"]:
+        """Retrieves data policy manifests.
+
+        This operation retrieves a list of all the data policy manifests that match the optional given
+        $filter. Valid values for $filter are: "$filter=namespace eq '{0}'". If $filter is not
+        provided, the unfiltered list includes all data policy manifests for data resource types. If
+        $filter=namespace is provided, the returned list only includes all data policy manifests that
+        have a namespace matching the provided value.
+
+        :param filter: The filter to apply on the operation. Valid values for $filter are: "namespace
+         eq '{value}'". If $filter is not provided, no filtering is performed. If $filter=namespace eq
+         '{value}' is provided, the returned list only includes all data policy manifests that have a
+         namespace matching the provided value. Default value is None.
+        :type filter: str
+        :return: An iterator like instance of either DataPolicyManifest or the result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.resource.policy.models.DataPolicyManifest]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-09-01"))
+        cls: ClsType[_models.DataPolicyManifestListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_data_policy_manifests_list_request(
+                    filter=filter,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("DataPolicyManifestListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
