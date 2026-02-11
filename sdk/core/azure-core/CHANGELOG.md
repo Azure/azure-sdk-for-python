@@ -1,16 +1,10 @@
 # Release History
 
-## 1.38.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.38.1 (2026-02-10)
 
 ### Bugs Fixed
 
-- Fixed PipelineClient.format_url to avoid adding trailing slashes when the URL template contains only query parameters.
-
-### Other Changes
+- Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters.  #45044
 
 ## 1.38.0 (2026-01-12)
 
