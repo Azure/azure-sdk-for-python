@@ -818,6 +818,10 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
         outlined in the AMQP v1.0 standard:
         http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
 
+        The returned message is created in a settled state with no associated receiver,
+        meaning settlement operations (e.g., complete, abandon, defer, dead_letter) and
+        lock renewal are not available. The lock_token property will return None.
+
         :param bytes message: The raw bytes representing the AMQP message payload.
         :return: A ServiceBusReceivedMessage created from the provided message payload.
         :rtype: ~azure.servicebus.ServiceBusReceivedMessage
