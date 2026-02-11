@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.15.0 (2026-02-11)
+### 4.15.0 (2026-02-12)
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
