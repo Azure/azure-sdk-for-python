@@ -29,6 +29,7 @@
 * Tracing: agent creation uses gen_ai.system.instructions attribute directly under the span instead of an event.
 * Tracing: "gen_ai.provider.name" attribute value changed to "microsoft.foundry".
 * Tracing: the format of the function tool call related traces in input and output messages changed to {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}} and {"type": "tool_call_response", "id": "...", "result": "..."}
+* Tracing: attribute name of agent instructions in the create_agent span changed from gen_ai.system.instructions to gen_ai.system_instructions and the format changed to follow the spec for gen_ai.system.instructions.
 
 ## 2.0.0b3 (2026-01-06)
 
