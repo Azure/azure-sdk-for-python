@@ -119,19 +119,17 @@ class HumanInTheLoopHelper:
             result=response_result,
         )
         return ChatMessage(role="tool", contents=[response_content])
-    
-    def remove_hitl_messages_from_conversation_thread(self, thread_messages: List[ChatMessage]) -> List[ChatMessage]:
-        """
-        Remove HITL function call contents and the related function result contents from the conversation thread.
-        HITL reqeusts were converted to function_call content with name HUMAN_IN_THE_LOOP_FUNCTION_NAME by the 
-        adapter. To avoid confusion for agent, we want to remove these contents from the thread when feeding to 
-        agent. Only real function_calls and their results will be kept in the thread. Due to inconsistent messages 
-        returned by the framework, we may see 1 or 2 function result contents after a HITL function call content, 
-        we will keep the last one and remove the previous one if exists.
 
-        :param thread_messages: The messages converted from conversation api.
+    def remove_hitl_content_from_thread(self, thread_messages: List[ChatMessage]) -> List[ChatMessage]:
+        """Remove HITL function call contents and related results from a conversation thread.
+
+        HITL requests become ``function_call`` entries named ``HUMAN_IN_THE_LOOP_FUNCTION_NAME`` when converted
+        by the adapter. To avoid feeding those synthetic requests back into the agent, this method strips the
+        HITL function_calls and their placeholder outputs while preserving real tool invocations.
+
+        :param thread_messages: The messages converted from the conversation API.
         :type thread_messages: List[ChatMessage]
-        :return: The filtered conversation thread messages without HITL related contents.
+        :return: Messages without HITL-specific artifacts.
         :rtype: List[ChatMessage]
         """
         filtered_messages = []
@@ -148,12 +146,14 @@ class HumanInTheLoopHelper:
                     result_call_id = getattr(content, "call_id", "")
                     if not prev_function_call:
                         if prev_hitl_request and prev_hitl_request.call_id == result_call_id:
-                            # this is a hitl function result without the function call content, we can 
+                            # this is a hitl function result without the function call content, we can
                             # just skip it and wait for the next function call or result.
                             prev_hitl_request = None
                         else:
-                            logger.warning("Got function result content with call_id %s but no previous function call found.",
-                                       result_call_id)
+                            logger.warning(
+                                "Got function result content with call_id %s but no previous function call found.",
+                                result_call_id,
+                            )
                     elif result_call_id == getattr(prev_function_call, "call_id", ""):
                         # prev_function_call is not None and call_id matches
                         if prev_hitl_request:
@@ -166,8 +166,11 @@ class HumanInTheLoopHelper:
                             filtered_contents.append(content)
                             prev_function_call = None
                     else:
-                        logger.warning("Got unmatched function result content with call_id %s, expected call_id %s. Skipping it.",
-                                       result_call_id, getattr(prev_function_call, "call_id", ""))
+                        logger.warning(
+                            "Got unmatched function result content with call_id %s, expected call_id %s. Skipping it.",
+                            result_call_id,
+                            getattr(prev_function_call, "call_id", ""),
+                        )
                         prev_function_call = None
                         prev_hitl_request = None
                 else:
@@ -180,7 +183,7 @@ class HumanInTheLoopHelper:
                         prev_function_call = None
                         prev_hitl_request = None
                         prev_function_output = None
-                    
+
                     if content.type == "function_call":
                         if content.name != HUMAN_IN_THE_LOOP_FUNCTION_NAME:
                             filtered_contents.append(content)

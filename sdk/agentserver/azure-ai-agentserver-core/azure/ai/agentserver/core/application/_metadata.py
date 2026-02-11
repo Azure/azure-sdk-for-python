@@ -4,11 +4,9 @@
 from __future__ import annotations
 
 import os
-import platform
+import platform  # pylint: disable=unused-import
 from dataclasses import dataclass, field
 from importlib.metadata import Distribution, PackageNotFoundError
-from typing import Mapping
-
 
 @dataclass(frozen=True, kw_only=True)
 class PackageMetadata:

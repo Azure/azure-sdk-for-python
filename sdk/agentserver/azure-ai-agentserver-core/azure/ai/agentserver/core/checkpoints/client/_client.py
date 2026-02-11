@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=client-method-missing-kwargs,client-accepts-api-version-keyword,missing-client-constructor-parameter-kwargs
 """Asynchronous client for Azure AI Foundry checkpoint storage API."""
 
 from typing import Any, AsyncContextManager, List, Optional
@@ -149,5 +150,8 @@ class FoundryCheckpointClient(AsyncContextManager["FoundryCheckpointClient"]):
         """Exit the async context manager.
 
         :param exc_details: Exception details if an exception occurred.
+        :type exc_details: Any
+        :return: None
+        :rtype: None
         """
         await self._client.__aexit__(*exc_details)

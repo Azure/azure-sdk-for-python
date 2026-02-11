@@ -1,11 +1,13 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+from typing import Optional, Union
 
-from typing import Optional, Union, Sequence, MutableMapping, Any
-from agent_framework import AgentThread, AgentProtocol, ChatMessage, WorkflowAgent
+from agent_framework import AgentThread, AgentProtocol, WorkflowAgent
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import TokenCredential
 from azure.ai.projects.aio import AIProjectClient
 
-from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
 
 from .agent_thread_repository import AgentThreadRepository
@@ -21,7 +23,10 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
                  credential: Union[TokenCredential, AsyncTokenCredential]) -> None:
         self._agent = agent
         if not project_endpoint or not credential:
-            raise ValueError("Both project_endpoint and credential are required for FoundryConversationThreadRepository.")
+            raise ValueError(
+                "Both project_endpoint and credential are required for "
+                "FoundryConversationThreadRepository."
+            )
         self._client = AIProjectClient(project_endpoint, credential)
         self._inventory: dict[str, AgentThread] = {}
 

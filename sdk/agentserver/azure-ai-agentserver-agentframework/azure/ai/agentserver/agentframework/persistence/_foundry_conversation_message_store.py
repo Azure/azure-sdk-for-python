@@ -1,21 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import inspect
 from collections.abc import MutableMapping, Sequence
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional
 
 from agent_framework import ChatMessage
-
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    ItemContentInputText,
-    ItemContentOutputText,
-    ItemType,
-    ResponsesMessageItemResource,
-)
 
 from azure.ai.agentserver.core.logger import get_logger
 
@@ -33,10 +23,8 @@ class FoundryConversationMessageStore:
 
     :param conversation_id: The conversation ID to fetch messages from.
     :type conversation_id: str
-    :param project_endpoint: The Azure AI Foundry project endpoint.
-    :type project_endpoint: str
-    :param credentials: The token credential for authentication.
-    :type credentials: Union[TokenCredential, AsyncTokenCredential]
+    :param project_client: The Azure AI Project client used to retrieve conversation history.
+    :type project_client: AIProjectClient
     """
 
     def __init__(
@@ -48,12 +36,8 @@ class FoundryConversationMessageStore:
 
         :param conversation_id: The conversation ID to fetch messages from.
         :type conversation_id: str
-        :param project_endpoint: The Azure AI Foundry project endpoint.
-        :type project_endpoint: str
-        :param credentials: The token credential for authentication.
-        :type credentials: Union[TokenCredential, AsyncTokenCredential]
-        :keyword _project_client_factory: Optional factory for creating project client (for testing).
-        :paramtype _project_client_factory: Optional[Any]
+        :param project_client: The Azure AI Project client used to retrieve conversation history.
+        :type project_client: AIProjectClient
         """
         self._conversation_id = conversation_id
         self._project_client = project_client
@@ -94,8 +78,8 @@ class FoundryConversationMessageStore:
 
         :param serialized_store_state: The serialized state data.
         :type serialized_store_state: MutableMapping[str, Any]
-        :param project_client: The AIProjectClient instance to use for API interactions.
-        :type project_client: Optional[AIProjectClient]
+        :keyword project_client: The AIProjectClient instance to use for API interactions.
+        :paramtype project_client: Optional[AIProjectClient]
         :return: A new FoundryConversationMessageStore instance.
         :rtype: FoundryConversationMessageStore
         :raises ValueError: If required parameters are missing.
@@ -104,7 +88,7 @@ class FoundryConversationMessageStore:
         conversation_id = serialized_store_state.get("conversation_id")
         if not conversation_id:
             raise ValueError("conversation_id is required in serialized state")
-        
+
         store = cls(
             conversation_id=conversation_id,
             project_client=project_client
@@ -127,7 +111,7 @@ class FoundryConversationMessageStore:
         """
         if not serialized_store_state:
             return
-        
+
         # Update cached messages
         cached_messages_data = serialized_store_state.get("messages", [])
         self._cached_messages = []
@@ -140,14 +124,14 @@ class FoundryConversationMessageStore:
 
     async def retrieve_messages(self):
         history_messages = await self._get_conversation_history()
-        filtered_messages = HumanInTheLoopHelper().remove_hitl_messages_from_conversation_thread(history_messages or [])
+        filtered_messages = HumanInTheLoopHelper().remove_hitl_content_from_thread(history_messages or [])
         self._retrieved_messages = filtered_messages
 
     async def _get_conversation_history(self) -> List[ChatMessage]:
         # Retrieve conversation history from Foundry.
         if not self._project_client:
             logger.error("AIProjectClient is not configured; cannot load conversation history.")
-            return
+            return []
 
         try:
             converter = ConversationItemConverter()
@@ -157,7 +141,7 @@ class FoundryConversationMessageStore:
 
                 if raw_items is None:
                     self._retrieved_messages = []
-                    return
+                    return []
 
                 iter_pages = getattr(raw_items, "iter_pages", None)
                 if iter_pages is not None:
@@ -173,10 +157,11 @@ class FoundryConversationMessageStore:
                     self._conversation_id,
                 )
                 return retrieved_messages[::-1]
-        except Exception:
+        except Exception as exc: 
             logger.exception(
-                "Failed to get conversation history for %s",
+                "Failed to get conversation history for %s: %s",
                 self._conversation_id,
+                exc,
             )
             return []
 

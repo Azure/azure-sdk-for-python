@@ -290,7 +290,11 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
         return stream_updates()
 
-    def _create_foundry_conversation_thread_repository(self, project_endpoint: str, credential: AsyncTokenCredential) -> FoundryConversationThreadRepository:
+    def _create_foundry_conversation_thread_repository(
+        self,
+        project_endpoint: str,
+        credential: AsyncTokenCredential,
+    ) -> FoundryConversationThreadRepository:
         """Helper method to create a FoundryConversationThreadRepository instance.
 
         :param project_endpoint: The endpoint of the Azure AI Project.

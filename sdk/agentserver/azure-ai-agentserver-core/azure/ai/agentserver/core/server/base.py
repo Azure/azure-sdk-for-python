@@ -25,7 +25,10 @@ from starlette.types import ASGIApp
 
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
+from azure.identity.aio import (
+    DefaultAzureCredential as AsyncDefaultTokenCredential,
+    get_bearer_token_provider,
+)
 
 from ._context import AgentServerContext
 from ._response_metadata import (
@@ -101,6 +104,7 @@ class FoundryCBAgent:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
         self._project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
         AgentServerContext(create_tool_runtime(self._project_endpoint, self.credentials))
+        self._port: Optional[int] = None
 
         async def runs_endpoint(request):
             # Set up tracing context and span
@@ -232,11 +236,25 @@ class FoundryCBAgent:
         self.tracer = None
 
     def _should_store(self, context: AgentRunContext) -> bool:
-        """Check if conversation items should be stored based on request's store parameter."""
+        """Determine whether conversation artifacts should be persisted.
+
+        :param context: Agent run context that contains the incoming request payload.
+        :type context: AgentRunContext
+        :return: ``True`` when storage is requested and the conversation is scoped to a project.
+        :rtype: bool
+        """
         return context.request.get("store", False) and context.conversation_id and self._project_endpoint
 
     def _items_are_equal(self, item1: dict, item2: dict) -> bool:
-        """Compare two conversation items for equality based on type and content."""
+        """Compare two conversation items for equality based on type and content.
+
+        :param item1: First conversation item.
+        :type item1: dict
+        :param item2: Second conversation item.
+        :type item2: dict
+        :return: ``True`` when both the metadata and content match.
+        :rtype: bool
+        """
         if item1.get("type") != item2.get("type"):
             return False
         if item1.get("role") != item2.get("role"):
@@ -253,22 +271,32 @@ class FoundryCBAgent:
             return text1 == text2
         return content1 == content2
 
-    async def _create_openai_client(self):
-        """Create an AsyncOpenAI client for conversation operations."""
-        from openai import AsyncOpenAI
-        from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
+    async def _create_openai_client(self) -> "AsyncOpenAI":
+        """Create an AsyncOpenAI client for conversation operations.
 
-        credential = DefaultAzureCredential()
-        token_provider = get_bearer_token_provider(credential, "https://ai.azure.com/.default")
+        :return: Configured AsyncOpenAI client scoped to the Foundry project endpoint.
+        :rtype: AsyncOpenAI
+        """
+        from openai import AsyncOpenAI
+
+        token_provider = get_bearer_token_provider(
+            self.credentials, "https://ai.azure.com/.default"
+        )
         token = await token_provider()
         return AsyncOpenAI(
             base_url=f"{self._project_endpoint}/openai",
             api_key=token,
-            default_query = {"api-version": "2025-11-15-preview"},
+            default_query={"api-version": "2025-11-15-preview"},
         )
 
     async def _save_input_to_conversation(self, context: AgentRunContext) -> None:
-        """Save input items to the conversation."""
+        """Persist request input items when storage is enabled on the request.
+
+        :param context: Agent run context containing the request payload and conversation metadata.
+        :type context: AgentRunContext
+        :return: None
+        :rtype: None
+        """
         try:
             conversation_id = context.conversation_id
             input_items = context.request.get("input", [])
@@ -311,12 +339,15 @@ class FoundryCBAgent:
                     # Compare as a whole - all N items must match in order
                     all_match = True
                     for i in range(n):
-                        hist_dict = last_n_historical[i].model_dump() if hasattr(last_n_historical[i], 'model_dump') else dict(last_n_historical[i])
+                        hist_dict = last_n_historical[i].model_dump() \
+                                if hasattr(last_n_historical[i], 'model_dump') \
+                                else dict(last_n_historical[i])
                         if not self._items_are_equal(hist_dict, items_to_save[i]):
                             all_match = False
                             break
                     if all_match:
-                        logger.debug(f"All {n} input items already exist in conversation {conversation_id}, skipping save")
+                        logger.debug(f"All {n} input items already exist in " +
+                                     f"conversation {conversation_id}, skipping save")
                         return
             except Exception as e:
                 logger.debug(f"Could not check for duplicates: {e}")
@@ -329,8 +360,18 @@ class FoundryCBAgent:
         except Exception as e:
             logger.warning(f"Failed to save input items to conversation: {e}", exc_info=True)
 
-    async def _save_output_to_conversation(self, context: AgentRunContext, response: project_models.Response) -> None:
-        """Save output items from a non-streaming response to the conversation."""
+    async def _save_output_to_conversation(
+            self, context: AgentRunContext, response: project_models.Response) -> None:
+        """
+        Save output items from a non-streaming response to the conversation.
+        
+        :param context: The agent run context containing conversation information.
+        :type context: AgentRunContext
+        :param response: The response object containing output items to save.
+        :type response: project_models.Response
+        :return: None
+        :rtype: None
+        """
         try:
             conversation_id = context.conversation_id
             output_items = response.get("output", [])
@@ -357,7 +398,15 @@ class FoundryCBAgent:
             logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
 
     async def _save_output_events_to_conversation(self, context: AgentRunContext, events: list) -> None:
-        """Save output items from streaming events to the conversation."""
+        """Persist streaming output events for later retrieval.
+
+        :param context: Agent run context containing conversation identifiers.
+        :type context: AgentRunContext
+        :param events: Response stream events captured during execution.
+        :type events: list
+        :return: None
+        :rtype: None
+        """
         try:
             conversation_id = context.conversation_id
             # Extract completed items from ResponseOutputItemDoneEvent

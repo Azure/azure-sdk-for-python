@@ -280,9 +280,16 @@ class SchemaProperty(BaseModel):
     @model_validator(mode="before")
     @classmethod
     def _coerce_empty_type(cls, data: Any) -> Any:
-        """Coerce an empty ``type`` string to ``None`` so that properties with
+        """
+        Coerce an empty ``type`` string to ``None`` so that properties with
         invalid or missing type information are still deserialised instead of
-        raising a validation error."""
+        raising a validation error.
+        
+        :param data: The input data to validate.
+        :type data: Any
+        :return: The validated data with empty type coerced to None.
+        :rtype: Any
+        """
         if isinstance(data, dict) and data.get("type") == "":
             data = {**data, "type": None}
         return data

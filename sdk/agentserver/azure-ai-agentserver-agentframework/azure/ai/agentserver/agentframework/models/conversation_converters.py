@@ -1,4 +1,6 @@
-from __future__ import annotations
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 
 import json
 from typing import Any, Mapping, Optional

@@ -11,7 +11,12 @@ from ._version import VERSION
 from .constants import Constants
 
 def _get_default_log_config():
-    """Build default log config with level from environment."""
+    """
+    Build default log config with level from environment.
+    
+    :return: A dictionary containing logging configuration.
+    :rtype: dict
+    """
     log_level = get_log_level()
     return {
         "version": 1,

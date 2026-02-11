@@ -17,7 +17,7 @@ from ._agent_framework import AgentFrameworkAgent
 from ._ai_agent_adapter import AgentFrameworkAIAgentAdapter
 from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
 from ._foundry_tools import FoundryToolsChatMiddleware
-from .persistence import AgentThreadRepository, CheckpointRepository, FoundryCheckpointRepository
+from .persistence import AgentThreadRepository, CheckpointRepository
 
 
 @overload
