@@ -5,11 +5,13 @@
 import abc
 import logging
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Dict, Type, Tuple
+from weakref import WeakValueDictionary
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ..._internal import within_credential_chain
+from .utils import get_running_async_lock_class, get_current_loop_id
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,8 +20,41 @@ class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
 
+        # Maps loop ID -> (loop_lock, active_locks WeakValueDict)
+        # This is to handle edge cases where the credential is used in multiple event loops.
+        self._per_loop_state: Dict[int, Tuple[Any, WeakValueDictionary]] = {}
+        self._lock_class_type: Optional[Type] = None
+
         # https://github.com/python/mypy/issues/5887
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
+
+    @property
+    def _lock_class(self) -> Type:
+        if self._lock_class_type is None:
+            self._lock_class_type = get_running_async_lock_class()
+        return self._lock_class_type
+
+    def _get_loop_state(self, loop_id: int) -> Tuple[Any, WeakValueDictionary]:
+        if loop_id not in self._per_loop_state:
+            self._per_loop_state[loop_id] = (self._lock_class(), WeakValueDictionary())
+        return self._per_loop_state[loop_id]
+
+    async def _get_request_lock(self, lock_key: tuple) -> Any:
+
+        loop_id = get_current_loop_id()
+        loop_lock, active_locks = self._get_loop_state(loop_id)
+
+        lock = active_locks.get(lock_key)
+        if lock is not None:
+            return lock
+
+        async with loop_lock:
+            # Double-check in case another coroutine created it while we waited
+            lock = active_locks.get(lock_key)
+            if lock is None:
+                lock = self._lock_class()
+                active_locks[lock_key] = lock
+            return lock
 
     @abc.abstractmethod
     async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessTokenInfo]:
@@ -47,13 +82,24 @@ class GetTokenMixin(abc.ABC):
 
     def _should_refresh(self, token: AccessTokenInfo) -> bool:
         now = int(time.time())
-        if token.refresh_on is not None and now >= token.refresh_on:
+
+        # Token is expired - must refresh
+        if now >= token.expires_on:
             return True
-        if token.expires_on - now > DEFAULT_REFRESH_OFFSET:
-            return False
+
+        # Check if we recently attempted a refresh to avoid hammering the token endpoint
         if now - self._last_request_time < DEFAULT_TOKEN_REFRESH_RETRY_DELAY:
             return False
-        return True
+
+        # Token has a refresh_on value, so refresh if we've passed that time
+        if token.refresh_on is not None and now >= token.refresh_on:
+            return True
+
+        # Proactively refresh if token is within the default refresh window
+        if token.expires_on - now <= DEFAULT_REFRESH_OFFSET:
+            return True
+
+        return False
 
     async def get_token(
         self,
@@ -132,19 +178,30 @@ class GetTokenMixin(abc.ABC):
             token = await self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
-            if not token:
-                self._last_request_time = int(time.time())
-                token = await self._request_token(
-                    *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
-                )
-            elif self._should_refresh(token):
-                try:
-                    self._last_request_time = int(time.time())
-                    token = await self._request_token(
+            if not token or self._should_refresh(token):
+                # Get the lock specific to this scope combination
+                lock_key = (tuple(sorted(scopes)), claims, tenant_id, enable_cae)
+                lock = await self._get_request_lock(lock_key)
+
+                async with lock:
+                    # Double-check in case another coroutine refreshed the token while we waited for the lock
+                    current_token = await self._acquire_token_silently(
                         *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                     )
-                except Exception:  # pylint:disable=broad-except
-                    pass
+                    if current_token and not self._should_refresh(current_token):
+                        token = current_token
+                    else:
+                        try:
+                            token = await self._request_token(
+                                *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                            )
+                        except Exception:  # pylint:disable=broad-except
+                            self._last_request_time = int(time.time())
+                            # Only raise if we don't have a valid (non-expired) token to return
+                            if current_token is None or current_token.expires_on <= self._last_request_time:
+                                raise
+                            token = current_token
+
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",
@@ -163,3 +220,15 @@ class GetTokenMixin(abc.ABC):
                 exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
             )
             raise
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        # Remove the non-picklable entries
+        del state["_lock_class_type"]
+        del state["_per_loop_state"]
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        self.__dict__.update(state)
+        self._per_loop_state = {}
+        self._lock_class_type = None
