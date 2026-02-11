@@ -62,9 +62,7 @@ from ._utils.logging_utils import log_strategy_start, log_error
 from ._utils.formatting_utils import write_pyrit_outputs_to_file
 
 
-def network_retry_decorator(
-    retry_config, logger, strategy_name, risk_category_name, prompt_idx=None
-):
+def network_retry_decorator(retry_config, logger, strategy_name, risk_category_name, prompt_idx=None):
     """Create a reusable retry decorator for network operations.
 
     :param retry_config: Retry configuration dictionary
@@ -78,9 +76,7 @@ def network_retry_decorator(
     def decorator(func):
         @retry(**retry_config["network_retry"])
         async def wrapper(*args, **kwargs):
-            prompt_detail = (
-                f" for prompt {prompt_idx}" if prompt_idx is not None else ""
-            )
+            prompt_detail = f" for prompt {prompt_idx}" if prompt_idx is not None else ""
             try:
                 return await func(*args, **kwargs)
             except (
@@ -131,9 +127,7 @@ def network_retry_decorator(
                     )
 
                 def _is_converted_prompt_error(exc: BaseException) -> bool:
-                    return isinstance(
-                        exc, ValueError
-                    ) and "Converted prompt text is None" in str(exc)
+                    return isinstance(exc, ValueError) and "Converted prompt text is None" in str(exc)
 
                 if (
                     "Error sending prompt with conversation ID" in message
@@ -230,16 +224,9 @@ class OrchestratorManager:
         :rtype: Callable
         """
         if isinstance(attack_strategy, list):
-            if (
-                AttackStrategy.MultiTurn in attack_strategy
-                or AttackStrategy.Crescendo in attack_strategy
-            ):
-                self.logger.error(
-                    "MultiTurn and Crescendo strategies are not supported in composed attacks."
-                )
-                raise ValueError(
-                    "MultiTurn and Crescendo strategies are not supported in composed attacks."
-                )
+            if AttackStrategy.MultiTurn in attack_strategy or AttackStrategy.Crescendo in attack_strategy:
+                self.logger.error("MultiTurn and Crescendo strategies are not supported in composed attacks.")
+                raise ValueError("MultiTurn and Crescendo strategies are not supported in composed attacks.")
         elif AttackStrategy.MultiTurn == attack_strategy:
             return self._multi_turn_orchestrator
         elif AttackStrategy.Crescendo == attack_strategy:
@@ -293,17 +280,13 @@ class OrchestratorManager:
 
         # Create converter list from single converter or list of converters
         converter_list = (
-            [converter]
-            if converter and isinstance(converter, PromptConverter)
-            else converter if converter else []
+            [converter] if converter and isinstance(converter, PromptConverter) else converter if converter else []
         )
 
         # Log which converter is being used
         if converter_list:
             if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [
-                    c.__class__.__name__ for c in converter_list if c is not None
-                ]
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
                 self.logger.debug(f"Using converters: {', '.join(converter_names)}")
             elif converter is not None:
                 self.logger.debug(f"Using converter: {converter.__class__.__name__}")
@@ -317,14 +300,10 @@ class OrchestratorManager:
                     "PyRIT orchestrator classes are not available. "
                     "Please install a compatible version of pyrit with orchestrator support."
                 )
-            orchestrator = PromptSendingOrchestrator(
-                objective_target=chat_target, prompt_converters=converter_list
-            )
+            orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
 
             if not all_prompts:
-                self.logger.warning(
-                    f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}"
-                )
+                self.logger.warning(f"No prompts provided to orchestrator for {strategy_name}/{risk_category_name}")
                 if task_statuses:
                     task_statuses[task_key] = TASK_STATUS["COMPLETED"]
                 return orchestrator
@@ -334,44 +313,30 @@ class OrchestratorManager:
 
             # If scan output directory exists, place the file there
             if self.scan_output_dir:
-                output_path = os.path.join(
-                    self.scan_output_dir, f"{base_path}{DATA_EXT}"
-                )
+                output_path = os.path.join(self.scan_output_dir, f"{base_path}{DATA_EXT}")
             else:
                 output_path = f"{base_path}{DATA_EXT}"
 
             if red_team_info:
-                red_team_info[strategy_name][risk_category_name][
-                    "data_file"
-                ] = output_path
+                red_team_info[strategy_name][risk_category_name]["data_file"] = output_path
 
             # Process prompts one at a time like multi-turn and crescendo orchestrators
-            self.logger.debug(
-                f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}"
-            )
+            self.logger.debug(f"Processing {len(all_prompts)} prompts for {strategy_name}/{risk_category_name}")
 
             # Calculate appropriate timeout for single-turn orchestrator
             calculated_timeout = self._calculate_timeout(timeout, "single")
 
             for prompt_idx, prompt in enumerate(all_prompts):
                 prompt_start_time = datetime.now()
-                self.logger.debug(
-                    f"Processing prompt {prompt_idx+1}/{len(all_prompts)}"
-                )
+                self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
 
                 # Get context for this prompt
-                context_data = (
-                    prompt_to_context.get(prompt, {}) if prompt_to_context else {}
-                )
+                context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
 
                 # Normalize context_data: handle both string (legacy) and dict formats
                 # If context_data is a string, convert it to the expected dict format
                 if isinstance(context_data, str):
-                    context_data = (
-                        {"contexts": [{"content": context_data}]}
-                        if context_data
-                        else {"contexts": []}
-                    )
+                    context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
 
                 # context_data is now always a dict with a 'contexts' list
                 # Each item in contexts is a dict with 'content' key
@@ -381,11 +346,7 @@ class OrchestratorManager:
                 # Check if any context has agent-specific fields (context_type, tool_name)
                 has_agent_fields = any(
                     isinstance(ctx, dict)
-                    and (
-                        "context_type" in ctx
-                        and "tool_name" in ctx
-                        and ctx["tool_name"] is not None
-                    )
+                    and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
                     for ctx in contexts
                 )
 
@@ -395,8 +356,7 @@ class OrchestratorManager:
                 # Get risk_sub_type for this prompt if it exists
                 risk_sub_type = (
                     self.red_team.prompt_to_risk_subtype.get(prompt)
-                    if self.red_team
-                    and hasattr(self.red_team, "prompt_to_risk_subtype")
+                    if self.red_team and hasattr(self.red_team, "prompt_to_risk_subtype")
                     else None
                 )
 
@@ -427,17 +387,13 @@ class OrchestratorManager:
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
-                    prompt_duration = (
-                        datetime.now() - prompt_start_time
-                    ).total_seconds()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
 
                     # Print progress to console
-                    if (
-                        prompt_idx < len(all_prompts) - 1
-                    ):  # Don't print for the last prompt
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
                         print(
                             f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
                         )
@@ -446,19 +402,13 @@ class OrchestratorManager:
                     self.logger.warning(
                         f"Prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with remaining prompts"
                     )
-                    print(
-                        f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}"
-                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Prompt {prompt_idx+1}")
                     # Set task status to TIMEOUT for this specific prompt
-                    batch_task_key = (
-                        f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
-                    )
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
                     if task_statuses:
                         task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
                 except Exception as e:
                     log_error(
@@ -468,9 +418,7 @@ class OrchestratorManager:
                         f"{strategy_name}/{risk_category_name}",
                     )
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
 
             if task_statuses:
@@ -542,9 +490,7 @@ class OrchestratorManager:
         # Log which converter is being used
         if converter_list:
             if isinstance(converter_list, list) and len(converter_list) > 0:
-                converter_names = [
-                    c.__class__.__name__ for c in converter_list if c is not None
-                ]
+                converter_names = [c.__class__.__name__ for c in converter_list if c is not None]
                 self.logger.debug(f"Using converters: {', '.join(converter_names)}")
             elif converter is not None:
                 self.logger.debug(f"Using converter: {converter.__class__.__name__}")
@@ -573,18 +519,12 @@ class OrchestratorManager:
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
 
             # Get context for this prompt
-            context_data = (
-                prompt_to_context.get(prompt, {}) if prompt_to_context else {}
-            )
+            context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
 
             # Normalize context_data: handle both string (legacy) and dict formats
             # If context_data is a string, convert it to the expected dict format
             if isinstance(context_data, str):
-                context_data = (
-                    {"contexts": [{"content": context_data}]}
-                    if context_data
-                    else {"contexts": []}
-                )
+                context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
 
             # context_data is now always a dict with a 'contexts' list
             # Each item in contexts is a dict with 'content' key
@@ -593,8 +533,7 @@ class OrchestratorManager:
 
             # Check if any context has agent-specific fields (context_type, tool_name)
             has_agent_fields = any(
-                isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx)
-                for ctx in contexts
+                isinstance(ctx, dict) and ("context_type" in ctx or "tool_name" in ctx) for ctx in contexts
             )
 
             # Build context_dict to pass via memory labels
@@ -612,8 +551,7 @@ class OrchestratorManager:
             context_string = ""
             if contexts:
                 context_string = "\n".join(
-                    ctx.get("content", "") if isinstance(ctx, dict) else str(ctx)
-                    for ctx in contexts
+                    ctx.get("content", "") if isinstance(ctx, dict) else str(ctx) for ctx in contexts
                 )
 
             try:
@@ -679,9 +617,7 @@ class OrchestratorManager:
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
-                    prompt_duration = (
-                        datetime.now() - prompt_start_time
-                    ).total_seconds()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
@@ -694,9 +630,7 @@ class OrchestratorManager:
                     )
 
                     # Print progress to console
-                    if (
-                        prompt_idx < len(all_prompts) - 1
-                    ):  # Don't print for the last prompt
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
                         print(
                             f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
                         )
@@ -705,19 +639,13 @@ class OrchestratorManager:
                     self.logger.warning(
                         f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                     )
-                    print(
-                        f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}"
-                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
                     # Set task status to TIMEOUT
-                    batch_task_key = (
-                        f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
-                    )
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
                     if task_statuses:
                         task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
                 except Exception as e:
                     log_error(
@@ -727,9 +655,7 @@ class OrchestratorManager:
                         f"{strategy_name}/{risk_category_name}",
                     )
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
             except Exception as e:
                 log_error(
@@ -810,18 +736,12 @@ class OrchestratorManager:
             self.logger.debug(f"Processing prompt {prompt_idx+1}/{len(all_prompts)}")
 
             # Get context for this prompt
-            context_data = (
-                prompt_to_context.get(prompt, {}) if prompt_to_context else {}
-            )
+            context_data = prompt_to_context.get(prompt, {}) if prompt_to_context else {}
 
             # Normalize context_data: handle both string (legacy) and dict formats
             # If context_data is a string, convert it to the expected dict format
             if isinstance(context_data, str):
-                context_data = (
-                    {"contexts": [{"content": context_data}]}
-                    if context_data
-                    else {"contexts": []}
-                )
+                context_data = {"contexts": [{"content": context_data}]} if context_data else {"contexts": []}
 
             # context_data is now always a dict with a 'contexts' list
             # Each item in contexts is a dict with 'content' key
@@ -831,11 +751,7 @@ class OrchestratorManager:
             # Check if any context has agent-specific fields (context_type, tool_name)
             has_agent_fields = any(
                 isinstance(ctx, dict)
-                and (
-                    "context_type" in ctx
-                    and "tool_name" in ctx
-                    and ctx["tool_name"] is not None
-                )
+                and ("context_type" in ctx and "tool_name" in ctx and ctx["tool_name"] is not None)
                 for ctx in contexts
             )
 
@@ -854,8 +770,7 @@ class OrchestratorManager:
             context_string = ""
             if contexts:
                 context_string = "\n".join(
-                    ctx.get("content", "") if isinstance(ctx, dict) else str(ctx)
-                    for ctx in contexts
+                    ctx.get("content", "") if isinstance(ctx, dict) else str(ctx) for ctx in contexts
                 )
 
             try:
@@ -931,9 +846,7 @@ class OrchestratorManager:
 
                     # Execute the retry-enabled function
                     await send_prompt_with_retry()
-                    prompt_duration = (
-                        datetime.now() - prompt_start_time
-                    ).total_seconds()
+                    prompt_duration = (datetime.now() - prompt_start_time).total_seconds()
                     self.logger.debug(
                         f"Successfully processed prompt {prompt_idx+1} for {strategy_name}/{risk_category_name} in {prompt_duration:.2f} seconds"
                     )
@@ -946,9 +859,7 @@ class OrchestratorManager:
                     )
 
                     # Print progress to console
-                    if (
-                        prompt_idx < len(all_prompts) - 1
-                    ):  # Don't print for the last prompt
+                    if prompt_idx < len(all_prompts) - 1:  # Don't print for the last prompt
                         print(
                             f"Strategy {strategy_name}, Risk {risk_category_name}: Processed prompt {prompt_idx+1}/{len(all_prompts)}"
                         )
@@ -957,19 +868,13 @@ class OrchestratorManager:
                     self.logger.warning(
                         f"Batch {prompt_idx+1} for {strategy_name}/{risk_category_name} timed out after {calculated_timeout} seconds, continuing with partial results"
                     )
-                    print(
-                        f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}"
-                    )
+                    print(f"⚠️ TIMEOUT: Strategy {strategy_name}, Risk {risk_category_name}, Batch {prompt_idx+1}")
                     # Set task status to TIMEOUT
-                    batch_task_key = (
-                        f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
-                    )
+                    batch_task_key = f"{strategy_name}_{risk_category_name}_prompt_{prompt_idx+1}"
                     if task_statuses:
                         task_statuses[batch_task_key] = TASK_STATUS["TIMEOUT"]
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
                 except Exception as e:
                     log_error(
@@ -979,9 +884,7 @@ class OrchestratorManager:
                         f"{strategy_name}/{risk_category_name}",
                     )
                     if red_team_info:
-                        red_team_info[strategy_name][risk_category_name]["status"] = (
-                            TASK_STATUS["INCOMPLETE"]
-                        )
+                        red_team_info[strategy_name][risk_category_name]["status"] = TASK_STATUS["INCOMPLETE"]
                     continue
             except Exception as e:
                 log_error(

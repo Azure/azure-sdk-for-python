@@ -84,18 +84,12 @@ class FoundryExecutionManager:
         :rtype: Dict[str, Any]
         """
         # Filter strategies for Foundry (exclude special handling strategies)
-        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(
-            attack_strategies
-        )
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
         mapped_strategies = StrategyMapper.map_strategies(foundry_strategies)
 
         # Check if Baseline was requested (it's in special_strategies)
         include_baseline = any(
-            (
-                s == AttackStrategy.Baseline
-                if not isinstance(s, list)
-                else AttackStrategy.Baseline in s
-            )
+            (s == AttackStrategy.Baseline if not isinstance(s, list) else AttackStrategy.Baseline in s)
             for s in attack_strategies
         )
 
@@ -113,9 +107,7 @@ class FoundryExecutionManager:
             )
             # Filter out multi-turn strategies
             mapped_strategies = [
-                s
-                for s in mapped_strategies
-                if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
+                s for s in mapped_strategies if s not in (FoundryStrategy.MultiTurn, FoundryStrategy.Crescendo)
             ]
 
         # Check if we need XPIA handling
@@ -133,9 +125,7 @@ class FoundryExecutionManager:
                     self.logger.info(f"No objectives for {risk_value}, skipping")
                     continue
 
-                self.logger.info(
-                    f"Processing {len(objectives)} objectives for {risk_value}"
-                )
+                self.logger.info(f"Processing {len(objectives)} objectives for {risk_value}")
 
                 # Build dataset configuration
                 dataset_config = self._build_dataset_config(
@@ -193,9 +183,7 @@ class FoundryExecutionManager:
                 self._result_processors[risk_value] = result_processor
 
                 # Generate JSONL output
-                output_path = os.path.join(
-                    self.output_dir, f"{risk_value}_results.jsonl"
-                )
+                output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
                 result_processor.to_jsonl(output_path)
 
                 # Get summary stats
@@ -355,9 +343,17 @@ class FoundryExecutionManager:
 
         results: Dict[str, Dict[str, Any]] = {}
 
+        # Map PyRIT attack type names to SDK technique names
+        pyrit_technique_map = {
+            "PromptSendingAttack": "indirect_jailbreak",
+        }
+
         for strategy_name, asr in asr_by_strategy.items():
-            # Clean strategy name for display
-            clean_name = strategy_name.replace("Attack", "").replace("Converter", "")
+            # Map known PyRIT types, otherwise clean for display
+            clean_name = pyrit_technique_map.get(
+                strategy_name,
+                strategy_name.replace("Attack", "").replace("Converter", ""),
+            )
 
             results[clean_name] = {
                 "data_file": output_path,

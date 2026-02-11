@@ -99,7 +99,7 @@ class TestRedTeamFoundry:
             session_state: Any = None,
             context: Optional[Dict[str, Any]] = None,
         ) -> dict:
-            query = messages["messages"][0]["content"]
+            query = messages[-1]["content"]
 
             # Check if context was provided (for XPIA attacks)
             context_info = ""
@@ -110,9 +110,9 @@ class TestRedTeamFoundry:
                 "content": f"Response to: {query}{context_info}",
                 "role": "assistant",
             }
-            messages["messages"].append(formatted_response)
+            messages.append(formatted_response)
             return {
-                "messages": messages["messages"],
+                "messages": messages,
                 "stream": stream,
                 "session_state": session_state,
                 "context": context,
@@ -147,9 +147,7 @@ class TestRedTeamFoundry:
 
         # At least one result should use the indirect_jailbreak technique
         techniques = [a["attack_technique"] for a in result.attack_details]
-        assert (
-            "indirect_jailbreak" in techniques
-        ), f"Expected indirect_jailbreak in techniques, got: {techniques}"
+        assert "indirect_jailbreak" in techniques, f"Expected indirect_jailbreak in techniques, got: {techniques}"
 
     @pytest.mark.azuretest
     @pytest.mark.parametrize(

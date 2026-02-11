@@ -176,14 +176,10 @@ class FileManager:
                             data.append(json.loads(line))
                         except json.JSONDecodeError as e:
                             if self.logger:
-                                self.logger.warning(
-                                    f"Skipping invalid JSON line {line_num} in {abs_path}: {str(e)}"
-                                )
+                                self.logger.warning(f"Skipping invalid JSON line {line_num} in {abs_path}: {str(e)}")
 
             if self.logger:
-                self.logger.debug(
-                    f"Successfully read {len(data)} records from JSONL {abs_path}"
-                )
+                self.logger.debug(f"Successfully read {len(data)} records from JSONL {abs_path}")
 
             return data
         except Exception as e:
@@ -214,9 +210,7 @@ class FileManager:
                 f.write(json.dumps(item) + "\n")
 
         if self.logger:
-            self.logger.debug(
-                f"Successfully wrote {len(data)} records to JSONL {abs_path}"
-            )
+            self.logger.debug(f"Successfully wrote {len(data)} records to JSONL {abs_path}")
 
         return abs_path
 
@@ -256,9 +250,7 @@ class FileManager:
         """
         return os.path.isfile(filepath)
 
-    def cleanup_file(
-        self, filepath: Union[str, os.PathLike], ignore_errors: bool = True
-    ) -> bool:
+    def cleanup_file(self, filepath: Union[str, os.PathLike], ignore_errors: bool = True) -> bool:
         """Delete a file if it exists.
 
         :param filepath: Path to the file to delete
@@ -279,9 +271,7 @@ class FileManager:
             return False
 
 
-def create_file_manager(
-    base_output_dir: Optional[str] = None, logger=None
-) -> FileManager:
+def create_file_manager(base_output_dir: Optional[str] = None, logger=None) -> FileManager:
     """Create a FileManager instance.
 
     :param base_output_dir: Base directory for file operations

@@ -54,9 +54,7 @@ class DatasetConfigurationBuilder:
         self.risk_category = risk_category
         self.is_indirect_attack = is_indirect_attack
         self.seed_groups: List[SeedGroup] = []
-        self._temp_dir = tempfile.TemporaryDirectory(
-            prefix=f"pyrit_foundry_{risk_category}_"
-        )
+        self._temp_dir = tempfile.TemporaryDirectory(prefix=f"pyrit_foundry_{risk_category}_")
 
     def add_objective_with_context(
         self,
@@ -100,9 +98,7 @@ class DatasetConfigurationBuilder:
         # 2. Handle prompt creation based on strategy type
         if self.is_indirect_attack and context_items:
             # XPIA: Create separate SeedPrompt with injected attack string
-            seeds.extend(
-                self._create_xpia_prompts(objective_content, context_items, group_uuid)
-            )
+            seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
         # Note: For standard attacks, context is stored in objective metadata (above)
         # rather than as separate SeedPrompts, because PyRIT's converters don't support
         # non-text data types and we don't want context to be sent through converters.
@@ -292,14 +288,8 @@ class DatasetConfigurationBuilder:
 
             # For binary_path, write content to files and use paths as values
             if data_type == "binary_path":
-                attack_vehicle_value = self._create_context_file(
-                    injected_content, context_type
-                )
-                original_value = (
-                    self._create_context_file(content, context_type)
-                    if content
-                    else None
-                )
+                attack_vehicle_value = self._create_context_file(injected_content, context_type)
+                original_value = self._create_context_file(content, context_type) if content else None
             else:
                 attack_vehicle_value = injected_content
                 original_value = content

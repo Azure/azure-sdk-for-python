@@ -26,9 +26,7 @@ class MockSeedGroup:
 
 
 class MockSeedObjective:
-    def __init__(
-        self, value="", prompt_group_id=None, metadata=None, harm_categories=None
-    ):
+    def __init__(self, value="", prompt_group_id=None, metadata=None, harm_categories=None):
         self.value = value
         self.prompt_group_id = prompt_group_id
         self.metadata = metadata or {}
@@ -86,9 +84,7 @@ class DatasetConfigurationBuilder:
         self.risk_category = risk_category
         self.is_indirect_attack = is_indirect_attack
         self.seed_groups: List[MockSeedGroup] = []
-        self._temp_dir = tempfile.TemporaryDirectory(
-            prefix=f"pyrit_foundry_{risk_category}_"
-        )
+        self._temp_dir = tempfile.TemporaryDirectory(prefix=f"pyrit_foundry_{risk_category}_")
 
     def add_objective_with_context(
         self,
@@ -112,9 +108,7 @@ class DatasetConfigurationBuilder:
         seeds.append(objective)
 
         if self.is_indirect_attack and context_items:
-            seeds.extend(
-                self._create_xpia_prompts(objective_content, context_items, group_uuid)
-            )
+            seeds.extend(self._create_xpia_prompts(objective_content, context_items, group_uuid))
         elif context_items:
             seeds.extend(self._create_context_prompts(context_items, group_uuid))
 
@@ -222,14 +216,8 @@ class DatasetConfigurationBuilder:
             )
 
             if data_type == "binary_path":
-                attack_vehicle_value = self._create_context_file(
-                    injected_content, context_type
-                )
-                original_value = (
-                    self._create_context_file(content, context_type)
-                    if content
-                    else None
-                )
+                attack_vehicle_value = self._create_context_file(injected_content, context_type)
+                original_value = self._create_context_file(content, context_type) if content else None
             else:
                 attack_vehicle_value = injected_content
                 original_value = content
@@ -279,9 +267,7 @@ class DatasetConfigurationBuilder:
         context_type = context_type.lower() if context_type else "text"
 
         try:
-            formatted_attack = mock_format_content_by_modality(
-                attack_string, context_type
-            )
+            formatted_attack = mock_format_content_by_modality(attack_string, context_type)
         except Exception:
             formatted_attack = attack_string
 
@@ -330,17 +316,13 @@ def cleanup_temp_files():
 @pytest.fixture
 def builder():
     """Create a fresh DatasetConfigurationBuilder for each test."""
-    return DatasetConfigurationBuilder(
-        risk_category="violence", is_indirect_attack=False
-    )
+    return DatasetConfigurationBuilder(risk_category="violence", is_indirect_attack=False)
 
 
 @pytest.fixture
 def indirect_builder():
     """Create a DatasetConfigurationBuilder for indirect attacks."""
-    return DatasetConfigurationBuilder(
-        risk_category="violence", is_indirect_attack=True
-    )
+    return DatasetConfigurationBuilder(risk_category="violence", is_indirect_attack=True)
 
 
 @pytest.fixture
@@ -609,9 +591,7 @@ class TestContextPromptCreation:
                 content = f.read()
                 assert any(item["content"] in content for item in sample_context_items)
 
-    def test_metadata_includes_original_content_length(
-        self, builder, sample_context_items
-    ):
+    def test_metadata_includes_original_content_length(self, builder, sample_context_items):
         """Test that metadata includes original content length."""
         group_uuid = uuid.uuid4()
         prompts = builder._create_context_prompts(sample_context_items, group_uuid)
@@ -654,9 +634,7 @@ class TestContextPromptCreation:
 class TestXPIAPromptCreation:
     """Test the _create_xpia_prompts method."""
 
-    def test_creates_attack_vehicle_as_file(
-        self, indirect_builder, sample_context_items
-    ):
+    def test_creates_attack_vehicle_as_file(self, indirect_builder, sample_context_items):
         """Test that XPIA attack vehicle is stored as file."""
         group_uuid = uuid.uuid4()
         prompts = indirect_builder._create_xpia_prompts(
@@ -670,9 +648,7 @@ class TestXPIAPromptCreation:
             assert av.data_type == "binary_path"
             assert os.path.exists(av.value)
 
-    def test_creates_original_context_as_file(
-        self, indirect_builder, sample_context_items
-    ):
+    def test_creates_original_context_as_file(self, indirect_builder, sample_context_items):
         """Test that original context is stored as file."""
         group_uuid = uuid.uuid4()
         prompts = indirect_builder._create_xpia_prompts(
@@ -725,9 +701,7 @@ class TestXPIAPromptCreation:
 class TestFullBuildFlow:
     """Test the full build flow with binary_path."""
 
-    def test_add_objective_with_context_creates_files(
-        self, builder, sample_context_items
-    ):
+    def test_add_objective_with_context_creates_files(self, builder, sample_context_items):
         """Test that add_objective_with_context creates files for context."""
         builder.add_objective_with_context(
             objective_content="Test objective",
@@ -753,9 +727,7 @@ class TestFullBuildFlow:
         assert hasattr(config, "get_all_seed_groups")
         assert len(config.get_all_seed_groups()) == 1
 
-    def test_indirect_attack_with_context_creates_files(
-        self, indirect_builder, sample_context_items
-    ):
+    def test_indirect_attack_with_context_creates_files(self, indirect_builder, sample_context_items):
         """Test that indirect attack creates files for attack vehicles."""
         indirect_builder.add_objective_with_context(
             objective_content="Hidden attack",

@@ -95,9 +95,7 @@ def red_team_convert_prompt(prompt_or_id: str, strategy: str) -> str:
         provider._fetched_prompts[prompt_or_id] = fetched_prompts[prompt_or_id]
 
     # Run the async method in a new event loop
-    result = asyncio.run(
-        provider.convert_prompt(prompt_or_id=prompt_or_id, strategy=strategy)
-    )
+    result = asyncio.run(provider.convert_prompt(prompt_or_id=prompt_or_id, strategy=strategy))
 
     return json.dumps(result)
 

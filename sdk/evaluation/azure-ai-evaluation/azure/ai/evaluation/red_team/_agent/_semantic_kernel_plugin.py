@@ -71,21 +71,15 @@ class RedTeamPlugin:
         # Dictionary to store fetched prompts for reference
         self.fetched_prompts = {}
 
-    @kernel_function(
-        description="Fetch a harmful prompt for a specific risk category to test content filters"
-    )
+    @kernel_function(description="Fetch a harmful prompt for a specific risk category to test content filters")
     async def fetch_harmful_prompt(
         self,
         risk_category: Annotated[
             str,
             "The risk category (e.g., 'violence', 'hate_unfairness', 'sexual', 'self_harm')",
         ],
-        strategy: Annotated[
-            str, "Attack strategy to use (e.g., 'baseline', 'jailbreak')"
-        ] = "baseline",
-        convert_with_strategy: Annotated[
-            str, "Optional strategy to convert the prompt"
-        ] = "",
+        strategy: Annotated[str, "Attack strategy to use (e.g., 'baseline', 'jailbreak')"] = "baseline",
+        convert_with_strategy: Annotated[str, "Optional strategy to convert the prompt"] = "",
     ) -> Annotated[str, "A JSON string with the harmful prompt and metadata"]:
         """
         Fetch a harmful prompt for a specific risk category to test content filters.
@@ -119,9 +113,7 @@ class RedTeamPlugin:
     @kernel_function(description="Convert a prompt using a specified strategy")
     async def convert_prompt(
         self,
-        prompt_or_id: Annotated[
-            str, "Either a prompt text or a prompt ID from a previous fetch"
-        ],
+        prompt_or_id: Annotated[str, "Either a prompt text or a prompt ID from a previous fetch"],
         strategy: Annotated[str, "The strategy to use for conversion"],
     ) -> Annotated[str, "A JSON string with the original and converted prompt"]:
         """
@@ -134,20 +126,14 @@ class RedTeamPlugin:
         # Check if input is a prompt ID we have stored
         if prompt_or_id in self.fetched_prompts:
             # Update the provider's cache
-            self.tool_provider._fetched_prompts[prompt_or_id] = self.fetched_prompts[
-                prompt_or_id
-            ]
+            self.tool_provider._fetched_prompts[prompt_or_id] = self.fetched_prompts[prompt_or_id]
 
         # Directly await the async method instead of using asyncio.run()
-        result = await self.tool_provider.convert_prompt(
-            prompt_or_id=prompt_or_id, strategy=strategy
-        )
+        result = await self.tool_provider.convert_prompt(prompt_or_id=prompt_or_id, strategy=strategy)
 
         return json.dumps(result)
 
-    @kernel_function(
-        description="Get a harmful prompt for a specific risk category and optionally convert it"
-    )
+    @kernel_function(description="Get a harmful prompt for a specific risk category and optionally convert it")
     async def red_team_unified(
         self,
         category: Annotated[
@@ -167,9 +153,7 @@ class RedTeamPlugin:
         strategy_param = strategy if strategy else None
 
         # Directly await the async method instead of using asyncio.run()
-        result = await self.tool_provider.red_team(
-            category=category, strategy=strategy_param
-        )
+        result = await self.tool_provider.red_team(category=category, strategy=strategy_param)
 
         # Store the prompt for later conversion if it's a success and we didn't convert it
         if result["status"] == "success":
@@ -181,9 +165,7 @@ class RedTeamPlugin:
 
         return json.dumps(result)
 
-    @kernel_function(
-        description="Get a list of all available prompt conversion strategies"
-    )
+    @kernel_function(description="Get a list of all available prompt conversion strategies")
     async def get_available_strategies(
         self,
     ) -> Annotated[str, "A JSON string with available conversion strategies"]:
@@ -198,9 +180,7 @@ class RedTeamPlugin:
 
         return json.dumps({"status": "success", "available_strategies": strategies})
 
-    @kernel_function(
-        description="Explain the purpose and responsible use of red teaming tools"
-    )
+    @kernel_function(description="Explain the purpose and responsible use of red teaming tools")
     async def explain_purpose(
         self,
     ) -> Annotated[str, "A JSON string with information about red teaming tools"]:
@@ -229,9 +209,7 @@ class RedTeamPlugin:
 
         return json.dumps(explanation)
 
-    @kernel_function(
-        description="Send a prompt to the target function and return the response"
-    )
+    @kernel_function(description="Send a prompt to the target function and return the response")
     async def send_to_target(
         self, prompt: Annotated[str, "The prompt text to send to the target function"]
     ) -> Annotated[str, "A JSON string with the response from the target"]:
@@ -255,9 +233,7 @@ class RedTeamPlugin:
             # Call the target function with the prompt
             response = self.target_function(prompt)
 
-            return json.dumps(
-                {"status": "success", "prompt": prompt, "response": response}
-            )
+            return json.dumps({"status": "success", "prompt": prompt, "response": response})
         except Exception as e:
             return json.dumps(
                 {

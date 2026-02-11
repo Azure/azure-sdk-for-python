@@ -62,15 +62,11 @@ class TestConverterForStrategy:
         mock_rai_client = MagicMock()
         mock_logger = MagicMock()
 
-        converter = get_converter_for_strategy(
-            AttackStrategy.Base64, mock_rai_client, False, mock_logger
-        )
+        converter = get_converter_for_strategy(AttackStrategy.Base64, mock_rai_client, False, mock_logger)
         assert isinstance(converter, Base64Converter)
 
         # Test strategy with no converter
-        converter = get_converter_for_strategy(
-            AttackStrategy.Baseline, mock_rai_client, False, mock_logger
-        )
+        converter = get_converter_for_strategy(AttackStrategy.Baseline, mock_rai_client, False, mock_logger)
         assert converter is None
 
     def test_get_converter_for_strategy_list(self):
@@ -80,9 +76,7 @@ class TestConverterForStrategy:
         mock_logger = MagicMock()
 
         strategies = [AttackStrategy.Base64, AttackStrategy.Flip]
-        converters = get_converter_for_strategy(
-            strategies, mock_rai_client, False, mock_logger
-        )
+        converters = get_converter_for_strategy(strategies, mock_rai_client, False, mock_logger)
 
         assert isinstance(converters, list)
         assert len(converters) == 2
@@ -127,9 +121,7 @@ class TestChatTargetFunctions:
 
     @patch("pyrit.auth.get_azure_openai_auth")
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
-    def test_get_chat_target_azure_openai_keyless(
-        self, mock_openai_chat_target, mock_get_auth
-    ):
+    def test_get_chat_target_azure_openai_keyless(self, mock_openai_chat_target, mock_get_auth):
         """Test getting chat target with keyless (DefaultAzureCredential) auth via PyRIT."""
         mock_instance = MagicMock()
         mock_openai_chat_target.return_value = mock_instance
@@ -152,9 +144,7 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
-    def test_get_chat_target_azure_openai_with_credential_in_target(
-        self, mock_openai_chat_target
-    ):
+    def test_get_chat_target_azure_openai_with_credential_in_target(self, mock_openai_chat_target):
         """Test getting chat target from an Azure OpenAI configuration with credential in target dict."""
         mock_instance = MagicMock()
         mock_openai_chat_target.return_value = mock_instance
@@ -184,9 +174,7 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
-    def test_get_chat_target_azure_openai_with_credential_parameter(
-        self, mock_openai_chat_target
-    ):
+    def test_get_chat_target_azure_openai_with_credential_parameter(self, mock_openai_chat_target):
         """Test getting chat target with credential passed as parameter (for ACA environments)."""
         mock_instance = MagicMock()
         mock_openai_chat_target.return_value = mock_instance
@@ -217,9 +205,7 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils.OpenAIChatTarget")
-    def test_get_chat_target_azure_openai_api_key_takes_precedence(
-        self, mock_openai_chat_target
-    ):
+    def test_get_chat_target_azure_openai_api_key_takes_precedence(self, mock_openai_chat_target):
         """Test that api_key takes precedence over credential when both are provided."""
         mock_instance = MagicMock()
         mock_openai_chat_target.return_value = mock_instance
@@ -283,9 +269,7 @@ class TestChatTargetFunctions:
         token_provider = call_kwargs["api_key"]
         token = token_provider()
         assert token == "target-credential-token"
-        target_credential.get_token.assert_called_with(
-            "https://cognitiveservices.azure.com/.default"
-        )
+        target_credential.get_token.assert_called_with("https://cognitiveservices.azure.com/.default")
         # param_credential should not be used
         param_credential.get_token.assert_not_called()
 
@@ -339,9 +323,7 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
-    def test_get_chat_target_callback_function_with_context(
-        self, mock_callback_chat_target
-    ):
+    def test_get_chat_target_callback_function_with_context(self, mock_callback_chat_target):
         """Test getting chat target from a callback function. Context is now handled via request labels."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance
@@ -370,9 +352,7 @@ class TestChatTargetFunctions:
         assert result == mock_instance
 
     @patch("azure.ai.evaluation.red_team._utils.strategy_utils._CallbackChatTarget")
-    def test_get_chat_target_simple_function_with_context(
-        self, mock_callback_chat_target
-    ):
+    def test_get_chat_target_simple_function_with_context(self, mock_callback_chat_target):
         """Test getting chat target from a simple function. Context is now handled via request labels."""
         mock_instance = MagicMock()
         mock_callback_chat_target.return_value = mock_instance

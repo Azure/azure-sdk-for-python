@@ -108,9 +108,7 @@ class RAIServiceScorer(TrueFalseScorer):
             context_data = []
             for seed in seed_group.seeds:
                 if hasattr(seed, "metadata") and seed.metadata:
-                    if seed.metadata.get("is_context") or seed.metadata.get(
-                        "is_attack_vehicle"
-                    ):
+                    if seed.metadata.get("is_context") or seed.metadata.get("is_attack_vehicle"):
                         # Read content from file if binary_path, otherwise use value directly
                         content = self._read_seed_value(seed)
                         context_data.append(
@@ -146,9 +144,7 @@ class RAIServiceScorer(TrueFalseScorer):
         self.validate(request_response, task=task)
 
         # Get the response text to evaluate
-        response_text = (
-            request_response.converted_value or request_response.original_value
-        )
+        response_text = request_response.converted_value or request_response.original_value
 
         # Get context from message labels or lookup
         context = self._get_context_for_piece(request_response)
@@ -163,6 +159,10 @@ class RAIServiceScorer(TrueFalseScorer):
         # Get metric and annotation task for risk category
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
+
+        # The Sync API requires "hate_unfairness" instead of "hate_fairness"
+        if metric_name == "hate_fairness":
+            metric_name = "hate_unfairness"
 
         try:
             # Call RAI service using sync_evals endpoint (matches legacy path behavior)
@@ -183,26 +183,13 @@ class RAIServiceScorer(TrueFalseScorer):
             result_label = ""
             passed = None
 
-            if hasattr(eval_result, "results") or (
-                isinstance(eval_result, dict) and "results" in eval_result
-            ):
-                results = (
-                    eval_result.results
-                    if hasattr(eval_result, "results")
-                    else eval_result.get("results", [])
-                )
+            if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
+                results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
                 results = results or []
 
                 for result_item in results:
-                    result_dict = (
-                        result_item
-                        if isinstance(result_item, dict)
-                        else result_item.__dict__
-                    )
-                    if (
-                        result_dict.get("name") == metric_name
-                        or result_dict.get("metric") == metric_name
-                    ):
+                    result_dict = result_item if isinstance(result_item, dict) else result_item.__dict__
+                    if result_dict.get("name") == metric_name or result_dict.get("metric") == metric_name:
                         raw_score = result_dict.get("score")
                         if raw_score is None:
                             raw_score = 0
@@ -213,9 +200,7 @@ class RAIServiceScorer(TrueFalseScorer):
                         break
 
             if raw_score is None:
-                self.logger.warning(
-                    f"No matching result found for metric '{metric_name}' in evaluation response."
-                )
+                self.logger.warning(f"No matching result found for metric '{metric_name}' in evaluation response.")
                 raw_score = 0
 
             # Determine attack success using the same logic as RAIServiceEvalChatTarget:
@@ -290,9 +275,7 @@ class RAIServiceScorer(TrueFalseScorer):
         # Find the assistant response piece
         response_piece = None
         for piece in message.message_pieces:
-            piece_role = (
-                piece.api_role if hasattr(piece, "api_role") else str(piece.role)
-            )
+            piece_role = piece.api_role if hasattr(piece, "api_role") else str(piece.role)
             if piece_role == "assistant":
                 response_piece = piece
                 break
@@ -317,11 +300,7 @@ class RAIServiceScorer(TrueFalseScorer):
             if context_str:
                 # Parse if it's JSON
                 try:
-                    context_dict = (
-                        json.loads(context_str)
-                        if isinstance(context_str, str)
-                        else context_str
-                    )
+                    context_dict = json.loads(context_str) if isinstance(context_str, str) else context_str
                     if isinstance(context_dict, dict) and "contexts" in context_dict:
                         contexts = context_dict["contexts"]
                         return " ".join(c.get("content", "") for c in contexts if c)
@@ -333,9 +312,7 @@ class RAIServiceScorer(TrueFalseScorer):
         if hasattr(piece, "prompt_metadata") and piece.prompt_metadata:
             prompt_group_id = piece.prompt_metadata.get("prompt_group_id")
             if prompt_group_id and str(prompt_group_id) in self._context_lookup:
-                contexts = self._context_lookup[str(prompt_group_id)].get(
-                    "contexts", []
-                )
+                contexts = self._context_lookup[str(prompt_group_id)].get("contexts", [])
                 return " ".join(c.get("content", "") for c in contexts if c)
 
         return ""
@@ -401,6 +378,4 @@ class RAIServiceScorer(TrueFalseScorer):
 
         for score in scores:
             if score.score_type != "true_false":
-                raise ValueError(
-                    f"Expected true_false score type, got {score.score_type}"
-                )
+                raise ValueError(f"Expected true_false score type, got {score.score_type}")

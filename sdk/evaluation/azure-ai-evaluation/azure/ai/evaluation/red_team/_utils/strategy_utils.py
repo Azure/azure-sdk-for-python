@@ -86,9 +86,7 @@ def create_tense_converter(
     return TenseConverter(converter_target=converter_target, tense="past")
 
 
-def strategy_converter_map() -> (
-    Dict[Any, Union[PromptConverter, List[PromptConverter], None]]
-):
+def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConverter], None]]:
     """
     Returns a mapping of attack strategies to their corresponding converters.
     """
@@ -137,9 +135,7 @@ def get_converter_for_strategy(
 
     def _resolve_converter(strategy):
         converter_or_factory = factory_map[strategy]
-        if callable(converter_or_factory) and not isinstance(
-            converter_or_factory, PromptConverter
-        ):
+        if callable(converter_or_factory) and not isinstance(converter_or_factory, PromptConverter):
             # It's a factory function, call it with dependencies
             return converter_or_factory(generated_rai_client, is_one_dp_project, logger)
         return converter_or_factory

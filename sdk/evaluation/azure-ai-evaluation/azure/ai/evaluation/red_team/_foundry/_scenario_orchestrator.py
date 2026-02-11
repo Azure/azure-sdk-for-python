@@ -101,9 +101,7 @@ class ScenarioOrchestrator:
 
         # Initialize with dataset and strategies
         # Note: FoundryScenario.initialize_async expects specific parameters
-        self.logger.info(
-            f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}"
-        )
+        self.logger.info(f"Initializing FoundryScenario with strategies: {[s.value for s in strategies]}")
 
         await self._scenario.initialize_async(
             objective_target=self.objective_target,
@@ -184,11 +182,7 @@ class ScenarioOrchestrator:
             return 0.0
 
         successful = sum(1 for r in results if r.outcome == AttackOutcome.SUCCESS)
-        decided = sum(
-            1
-            for r in results
-            if r.outcome in (AttackOutcome.SUCCESS, AttackOutcome.FAILURE)
-        )
+        decided = sum(1 for r in results if r.outcome in (AttackOutcome.SUCCESS, AttackOutcome.FAILURE))
         return successful / decided if decided > 0 else 0.0
 
     def calculate_asr_by_strategy(self) -> Dict[str, float]:
@@ -219,9 +213,7 @@ class ScenarioOrchestrator:
                 strategy_stats[strategy_name]["successful"] += 1
 
         return {
-            strategy: (
-                stats["successful"] / stats["decided"] if stats["decided"] > 0 else 0.0
-            )
+            strategy: (stats["successful"] / stats["decided"] if stats["decided"] > 0 else 0.0)
             for strategy, stats in strategy_stats.items()
         }
 
