@@ -156,11 +156,6 @@ class update_snippet(Check):
 
             logger.info(f"Processing snippets for {pkg_name} ({pkg_dir})")
 
-            snippets = get_snippets_from_directory(pkg_dir)
-            if not snippets:
-                logger.info(f"No snippets found for {pkg_name}, skipping.")
-                continue
-
             # Run black on sample files before extracting snippets
             if not args.no_black:
                 if not self._run_black(pkg_dir, pkg_name, args):
@@ -169,6 +164,11 @@ class update_snippet(Check):
                     )
                     results.append(1)
                     continue
+
+            snippets = get_snippets_from_directory(pkg_dir)
+            if not snippets:
+                logger.info(f"No snippets found for {pkg_name}, skipping.")
+                continue
 
             logger.info(f"Found {len(snippets)} snippet(s) for {pkg_name}.")
 
