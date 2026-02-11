@@ -1,14 +1,16 @@
 import argparse
+import os
 import re
+import sys
 from pathlib import Path
 
 from typing import Optional, List, Dict
 
 from ci_tools.variables import set_envvar_defaults
-from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.variables import in_ci
 from ci_tools.logging import logger
 
+from .black import black
 from .Check import Check
 
 target_snippet_sources = ["samples/*.py", "samples/**/*.py"]
@@ -127,7 +129,13 @@ class update_snippet(Check):
         p = subparsers.add_parser(
             "update_snippet",
             parents=parents,
-            help="Update README code snippets from sample files",
+            help="Format with black and update README code snippets from sample files",
+        )
+        p.add_argument(
+            "--no-black",
+            action="store_true",
+            default=False,
+            help="Skip running black on sample files before updating snippets.",
         )
         p.set_defaults(func=self.run)
 
@@ -146,6 +154,10 @@ class update_snippet(Check):
             pkg_name = parsed.name
 
             logger.info(f"Processing snippets for {pkg_name} ({pkg_dir})")
+
+            # Run black on sample files before extracting snippets
+            if not args.no_black:
+                self._run_black(pkg_dir, pkg_name, args)
 
             snippets = get_snippets_from_directory(pkg_dir)
             if not snippets:
@@ -179,3 +191,15 @@ class update_snippet(Check):
                 results.append(0)
 
         return max(results) if results else 0
+
+    def _run_black(self, pkg_dir: str, pkg_name: str, args: argparse.Namespace) -> None:
+        """Run black on the sample files of a package using the repo-wide config."""
+        logger.info(f"Running black on sample files for {pkg_name}")
+        samples_dir = os.path.join(pkg_dir, "samples")
+        if not os.path.isdir(samples_dir):
+            logger.debug(f"No samples directory found for {pkg_name}, skipping black.")
+            return
+
+        executable, _ = self.get_executable(args.isolate, args.command, sys.executable, pkg_dir)
+        logger.info(f"Running black on samples for {pkg_name}")
+        black.format_directory(executable, samples_dir)
