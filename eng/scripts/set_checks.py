@@ -15,7 +15,7 @@ from ci_tools.environment_exclusions import is_check_enabled
 FULL_BUILD_SET = [
     "whl",
     "sdist",
-    "depends",
+    "import_all",
     "latestdependency",
     "mindependency",
     "whl_no_aio",
@@ -29,6 +29,8 @@ def resolve_devops_variable(var_value: str) -> List[str]:
             return []
         else:
             return [tox_env.strip() for tox_env in var_value.split(",") if tox_env.strip()]
+    else:
+        return []
 
 
 def set_devops_value(resolved_set: List[str]) -> None:
@@ -42,8 +44,8 @@ def remove_unsupported_values(selected_set: List[str], unsupported_values: List[
             selected_set.remove(unsupported_tox_env)
 
 
-def process_ci_skips(glob_string: str, service: str ) -> None:
-    checks_with_global_skip = ["pylint", "verifywhl", "verifysdist" "bandit", "mypy", "pyright", "verifytypes"]
+def process_ci_skips(glob_string: str, service: str) -> None:
+    checks_with_global_skip = ["pylint", "verifywhl", "verifysdist", "bandit", "mypy", "pyright", "verifytypes"]
     root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
     if service and service != "auto":
@@ -64,15 +66,14 @@ def process_ci_skips(glob_string: str, service: str ) -> None:
             all_packages = set([os.path.basename(pkg) for pkg in targeted_packages])
             set_ci_variable(f"Skip.{check[0].upper()}{check[1:]}", "true")
             output_ci_warning(
-                    f"All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
-                    "set_tox_environment.py",
+                f"All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
+                "set_checks.py",
             )
-
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="This script is used to resolve a set of arguments (that correspond to devops runtime variables) and determine which tox environments should be run for the current job. "
+        description="This script is used to resolve a set of arguments (that correspond to devops runtime variables) and determine which checks should be run for the current job. "
         + "When running against a specific service directory, attempts to find entire analysis steps that can be skipped. EG if pylint is disabled for every package in a given service directory, that "
         + "step should never actually run."
     )
@@ -92,14 +93,14 @@ if __name__ == "__main__":
         "-o",
         "--override",
         dest="override_set",
-        help="If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(Run.ToxCustomEnvs). EG: \"whl,sdist\".",
+        help='If you have a set of tox environments that should override the defaults, provide it here. In CI this is runtime variable $(ChecksOverride). EG: "whl,sdist".',
     )
 
     parser.add_argument(
         "-u",
         "--unsupported",
         dest="unsupported",
-        help="A list of unsupported environments. EG: \"pylint,sdist\"",
+        help='A list of unsupported environments. EG: "pylint,sdist"',
     )
 
     parser.add_argument(
