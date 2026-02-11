@@ -18,6 +18,7 @@ from ._enums import (
     SearchFieldDataType as _SearchFieldDataType,
     SplitSkillLanguage,
     TextTranslationSkillLanguage,
+    ScoringStatistics,
 )
 from ...knowledgebases.models import (
     KnowledgeRetrievalReasoningEffort,
@@ -177,6 +178,7 @@ SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[at
 OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
 SplitSkillLanguage.IS = SplitSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
 TextTranslationSkillLanguage.IS = TextTranslationSkillLanguage.IS_ENUM  # type: ignore[attr-defined]
+ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM  # type: ignore[attr-defined]
 
 
 def Collection(typ: Any) -> str:
