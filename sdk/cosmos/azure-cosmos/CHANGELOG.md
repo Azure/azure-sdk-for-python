@@ -1,6 +1,9 @@
 ## Release History
 
-### 4.15.0 (2026-02-10)
+### 4.15.0 (2026-02-11)
+
+#### Features Added
+* GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
 
 #### Bugs Fixed
 * Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
