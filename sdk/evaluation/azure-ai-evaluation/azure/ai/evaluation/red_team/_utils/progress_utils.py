@@ -21,7 +21,11 @@ class ProgressManager:
     """Centralized progress and status tracking for Red Team operations."""
 
     def __init__(
-        self, total_tasks: int = 0, logger=None, show_progress_bar: bool = True, progress_desc: str = "Processing"
+        self,
+        total_tasks: int = 0,
+        logger=None,
+        show_progress_bar: bool = True,
+        progress_desc: str = "Processing",
     ):
         """Initialize progress manager.
 
@@ -71,7 +75,9 @@ class ProgressManager:
             self.progress_bar.close()
             self.progress_bar = None
 
-    async def update_task_status(self, task_key: str, status: str, details: Optional[str] = None) -> None:
+    async def update_task_status(
+        self, task_key: str, status: str, details: Optional[str] = None
+    ) -> None:
         """Update the status of a specific task.
 
         :param task_key: Unique identifier for the task
@@ -105,15 +111,28 @@ class ProgressManager:
         async with self.progress_lock:
             self.progress_bar.update(1)
 
-            completion_pct = (self.completed_tasks / self.total_tasks) * 100 if self.total_tasks > 0 else 0
+            completion_pct = (
+                (self.completed_tasks / self.total_tasks) * 100
+                if self.total_tasks > 0
+                else 0
+            )
 
             # Calculate time estimates
             if self.start_time:
                 elapsed_time = time.time() - self.start_time
                 if self.completed_tasks > 0:
                     avg_time_per_task = elapsed_time / self.completed_tasks
-                    remaining_tasks = self.total_tasks - self.completed_tasks - self.failed_tasks - self.timeout_tasks
-                    est_remaining_time = avg_time_per_task * remaining_tasks if remaining_tasks > 0 else 0
+                    remaining_tasks = (
+                        self.total_tasks
+                        - self.completed_tasks
+                        - self.failed_tasks
+                        - self.timeout_tasks
+                    )
+                    est_remaining_time = (
+                        avg_time_per_task * remaining_tasks
+                        if remaining_tasks > 0
+                        else 0
+                    )
 
                     postfix = {
                         "completed": f"{completion_pct:.1f}%",
@@ -137,7 +156,11 @@ class ProgressManager:
             print(message)
 
     def log_task_completion(
-        self, task_name: str, duration: float, success: bool = True, details: Optional[str] = None
+        self,
+        task_name: str,
+        duration: float,
+        success: bool = True,
+        details: Optional[str] = None,
     ) -> None:
         """Log the completion of a task.
 
@@ -197,10 +220,16 @@ class ProgressManager:
             "completed_tasks": self.completed_tasks,
             "failed_tasks": self.failed_tasks,
             "timeout_tasks": self.timeout_tasks,
-            "success_rate": (self.completed_tasks / self.total_tasks) * 100 if self.total_tasks > 0 else 0,
+            "success_rate": (
+                (self.completed_tasks / self.total_tasks) * 100
+                if self.total_tasks > 0
+                else 0
+            ),
             "total_time_seconds": total_time,
             "average_time_per_task": (
-                total_time / self.completed_tasks if total_time and self.completed_tasks > 0 else None
+                total_time / self.completed_tasks
+                if total_time and self.completed_tasks > 0
+                else None
             ),
             "task_statuses": self.task_statuses.copy(),
         }
@@ -219,10 +248,14 @@ class ProgressManager:
         self.write_progress_message(f"Success Rate: {summary['success_rate']:.1f}%")
 
         if summary["total_time_seconds"]:
-            self.write_progress_message(f"Total Time: {summary['total_time_seconds']:.1f}s")
+            self.write_progress_message(
+                f"Total Time: {summary['total_time_seconds']:.1f}s"
+            )
 
         if summary["average_time_per_task"]:
-            self.write_progress_message(f"Avg Time/Task: {summary['average_time_per_task']:.1f}s")
+            self.write_progress_message(
+                f"Avg Time/Task: {summary['average_time_per_task']:.1f}s"
+            )
 
         self.write_progress_message("=" * 60)
 
@@ -237,7 +270,10 @@ class ProgressManager:
 
 
 def create_progress_manager(
-    total_tasks: int = 0, logger=None, show_progress_bar: bool = True, progress_desc: str = "Processing"
+    total_tasks: int = 0,
+    logger=None,
+    show_progress_bar: bool = True,
+    progress_desc: str = "Processing",
 ) -> ProgressManager:
     """Create a ProgressManager instance.
 
@@ -248,5 +284,8 @@ def create_progress_manager(
     :return: Configured ProgressManager
     """
     return ProgressManager(
-        total_tasks=total_tasks, logger=logger, show_progress_bar=show_progress_bar, progress_desc=progress_desc
+        total_tasks=total_tasks,
+        logger=logger,
+        show_progress_bar=show_progress_bar,
+        progress_desc=progress_desc,
     )

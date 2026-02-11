@@ -16,7 +16,9 @@ if has_pyrit:
     # Initialize PyRIT with in-memory database
     CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
 
-    from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import AzureRAIServiceTrueFalseScorer
+    from azure.ai.evaluation.red_team._utils._rai_service_true_false_scorer import (
+        AzureRAIServiceTrueFalseScorer,
+    )
     from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
     from pyrit.models import MessagePiece as PromptRequestPiece, Score, UnvalidatedScore
 
@@ -70,10 +72,15 @@ def true_false_scorer(mock_chat_target):
 
 
 @pytest.mark.asyncio
-@pytest.mark.skipif(IS_SCORER_ABSTRACT, reason="AzureRAIServiceTrueFalseScorer is abstract in this PyRIT version")
+@pytest.mark.skipif(
+    IS_SCORER_ABSTRACT,
+    reason="AzureRAIServiceTrueFalseScorer is abstract in this PyRIT version",
+)
 @mock.patch.object(AzureRAIServiceTrueFalseScorer, "_score_value_with_llm")
 @mock.patch.object(AzureRAIServiceTrueFalseScorer, "validate")
-async def test_score_async_success(mock_validate, mock_score_llm, true_false_scorer, mock_prompt_request_piece):
+async def test_score_async_success(
+    mock_validate, mock_score_llm, true_false_scorer, mock_prompt_request_piece
+):
     """Tests the successful scoring flow."""
     mock_task = "Evaluate for sexual content"
     mock_unvalidated_score = UnvalidatedScore(
@@ -89,7 +96,9 @@ async def test_score_async_success(mock_validate, mock_score_llm, true_false_sco
     )
     mock_score_llm.return_value = mock_unvalidated_score
 
-    scores = await true_false_scorer.score_async(mock_prompt_request_piece, task=mock_task)
+    scores = await true_false_scorer.score_async(
+        mock_prompt_request_piece, task=mock_task
+    )
 
     mock_validate.assert_called_once_with(mock_prompt_request_piece, task=mock_task)
     mock_score_llm.assert_called_once_with(
@@ -112,7 +121,10 @@ async def test_score_async_success(mock_validate, mock_score_llm, true_false_sco
     MockLogger.info.assert_called_with("Starting to score prompt response")
 
 
-@pytest.mark.skipif(IS_SCORER_ABSTRACT, reason="AzureRAIServiceTrueFalseScorer is abstract in this PyRIT version")
+@pytest.mark.skipif(
+    IS_SCORER_ABSTRACT,
+    reason="AzureRAIServiceTrueFalseScorer is abstract in this PyRIT version",
+)
 def test_validate_no_error(true_false_scorer, mock_prompt_request_piece):
     """Tests that the current validate method runs without error."""
     try:

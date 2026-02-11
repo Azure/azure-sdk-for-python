@@ -17,12 +17,22 @@ from pathlib import Path
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
-from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope, _get_ai_studio_url
-from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
+from azure.ai.evaluation._evaluate._utils import (
+    _trace_destination_from_project_scope,
+    _get_ai_studio_url,
+)
+from azure.ai.evaluation._evaluate._utils import (
+    extract_workspace_triad_from_trace_provider,
+)
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._common import RedTeamUpload, ResultType
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
@@ -41,7 +51,14 @@ from ._utils.logging_utils import log_error
 class MLflowIntegration:
     """Handles MLflow integration for red team evaluations."""
 
-    def __init__(self, logger, azure_ai_project, generated_rai_client, one_dp_project, scan_output_dir=None):
+    def __init__(
+        self,
+        logger,
+        azure_ai_project,
+        generated_rai_client,
+        one_dp_project,
+        scan_output_dir=None,
+    ):
         """Initialize the MLflow integration.
 
         :param logger: Logger instance for logging
@@ -109,9 +126,12 @@ class MLflowIntegration:
             )
 
         if self._one_dp_project:
-            response = self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
-                red_team=RedTeamUpload(
-                    display_name=run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+            response = (
+                self.generated_rai_client._evaluation_onedp_client.start_red_team_run(
+                    red_team=RedTeamUpload(
+                        display_name=run_name
+                        or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    )
                 )
             )
 
@@ -121,7 +141,9 @@ class MLflowIntegration:
         else:
             trace_destination = _trace_destination_from_project_scope(azure_ai_project)
             if not trace_destination:
-                self.logger.warning("Could not determine trace destination from project scope")
+                self.logger.warning(
+                    "Could not determine trace destination from project scope"
+                )
                 raise EvaluationException(
                     message="Could not determine trace destination",
                     blame=ErrorBlame.SYSTEM_ERROR,
@@ -138,9 +160,13 @@ class MLflowIntegration:
                 credential=azure_ai_project.get("credential"),
             )
 
-            tracking_uri = management_client.workspace_get_info(ws_triad.workspace_name).ml_flow_tracking_uri
+            tracking_uri = management_client.workspace_get_info(
+                ws_triad.workspace_name
+            ).ml_flow_tracking_uri
 
-            run_display_name = run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            run_display_name = (
+                run_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+            )
             self.logger.debug(f"Starting MLFlow run with name: {run_display_name}")
             eval_run = EvalRun(
                 run_name=run_display_name,
@@ -151,7 +177,9 @@ class MLflowIntegration:
                 management_client=management_client,
             )
             eval_run._start_run()
-            self.logger.debug(f"MLFlow run started successfully with ID: {eval_run.info.run_id}")
+            self.logger.debug(
+                f"MLFlow run started successfully with ID: {eval_run.info.run_id}"
+            )
 
             self.trace_destination = trace_destination
             self.logger.debug(f"MLFlow run created successfully with ID: {eval_run}")
@@ -196,19 +224,27 @@ class MLflowIntegration:
             if self.scan_output_dir:
                 # Save new format as results.json
                 results_path = os.path.join(self.scan_output_dir, results_name)
-                self.logger.debug(f"Saving results to scan output directory: {results_path}")
+                self.logger.debug(
+                    f"Saving results to scan output directory: {results_path}"
+                )
                 with open(results_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     # Use provided aoai_summary
                     if aoai_summary is None:
-                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
-                        raise ValueError("aoai_summary parameter is required but was not provided")
+                        self.logger.error(
+                            "aoai_summary must be provided to log_redteam_results_to_mlflow"
+                        )
+                        raise ValueError(
+                            "aoai_summary parameter is required but was not provided"
+                        )
 
                     payload = dict(aoai_summary)  # Make a copy
                     json.dump(payload, f)
 
                 # Save legacy format as instance_results.json
                 artifact_path = os.path.join(self.scan_output_dir, artifact_name)
-                self.logger.debug(f"Saving artifact to scan output directory: {artifact_path}")
+                self.logger.debug(
+                    f"Saving artifact to scan output directory: {artifact_path}"
+                )
                 with open(artifact_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     legacy_payload = self._build_instance_results_payload(
                         redteam_result=redteam_result,
@@ -219,7 +255,9 @@ class MLflowIntegration:
                     json.dump(legacy_payload, f)
 
                 eval_info_path = os.path.join(self.scan_output_dir, eval_info_name)
-                self.logger.debug(f"Saving evaluation info to scan output directory: {eval_info_path}")
+                self.logger.debug(
+                    f"Saving evaluation info to scan output directory: {eval_info_path}"
+                )
                 with open(eval_info_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     # Remove evaluation_result from red_team_info before logging
                     red_team_info_logged = {}
@@ -231,14 +269,18 @@ class MLflowIntegration:
                             info_dict_copy.pop("evaluation_result", None)
                             red_team_info_logged[strategy][harm] = info_dict_copy
                     f.write(json.dumps(red_team_info_logged, indent=2))
-                self.logger.debug(f"Successfully wrote redteam_info.json to: {eval_info_path}")
+                self.logger.debug(
+                    f"Successfully wrote redteam_info.json to: {eval_info_path}"
+                )
 
                 # Also save a human-readable scorecard if available
                 if not _skip_evals and redteam_result.scan_result:
                     from ._utils.formatting_utils import format_scorecard
 
                     scorecard_path = os.path.join(self.scan_output_dir, "scorecard.txt")
-                    with open(scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+                    with open(
+                        scorecard_path, "w", encoding=DefaultOpenEncoding.WRITE
+                    ) as f:
                         f.write(format_scorecard(redteam_result.scan_result))
                     self.logger.debug(f"Saved scorecard to: {scorecard_path}")
 
@@ -251,8 +293,12 @@ class MLflowIntegration:
                 ) as f:
                     # Use provided aoai_summary (required)
                     if aoai_summary is None:
-                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
-                        raise ValueError("aoai_summary parameter is required but was not provided")
+                        self.logger.error(
+                            "aoai_summary must be provided to log_redteam_results_to_mlflow"
+                        )
+                        raise ValueError(
+                            "aoai_summary parameter is required but was not provided"
+                        )
 
                     payload = dict(aoai_summary)  # Make a copy
                     # Remove conversations for MLFlow artifact
@@ -293,7 +339,9 @@ class MLflowIntegration:
                         shutil.copy(file_path, os.path.join(tmpdir, file))
                         self.logger.debug(f"Copied file to artifact directory: {file}")
                     except Exception as e:
-                        self.logger.warning(f"Failed to copy file {file} to artifact directory: {str(e)}")
+                        self.logger.warning(
+                            f"Failed to copy file {file} to artifact directory: {str(e)}"
+                        )
 
                 properties.update({"scan_output_dir": str(self.scan_output_dir)})
             else:
@@ -302,14 +350,20 @@ class MLflowIntegration:
                 with open(results_file, "w", encoding=DefaultOpenEncoding.WRITE) as f:
                     # Use provided aoai_summary (required)
                     if aoai_summary is None:
-                        self.logger.error("aoai_summary must be provided to log_redteam_results_to_mlflow")
-                        raise ValueError("aoai_summary parameter is required but was not provided")
+                        self.logger.error(
+                            "aoai_summary must be provided to log_redteam_results_to_mlflow"
+                        )
+                        raise ValueError(
+                            "aoai_summary parameter is required but was not provided"
+                        )
 
                     payload = dict(aoai_summary)  # Make a copy
                     # Include conversations only if _skip_evals is True
                     if _skip_evals and "conversations" not in payload:
                         payload["conversations"] = (
-                            redteam_result.attack_details or redteam_result.scan_result.get("attack_details") or []
+                            redteam_result.attack_details
+                            or redteam_result.scan_result.get("attack_details")
+                            or []
                         )
                     elif not _skip_evals:
                         payload.pop("conversations", None)
@@ -342,21 +396,25 @@ class MLflowIntegration:
 
                 if joint_attack_summary:
                     for risk_category_summary in joint_attack_summary:
-                        risk_category = risk_category_summary.get("risk_category").lower()
+                        risk_category = risk_category_summary.get(
+                            "risk_category"
+                        ).lower()
                         for key, value in risk_category_summary.items():
                             if key != "risk_category":
-                                metrics.update({f"{risk_category}_{key}": cast(float, value)})
-                                self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
+                                metrics.update(
+                                    {f"{risk_category}_{key}": cast(float, value)}
+                                )
+                                self.logger.debug(
+                                    f"Logged metric: {risk_category}_{key} = {value}"
+                                )
 
             if self._one_dp_project:
                 try:
-                    create_evaluation_result_response = (
-                        self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
-                            name=str(uuid.uuid4()),
-                            path=tmpdir,
-                            metrics=metrics,
-                            result_type=ResultType.REDTEAM,
-                        )
+                    create_evaluation_result_response = self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
+                        name=str(uuid.uuid4()),
+                        path=tmpdir,
+                        metrics=metrics,
+                        result_type=ResultType.REDTEAM,
                     )
 
                     update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
@@ -374,16 +432,22 @@ class MLflowIntegration:
                     )
                     self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
                 except Exception as e:
-                    self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
+                    self.logger.warning(
+                        f"Failed to upload red team results to AI Foundry: {str(e)}"
+                    )
             else:
                 # Log the entire directory to MLFlow
                 try:
                     eval_run.log_artifact(tmpdir, artifact_name)
                     if self.scan_output_dir:
                         eval_run.log_artifact(tmpdir, eval_info_name)
-                    self.logger.debug(f"Successfully logged artifacts directory to AI Foundry")
+                    self.logger.debug(
+                        f"Successfully logged artifacts directory to AI Foundry"
+                    )
                 except Exception as e:
-                    self.logger.warning(f"Failed to log artifacts to AI Foundry: {str(e)}")
+                    self.logger.warning(
+                        f"Failed to log artifacts to AI Foundry: {str(e)}"
+                    )
 
                 for k, v in metrics.items():
                     eval_run.log_metric(k, v)

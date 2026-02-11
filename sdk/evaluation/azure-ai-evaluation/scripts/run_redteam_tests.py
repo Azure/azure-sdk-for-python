@@ -36,7 +36,7 @@ def main():
     # Install redteam requirements
     print(f"Installing requirements from {redteam_requirements}...")
     install_result = subprocess.run(
-        [sys.executable, "-m", "pip", "install", "-r", str(redteam_requirements)],
+        ["uv", "pip", "install", "-r", str(redteam_requirements)],
         cwd=str(package_root),
     )
     if install_result.returncode != 0:
@@ -46,7 +46,7 @@ def main():
     # Install the package with redteam extra
     print("Installing azure-ai-evaluation[redteam]...")
     install_pkg_result = subprocess.run(
-        [sys.executable, "-m", "pip", "install", "-e", ".[redteam]"],
+        ["uv", "pip", "install", "-e", ".[redteam]"],
         cwd=str(package_root),
     )
     if install_pkg_result.returncode != 0:
