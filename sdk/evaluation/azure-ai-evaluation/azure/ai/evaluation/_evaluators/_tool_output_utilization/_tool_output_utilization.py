@@ -65,7 +65,6 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE = "tool_output_utilization.prompty"
     _RESULT_KEY = "tool_output_utilization"
-    _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _DEFAULT_TOOL_OUTPUT_UTILIZATION_SCORE = 1
 
