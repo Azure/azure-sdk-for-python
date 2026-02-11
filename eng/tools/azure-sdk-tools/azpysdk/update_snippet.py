@@ -155,14 +155,14 @@ class update_snippet(Check):
 
             logger.info(f"Processing snippets for {pkg_name} ({pkg_dir})")
 
-            # Run black on sample files before extracting snippets
-            if not args.no_black:
-                self._run_black(pkg_dir, pkg_name, args)
-
             snippets = get_snippets_from_directory(pkg_dir)
             if not snippets:
                 logger.info(f"No snippets found for {pkg_name}, skipping.")
                 continue
+
+            # Run black on sample files before extracting snippets
+            if not args.no_black:
+                self._run_black(pkg_dir, pkg_name, args)
 
             logger.info(f"Found {len(snippets)} snippet(s) for {pkg_name}.")
 
@@ -196,7 +196,7 @@ class update_snippet(Check):
         """Run black on the sample files of a package using the repo-wide config."""
         samples_dir = os.path.join(pkg_dir, "samples")
         if not os.path.isdir(samples_dir):
-            logger.debug(f"No samples directory found for {pkg_name}, skipping black.")
+            logger.info(f"No samples directory found for {pkg_name}, skipping black.")
             return
 
         executable, _ = self.get_executable(args.isolate, args.command, sys.executable, pkg_dir)
