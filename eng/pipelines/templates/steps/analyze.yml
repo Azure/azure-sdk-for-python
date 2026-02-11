@@ -146,7 +146,8 @@ steps:
 
   - template: /eng/pipelines/templates/steps/update_snippet.yml
     parameters:
-      PackageInfoFolder: $(Build.ArtifactStagingDirectory)/PackageInfo
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
 
   - template: ../steps/run_breaking_changes.yml
     parameters:

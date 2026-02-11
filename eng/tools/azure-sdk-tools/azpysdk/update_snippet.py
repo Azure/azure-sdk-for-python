@@ -194,12 +194,11 @@ class update_snippet(Check):
 
     def _run_black(self, pkg_dir: str, pkg_name: str, args: argparse.Namespace) -> None:
         """Run black on the sample files of a package using the repo-wide config."""
-        logger.info(f"Running black on sample files for {pkg_name}")
         samples_dir = os.path.join(pkg_dir, "samples")
         if not os.path.isdir(samples_dir):
             logger.debug(f"No samples directory found for {pkg_name}, skipping black.")
             return
 
         executable, _ = self.get_executable(args.isolate, args.command, sys.executable, pkg_dir)
-        logger.info(f"Running black on samples for {pkg_name}")
+        logger.info(f"Running black on samples for {pkg_name} to format before snippet extraction.")
         black.format_directory(executable, samples_dir)

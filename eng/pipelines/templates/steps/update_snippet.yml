@@ -1,38 +1,19 @@
 parameters:
-  - name: PackageInfoFolder
-    type: string
-    default: ''
+  ServiceDirectory: ''
+  AdditionalTestArgs: ''
 
 steps:
   # this step should run on python 3.9.
   # a previous step should have installed eng/ci_tools.txt to active venv
-  - pwsh: |
-      $failed = $false
-
-      if ("$(TargetingString)" -ne "null") {
-        foreach($targetedPackage in "$(TargetingString)".split(',')) {
-          $pkgInfo = Get-ChildItem -Path "${{ parameters.PackageInfoFolder }}" -Recurse -Filter "$targetedPackage.json" `
-            | Get-Content -Raw `
-            | ConvertFrom-Json
-
-          if ($pkgInfo) {
-            python eng/tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
-          }
-          else {
-            Write-Error "Unable to obtain package info for $targetedPackage."
-            $failed = $true
-          }
-
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "Failed to update snippets for $targetedPackage."
-            $failed = $true
-          }
-        }
-
-        if ($failed) {
-          Write-Error "At least one snippet update failed. Check above output for details."
-          exit 1
-        }
-      }
-    displayName: Update Snippets
+  - task: PythonScript@0
+    displayName: 'Update Snippets'
+    inputs:
+      scriptPath: 'eng/scripts/dispatch_checks.py'
+      arguments: >-
+        "$(TargetingString)"
+        --service="${{ parameters.ServiceDirectory }}"
+        --checks="update_snippet"
+        --disable-compatibility-filter
+        --filter-type="Omit_management"
+        ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))
