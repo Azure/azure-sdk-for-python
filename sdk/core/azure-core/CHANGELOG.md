@@ -4,6 +4,13 @@
 
 ### Features Added
 
+- Added streaming support for Server-Sent Events (SSE) and JSON Lines (JSONL) responses. The new `azure.core.streaming` module provides:
+  - `Stream`: A generic iterator for consuming streaming responses with automatic content-type detection
+  - `SSEDecoder` and `ServerSentEvent`: For parsing Server-Sent Events streams (text/event-stream)
+  - `JSONLDecoder` and `JSONLEvent`: For parsing JSON Lines streams (application/jsonl, application/x-ndjson)
+  - Support for terminal events and custom deserialization callbacks
+  - Context manager support for automatic resource cleanup
+
 ### Breaking Changes
 
 ### Bugs Fixed

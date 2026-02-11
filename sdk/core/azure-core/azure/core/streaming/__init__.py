@@ -23,27 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+"""Streaming support for Server-Sent Events (SSE) and JSON Lines (JSONL)."""
 
-from ._version import VERSION
-
-__version__ = VERSION
-
-from ._pipeline_client import PipelineClient
-from ._match_conditions import MatchConditions
-from ._azure_clouds import AzureClouds
-from ._enum_meta import CaseInsensitiveEnumMeta
-from ._pipeline_client_async import AsyncPipelineClient
-
-# Streaming support
-from .streaming import Stream, ServerSentEvent, JSONLEvent
+from ._stream import Stream
+from ._sse_decoder import SSEDecoder, ServerSentEvent
+from ._jsonl_decoder import JSONLDecoder, JSONLEvent
 
 __all__ = [
-    "PipelineClient",
-    "MatchConditions",
-    "CaseInsensitiveEnumMeta",
-    "AsyncPipelineClient",
-    "AzureClouds",
     "Stream",
+    "SSEDecoder",
     "ServerSentEvent",
+    "JSONLDecoder",
     "JSONLEvent",
 ]
