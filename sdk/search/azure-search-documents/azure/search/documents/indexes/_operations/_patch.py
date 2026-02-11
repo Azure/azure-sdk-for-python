@@ -326,6 +326,25 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             )
 
     @distributed_trace
+    def list_indexes(
+        self, *, select: Optional[List[str]] = None, **kwargs: Any
+    ) -> ItemPaged[Union[_models.SearchIndex, _models.SearchIndexResponse]]:
+        """Lists all indexes available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+            list of JSON property names, or '*' for all properties. The default is all properties. If
+            select is provided, uses the list_indexes_with_selected_properties endpoint which returns
+            SearchIndexResponse objects. Default value is None.
+        :paramtype select: list[str]
+        :return: An iterator like instance of SearchIndex or SearchIndexResponse
+        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.search.documents.indexes.models.SearchIndex, ~azure.search.documents.indexes.models.SearchIndexResponse]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if select is not None:
+            return self.list_indexes_with_selected_properties(select=select, **kwargs)
+        return self._list_indexes(**kwargs)
+
+    @distributed_trace
     def list_index_names(self, **kwargs: Any) -> ItemPaged[str]:
         """Lists the names of all indexes available for a search service.
 
@@ -333,7 +352,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self.list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self._list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(ItemPaged[str], names)
 
     @distributed_trace
