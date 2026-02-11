@@ -235,7 +235,6 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
 
         try:
             # Import here to avoid circular imports and make dependency optional
-            import os
             from openai import AsyncOpenAI
             from azure.identity.aio import DefaultAzureCredential, get_bearer_token_provider
 
@@ -271,7 +270,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
         except ImportError as e:
             logger.warning(f"OpenAI or Azure Identity not available, cannot fetch historical items: {e}", exc_info=True)
             return []
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             logger.warning(f"Failed to fetch historical items for conversation {conversation_id}: {e}", exc_info=True)
             return []
 
@@ -368,7 +367,7 @@ class ResponseAPIDefaultConverter(ResponseAPIConverter):
             else:
                 logger.debug(f"No checkpoint state found for conversation {thread_id}")
             return state
-        logger.debug(f"No checkpointer configured for graph, skipping checkpoint lookup")
+        logger.debug("No checkpointer configured for graph, skipping checkpoint lookup")
         return None
 
     def _filter_incomplete_tool_calls(self, messages: List[AnyMessage]) -> List[AnyMessage]:
