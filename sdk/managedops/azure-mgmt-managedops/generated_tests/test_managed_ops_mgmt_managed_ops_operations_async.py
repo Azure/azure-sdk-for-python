@@ -89,15 +89,7 @@ class TestManagedOpsMgmtManagedOpsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.managed_ops.begin_update(
                 managed_ops_name="str",
                 properties={
-                    "properties": {
-                        "desiredConfiguration": {
-                            "azureMonitorInsights": {"azureMonitorWorkspaceId": "str"},
-                            "changeTrackingAndInventory": {"logAnalyticsWorkspaceId": "str"},
-                            "userAssignedManagedIdentityId": "str",
-                            "defenderCspm": "Enable",
-                            "defenderForServers": "Enable",
-                        }
-                    }
+                    "properties": {"desiredConfiguration": {"defenderCspm": "Enable", "defenderForServers": "Enable"}}
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

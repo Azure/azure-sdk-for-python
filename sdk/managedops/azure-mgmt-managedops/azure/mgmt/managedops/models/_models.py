@@ -295,6 +295,47 @@ class DesiredConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DesiredConfigurationUpdate(_Model):
+    """Updatable parameters in the Desired configuration input.
+
+    :ivar defender_for_servers: Desired enablement state of the Defender For Servers service. Is
+     one of the following types: Literal["Enable"], Literal["Disable"], str
+    :vartype defender_for_servers: str or str or str
+    :ivar defender_cspm: Desired enablement state of the Defender Cloud Security Posture Management
+     (CSPM) service. Is one of the following types: Literal["Enable"], Literal["Disable"], str
+    :vartype defender_cspm: str or str or str
+    """
+
+    defender_for_servers: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = rest_field(
+        name="defenderForServers", visibility=["read", "create", "update"]
+    )
+    """Desired enablement state of the Defender For Servers service. Is one of the following types:
+     Literal[\"Enable\"], Literal[\"Disable\"], str"""
+    defender_cspm: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = rest_field(
+        name="defenderCspm", visibility=["read", "create", "update"]
+    )
+    """Desired enablement state of the Defender Cloud Security Posture Management (CSPM) service. Is
+     one of the following types: Literal[\"Enable\"], Literal[\"Disable\"], str"""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        defender_for_servers: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = None,
+        defender_cspm: Optional[Union[Literal["Enable"], Literal["Disable"], str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -541,16 +582,16 @@ class ManagedOpsProperties(_Model):
 
 
 class ManagedOpUpdate(_Model):
-    """The type used for update operations of the ManagedOp.
+    """ManagedOps model for update operations.
 
-    :ivar properties: The resource-specific properties for this resource.
+    :ivar properties: Updatable properties in the ManagedOps resource.
     :vartype properties: ~azure.mgmt.managedops.models.ManagedOpUpdateProperties
     """
 
     properties: Optional["_models.ManagedOpUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The resource-specific properties for this resource."""
+    """Updatable properties in the ManagedOps resource."""
 
     @overload
     def __init__(
@@ -571,22 +612,22 @@ class ManagedOpUpdate(_Model):
 
 
 class ManagedOpUpdateProperties(_Model):
-    """The updatable properties of the ManagedOp.
+    """Updatable properties in the ManagedOps resource.
 
-    :ivar desired_configuration: Desired configuration input by the user.
-    :vartype desired_configuration: ~azure.mgmt.managedops.models.DesiredConfiguration
+    :ivar desired_configuration: Desired configuration input by the user. Required.
+    :vartype desired_configuration: ~azure.mgmt.managedops.models.DesiredConfigurationUpdate
     """
 
-    desired_configuration: Optional["_models.DesiredConfiguration"] = rest_field(
+    desired_configuration: "_models.DesiredConfigurationUpdate" = rest_field(
         name="desiredConfiguration", visibility=["read", "create", "update"]
     )
-    """Desired configuration input by the user."""
+    """Desired configuration input by the user. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        desired_configuration: Optional["_models.DesiredConfiguration"] = None,
+        desired_configuration: "_models.DesiredConfigurationUpdate",
     ) -> None: ...
 
     @overload
