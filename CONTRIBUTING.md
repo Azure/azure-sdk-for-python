@@ -11,9 +11,7 @@ If you want to contribute to a file that is generated (header contains `Code gen
 
 We utilize a variety of tools to ensure smooth development, testing, and code quality for the Azure Python SDK. Below is a list of key tools and their purpose in the workflow:
 
-- Tox: [Tox](https://tox.wiki/en/latest/) is our primary tool for managing test environments. It allows us to distribute tests to virtual environments, install dependencies, and maintain consistency between local and CI builds. Tox is configured to handle various testing scenarios, including linting, type checks, and running unit tests.
-
-- Virtualenv: [Virtualenv](https://virtualenv.pypa.io/en/latest/) is leveraged by Tox to create isolated environments for each test suite, ensuring consistent dependencies and reducing conflicts.
+- azpysdk: The `azpysdk` CLI is our primary tool for running checks locally and in CI. It is an entrypoint provided by the `eng/tools/azure-sdk-tools` package and abstracts all checks (linting, type checking, tests, doc generation, etc.) behind a single command. See the [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md) for full details.
 
 - UV: [UV](https://docs.astral.sh/uv/) is a fast package manager that can manage Python versions, run and install Python packages, and be used instead of pip, virtualenv, and more.
 
@@ -31,140 +29,65 @@ We utilize a variety of tools to ensure smooth development, testing, and code qu
 
 ## Building and Testing
 
-The Azure SDK team's Python CI leverages the tool `tox` to distribute tests to virtual environments, handle test dependency installation, and coordinate tooling reporting during PR/CI builds. This means that a dev working locally can reproduce _exactly_ what the build machine is doing.
+The Azure SDK team's Python CI leverages the `azpysdk` CLI tool to run checks, tests, and linters during PR/CI builds. This means that a dev working locally can reproduce _exactly_ what the build machine is doing.
 
-[A Brief Overview of Tox](https://tox.wiki/en/latest/)
+The `azpysdk` entrypoint is provided by the `eng/tools/azure-sdk-tools` package. For full setup instructions and the list of available checks, see the [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md).
 
-#### A Monorepo and Tox in Harmony
+### Quick Setup
 
-Traditionally, the `tox.ini` file for a package sits _alongside the setup.py_ in source code. The `azure-sdk-for-python` necessarily does not adhere to this policy. There are over one-hundred packages contained here-in. That's a lot of `tox.ini` files to maintain!
-
-Instead, the CI system leverages the `--root` argument which is new to `tox4`. The `--root` argument allows `tox` to act as if the `tox.ini` is located in whatever directory you specify!
-
-#### Tox Environments
-
-A given `tox.ini` works on the concept of `test environments`. A given test environment is a combination of:
-
-1. An identifier (or identifiers)
-2. A targeted Python version
-    1. `tox` will default to base python executing the `tox` command if no Python environment is specified
-3. (optionally) an OS platform
-
-Internally `tox` leverages `virtualenv` to create each test environment's virtual environment.
-
-This means that once the `tox` workflow is in place, all tests will be executed _within a virtual environment._
-
-You can use the command `tox list` to list all the environments provided by a `tox.ini` file. You can either use that command in the
-same directory as the file itself, or use the `--conf` argument to specify the path to it directly.
-
-
-Sample output of `tox list`:
+From the root of your target package:
 
 ```
-sdk-for-python/eng/tox> tox list
-default environments:
-whl              -> Builds a wheel and runs tests
-sdist            -> Builds a source distribution and runs tests
-
-additional environments:
-pylint           -> Lints a package with a pinned version of pylint
-next-pylint      -> Lints a package with pylint (version 2.15.8)
-mypy             -> Typechecks a package with mypy (version 1.9.0)
-next-mypy        -> Typechecks a package with the latest version of mypy
-pyright          -> Typechecks a package with pyright (version 1.1.287)
-next-pyright     -> Typechecks a package with the latest version of static type-checker pyright
-verifytypes      -> Verifies the "type completeness" of a package with pyright
-whl_no_aio       -> Builds a wheel without aio and runs tests
-develop          -> Tests a package
-sphinx           -> Builds a package's documentation with sphinx
-depends          -> Ensures all modules in a target package can be successfully imported
-verifywhl        -> Verify directories included in whl and contents in manifest file
-verifysdist      -> Verify directories included in sdist and contents in manifest file. Also ensures that py.typed configuration is correct within the setup.py
-devtest          -> Tests a package against dependencies installed from a dev index
-latestdependency -> Tests a package against the released, upper-bound versions of its azure dependencies
-mindependency    -> Tests a package against the released, lower-bound versions of its azure dependencies
-apistub          -> Generate an api stub of a package ( for https://apiview.dev )
-bandit           -> Runs bandit, a tool to find common security issues, against a package
-samples          -> Runs a package's samples
-breaking         -> Runs the breaking changes checker against a package
+pip install -r dev_requirements.txt
 ```
 
-### Example Usage of the common Azure SDK For Python `tox.ini`
+This installs `azure-sdk-tools` (which provides `azpysdk`) along with the package's dev dependencies.
 
-Basic usage of `tox` within this monorepo is:
+### Available Checks
 
-1. `pip install "tox<5"`
-2. Run `tox run -e ENV_NAME -c path/to/tox.ini --root path/to/python_package`
-  * **Note**: You can use environment variables to provide defaults for tox config values
-    * With `TOX_CONFIG_FILE` set to the absolute path of `tox.ini`, you can avoid needing `-c path/to/tox.ini` in your tox invocations
-    * With `TOX_ROOT_DIR` set to the absolute path to your python package, you can avoid needing `--root path/to/python_package`
-
-The common `tox.ini` location is `eng/tox/tox.ini` within the repository.
-
-If at any time you want to blow away the tox created virtual environments and start over, simply append `-r` to any tox invocation!
-
-#### Example `azure-core` mypy
-
-1. Run `tox run -e mypy -c ./eng/tox/tox.ini --root sdk/core/azure-core`
-
-#### Example `azure-storage-blob` tests
-
-2. Execute `tox run -c ./eng/tox/tox.ini --root sdk/storage/azure-storage-blob`
-
-Note that we didn't provide an `environment` argument for this example. Reason here is that the _default_ environment selected by our common `tox.ini` file is one that runs `pytest`.
-
-#### `whl` environment
-Used for test execution across the spectrum of all the platforms we want to support. Maintained at a `platform specific` level just in case we run into platform-specific bugs.
-
-* Installs the wheel, runs tests using the wheel
+You can discover all available checks by running `azpysdk --help`. Some common checks:
 
 ```
-\> tox run -e whl -c <path to tox.ini> --root <path to python package>
-
+azpysdk pylint .        # Lint with pylint
+azpysdk mypy .          # Type check with mypy
+azpysdk pyright .       # Type check with pyright
+azpysdk verifytypes .   # Verify type completeness
+azpysdk sphinx .        # Build documentation
+azpysdk bandit .        # Security analysis
+azpysdk black .         # Code formatting
+azpysdk verifywhl .     # Verify wheel contents
+azpysdk verifysdist .   # Verify sdist contents
+azpysdk import_all .    # Verify all imports resolve
+azpysdk apistub .       # Generate API stub
+azpysdk samples .       # Run samples
+azpysdk breaking .      # Check for breaking changes
+azpysdk devtest .       # Test against dev feed dependencies
 ```
 
-#### `sdist` environment
-Used for the local dev loop.
+### Running from the repo root
 
-* Installs package in editable mode
-* Runs tests using the editable mode installation, not the wheel
+`azpysdk` also supports globbing and comma-separated package names when invoked from the repo root:
 
 ```
-
-\> tox run -e sdist -c <path to tox.ini> --root <path to python package>
-
+azure-sdk-for-python> azpysdk import_all azure-storage*
+azure-sdk-for-python> azpysdk pylint azure-storage-blob,azure-core
 ```
 
-#### `pylint` environment
-Pylint install and run.
+### Isolated environments
+
+To run a check in a completely fresh virtual environment, add `--isolate`:
 
 ```
-\> tox run -e pylint -c <path to tox.ini> --root <path to python package>
-```
-
-
-#### `mypy` environment
-Mypy install and run.
-
-```
-\> tox run -e mypy -c <path to tox.ini> --root <path to python package>
-```
-
-#### `sphinx` environment
-Generate sphinx doc for this package.
-
-```
-\> tox run -e sphinx -c <path to tox.ini> --root <path to python package>
+azpysdk pylint . --isolate
 ```
 
 ### Custom Pytest Arguments
 
-`tox` supports custom arguments, and the defined pytest environments within the common `tox.ini` also allow these. Essentially, separate the arguments you want passed to `pytest` by a `--` in your tox invocation.
+When running test-related checks, you can pass additional arguments to `pytest` after `--`:
 
-[Tox Documentation on Positional Arguments](https://tox.wiki/en/latest/config.html#substitutions-for-positional-arguments-in-commands)
-
-**Example: Invoke tox, breaking into the debugger on failure**
-`tox run -e whl -c <path to tox.ini> --root <path to python package> -- --pdb`
+```
+azpysdk devtest . -- --pdb
+```
 
 ### Performance Testing
 
@@ -175,7 +98,7 @@ SDK performance testing is supported via the custom `perfstress` framework. For 
 We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
 
 ### Dev Feed
-Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. We have also created a tox environment to test a package against dev built version of dependent packages. Below is the link to Azure devops feed.
+Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. Below is the link to Azure devops feed.
 [`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`](https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python)
 
 ##### To install latest dev build version of a package
@@ -191,13 +114,13 @@ pip install azure-appconfiguration==1.0.0b6.dev20191205001 --extra-index-url htt
 
 To test a package being developed against latest dev build version of dependent packages:
 a. cd to package root folder
-b. run tox environment devtest
+b. run `azpysdk devtest`
 
 ```
-\> tox run -e devtest -c <path to tox.ini> --root <path to python package>
+azpysdk devtest .
 ```
 
-This tox test( devtest) will fail if installed dependent packages are not dev build version.
+This check will fail if installed dependent packages are not dev build version.
 
 ## Samples
 
