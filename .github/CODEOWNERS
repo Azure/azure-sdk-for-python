@@ -83,7 +83,7 @@
 # PRLabel: %Batch
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
-# PRLabel: %CognitiveServices
+# PRLabel: %Cognitive - Mgmt
 /sdk/cognitiveservices/                                              @lmazuel
 
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang
