@@ -15,7 +15,7 @@ from typing import (
     overload, Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
 from azure.core.tracing.common import with_current_context
 
 from ._shared.request_handlers import validate_and_format_range_headers
@@ -235,7 +235,7 @@ class _ChunkDownloader(object):  # pylint: disable=too-many-instance-attributes
                 try:
                     chunk_data = process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+                except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise HttpResponseError(error, error=error) from error
@@ -522,7 +522,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._encryption_options
                     )
                 retry_active = False
-            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+            except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
                     raise HttpResponseError(error, error=error) from error
