@@ -8,7 +8,12 @@
       "asetup",
       "hitl",
       "HITL",
-      "awrap"
+      "awrap",
+      "serde",
+      "aput",
+      "alist",
+      "dedup",
+      "Dedup"
     ],
     "ignorePaths": [
       "*.csv",

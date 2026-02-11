@@ -9,7 +9,8 @@
       "aifunction",
       "ainvoke",
       "hitl",
-      "HITL"
+      "HITL",
+      "inmemory"
     ],
     "ignorePaths": [
       "*.csv",

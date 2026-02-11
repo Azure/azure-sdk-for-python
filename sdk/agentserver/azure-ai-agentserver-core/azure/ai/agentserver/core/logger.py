@@ -6,11 +6,12 @@ import contextvars
 import logging
 import os
 from logging import config
+from typing import Any, Optional
 
 from ._version import VERSION
 from .constants import Constants
 
-def _get_default_log_config():
+def _get_default_log_config() -> dict[str, Any]:
     """
     Build default log config with level from environment.
     
@@ -125,13 +126,13 @@ class CustomDimensionsFilter(logging.Filter):
         return True
 
 
-def configure(log_config: dict = None):
+def configure(log_config: Optional[dict[str, Any]] = None):
     """
     Configure logging based on the provided configuration dictionary.
     The dictionary should contain the logging configuration in a format compatible with `logging.config.dictConfig`.
 
     :param log_config: A dictionary containing logging configuration. If None, uses default config with AGENT_LOG_LEVEL.
-    :type log_config: dict
+    :type log_config: Optional[dict[str, Any]]
     """
     try:
         if log_config is None:

@@ -282,7 +282,7 @@ class SchemaProperty(BaseModel):
     def _coerce_empty_type(cls, data: Any) -> Any:
         """
         Coerce an empty ``type`` string to ``None`` so that properties with
-        invalid or missing type information are still deserialised instead of
+        invalid or missing type information are still deserialized instead of
         raising a validation error.
         
         :param data: The input data to validate.
