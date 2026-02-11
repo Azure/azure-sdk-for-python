@@ -1,5 +1,6 @@
 # Default Assets restore directory
 .assets
+.assets_distributed
 
 # Python cache
 __pycache__/
