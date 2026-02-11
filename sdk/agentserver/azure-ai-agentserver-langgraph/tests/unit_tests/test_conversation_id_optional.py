@@ -21,6 +21,11 @@ class _DummyConverter:
         raise AssertionError("convert_response_stream should not be called for this test")
 
 
+class DummyGraphState:
+    def __init__(self):
+        self.values = "state"
+
+
 class _DummyGraph:
     def __init__(self) -> None:
         self.checkpointer = object()
@@ -28,7 +33,7 @@ class _DummyGraph:
 
     async def aget_state(self, config):
         self.last_config = config
-        return "state"
+        return DummyGraphState()
 
 
 @pytest.mark.unit
@@ -53,7 +58,8 @@ async def test_aget_state_uses_conversation_id() -> None:
 
     state = await converter._aget_state(context)  # type: ignore[arg-type]
 
-    assert state == "state"
+    assert state is not None
+    assert state.values == "state"
     assert graph.last_config["configurable"]["thread_id"] == "conv-1"
 
 
