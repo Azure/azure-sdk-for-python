@@ -102,7 +102,7 @@ class RawDeserializer:
                 except NameError:
                     pass
 
-                return ET.fromstring(data_as_str)  # nosec
+                return ET.fromstring(data_as_str)
             except ET.ParseError as err:
                 # It might be because the server has an issue, and returned JSON with
                 # content-type XML....
