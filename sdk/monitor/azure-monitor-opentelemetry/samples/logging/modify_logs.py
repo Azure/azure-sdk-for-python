@@ -23,7 +23,8 @@ class LogRecordEnrichingProcessor(LogRecordProcessor):
         if current_span and getattr(current_span, "name", None):
             if log_record.log_record.attributes is None:
                 log_record.log_record.attributes = {}
-            log_record.log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] = current_span.name # type: ignore[attr-defined, index]
+            log_record.log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] = current_span.name  # type: ignore[attr-defined, index]
+
     def shutdown(self) -> None:
         pass
 

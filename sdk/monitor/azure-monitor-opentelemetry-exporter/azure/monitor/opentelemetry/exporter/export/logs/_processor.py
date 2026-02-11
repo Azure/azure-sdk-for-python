@@ -18,7 +18,7 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
     ):
         """Initialize the Azure Monitor Log Record Processor.
 
-        :param exporter: The LogRecordExporter to use for exporting logs.
+        :param log_record_exporter: The LogRecordExporter to use for exporting logs.
         :param options: Optional configuration dictionary. Supported options:
                         - enable_trace_based_sampling_for_logs(bool): Enable trace-based sampling for logs.
         """
@@ -29,7 +29,7 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
     def on_emit(self, log_record: ReadWriteLogRecord) -> None:  # pylint: disable=arguments-renamed
         # cspell: disable
         """Determines whether the logger should drop log records associated with unsampled traces.
-        If `enable_trace_based_sampling_for_logs` is `true`, log records associated with unsampled traces are 
+        If `enable_trace_based_sampling_for_logs` is `true`, log records associated with unsampled traces are
         dropped by the `Logger`.
         A log record is considered associated with an unsampled trace if it has a valid `SpanId` and its
         `TraceFlags` indicate that the trace is unsampled. A log record that isn't associated with a trace
