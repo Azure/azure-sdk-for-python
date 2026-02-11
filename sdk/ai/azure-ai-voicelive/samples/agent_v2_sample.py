@@ -1,5 +1,5 @@
-# pylint: disable=line-too-long,useless-suppression
 #!/usr/bin/env python
+# pylint: disable=line-too-long,useless-suppression
 
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
