@@ -54,7 +54,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
     ModelVersionData,
     ModelVersionResourceArmPaginatedResult,
 )
-from azure.ai.ml._restclient.v2023_04_01.models import PendingUploadRequestDto
+from azure.ai.ml._restclient.v2023_10_01.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
