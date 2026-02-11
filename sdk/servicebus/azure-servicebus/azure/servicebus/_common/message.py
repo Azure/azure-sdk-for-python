@@ -810,6 +810,28 @@ class ServiceBusReceivedMessage(ServiceBusMessage):  # pylint: disable=too-many-
     def __setstate__(self, state: Dict[str, Any]) -> None:
         self.__dict__.update(state)
 
+    @classmethod
+    def from_bytes(cls, message: bytes) -> "ServiceBusReceivedMessage":
+        """Constructs a ServiceBusReceivedMessage from the raw bytes of an AMQP message payload.
+
+        The message payload should adhere to the Message Format specification
+        outlined in the AMQP v1.0 standard:
+        http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#section-message-format
+
+        :param bytes message: The raw bytes representing the AMQP message payload.
+        :return: A ServiceBusReceivedMessage created from the provided message payload.
+        :rtype: ~azure.servicebus.ServiceBusReceivedMessage
+        """
+        from .._pyamqp._decode import decode_payload
+
+        amqp_message = decode_payload(memoryview(message))
+        received_msg = cls(
+            message=amqp_message,
+            receiver=None,
+            receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
+        )
+        return received_msg
+
     @property
     def _lock_expired(self) -> bool:
         """
