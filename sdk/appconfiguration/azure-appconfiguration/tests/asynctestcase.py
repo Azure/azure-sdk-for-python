@@ -4,11 +4,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import List
+from testcase import AppConfigTestCase
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceExistsError
-from testcase import AppConfigTestCase
-from typing import List
 
 
 class AsyncAppConfigTestCase(AppConfigTestCase):
