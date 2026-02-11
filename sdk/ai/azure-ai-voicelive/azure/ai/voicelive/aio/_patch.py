@@ -41,9 +41,9 @@ from azure.core.pipeline import policies
 from ..models import ClientEvent, ServerEvent, RequestSession
 
 if sys.version_info >= (3, 11):
-    from typing import NotRequired  # noqa: F401
+    from typing import NotRequired, Required  # noqa: F401
 else:
-    from typing_extensions import NotRequired  # noqa: F401
+    from typing_extensions import NotRequired, Required  # noqa: F401
 
 __all__: list[str] = [
     "connect",
@@ -109,8 +109,8 @@ class AgentSessionConfig(TypedDict, total=False):
     :type foundry_resource_override: str
     """
 
-    agent_name: str
-    project_name: str
+    agent_name: Required[str]
+    project_name: Required[str]
     agent_version: NotRequired[str]
     conversation_id: NotRequired[str]
     authentication_identity_client_id: NotRequired[str]
@@ -831,15 +831,15 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
 
             # Optional agent parameters
             if self.__agent_config.get("agent_version"):
-                params["agent-version"] = self.__agent_config["agent_version"]
+                params["agent-version"] = self.__agent_config.get("agent_version")
             if self.__agent_config.get("conversation_id"):
-                params["conversation-id"] = self.__agent_config["conversation_id"]
+                params["conversation-id"] = self.__agent_config.get("conversation_id")
             if self.__agent_config.get("authentication_identity_client_id"):
-                params["agent-authentication-identity-client-id"] = self.__agent_config[
+                params["agent-authentication-identity-client-id"] = self.__agent_config.get(
                     "authentication_identity_client_id"
-                ]
+                )
             if self.__agent_config.get("foundry_resource_override"):
-                params["foundry-resource-override"] = self.__agent_config["foundry_resource_override"]
+                params["foundry-resource-override"] = self.__agent_config.get("foundry_resource_override")
 
         params.update(dict(self.__extra_query))
 
