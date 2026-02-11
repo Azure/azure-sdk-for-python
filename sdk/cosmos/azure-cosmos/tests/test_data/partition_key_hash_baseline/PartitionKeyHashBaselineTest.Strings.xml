@@ -1,0 +1,62 @@
+<Results>
+  <Result>
+    <Input>
+      <Description>Empty String</Description>
+      <PartitionKeyValue>""</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>0000000000000000000000003CCCB0FF</PartitionKeyHashV1>
+      <PartitionKeyHashV2>B2E9366E637A71B4E710384B2F4970A0</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>short string</Description>
+      <PartitionKeyValue>"asdf"</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>000000000000000000000000B02BABC2</PartitionKeyHashV1>
+      <PartitionKeyHashV2>608BF1D598F5B63AD5520F04FE58C5E8</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>99 byte string</Description>
+      <PartitionKeyValue>"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>000000000000000000000000CCC122D9</PartitionKeyHashV1>
+      <PartitionKeyHashV2>3C02F609961C32AAC2B912B940D1209A</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>100 byte string</Description>
+      <PartitionKeyValue>"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>000000000000000000000000D5843D83</PartitionKeyHashV1>
+      <PartitionKeyHashV2>8DBD7D229437BB665DE6417747994D57</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>101 byte string</Description>
+      <PartitionKeyValue>"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>0000000000000000000000003B1B5D8D</PartitionKeyHashV1>
+      <PartitionKeyHashV2>88042541D30C8BF90D7092B1519AE0BC</PartitionKeyHashV2>
+    </Output>
+  </Result>
+  <Result>
+    <Input>
+      <Description>2kb byte string</Description>
+      <PartitionKeyValue>"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"</PartitionKeyValue>
+    </Input>
+    <Output>
+      <PartitionKeyHashV1>0000000000000000000000009C91058D</PartitionKeyHashV1>
+      <PartitionKeyHashV2>B3E0AE996F53F2CD5DD5574ACAB3BF19</PartitionKeyHashV2>
+    </Output>
+  </Result>
+</Results>
