@@ -26,10 +26,9 @@
 * Tracing: response generation span names changed from "responses {model_name}" to "chat {model_name}" for model calls and from "responses {agent_name}" to "invoke_agent {agent_name}" for agent calls.
 * Tracing: response generation operation names changed from "responses" to "chat" for model calls and from "responses" to "invoke_agent" for agent calls.
 * Tracing: response generation uses gen_ai.input.messages and gen_ai.output.messages attributes directly under the span instead of events.
-* Tracing: agent creation uses gen_ai.system.instructions attribute directly under the span instead of an event.
+* Tracing: agent creation uses gen_ai.system_instructions attribute directly under the span instead of an event. Note that the attribute name is gen_ai.system_instructions not gen_ai.system.instructions.
 * Tracing: "gen_ai.provider.name" attribute value changed to "microsoft.foundry".
 * Tracing: the format of the function tool call related traces in input and output messages changed to {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}} and {"type": "tool_call_response", "id": "...", "result": "..."}
-* Tracing: attribute name of agent instructions in the create_agent span changed from gen_ai.system.instructions to gen_ai.system_instructions and the format changed to follow the spec for gen_ai.system.instructions.
 
 ## 2.0.0b3 (2026-01-06)
 
