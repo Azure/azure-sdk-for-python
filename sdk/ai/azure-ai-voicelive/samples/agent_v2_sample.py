@@ -526,6 +526,7 @@ async def run_assistant():
 
 def main():
     """Main function."""
+
     # Setup signal handlers for graceful shutdown
     def signal_handler(_sig, _frame):
         logger.info("Received shutdown signal")

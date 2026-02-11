@@ -122,24 +122,6 @@ class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Default sensitivity threshold level."""
 
 
-class FillerResponseConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Filler response configuration types."""
-
-    STATIC_FILLER = "static_filler"
-    """Static filler configuration type."""
-    LLM_FILLER = "llm_filler"
-    """LLM-based filler configuration type."""
-
-
-class FillerTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Triggers that can activate filler response generation."""
-
-    LATENCY = "latency"
-    """Trigger filler when response latency exceeds threshold."""
-    TOOL = "tool"
-    """Trigger filler when a tool call is being executed."""
-
-
 class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Input audio format types supported."""
 
@@ -149,6 +131,24 @@ class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
     G711_ALAW = "g711_alaw"
     """G.711 A-law audio format at 8kHz sampling rate."""
+
+
+class InterimResponseConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Interim response configuration types."""
+
+    STATIC_INTERIM_RESPONSE = "static_interim_response"
+    """Static interim response configuration type."""
+    LLM_INTERIM_RESPONSE = "llm_interim_response"
+    """LLM-based interim response configuration type."""
+
+
+class InterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Triggers that can activate interim response generation."""
+
+    LATENCY = "latency"
+    """Trigger interim response when response latency exceeds threshold."""
+    TOOL = "tool"
+    """Trigger interim response when a tool call is being executed."""
 
 
 class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

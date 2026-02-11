@@ -38,11 +38,11 @@
 ### Features Added
 
 - **Support for Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values (e.g., `turn_detection=None` now correctly sends `"turn_detection": null` in the WebSocket message)
-- **Filler Response Configuration**: Added support for filler response generation during latency or tool calls:
-  - `BasicFillerResponseConfig` for static filler texts that are randomly selected
-  - `LlmFillerResponseConfig` for LLM-generated context-aware filler responses
-  - `FillerTrigger` enum with `latency` and `tool` triggers
-  - `filler_response` field in `RequestSession` and `ResponseSession`
+- **Interim Response Configuration**: Added support for interim response generation during latency or tool calls:
+  - `StaticInterimResponseConfig` for static interim response texts that are randomly selected
+  - `LlmInterimResponseConfig` for LLM-generated context-aware interim responses
+  - `InterimResponseTrigger` enum with `latency` and `tool` triggers
+  - `interim_response` field in `RequestSession` and `ResponseSession`
 - **Foundry Agent Integration**: Added support for Azure AI Foundry agents:
   - `FoundryAgentTool` for defining Foundry agent configurations
   - `ResponseFoundryAgentCallItem` for Foundry agent call responses

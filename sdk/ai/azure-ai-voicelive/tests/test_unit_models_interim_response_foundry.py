@@ -5,17 +5,17 @@
 # --------------------------------------------------------------------------
 
 """
-Unit tests for FillerResponseConfig, ReasoningEffort, and ServerEventWarning models.
-Tests the filler response feature, warning events, and Foundry tool/call model behavior
+Unit tests for InterimResponseConfig, ReasoningEffort, and ServerEventWarning models.
+Tests the interim response feature, warning events, and Foundry tool/call model behavior
 (including sessions and responses that use Foundry models and tools).
 """
 
 import pytest
 from azure.ai.voicelive.models import (
-    BasicFillerResponseConfig,
-    FillerResponseConfigType,
-    FillerTrigger,
-    LlmFillerResponseConfig,
+    StaticInterimResponseConfig,
+    InterimResponseConfigType,
+    InterimResponseTrigger,
+    LlmInterimResponseConfig,
     ReasoningEffort,
     RequestSession,
     Response,
@@ -28,81 +28,81 @@ from azure.ai.voicelive.models import (
 )
 
 
-class TestBasicFillerResponseConfig:
-    """Test BasicFillerResponseConfig model."""
+class TestStaticInterimResponseConfig:
+    """Test StaticInterimResponseConfig model."""
 
-    def test_basic_filler_minimal(self):
-        """Test BasicFillerResponseConfig with minimal parameters."""
-        config = BasicFillerResponseConfig()
+    def test_static_interim_response_minimal(self):
+        """Test StaticInterimResponseConfig with minimal parameters."""
+        config = StaticInterimResponseConfig()
 
-        assert config.type == FillerResponseConfigType.STATIC_FILLER
+        assert config.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
         assert config.triggers is None
         assert config.latency_threshold_ms is None
         assert config.texts is None
 
-    def test_basic_filler_with_texts(self):
-        """Test BasicFillerResponseConfig with filler texts."""
+    def test_static_interim_response_with_texts(self):
+        """Test StaticInterimResponseConfig with interim response texts."""
         texts = ["Hmm...", "Let me think...", "One moment..."]
-        config = BasicFillerResponseConfig(texts=texts)
+        config = StaticInterimResponseConfig(texts=texts)
 
-        assert config.type == FillerResponseConfigType.STATIC_FILLER
+        assert config.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
         assert config.texts == texts
         assert len(config.texts) == 3
 
-    def test_basic_filler_with_triggers(self):
-        """Test BasicFillerResponseConfig with triggers."""
-        config = BasicFillerResponseConfig(
-            triggers=[FillerTrigger.LATENCY, FillerTrigger.TOOL], latency_threshold_ms=2000, texts=["Please wait..."]
+    def test_static_interim_response_with_triggers(self):
+        """Test StaticInterimResponseConfig with triggers."""
+        config = StaticInterimResponseConfig(
+            triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL], latency_threshold_ms=2000, texts=["Please wait..."]
         )
 
-        assert config.type == FillerResponseConfigType.STATIC_FILLER
-        assert FillerTrigger.LATENCY in config.triggers
-        assert FillerTrigger.TOOL in config.triggers
+        assert config.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
+        assert InterimResponseTrigger.LATENCY in config.triggers
+        assert InterimResponseTrigger.TOOL in config.triggers
         assert config.latency_threshold_ms == 2000
 
-    def test_basic_filler_string_triggers(self):
-        """Test BasicFillerResponseConfig with string triggers."""
-        config = BasicFillerResponseConfig(triggers=["latency", "tool"])
+    def test_static_interim_response_string_triggers(self):
+        """Test StaticInterimResponseConfig with string triggers."""
+        config = StaticInterimResponseConfig(triggers=["latency", "tool"])
 
         assert config.triggers == ["latency", "tool"]
 
 
-class TestLlmFillerResponseConfig:
-    """Test LlmFillerResponseConfig model."""
+class TestLlmInterimResponseConfig:
+    """Test LlmInterimResponseConfig model."""
 
-    def test_llm_filler_minimal(self):
-        """Test LlmFillerResponseConfig with minimal parameters."""
-        config = LlmFillerResponseConfig()
+    def test_llm_interim_response_minimal(self):
+        """Test LlmInterimResponseConfig with minimal parameters."""
+        config = LlmInterimResponseConfig()
 
-        assert config.type == FillerResponseConfigType.LLM_FILLER
+        assert config.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
         assert config.model is None
         assert config.instructions is None
         assert config.max_completion_tokens is None
 
-    def test_llm_filler_full(self):
-        """Test LlmFillerResponseConfig with all parameters."""
-        config = LlmFillerResponseConfig(
-            triggers=[FillerTrigger.LATENCY],
+    def test_llm_interim_response_full(self):
+        """Test LlmInterimResponseConfig with all parameters."""
+        config = LlmInterimResponseConfig(
+            triggers=[InterimResponseTrigger.LATENCY],
             latency_threshold_ms=1500,
             model="gpt-4o-mini",
-            instructions="Generate brief filler responses.",
+            instructions="Generate brief interim responses.",
             max_completion_tokens=50,
         )
 
-        assert config.type == FillerResponseConfigType.LLM_FILLER
-        assert FillerTrigger.LATENCY in config.triggers
+        assert config.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
+        assert InterimResponseTrigger.LATENCY in config.triggers
         assert config.latency_threshold_ms == 1500
         assert config.model == "gpt-4o-mini"
         assert config.max_completion_tokens == 50
 
-    def test_filler_config_type_discrimination(self):
-        """Test that filler config types are properly discriminated."""
-        basic = BasicFillerResponseConfig(texts=["Wait..."])
-        llm = LlmFillerResponseConfig(model="gpt-4o")
+    def test_interim_response_config_type_discrimination(self):
+        """Test that interim response config types are properly discriminated."""
+        static = StaticInterimResponseConfig(texts=["Wait..."])
+        llm = LlmInterimResponseConfig(model="gpt-4o")
 
-        assert basic.type != llm.type
-        assert basic.type == FillerResponseConfigType.STATIC_FILLER
-        assert llm.type == FillerResponseConfigType.LLM_FILLER
+        assert static.type != llm.type
+        assert static.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
+        assert llm.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
 
 
 class TestServerEventWarning:
@@ -196,45 +196,45 @@ class TestResponseMetadata:
         assert params.metadata == metadata
 
 
-class TestSessionWithFillerResponse:
-    """Test session models with filler_response field."""
+class TestSessionWithInterimResponse:
+    """Test session models with interim_response field."""
 
-    def test_request_session_with_basic_filler(self):
-        """Test RequestSession with BasicFillerResponseConfig."""
-        filler = BasicFillerResponseConfig(texts=["Hmm..."])
-        session = RequestSession(model="gpt-4o-realtime-preview", filler_response=filler)
+    def test_request_session_with_static_interim_response(self):
+        """Test RequestSession with StaticInterimResponseConfig."""
+        interim = StaticInterimResponseConfig(texts=["Hmm..."])
+        session = RequestSession(model="gpt-4o-realtime-preview", interim_response=interim)
 
-        assert session.filler_response is not None
-        assert session.filler_response.type == FillerResponseConfigType.STATIC_FILLER
+        assert session.interim_response is not None
+        assert session.interim_response.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
 
-    def test_request_session_with_llm_filler(self):
-        """Test RequestSession with LlmFillerResponseConfig."""
-        filler = LlmFillerResponseConfig(model="gpt-4o-mini")
-        session = RequestSession(model="gpt-4o-realtime-preview", filler_response=filler)
+    def test_request_session_with_llm_interim_response(self):
+        """Test RequestSession with LlmInterimResponseConfig."""
+        interim = LlmInterimResponseConfig(model="gpt-4o-mini")
+        session = RequestSession(model="gpt-4o-realtime-preview", interim_response=interim)
 
-        assert session.filler_response is not None
-        assert session.filler_response.type == FillerResponseConfigType.LLM_FILLER
+        assert session.interim_response is not None
+        assert session.interim_response.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
 
-    def test_response_session_with_filler(self):
-        """Test ResponseSession with filler_response."""
-        filler = BasicFillerResponseConfig(texts=["Wait..."])
-        session = ResponseSession(model="gpt-4o-realtime-preview", filler_response=filler)
+    def test_response_session_with_interim_response(self):
+        """Test ResponseSession with interim_response."""
+        interim = StaticInterimResponseConfig(texts=["Wait..."])
+        session = ResponseSession(model="gpt-4o-realtime-preview", interim_response=interim)
 
-        assert session.filler_response is not None
+        assert session.interim_response is not None
 
 
 class TestNewEnums:
     """Test new enum types."""
 
-    def test_filler_trigger_enum(self):
-        """Test FillerTrigger enum."""
-        assert FillerTrigger.LATENCY == "latency"
-        assert FillerTrigger.TOOL == "tool"
+    def test_interim_response_trigger_enum(self):
+        """Test InterimResponseTrigger enum."""
+        assert InterimResponseTrigger.LATENCY == "latency"
+        assert InterimResponseTrigger.TOOL == "tool"
 
-    def test_filler_config_type_enum(self):
-        """Test FillerResponseConfigType enum."""
-        assert FillerResponseConfigType.STATIC_FILLER == "static_filler"
-        assert FillerResponseConfigType.LLM_FILLER == "llm_filler"
+    def test_interim_response_config_type_enum(self):
+        """Test InterimResponseConfigType enum."""
+        assert InterimResponseConfigType.STATIC_INTERIM_RESPONSE == "static_interim_response"
+        assert InterimResponseConfigType.LLM_INTERIM_RESPONSE == "llm_interim_response"
 
     def test_server_event_type_includes_warning(self):
         """Test ServerEventType includes WARNING."""
@@ -249,17 +249,17 @@ class TestNewEnums:
 class TestIntegrationScenarios:
     """Test integration scenarios with new features."""
 
-    def test_session_with_filler_and_reasoning(self):
-        """Test complete session with filler config and reasoning effort."""
-        filler = LlmFillerResponseConfig(triggers=[FillerTrigger.LATENCY, FillerTrigger.TOOL], model="gpt-4o-mini")
+    def test_session_with_interim_response_and_reasoning(self):
+        """Test complete session with interim response config and reasoning effort."""
+        interim = LlmInterimResponseConfig(triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL], model="gpt-4o-mini")
         session = RequestSession(
             model="gpt-4o-realtime-preview",
             reasoning_effort=ReasoningEffort.MEDIUM,
-            filler_response=filler,
+            interim_response=interim,
         )
 
         assert session.reasoning_effort == ReasoningEffort.MEDIUM
-        assert session.filler_response.type == FillerResponseConfigType.LLM_FILLER
+        assert session.interim_response.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
 
     def test_function_tool_in_session(self):
         """Test session with function tool."""
@@ -275,29 +275,29 @@ class TestIntegrationScenarios:
 class TestSerialization:
     """Test serialization and deserialization of new models."""
 
-    def test_basic_filler_serialization(self):
-        """Test BasicFillerResponseConfig serialization."""
-        config = BasicFillerResponseConfig(
-            triggers=[FillerTrigger.LATENCY], latency_threshold_ms=2000, texts=["Wait...", "One moment..."]
+    def test_static_interim_response_serialization(self):
+        """Test StaticInterimResponseConfig serialization."""
+        config = StaticInterimResponseConfig(
+            triggers=[InterimResponseTrigger.LATENCY], latency_threshold_ms=2000, texts=["Wait...", "One moment..."]
         )
 
         # Serialize to dict
         data = dict(config)
 
-        assert data["type"] == "static_filler"
+        assert data["type"] == "static_interim_response"
         assert data["triggers"] == ["latency"]
         assert data["latency_threshold_ms"] == 2000
         assert data["texts"] == ["Wait...", "One moment..."]
 
-    def test_llm_filler_serialization(self):
-        """Test LlmFillerResponseConfig serialization."""
-        config = LlmFillerResponseConfig(
-            triggers=[FillerTrigger.TOOL], model="gpt-4o-mini", instructions="Be brief", max_completion_tokens=50
+    def test_llm_interim_response_serialization(self):
+        """Test LlmInterimResponseConfig serialization."""
+        config = LlmInterimResponseConfig(
+            triggers=[InterimResponseTrigger.TOOL], model="gpt-4o-mini", instructions="Be brief", max_completion_tokens=50
         )
 
         data = dict(config)
 
-        assert data["type"] == "llm_filler"
+        assert data["type"] == "llm_interim_response"
         assert data["model"] == "gpt-4o-mini"
         assert data["instructions"] == "Be brief"
         assert data["max_completion_tokens"] == 50
@@ -321,19 +321,19 @@ class TestSerialization:
 class TestEdgeCases:
     """Test edge cases and boundary conditions."""
 
-    def test_basic_filler_empty_texts(self):
-        """Test BasicFillerResponseConfig with empty texts list."""
-        config = BasicFillerResponseConfig(texts=[])
+    def test_static_interim_response_empty_texts(self):
+        """Test StaticInterimResponseConfig with empty texts list."""
+        config = StaticInterimResponseConfig(texts=[])
         assert config.texts == []
 
-    def test_basic_filler_single_text(self):
-        """Test BasicFillerResponseConfig with single text."""
-        config = BasicFillerResponseConfig(texts=["Only one"])
+    def test_static_interim_response_single_text(self):
+        """Test StaticInterimResponseConfig with single text."""
+        config = StaticInterimResponseConfig(texts=["Only one"])
         assert len(config.texts) == 1
 
-    def test_llm_filler_zero_tokens(self):
-        """Test LlmFillerResponseConfig with zero max tokens."""
-        config = LlmFillerResponseConfig(max_completion_tokens=0)
+    def test_llm_interim_response_zero_tokens(self):
+        """Test LlmInterimResponseConfig with zero max tokens."""
+        config = LlmInterimResponseConfig(max_completion_tokens=0)
         assert config.max_completion_tokens == 0
 
     def test_function_tool_minimal(self):
@@ -345,12 +345,12 @@ class TestEdgeCases:
         assert tool.name == "test"
         assert tool.type == ToolType.FUNCTION
 
-    def test_multiple_filler_triggers(self):
-        """Test filler config with all trigger types."""
-        config = BasicFillerResponseConfig(triggers=[FillerTrigger.LATENCY, FillerTrigger.TOOL])
+    def test_multiple_interim_response_triggers(self):
+        """Test interim response config with all trigger types."""
+        config = StaticInterimResponseConfig(triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL])
         assert len(config.triggers) == 2
-        assert FillerTrigger.LATENCY in config.triggers
-        assert FillerTrigger.TOOL in config.triggers
+        assert InterimResponseTrigger.LATENCY in config.triggers
+        assert InterimResponseTrigger.TOOL in config.triggers
 
 
 class TestValidation:
@@ -388,32 +388,32 @@ class TestValidation:
 
 
 class TestTypeUnions:
-    """Test union type handling for filler configs."""
+    """Test union type handling for interim response configs."""
 
-    def test_session_accepts_basic_filler(self):
-        """Test RequestSession accepts BasicFillerResponseConfig."""
-        filler = BasicFillerResponseConfig(texts=["Wait"])
-        session = RequestSession(filler_response=filler)
+    def test_session_accepts_static_interim_response(self):
+        """Test RequestSession accepts StaticInterimResponseConfig."""
+        interim = StaticInterimResponseConfig(texts=["Wait"])
+        session = RequestSession(interim_response=interim)
 
-        assert isinstance(session.filler_response, BasicFillerResponseConfig)
+        assert isinstance(session.interim_response, StaticInterimResponseConfig)
 
-    def test_session_accepts_llm_filler(self):
-        """Test RequestSession accepts LlmFillerResponseConfig."""
-        filler = LlmFillerResponseConfig(model="gpt-4o")
-        session = RequestSession(filler_response=filler)
+    def test_session_accepts_llm_interim_response(self):
+        """Test RequestSession accepts LlmInterimResponseConfig."""
+        interim = LlmInterimResponseConfig(model="gpt-4o")
+        session = RequestSession(interim_response=interim)
 
-        assert isinstance(session.filler_response, LlmFillerResponseConfig)
+        assert isinstance(session.interim_response, LlmInterimResponseConfig)
 
-    def test_response_session_filler_types(self):
-        """Test ResponseSession with different filler types."""
-        basic = BasicFillerResponseConfig(texts=["Hmm"])
-        llm = LlmFillerResponseConfig()
+    def test_response_session_interim_response_types(self):
+        """Test ResponseSession with different interim response types."""
+        static = StaticInterimResponseConfig(texts=["Hmm"])
+        llm = LlmInterimResponseConfig()
 
-        session1 = ResponseSession(filler_response=basic)
-        session2 = ResponseSession(filler_response=llm)
+        session1 = ResponseSession(interim_response=static)
+        session2 = ResponseSession(interim_response=llm)
 
-        assert session1.filler_response.type == FillerResponseConfigType.STATIC_FILLER
-        assert session2.filler_response.type == FillerResponseConfigType.LLM_FILLER
+        assert session1.interim_response.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
+        assert session2.interim_response.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
 
 
 class TestServerEventWarningType:
@@ -432,16 +432,16 @@ class TestServerEventWarningType:
 class TestComplexScenarios:
     """Test complex real-world scenarios."""
 
-    def test_session_with_filler_and_all_features(self):
-        """Test session combining filler config, reasoning, and tools."""
+    def test_session_with_interim_response_and_all_features(self):
+        """Test session combining interim response config, reasoning, and tools."""
         from azure.ai.voicelive.models import FunctionTool
 
         # Create function tool
         func_tool = FunctionTool(name="get_data", description="Gets data", parameters={})
 
-        # Filler config
-        filler = LlmFillerResponseConfig(
-            triggers=[FillerTrigger.LATENCY, FillerTrigger.TOOL],
+        # Interim response config
+        interim = LlmInterimResponseConfig(
+            triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL],
             latency_threshold_ms=1500,
             model="gpt-4o-mini",
             max_completion_tokens=30,
@@ -452,14 +452,14 @@ class TestComplexScenarios:
             model="gpt-4o-realtime-preview",
             tools=[func_tool],
             reasoning_effort=ReasoningEffort.HIGH,
-            filler_response=filler,
+            interim_response=interim,
         )
 
         # Verify all features present
         assert session.tools[0].type == ToolType.FUNCTION
         assert session.reasoning_effort == ReasoningEffort.HIGH
-        assert session.filler_response.type == FillerResponseConfigType.LLM_FILLER
-        assert session.filler_response.model == "gpt-4o-mini"
+        assert session.interim_response.type == InterimResponseConfigType.LLM_INTERIM_RESPONSE
+        assert session.interim_response.model == "gpt-4o-mini"
 
     def test_complete_warning_workflow(self):
         """Test complete warning event workflow."""

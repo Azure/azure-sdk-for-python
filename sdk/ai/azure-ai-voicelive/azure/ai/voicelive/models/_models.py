@@ -15,7 +15,7 @@ from ._enums import (
     AzureVoiceType,
     ClientEventType,
     ContentPartType,
-    FillerResponseConfigType,
+    InterimResponseConfigType,
     ItemType,
     MessageRole,
     ResponseStatus,
@@ -1144,97 +1144,6 @@ class Background(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class FillerResponseConfigBase(_Model):
-    """Base model for filler response configuration.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    LlmFillerResponseConfig, BasicFillerResponseConfig
-
-    :ivar type: The type of filler response configuration. Required. Known values are:
-     "static_filler" and "llm_filler".
-    :vartype type: str or ~azure.ai.voicelive.models.FillerResponseConfigType
-    :ivar triggers: List of triggers that can fire the filler. Any trigger can activate the filler
-     (OR logic). Supported: 'latency', 'tool'.
-    :vartype triggers: list[str or ~azure.ai.voicelive.models.FillerTrigger]
-    :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering filler
-     response. Default is 2000ms.
-    :vartype latency_threshold_ms: int
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The type of filler response configuration. Required. Known values are: \"static_filler\" and
-     \"llm_filler\"."""
-    triggers: Optional[list[Union[str, "_models.FillerTrigger"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """List of triggers that can fire the filler. Any trigger can activate the filler (OR logic).
-     Supported: 'latency', 'tool'."""
-    latency_threshold_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Latency threshold in milliseconds before triggering filler response. Default is 2000ms."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-        triggers: Optional[list[Union[str, "_models.FillerTrigger"]]] = None,
-        latency_threshold_ms: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class BasicFillerResponseConfig(FillerResponseConfigBase, discriminator="static_filler"):
-    """Configuration for basic/static filler response generation. Randomly selects from configured
-    texts when any trigger condition is met.
-
-    :ivar triggers: List of triggers that can fire the filler. Any trigger can activate the filler
-     (OR logic). Supported: 'latency', 'tool'.
-    :vartype triggers: list[str or ~azure.ai.voicelive.models.FillerTrigger]
-    :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering filler
-     response. Default is 2000ms.
-    :vartype latency_threshold_ms: int
-    :ivar type: Required. Static filler configuration type.
-    :vartype type: str or ~azure.ai.voicelive.models.STATIC_FILLER
-    :ivar texts: List of filler text options to randomly select from.
-    :vartype texts: list[str]
-    """
-
-    type: Literal[FillerResponseConfigType.STATIC_FILLER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Static filler configuration type."""
-    texts: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """List of filler text options to randomly select from."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        triggers: Optional[list[Union[str, "_models.FillerTrigger"]]] = None,
-        latency_threshold_ms: Optional[int] = None,
-        texts: Optional[list[str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = FillerResponseConfigType.STATIC_FILLER  # type: ignore
 
 
 class CachedTokenDetails(_Model):
@@ -2423,41 +2332,92 @@ class InputTokenDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LlmFillerResponseConfig(FillerResponseConfigBase, discriminator="llm_filler"):
-    """Configuration for LLM-based filler response generation. Uses LLM to generate context-aware
-    filler responses when any trigger condition is met.
+class InterimResponseConfigBase(_Model):
+    """Base model for interim response configuration.
 
-    :ivar triggers: List of triggers that can fire the filler. Any trigger can activate the filler
-     (OR logic). Supported: 'latency', 'tool'.
-    :vartype triggers: list[str or ~azure.ai.voicelive.models.FillerTrigger]
-    :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering filler
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LlmInterimResponseConfig, StaticInterimResponseConfig
+
+    :ivar type: The type of interim response configuration. Required. Known values are:
+     "static_interim_response" and "llm_interim_response".
+    :vartype type: str or ~azure.ai.voicelive.models.InterimResponseConfigType
+    :ivar triggers: List of triggers that can fire the interim response. Any trigger can activate
+     it (OR logic). Supported: 'latency', 'tool'.
+    :vartype triggers: list[str or ~azure.ai.voicelive.models.InterimResponseTrigger]
+    :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering interim
      response. Default is 2000ms.
     :vartype latency_threshold_ms: int
-    :ivar type: Required. LLM-based filler configuration type.
-    :vartype type: str or ~azure.ai.voicelive.models.LLM_FILLER
-    :ivar model: The model to use for LLM-based filler generation. Default is gpt-4.1-mini.
-    :vartype model: str
-    :ivar instructions: Custom instructions for generating filler responses. If not provided, a
-     default prompt is used.
-    :vartype instructions: str
-    :ivar max_completion_tokens: Maximum number of tokens to generate for the filler response.
-    :vartype max_completion_tokens: int
     """
 
-    type: Literal[FillerResponseConfigType.LLM_FILLER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. LLM-based filler configuration type."""
-    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The model to use for LLM-based filler generation. Default is gpt-4.1-mini."""
-    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Custom instructions for generating filler responses. If not provided, a default prompt is used."""
-    max_completion_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Maximum number of tokens to generate for the filler response."""
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of interim response configuration. Required. Known values are:
+     \"static_interim_response\" and \"llm_interim_response\"."""
+    triggers: Optional[list[Union[str, "_models.InterimResponseTrigger"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of triggers that can fire the interim response. Any trigger can activate it (OR logic).
+     Supported: 'latency', 'tool'."""
+    latency_threshold_ms: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Latency threshold in milliseconds before triggering interim response. Default is 2000ms."""
 
     @overload
     def __init__(
         self,
         *,
-        triggers: Optional[list[Union[str, "_models.FillerTrigger"]]] = None,
+        type: str,
+        triggers: Optional[list[Union[str, "_models.InterimResponseTrigger"]]] = None,
+        latency_threshold_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LlmInterimResponseConfig(InterimResponseConfigBase, discriminator="llm_interim_response"):
+    """Configuration for LLM-based interim response generation. Uses LLM to generate context-aware
+    interim responses when any trigger condition is met.
+
+    :ivar triggers: List of triggers that can fire the interim response. Any trigger can activate
+     it (OR logic). Supported: 'latency', 'tool'.
+    :vartype triggers: list[str or ~azure.ai.voicelive.models.InterimResponseTrigger]
+    :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering interim
+     response. Default is 2000ms.
+    :vartype latency_threshold_ms: int
+    :ivar type: Required. LLM-based interim response configuration type.
+    :vartype type: str or ~azure.ai.voicelive.models.LLM_INTERIM_RESPONSE
+    :ivar model: The model to use for LLM-based interim response generation. Default is
+     gpt-4.1-mini.
+    :vartype model: str
+    :ivar instructions: Custom instructions for generating interim responses. If not provided, a
+     default prompt is used.
+    :vartype instructions: str
+    :ivar max_completion_tokens: Maximum number of tokens to generate for the interim response.
+    :vartype max_completion_tokens: int
+    """
+
+    type: Literal[InterimResponseConfigType.LLM_INTERIM_RESPONSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. LLM-based interim response configuration type."""
+    model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model to use for LLM-based interim response generation. Default is gpt-4.1-mini."""
+    instructions: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Custom instructions for generating interim responses. If not provided, a default prompt is
+     used."""
+    max_completion_tokens: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of tokens to generate for the interim response."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        triggers: Optional[list[Union[str, "_models.InterimResponseTrigger"]]] = None,
         latency_threshold_ms: Optional[int] = None,
         model: Optional[str] = None,
         instructions: Optional[str] = None,
@@ -2473,7 +2433,7 @@ class LlmFillerResponseConfig(FillerResponseConfigBase, discriminator="llm_fille
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = FillerResponseConfigType.LLM_FILLER  # type: ignore
+        self.type = InterimResponseConfigType.LLM_INTERIM_RESPONSE  # type: ignore
 
 
 class LogProbProperties(_Model):
@@ -2890,10 +2850,10 @@ class RequestSession(_Model):
      faster responses and fewer tokens used on reasoning in a response. Known values are: "none",
      "minimal", "low", "medium", "high", and "xhigh".
     :vartype reasoning_effort: str or ~azure.ai.voicelive.models.ReasoningEffort
-    :ivar filler_response: Configuration for filler response generation during latency or tool
-     calls. Is either a BasicFillerResponseConfig type or a LlmFillerResponseConfig type.
-    :vartype filler_response: ~azure.ai.voicelive.models.BasicFillerResponseConfig or
-     ~azure.ai.voicelive.models.LlmFillerResponseConfig
+    :ivar interim_response: Configuration for interim response generation during latency or tool
+     calls. Is either a StaticInterimResponseConfig type or a LlmInterimResponseConfig type.
+    :vartype interim_response: ~azure.ai.voicelive.models.StaticInterimResponseConfig or
+     ~azure.ai.voicelive.models.LlmInterimResponseConfig
     """
 
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2966,11 +2926,11 @@ class RequestSession(_Model):
      values for each model. Reducing reasoning effort can result in faster responses and fewer
      tokens used on reasoning in a response. Known values are: \"none\", \"minimal\", \"low\",
      \"medium\", \"high\", and \"xhigh\"."""
-    filler_response: Optional["_types.FillerResponseConfig"] = rest_field(
+    interim_response: Optional["_types.InterimResponseConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Configuration for filler response generation during latency or tool calls. Is either a
-     BasicFillerResponseConfig type or a LlmFillerResponseConfig type."""
+    """Configuration for interim response generation during latency or tool calls. Is either a
+     StaticInterimResponseConfig type or a LlmInterimResponseConfig type."""
 
     @overload
     def __init__(
@@ -2995,7 +2955,7 @@ class RequestSession(_Model):
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         reasoning_effort: Optional[Union[str, "_models.ReasoningEffort"]] = None,
-        filler_response: Optional["_types.FillerResponseConfig"] = None,
+        interim_response: Optional["_types.InterimResponseConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -3981,10 +3941,10 @@ class ResponseSession(_Model):
      faster responses and fewer tokens used on reasoning in a response. Known values are: "none",
      "minimal", "low", "medium", "high", and "xhigh".
     :vartype reasoning_effort: str or ~azure.ai.voicelive.models.ReasoningEffort
-    :ivar filler_response: Configuration for filler response generation during latency or tool
-     calls. Is either a BasicFillerResponseConfig type or a LlmFillerResponseConfig type.
-    :vartype filler_response: ~azure.ai.voicelive.models.BasicFillerResponseConfig or
-     ~azure.ai.voicelive.models.LlmFillerResponseConfig
+    :ivar interim_response: Configuration for interim response generation during latency or tool
+     calls. Is either a StaticInterimResponseConfig type or a LlmInterimResponseConfig type.
+    :vartype interim_response: ~azure.ai.voicelive.models.StaticInterimResponseConfig or
+     ~azure.ai.voicelive.models.LlmInterimResponseConfig
     :ivar agent: The agent configuration for the session, if applicable.
     :vartype agent: ~azure.ai.voicelive.models.AgentConfig
     :ivar id: The unique identifier for the session.
@@ -4061,11 +4021,11 @@ class ResponseSession(_Model):
      values for each model. Reducing reasoning effort can result in faster responses and fewer
      tokens used on reasoning in a response. Known values are: \"none\", \"minimal\", \"low\",
      \"medium\", \"high\", and \"xhigh\"."""
-    filler_response: Optional["_types.FillerResponseConfig"] = rest_field(
+    interim_response: Optional["_types.InterimResponseConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Configuration for filler response generation during latency or tool calls. Is either a
-     BasicFillerResponseConfig type or a LlmFillerResponseConfig type."""
+    """Configuration for interim response generation during latency or tool calls. Is either a
+     StaticInterimResponseConfig type or a LlmInterimResponseConfig type."""
     agent: Optional["_models.AgentConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The agent configuration for the session, if applicable."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -4094,7 +4054,7 @@ class ResponseSession(_Model):
         temperature: Optional[float] = None,
         max_response_output_tokens: Optional[Union[int, Literal["inf"]]] = None,
         reasoning_effort: Optional[Union[str, "_models.ReasoningEffort"]] = None,
-        filler_response: Optional["_types.FillerResponseConfig"] = None,
+        interim_response: Optional["_types.InterimResponseConfig"] = None,
         agent: Optional["_models.AgentConfig"] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
     ) -> None: ...
@@ -6610,6 +6570,48 @@ class ServerVad(TurnDetection, discriminator="server_vad"):
 
 class SessionBase(_Model):
     """VoiceLive session object configuration."""
+
+
+class StaticInterimResponseConfig(InterimResponseConfigBase, discriminator="static_interim_response"):
+    """Configuration for static interim response generation. Randomly selects from configured texts
+    when any trigger condition is met.
+
+    :ivar triggers: List of triggers that can fire the interim response. Any trigger can activate
+     it (OR logic). Supported: 'latency', 'tool'.
+    :vartype triggers: list[str or ~azure.ai.voicelive.models.InterimResponseTrigger]
+    :ivar latency_threshold_ms: Latency threshold in milliseconds before triggering interim
+     response. Default is 2000ms.
+    :vartype latency_threshold_ms: int
+    :ivar type: Required. Static interim response configuration type.
+    :vartype type: str or ~azure.ai.voicelive.models.STATIC_INTERIM_RESPONSE
+    :ivar texts: List of interim response text options to randomly select from.
+    :vartype texts: list[str]
+    """
+
+    type: Literal[InterimResponseConfigType.STATIC_INTERIM_RESPONSE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Static interim response configuration type."""
+    texts: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of interim response text options to randomly select from."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        triggers: Optional[list[Union[str, "_models.InterimResponseTrigger"]]] = None,
+        latency_threshold_ms: Optional[int] = None,
+        texts: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = InterimResponseConfigType.STATIC_INTERIM_RESPONSE  # type: ignore
 
 
 class SystemMessageItem(MessageItem, discriminator="system"):

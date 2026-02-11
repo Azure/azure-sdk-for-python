@@ -657,7 +657,9 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     vendor_options: NotRequired[Mapping[str, Any]]
 
 
-class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnection"]):  # pylint: disable=too-many-instance-attributes
+class _VoiceLiveConnectionManager(
+    AbstractAsyncContextManager["VoiceLiveConnection"]
+):  # pylint: disable=too-many-instance-attributes
     """Async manager for VoiceLive WebSocket connections."""
 
     def __init__(
