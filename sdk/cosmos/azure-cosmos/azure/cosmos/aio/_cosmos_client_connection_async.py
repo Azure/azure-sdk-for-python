@@ -78,7 +78,7 @@ from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 from .._range_partition_resolver import RangePartitionResolver
 from ._read_items_helper_async import ReadItemsHelperAsync
-from ..user_agent_policy import CosmosUserAgentPolicy
+from .._user_agent_policy import CosmosUserAgentPolicy
 
 
 class CredentialDict(TypedDict, total=False):

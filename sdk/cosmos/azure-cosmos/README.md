@@ -952,7 +952,7 @@ Cross region hedging availability strategy improves availability and reduces lat
 
 #### Enabling Cross Region Hedging
 
-You can enable cross region hedging by passing the `availability_strategy` parameter as a dictionary to the `CosmosClient` or per-request. The most common configuration keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests).
+You can enable cross region hedging by passing the `availability_strategy` parameter as a dictionary to the `CosmosClient` or per-request. The keys used to configure this behavior are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests). There are no default values for these configurations, so they must be explicitly set in order to enable the availability strategy.
 
 #### Client-level configuration
 
@@ -1017,6 +1017,22 @@ client = CosmosClient(
     availability_strategy_max_concurrency=2
 )
 ```
+
+### Cross Region Hedging - Best Practices
+
+1. Configure appropriate thresholds based on your application's needs:
+   - Lower thresholds: More aggressive hedging, potentially higher costs
+   - Higher thresholds: More conservative, may impact latency
+
+2. Use request-level overrides judiciously:
+   - Disable hedging for non-critical operations
+   - Use custom thresholds for latency-sensitive operations
+
+3. Monitor usage:
+   - Track hedging patterns
+   - Adjust thresholds based on observed performance
+
+4. Enable multiple write regions when write availability is critical
 
 ## Troubleshooting
 
