@@ -1,0 +1,18 @@
+These are the GitHub CoPilot instructions used to edit emitted code, in order to set the
+required Foundry-Features HTTP request header in preview operations.
+
+Last updated: 2/11/2026
+
+Look at all the Python source files under \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure in this repository.
+Find all the public methods that have a required input argument named "foundry_features" (note that some method
+will have "foundry_features" as an optional input argument. Ignore those). An example of such a method is one that 
+has the following in the method signature: 
+foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]
+For each of the public methods that have a required input argument named "foundry_features",
+remove the input argument from the method signature and the corresponding document strings.
+Instead, update the method itself, and set the value of "foundry_features" to the value shown in the
+method signature. In the example above, that operation will look like this:
+foundry_features = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.
+At the end, show a summary report of all the method you edited, and which FoundryFeaturesOptInKeys
+value was used for each method.
+
