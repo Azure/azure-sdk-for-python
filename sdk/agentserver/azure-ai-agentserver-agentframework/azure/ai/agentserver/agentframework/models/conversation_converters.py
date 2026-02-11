@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+# pylint: disable=too-many-return-statements
 import json
 from typing import Any, Mapping, Optional
 from uuid import uuid4

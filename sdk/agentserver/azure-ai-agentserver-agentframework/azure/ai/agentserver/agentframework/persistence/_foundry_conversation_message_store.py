@@ -67,7 +67,7 @@ class FoundryConversationMessageStore:
         self._cached_messages.extend(messages)
 
     @classmethod
-    async def deserialize(
+    async def deserialize(      # pylint: disable=unused-argument
         cls,
         serialized_store_state: MutableMapping[str, Any],
         *,
@@ -99,7 +99,7 @@ class FoundryConversationMessageStore:
 
         return store
 
-    async def update_from_state(
+    async def update_from_state(  # pylint: disable=unused-argument
         self,
         serialized_store_state: MutableMapping[str, Any],
         **kwargs: Any,
@@ -121,6 +121,17 @@ class FoundryConversationMessageStore:
             elif isinstance(msg_data, ChatMessage):
                 self._cached_messages.append(msg_data)
         await self.retrieve_messages()
+
+    async def serialize(self, **kwargs: Any) -> dict[str, Any]:  # pylint: disable=unused-argument
+        """Serialize the current store state.
+
+        :return: The serialized state data containing conversation_id and cached messages.
+        :rtype: dict[str, Any]
+        """
+        return {
+            "conversation_id": self._conversation_id,
+            "messages": [msg.to_dict() for msg in self._cached_messages],
+        }
 
     async def retrieve_messages(self):
         history_messages = await self._get_conversation_history()
@@ -157,22 +168,10 @@ class FoundryConversationMessageStore:
                     self._conversation_id,
                 )
                 return retrieved_messages[::-1]
-        except Exception as exc: 
+        except Exception as exc:  # pylint: disable=broad-except
             logger.exception(
                 "Failed to get conversation history for %s: %s",
                 self._conversation_id,
                 exc,
             )
             return []
-
-
-    async def serialize(self, **kwargs: Any) -> dict[str, Any]:
-        """Serialize the current store state.
-
-        :return: The serialized state data containing conversation_id and cached messages.
-        :rtype: dict[str, Any]
-        """
-        return {
-            "conversation_id": self._conversation_id,
-            "messages": [msg.to_dict() for msg in self._cached_messages],
-        }

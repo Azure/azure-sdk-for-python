@@ -201,7 +201,7 @@ class HumanInTheLoopHelper:
                     additional_properties=message.additional_properties,
                 )
                 filtered_messages.append(filtered_message)
-            
+
             if prev_function_output:
                 pending_tool_message = ChatMessage(
                     role="tool",
