@@ -36,7 +36,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         assert service is not None
         assert service.account_name == storage_account_name
         assert service.credential.account_name == storage_account_name
-        assert service.credential.account_key == storage_account_key
+        assert service.credential.account_key == storage_account_key.secret
         assert f"{storage_account_name}.{url_type}.core.windows.net" in service.url
         assert f"{storage_account_name}-secondary.{url_type}.core.windows.net" in service.secondary_endpoint
 
@@ -63,7 +63,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name="foo"
+                self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, queue_name="foo"
             )
 
             # Assert
@@ -78,7 +78,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
-                self.connection_string(storage_account_name, storage_account_key), queue_name="test"
+                self.connection_string(storage_account_name, storage_account_key.secret), queue_name="test"
             )
 
             # Assert
@@ -147,13 +147,13 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(storage_account_name, "queue").replace("core.windows.net", "core.chinacloudapi.cn")
-            service = service_type[0](url, credential=storage_account_key, queue_name="foo")
+            service = service_type[0](url, credential=storage_account_key.secret, queue_name="foo")
 
             # Assert
             assert service is not None
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert (
                 service.primary_endpoint.startswith(
                     f"https://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn"
@@ -177,7 +177,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             url = self.account_url(storage_account_name, "queue").replace("https", "http")
-            service = service_type[0](url, credential=storage_account_key, queue_name="foo")
+            service = service_type[0](url, credential=storage_account_key.secret, queue_name="foo")
 
             # Assert
             self.validate_standard_account_endpoints(
@@ -210,11 +210,11 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name="foo"
+                self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, queue_name="foo"
             )
             service = service_type[0](
                 self.account_url(storage_account_name, "queue"),
-                credential=storage_account_key,
+                credential=storage_account_key.secret,
                 queue_name="foo",
                 connection_timeout=22,
             )
@@ -233,7 +233,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        conn_string = f"AccountName={storage_account_name};" f"AccountKey={storage_account_key};"
+        conn_string = f"AccountName={storage_account_name};" f"AccountKey={storage_account_key.secret};"
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(conn_string, queue_name="foo")
@@ -271,7 +271,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         # Arrange
         conn_string = (
             f"AccountName={storage_account_name};"
-            f"AccountKey={storage_account_key};"
+            f"AccountKey={storage_account_key.secret};"
             "DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;"
         )
 
@@ -283,7 +283,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert (
                 service.primary_endpoint.startswith(
                     f"http://{storage_account_name}.{service_type[1]}.core.chinacloudapi.cn/"
@@ -321,7 +321,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             conn_string = (
                 f"AccountName={storage_account_name};"
-                f"AccountKey={storage_account_key};"
+                f"AccountKey={storage_account_key.secret};"
                 "QueueEndpoint=www.mydomain.com;"
             )
 
@@ -332,7 +332,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith("https://www.mydomain.com/")
             assert service.secondary_endpoint.startswith(
                 f"https://{storage_account_name}-secondary.queue.core.windows.net"
@@ -347,7 +347,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             conn_string = (
                 f"AccountName={storage_account_name};"
-                f"AccountKey={storage_account_key};"
+                f"AccountKey={storage_account_key.secret};"
                 "QueueEndpoint=www.mydomain.com/;"
             )
 
@@ -358,7 +358,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith("https://www.mydomain.com/")
             assert service.secondary_endpoint.startswith(
                 f"https://{storage_account_name}-secondary.queue.core.windows.net"
@@ -373,7 +373,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             conn_string = (
                 f"AccountName={storage_account_name};"
-                f"AccountKey={storage_account_key};"
+                f"AccountKey={storage_account_key.secret};"
                 "QueueEndpoint=www.mydomain.com/;"
             )
 
@@ -386,7 +386,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith("https://www.mydomain.com/")
             assert service.secondary_endpoint.startswith("https://www-sec.mydomain.com/")
 
@@ -399,7 +399,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             # Arrange
             conn_string = (
                 f"AccountName={storage_account_name};"
-                f"AccountKey={storage_account_key};"
+                f"AccountKey={storage_account_key.secret};"
                 f"{_CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1])}=www.mydomain.com;"
             )
 
@@ -418,7 +418,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             # Arrange
             conn_string = (
                 f"AccountName={storage_account_name};"
-                f"AccountKey={storage_account_key};"
+                f"AccountKey={storage_account_key.secret};"
                 f"{_CONNECTION_ENDPOINTS.get(service_type[1])}=www.mydomain.com;"
                 f"{_CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1])}=www-sec.mydomain.com;"
             )
@@ -430,7 +430,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             assert service is not None
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith("https://www.mydomain.com/")
             assert service.secondary_endpoint.startswith("https://www-sec.mydomain.com/")
 
@@ -443,7 +443,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for service_type in SERVICES.items():
             conn_string = (
                 f"DefaultEndpointsProtocol=http;AccountName={storage_account_name};"
-                f"AccountKey={storage_account_key};"
+                f"AccountKey={storage_account_key.secret};"
                 f"QueueEndpoint={custom_account_url};"
             )
 
@@ -453,7 +453,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
             # Assert
             assert service.account_name == storage_account_name
             assert service.credential.account_name == storage_account_name
-            assert service.credential.account_key == storage_account_key
+            assert service.credential.account_key == storage_account_key.secret
             assert service.primary_hostname == "local-machine:11002/custom/account/path"
 
         service = QueueServiceClient(account_url=custom_account_url)
@@ -483,7 +483,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
         name = self.get_resource_name("cont")
 
         # Act
@@ -505,7 +507,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
         name = self.get_resource_name("cont")
         queue = service.get_queue_client(name)
 
@@ -523,7 +527,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
 
         def callback(response):
             assert "User-Agent" in response.http_request.headers
@@ -539,7 +545,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
         custom_app = "TestApp/v1.0"
         service = QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key, user_agent=custom_app
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
+            user_agent=custom_app,
         )
 
         def callback(response):
@@ -567,7 +575,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = QueueServiceClient(self.account_url(storage_account_name, "queue"), credential=storage_account_key)
+        service = QueueServiceClient(
+            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret
+        )
 
         def callback(response):
             assert "User-Agent" in response.http_request.headers
@@ -587,7 +597,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name="queue"
+                self.account_url(storage_account_name, "queue"),
+                credential=storage_account_key.secret,
+                queue_name="queue",
             )
 
             # Assert
@@ -604,7 +616,9 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "queue"), credential=storage_account_key, queue_name="queue"
+                self.account_url(storage_account_name, "queue"),
+                credential=storage_account_key.secret,
+                queue_name="queue",
             )
             await service.close()
 

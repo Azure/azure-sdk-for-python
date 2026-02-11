@@ -82,6 +82,13 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - ${{ if eq(lower(parameters.OSName), 'macos') }}:
+      - pwsh: |
+          $dotnetroot = "$HOME/.dotnet"
+          Write-Host $dotnetroot
+          Write-Host "##vso[task.setvariable variable=DOTNET_ROOT]$dotnetroot"
+        displayName: 'Set DOTNET_ROOT'
+
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:

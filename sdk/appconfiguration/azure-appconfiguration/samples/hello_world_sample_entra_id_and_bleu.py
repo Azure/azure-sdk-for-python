@@ -10,20 +10,20 @@
 FILE: hello_world_sample_entra_id_and_bleu.py
 
 DESCRIPTION:
-    This sample demos how to add/update/retrieve/delete configuration settings synchronously using Entra ID authentication
-    with Azure Bleu (French Sovereign Cloud).
+    This sample demos how to add/update/retrieve/delete configuration settings synchronously using Entra ID
+    authentication with Azure Bleu (French Sovereign Cloud).
 
 USAGE: python hello_world_sample_entra_id_and_bleu.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_ENDPOINT: Endpoint URL for the Azure App Configuration store in Bleu cloud
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL for the Azure App Configuration store in Bleu cloud
        (e.g., https://<your-store-name>.azconfig.sovcloud-api.fr)
     2) AZURE_TENANT_ID: Your Azure tenant ID
     3) AZURE_CLIENT_ID: Your application (client) ID
     4) AZURE_CLIENT_SECRET: Your application client secret
     
     For Azure Bleu (French Sovereign Cloud):
-    - Use credential_scopes: ["https://appconfig.sovcloud-api.fr/.default"]
+    - Use audience: ["https://appconfig.sovcloud-api.fr/"]
     
     DefaultAzureCredential will attempt multiple authentication methods:
     - Environment variables (AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET)
@@ -33,21 +33,20 @@ USAGE: python hello_world_sample_entra_id_and_bleu.py
     - Azure PowerShell
     - Interactive browser
 """
+import os
+from azure.appconfiguration import AzureAppConfigurationClient
+from azure.identity import DefaultAzureCredential
 from azure.appconfiguration import ConfigurationSetting
 
 
 def main():
     # [START create_app_config_client_entra_id]
-    import os
-    from azure.appconfiguration import AzureAppConfigurationClient
-    from azure.identity import DefaultAzureCredential
-
-    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
+    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 
     # Create app config client with Entra ID authentication
     credential = DefaultAzureCredential()
     client = AzureAppConfigurationClient(
-        base_url=ENDPOINT, credential=credential, credential_scopes=["https://appconfig.sovcloud-api.fr/.default"]
+        base_url=ENDPOINT, credential=credential, audience="https://appconfig.sovcloud-api.fr/"
     )
     # [END create_app_config_client_entra_id]
 

@@ -50,7 +50,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         # otherwise the tests would take too long to execute
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key,
+            credential=key.secret,
             max_single_put_size=1024,
             max_block_size=1024)
         self.config = self.bsc._config
@@ -159,7 +159,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Set up destination blob without data
         blob_service_client = BlobServiceClient(
             account_url=self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         destination_blob_client = blob_service_client.get_blob_client(
             container=self.source_container_name,
@@ -212,7 +212,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Set up destination blob without data
         blob_service_client = BlobServiceClient(
             account_url=self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key
+            credential=storage_account_key.secret
         )
         destination_blob_client = blob_service_client.get_blob_client(
             container=self.source_container_name,
@@ -257,7 +257,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -290,7 +290,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -321,7 +321,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -354,7 +354,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -386,7 +386,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -417,7 +417,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=source_blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -454,7 +454,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=source_blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -503,7 +503,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=source_blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -542,7 +542,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=source_blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -579,7 +579,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=source_blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -624,7 +624,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         sas = self.generate_sas(
             generate_blob_sas,
             account_name=storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             container_name=self.container_name,
             blob_name=source_blob.blob_name,
             permission=BlobSasPermissions(read=True),
@@ -1920,7 +1920,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, 'blob'),
             self.container_name, blob_name,
-            credential=storage_account_key)
+            credential=storage_account_key.secret)
 
         await blob_client.upload_blob(
             data,
@@ -1948,7 +1948,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, 'blob'),
             self.container_name, blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024, max_block_size=1024)
 
         await blob_client.upload_blob(
@@ -1978,7 +1978,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, 'blob'),
             self.container_name, blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024, max_block_size=1024)
 
         await blob_client.upload_blob(
@@ -2009,7 +2009,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, 'blob'),
             self.container_name, blob_name,
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024, max_block_size=1024)
 
         await blob_client.upload_blob(

@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingGroundingAgentTool,
+    BingGroundingTool,
     BingGroundingSearchToolParameters,
     BingGroundingSearchConfiguration,
 )
@@ -27,7 +27,7 @@ class TestAgentBingGrounding(TestBase):
         """
         Test agent with Bing grounding capabilities.
 
-        This test verifies that an agent can be created with BingGroundingAgentTool,
+        This test verifies that an agent can be created with BingGroundingTool,
         use it to search the web for current information, and provide responses with
         URL citations.
 
@@ -45,14 +45,14 @@ class TestAgentBingGrounding(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
-        # Note: This test requires AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable
+        # Note: This test requires bing_project_connection_id environment variable
         # to be set with a valid Bing connection ID from the project
-        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
+        bing_connection_id = kwargs.get("bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.fail("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("bing_project_connection_id environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
@@ -69,7 +69,7 @@ class TestAgentBingGrounding(TestBase):
                     model=model,
                     instructions="You are a helpful assistant.",
                     tools=[
-                        BingGroundingAgentTool(
+                        BingGroundingTool(
                             bing_grounding=BingGroundingSearchToolParameters(
                                 search_configurations=[
                                     BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
@@ -145,12 +145,12 @@ class TestAgentBingGrounding(TestBase):
         Bing grounding and provide accurate responses with citations.
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
-        bing_connection_id = kwargs.get("azure_ai_projects_tests_bing_project_connection_id")
+        bing_connection_id = kwargs.get("bing_project_connection_id")
 
         if not bing_connection_id:
-            pytest.fail("AZURE_AI_PROJECTS_TESTS_BING_PROJECT_CONNECTION_ID environment variable not set")
+            pytest.fail("bing_project_connection_id environment variable not set")
 
         assert isinstance(bing_connection_id, str), "bing_connection_id must be a string"
 
@@ -165,7 +165,7 @@ class TestAgentBingGrounding(TestBase):
                     model=model,
                     instructions="You are a helpful assistant that provides current information.",
                     tools=[
-                        BingGroundingAgentTool(
+                        BingGroundingTool(
                             bing_grounding=BingGroundingSearchToolParameters(
                                 search_configurations=[
                                     BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)

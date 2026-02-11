@@ -62,7 +62,7 @@ _LAST_EXCEPTION_RATE_TIME = datetime.now()
 _EXCEPTIONS_COUNT = 0
 
 
-#  pylint: disable=unused-argument
+#  pylint: disable=unused-argument, do-not-use-logging-exception, do-not-log-exceptions-if-not-debug
 def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
     """Get process CPU usage as a percentage.
 
@@ -597,7 +597,6 @@ class _PerformanceCountersManager(metaclass=Singleton):
                 try:
                     # Note: ProcessIORate may not be available on all platforms
                     if metric_class == ProcessIORate and not _IO_AVAILABLE:
-                        _logger.warning("Process I/O Rate performance counter is not available on this platform.")
                         continue
                     performance_counter = metric_class(self._meter)
                     self._performance_counters.append(performance_counter)

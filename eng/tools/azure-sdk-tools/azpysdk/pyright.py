@@ -15,7 +15,7 @@ from ci_tools.scenario.generation import create_package_and_install
 
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.391"
+PYRIGHT_VERSION = "1.1.405"
 REPO_ROOT = discover_repo_root()
 
 
@@ -73,6 +73,8 @@ class pyright(Check):
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
 

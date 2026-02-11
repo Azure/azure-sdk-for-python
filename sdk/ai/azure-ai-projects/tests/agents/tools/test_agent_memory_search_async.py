@@ -13,7 +13,7 @@ from devtools_testutils import RecordedTransport, is_live, is_live_and_not_recor
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     MemoryStoreDefaultDefinition,
-    MemorySearchTool,
+    MemorySearchPreviewTool,
     PromptAgentDefinition,
     MemoryStoreDefaultOptions,
 )
@@ -25,9 +25,9 @@ class TestAgentMemorySearchAsync(TestBase):
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_memory_search_async(self, **kwargs):
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
-        chat_model = kwargs.get("azure_ai_projects_tests_memory_store_chat_model_deployment_name")
-        embedding_model = kwargs.get("azure_ai_projects_tests_memory_store_embedding_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
+        chat_model = kwargs.get("memory_store_chat_model_deployment_name")
+        embedding_model = kwargs.get("memory_store_embedding_model_deployment_name")
 
         assert isinstance(model, str)
         assert isinstance(chat_model, str)
@@ -79,7 +79,7 @@ class TestAgentMemorySearchAsync(TestBase):
                 assert memory_store.description == "Test memory store for agent conversations"
 
                 # Create memory search tool
-                tool = MemorySearchTool(
+                tool = MemorySearchPreviewTool(
                     memory_store_name=memory_store.name,
                     scope=scope,
                     update_delay=1,  # Wait 1 second for testing; use higher value (300) in production

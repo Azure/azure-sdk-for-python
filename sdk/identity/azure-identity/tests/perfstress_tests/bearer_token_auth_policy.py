@@ -12,7 +12,7 @@ from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline, Pipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, BearerTokenCredentialPolicy
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 
 
 class BearerTokenPolicyTest(PerfStressTest):

@@ -8,6 +8,7 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 from azure.ai.evaluation._model_configurations import Conversation
 from ..._common.utils import (
     ErrorBlame,
@@ -96,6 +97,9 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _OPTIONAL_PARAMS = ["query"]
     _SUPPORTED_TOOLS = ["file_search"]
 
+    _validator: ValidatorInterface
+    _validator_with_query: ValidatorInterface
+
     id = "azureai://built-in/evaluators/groundedness"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -105,6 +109,17 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE_NO_QUERY)  # Default to no query
 
         self._higher_is_better = True
+
+        # Initialize input validator
+        self._validator = ConversationValidator(
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            requires_query=False,
+        )
+
+        self._validator_with_query = ConversationValidator(
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR, requires_query=True
+        )
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -115,6 +130,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             **kwargs,
         )
         self._model_config = model_config
+        self._credential = credential
         self.threshold = threshold
         # Needs to be set because it's used in call method to re-validate prompt if `query` is provided
 
@@ -218,7 +234,12 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             self._DEFAULT_OPEN_API_VERSION,
             UserAgentSingleton().value,
         )
-        self._flow = AsyncPrompty.load(source=self._prompty_file, model=prompty_model_config)
+        self._flow = AsyncPrompty.load(
+            source=self._prompty_file,
+            model=prompty_model_config,
+            token_credential=self._credential,
+            is_reasoning_model=self._is_reasoning_model,
+        )
 
     def _has_context(self, eval_input: dict) -> bool:
         """
@@ -266,6 +287,11 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         """
         # Convert inputs into list of evaluable inputs.
         try:
+            # Validate input before processing
+            if kwargs.get("context") or kwargs.get("conversation"):
+                self._validator.validate_eval_input(kwargs)
+            else:
+                self._validator_with_query.validate_eval_input(kwargs)
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
@@ -293,7 +319,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             raise EvaluationException(
                 message=msg,
                 blame=ErrorBlame.USER_ERROR,
-                category=ErrorCategory.INVALID_VALUE,
+                category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             )
         context = self._get_context_from_agent_response(response, tool_definitions)

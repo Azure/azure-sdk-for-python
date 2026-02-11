@@ -15,7 +15,12 @@ All tests use the same tool combination but different inputs and workflows.
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool, CodeInterpreterTool, CodeInterpreterToolAuto
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    FileSearchTool,
+    CodeInterpreterTool,
+    CodeInterpreterContainerAuto,
+)
 
 
 class TestAgentFileSearchAndCodeInterpreter(TestBase):
@@ -32,7 +37,7 @@ class TestAgentFileSearchAndCodeInterpreter(TestBase):
         2. Code Interpreter: Agent calculates the average of those numbers
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -83,7 +88,7 @@ End of sensor log.
                 instructions="You are a data analyst. Use file search to find data files, then use code interpreter to perform calculations on the data.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                 ],
             ),
             description="Agent with File Search and Code Interpreter.",
@@ -114,7 +119,7 @@ End of sensor log.
         2. Code Interpreter: Agent executes the code and returns the computed result
         """
 
-        model = kwargs.get("azure_ai_projects_tests_model_deployment_name")
+        model = kwargs.get("azure_ai_model_deployment_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)
@@ -153,7 +158,7 @@ def fibonacci(n):
                 instructions="You are a code analyst. Use file search to find code files, then use code interpreter to execute and test the code.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                 ],
             ),
             description="Agent for code analysis and execution.",

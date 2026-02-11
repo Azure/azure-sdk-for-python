@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Browser Automation capabilities
-    using the BrowserAutomationAgentTool and synchronous Azure AI Projects client. The agent can
+    using the BrowserAutomationPreviewTool and synchronous Azure AI Projects client. The agent can
     perform automated web browsing tasks and provide responses based on web interactions.
 
 USAGE:
@@ -32,7 +32,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BrowserAutomationAgentTool,
+    BrowserAutomationPreviewTool,
     BrowserAutomationToolParameters,
     BrowserAutomationToolConnectionParameters,
 )
@@ -48,7 +48,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = BrowserAutomationAgentTool(
+    tool = BrowserAutomationPreviewTool(
         browser_automation_preview=BrowserAutomationToolParameters(
             connection=BrowserAutomationToolConnectionParameters(
                 project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],

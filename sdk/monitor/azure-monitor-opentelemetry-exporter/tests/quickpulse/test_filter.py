@@ -19,6 +19,7 @@ from azure.monitor.opentelemetry.exporter._quickpulse._filter import (
 )
 
 
+# pylint: disable=line-too-long
 class TestFilter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._parse_document_filter_configuration")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._filter._clear_quickpulse_projection_map")

@@ -62,6 +62,8 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,
@@ -82,7 +84,7 @@ setup(
     install_requires=[
         "azure-core<2.0.0,>=1.28.0",
         "azure-core-tracing-opentelemetry~=1.0.0b11",
-        "azure-monitor-opentelemetry-exporter~=1.0.0b46",
+        "azure-monitor-opentelemetry-exporter~=1.0.0b47",
         "opentelemetry-sdk==1.39",
         "opentelemetry-instrumentation-django==0.60b0",
         "opentelemetry-instrumentation-fastapi==0.60b0",

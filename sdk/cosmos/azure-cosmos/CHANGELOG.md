@@ -7,6 +7,8 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
+* Fixed crash in sync and async clients when `force_refresh_on_startup` was set to `None`, which could surface as `AttributeError: 'NoneType' object has no attribute '_WritableLocations'` during region discovery when `database_account` was `None`. See [PR 44987](https://github.com/Azure/azure-sdk-for-python/pull/44987)
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
@@ -17,6 +19,12 @@
 #### Bugs Fixed
 * Fixed bug where sdk was not properly retrying requests in some edge cases after partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
 
+### 4.14.3 (2025-12-08)
+
+#### Bugs Fixed
+* Fixed bug where client timeout/read_timeout values were not properly enforced. See [PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
+* Fixed bug when passing in None for some options in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
+
 ### 4.15.0b1 (2025-11-26)
 
 #### Features Added
@@ -24,8 +32,8 @@
 * Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
 
 #### Bugs Fixed
-* Fixed bug where client timeout/read_timeout values were not properly enforced[PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
-* Fixed bug when passing in None for some option in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
+* Fixed bug where client timeout/read_timeout values were not properly enforced. See [PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
+* Fixed bug when passing in None for some options in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
 * Fixed bug where first metadata requests have duplicated custom `user_agent` in headers. See [PR 44189](https://github.com/Azure/azure-sdk-for-python/pull/44189)
 
 #### Other Changes

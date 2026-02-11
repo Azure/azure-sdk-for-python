@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 from unittest.mock import patch, call
+import pytest
+from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 from azure.appconfiguration.provider._discovery import (
     _get_known_domain,
     _request_record,
@@ -12,7 +13,6 @@ from azure.appconfiguration.provider._discovery import (
     _find_origin,
     find_auto_failover_endpoints,
 )
-from dns.resolver import NXDOMAIN, YXDOMAIN, LifetimeTimeout, NoNameservers  # cspell:disable-line
 
 AZCONFIG_IO = ".azconfig.io"  # cspell:disable-line
 APPCONFIG_IO = ".appconfig.io"  # cspell:disable-line

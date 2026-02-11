@@ -16,7 +16,7 @@ from test_helpers import MockLegacyTransport
 
 class TestStorageTransports(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
         self.container_name = self.get_resource_name('utcontainer')
         if self.is_live:
             try:
@@ -34,7 +34,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name='container',
             blob_name='blob',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport,
             retry_total=0
         )
@@ -62,7 +62,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name='container',
             blob_name='blob',
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport,
             retry_total=0
         )
@@ -90,7 +90,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport
         )
 
@@ -117,7 +117,7 @@ class TestStorageTransports(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
             blob_name=self.get_resource_name('blob'),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             transport=transport
         )
 

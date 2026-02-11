@@ -3,3 +3,6 @@ pyright = false
 pylint = true
 bandit = true
 black = true
+
+[tool.azure-sdk-conda]
+in_bundle = false
