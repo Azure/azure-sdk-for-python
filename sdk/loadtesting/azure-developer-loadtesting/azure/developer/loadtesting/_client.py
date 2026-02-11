@@ -15,14 +15,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import LoadTestAdministrationClientConfiguration, LoadTestRunClientConfiguration
-from ._operations import LoadTestAdministrationClientOperationsMixin, LoadTestRunClientOperationsMixin
-from ._serialization import Deserializer, Serializer
+from ._operations import _LoadTestAdministrationClientOperationsMixin, _LoadTestRunClientOperationsMixin
+from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
+class LoadTestAdministrationClient(_LoadTestAdministrationClientOperationsMixin):
     """LoadTestAdministrationClient.
 
     :param endpoint: Required.
@@ -30,14 +30,17 @@ class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-12-01-preview". Note that overriding this default value may result in unsupported
+     "2025-11-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "https://{endpoint}"
         self._config = LoadTestAdministrationClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -98,7 +101,7 @@ class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
         self._client.__exit__(*exc_details)
 
 
-class LoadTestRunClient(LoadTestRunClientOperationsMixin):
+class LoadTestRunClient(_LoadTestRunClientOperationsMixin):
     """LoadTestRunClient.
 
     :param endpoint: Required.
@@ -106,14 +109,17 @@ class LoadTestRunClient(LoadTestRunClientOperationsMixin):
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-12-01-preview". Note that overriding this default value may result in unsupported
+     "2025-11-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         _endpoint = "https://{endpoint}"
         self._config = LoadTestRunClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [

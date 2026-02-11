@@ -38,5 +38,5 @@ LoadTestingPreparer = functools.partial(
     loadtesting_app_component_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.Web/sites/contoso-sampleapp",
     loadtesting_test_profile_id="some-test-profile-id",
     loadtesting_target_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.Web/sites/myFlexFunction",
-    loadtesting_test_profile_run_id="some-test-profile-run-id"
+    loadtesting_test_profile_run_id="some-test-profile-run-id",
 )

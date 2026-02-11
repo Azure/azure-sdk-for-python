@@ -16,7 +16,7 @@ class LoadTestingAsyncTest(AzureRecordedTestCase):
             credential=self.admin_credential,
             endpoint=endpoint,
         )
-        
+
         return self.admin_client
 
     def create_run_client(self, endpoint) -> LoadTestRunClient:
@@ -28,11 +28,11 @@ class LoadTestingAsyncTest(AzureRecordedTestCase):
         )
 
         return self.run_client
-    
+
     async def close_admin_client(self):
         await self.admin_credential.close()
         await self.admin_client.close()
-    
+
     async def close_run_client(self):
         await self.run_credential.close()
         await self.run_client.close()

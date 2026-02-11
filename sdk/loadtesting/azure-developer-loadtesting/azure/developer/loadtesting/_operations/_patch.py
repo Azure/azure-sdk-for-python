@@ -16,8 +16,8 @@ from azure.core.polling import PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import JSON
-from ._operations import LoadTestAdministrationClientOperationsMixin as GeneratedAdministrationClientOperations
-from ._operations import LoadTestRunClientOperationsMixin as GeneratedRunClientOperations
+from ._operations import _LoadTestAdministrationClientOperationsMixin as GeneratedAdministrationClientOperations
+from ._operations import _LoadTestRunClientOperationsMixin as GeneratedRunClientOperations
 
 from .. import models as _models
 

@@ -14,6 +14,7 @@ from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
 
 DISPLAY_NAME = "TestingResourcePyTest"
 
+
 class TestLoadTestAdministrationOperations(LoadTestingTest):
 
     @LoadTestingPreparer()
@@ -33,8 +34,18 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
                 },
                 "passFailCriteria": {
                     "passFailMetrics": {
-                        "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                        "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                        "condition1": {
+                            "clientmetric": "response_time_ms",
+                            "aggregate": "avg",
+                            "condition": ">",
+                            "value": 300,
+                        },
+                        "condition2": {
+                            "clientmetric": "error",
+                            "aggregate": "percentage",
+                            "condition": ">",
+                            "value": 50,
+                        },
                         "condition3": {
                             "clientmetric": "latency",
                             "aggregate": "avg",
@@ -46,7 +57,8 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
                 },
                 "secrets": {},
                 "environmentVariables": {"my-variable": "value"},
-        })
+            },
+        )
 
         assert result is not None
 
@@ -110,7 +122,8 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_create_or_update_app_components(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_app_component_id):
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_app_component_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -181,7 +194,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.delete_test_file(loadtesting_test_id, "sample.jmx")
         assert result is None
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_delete_load_test(self, loadtesting_endpoint, loadtesting_test_id):
@@ -190,6 +203,7 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.delete_test(loadtesting_test_id)
         assert result is None
+
 
 class TestTestProfileAdministrationOperations(LoadTestingTest):
 
@@ -211,8 +225,18 @@ class TestTestProfileAdministrationOperations(LoadTestingTest):
                 },
                 "passFailCriteria": {
                     "passFailMetrics": {
-                        "condition1": {"clientmetric": "response_time_ms", "aggregate": "avg", "condition": ">", "value": 300},
-                        "condition2": {"clientmetric": "error", "aggregate": "percentage", "condition": ">", "value": 50},
+                        "condition1": {
+                            "clientmetric": "response_time_ms",
+                            "aggregate": "avg",
+                            "condition": ">",
+                            "value": 300,
+                        },
+                        "condition2": {
+                            "clientmetric": "error",
+                            "aggregate": "percentage",
+                            "condition": ">",
+                            "value": 50,
+                        },
                         "condition3": {
                             "clientmetric": "latency",
                             "aggregate": "avg",
@@ -224,7 +248,8 @@ class TestTestProfileAdministrationOperations(LoadTestingTest):
                 },
                 "secrets": {},
                 "environmentVariables": {"my-variable": "value"},
-        })
+            },
+        )
 
         assert result is not None
 
@@ -239,7 +264,9 @@ class TestTestProfileAdministrationOperations(LoadTestingTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_create_or_update_test_profile(self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id):
+    def test_create_or_update_test_profile(
+        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id
+    ):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
@@ -253,20 +280,14 @@ class TestTestProfileAdministrationOperations(LoadTestingTest):
                 "targetResourceConfigurations": {
                     "kind": "FunctionsFlexConsumption",
                     "configurations": {
-                        "config1": {
-                            "instanceMemoryMB": 2048,
-                            "httpConcurrency": 20
-                        },
-                        "config2": {
-                            "instanceMemoryMB": 4096,
-                            "httpConcurrency": 100
-                        },
-                    }
-                }
+                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 20},
+                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 100},
+                    },
+                },
             },
         )
         assert result is not None
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_get_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
@@ -286,7 +307,7 @@ class TestTestProfileAdministrationOperations(LoadTestingTest):
         assert result is not None
         items = [r for r in result]
         assert len(items) > 0  # page has atleast one item
-    
+
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_delete_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
