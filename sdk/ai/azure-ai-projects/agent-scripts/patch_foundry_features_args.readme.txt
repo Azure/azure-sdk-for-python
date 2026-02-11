@@ -23,6 +23,9 @@ foundry_features = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.
 Do not modify any of the internal helper methods with names that start with "build_beta_".
 At the end, show a summary report of all the methods you edited, and which FoundryFeaturesOptInKeys
 value was used for each method.
+Once you are done updating the Python files, run the "black" tool in the following way to fix any
+format issues:
+black --config ../../../eng/black-pyproject.toml .
 To verify your result, run the mypy tool and make sure there are no errors originating
 from the package source file. This means that when you go to the folder:
 \azure-sdk-for-python\sdk\ai\azure-ai-projects\

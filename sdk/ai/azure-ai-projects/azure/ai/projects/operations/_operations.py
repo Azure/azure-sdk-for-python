@@ -5295,9 +5295,7 @@ class BetaEvaluationTaxonomiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, name: str, **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
+    def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
         """Get an evaluation run by name.
 
         :param name: The name of the resource. Required.
@@ -5306,7 +5304,9 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5360,11 +5360,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace
     def list(
-        self,
-        *,
-        input_name: Optional[str] = None,
-        input_type: Optional[str] = None,
-        **kwargs: Any
+        self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
     ) -> ItemPaged["_models.EvaluationTaxonomy"]:
         """List evaluation taxonomies.
 
@@ -5376,7 +5372,9 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5455,9 +5453,7 @@ class BetaEvaluationTaxonomiesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, name: str, **kwargs: Any
-    ) -> None:
+    def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete an evaluation taxonomy by name.
 
         :param name: The name of the resource. Required.
@@ -5466,7 +5462,9 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5508,12 +5506,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     def create(
-        self,
-        name: str,
-        body: _models.EvaluationTaxonomy,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5531,12 +5524,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     def create(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5554,12 +5542,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     def create(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5577,10 +5560,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace
     def create(
-        self,
-        name: str,
-        body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]],
-        **kwargs: Any
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Create an evaluation taxonomy.
 
@@ -5593,7 +5573,9 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5657,12 +5639,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     def update(
-        self,
-        name: str,
-        body: _models.EvaluationTaxonomy,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5680,12 +5657,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     def update(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5703,12 +5675,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @overload
     def update(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5726,10 +5693,7 @@ class BetaEvaluationTaxonomiesOperations:
 
     @distributed_trace
     def update(
-        self,
-        name: str,
-        body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]],
-        **kwargs: Any
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
@@ -5742,7 +5706,9 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5823,9 +5789,7 @@ class BetaEvaluationRulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, id: str, **kwargs: Any
-    ) -> _models.EvaluationRule:
+    def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
         """Get an evaluation rule.
 
         :param id: Unique identifier for the evaluation rule. Required.
@@ -5834,7 +5798,9 @@ class BetaEvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5887,9 +5853,7 @@ class BetaEvaluationRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, id: str, **kwargs: Any
-    ) -> None:
+    def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete an evaluation rule.
 
         :param id: Unique identifier for the evaluation rule. Required.
@@ -5898,7 +5862,9 @@ class BetaEvaluationRulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5940,12 +5906,7 @@ class BetaEvaluationRulesOperations:
 
     @overload
     def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: _models.EvaluationRule,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -5963,12 +5924,7 @@ class BetaEvaluationRulesOperations:
 
     @overload
     def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -5986,12 +5942,7 @@ class BetaEvaluationRulesOperations:
 
     @overload
     def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -6009,10 +5960,7 @@ class BetaEvaluationRulesOperations:
 
     @distributed_trace
     def create_or_update(
-        self,
-        id: str,
-        evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]],
-        **kwargs: Any
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -6025,7 +5973,9 @@ class BetaEvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6109,7 +6059,9 @@ class BetaEvaluationRulesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6230,7 +6182,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6330,7 +6284,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6409,12 +6365,7 @@ class BetaEvaluatorsOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_version(
-        self,
-        name: str,
-        version: str,
-        **kwargs: Any
-    ) -> _models.EvaluatorVersion:
+    def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
         the EvaluatorVersion does not exist.
 
@@ -6426,7 +6377,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6481,10 +6434,7 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace
     def delete_version(  # pylint: disable=inconsistent-return-statements
-        self,
-        name: str,
-        version: str,
-        **kwargs: Any
+        self, name: str, version: str, **kwargs: Any
     ) -> None:
         """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
         EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
@@ -6497,7 +6447,9 @@ class BetaEvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6563,12 +6515,7 @@ class BetaEvaluatorsOperations:
 
     @overload
     def create_version(
-        self,
-        name: str,
-        evaluator_version: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
@@ -6586,12 +6533,7 @@ class BetaEvaluatorsOperations:
 
     @overload
     def create_version(
-        self,
-        name: str,
-        evaluator_version: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
@@ -6609,10 +6551,7 @@ class BetaEvaluatorsOperations:
 
     @distributed_trace
     def create_version(
-        self,
-        name: str,
-        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
-        **kwargs: Any
+        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Create a new EvaluatorVersion with auto incremented version id.
 
@@ -6625,7 +6564,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6715,13 +6656,7 @@ class BetaEvaluatorsOperations:
 
     @overload
     def update_version(
-        self,
-        name: str,
-        version: str,
-        evaluator_version: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluatorVersion:
         """Update an existing EvaluatorVersion with the given version id.
 
@@ -6786,7 +6721,9 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6869,11 +6806,7 @@ class BetaInsightsOperations:
 
     @overload
     def generate(
-        self,
-        insight: _models.Insight,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, insight: _models.Insight, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Insight:
         """Generate Insights.
 
@@ -6889,13 +6822,7 @@ class BetaInsightsOperations:
         """
 
     @overload
-    def generate(
-        self,
-        insight: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Insight:
+    def generate(self, insight: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
@@ -6910,13 +6837,7 @@ class BetaInsightsOperations:
         """
 
     @overload
-    def generate(
-        self,
-        insight: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Insight:
+    def generate(self, insight: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
@@ -6931,11 +6852,7 @@ class BetaInsightsOperations:
         """
 
     @distributed_trace
-    def generate(
-        self,
-        insight: Union[_models.Insight, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Insight:
+    def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
         """Generate Insights.
 
         :param insight: Complete evaluation configuration including data source, evaluators, and result
@@ -6945,7 +6862,9 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7007,13 +6926,7 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(
-        self,
-        id: str,
-        *,
-        include_coordinates: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.Insight:
+    def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
         """Get a specific insight by Id.
 
         :param id: The unique identifier for the insights report. Required.
@@ -7025,7 +6938,9 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7107,7 +7022,9 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7238,11 +7155,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def create(
-        self,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
@@ -7258,11 +7171,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def create(
-        self,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
@@ -7304,7 +7213,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7405,12 +7316,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def update(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
@@ -7428,12 +7334,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def update(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
@@ -7474,7 +7375,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7544,9 +7447,7 @@ class BetaMemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(
-        self, name: str, **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
+    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
@@ -7555,7 +7456,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7640,7 +7543,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7701,9 +7606,7 @@ class BetaMemoryStoresOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete(
-        self, name: str, **kwargs: Any
-    ) -> _models.DeleteMemoryStoreResult:
+    def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
 
         :param name: The name of the memory store to delete. Required.
@@ -7712,7 +7615,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7804,12 +7709,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def search_memories(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
@@ -7827,12 +7727,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def search_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
@@ -7880,7 +7775,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8056,21 +7953,11 @@ class BetaMemoryStoresOperations:
     ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     def _begin_update_memories(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
     def _begin_update_memories(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace
@@ -8111,7 +7998,9 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -8175,12 +8064,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def delete_scope(
-        self,
-        name: str,
-        *,
-        scope: str,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -8200,12 +8084,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def delete_scope(
-        self,
-        name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -8224,12 +8103,7 @@ class BetaMemoryStoresOperations:
 
     @overload
     def delete_scope(
-        self,
-        name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -8248,12 +8122,7 @@ class BetaMemoryStoresOperations:
 
     @distributed_trace
     def delete_scope(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        scope: str = _Unset,
-        **kwargs: Any
+        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
         """Delete all memories associated with a specific scope from a memory store.
 
@@ -8269,7 +8138,9 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8359,9 +8230,7 @@ class BetaRedTeamsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, name: str, **kwargs: Any
-    ) -> _models.RedTeam:
+    def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
         :param name: Identifier of the red team run. Required.
@@ -8370,7 +8239,9 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8423,16 +8294,16 @@ class BetaRedTeamsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(
-        self, **kwargs: Any
-    ) -> ItemPaged["_models.RedTeam"]:
+    def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
         """List a redteam by name.
 
         :return: An iterator like instance of RedTeam
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8510,11 +8381,7 @@ class BetaRedTeamsOperations:
 
     @overload
     def create(
-        self,
-        red_team: _models.RedTeam,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.RedTeam:
         """Creates a redteam run.
 
@@ -8529,13 +8396,7 @@ class BetaRedTeamsOperations:
         """
 
     @overload
-    def create(
-        self,
-        red_team: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RedTeam:
+    def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
@@ -8549,13 +8410,7 @@ class BetaRedTeamsOperations:
         """
 
     @overload
-    def create(
-        self,
-        red_team: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RedTeam:
+    def create(self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Required.
@@ -8569,11 +8424,7 @@ class BetaRedTeamsOperations:
         """
 
     @distributed_trace
-    def create(
-        self,
-        red_team: Union[_models.RedTeam, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.RedTeam:
+    def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
         :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
@@ -8583,7 +8434,9 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8667,9 +8520,7 @@ class BetaSchedulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
-        self, id: str, **kwargs: Any
-    ) -> None:
+    def delete(self, id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a schedule.
 
         :param id: Identifier of the schedule. Required.
@@ -8678,7 +8529,9 @@ class BetaSchedulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8719,9 +8572,7 @@ class BetaSchedulesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get(
-        self, id: str, **kwargs: Any
-    ) -> _models.Schedule:
+    def get(self, id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
 
         :param id: Identifier of the schedule. Required.
@@ -8730,7 +8581,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8801,7 +8654,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8881,12 +8736,7 @@ class BetaSchedulesOperations:
 
     @overload
     def create_or_update(
-        self,
-        id: str,
-        resource: _models.Schedule,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, resource: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -8904,12 +8754,7 @@ class BetaSchedulesOperations:
 
     @overload
     def create_or_update(
-        self,
-        id: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -8927,12 +8772,7 @@ class BetaSchedulesOperations:
 
     @overload
     def create_or_update(
-        self,
-        id: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, id: str, resource: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -8950,10 +8790,7 @@ class BetaSchedulesOperations:
 
     @distributed_trace
     def create_or_update(
-        self,
-        id: str,
-        resource: Union[_models.Schedule, JSON, IO[bytes]],
-        **kwargs: Any
+        self, id: str, resource: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
         """Create or update operation template.
 
@@ -8966,7 +8803,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -9029,12 +8868,7 @@ class BetaSchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_run(
-        self,
-        schedule_id: str,
-        run_id: str,
-        **kwargs: Any
-    ) -> _models.ScheduleRun:
+    def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
         """Get a schedule run by id.
 
         :param schedule_id: The unique identifier of the schedule. Required.
@@ -9045,7 +8879,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -9124,7 +8960,9 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
