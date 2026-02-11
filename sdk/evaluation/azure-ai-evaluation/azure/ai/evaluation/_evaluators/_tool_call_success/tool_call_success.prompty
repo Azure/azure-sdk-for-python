@@ -49,7 +49,7 @@ EVALUATION FRAMEWORK
 ====================
 
 A. Iterate on the list of tool calls
-B. Examine tool result and definition for the tool being called to check whether the call **succeeded** or **failed** as in the following steps explain:
+B. Examine tool result and definition for the tool being called to check whether the call **succeeded** or **failed** as the following steps explain:
   1. A tool result is **failed** if **any** of the following ERROR-CASES applies to it:
     ERROR-CASES:
     ===========
@@ -60,8 +60,8 @@ B. Examine tool result and definition for the tool being called to check whether
     - The tool timed-out or returned a result that indicate a time-out
     - The tool result is null or empty while the tool definition , if present, or tool name implies that it cannot return empty result
   2. If none of the error cases apply to the tool result , it is considered **succeeded** even if the tool result itself indicates an implementation mistake
-  3. If the same tool is called more than once with same parameters and suceeded at least one time , consider all its calls as success 
-C. If one or more tool result are **failed** , then you the **evaluation process** has **failed**, otherwise , the **evaluation process** has **succeeded**
+  3. If the same tool is called more than once with same parameters and succeeded at least one time , consider all its calls as success 
+C. If one or more tool results are **failed** , then the **evaluation process** has **failed**, otherwise , the **evaluation process** has **succeeded**
 D. You are required to return your **output** in the following format:
   {
     "explanation": "<15-60 words explaining the logic flow of your decision>",
@@ -88,9 +88,9 @@ EXPECTED OUTPUT
 {
   "explanation": "None of the results indicate an error",
   "details": {
-    "failed_tools": "",
+    "failed_tools": ""
   },
-  "success": True
+  "success": true
 }
 
 
@@ -104,9 +104,9 @@ EXPECTED OUTPUT
 {
   "explanation": "None of the results indicate an error",
   "details": {
-    "failed_tools": "",
+    "failed_tools": ""
   },
-  "success": True
+  "success": true
 }
 
 ### Example - Succeeded
@@ -120,9 +120,9 @@ EXPECTED OUTPUT
 {
   "explanation": "Although the returned value 7 is not the square root of 4, this is a business mistake in the tool. The tool did not return a result indicating a technical error",
   "details": {
-    "failed_tools": "",
+    "failed_tools": ""
   },
-  "success": True
+  "success": true
 }
 
 
@@ -137,9 +137,9 @@ EXPECTED OUTPUT
 {
   "explanation": "The tool returned a semicolon separated list of names. Although the description in the definition says it should return comma-separated list , this formatting mistake is a business mistake of the tool, not a technical failure. The tool did not return an error",
   "details": {
-    "failed_tools": "",
+    "failed_tools": ""
   },
-  "success": True
+  "success": true
 }
 
 
@@ -155,9 +155,9 @@ EXPECTED OUTPUT
 {
   "explanation": "The tool returned empty response which is accepted given that this tool functionality does not include returning data to the caller",
   "details": {
-    "failed_tools": "",
+    "failed_tools": ""
   },
-  "success": True
+  "success": true
 }
 
 
@@ -166,7 +166,7 @@ EXPECTED OUTPUT
 
 ### Example - Failed
 
-[TOOL_DEFINITIONS] [get_weather_info] return today's the weather information of the specified city 
+[TOOL_DEFINITIONS] [get_weather_info] return today's weather information of the specified city 
 [TOOL_CALLS]
 [TOOL_CALL] get_weather_info(city:"London")
 [TOOL_RESULT] ""
@@ -175,9 +175,9 @@ EXPECTED OUTPUT
 {
   "explanation": "The tool returned empty response , however , given the tool definition , it should never return empty response because there should be weather info at any given point in time. An empty response here is considered a technical failure. The conclusion is the get_weather_info failed",
   "details": {
-    "failed_tools": "get_weather_info",
+    "failed_tools": "get_weather_info"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -191,9 +191,9 @@ EXPECTED OUTPUT
 {
   "explanation": "The tool returned a string indicating that it failed",
   "details": {
-    "failed_tools": "get_current_user_Info",
+    "failed_tools": "get_current_user_Info"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -207,9 +207,9 @@ EXPECTED OUTPUT
 {
   "explanation": "The tool returned an object with empty fields and a string indicating that it failed",
   "details": {
-    "failed_tools": "get_current_user_Info",
+    "failed_tools": "get_current_user_Info"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -223,9 +223,9 @@ EXPECTED OUTPUT
 {
   "explanation": "The call for GetWeatherInfo returned an object containing single property 'temp' that is an empty string. This means the call to GetWeatherInfo returned empty result while weather info should be available at any time",
   "details": {
-    "failed_tools": "GetWeatherInfo",
+    "failed_tools": "GetWeatherInfo"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -239,9 +239,9 @@ EXPECTED OUTPUT
 {
   "explanation": "the returned result indicates that the call to get_day_of_week timed out",
   "details": {
-    "failed_tools": "get_day_of_week",
+    "failed_tools": "get_day_of_week"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -256,9 +256,9 @@ EXPECTED OUTPUT
 {
   "explanation": "null indicates an empty result which cannot be an accepted output of the tool given the tool definition since any given date represents a day of week",
   "details": {
-    "failed_tools": "get_day_of_week",
+    "failed_tools": "get_day_of_week"
   },
-  "success": False
+  "success": false
 } 
 
 
@@ -273,9 +273,9 @@ EXPECTED OUTPUT
 {
   "explanation": "Empty object cannot be an accepted output of the tool given the tool definition since any given date should represent a day of week",
   "details": {
-    "failed_tools": "get_day_of_week",
+    "failed_tools": "get_day_of_week"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -291,9 +291,9 @@ EXPECTED OUTPUT
 {
   "explanation": "GetWeatherInfo returned an empty response while it should return the weather info and BookTicket returned an error.Both tools failed.",
   "details": {
-    "failed_tools": "GetWeatherInfo,BookTicket",
+    "failed_tools": "GetWeatherInfo,BookTicket"
   },
-  "success": False
+  "success": false
 }
 
 
@@ -309,9 +309,9 @@ EXPECTED OUTPUT
 {
   "explanation": "Although GetWeatherInfo succeeded, BookTicket returned an error. The final result is failure because one of the tool calls has failed",
   "details": {
-    "failed_tools": "BookTicket",
+    "failed_tools": "BookTicket"
   },
-  "success": False
+  "success": false
 }
 
 
