@@ -88,14 +88,17 @@ def extract_cert_chain(pem_bytes: bytes) -> bytes:
     return b"".join(chain.splitlines())
 
 
-_Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes)])
+_Cert = NamedTuple(
+    "_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes), ("sha256_fingerprint", bytes)]
+)
 
 
 def load_pem_certificate(certificate_data: bytes, password: Optional[bytes] = None) -> _Cert:
     private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
-    return _Cert(certificate_data, private_key, fingerprint)
+    sha256_fingerprint = cert.fingerprint(hashes.SHA256())
+    return _Cert(certificate_data, private_key, fingerprint, sha256_fingerprint)
 
 
 def load_pkcs12_certificate(certificate_data: bytes, password: Optional[bytes] = None) -> _Cert:
@@ -121,8 +124,9 @@ def load_pkcs12_certificate(certificate_data: bytes, password: Optional[bytes] =
     pem_bytes = b"".join(pem_sections)
 
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
+    sha256_fingerprint = cert.fingerprint(hashes.SHA256())
 
-    return _Cert(pem_bytes, private_key, fingerprint)
+    return _Cert(pem_bytes, private_key, fingerprint, sha256_fingerprint)
 
 
 def get_client_credential(
@@ -166,7 +170,11 @@ def get_client_credential(
     if not isinstance(cert.private_key, RSAPrivateKey):
         raise ValueError("The certificate must have an RSA private key because RS256 is used for signing")
 
-    client_credential = {"private_key": cert.pem_bytes, "thumbprint": hexlify(cert.fingerprint).decode("utf-8")}
+    client_credential = {
+        "private_key": cert.pem_bytes,
+        "thumbprint": hexlify(cert.fingerprint).decode("utf-8"),
+        "sha256_thumbprint": hexlify(cert.sha256_fingerprint).decode("utf-8"),
+    }
     if password:
         client_credential["passphrase"] = password
 

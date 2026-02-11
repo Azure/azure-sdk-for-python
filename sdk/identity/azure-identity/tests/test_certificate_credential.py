@@ -10,7 +10,7 @@ from azure.core.pipeline.policies import ContentDecodePolicy, SansIOHTTPPolicy
 from azure.identity import CertificateCredential, TokenCachePersistenceOptions
 from azure.identity._enums import RegionalAuthority
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.certificate import load_pkcs12_certificate
+from azure.identity._credentials.certificate import get_client_credential, load_pkcs12_certificate
 from azure.identity._internal.user_agent import USER_AGENT
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -48,6 +48,27 @@ ALL_CERTS = (
 )
 
 EC_CERT_PATH = os.path.join(os.path.dirname(__file__), "ec-certificate.pem")
+
+
+@pytest.mark.parametrize("cert_path, cert_password", ALL_CERTS)
+def test_get_client_credential_includes_sha256_thumbprint(cert_path, cert_password):
+    client_credential = get_client_credential(certificate_path=cert_path, password=cert_password)
+
+    assert "sha256_thumbprint" in client_credential
+
+    with open(cert_path, "rb") as f:
+        cert_bytes = f.read()
+
+    if b"-----BEGIN" in cert_bytes:
+        cert = x509.load_pem_x509_certificate(cert_bytes, default_backend())
+    else:
+        from cryptography.hazmat.primitives.serialization import pkcs12
+
+        pw = cert_password.encode("utf-8") if isinstance(cert_password, str) else cert_password
+        _, cert, _ = pkcs12.load_key_and_certificates(cert_bytes, pw, backend=default_backend())
+
+    expected_sha256 = cert.fingerprint(hashes.SHA256()).hex()
+    assert client_credential["sha256_thumbprint"] == expected_sha256
 
 
 def test_non_rsa_key():
