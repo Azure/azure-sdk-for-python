@@ -13,8 +13,10 @@ from azure.core.exceptions import HttpResponseError
 
 from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
 from ._models import IndexAction
-from ._enums import IndexActionType
+from ._enums import IndexActionType, ScoringStatistics
 
+# Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
+ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM  # type: ignore[attr-defined]
 
 def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
     """Flatten variadic arguments into a single list of documents.
@@ -204,6 +206,7 @@ IndexDocumentsBatch.__module__ = "azure.search.documents"
 
 __all__: list[str] = [
     "IndexDocumentsBatch",
+    "ScoringStatistics",
 ]  # Add all objects you want publicly available to users at this package level
 
 
