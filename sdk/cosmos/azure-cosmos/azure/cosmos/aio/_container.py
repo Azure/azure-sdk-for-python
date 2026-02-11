@@ -42,7 +42,7 @@ from .._base import (_build_properties_cache, _deserialize_throughput, _replace_
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 
-from .._cosmos_responses import CosmosDict, CosmosList
+from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .._constants import _Constants as Constants, TimeoutScope
 from .._routing.routing_range import Range
 from .._session_token_helpers import get_latest_session_token
@@ -548,7 +548,7 @@ class ContainerProxy:
             throughput_bucket: Optional[int] = None,
             availability_strategy_config: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -594,7 +594,7 @@ class ContainerProxy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -634,7 +634,7 @@ class ContainerProxy:
             throughput_bucket: Optional[int] = None,
             availability_strategy_config: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -677,7 +677,7 @@ class ContainerProxy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -716,7 +716,7 @@ class ContainerProxy:
             throughput_bucket: Optional[int] = None,
             availability_strategy_config: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -758,7 +758,7 @@ class ContainerProxy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[Dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 
@@ -783,7 +783,7 @@ class ContainerProxy:
         self,
         *args: Any,
         **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Return all results matching the given `query`.
 
         You can use any value for the container name in the FROM clause, but
@@ -833,7 +833,7 @@ class ContainerProxy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
-        :rtype: AsyncItemPaged[dict[str, Any]]
+        :rtype: CosmosAsyncItemPaged
 
         .. admonition:: Example:
 

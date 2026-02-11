@@ -55,7 +55,7 @@ from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
-from .._cosmos_responses import CosmosDict, CosmosList
+from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
@@ -2353,7 +2353,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key: Optional[PartitionKeyType] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
+    ) -> CosmosAsyncItemPaged:
         """Queries documents in a collection.
 
         :param str database_or_container_link:
@@ -2375,7 +2375,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options = {}
 
         if base.IsDatabaseLink(database_or_container_link):
-            return AsyncItemPaged(
+            return CosmosAsyncItemPaged(
                 self,
                 query,
                 options,
@@ -2386,6 +2386,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(database_or_container_link, http_constants.ResourceType.Document)
         collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
+
+        # Create shared list for thread-safe header capture
+        response_headers_list: list[CaseInsensitiveDict] = []
 
         async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
             await kwargs["containerProperties"](options)
@@ -2401,12 +2404,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     query,
                     new_options,
                     response_hook=response_hook,
+                    response_headers_list=response_headers_list,
                     **kwargs
                 ),
                 self.last_response_headers,
             )
 
-        return AsyncItemPaged(
+        return CosmosAsyncItemPaged(
             self,
             query,
             options,
@@ -2415,7 +2419,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             page_iterator_class=query_iterable.QueryIterable,
             response_hook=response_hook,
             raw_response_hook=kwargs.get('raw_response_hook'),
-            resource_type=http_constants.ResourceType.Document
+            resource_type=http_constants.ResourceType.Document,
+            response_headers_list=response_headers_list
         )
 
     def QueryItemsChangeFeed(
@@ -2975,6 +2980,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         partition_key_range_id: Optional[str] = None,
         response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
         is_query_plan: bool = False,
+        response_headers_list: Optional[list[CaseInsensitiveDict]] = None,
         **kwargs: Any
     ) -> list[dict[str, Any]]:
         """Query for more than one Azure Cosmos resources.
@@ -2993,6 +2999,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         :type response_hook: Callable[[Mapping[str, Any], dict[str, Any]], None]
         :param bool is_query_plan:
             Specifies if the call is to fetch query plan
+        :param response_headers_list: Optional list to capture response headers from each page fetch.
+        :type response_headers_list: Optional[list[CaseInsensitiveDict]]
         :returns: A list of the queried resources.
         :rtype: list
         :raises SystemError: If the query compatibility mode is undefined.
@@ -3063,6 +3071,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             result, last_response_headers = await self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
             self._UpdateSessionIfRequired(headers, result, last_response_headers)
+            if response_headers_list is not None:
+                response_headers_list.append(last_response_headers.copy())
             if response_hook:
                 response_hook(self.last_response_headers, result)
             return __GetBodiesFromQueryResult(result)
@@ -3161,6 +3171,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     else:
                         results = partial_result
 
+                if response_headers_list is not None:
+                    response_headers_list.append(last_response_headers.copy())
                 if response_hook:
                     response_hook(self.last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
@@ -3176,6 +3188,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if response_headers_list is not None:
+            response_headers_list.append(last_response_headers.copy())
         if response_hook:
             response_hook(self.last_response_headers, result)
 
