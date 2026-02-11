@@ -40,7 +40,7 @@ def test_remove_hitl_messages_keeps_latest_function_result(helper: HumanInTheLoo
         ChatMessage(role="assistant", contents=[follow_up_content]),
     ]
 
-    filtered = helper.remove_hitl_messages_from_conversation_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_thread(thread_messages)
 
     assert len(filtered) == 3
     assert filtered[0].role == ChatRole.ASSISTANT
@@ -70,7 +70,7 @@ def test_remove_hitl_messages_keeps_the_function_result(helper: HumanInTheLoopHe
         ChatMessage(role="assistant", contents=[follow_up_content]),
     ]
 
-    filtered = helper.remove_hitl_messages_from_conversation_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_thread(thread_messages)
 
     assert len(filtered) == 3
     assert filtered[0].role == ChatRole.ASSISTANT
@@ -98,7 +98,7 @@ def test_remove_hitl_messages_skips_orphaned_hitl_results(helper: HumanInTheLoop
         ChatMessage(role="user", contents=[user_update]),
     ]
 
-    filtered = helper.remove_hitl_messages_from_conversation_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_thread(thread_messages)
 
     assert len(filtered) == 1
     assert len(filtered[0].contents) == 1
@@ -115,7 +115,7 @@ def test_remove_hitl_messages_preserves_regular_tool_cycle(helper: HumanInTheLoo
         ChatMessage(role="tool", contents=[result_content]),
     ]
 
-    filtered = helper.remove_hitl_messages_from_conversation_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_thread(thread_messages)
 
     assert len(filtered) == 2
     assert len(filtered[0].contents) == 1
