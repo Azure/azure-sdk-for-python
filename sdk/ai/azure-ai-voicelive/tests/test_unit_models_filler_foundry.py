@@ -6,7 +6,8 @@
 
 """
 Unit tests for FillerResponseConfig, ReasoningEffort, and ServerEventWarning models.
-Tests the filler response feature and warning events.
+Tests the filler response feature, warning events, and Foundry tool/call model behavior
+(including sessions and responses that use Foundry models and tools).
 """
 
 import pytest
