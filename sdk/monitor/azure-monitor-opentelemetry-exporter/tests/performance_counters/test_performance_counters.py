@@ -14,7 +14,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
 )
 from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import ReadableSpan
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
@@ -570,7 +570,7 @@ class TestPerformanceCountersManager(unittest.TestCase):
         mock_log_record = MagicMock()
         mock_log_record.attributes = {EXCEPTION_TYPE: "ValueError", EXCEPTION_MESSAGE: "Test exception"}
 
-        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
+        mock_readable_log_record = MagicMock(spec=ReadWriteLogRecord)
         mock_readable_log_record.log_record = mock_log_record
 
         # Import to access global counter
@@ -591,7 +591,7 @@ class TestPerformanceCountersManager(unittest.TestCase):
         mock_log_record = MagicMock()
         mock_log_record.attributes = {"normal": "attribute"}
 
-        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
+        mock_readable_log_record = MagicMock(spec=ReadWriteLogRecord)
         mock_readable_log_record.log_record = mock_log_record
 
         # Import to access global counter

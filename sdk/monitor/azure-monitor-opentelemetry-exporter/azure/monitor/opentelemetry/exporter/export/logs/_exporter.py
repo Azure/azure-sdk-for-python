@@ -25,7 +25,7 @@ try:
         enduser_attributes as _enduser_attributes,
     )
 except ImportError:
-    _enduser_attributes = None
+    _enduser_attributes = None  # type: ignore
 
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -85,7 +85,7 @@ class AzureMonitorLogExporter(BaseExporter, LogRecordExporter):
         :param batch: OpenTelemetry ReadableLogRecord(s) to export.
         :type batch: ~typing.Sequence[~opentelemetry._logs.ReadableLogRecord]
         :return: The result of the export.
-        :rtype: ~opentelemetry.sdk._logs.export.ReadableLogRecord
+        :rtype: ~opentelemetry.sdk._logs.export.LogRecordExportResult
         """
         envelopes = [self._log_to_envelope(log) for log in batch]
         try:
@@ -150,9 +150,9 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
     tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)  # type: ignore
     if log_record.attributes and _ENDUSER_ID_ATTRIBUTE in log_record.attributes:
-        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[_ENDUSER_ID_ATTRIBUTE]
+        tags[ContextTagKeys.AI_USER_AUTH_USER_ID] = log_record.attributes[_ENDUSER_ID_ATTRIBUTE]  # type: ignore
     if log_record.attributes and _ENDUSER_PSEUDO_ID_ATTRIBUTE in log_record.attributes:
-        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]
+        tags[ContextTagKeys.AI_USER_ID] = log_record.attributes[_ENDUSER_PSEUDO_ID_ATTRIBUTE]  # type: ignore
 
     tags[ContextTagKeys.AI_OPERATION_PARENT_ID] = "{:016x}".format(  # type: ignore
         log_record.span_id or _DEFAULT_SPAN_ID
@@ -228,9 +228,10 @@ def _convert_log_to_envelope(readable_log_record: ReadableLogRecord) -> Telemetr
             severity_level=severity_level,  # type: ignore
             properties=properties,
         )
-        data.message = data.message.strip()
-        if len(data.message) == 0:
-            data.message = _DEFAULT_LOG_MESSAGE
+        if hasattr(data, "message"):
+            data.message = data.message.strip()
+            if len(data.message) == 0:
+                data.message = _DEFAULT_LOG_MESSAGE
         envelope.data = MonitorBase(base_data=data, base_type="MessageData")
 
     return envelope
