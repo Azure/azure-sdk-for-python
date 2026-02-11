@@ -870,7 +870,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
         try:
-            headers, raw_response_body = self._client.blob.query(**options)
+            headers, raw_response_body = self._client.block_blob.query(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         return BlobQueryReader(
