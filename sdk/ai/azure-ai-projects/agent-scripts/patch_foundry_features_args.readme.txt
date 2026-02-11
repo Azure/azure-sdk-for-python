@@ -1,12 +1,18 @@
 These are the GitHub CoPilot instructions used to edit emitted code, in order to set the
 required Foundry-Features HTTP request header in preview operations. Before running the Agent,
-make sure your package souces code (files under \sdk\ai\azure-ai-projects\azure) do not have any
+make sure your package sources code (files under \sdk\ai\azure-ai-projects\azure) do not have any
 mypy errors.
+
+The agent created the Python script "patch_foundry_features_args.py" in this folder. Next time
+you re-emit from TypeSpec, try running that script from the \sdk\ai\azure-ai-projects folder
+and see if again it did the job correctly.
 
 Last updated: 2/11/2026
 
+-----------------------------
+
 I would like you to create a Python script named "patch_foundry_features_args.py" that you will
-run to do the work described below. Save the the script to the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects.
+run to do the work described below. Save the script to the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects.
 The work that needs to be done is the following:
 Edit these two Python source files, and only these two:
 \sdk\ai\azure-ai-projects\azure\ai\projects\aio\operations\_operations.py and
