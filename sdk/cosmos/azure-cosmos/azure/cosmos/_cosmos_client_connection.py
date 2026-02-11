@@ -3274,7 +3274,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
             if response_headers_list is not None:
-                response_headers_list.append(CaseInsensitiveDict(last_response_headers))
+                response_headers_list.append(last_response_headers.copy())
             if response_hook:
                 response_hook(last_response_headers, result)
             return __GetBodiesFromQueryResult(result), last_response_headers
@@ -3374,7 +3374,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     else:
                         results = partial_result
                 if response_headers_list is not None:
-                    response_headers_list.append(CaseInsensitiveDict(last_response_headers))
+                    response_headers_list.append(last_response_headers.copy())
                 if response_hook:
                     response_hook(last_response_headers, partial_result)
             # if the prefix partition query has results lets return it
@@ -3389,7 +3389,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             index_metrics_raw = last_response_headers[INDEX_METRICS_HEADER]
             last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
         if response_headers_list is not None:
-            response_headers_list.append(CaseInsensitiveDict(last_response_headers))
+            response_headers_list.append(last_response_headers.copy())
         if response_hook:
             response_hook(last_response_headers, result)
 
