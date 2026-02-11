@@ -130,8 +130,12 @@ def _extract_source_modified_access_conditions(
 ) -> None:
     """Extract SourceModifiedAccessConditions fields into kwargs if not already set."""
     if source_modified_access_conditions is not None:
-        _set_if_not_none(kwargs, "source_if_modified_since", source_modified_access_conditions.get("source_if_modified_since"))
-        _set_if_not_none(kwargs, "source_if_unmodified_since", source_modified_access_conditions.get("source_if_unmodified_since"))
+        _set_if_not_none(
+            kwargs, "source_if_modified_since", source_modified_access_conditions.get("source_if_modified_since")
+        )
+        _set_if_not_none(
+            kwargs, "source_if_unmodified_since", source_modified_access_conditions.get("source_if_unmodified_since")
+        )
         _set_if_not_none(kwargs, "source_if_tags", source_modified_access_conditions.get("source_if_tags"))
         # Pass source_if_match and source_if_none_match directly (they are used as-is in the generated code)
         _set_if_not_none(kwargs, "source_if_match", source_modified_access_conditions.get("source_if_match"))
@@ -155,9 +159,19 @@ def _extract_sequence_number_access_conditions(
 ) -> None:
     """Extract SequenceNumberAccessConditions fields into kwargs if not already set."""
     if sequence_number_access_conditions is not None:
-        _set_if_not_none(kwargs, "if_sequence_number_less_than_or_equal_to", sequence_number_access_conditions.get("if_sequence_number_less_than_or_equal_to"))
-        _set_if_not_none(kwargs, "if_sequence_number_less_than", sequence_number_access_conditions.get("if_sequence_number_less_than"))
-        _set_if_not_none(kwargs, "if_sequence_number_equal_to", sequence_number_access_conditions.get("if_sequence_number_equal_to"))
+        _set_if_not_none(
+            kwargs,
+            "if_sequence_number_less_than_or_equal_to",
+            sequence_number_access_conditions.get("if_sequence_number_less_than_or_equal_to"),
+        )
+        _set_if_not_none(
+            kwargs,
+            "if_sequence_number_less_than",
+            sequence_number_access_conditions.get("if_sequence_number_less_than"),
+        )
+        _set_if_not_none(
+            kwargs, "if_sequence_number_equal_to", sequence_number_access_conditions.get("if_sequence_number_equal_to")
+        )
 
 
 def _extract_append_position_access_conditions(
@@ -177,7 +191,11 @@ def _extract_container_cpk_scope_info(
     """Extract ContainerCpkScopeInfo fields into kwargs if not already set."""
     if container_cpk_scope_info is not None:
         _set_if_not_none(kwargs, "default_encryption_scope", container_cpk_scope_info.get("default_encryption_scope"))
-        _set_if_not_none(kwargs, "prevent_encryption_scope_override", container_cpk_scope_info.get("prevent_encryption_scope_override"))
+        _set_if_not_none(
+            kwargs,
+            "prevent_encryption_scope_override",
+            container_cpk_scope_info.get("prevent_encryption_scope_override"),
+        )
 
 
 def _extract_blob_modified_access_conditions(
@@ -238,6 +256,7 @@ from ._operations import _PageBlobClientOperationsMixin as _PageBlobClientOperat
 from ._operations import _AppendBlobClientOperationsMixin as _AppendBlobClientOperationsMixinGenerated
 from ._operations import _BlockBlobClientOperationsMixin as _BlockBlobClientOperationsMixinGenerated
 
+
 class _ParameterGroupExtractionMixin:
     """Mixin that intercepts method calls to extract parameter groups from kwargs."""
 
@@ -289,6 +308,7 @@ class _BlockBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _BlockBlob
 
     pass
 
+
 __all__: list[str] = [
     "_ServiceClientOperationsMixin",
     "_ContainerClientOperationsMixin",
@@ -297,6 +317,7 @@ __all__: list[str] = [
     "_AppendBlobClientOperationsMixin",
     "_BlockBlobClientOperationsMixin",
 ]
+
 
 def patch_sdk():
     """Do not remove from this file.
