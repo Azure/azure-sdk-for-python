@@ -352,8 +352,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            return self.list_indexes_with_selected_properties(select=select, **kwargs)
-        return self._list_indexes(**kwargs)
+            return cast(
+                AsyncItemPaged[Union[_models.SearchIndex, _models.SearchIndexResponse]],
+                self.list_indexes_with_selected_properties(select=select, **kwargs),
+            )
+        return cast(
+            AsyncItemPaged[Union[_models.SearchIndex, _models.SearchIndexResponse]],
+            self._list_indexes(**kwargs),
+        )
 
     @distributed_trace
     def list_index_names(self, **kwargs: Any) -> AsyncItemPaged[str]:
