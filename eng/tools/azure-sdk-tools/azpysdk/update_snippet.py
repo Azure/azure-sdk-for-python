@@ -3,6 +3,7 @@ import os
 import re
 import sys
 from pathlib import Path
+import subprocess
 
 from typing import Optional, List, Dict
 
@@ -162,7 +163,12 @@ class update_snippet(Check):
 
             # Run black on sample files before extracting snippets
             if not args.no_black:
-                self._run_black(pkg_dir, pkg_name, args)
+                if not self._run_black(pkg_dir, pkg_name, args):
+                    logger.error(
+                        f"Black formatting failed for {pkg_name}, skipping snippet update. Run `azpysdk update_snippet .` locally from the package root to format samples and update snippets."
+                    )
+                    results.append(1)
+                    continue
 
             logger.info(f"Found {len(snippets)} snippet(s) for {pkg_name}.")
 
@@ -192,7 +198,9 @@ class update_snippet(Check):
 
         return max(results) if results else 0
 
-    def _run_black(self, pkg_dir: str, pkg_name: str, args: argparse.Namespace) -> None:
+    def _run_black(
+        self, pkg_dir: str, pkg_name: str, args: argparse.Namespace
+    ) -> Optional[subprocess.CompletedProcess]:
         """Run black on the sample files of a package using the repo-wide config."""
         samples_dir = os.path.join(pkg_dir, "samples")
         if not os.path.isdir(samples_dir):
@@ -201,4 +209,4 @@ class update_snippet(Check):
 
         executable, _ = self.get_executable(args.isolate, args.command, sys.executable, pkg_dir)
         logger.info(f"Running black on samples for {pkg_name} to format before snippet extraction.")
-        black.format_directory(executable, samples_dir)
+        return black.format_directory(executable, samples_dir)
