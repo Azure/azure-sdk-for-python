@@ -21,7 +21,7 @@ class TestManagementGroupsAPIEntitiesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_entities_list(self, resource_group):
         response = self.client.entities.list(
             api_version="2021-04-01",
         )
