@@ -679,9 +679,6 @@
 # ServiceLabel: %Managed Identity %Service Attention
 # ServiceOwners:          @varunkch
 
-# ServiceLabel: %Managed Services %Service Attention
-# ServiceOwners:          @Lighthouse-Azure
-
 # ServiceLabel: %MariaDB %Service Attention
 # ServiceOwners:          @ambhatna @savjani
 
