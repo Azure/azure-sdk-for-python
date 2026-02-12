@@ -2,11 +2,13 @@
 
 ## 1.1.0 (2026-02-12)
 
-change log generation failed!!! You need to write it manually!!!
+### Bugs Fixed
 
-## 1.1.0 (2026-02-12)
+  - Fixed import error when upgrading to latest azure-core
 
-change log generation failed!!! You need to write it manually!!!
+### Other Changes
+
+  - Refreshed SDK code with latest code generator
 
 ## 1.1.0b2 (2024-11-05)
 
