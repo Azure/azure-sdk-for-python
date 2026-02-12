@@ -173,7 +173,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             _is_intermediate_response,
             _preprocess_messages,
         )
-        
+
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
         if ("query" not in eval_input) and ("response" not in eval_input) and ("tool_definitions" not in eval_input):
@@ -184,14 +184,14 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR,
             )
-        
+
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
             return self._not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
             )
-        
+
         # Preprocess messages if they are lists
         if isinstance(eval_input.get("response"), list):
             eval_input["response"] = _preprocess_messages(eval_input["response"])

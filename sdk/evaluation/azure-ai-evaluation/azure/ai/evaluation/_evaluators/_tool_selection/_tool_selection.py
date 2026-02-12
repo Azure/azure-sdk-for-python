@@ -187,7 +187,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             _is_intermediate_response,
             _preprocess_messages,
         )
-        
+
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
             return self._not_applicable_result(
@@ -195,11 +195,11 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 1,
                 has_details=True,
             )
-        
+
         # Preprocess messages if they are lists
         if isinstance(eval_input.get("response"), list):
             eval_input["response"] = _preprocess_messages(eval_input["response"])
-        
+
         if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to the Tool Selection evaluator."),
