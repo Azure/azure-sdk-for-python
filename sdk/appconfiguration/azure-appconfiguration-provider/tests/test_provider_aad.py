@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase, has_feature_flag
 from test_constants import FEATURE_MANAGEMENT_KEY
+from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):

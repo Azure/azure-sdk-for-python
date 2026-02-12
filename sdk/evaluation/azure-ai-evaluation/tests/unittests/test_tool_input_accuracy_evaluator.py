@@ -421,7 +421,14 @@ class TestToolInputAccuracyEvaluator:
 
         query = "Simple question without tool calls"
         response = [{"role": "assistant", "content": "I can help you with that."}]
-        tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
+        tool_definitions = [
+            {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information",
+                "parameters": {"type": "object", "properties": {}},
+            }
+        ]
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
@@ -433,32 +440,29 @@ class TestToolInputAccuracyEvaluator:
 
     def test_evaluate_no_tool_definitions(self, mock_model_config):
         """Test evaluation when no tool definitions are provided."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+            evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        query = "Get weather"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris"},
-                    }
-                ],
-            }
-        ]
-        tool_definitions = []
+            query = "Get weather"
+            response = [
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_call",
+                            "tool_call_id": "call_123",
+                            "name": "get_weather",
+                            "arguments": {"location": "Paris"},
+                        }
+                    ],
+                }
+            ]
+            tool_definitions = []
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_DEFINITIONS_MESSAGE in result[f"{key}_reason"]
+        assert "Tool definitions input is required" in str(exc_info.value)
 
     def test_evaluate_missing_tool_definitions(self, mock_model_config):
         """Test evaluation when tool definitions are missing for some tool calls."""
@@ -479,7 +483,14 @@ class TestToolInputAccuracyEvaluator:
                 ],
             }
         ]
-        tool_definitions = [{"name": "different_function", "type": "function", "description": "A different function"}]
+        tool_definitions = [
+            {
+                "name": "different_function",
+                "type": "function",
+                "description": "A different function",
+                "parameters": {"type": "object", "properties": {}},
+            }
+        ]
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
@@ -527,19 +538,23 @@ class TestToolInputAccuracyEvaluator:
 
     def test_evaluate_no_response(self, mock_model_config):
         """Test evaluation when no response is provided."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+            evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        query = "Get weather"
-        tool_definitions = [{"name": "get_weather", "type": "function", "description": "Get weather information"}]
+            query = "Get weather"
+            tool_definitions = [
+                {
+                    "name": "get_weather",
+                    "type": "function",
+                    "description": "Get weather information",
+                    "parameters": {"type": "object", "properties": {}},
+                }
+            ]
 
-        result = evaluator(query=query, response=None, tool_definitions=tool_definitions)
+            evaluator(query=query, response=None, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
-        assert result[f"{key}_result"] == "pass"
-        assert "Response parameter is required" in result[f"{key}_reason"]
+        assert "Response is a required input" in str(exc_info.value)
 
     def test_parameter_extraction_accuracy_calculation(self, mock_model_config):
         """Test the parameter extraction accuracy calculation."""
@@ -617,41 +632,39 @@ class TestToolInputAccuracyEvaluator:
 
     def test_evaluate_with_single_tool_definition(self, mock_model_config):
         """Test evaluation with a single tool definition (not in list format)."""
-        evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
-        evaluator._flow = MagicMock(side_effect=flow_side_effect)
+        with pytest.raises(EvaluationException) as exc_info:
+            evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
+            evaluator._flow = MagicMock(side_effect=flow_side_effect)
 
-        query = "Get weather all_correct"
-        response = [
-            {
-                "role": "assistant",
-                "content": [
-                    {
-                        "type": "tool_call",
-                        "tool_call_id": "call_123",
-                        "name": "get_weather",
-                        "arguments": {"location": "Paris"},
-                    }
-                ],
+            query = "Get weather all_correct"
+            response = [
+                {
+                    "role": "assistant",
+                    "content": [
+                        {
+                            "type": "tool_call",
+                            "tool_call_id": "call_123",
+                            "name": "get_weather",
+                            "arguments": {"location": "Paris"},
+                        }
+                    ],
+                }
+            ]
+            # Single tool definition (not in list)
+            tool_definitions = {
+                "name": "get_weather",
+                "type": "function",
+                "description": "Get weather information for a location",
+                "parameters": {
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
+                    "required": ["location"],
+                },
             }
-        ]
-        # Single tool definition (not in list)
-        tool_definitions = {
-            "name": "get_weather",
-            "type": "function",
-            "description": "Get weather information for a location",
-            "parameters": {
-                "type": "object",
-                "properties": {"location": {"type": "string", "description": "The location to get weather for"}},
-                "required": ["location"],
-            },
-        }
 
-        result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
+            evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert "Tool definitions must be provided as a list" in str(exc_info.value)
 
     def test_evaluate_missing_query(self, mock_model_config):
         """Test that evaluator raises exception when query is None or missing."""
