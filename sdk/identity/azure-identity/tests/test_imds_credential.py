@@ -16,7 +16,7 @@ from azure.identity._credentials.imds import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.policies import RetryPolicy
-from azure.core.pipeline.transport import HttpRequest, HttpResponse
+from azure.core.rest import HttpRequest, HttpResponse
 import pytest
 
 from helpers import mock, mock_response, Request, validating_transport, GET_TOKEN_METHODS

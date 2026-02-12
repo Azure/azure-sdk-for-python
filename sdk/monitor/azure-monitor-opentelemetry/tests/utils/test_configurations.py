@@ -26,6 +26,12 @@ from opentelemetry.instrumentation.environment_variables import (
     OTEL_PYTHON_DISABLED_INSTRUMENTATIONS,
 )
 from opentelemetry.sdk.trace.sampling import ALWAYS_OFF, ALWAYS_ON, ParentBased, TraceIdRatioBased
+from opentelemetry.environment_variables import (
+    OTEL_LOGS_EXPORTER,
+    OTEL_METRICS_EXPORTER,
+    OTEL_TRACES_EXPORTER,
+)
+from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry._utils.configurations import (
     _get_configurations,
     _get_sampler_from_name,
@@ -41,16 +47,8 @@ from azure.monitor.opentelemetry._constants import (
     PARENT_BASED_ALWAYS_OFF_SAMPLER,
     PARENT_BASED_ALWAYS_ON_SAMPLER,
     PARENT_BASED_TRACE_ID_RATIO_SAMPLER,
-    SAMPLING_ARG,
     METRIC_READERS_ARG,
 )
-from opentelemetry.environment_variables import (
-    OTEL_LOGS_EXPORTER,
-    OTEL_METRICS_EXPORTER,
-    OTEL_TRACES_EXPORTER,
-)
-from opentelemetry.sdk.environment_variables import OTEL_EXPERIMENTAL_RESOURCE_DETECTORS
-from opentelemetry.sdk.resources import Resource
 
 from azure.monitor.opentelemetry._version import VERSION
 
@@ -62,6 +60,7 @@ TEST_MERGED_RESOURCE = Resource(
 )
 
 
+# pylint: disable=too-many-public-methods, unused-argument
 class TestConfigurations(TestCase):
     @patch.dict("os.environ", {}, clear=True)
     @patch(
@@ -397,7 +396,6 @@ class TestConfigurations(TestCase):
         clear=True,
     )
     def test_get_configurations_logging_format_param_overrides_env_var(self):
-        from logging import Formatter
 
         custom_formatter = Formatter("%(levelname)s: %(message)s")
         configurations = _get_configurations(logging_formatter=custom_formatter)
@@ -696,24 +694,6 @@ class TestConfigurations(TestCase):
         self.assertTrue("connection_string" not in configurations)
         self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
         self.assertEqual(configurations["sampling_arg"], 0.75)
-        self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
-
-    @patch.dict(
-        "os.environ",
-        {
-            OTEL_PYTHON_DISABLED_INSTRUMENTATIONS: "flask,requests,fastapi,azure_sdk",
-            OTEL_TRACES_SAMPLER: TRACE_ID_RATIO_SAMPLER,
-            OTEL_TRACES_SAMPLER_ARG: "sampler",
-        },
-        clear=True,
-    )
-    @patch("opentelemetry.sdk.resources.Resource.create", return_value=TEST_DEFAULT_RESOURCE)
-    def test_get_configurations_env_vars_trace_id_ratio_non_numeric_value(self, resource_create_mock):
-        configurations = _get_configurations()
-
-        self.assertTrue("connection_string" not in configurations)
-        self.assertEqual(configurations["resource"].attributes, TEST_DEFAULT_RESOURCE.attributes)
-        self.assertEqual(configurations["sampling_arg"], 1.0)
         self.assertEqual(configurations["sampler_type"], "trace_id_ratio")
 
     @patch.dict(

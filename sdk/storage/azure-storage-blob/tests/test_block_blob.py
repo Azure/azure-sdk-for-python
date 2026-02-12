@@ -1984,4 +1984,82 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         finally:
             self.bsc.delete_container(self.container_name)
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_stage_block_from_url_uds(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container_name, blob_name = self.get_resource_name('oauthcontainer'), self.get_resource_name('oauthblob')
+        container = service.create_container(container_name)
+        blob = container.get_blob_client(blob_name)
+
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        dst_sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(create=True),
+            expiry=expiry,
+        )
+        dst_blob = BlobClient.from_blob_url(f"{blob.url}?{dst_sas}")
+
+        src_blob_name = self.get_resource_name('oauthblob2')
+        src_sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            src_blob_name,
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(read=True, add=True, create=True, write=True, delete=True),
+            expiry=expiry,
+        )
+        data = b"abc123"
+        src_blob = BlobClient.from_blob_url(f"{container.url}/{src_blob_name}?{src_sas}")
+        src_blob.upload_blob(data)
+
+        dst_blob.stage_block_from_url('1', src_blob.url)
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_commit_block_list_uds(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        container_name, blob_name = self.get_resource_name('oauthcontainer'), self.get_resource_name('oauthblob')
+        container = service.create_container(container_name)
+        blob = container.get_blob_client(blob_name)
+
+        start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+        user_delegation_key = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            user_delegation_key=user_delegation_key,
+            permission=BlobSasPermissions(create=True),
+            expiry=expiry,
+        )
+
+        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{sas}")
+        identity_blob.stage_block('1', b'AAA')
+        identity_blob.stage_block('2', b'BBB')
+        identity_blob.stage_block('3', b'CCC')
+        block_list = [BlobBlock(block_id='3'), BlobBlock(block_id='2'), BlobBlock(block_id='1')]
+        identity_blob.commit_block_list(block_list=block_list)
+
+        return variables
+
 #------------------------------------------------------------------------------

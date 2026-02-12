@@ -92,7 +92,7 @@ def get_dependency_conflicts(
             try:
                 req = Requirement(dep)
             except InvalidRequirement as exc:
-                logger.warning(
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     'error parsing dependency, reporting as a conflict: "%s" - %s',
                     dep,
                     exc,
@@ -127,7 +127,7 @@ def _get_dependency_conflicts_any(
             try:
                 req = Requirement(dep)
             except InvalidRequirement as exc:
-                logger.warning(
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
                     'error parsing dependency, reporting as a conflict: "%s" - %s',
                     dep,
                     exc,

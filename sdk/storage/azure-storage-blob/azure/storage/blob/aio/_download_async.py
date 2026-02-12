@@ -19,7 +19,7 @@ from typing import (
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -144,7 +144,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 try:
                     chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+                except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise HttpResponseError(error, error=error) from error
@@ -432,7 +432,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._encryption_options
                     )
                 retry_active = False
-            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+            except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
                     raise HttpResponseError(error, error=error) from error

@@ -31,3 +31,7 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
 
     add_uri_regex_sanitizer(regex=r"\.preprod\.", value=".")
+    add_uri_regex_sanitizer(
+        regex=r"(?<=[?&]sktid=)[^&#]+",
+        value="00000000-0000-0000-0000-000000000000",
+    )
