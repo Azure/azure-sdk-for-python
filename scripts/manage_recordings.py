@@ -4,15 +4,50 @@
 # license information.
 # --------------------------------------------------------------------------
 
+# ============================================================================
+# DEPRECATION NOTICE
+# ============================================================================
+# This script is deprecated and maintained only for backward compatibility.
+# 
+# Please use the 'azpysdk recording' command instead:
+#
+#   azpysdk recording push -p sdk/keyvault/azure-keyvault-keys/assets.json
+#   azpysdk recording restore
+#   azpysdk recording reset
+#   azpysdk recording locate
+#   azpysdk recording show
+#
+# For more information, run: azpysdk recording --help
+# ============================================================================
+
 import argparse
 import os
 import shlex
 import subprocess
 import sys
+import warnings
 
 from devtools_testutils.proxy_startup import (
     ascend_to_root,
     prepare_local_tool,
+)
+
+# Emit deprecation warning
+warnings.warn(
+    "\n"
+    "=" * 80 + "\n"
+    "DEPRECATION WARNING: This script is deprecated.\n"
+    "Please use 'azpysdk recording' command instead.\n"
+    "\n"
+    "Examples:\n"
+    "  azpysdk recording push -p sdk/keyvault/azure-keyvault-keys/assets.json\n"
+    "  azpysdk recording restore\n"
+    "  azpysdk recording reset\n"
+    "\n"
+    "Run 'azpysdk recording --help' for more information.\n"
+    "=" * 80,
+    DeprecationWarning,
+    stacklevel=2,
 )
 
 
@@ -21,7 +56,11 @@ TOOL_ENV_VAR = "PROXY_PID"
 
 # This file contains a script for managing test recordings in the azure-sdk-assets repository.
 #
-# INSTRUCTIONS FOR USE:
+# ============================================================================
+# DEPRECATION NOTICE: This script is deprecated. Use 'azpysdk recording' instead.
+# ============================================================================
+#
+# LEGACY INSTRUCTIONS FOR USE (for backward compatibility only):
 #
 # - Set your working directory to be inside your local copy of the azure-sdk-for-python repository.
 # - Run the following command:
@@ -33,10 +72,16 @@ TOOL_ENV_VAR = "PROXY_PID"
 #
 #     `python scripts/manage_recordings.py push -p sdk/keyvault/azure-keyvault-keys/assets.json`
 #
+#   NEW RECOMMENDED COMMAND:
+#     `azpysdk recording push -p sdk/keyvault/azure-keyvault-keys/assets.json`
+#
 #   If this script is run from the directory containing an assets.json file, no path needs to be provided. For example,
 #   with a working directory at the azure-keyvault-keys package root:
 #
 #     `python ../../../scripts/manage_recordings.py push`
+#
+#   NEW RECOMMENDED COMMAND:
+#     `azpysdk recording push`
 #
 # - In addition to "push", you can also use the "restore" or "reset" verbs in the same command format.
 #
