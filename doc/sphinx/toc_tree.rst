@@ -87,7 +87,6 @@
   ./ref/azure.mgmt.maps.rst
   ./ref/azure.mgmt.marketplaceordering.rst
   ./ref/azure.mgmt.media.rst
-  ./ref/azure.mgmt.mixedreality.rst
   ./ref/azure.mgmt.monitor.rst
   ./ref/azure.mgmt.msi.rst
   ./ref/azure.mgmt.netapp.rst

@@ -766,8 +766,6 @@ extends:
                           version: 1.1.0
                         - package: azure-mgmt-media
                           version: 10.2.1
-                        - package: azure-mgmt-mixedreality
-                          version: 1.0.0
                         - package: azure-mgmt-mobilenetwork
                           version: 3.3.0
                         - package: azure-mgmt-mongocluster
