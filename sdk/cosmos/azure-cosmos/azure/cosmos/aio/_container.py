@@ -357,9 +357,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -434,9 +434,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -507,9 +507,9 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -612,9 +612,9 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -700,9 +700,9 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -786,9 +786,9 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -866,9 +866,9 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -996,9 +996,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1047,9 +1047,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1086,9 +1086,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1137,9 +1137,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1185,9 +1185,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1291,9 +1291,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1433,9 +1433,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1537,9 +1537,9 @@ class ContainerProxy:
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1634,9 +1634,9 @@ class ContainerProxy:
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
@@ -1986,9 +1986,9 @@ class ContainerProxy:
         :returns: A CosmosList representing the items after the batch operations went through.
         :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy configuration for cross-region hedging.
-            This dictionary accepts the following keys: ``threshold`` (int) is the initial wait time
+            This dictionary accepts the following keys: ``threshold_ms`` (int) is the initial wait time
             in milliseconds before sending the first hedged request to an alternate region, and
-            ``threshold_step`` (int) is the fixed wait time interval in milliseconds between subsequent
+            ``threshold_step_ms`` (int) is the fixed wait time interval in milliseconds between subsequent
             hedged requests. If not provided, the client's default strategy will be used.
             For more information, see:
             https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/README.md#cross-region-hedging-availability-strategy
