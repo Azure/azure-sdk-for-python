@@ -207,11 +207,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         The threshold-based availability strategy configuration for cross-region hedging.
         This dictionary accepts the following keys:
 
-        - ``threshold`` (int): Initial wait time in milliseconds before sending the first hedged request
+        - ``threshold_ms`` (int): Initial wait time in milliseconds before sending the first hedged request
           to an alternate region.
-        - ``threshold_step`` (int): Fixed wait time interval in milliseconds between subsequent hedged requests.
+        - ``threshold_steps_ms`` (int): Fixed wait time interval in milliseconds between subsequent hedged requests.
 
-        For example, with ``threshold=100`` and ``threshold_step=50``:
+        For example, with ``threshold_ms=100`` and ``threshold_steps_ms=50``:
         At t=0ms the original request is sent to the primary region, at t=100ms a second request is sent
         to the next region, at t=150ms a third request is sent, and so on.
 
