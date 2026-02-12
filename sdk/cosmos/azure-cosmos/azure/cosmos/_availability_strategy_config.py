@@ -24,7 +24,7 @@
 from typing import Optional, Any
 
 
-class CrossRegionHedgingStrategyConfig:
+class CrossRegionHedgingStrategy:
     """Configuration for cross-region request hedging strategy.
 
     :param config: Dictionary containing configuration values, defaults to None
@@ -48,15 +48,15 @@ class CrossRegionHedgingStrategyConfig:
         if self.threshold_steps_ms <= 0:
             raise ValueError("threshold_steps_ms must be positive")
 
-def _validate_hedging_config(config: Optional[dict[str, Any]]) -> Optional[CrossRegionHedgingStrategyConfig]:
-    """Validate and create a CrossRegionHedgingStrategyConfig.
+def _validate_hedging_strategy(config: Optional[dict[str, Any]]) -> Optional[CrossRegionHedgingStrategy]:
+    """Validate and create a CrossRegionHedgingStrategy.
     
     :param config: Dictionary containing configuration values
     :type config: Optional[Dict[str, Any]]
     :returns: Validated configuration object
-    :rtype: Optional[CrossRegionHedgingStrategyConfig]
+    :rtype: Optional[CrossRegionHedgingStrategy]
     """
     if config is None:
         return None
 
-    return CrossRegionHedgingStrategyConfig(config)
+    return CrossRegionHedgingStrategy(config)

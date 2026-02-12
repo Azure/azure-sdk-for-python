@@ -34,6 +34,7 @@ from ._utils import (
     GEN_AI_OUTPUT_MESSAGES,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_SYSTEM_MESSAGE,
+    GEN_AI_SYSTEM_INSTRUCTION_EVENT,
     GEN_AI_THREAD_ID,
     GEN_AI_THREAD_RUN_ID,
     GEN_AI_USAGE_INPUT_TOKENS,
@@ -633,9 +634,10 @@ class _AIAgentsInstrumentorPreview:
             return
 
         content_array: List[Dict[str, Any]] = []
-        if _trace_agents_content:
-            # Add instructions if provided
-            if instructions:
+
+        # Add instructions if provided
+        if instructions:
+            if _trace_agents_content:
                 # Combine instructions if both exist
                 if additional_instructions:
                     combined_text = f"{instructions} {additional_instructions}"
@@ -644,9 +646,13 @@ class _AIAgentsInstrumentorPreview:
 
                 # Use optimized format with consistent "content" field
                 content_array.append({"type": "text", "content": combined_text})
+            else:
+                # Content recording disabled, but indicate that text instructions exist
+                content_array.append({"type": "text"})
 
-            # Add response schema if provided
-            if response_schema is not None:
+        # Add response schema if provided
+        if response_schema is not None:
+            if _trace_agents_content:
                 # Convert schema to JSON string if it's a dict/object
                 if isinstance(response_schema, dict):
                     schema_str = json.dumps(response_schema, ensure_ascii=False)
@@ -663,6 +669,9 @@ class _AIAgentsInstrumentorPreview:
                     schema_str = str(response_schema)
 
                 content_array.append({"type": "response_schema", "content": schema_str})
+            else:
+                # Content recording disabled, but indicate that response schema exists
+                content_array.append({"type": "response_schema"})
 
         use_events = _get_use_message_events()
 
@@ -671,14 +680,11 @@ class _AIAgentsInstrumentorPreview:
             attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
             # Store as JSON array directly without outer wrapper
             attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-            span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
+            span.span_instance.add_event(name=GEN_AI_SYSTEM_INSTRUCTION_EVENT, attributes=attributes)
         else:
             # Use attributes for instructions tracing
-            # System instructions use the same attribute name as the event
-            message_json = json.dumps(
-                [{"role": "system", "parts": content_array}] if content_array else [{"role": "system"}],
-                ensure_ascii=False,
-            )
+            # System instructions format: array of content objects without role/parts wrapper
+            message_json = json.dumps(content_array, ensure_ascii=False)
             if span and span.span_instance.is_recording:
                 span.add_attribute(GEN_AI_SYSTEM_MESSAGE, message_json)
 
@@ -1283,7 +1289,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _project_apis(self):
         """Define AIProjectClient APIs to instrument for trace propagation.
-        
+
         :return: A tuple containing sync and async API tuples.
         :rtype: Tuple[Tuple, Tuple]
         """
@@ -1309,7 +1315,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _inject_openai_client(self, f, _trace_type, _name):
         """Injector for get_openai_client that enables trace context propagation if opted in.
-        
+
         :return: The wrapped function with trace context propagation enabled.
         :rtype: Callable
         """
@@ -1331,7 +1337,7 @@ class _AIAgentsInstrumentorPreview:
 
     def _project_api_list(self):
         """Generate project API list with custom injector.
-        
+
         :return: A generator yielding API tuples with injectors.
         :rtype: Generator
         """

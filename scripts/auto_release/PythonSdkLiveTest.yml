@@ -97,7 +97,7 @@ jobs:
         export ISSUE_OWNER=$(ISSUE_OWNER)
 
         # install azure-sdk-tools
-        python -m pip install $root_path/eng/tools/azure-sdk-tools[build,ghtools,sdkgenerator]
+        python -m pip install $root_path/eng/tools/azure-sdk-tools[ghtools,sdkgenerator]
 
         # install requirements
         python -m pip install -r $script_path/requirement.txt
