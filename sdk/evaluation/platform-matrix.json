@@ -69,7 +69,7 @@
           "CoverageArg": "--disablecov",
           "TestSamples": "false",
           "InjectedPackages": "../azure-ai-evaluation[redteam]",
-          "UnsupportedToxEnvironments": "whl,sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples"
+          "UnsupportedToxEnvironments": "sdist,depends,latestdependency,mindependency,whl_no_aio,pylint,mypy,pyright,black,verifytypes,apistub,samples"
         }
       }
     }
