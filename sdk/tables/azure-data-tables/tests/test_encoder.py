@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -135,7 +136,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -147,7 +148,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -160,7 +161,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -176,7 +180,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -196,7 +203,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -235,7 +245,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -258,7 +271,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -315,7 +331,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(
                     lambda: client.get_entity("PK", "RK"),
                     {k: v for k, v in test_entity.items() if v is not None},
@@ -391,7 +407,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -445,7 +461,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -559,7 +575,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -586,7 +602,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -613,7 +629,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -634,7 +653,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK3", "RK3"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -668,7 +687,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK5", "RK5"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -687,7 +706,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_payload_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
             assert (
@@ -706,7 +728,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK", EnumBasicOptions.ONE.value), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -721,7 +743,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 test_entity,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}",
-                verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                verify_headers={"Content-Type": "application/json", "Accept": "application/json;odata=minimalmetadata"},
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -737,7 +759,10 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     test_entity,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}",
-                    verify_headers={"Content-Type": "application/json;odata=nometadata"},
+                    verify_headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json;odata=minimalmetadata",
+                    },
                     verify_response=(lambda: client.get_entity("PK", "1"), expected_entity),
                 )
             assert "Operation returned an invalid status 'Bad Request'" in str(error.value)
@@ -765,7 +790,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -774,7 +799,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -787,7 +812,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -796,7 +821,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json"},
+                verify_headers={"Content-Type": "application/json"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -873,7 +898,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"{table_name}(PartitionKey='{quote(pk)}',RowKey='{quote(rk)}')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
@@ -885,7 +909,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{quote(rk)}')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
@@ -909,7 +932,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{rk}')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
@@ -921,7 +943,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{rk}')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
@@ -978,7 +999,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
@@ -990,7 +1010,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
@@ -1067,7 +1086,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
@@ -1079,7 +1097,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
@@ -1136,7 +1153,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
@@ -1148,7 +1164,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
@@ -1291,7 +1306,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
@@ -1303,7 +1317,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
@@ -1340,7 +1353,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
@@ -1352,7 +1364,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
@@ -1386,7 +1397,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
                     verify_headers={
                         "Content-Type": "application/json",
-                        "Accept": "application/json",
                     },
                 )
             assert "An error occurred while processing this request." in str(error.value)
@@ -1399,7 +1409,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
                     verify_headers={
                         "Content-Type": "application/json",
-                        "Accept": "application/json",
                     },
                 )
             assert "An error occurred while processing this request." in str(error.value)
@@ -1421,7 +1430,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK3", "RK3"), test_entity),
             )
@@ -1433,7 +1441,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK3", "RK3"), test_entity),
             )
@@ -1475,7 +1482,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK5',RowKey='RK5')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK5", "RK5"), test_entity),
             )
@@ -1487,7 +1493,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK5',RowKey='RK5')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK5", "RK5"), test_entity),
             )
@@ -1507,7 +1512,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                     verify_headers={
                         "Content-Type": "application/json",
-                        "Accept": "application/json",
                     },
                 )
             assert "The property name is invalid" in str(error.value)
@@ -1520,7 +1524,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                     verify_headers={
                         "Content-Type": "application/json",
-                        "Accept": "application/json",
                     },
                 )
             assert "The property name is invalid" in str(error.value)
@@ -1541,7 +1544,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
@@ -1553,7 +1555,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
@@ -1573,7 +1574,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
@@ -1585,7 +1585,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
@@ -1605,7 +1604,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
@@ -1617,7 +1615,6 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
                 verify_headers={
                     "Content-Type": "application/json",
-                    "Accept": "application/json",
                 },
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
@@ -1642,7 +1639,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1651,7 +1648,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1665,7 +1662,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="merge",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1674,7 +1671,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode="replace",
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK'@*$!%"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1750,7 +1747,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{quote(rk)}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1759,7 +1756,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{quote(rk)}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1781,7 +1778,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{rk}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1790,7 +1787,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='{quote(pk)}',RowKey='{rk}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity(pk, rk), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1845,7 +1842,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1854,7 +1851,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1929,7 +1926,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1938,7 +1935,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK1',RowKey='RK1')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK1", "RK1"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -1993,7 +1990,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2002,7 +1999,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK2", "RK2"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2143,7 +2140,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2152,7 +2149,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), response_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2187,7 +2184,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2196,7 +2193,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", non_utf8_char), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2228,7 +2225,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                    verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 )
             assert "An error occurred while processing this request" in str(error.value)
             assert error.value.error_code == "InvalidInput"
@@ -2238,7 +2235,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     mode=UpdateMode.REPLACE,
                     verify_payload=json.dumps(expected_entity, sort_keys=True),
                     verify_url=f"/{table_name}(PartitionKey='PK2',RowKey='RK2')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                    verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 )
             assert "An error occurred while processing this request" in str(error.value)
             assert error.value.error_code == "InvalidInput"
@@ -2258,7 +2255,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK3", "RK3"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2267,7 +2264,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=json.dumps(expected_entity, sort_keys=True),
                 verify_url=f"/{table_name}(PartitionKey='PK3',RowKey='RK3')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK3", "RK3"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2307,7 +2304,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK5',RowKey='RK5')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK5", "RK5"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2316,7 +2313,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK5',RowKey='RK5')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK5", "RK5"), test_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2334,7 +2331,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     mode=UpdateMode.MERGE,
                     verify_payload=verification,
                     verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                    verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 )
             assert "The property name is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
@@ -2344,7 +2341,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                     mode=UpdateMode.REPLACE,
                     verify_payload=verification,
                     verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                    verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                    verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 )
             assert "The property name is invalid" in str(error.value)
             assert error.value.error_code.value == "PropertyNameInvalid"
@@ -2363,7 +2360,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2372,7 +2369,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='One')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "One"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2390,7 +2387,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2399,7 +2396,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='Two')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "Two"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2417,7 +2414,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.MERGE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2426,7 +2423,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 mode=UpdateMode.REPLACE,
                 verify_payload=verification,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='RK')",
-                verify_headers={"Content-Type": "application/json", "Accept": "application/json", "If-Match": "*"},
+                verify_headers={"Content-Type": "application/json", "If-Match": "*"},
                 verify_response=(lambda: client.get_entity("PK", "RK"), expected_entity),
             )
             assert list(resp.keys()) == ["date", "etag", "version"]
@@ -2448,7 +2445,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "bar",
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='bar')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2457,7 +2454,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 {"PartitionKey": "foo", "RowKey": "bar"},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='bar')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2467,7 +2464,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 "RK'@*$!%",  # cspell:disable-line
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2476,7 +2473,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 {"PartitionKey": "foo", "RowKey": "RK'@*$!%"},  # cspell:disable-line
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='RK%27%27%40%2A%24%21%25')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2565,7 +2562,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 non_utf8_char,
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2574,7 +2571,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 {"PartitionKey": "PK", "RowKey": non_utf8_char},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='PK',RowKey='{quote(non_utf8_char)}')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2595,7 +2592,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 EnumStrOptions.ONE,
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='One')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
 
@@ -2604,7 +2601,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
                 {"PartitionKey": "foo", "RowKey": EnumStrOptions.ONE},
                 verify_payload=None,
                 verify_url=f"/{table_name}(PartitionKey='foo',RowKey='One')",
-                verify_headers={"Accept": "application/json;odata=minimalmetadata", "If-Match": "*"},
+                verify_headers={"If-Match": "*"},
             )
             assert resp is None
             client.delete_table()

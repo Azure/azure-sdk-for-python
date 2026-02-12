@@ -19,8 +19,8 @@ from ._generated.operations._operations import (
     build_table_update_entity_request,
     build_table_delete_entity_request,
 )
-from ._generated._configuration import AzureTableConfiguration
-from ._generated.aio._configuration import AzureTableConfiguration as AsyncAzureTableConfiguration
+from ._generated._configuration import TablesClientConfiguration as AzureTableConfiguration
+from ._generated.aio._configuration import TablesClientConfiguration as AsyncAzureTableConfiguration
 
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
@@ -126,7 +126,7 @@ class TableBatchOperations(object):
         entity_json = self._encoder(entity)
         self._verify_partition_key(entity_json)
         request = build_table_insert_entity_request(
-            table=self.table_name, json=entity_json, version=self._config.version, **kwargs
+            table=self.table_name, json=entity_json, api_version=self._config.api_version, **kwargs
         )
         request.url = self._base_url + request.url
         self.requests.append(request)
@@ -180,7 +180,7 @@ class TableBatchOperations(object):
                 etag=etag,
                 match_condition=match_condition,
                 json=entity_json,
-                version=self._config.version,
+                api_version=self._config.api_version,
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
@@ -191,7 +191,7 @@ class TableBatchOperations(object):
                 etag=etag,
                 match_condition=match_condition,
                 json=entity_json,
-                version=self._config.version,
+                api_version=self._config.api_version,
                 **kwargs,
             )
             if self._is_cosmos_endpoint:
@@ -244,7 +244,7 @@ class TableBatchOperations(object):
             match_condition=_get_match_condition(
                 etag=etag, match_condition=match_condition or MatchConditions.Unconditionally
             ),
-            version=self._config.version,
+            api_version=self._config.api_version,
             **kwargs,
         )
         request.url = self._base_url + request.url
@@ -280,7 +280,7 @@ class TableBatchOperations(object):
                 partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
                 row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 json=entity_json,
-                version=self._config.version,
+                api_version=self._config.api_version,
                 **kwargs,
             )
         elif mode == UpdateMode.MERGE:
@@ -289,7 +289,7 @@ class TableBatchOperations(object):
                 partition_key=_prepare_key(partition_key),  # type: ignore[arg-type]
                 row_key=_prepare_key(row_key),  # type: ignore[arg-type]
                 json=entity_json,
-                version=self._config.version,
+                api_version=self._config.api_version,
                 **kwargs,
             )
             if self._is_cosmos_endpoint:

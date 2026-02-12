@@ -20,6 +20,13 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import cosmos_decorator_async
 from test_decoder import _clean
 
+from azure.core.pipeline.policies import HttpLoggingPolicy
+
+HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("x-ms-substatus")
+HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("x-ms-date")
+HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("DataServiceVersion")
+HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST.add("x-ms-version")
+
 
 class TestTableEncoderCosmosAsync(AzureRecordedTestCase, AsyncTableTestCase):
     @cosmos_decorator_async

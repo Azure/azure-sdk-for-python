@@ -152,9 +152,15 @@ class TableServiceClient(TablesBaseClient):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         props = TableServiceProperties(
-            logging=analytics_logging,
-            hour_metrics=hour_metrics,
-            minute_metrics=minute_metrics,
+            logging=(
+                analytics_logging._to_generated() if analytics_logging is not None else analytics_logging
+            ),  # pylint:disable=protected-access
+            hour_metrics=(
+                hour_metrics._to_generated() if hour_metrics is not None else hour_metrics
+            ),  # pylint:disable=protected-access
+            minute_metrics=(
+                minute_metrics._to_generated() if minute_metrics is not None else minute_metrics
+            ),  # pylint:disable=protected-access
             cors=[c._to_generated() for c in cors] if cors is not None else cors,  # pylint:disable=protected-access
         )
         try:
@@ -268,13 +274,11 @@ class TableServiceClient(TablesBaseClient):
                 :caption: Querying tables in a storage account
         """
         query_filter = _parameter_filter_substitution(parameters, query_filter)
-
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
+        return self._client.table.query(
             filter=query_filter,
-            page_iterator_class=TablePropertiesPaged,
+            top=results_per_page,
+            cls=lambda objs: [TableItem._from_generated(o) for o in objs],
+            **kwargs,
         )
 
     @distributed_trace
@@ -295,11 +299,8 @@ class TableServiceClient(TablesBaseClient):
                 :dedent: 16
                 :caption: Listing all tables in a storage account
         """
-        command = functools.partial(self._client.table.query, **kwargs)
-        return ItemPaged(
-            command,
-            results_per_page=results_per_page,
-            page_iterator_class=TablePropertiesPaged,
+        return self._client.table.query(
+            top=results_per_page, cls=lambda objs: [TableItem._from_generated(o) for o in objs], **kwargs
         )
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:

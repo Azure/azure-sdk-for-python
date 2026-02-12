@@ -24,15 +24,23 @@ SERVICE_LIVE_RESP_BODY = (
 )
 
 
+def _service_unavailable_resp(*args, **kwargs):
+    return SERVICE_UNAVAILABLE_RESP_BODY
+
+
+def _service_live_resp(*args, **kwargs):
+    return SERVICE_LIVE_RESP_BODY
+
+
 # --Test Class -----------------------------------------------------------------
 class TestTableServiceStatsCosmos(AzureRecordedTestCase, TableTestCase):
     @staticmethod
     def override_response_body_with_unavailable_status(response):
-        response.http_response.text = lambda _: SERVICE_UNAVAILABLE_RESP_BODY
+        response.http_response.text = _service_unavailable_resp
 
     @staticmethod
     def override_response_body_with_live_status(response):
-        response.http_response.text = lambda _: SERVICE_LIVE_RESP_BODY
+        response.http_response.text = _service_live_resp
 
     # TODO: Should we remove these both from cosmos sync/async?
     # --Test cases per service ---------------------------------------

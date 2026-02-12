@@ -3,11 +3,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._generated._version import VERSION
 
 # default values for common package, in case it is used directly
 DEFAULT_X_MS_VERSION = "2018-03-28"
-X_MS_VERSION = VERSION
+X_MS_VERSION = "2019-02-02"
 
 DEFAULT_STORAGE_ENDPOINT_SUFFIX = "core.windows.net"
 DEFAULT_COSMOS_ENDPOINT_SUFFIX = "cosmos.azure.com"

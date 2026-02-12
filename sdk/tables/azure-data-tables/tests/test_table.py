@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
 # -------------------------------------------------------------------------
@@ -241,8 +242,8 @@ class TestTable(AzureRecordedTestCase, TableTestCase):
         generator2 = ts.list_tables(results_per_page=2).by_page(continuation_token=generator1.continuation_token)
         next(generator2)
 
-        tables1 = generator1._current_page
-        tables2 = generator2._current_page
+        tables1 = list(generator1._current_page)
+        tables2 = list(generator2._current_page)
 
         # Assert
         assert len(tables1) == 2
