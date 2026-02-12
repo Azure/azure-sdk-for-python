@@ -742,9 +742,6 @@
 # ServiceLabel: %Notification Hub %Service Attention
 # ServiceOwners:          @tjsomasundaram
 
-# ServiceLabel: %Operational Insights %Service Attention
-# ServiceOwners:          @AzmonLogA
-
 # ServiceLabel: %Policy %Service Attention
 # ServiceOwners:          @aperezcloud @kenieva
 
