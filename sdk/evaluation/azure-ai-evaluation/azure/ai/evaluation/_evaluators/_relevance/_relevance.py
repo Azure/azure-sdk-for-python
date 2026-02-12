@@ -184,6 +184,12 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         if "query" not in eval_input and "response" not in eval_input:
             raise EvaluationException(
                 message="Only text conversation inputs are supported.",
@@ -192,6 +198,19 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
         if not isinstance(eval_input["query"], str):
             eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         if not isinstance(eval_input["response"], str):

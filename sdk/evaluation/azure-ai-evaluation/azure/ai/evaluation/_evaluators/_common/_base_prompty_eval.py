@@ -34,6 +34,71 @@ except ImportError:
 T = TypeVar("T")
 
 
+def _is_intermediate_response(response):
+    """Check if response is intermediate (last content item is function_call or mcp_approval_request)."""
+    if isinstance(response, list) and len(response) > 0:
+        last_msg = response[-1]
+        if isinstance(last_msg, dict) and last_msg.get("role") == "assistant":
+            content = last_msg.get("content", [])
+            if isinstance(content, list) and len(content) > 0:
+                last_content = content[-1]
+                if isinstance(last_content, dict) and last_content.get("type") in (
+                    "function_call",
+                    "mcp_approval_request",
+                ):
+                    return True
+    return False
+
+
+def _drop_mcp_approval_messages(messages):
+    """Remove MCP approval request/response messages."""
+    if not isinstance(messages, list):
+        return messages
+    return [
+        msg
+        for msg in messages
+        if not (
+            isinstance(msg, dict)
+            and isinstance(msg.get("content"), list)
+            and (
+                (
+                    msg.get("role") == "assistant"
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_request" for c in msg["content"])
+                )
+                or (
+                    msg.get("role") == "tool"
+                    and any(isinstance(c, dict) and c.get("type") == "mcp_approval_response" for c in msg["content"])
+                )
+            )
+        )
+    ]
+
+
+def _normalize_function_call_types(messages):
+    """Normalize function_call/function_call_output types to tool_call/tool_result."""
+    if not isinstance(messages, list):
+        return messages
+    for msg in messages:
+        if isinstance(msg, dict) and isinstance(msg.get("content"), list):
+            for item in msg["content"]:
+                if isinstance(item, dict) and item.get("type") == "function_call":
+                    item["type"] = "tool_call"
+                    if "function_call" in item:
+                        item["tool_call"] = item.pop("function_call")
+                elif isinstance(item, dict) and item.get("type") == "function_call_output":
+                    item["type"] = "tool_result"
+                    if "function_call_output" in item:
+                        item["tool_result"] = item.pop("function_call_output")
+    return messages
+
+
+def _preprocess_messages(messages):
+    """Drop MCP approval messages and normalize function call types."""
+    messages = _drop_mcp_approval_messages(messages)
+    messages = _normalize_function_call_types(messages)
+    return messages
+
+
 class PromptyEvaluatorBase(EvaluatorBase[T]):
     """Base class for all evaluators that make use of context as an input. It's also assumed that such evaluators
     make use of a prompty file, and return their results as a dictionary, with a single key-value pair
@@ -133,6 +198,20 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.CONVERSATION,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
         # Call the prompty flow to get the evaluation result.
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
@@ -323,7 +402,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         return needed_tool_definitions
 
     def _not_applicable_result(
-        self, error_message: str, threshold: Union[int, float]
+        self, error_message: str, threshold: Union[int, float], has_details: bool = False
     ) -> Dict[str, Union[str, float, Dict]]:
         """Return a result indicating that the evaluation is not applicable.
 
@@ -331,14 +410,28 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         :type error_message: str
         :param threshold: The threshold value for the evaluator.
         :type threshold: Union[int, float]
+        :param has_details: Whether to include an empty details field in the result.
+        :type has_details: bool
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float, Dict]]
         """
         # If no tool calls were made or tool call type is not supported, return not applicable result
-        return {
-            self._result_key: self._NOT_APPLICABLE_RESULT,
+        result = {
+            self._result_key: threshold,
             f"{self._result_key}_result": "pass",
             f"{self._result_key}_threshold": threshold,
-            f"{self._result_key}_reason": error_message,
-            f"{self._result_key}_details": {},
+            f"{self._result_key}_reason": f"Not applicable: {error_message}",
+            f"{self._result_key}_prompt_tokens": 0,
+            f"{self._result_key}_completion_tokens": 0,
+            f"{self._result_key}_total_tokens": 0,
+            f"{self._result_key}_finish_reason": "",
+            f"{self._result_key}_model": "",
+            f"{self._result_key}_sample_input": "",
+            f"{self._result_key}_sample_output": "",
         }
+
+        # Add empty details field if requested
+        if has_details:
+            result[f"{self._result_key}_details"] = {}
+
+        return result
