@@ -30,17 +30,13 @@ By default, [Azure Active Directory](https://aka.ms/awps/aad) token authenticati
 - `AZURE_TENANT_ID` for Azure tenant ID.
 - `AZURE_CLIENT_SECRET` for Azure client secret.
 
-In addition, Azure subscription ID can be configured via environment variable `AZURE_SUBSCRIPTION_ID`.
-
 With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.managementgroups import ManagementGroupsAPI
-import os
 
-sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = ManagementGroupsAPI(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = ManagementGroupsAPI(credential=DefaultAzureCredential())
 ```
 
 ## Examples
