@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, cast, List, Sequence, Union, Optional, TYPE_CHECKING
+from typing import Any, cast, List, overload, Sequence, Union, Optional, TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
@@ -325,10 +325,16 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
                 **kwargs,
             )
 
+    @overload
+    def list_indexes(self, **kwargs: Any) -> ItemPaged[_models.SearchIndex]: ...
+
+    @overload
+    def list_indexes(self, *, select: List[str], **kwargs: Any) -> ItemPaged[_models.SearchIndexResponse]: ...
+
     @distributed_trace
     def list_indexes(
         self, *, select: Optional[List[str]] = None, **kwargs: Any
-    ) -> ItemPaged[Union[_models.SearchIndex, _models.SearchIndexResponse]]:
+    ) -> Union[ItemPaged[_models.SearchIndex], ItemPaged[_models.SearchIndexResponse]]:
         """Lists all indexes available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -337,18 +343,13 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             SearchIndexResponse objects. Default value is None.
         :paramtype select: list[str]
         :return: An iterator like instance of SearchIndex or SearchIndexResponse
-        :rtype: ~azure.core.paging.ItemPaged[Union[~azure.search.documents.indexes.models.SearchIndex, ~azure.search.documents.indexes.models.SearchIndexResponse]]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndex] or
+            ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndexResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            return cast(
-                ItemPaged[Union[_models.SearchIndex, _models.SearchIndexResponse]],
-                self.list_indexes_with_selected_properties(select=select, **kwargs),
-            )
-        return cast(
-            ItemPaged[Union[_models.SearchIndex, _models.SearchIndexResponse]],
-            self._list_indexes(**kwargs),
-        )
+            return self.list_indexes_with_selected_properties(select=select, **kwargs)
+        return self._list_indexes(**kwargs)
 
     @distributed_trace
     def list_index_names(self, **kwargs: Any) -> ItemPaged[str]:
