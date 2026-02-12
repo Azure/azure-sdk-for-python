@@ -6,6 +6,13 @@
 
 * Tracing: included agent ID in response generation traces when available.
 * Tracing: Added support for opt-in trace context propagation.
+* API Center: Added support for listing and retrieving APIs from Azure API Center connections.
+  * Added `ConnectionsOperations.list_api_center_apis()` to list all APIs from an API Center connection.
+  * Added `ConnectionsOperations.get_api_center_api()` to retrieve a specific API by name.
+  * Added `ConnectionsOperations.list_api_center_mcp_servers()` to list MCP servers from an API Center connection.
+  * Added `ApiCenterApi` model to represent an API from API Center.
+  * Added `ApiCenterMcpServer` model to represent an MCP server from API Center.
+  * Added `ApiType` enum for API type constants (MCP, REST, GraphQL, gRPC, etc.).
 
 ### Breaking changes
 
