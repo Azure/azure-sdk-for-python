@@ -161,7 +161,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         *,
         query: str,
         response: List[dict],
-        tool_definitions: List[dict],
+        tool_definitions: Optional[List[dict]] = None,
     ) -> Dict[str, Union[str, float]]:
         """Evaluate groundedness for agent response with tool calls. Only file_search tool is supported.
 
@@ -169,8 +169,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: str
         :keyword response: The response from the agent to be evaluated.
         :paramtype response: List[dict]
-        :keyword tool_definitions: The tool definitions used by the agent.
-        :paramtype tool_definitions: List[dict]
+        :keyword tool_definitions: Optional tool definitions used by the agent.
+        :paramtype tool_definitions: Optional[List[dict]]
         :return: The groundedness score.
         :rtype: Dict[str, Union[str, float]]
         """
