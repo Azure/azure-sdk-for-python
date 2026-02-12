@@ -220,12 +220,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 f"{self._result_key}_sample_output": result.get("sample_output", ""),
             }
 
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

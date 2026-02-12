@@ -204,14 +204,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
-        # If llm_output is not a dictionary, return NaN for the score. This should never happen
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        # If llm_output is not a dictionary, raise exception
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
