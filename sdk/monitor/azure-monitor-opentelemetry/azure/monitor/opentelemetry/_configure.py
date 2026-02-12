@@ -112,7 +112,7 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     :keyword list[~opentelemetry.sdk.metrics.MetricReader] metric_readers: List of MetricReader objects to read and
      export metrics. Each reader can have its own exporter and collection interval.
     :keyword bool enable_live_metrics: Boolean value to determine whether to enable live metrics feature.
-     Defaults to `False`.
+     Defaults to `True`.
     :keyword bool enable_performance_counters: Boolean value to determine whether to enable performance counters.
      Defaults to `True`.
     :keyword str storage_directory: Storage directory in which to store retry files. Defaults to
@@ -166,15 +166,15 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
         sampler_type = configurations[SAMPLER_TYPE]
         sampler = _get_sampler_from_name(sampler_type, sampler_arg)
         tracer_provider = TracerProvider(sampler=sampler, resource=resource)
-    elif SAMPLING_TRACES_PER_SECOND_ARG in configurations:
-        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
-        tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
-        )
-    else:
+    elif SAMPLING_RATIO_ARG in configurations:
         sampling_ratio = configurations[SAMPLING_RATIO_ARG]
         tracer_provider = TracerProvider(
             sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
+        )
+    else:
+        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
+        tracer_provider = TracerProvider(
+            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
         )
 
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore

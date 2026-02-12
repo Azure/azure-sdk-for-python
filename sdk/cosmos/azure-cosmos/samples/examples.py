@@ -362,19 +362,19 @@ for queried_item in container.query_items_change_feed(feed_range=feed_ranges[0],
 # [END query_items_change_feed_from_beginning]
 
 # configure availability strategy config on request level
-# [START read_item_with_availability_strategy_config]
+# [START read_item_with_availability_strategy]
 strategy = {'threshold_ms':500, 'threshold_steps_ms':100}
 container.read_item(
     item="id1",
     partition_key="pk1",
-    availability_strategy_config=strategy)
-# [END read_item_with_availability_strategy_config]
+    availability_strategy=strategy)
+# [END read_item_with_availability_strategy]
 
 # disable availability strategy config on request level
-# [START read_item_with_disabled_availability_strategy_config]
+# [START read_item_with_disabled_availability_strategy]
 container.read_item(
     item="id1",
     partition_key="pk1",
-    availability_strategy_config=None
+    availability_strategy=None
 )
-# [END read_item_with_disabled_availability_strategy_config]
+# [END read_item_with_disabled_availability_strategy]
