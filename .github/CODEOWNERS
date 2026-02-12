@@ -142,8 +142,8 @@
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi @amruthashree18
 
-# ServiceLabel: %Content Safety
-# PRLabel: %Content Safety
+# ServiceLabel: %Cognitive - Content Safety
+# PRLabel: %Cognitive - Content Safety
 /sdk/contentsafety/                                                  @mengaims
 
 # ServiceLabel: %DevCenter
