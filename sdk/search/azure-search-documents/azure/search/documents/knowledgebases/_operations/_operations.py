@@ -52,7 +52,7 @@ def build_knowledge_base_retrieval_retrieve_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json;odata.metadata=minimal")
 
     # Construct URL
-    _url = "/retrieve/{knowledgeBaseName}"
+    _url = "/knowledgebases('{knowledgeBaseName}')/retrieve"
     path_format_arguments = {
         "knowledgeBaseName": _SERIALIZER.url("knowledge_base_name", knowledge_base_name, "str"),
     }
