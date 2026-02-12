@@ -53,6 +53,7 @@ servicePreparer = functools.partial(
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
     ai_search_index_name="sanitized-index-name",
     mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
     sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
     completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
@@ -80,6 +81,15 @@ RFT_JOB_TYPE: Final[str] = "rft"
 STANDARD_TRAINING_TYPE: Final[str] = "Standard"
 GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
 DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
+# Method type constants
+SUPERVISED_METHOD_TYPE: Final[str] = "supervised"
+DPO_METHOD_TYPE: Final[str] = "dpo"
+REINFORCEMENT_METHOD_TYPE: Final[str] = "reinforcement"
+
+# Model type constants
+OPENAI_MODEL_TYPE: Final[str] = "openai"
+OSS_MODEL_TYPE: Final[str] = "oss"
 
 
 def patched_open_crlf_to_lf(*args, **kwargs):

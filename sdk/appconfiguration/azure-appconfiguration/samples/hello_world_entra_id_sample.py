@@ -15,7 +15,7 @@ DESCRIPTION:
 USAGE: python hello_world_entra_id_sample.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
@@ -26,7 +26,7 @@ from azure.appconfiguration import ConfigurationSetting
 def main():
     # [START create_app_config_client]
 
-    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT"]
+    ENDPOINT = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
     credential = DefaultAzureCredential()
     # Create app config client
     client = AzureAppConfigurationClient(base_url=ENDPOINT, credential=credential)

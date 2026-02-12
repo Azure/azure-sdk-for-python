@@ -4,9 +4,14 @@
 
 ### Features Added
 
+- Adds support for adding `audience` to the kwargs for `load` allowing it to specify the audience for the request.
+
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixes a bug where `feature_flag_selects` could be passed in as `None` which resulted in an exception on load, doing this now results in loading the default feature flags.
+- Fixes a bug where `feature_flag_selects` couldn't load snapshots.
 
 ### Other Changes
 
