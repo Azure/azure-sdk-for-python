@@ -5,20 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from azure.ai.agentserver.langgraph._exceptions import LangGraphMissingConversationIdError
-from azure.ai.agentserver.langgraph.langgraph import LangGraphAdapter
 from azure.ai.agentserver.langgraph.models.response_api_default_converter import ResponseAPIDefaultConverter
-
-
-class _DummyConverter:
-    async def convert_request(self, context):  # pragma: no cover - guard should short-circuit first
-        raise AssertionError("convert_request should not be called for this test")
-
-    async def convert_response_non_stream(self, output, context):  # pragma: no cover - guard should short-circuit
-        raise AssertionError("convert_response_non_stream should not be called for this test")
-
-    async def convert_response_stream(self, output, context):  # pragma: no cover - guard should short-circuit
-        raise AssertionError("convert_response_stream should not be called for this test")
 
 
 class _DummyGraph:
@@ -55,14 +42,3 @@ async def test_aget_state_uses_conversation_id() -> None:
 
     assert state == "state"
     assert graph.last_config["configurable"]["thread_id"] == "conv-1"
-
-
-@pytest.mark.unit
-@pytest.mark.asyncio
-async def test_agent_run_requires_conversation_id_with_checkpointer_raises() -> None:
-    graph = _DummyGraph()
-    adapter = LangGraphAdapter(graph, converter=_DummyConverter())  # type: ignore[arg-type]
-    context = SimpleNamespace(conversation_id=None, stream=False)
-
-    with pytest.raises(LangGraphMissingConversationIdError):
-        await adapter.agent_run(context)
