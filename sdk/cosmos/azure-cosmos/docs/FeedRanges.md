@@ -155,9 +155,17 @@ session_token = container.get_latest_session_token(
     feed_ranges_to_session_tokens=[(feed_range, token), ...],
     target_feed_range=target_feed_range
 )
+
+# Async (must be awaited)
+session_token = await container.get_latest_session_token(
+    feed_ranges_to_session_tokens=[(feed_range, token), ...],
+    target_feed_range=target_feed_range
+)
 ```
 
-See the [session_token_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/session_token_management.py) sample for a complete example.
+> **Note:** In the async client, `get_latest_session_token()` is a coroutine and **must be awaited**.
+
+See the [session_token_management.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/session_token_management.py) (sync) and [session_token_management_async.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/session_token_management_async.py) (async) samples for complete examples.
 
 ---
 
