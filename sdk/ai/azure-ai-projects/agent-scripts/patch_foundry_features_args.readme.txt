@@ -1,0 +1,42 @@
+These are the GitHub CoPilot instructions used to edit emitted code, in order to set the
+required Foundry-Features HTTP request header in preview operations. Before running the Agent,
+make sure your package sources code (files under \sdk\ai\azure-ai-projects\azure) do not have any
+mypy errors.
+
+The agent created the Python script "patch_foundry_features_args.py" in this folder. Next time
+you re-emit from TypeSpec, try running that script from the \sdk\ai\azure-ai-projects folder
+and see if again it did the job correctly.
+
+Last updated: 2/11/2026
+
+-----------------------------
+
+I would like you to create a Python script named "patch_foundry_features_args.py" that you will
+run to do the work described below. Save the script to the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects.
+The work that needs to be done is the following:
+Edit these two Python source files, and only these two:
+\sdk\ai\azure-ai-projects\azure\ai\projects\aio\operations\_operations.py and
+\sdk\ai\azure-ai-projects\azure\ai\projects\operations\_operations.py.
+Find all the public methods that have a required input argument named "foundry_features" (note that some method
+will have "foundry_features" as an optional input argument. Ignore those). An example of such a method is one that 
+has the following in the method signature: 
+foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]
+For each of the public methods that have a required input argument named "foundry_features",
+remove the input argument from the method signature and the corresponding document strings.
+Instead, update the method itself, and set the value of "foundry_features" to the value shown in the
+method signature. In the example above, that operation will look like this:
+foundry_features = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.
+Do not modify any of the internal helper methods with names that start with "build_beta_".
+At the end, show a summary report of all the methods you edited, and which FoundryFeaturesOptInKeys
+value was used for each method.
+Once you are done updating the Python files, run the "black" tool in the following way to fix any
+format issues:
+black --config ../../../eng/black-pyproject.toml .
+To verify your result, run the mypy tool and make sure there are no errors originating
+from the package source file. This means that when you go to the folder:
+\azure-sdk-for-python\sdk\ai\azure-ai-projects\
+and run:
+tox run -e mypy -c ../../../eng/tox/tox.ini --root
+there will be no errors from files under the folder \azure-sdk-for-python\sdk\ai\azure-ai-projects\azure folder.
+
+

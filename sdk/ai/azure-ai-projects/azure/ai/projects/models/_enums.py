@@ -435,6 +435,8 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORKFLOW_AGENTS_V1_PREVIEW."""
     EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
     """EVALUATIONS_V1_PREVIEW."""
+    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+    """SCHEDULES_V1_PREVIEW."""
     RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
     """RED_TEAMS_V1_PREVIEW."""
     INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
