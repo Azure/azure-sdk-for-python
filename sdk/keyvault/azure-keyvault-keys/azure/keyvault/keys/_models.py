@@ -252,11 +252,11 @@ class KeyProperties(object):
         return self._attributes.recovery_level if self._attributes else None
 
     @property
-    def tags(self) -> Dict[str, str]:
+    def tags(self) -> Optional[Dict[str, str]]:
         """Application specific metadata in the form of key-value pairs.
 
         :returns: A dictionary of tags attached to the key.
-        :rtype: dict[str, str]
+        :rtype: dict[str, str] or None
         """
         return self._tags
 
