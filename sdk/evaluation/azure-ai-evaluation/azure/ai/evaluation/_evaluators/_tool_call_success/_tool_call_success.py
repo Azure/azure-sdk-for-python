@@ -168,16 +168,25 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
 
-        eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
+        # If response is a string, pass directly without reformatting
+        if isinstance(eval_input["response"], str):
+            # Unless tool calls are explicitly provided, then keep it as is
+            if "tool_calls" not in eval_input or not eval_input["tool_calls"]:
+                eval_input["tool_calls"] = eval_input["response"]
+        else:
+            eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
 
-        if "tool_definitions" in eval_input:
+        # If tool definitions are string, pass directly without reformatting, else format it.
+        if "tool_definitions" in eval_input and not isinstance(eval_input["tool_definitions"], str):
             tool_definitions = eval_input["tool_definitions"]
-            filtered_tool_definitions = _filter_to_used_tools(
-                tool_definitions=tool_definitions,
-                msgs_list=eval_input["response"],
-                logger=logger,
-            )
-            eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
+            # Only if response is not a string, we filter tool definitions to only tools needed.
+            if not isinstance(eval_input["response"], str):
+                tool_definitions = _filter_to_used_tools(
+                    tool_definitions=tool_definitions,
+                    msgs_list=eval_input["response"],
+                    logger=logger,
+                )
+            eval_input["tool_definitions"] = _reformat_tool_definitions(tool_definitions, logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", "")
