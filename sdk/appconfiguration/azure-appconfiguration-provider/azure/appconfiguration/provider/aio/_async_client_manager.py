@@ -12,7 +12,7 @@ from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.exceptions import HttpResponseError, AzureError
+from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
@@ -147,7 +147,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 snapshot = await self._client.get_snapshot(select.snapshot_name)
                 if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Snapshot '{select.snapshot_name}' is not a key snapshot.")
+                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Use traditional filtering when not loading from a snapshot
@@ -279,48 +279,32 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
-    async def resolve_snapshot_reference(
-        self, setting: ConfigurationSetting, **kwargs
-    ) -> Dict[str, ConfigurationSetting]:
+    async def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> List[ConfigurationSetting]:
         """
         Resolve a snapshot reference configuration setting to the actual snapshot data.
 
         :param ConfigurationSetting setting: The snapshot reference configuration setting
-        :return: A dictionary of resolved configuration settings from the snapshot
-        :rtype: Dict[str, ConfigurationSetting]
+        :return: A list of resolved configuration settings from the snapshot
+        :rtype: List[ConfigurationSetting]
         :raises ValueError: When the setting is not a valid snapshot reference
         """
-        if not setting.content_type or not SNAPSHOT_REF_CONTENT_TYPE in setting.content_type:
+        if setting.content_type != SNAPSHOT_REF_CONTENT_TYPE:
             raise ValueError("Setting is not a snapshot reference")
 
-        try:
-            # Parse the snapshot reference
-            snapshot_name = SnapshotReferenceParser.parse(setting)
+        # Parse the snapshot reference
+        snapshot_name = SnapshotReferenceParser.parse(setting)
 
-            snapshot = await self._client.get_snapshot(snapshot_name)
-            if snapshot.composition_type != SnapshotComposition.KEY:
-                raise ValueError(f"Snapshot '{snapshot_name}' is not a key snapshot.")
+        snapshot = await self._client.get_snapshot(snapshot_name)
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Snapshot '{snapshot_name}' does not have a 'key' composition type.")
 
-            # Create a selector for the snapshot
-            snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+        # Create a selector for the snapshot
+        snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
 
-            # Use existing load_configuration_settings to load from snapshot
-            configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
+        # Use existing load_configuration_settings to load from snapshot
+        configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
 
-            # Build a dictionary keyed by configuration key
-            snapshot_settings = {}
-            for config in configurations:
-                # Last wins for duplicate keys during iteration
-                snapshot_settings[config.key] = config
-
-            return snapshot_settings
-
-        except AzureError as e:
-            # Wrap Azure errors with more context
-            raise ValueError(
-                f"Failed to resolve snapshot reference for key '{setting.key}' "
-                f"(label: '{setting.label}'). Azure service error occurred."
-            ) from e
+        return configurations
 
 
 class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes

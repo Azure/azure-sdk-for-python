@@ -446,10 +446,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._tracing_context.uses_snapshot_reference = True
                 try:
                     # Resolve the snapshot reference to actual settings
-                    snapshot_settings = client.resolve_snapshot_reference(setting)
-
-                    snapshot_configuration_list = list(snapshot_settings.values())
-                    expanded_settings.extend(snapshot_configuration_list)
+                    expanded_settings.extend(client.resolve_snapshot_reference(setting))
                 except (ValueError, AzureError) as e:
                     # Continue processing other settings even if snapshot resolution fails
                     logger.warning(
@@ -466,7 +463,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
     def _process_configurations(
         self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
     ) -> Dict[str, Any]:
-
+        # Snapshot references must be expanded in place to support override by key ordering.
         expanded_settings = self._expand_snapshot_references(configuration_settings, client)
 
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
