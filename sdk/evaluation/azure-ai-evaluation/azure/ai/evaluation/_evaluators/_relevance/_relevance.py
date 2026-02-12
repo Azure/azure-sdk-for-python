@@ -197,7 +197,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
         if not isinstance(eval_input["response"], str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = result.get("llm_output")
+        llm_output = result.get("llm_output", result)
         score = math.nan
 
         if isinstance(llm_output, dict):

@@ -162,7 +162,7 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
 
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = result.get("llm_output") if isinstance(result, dict) else result
+        llm_output = result.get("llm_output", result) if isinstance(result, dict) else result
 
         score = math.nan
         llm_output_is_dict = isinstance(llm_output, dict)
@@ -176,19 +176,27 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             binary_result = self._get_binary_result(score)
 
+            input_token_count = result.get("input_token_count", 0) if isinstance(result, dict) else 0
+            output_token_count = result.get("output_token_count", 0) if isinstance(result, dict) else 0
+            total_token_count = result.get("total_token_count", 0) if isinstance(result, dict) else 0
+            finish_reason = result.get("finish_reason", "") if isinstance(result, dict) else ""
+            model_id = result.get("model_id", "") if isinstance(result, dict) else ""
+            sample_input = result.get("sample_input", "") if isinstance(result, dict) else ""
+            sample_output = result.get("sample_output", "") if isinstance(result, dict) else ""
+
             # updating the result key and threshold to int based on the schema
             return {
                 f"{self._result_key}": int(score),
                 f"{self._result_key}_result": binary_result,
                 f"{self._result_key}_threshold": int(self._threshold),
                 f"{self._result_key}_reason": reason,
-                f"{self._result_key}_prompt_tokens": result.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": result.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": result.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": result.get("finish_reason", ""),
-                f"{self._result_key}_model": result.get("model_id", ""),
-                f"{self._result_key}_sample_input": result.get("sample_input", ""),
-                f"{self._result_key}_sample_output": result.get("sample_output", ""),
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
+                f"{self._result_key}_finish_reason": finish_reason,
+                f"{self._result_key}_model": model_id,
+                f"{self._result_key}_sample_input": sample_input,
+                f"{self._result_key}_sample_output": sample_output,
             }
 
         if logger:
