@@ -167,6 +167,7 @@ def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, s
 
 def sdk_allowed_kwargs(kwargs):
     allowed_kwargs = [
+        "audience",
         "headers",
         "request_id",
         "user_agent",

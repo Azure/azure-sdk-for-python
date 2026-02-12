@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Adds support for adding `audience` to the kwargs for `load` allowing it to specify the audience for the request.
+
 ### Breaking Changes
 
 ### Bugs Fixed

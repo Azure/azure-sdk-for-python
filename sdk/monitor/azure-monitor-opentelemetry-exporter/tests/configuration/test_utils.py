@@ -603,7 +603,7 @@ class TestOneSettingsResponseErrorHandling(unittest.TestCase):
             (False, False, 429, "no error flags but error status"),
         ]
 
-        for has_timeout, has_exception, status_code, description in test_cases:
+        for _has_timeout, has_exception, status_code, description in test_cases:
             with self.subTest(description=description):
                 response = OneSettingsResponse(has_exception=has_exception, status_code=status_code)
                 self.assertEqual(response.has_exception, has_exception)

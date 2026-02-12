@@ -26,6 +26,8 @@ import queue
 from typing import Union, Optional, cast
 from concurrent.futures import ThreadPoolExecutor
 
+from azure.identity.aio import AzureCliCredential
+
 # Audio processing imports
 try:
     import pyaudio
@@ -355,7 +357,7 @@ class AsyncSupervisorAgentClient:
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
+        credential: AsyncTokenCredential,
         model: str,
         voice: str,
         instructions: str,
@@ -541,21 +543,10 @@ class AsyncSupervisorAgentClient:
 async def main() -> None:
     """Main entry point for the supervisor agent sample."""
     # Get credentials from environment variables
-    api_key = os.environ.get("AZURE_VOICELIVE_API_KEY")
     endpoint = os.environ.get("AZURE_VOICELIVE_ENDPOINT", "wss://api.voicelive.com/v1")
 
-    if not api_key:
-        print("❌ Error: No AZURE_VOICELIVE_API_KEY provided")
-        print("Please set the AZURE_VOICELIVE_API_KEY environment variable.")
-        sys.exit(1)
-
-    # Option 1: API key authentication (simple, recommended for quick start)
-    credential: Union[AzureKeyCredential, AsyncTokenCredential] = AzureKeyCredential(api_key)
-
-    # Option 2: Async AAD authentication (requires azure-identity)
-    # Uncomment the lines below to use AAD authentication instead:
-    # from azure.identity.aio import AzureCliCredential, DefaultAzureCredential
-    # credential = AzureCliCredential()
+    
+    credential = AzureCliCredential()
 
     # Create and run the supervisor agent client
     client = AsyncSupervisorAgentClient(
