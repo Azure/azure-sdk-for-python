@@ -58,12 +58,16 @@ def extract_whl(dist_dir, version):
 
 
 def verify_whl_root_directory(
-    dist_dir: str, expected_top_level_module: str, parsed_pkg: ParsedSetup, executable: str
+    dist_dir: str,
+    expected_top_level_module: str,
+    parsed_pkg: ParsedSetup,
+    executable: str,
+    pypi_versions: List[str],
 ) -> bool:
     # Verify metadata compatibility with prior version
     version: str = parsed_pkg.version
     metadata: Dict[str, Any] = extract_package_metadata(get_path_to_zip(dist_dir, version))
-    prior_version = get_prior_version(parsed_pkg.name, version)
+    prior_version = get_prior_version(parsed_pkg.name, version, pypi_versions=pypi_versions)
     if prior_version:
         if not verify_prior_version_metadata(parsed_pkg.name, prior_version, metadata, executable):
             return False
@@ -98,19 +102,19 @@ def should_verify_package(package_name):
     return package_name not in EXCLUDED_PACKAGES and "nspkg" not in package_name and "-mgmt" not in package_name
 
 
-def has_stable_version_on_pypi(package_name: str) -> bool:
+def has_stable_version_on_pypi(package_name: str, pypi_versions: List[str]) -> bool:
     """Check if the package has any stable (non-prerelease) version on PyPI."""
     try:
-        all_versions = retrieve_versions_from_pypi(package_name)
+        all_versions = pypi_versions
         stable_versions = [Version(v) for v in all_versions if not Version(v).is_prerelease]
         return len(stable_versions) > 0
     except Exception:
         return False
 
 
-def verify_conda_section(package_dir: str, package_name: str) -> bool:
+def verify_conda_section(package_dir: str, package_name: str, pypi_versions: List[str]) -> bool:
     """Verify that packages with stable versions on PyPI have [tool.azure-sdk-conda] section in pyproject.toml."""
-    if not has_stable_version_on_pypi(package_name):
+    if not has_stable_version_on_pypi(package_name, pypi_versions=pypi_versions):
         logger.info(f"Package {package_name} has no stable version on PyPI, skipping conda section check")
         return True
 
@@ -139,10 +143,15 @@ def verify_conda_section(package_dir: str, package_name: str) -> bool:
         return False
 
 
-def get_prior_version(package_name: str, current_version: str) -> Optional[str]:
-    """Get prior stable version if it exists, otherwise get prior preview version, else return None."""
+def get_prior_version(
+    package_name: str, current_version: str, pypi_versions: Optional[List[str]] = None
+) -> Optional[str]:
+    """Get prior stable version if it exists, otherwise get prior preview version, else return None.
+
+    pypi_versions can be optionally passed in to avoid redundant PyPI calls
+    """
     try:
-        all_versions = retrieve_versions_from_pypi(package_name)
+        all_versions = pypi_versions if pypi_versions is not None else retrieve_versions_from_pypi(package_name)
         current_ver = Version(current_version)
         prior_versions = [Version(v) for v in all_versions if Version(v) < current_ver]
         if not prior_versions:
@@ -290,15 +299,21 @@ class verify_whl(Check):
             )
 
             if should_verify_package(package_name):
+                pypi_versions = retrieve_versions_from_pypi(package_name)
+
                 logger.info(f"Verifying whl for package: {package_name}")
-                if verify_whl_root_directory(staging_directory, top_level_module, parsed, executable):
+                if verify_whl_root_directory(
+                    staging_directory, top_level_module, parsed, executable, pypi_versions=pypi_versions
+                ):
                     logger.info(f"Verified whl for package {package_name}")
                 else:
                     logger.error(f"Failed to verify whl for package {package_name}")
                     results.append(1)
 
                 # Verify conda section for packages with stable versions on PyPI
-                if not verify_conda_section(package_dir, package_name):
+                if verify_conda_section(package_dir, package_name, pypi_versions=pypi_versions):
+                    logger.info(f"Verified conda section for package {package_name}")
+                else:
                     results.append(1)
 
         return max(results) if results else 0
