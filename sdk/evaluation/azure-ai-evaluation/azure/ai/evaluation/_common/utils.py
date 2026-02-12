@@ -706,7 +706,7 @@ def reformat_conversation_history(query, logger=None, include_system_messages=Fa
         #   Lower percentage of mode in Likert scale (73.4% vs 75.4%)
         #   Lower pairwise agreement between LLMs (85% vs 90% at the pass/fail level with threshold of 3)
         if logger:
-            logger.warning(f"Conversation history could not be parsed, falling back to original query: {query}")
+            logger.warning("Conversation history could not be parsed, falling back to original query")
         return query
 
 
@@ -761,15 +761,15 @@ def reformat_agent_response(response, logger=None, include_tool_messages=False):
             # If no message could be extracted, likely the format changed, fallback to the original response in that case
             if logger:
                 logger.debug(
-                    f"Empty agent response extracted, likely due to input schema change. Falling back to using the original response: {response}"
+                    "Empty agent response extracted, likely due to input schema change. Falling back to original response"
                 )
             return response
         return "\n".join(agent_response)
-    except:
+    except Exception:
         # If the agent response cannot be parsed for whatever reason (e.g. the converter format changed), the original response is returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.debug(f"Agent response could not be parsed, falling back to original response: {response}")
+            logger.debug("Agent response could not be parsed, falling back to original response")
         return response
 
 
@@ -787,9 +787,7 @@ def reformat_tool_definitions(tool_definitions, logger=None):
         # If the tool definitions cannot be parsed for whatever reason, the original tool definitions are returned
         # This is a fallback to ensure that the evaluation can still proceed. See comments on reformat_conversation_history for more details.
         if logger:
-            logger.warning(
-                f"Tool definitions could not be parsed, falling back to original definitions: {tool_definitions}"
-            )
+            logger.debug("Tool definitions could not be parsed, falling back to original definitions")
         return tool_definitions
 
 
@@ -915,9 +913,9 @@ def upload(path: str, container_client: ContainerClient, logger=None):
 
     except Exception as e:
         raise EvaluationException(
-            message=f"Error uploading file: {e}",
-            internal_message=f"Error uploading file: {e}",
+            message=f"Error uploading file: {type(e).__name__}",
+            internal_message=f"Error uploading file: {type(e).__name__}",
             target=ErrorTarget.RAI_CLIENT,
             category=ErrorCategory.UPLOAD_ERROR,
             blame=ErrorBlame.SYSTEM_ERROR,
-        )
+        ) from e
