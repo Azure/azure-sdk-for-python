@@ -100,7 +100,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
 
         # Initialize input validator
-        self._validator = ToolCallsValidator(error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR)
+        self._validator = ToolCallsValidator(
+            error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            check_for_unsupported_tools=True,
+        )
 
         super().__init__(
             model_config=model_config,
