@@ -42,7 +42,7 @@ If you have a file in `samples\text_example_async.py` with a snippet named `asyn
 
 ## Run update_snippet tool 
 
-The update_snippet tool is included in the [azpysdk CLI](../../doc/tool_usage_guide.md), which is installed with `azure-sdk-tools`.
+The update_snippet tool is included in the [azpysdk CLI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md), which is installed with `azure-sdk-tools`.
 
 ```powershell
 cd <package_dir>
