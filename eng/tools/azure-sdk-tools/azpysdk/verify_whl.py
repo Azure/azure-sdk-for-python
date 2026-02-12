@@ -112,7 +112,9 @@ def has_stable_version_on_pypi(package_name: str, pypi_versions: List[str]) -> b
         return False
 
 
-def verify_conda_section(package_dir: str, package_name: str, parsed_pkg: ParsedSetup, pypi_versions: List[str]) -> bool:
+def verify_conda_section(
+    package_dir: str, package_name: str, parsed_pkg: ParsedSetup, pypi_versions: List[str]
+) -> bool:
     """Verify that packages with stable versions on PyPI have [tool.azure-sdk-conda] section in pyproject.toml."""
     if not has_stable_version_on_pypi(package_name, pypi_versions=pypi_versions):
         logger.info(f"Package {package_name} has no stable version on PyPI, skipping conda section check")
@@ -122,7 +124,7 @@ def verify_conda_section(package_dir: str, package_name: str, parsed_pkg: Parsed
     if not os.path.exists(pyproject_path):
         logger.error(f"Package {package_name} has a stable version on PyPI but is missing pyproject.toml")
         return False
-    
+
     config = parsed_pkg.get_conda_config()
     if not config:
         logger.error(
@@ -135,6 +137,7 @@ def verify_conda_section(package_dir: str, package_name: str, parsed_pkg: Parsed
         logger.error(f"[tool.azure-sdk-conda] section in pyproject.toml is missing required field `in_bundle`.")
         return False
     return True
+
 
 def get_prior_version(
     package_name: str, current_version: str, pypi_versions: Optional[List[str]] = None
