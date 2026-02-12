@@ -107,6 +107,8 @@ class ContainerProxy:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
             if "timeout" in options:
                 kwargs['timeout'] = options['timeout']
+            if "read_timeout" in options:
+                kwargs['read_timeout'] = options['read_timeout']
 
         return await self._get_properties(**kwargs)
 

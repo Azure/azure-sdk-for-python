@@ -1466,6 +1466,78 @@ class TestCRUDOperations(unittest.TestCase):
         )
         self.assertEqual(result['id'], 'test_item_1')
 
+    def test_request_level_timeout_overrides_client_read_timeout(self):
+        """Test that request-level read_timeout overrides client-level timeout for reads and writes"""
+
+        # Create container with normal client
+        normal_container = self.databaseForTest.create_container(
+            id='request_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create test items
+        for i in range(5):
+            test_item = {
+                'id': f'test_item_{i}',
+                'pk': f'partition{i}',
+                'data': f'test_data_{i}'
+            }
+            normal_container.create_item(test_item)
+
+        # Create client with very short read timeout at client level
+        timeout_client = cosmos_client.CosmosClient(
+            url=self.host,
+            credential=self.masterKey,
+            read_timeout=0.001  # Very short timeout that would normally fail
+        )
+        print(f"test_crud got the client")
+        database = timeout_client.get_database_client(self.databaseForTest.id)
+        container = database.get_container_client(normal_container.id)
+        print(f"test_crud about to execute read operation")
+        # Test 1: Point read with request-level timeout should succeed (overrides client timeout)
+        result = container.read_item(
+            item='test_item_0',
+            partition_key='partition0',
+            read_timeout=30  # Higher timeout at request level
+        )
+        self.assertEqual(result['id'], 'test_item_0')
+
+        # Test 2: Query with request-level timeout should succeed (overrides client timeout)
+        results = list(container.query_items(
+            query="SELECT * FROM c WHERE c.pk = @pk",
+            parameters=[{"name": "@pk", "value": "partition1"}],
+            read_timeout=30  # Higher timeout at request level
+        ))
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], 'test_item_1')
+
+        # Test 3: Upsert (write) with request-level timeout should succeed
+        upsert_item = {
+            'id': 'test_item_0',
+            'pk': 'partition0',
+            'data': 'updated_data'
+        }
+        result = container.upsert_item(
+            body=upsert_item,
+            read_timeout=30  # Higher timeout at request level
+        )
+        self.assertEqual(result['data'], 'updated_data')
+
+        # Test 4: Create (write) with request-level timeout should succeed
+        new_item = {
+            'id': 'new_test_item',
+            'pk': 'new_partition',
+            'data': 'new_data'
+        }
+        result = container.create_item(
+            body=new_item,
+            read_timeout=30  # Higher timeout at request level
+        )
+        self.assertEqual(result['id'], 'new_test_item')
+
+        # Cleanup
+        self.databaseForTest.delete_container(normal_container.id)
+
     def test_point_operation_read_timeout(self):
         """Test that point operations respect client provided read timeout"""
 
@@ -1490,6 +1562,98 @@ class TestCRUDOperations(unittest.TestCase):
             )
         except Exception as e:
             print(f"Exception is {e}")
+
+    def test_client_level_read_timeout_on_queries_and_point_operations(self):
+        """Test that queries and point operations respect client-level read timeout"""
+
+        # Create container with normal client
+        normal_container = self.databaseForTest.create_container(
+            id='read_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create test items
+        for i in range(5):
+            test_item = {
+                'id': f'test_item_{i}',
+                'pk': f'partition{i}',
+                'data': f'test_data_{i}'
+            }
+            normal_container.create_item(test_item)
+
+        # Create client with very short read timeout
+        timeout_client = cosmos_client.CosmosClient(
+            url=self.host,
+            credential=self.masterKey,
+            read_timeout=0.001  # Very short timeout to force failure
+        )
+        database = timeout_client.get_database_client(self.databaseForTest.id)
+        container = database.get_container_client(normal_container.id)
+
+        # Test 1: Point read operation should time out
+        with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
+            container.read_item(
+                item='test_item_0',
+                partition_key='partition0'
+            )
+
+        # Test 2: Query operation should time out
+        with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
+            list(container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "partition0"}]
+            ))
+
+    def test_policy_level_read_timeout_on_queries_and_point_operations(self):
+        """Test that queries and point operations respect connection-policy level read timeout"""
+
+        # Create container with normal client
+        normal_container = self.databaseForTest.create_container(
+            id='read_timeout_container_' + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/pk")
+        )
+
+        # Create test items
+        for i in range(5):
+            test_item = {
+                'id': f'test_item_{i}',
+                'pk': f'partition{i}',
+                'data': f'test_data_{i}'
+            }
+            normal_container.create_item(test_item)
+
+        # Create client with very short read timeout
+        connection_policy = documents.ConnectionPolicy()
+        connection_policy.read_timeout = 0.001
+        timeout_client = cosmos_client.CosmosClient(
+            url=self.host,
+            credential=self.masterKey,
+            connection_policy=connection_policy
+        )
+        database = timeout_client.get_database_client(self.databaseForTest.id)
+        container = database.get_container_client(normal_container.id)
+
+        try:
+            container.read_item(
+                item='test_item_0',
+                partition_key='partition0'
+            )
+        except Exception as e:
+            print(f"Exception is {e}")
+
+        # Test 1: Point read operation should time out
+        with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
+            container.read_item(
+                item='test_item_0',
+                partition_key='partition0'
+            )
+
+        # Test 2: Query operation should time out
+        with self.assertRaises((exceptions.CosmosClientTimeoutError, ServiceResponseError)):
+            list(container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "partition0"}]
+            ))
 
     # TODO: for read timeouts azure-core returns a ServiceResponseError, needs to be fixed in azure-core and then this test can be enabled
     @unittest.skip
