@@ -463,14 +463,15 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 try:
                     # Resolve the snapshot reference to actual settings
                     expanded_settings.extend(await client.resolve_snapshot_reference(setting))
-                except (ValueError, AzureError) as e:
-                    logger.warning(
+                except AzureError as e:
+                    # Continue processing other settings even if snapshot resolution fails
+                    logger.error(
                         "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
                         setting.key,
                         setting.label,
                         str(e),
                     )
-                    # Continue processing other settings even if snapshot resolution fails
+                    raise e
             else:
                 expanded_settings.append(setting)
 
