@@ -952,7 +952,7 @@ Cross region hedging availability strategy improves availability and reduces lat
 
 #### Enabling Cross Region Hedging
 
-You can enable cross region hedging by passing the `availability_strategy_config` parameter as a dictionary to the `CosmosClient` or per-request. The most common configuration keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests).
+You can enable cross region hedging by passing the `availability_strategy` parameter as a dictionary to the `CosmosClient` or per-request. The most common configuration keys are `threshold_ms` (delay before sending a hedged request) and `threshold_steps_ms` (step interval for additional hedged requests).
 
 #### Client-level configuration
 
@@ -962,7 +962,7 @@ from azure.cosmos import CosmosClient
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
 )
 ```
 
@@ -973,7 +973,7 @@ client = CosmosClient(
 container.read_item(
     item="item_id",
     partition_key="pk_value",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50}
+    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50}
 )
 ```
 
@@ -984,7 +984,7 @@ container.read_item(
 container.read_item(
     item="item_id",
     partition_key="pk_value",
-    availability_strategy_config=None
+    availability_strategy=None
 )
 ```
 
@@ -999,7 +999,7 @@ executor = ThreadPoolExecutor(max_workers=2)
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
+    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50},
     availability_strategy_executor=executor
 )
 ```
@@ -1013,7 +1013,7 @@ from azure.cosmos import CosmosClient
 client = CosmosClient(
     "<account-uri>",
     "<account-key>",
-    availability_strategy_config={"threshold_ms": 150, "threshold_steps_ms": 50},
+    availability_strategy={"threshold_ms": 150, "threshold_steps_ms": 50},
     availability_strategy_max_concurrency=2
 )
 ```
