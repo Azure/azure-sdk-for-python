@@ -311,7 +311,7 @@ class PageBlobChunkUploader(_ChunkUploader):
                 **self.request_options,
             )
 
-            if not self.parallel and self.request_options.get("modified_access_conditions"):
+            if not self.parallel and self.request_options.get("modified_access_conditions") is not None:
                 self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
@@ -366,7 +366,7 @@ class DataLakeFileChunkUploader(_ChunkUploader):
             **self.request_options,
         )
 
-        if not self.parallel and self.request_options.get("modified_access_conditions"):
+        if not self.parallel and self.request_options.get("modified_access_conditions") is not None:
             self.request_options["modified_access_conditions"].if_match = self.response_headers["etag"]
 
     def _upload_substream_block(self, index, block_stream):
