@@ -187,7 +187,7 @@ class TestTableServicePropertiesAsync(AzureRecordedTestCase, TableTestCase):
 
         # Azure Core 1.38.1 introduced a change to URL formatting which can cause recording mismatches in
         # mindependency checks.
-        if Version(core_version) >= Version("1.38.1"):
+        if Version(core_version) >= Version("1.38.1") or self.is_live:
             with pytest.raises(HttpResponseError) as exc:
                 await tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
             assert ("URI is invalid") in str(exc.value)
