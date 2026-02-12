@@ -153,6 +153,51 @@ class TestSession(unittest.TestCase):
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
         assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
 
+    def test_session_token_compound_not_sent_for_single_partition_query(self):
+        """
+        Verify that when querying with a feed range (single physical partition),
+        only that partition's session token is sent, not the entire compound token.
+        """
+        test_container = self.created_db.create_container(
+            "Container query test" + str(uuid.uuid4()),
+            PartitionKey(path="/pk"),
+            offer_throughput=11000
+        )
+
+        try:
+            # Create items across multiple partition keys
+            for i in range(100):
+                test_container.create_item({
+                    'id': str(uuid.uuid4()),
+                    'pk': f"pk_{i:04d}"
+                })
+
+            # Get feed ranges and verify multiple exist
+            feed_ranges = list(test_container.read_feed_ranges())
+            self.assertGreater(len(feed_ranges), 1, "Expected multiple feed ranges")
+
+            # Capture session token sent with feed range query
+            captured_session_token = {}
+
+            def capture_session_token(request):
+                captured_session_token['token'] = request.http_request.headers.get(HttpHeaders.SessionToken)
+
+            # Query with single feed range
+            list(test_container.query_items(
+                query="SELECT * FROM c",
+                feed_range=feed_ranges[0],
+                raw_request_hook=capture_session_token
+            ))
+
+            # Verify only single partition token was sent
+            token = captured_session_token.get('token')
+            self.assertIsNotNone(token, "Session token should be present")
+            self.assertNotIn(',', token,
+                             f"Expected single partition token, got compound token: {token}")
+
+        finally:
+            self.created_db.delete_container(test_container)
+
     def test_session_token_with_space_in_container_name(self):
 
         # Session token should not be sent for control plane operations
