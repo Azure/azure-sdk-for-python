@@ -83,7 +83,7 @@
 # PRLabel: %Batch
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
-# PRLabel: %CognitiveServices
+# PRLabel: %Cognitive - Mgmt
 /sdk/cognitiveservices/                                              @lmazuel
 
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang
@@ -142,8 +142,8 @@
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi @amruthashree18
 
-# ServiceLabel: %Content Safety
-# PRLabel: %Content Safety
+# ServiceLabel: %Cognitive - Content Safety
+# PRLabel: %Cognitive - Content Safety
 /sdk/contentsafety/                                                  @mengaims
 
 # ServiceLabel: %DevCenter
@@ -154,8 +154,8 @@
 # PRLabel: %Defender EASM
 /sdk/easm/                                                           @nathanfalke
 
-# ServiceLabel: %FaceAPI
-# PRLabel: %FaceAPI
+# ServiceLabel: %Cognitive - Face
+# PRLabel: %Cognitive - Face
 /sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
@@ -269,12 +269,8 @@
 # ServiceLabel: %Voice Live %Service Attention
 /sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
 
-
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
-
-# PRLabel: %Models repository
-/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearning/                                                @shutchings
@@ -442,9 +438,6 @@
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
-
-# PRLabel: %Media
-/sdk/media/                                                          @naiteeks @giakas
 
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
@@ -640,9 +633,6 @@
 # ServiceLabel: %Devtestlab %Service Attention
 # ServiceOwners:          @Tanmayeekamath
 
-# ServiceLabel: %Device Provisioning Service %Service Attention
-# ServiceOwners:          @nberdy
-
 # ServiceLabel: %Functions %Service Attention
 # ServiceOwners:          @ahmedelnably @fabiocav
 
@@ -678,9 +668,6 @@
 
 # ServiceLabel: %Managed Identity %Service Attention
 # ServiceOwners:          @varunkch
-
-# ServiceLabel: %Managed Services %Service Attention
-# ServiceOwners:          @Lighthouse-Azure
 
 # ServiceLabel: %MariaDB %Service Attention
 # ServiceOwners:          @ambhatna @savjani
@@ -741,9 +728,6 @@
 
 # ServiceLabel: %Notification Hub %Service Attention
 # ServiceOwners:          @tjsomasundaram
-
-# ServiceLabel: %Operational Insights %Service Attention
-# ServiceOwners:          @AzmonLogA
 
 # ServiceLabel: %Policy %Service Attention
 # ServiceOwners:          @aperezcloud @kenieva
