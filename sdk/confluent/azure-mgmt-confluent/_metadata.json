@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-08-18-preview",
+  "commit": "37e381cdb441a1370593507d94157f3f6a57a154",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/confluent/Confluent.Management",
+  "emitterVersion": "0.60.0"
+}
