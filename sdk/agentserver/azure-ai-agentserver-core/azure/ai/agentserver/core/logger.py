@@ -6,25 +6,48 @@ import contextvars
 import logging
 import os
 from logging import config
+from typing import Any, Optional
 
 from ._version import VERSION
 from .constants import Constants
 
-default_log_config = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "loggers": {
-        "azure.ai.agentserver": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
+def _get_default_log_config() -> dict[str, Any]:
+    """
+    Build default log config with level from environment.
+    
+    :return: A dictionary containing logging configuration.
+    :rtype: dict
+    """
+    log_level = get_log_level()
+    return {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "loggers": {
+            "azure.ai.agentserver": {
+                "handlers": ["console"],
+                "level": log_level,
+                "propagate": False,
+            },
         },
-    },
-    "handlers": {
-        "console": {"formatter": "std_out", "class": "logging.StreamHandler", "level": "INFO"},
-    },
-    "formatters": {"std_out": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}},
-}
+        "handlers": {
+            "console": {
+                "formatter": "std_out", 
+                "class": "logging.StreamHandler", 
+                "stream": "ext://sys.stdout", 
+                "level": log_level},
+        },
+        "formatters": {"std_out": {"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"}},
+    }
+
+
+def get_log_level():
+    log_level = os.getenv(Constants.AGENT_LOG_LEVEL, "INFO").upper()
+    valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+    if log_level not in valid_levels:
+        print(f"Invalid log level '{log_level}' specified. Defaulting to 'INFO'.")
+        log_level = "INFO"
+    return log_level
+
 
 request_context = contextvars.ContextVar("request_context", default=None)
 
@@ -103,15 +126,17 @@ class CustomDimensionsFilter(logging.Filter):
         return True
 
 
-def configure(log_config: dict = default_log_config):
+def configure(log_config: Optional[dict[str, Any]] = None):
     """
     Configure logging based on the provided configuration dictionary.
     The dictionary should contain the logging configuration in a format compatible with `logging.config.dictConfig`.
 
-    :param log_config: A dictionary containing logging configuration.
-    :type log_config: dict
+    :param log_config: A dictionary containing logging configuration. If None, uses default config with AGENT_LOG_LEVEL.
+    :type log_config: Optional[dict[str, Any]]
     """
     try:
+        if log_config is None:
+            log_config = _get_default_log_config()
         config.dictConfig(log_config)
         app_logger = logging.getLogger("azure.ai.agentserver")
 
@@ -149,15 +174,6 @@ def configure(log_config: dict = default_log_config):
 
     except Exception as e:
         print(f"Failed to configure logging: {e}")
-
-
-def get_log_level():
-    log_level = os.getenv(Constants.AGENT_LOG_LEVEL, "INFO").upper()
-    valid_levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
-    if log_level not in valid_levels:
-        print(f"Invalid log level '{log_level}' specified. Defaulting to 'INFO'.")
-        log_level = "INFO"
-    return log_level
 
 
 def get_logger() -> logging.Logger:

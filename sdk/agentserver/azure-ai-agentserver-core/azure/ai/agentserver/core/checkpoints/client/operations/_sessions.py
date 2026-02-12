@@ -5,7 +5,6 @@
 
 from typing import Any, ClassVar, Dict, Optional
 
-from azure.core import AsyncPipelineClient
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async

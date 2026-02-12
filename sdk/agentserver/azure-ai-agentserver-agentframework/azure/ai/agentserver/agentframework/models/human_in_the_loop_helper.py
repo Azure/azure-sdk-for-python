@@ -119,3 +119,94 @@ class HumanInTheLoopHelper:
             result=response_result,
         )
         return ChatMessage(role="tool", contents=[response_content])
+
+    def remove_hitl_content_from_thread(self, thread_messages: List[ChatMessage]) -> List[ChatMessage]:
+        """Remove HITL function call contents and related results from a conversation thread.
+
+        HITL requests become ``function_call`` entries named ``HUMAN_IN_THE_LOOP_FUNCTION_NAME`` when converted
+        by the adapter. To avoid feeding those synthetic requests back into the agent, this method strips the
+        HITL function_calls and their placeholder outputs while preserving real tool invocations.
+
+        :param thread_messages: The messages converted from the conversation API.
+        :type thread_messages: List[ChatMessage]
+        :return: Messages without HITL-specific artifacts.
+        :rtype: List[ChatMessage]
+        """
+        filtered_messages = []
+
+        prev_function_call = None
+        prev_hitl_request = None
+        prev_function_output = None
+        pending_tool_message = None
+
+        for message in thread_messages:
+            filtered_contents = []
+            for content in message.contents:
+                if content.type == "function_result":
+                    result_call_id = getattr(content, "call_id", "")
+                    if not prev_function_call:
+                        if prev_hitl_request and prev_hitl_request.call_id == result_call_id:
+                            # this is a hitl function result without the function call content, we can
+                            # just skip it and wait for the next function call or result.
+                            prev_hitl_request = None
+                        else:
+                            logger.warning(
+                                "Got function result content with call_id %s but no previous function call found.",
+                                result_call_id,
+                            )
+                    elif result_call_id == getattr(prev_function_call, "call_id", ""):
+                        # prev_function_call is not None and call_id matches
+                        if prev_hitl_request:
+                            # A HITL request may followed by one or two function result contents.
+                            # if there are two, the last one is the real function result, the first
+                            # one is just for recording the human feedback, we should remove it.
+                            prev_function_output = content
+                        else:
+                            # function call without hitl result of the function call content
+                            filtered_contents.append(content)
+                            prev_function_call = None
+                    else:
+                        logger.warning(
+                            "Got unmatched function result content with call_id %s, expected call_id %s. Skipping it.",
+                            result_call_id,
+                            getattr(prev_function_call, "call_id", ""),
+                        )
+                        prev_function_call = None
+                        prev_hitl_request = None
+                else:
+                    if pending_tool_message:
+                        # for the case mentioned above, we should append the real function result content
+                        # when we see the next content, which means the function call and output cycle is ended.
+                        # attach the real function result to the thread
+                        filtered_messages.append(pending_tool_message)
+                        pending_tool_message = None
+                        prev_function_call = None
+                        prev_hitl_request = None
+                        prev_function_output = None
+
+                    if content.type == "function_call":
+                        if content.name != HUMAN_IN_THE_LOOP_FUNCTION_NAME:
+                            filtered_contents.append(content)
+                            prev_function_call = content
+                        else:
+                            # hitl request converted by adapter, skip this message.
+                            prev_hitl_request = content
+                    else:
+                        filtered_contents.append(content)
+            if filtered_contents:
+                filtered_message = ChatMessage(
+                    role=message.role,
+                    contents=filtered_contents,
+                    message_id=message.message_id,
+                    additional_properties=message.additional_properties,
+                )
+                filtered_messages.append(filtered_message)
+
+            if prev_function_output:
+                pending_tool_message = ChatMessage(
+                    role="tool",
+                    contents=[prev_function_output],
+                    message_id=message.message_id,
+                    additional_properties=message.additional_properties,
+                )
+        return filtered_messages

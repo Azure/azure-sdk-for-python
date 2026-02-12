@@ -40,8 +40,11 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
         thread_repository: Optional[AgentThreadRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
+        *,
+        project_endpoint: Optional[str] = None,
+        **kwargs,
     ) -> None:
-        super().__init__(credentials, thread_repository)
+        super().__init__(credentials, thread_repository, project_endpoint=project_endpoint, **kwargs)
         self._workflow_factory = workflow_factory
         self._checkpoint_repository = checkpoint_repository
 

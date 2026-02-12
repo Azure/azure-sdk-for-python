@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=docstring-should-be-keyword
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from typing import Optional, Union, TYPE_CHECKING
@@ -24,10 +25,11 @@ def from_langgraph(
     credentials: Optional[Union["AsyncTokenCredential", "TokenCredential"]] = None,
     converter: Optional["ResponseAPIConverter"] = None,
 ) -> "LangGraphAdapter":
-    """Create a LangGraph adapter for Azure AI Agent Server.
+    """
+    Create a LangGraph adapter for Azure AI Agent Server.
 
     :param agent: The compiled LangGraph state graph. To use persistent checkpointing,
-        compile the graph with a checkpointer via ``builder.compile(checkpointer=saver)``.
+                    compile the graph with a checkpointer via ``builder.compile(checkpointer=saver)``.
     :type agent: CompiledStateGraph
     :param credentials: Azure credentials for authentication.
     :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]

@@ -8,8 +8,6 @@ from contextlib import AbstractAsyncContextManager
 from types import TracebackType
 from typing import Any, AsyncIterator, Dict, Iterator, List, Optional, Sequence, Tuple, Union
 
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
 from langchain_core.runnables import RunnableConfig
 from langgraph.checkpoint.base import (
     BaseCheckpointSaver,
@@ -21,6 +19,8 @@ from langgraph.checkpoint.base import (
     get_checkpoint_id,
 )
 
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.agentserver.core.checkpoints.client import (
     CheckpointItem,
     CheckpointItemId,
@@ -28,7 +28,7 @@ from azure.ai.agentserver.core.checkpoints.client import (
     FoundryCheckpointClient,
 )
 
-from ._item_id import ItemType, ParsedItemId, make_item_id, parse_item_id
+from ._item_id import ParsedItemId, make_item_id, parse_item_id
 
 logger = logging.getLogger(__name__)
 
@@ -110,8 +110,11 @@ class FoundryCheckpointSaver(
         """Exit the async context manager.
 
         :param exc_type: Exception type if an exception occurred.
+        :type exc_type: Optional[type[BaseException]]
         :param exc_val: Exception value if an exception occurred.
+        :type exc_val: Optional[BaseException]
         :param exc_tb: Exception traceback if an exception occurred.
+        :type exc_tb: Optional[TracebackType]
         """
         await self._client.__aexit__(exc_type, exc_val, exc_tb)
 
@@ -442,11 +445,11 @@ class FoundryCheckpointSaver(
 
         :param config: Base configuration for filtering checkpoints.
         :type config: Optional[RunnableConfig]
-        :param filter: Additional filtering criteria for metadata.
+        :keyword filter: Additional filtering criteria for metadata.
         :type filter: Optional[Dict[str, Any]]
-        :param before: List checkpoints created before this configuration.
+        :keyword before: List checkpoints created before this configuration.
         :type before: Optional[RunnableConfig]
-        :param limit: Maximum number of checkpoints to return.
+        :keyword limit: Maximum number of checkpoints to return.
         :type limit: Optional[int]
         :return: Async iterator of matching checkpoint tuples.
         :rtype: AsyncIterator[CheckpointTuple]
@@ -521,6 +524,10 @@ class FoundryCheckpointSaver(
     def get_tuple(self, config: RunnableConfig) -> Optional[CheckpointTuple]:
         """Sync version not supported - use aget_tuple instead.
 
+        :param config: Configuration specifying which checkpoint to retrieve.
+        :type config: RunnableConfig
+        :return: The checkpoint tuple, or None if not found.
+        :rtype: Optional[CheckpointTuple]
         :raises NotImplementedError: Always raised.
         """
         raise NotImplementedError(
@@ -537,6 +544,16 @@ class FoundryCheckpointSaver(
     ) -> Iterator[CheckpointTuple]:
         """Sync version not supported - use alist instead.
 
+        :param config: Base configuration for filtering checkpoints.
+        :type config: Optional[RunnableConfig]
+        :keyword filter: Additional filtering criteria for metadata.
+        :type filter: Optional[Dict[str, Any]]
+        :keyword before: List checkpoints created before this configuration.
+        :type before: Optional[RunnableConfig]
+        :keyword limit: Maximum number of checkpoints to return.
+        :type limit: Optional[int]
+        :return: Iterator of matching checkpoint tuples.
+        :rtype: Iterator[CheckpointTuple]
         :raises NotImplementedError: Always raised.
         """
         raise NotImplementedError(
@@ -552,6 +569,16 @@ class FoundryCheckpointSaver(
     ) -> RunnableConfig:
         """Sync version not supported - use aput instead.
 
+        :param config: Configuration for the checkpoint.
+        :type config: RunnableConfig
+        :param checkpoint: The checkpoint to store.
+        :type checkpoint: Checkpoint
+        :param metadata: Additional metadata for the checkpoint.
+        :type metadata: CheckpointMetadata
+        :param new_versions: New channel versions as of this write.
+        :type new_versions: ChannelVersions
+        :return: Updated configuration with the checkpoint ID.
+        :rtype: RunnableConfig
         :raises NotImplementedError: Always raised.
         """
         raise NotImplementedError(
@@ -567,6 +594,16 @@ class FoundryCheckpointSaver(
     ) -> None:
         """Sync version not supported - use aput_writes instead.
 
+        :param config: Configuration of the related checkpoint.
+        :type config: RunnableConfig
+        :param writes: List of writes to store as (channel, value) pairs.
+        :type writes: Sequence[Tuple[str, Any]]
+        :param task_id: Identifier for the task creating the writes.
+        :type task_id: str
+        :param task_path: Path of the task creating the writes.
+        :type task_path: str
+        :return: None
+        :rtype: None
         :raises NotImplementedError: Always raised.
         """
         raise NotImplementedError(
@@ -576,6 +613,10 @@ class FoundryCheckpointSaver(
     def delete_thread(self, thread_id: str) -> None:
         """Sync version not supported - use adelete_thread instead.
 
+        :param thread_id: Identifier of the thread to delete.
+        :type thread_id: str
+        :return: None
+        :rtype: None
         :raises NotImplementedError: Always raised.
         """
         raise NotImplementedError(
@@ -590,6 +631,7 @@ class FoundryCheckpointSaver(
         :param current: The current version identifier.
         :type current: Optional[str]
         :param channel: Deprecated argument, kept for backwards compatibility.
+        :type channel: None
         :return: The next version identifier.
         :rtype: str
         """

@@ -16,10 +16,10 @@ class TestTranscriptionUrl(TranscriptionClientTestBase):
     def test_transcribe_from_public_url(self, transcription_endpoint, transcription_test_audio_url):
         """Test transcription from a publicly accessible URL."""
         client = self.create_client(endpoint=transcription_endpoint)
-        
+
         audio_url = transcription_test_audio_url
         result = client.transcribe_from_url(audio_url)
-        
+
         assert result is not None
         assert result.combined_phrases is not None
         assert len(result.combined_phrases) > 0

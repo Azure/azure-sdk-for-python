@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,12 +8,11 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
 
 
@@ -48,8 +47,8 @@ class APIServerProfile(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.visibility = visibility
-        self.url = None
-        self.ip = None
+        self.url: Optional[str] = None
+        self.ip: Optional[str] = None
 
 
 class CloudErrorBody(_serialization.Model):
@@ -81,7 +80,7 @@ class CloudErrorBody(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["_models.CloudErrorBody"]] = None,
+        details: Optional[list["_models.CloudErrorBody"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -107,6 +106,8 @@ class CloudErrorBody(_serialization.Model):
 class ClusterProfile(_serialization.Model):
     """ClusterProfile represents a cluster profile.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     :ivar pull_secret: The pull secret for the cluster.
     :vartype pull_secret: str
     :ivar domain: The domain for the cluster.
@@ -118,7 +119,13 @@ class ClusterProfile(_serialization.Model):
     :ivar fips_validated_modules: If FIPS validated crypto modules are used. Known values are:
      "Disabled" and "Enabled".
     :vartype fips_validated_modules: str or ~azure.mgmt.redhatopenshift.models.FipsValidatedModules
+    :ivar oidc_issuer: The URL of the managed OIDC issuer in a workload identity cluster.
+    :vartype oidc_issuer: str
     """
+
+    _validation = {
+        "oidc_issuer": {"readonly": True},
+    }
 
     _attribute_map = {
         "pull_secret": {"key": "pullSecret", "type": "str"},
@@ -126,6 +133,7 @@ class ClusterProfile(_serialization.Model):
         "version": {"key": "version", "type": "str"},
         "resource_group_id": {"key": "resourceGroupId", "type": "str"},
         "fips_validated_modules": {"key": "fipsValidatedModules", "type": "str"},
+        "oidc_issuer": {"key": "oidcIssuer", "type": "str"},
     }
 
     def __init__(
@@ -158,6 +166,7 @@ class ClusterProfile(_serialization.Model):
         self.version = version
         self.resource_group_id = resource_group_id
         self.fips_validated_modules = fips_validated_modules
+        self.oidc_issuer: Optional[str] = None
 
 
 class ConsoleProfile(_serialization.Model):
@@ -180,7 +189,7 @@ class ConsoleProfile(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.url = None
+        self.url: Optional[str] = None
 
 
 class Display(_serialization.Model):
@@ -289,7 +298,7 @@ class IngressProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.visibility = visibility
-        self.ip = None
+        self.ip: Optional[str] = None
 
 
 class LoadBalancerProfile(_serialization.Model):
@@ -322,170 +331,7 @@ class LoadBalancerProfile(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.managed_outbound_ips = managed_outbound_ips
-        self.effective_outbound_ips = None
-
-
-class Resource(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
-
-
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
-    tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    """
-
-
-class MachinePool(ProxyResource):
-    """MachinePool represents a MachinePool.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar resources:
-    :vartype resources: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "resources": {"key": "properties.resources", "type": "str"},
-    }
-
-    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resources:
-        :paramtype resources: str
-        """
-        super().__init__(**kwargs)
-        self.resources = resources
-
-
-class MachinePoolList(_serialization.Model):
-    """MachinePoolList represents a list of MachinePools.
-
-    :ivar value: The list of Machine Pools.
-    :vartype value: list[~azure.mgmt.redhatopenshift.models.MachinePool]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[MachinePool]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.MachinePool"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of Machine Pools.
-        :paramtype value: list[~azure.mgmt.redhatopenshift.models.MachinePool]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class MachinePoolUpdate(_serialization.Model):
-    """MachinePool represents a MachinePool.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar resources:
-    :vartype resources: str
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "resources": {"key": "properties.resources", "type": "str"},
-    }
-
-    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resources:
-        :paramtype resources: str
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.resources = resources
+        self.effective_outbound_ips: Optional[list["_models.EffectiveOutboundIP"]] = None
 
 
 class ManagedOutboundIPs(_serialization.Model):
@@ -511,6 +357,70 @@ class ManagedOutboundIPs(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.count = count
+
+
+class ManagedServiceIdentity(_serialization.Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: Type of managed service identity (where both SystemAssigned and UserAssigned types
+     are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.redhatopenshift.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The set of user assigned identities associated with the
+     resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+     The dictionary values can be empty objects ({}) in requests.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.redhatopenshift.models.UserAssignedIdentity]
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
+        "type": {"required": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
+         types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
+         "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.redhatopenshift.models.ManagedServiceIdentityType
+        :keyword user_assigned_identities: The set of user assigned identities associated with the
+         resource. The userAssignedIdentities dictionary keys will be ARM resource ids in the form:
+         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}.
+         The dictionary values can be empty objects ({}) in requests.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.redhatopenshift.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
+        self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
 class MasterProfile(_serialization.Model):
@@ -620,6 +530,47 @@ class NetworkProfile(_serialization.Model):
         self.preconfigured_nsg = preconfigured_nsg
 
 
+class Resource(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
+
+
 class TrackedResource(Resource):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
@@ -628,8 +579,8 @@ class TrackedResource(Resource):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -662,7 +613,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -674,15 +625,15 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
+class OpenShiftCluster(TrackedResource):
     """OpenShiftCluster represents an Azure Red Hat OpenShift cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -696,6 +647,9 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
+    :ivar identity: Identity stores information about the cluster MSI(s) in a workload identity
+     cluster.
+    :vartype identity: ~azure.mgmt.redhatopenshift.models.ManagedServiceIdentity
     :ivar provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
      "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.redhatopenshift.models.ProvisioningState
@@ -705,6 +659,9 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
     :vartype console_profile: ~azure.mgmt.redhatopenshift.models.ConsoleProfile
     :ivar service_principal_profile: The cluster service principal profile.
     :vartype service_principal_profile: ~azure.mgmt.redhatopenshift.models.ServicePrincipalProfile
+    :ivar platform_workload_identity_profile: The workload identity profile.
+    :vartype platform_workload_identity_profile:
+     ~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityProfile
     :ivar network_profile: The cluster network profile.
     :vartype network_profile: ~azure.mgmt.redhatopenshift.models.NetworkProfile
     :ivar master_profile: The cluster master profile.
@@ -735,10 +692,15 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
         "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "cluster_profile": {"key": "properties.clusterProfile", "type": "ClusterProfile"},
         "console_profile": {"key": "properties.consoleProfile", "type": "ConsoleProfile"},
         "service_principal_profile": {"key": "properties.servicePrincipalProfile", "type": "ServicePrincipalProfile"},
+        "platform_workload_identity_profile": {
+            "key": "properties.platformWorkloadIdentityProfile",
+            "type": "PlatformWorkloadIdentityProfile",
+        },
         "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
         "master_profile": {"key": "properties.masterProfile", "type": "MasterProfile"},
         "worker_profiles": {"key": "properties.workerProfiles", "type": "[WorkerProfile]"},
@@ -751,16 +713,18 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         cluster_profile: Optional["_models.ClusterProfile"] = None,
         console_profile: Optional["_models.ConsoleProfile"] = None,
         service_principal_profile: Optional["_models.ServicePrincipalProfile"] = None,
+        platform_workload_identity_profile: Optional["_models.PlatformWorkloadIdentityProfile"] = None,
         network_profile: Optional["_models.NetworkProfile"] = None,
         master_profile: Optional["_models.MasterProfile"] = None,
-        worker_profiles: Optional[List["_models.WorkerProfile"]] = None,
+        worker_profiles: Optional[list["_models.WorkerProfile"]] = None,
         apiserver_profile: Optional["_models.APIServerProfile"] = None,
-        ingress_profiles: Optional[List["_models.IngressProfile"]] = None,
+        ingress_profiles: Optional[list["_models.IngressProfile"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -768,6 +732,9 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword identity: Identity stores information about the cluster MSI(s) in a workload identity
+         cluster.
+        :paramtype identity: ~azure.mgmt.redhatopenshift.models.ManagedServiceIdentity
         :keyword provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
          "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
         :paramtype provisioning_state: str or ~azure.mgmt.redhatopenshift.models.ProvisioningState
@@ -778,6 +745,9 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
         :keyword service_principal_profile: The cluster service principal profile.
         :paramtype service_principal_profile:
          ~azure.mgmt.redhatopenshift.models.ServicePrincipalProfile
+        :keyword platform_workload_identity_profile: The workload identity profile.
+        :paramtype platform_workload_identity_profile:
+         ~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityProfile
         :keyword network_profile: The cluster network profile.
         :paramtype network_profile: ~azure.mgmt.redhatopenshift.models.NetworkProfile
         :keyword master_profile: The cluster master profile.
@@ -790,14 +760,16 @@ class OpenShiftCluster(TrackedResource):  # pylint: disable=too-many-instance-at
         :paramtype ingress_profiles: list[~azure.mgmt.redhatopenshift.models.IngressProfile]
         """
         super().__init__(tags=tags, location=location, **kwargs)
+        self.identity = identity
         self.provisioning_state = provisioning_state
         self.cluster_profile = cluster_profile
         self.console_profile = console_profile
         self.service_principal_profile = service_principal_profile
+        self.platform_workload_identity_profile = platform_workload_identity_profile
         self.network_profile = network_profile
         self.master_profile = master_profile
         self.worker_profiles = worker_profiles
-        self.worker_profiles_status = None
+        self.worker_profiles_status: Optional[list["_models.WorkerProfile"]] = None
         self.apiserver_profile = apiserver_profile
         self.ingress_profiles = ingress_profiles
 
@@ -867,7 +839,7 @@ class OpenShiftClusterList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.OpenShiftCluster"]] = None,
+        value: Optional[list["_models.OpenShiftCluster"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -882,15 +854,16 @@ class OpenShiftClusterList(_serialization.Model):
         self.next_link = next_link
 
 
-class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class OpenShiftClusterUpdate(_serialization.Model):
     """OpenShiftCluster represents an Azure Red Hat OpenShift cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
+    :ivar identity: Identity stores information about the cluster MSI(s) in a workload identity
+     cluster.
+    :vartype identity: ~azure.mgmt.redhatopenshift.models.ManagedServiceIdentity
     :ivar provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
      "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.redhatopenshift.models.ProvisioningState
@@ -900,6 +873,9 @@ class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-
     :vartype console_profile: ~azure.mgmt.redhatopenshift.models.ConsoleProfile
     :ivar service_principal_profile: The cluster service principal profile.
     :vartype service_principal_profile: ~azure.mgmt.redhatopenshift.models.ServicePrincipalProfile
+    :ivar platform_workload_identity_profile: The workload identity profile.
+    :vartype platform_workload_identity_profile:
+     ~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityProfile
     :ivar network_profile: The cluster network profile.
     :vartype network_profile: ~azure.mgmt.redhatopenshift.models.NetworkProfile
     :ivar master_profile: The cluster master profile.
@@ -915,17 +891,20 @@ class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-
     """
 
     _validation = {
-        "system_data": {"readonly": True},
         "worker_profiles_status": {"readonly": True},
     }
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "cluster_profile": {"key": "properties.clusterProfile", "type": "ClusterProfile"},
         "console_profile": {"key": "properties.consoleProfile", "type": "ConsoleProfile"},
         "service_principal_profile": {"key": "properties.servicePrincipalProfile", "type": "ServicePrincipalProfile"},
+        "platform_workload_identity_profile": {
+            "key": "properties.platformWorkloadIdentityProfile",
+            "type": "PlatformWorkloadIdentityProfile",
+        },
         "network_profile": {"key": "properties.networkProfile", "type": "NetworkProfile"},
         "master_profile": {"key": "properties.masterProfile", "type": "MasterProfile"},
         "worker_profiles": {"key": "properties.workerProfiles", "type": "[WorkerProfile]"},
@@ -937,21 +916,26 @@ class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         cluster_profile: Optional["_models.ClusterProfile"] = None,
         console_profile: Optional["_models.ConsoleProfile"] = None,
         service_principal_profile: Optional["_models.ServicePrincipalProfile"] = None,
+        platform_workload_identity_profile: Optional["_models.PlatformWorkloadIdentityProfile"] = None,
         network_profile: Optional["_models.NetworkProfile"] = None,
         master_profile: Optional["_models.MasterProfile"] = None,
-        worker_profiles: Optional[List["_models.WorkerProfile"]] = None,
+        worker_profiles: Optional[list["_models.WorkerProfile"]] = None,
         apiserver_profile: Optional["_models.APIServerProfile"] = None,
-        ingress_profiles: Optional[List["_models.IngressProfile"]] = None,
+        ingress_profiles: Optional[list["_models.IngressProfile"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
+        :keyword identity: Identity stores information about the cluster MSI(s) in a workload identity
+         cluster.
+        :paramtype identity: ~azure.mgmt.redhatopenshift.models.ManagedServiceIdentity
         :keyword provisioning_state: The cluster provisioning state. Known values are: "AdminUpdating",
          "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
         :paramtype provisioning_state: str or ~azure.mgmt.redhatopenshift.models.ProvisioningState
@@ -962,6 +946,9 @@ class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-
         :keyword service_principal_profile: The cluster service principal profile.
         :paramtype service_principal_profile:
          ~azure.mgmt.redhatopenshift.models.ServicePrincipalProfile
+        :keyword platform_workload_identity_profile: The workload identity profile.
+        :paramtype platform_workload_identity_profile:
+         ~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityProfile
         :keyword network_profile: The cluster network profile.
         :paramtype network_profile: ~azure.mgmt.redhatopenshift.models.NetworkProfile
         :keyword master_profile: The cluster master profile.
@@ -975,17 +962,38 @@ class OpenShiftClusterUpdate(_serialization.Model):  # pylint: disable=too-many-
         """
         super().__init__(**kwargs)
         self.tags = tags
-        self.system_data = None
+        self.identity = identity
         self.provisioning_state = provisioning_state
         self.cluster_profile = cluster_profile
         self.console_profile = console_profile
         self.service_principal_profile = service_principal_profile
+        self.platform_workload_identity_profile = platform_workload_identity_profile
         self.network_profile = network_profile
         self.master_profile = master_profile
         self.worker_profiles = worker_profiles
-        self.worker_profiles_status = None
+        self.worker_profiles_status: Optional[list["_models.WorkerProfile"]] = None
         self.apiserver_profile = apiserver_profile
         self.ingress_profiles = ingress_profiles
+
+
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
+    """
 
 
 class OpenShiftVersion(ProxyResource):
@@ -993,8 +1001,8 @@ class OpenShiftVersion(ProxyResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1049,7 +1057,7 @@ class OpenShiftVersionList(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.OpenShiftVersion"]] = None,
+        value: Optional[list["_models.OpenShiftVersion"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1120,7 +1128,7 @@ class OperationList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: List of operations supported by the resource provider.
@@ -1133,13 +1141,128 @@ class OperationList(_serialization.Model):
         self.next_link = next_link
 
 
-class Secret(ProxyResource):
-    """Secret represents a secret.
+class PlatformWorkloadIdentity(_serialization.Model):
+    """PlatformWorkloadIdentity stores information representing a single workload identity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+    :ivar resource_id: The resource ID of the PlatformWorkloadIdentity resource.
+    :vartype resource_id: str
+    :ivar client_id: The ClientID of the PlatformWorkloadIdentity resource.
+    :vartype client_id: str
+    :ivar object_id: The ObjectID of the PlatformWorkloadIdentity resource.
+    :vartype object_id: str
+    """
+
+    _validation = {
+        "client_id": {"readonly": True},
+        "object_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
+    }
+
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword resource_id: The resource ID of the PlatformWorkloadIdentity resource.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.resource_id = resource_id
+        self.client_id: Optional[str] = None
+        self.object_id: Optional[str] = None
+
+
+class PlatformWorkloadIdentityProfile(_serialization.Model):
+    """PlatformWorkloadIdentityProfile encapsulates all information that is specific to workload
+    identity clusters.
+
+    :ivar upgradeable_to: UpgradeableTo stores a single OpenShift version a workload identity
+     cluster can be upgraded to.
+    :vartype upgradeable_to: str
+    :ivar platform_workload_identities: Dictionary of :code:`<PlatformWorkloadIdentity>`.
+    :vartype platform_workload_identities: dict[str,
+     ~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentity]
+    """
+
+    _attribute_map = {
+        "upgradeable_to": {"key": "upgradeableTo", "type": "str"},
+        "platform_workload_identities": {"key": "platformWorkloadIdentities", "type": "{PlatformWorkloadIdentity}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        upgradeable_to: Optional[str] = None,
+        platform_workload_identities: Optional[dict[str, "_models.PlatformWorkloadIdentity"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword upgradeable_to: UpgradeableTo stores a single OpenShift version a workload identity
+         cluster can be upgraded to.
+        :paramtype upgradeable_to: str
+        :keyword platform_workload_identities: Dictionary of :code:`<PlatformWorkloadIdentity>`.
+        :paramtype platform_workload_identities: dict[str,
+         ~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentity]
+        """
+        super().__init__(**kwargs)
+        self.upgradeable_to = upgradeable_to
+        self.platform_workload_identities = platform_workload_identities
+
+
+class PlatformWorkloadIdentityRole(_serialization.Model):
+    """PlatformWorkloadIdentityRole represents a mapping from a particular OCP operator to the
+    built-in role that should be assigned to that operator's corresponding managed identity.
+
+    :ivar operator_name: OperatorName represents the name of the operator that this role is for.
+    :vartype operator_name: str
+    :ivar role_definition_name: RoleDefinitionName represents the name of the role.
+    :vartype role_definition_name: str
+    :ivar role_definition_id: RoleDefinitionID represents the resource ID of the role definition.
+    :vartype role_definition_id: str
+    """
+
+    _attribute_map = {
+        "operator_name": {"key": "operatorName", "type": "str"},
+        "role_definition_name": {"key": "roleDefinitionName", "type": "str"},
+        "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operator_name: Optional[str] = None,
+        role_definition_name: Optional[str] = None,
+        role_definition_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword operator_name: OperatorName represents the name of the operator that this role is for.
+        :paramtype operator_name: str
+        :keyword role_definition_name: RoleDefinitionName represents the name of the role.
+        :paramtype role_definition_name: str
+        :keyword role_definition_id: RoleDefinitionID represents the resource ID of the role
+         definition.
+        :paramtype role_definition_id: str
+        """
+        super().__init__(**kwargs)
+        self.operator_name = operator_name
+        self.role_definition_name = role_definition_name
+        self.role_definition_id = role_definition_id
+
+
+class PlatformWorkloadIdentityRoleSet(ProxyResource):
+    """PlatformWorkloadIdentityRoleSet represents a mapping from the names of OCP operators to the
+    built-in roles that should be assigned to those operator's corresponding managed identities for
+    a particular OCP version.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1149,8 +1272,13 @@ class Secret(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar secret_resources: The Secrets Resources.
-    :vartype secret_resources: str
+    :ivar open_shift_version: OpenShiftVersion represents the version associated with this set of
+     roles.
+    :vartype open_shift_version: str
+    :ivar platform_workload_identity_roles: PlatformWorkloadIdentityRoles represents the set of
+     roles associated with this version.
+    :vartype platform_workload_identity_roles:
+     list[~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityRole]
     """
 
     _validation = {
@@ -1165,74 +1293,64 @@ class Secret(ProxyResource):
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
-        "secret_resources": {"key": "properties.secretResources", "type": "str"},
+        "open_shift_version": {"key": "properties.openShiftVersion", "type": "str"},
+        "platform_workload_identity_roles": {
+            "key": "properties.platformWorkloadIdentityRoles",
+            "type": "[PlatformWorkloadIdentityRole]",
+        },
     }
 
-    def __init__(self, *, secret_resources: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        open_shift_version: Optional[str] = None,
+        platform_workload_identity_roles: Optional[list["_models.PlatformWorkloadIdentityRole"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword secret_resources: The Secrets Resources.
-        :paramtype secret_resources: str
+        :keyword open_shift_version: OpenShiftVersion represents the version associated with this set
+         of roles.
+        :paramtype open_shift_version: str
+        :keyword platform_workload_identity_roles: PlatformWorkloadIdentityRoles represents the set of
+         roles associated with this version.
+        :paramtype platform_workload_identity_roles:
+         list[~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityRole]
         """
         super().__init__(**kwargs)
-        self.secret_resources = secret_resources
+        self.open_shift_version = open_shift_version
+        self.platform_workload_identity_roles = platform_workload_identity_roles
 
 
-class SecretList(_serialization.Model):
-    """SecretList represents a list of Secrets.
+class PlatformWorkloadIdentityRoleSetList(_serialization.Model):
+    """PlatformWorkloadIdentityRoleSetList represents a List of role sets.
 
-    :ivar value: The list of secrets.
-    :vartype value: list[~azure.mgmt.redhatopenshift.models.Secret]
-    :ivar next_link: The link used to get the next page of operations.
+    :ivar value: The list of role sets.
+    :vartype value: list[~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityRoleSet]
+    :ivar next_link: Next Link to next operation.
     :vartype next_link: str
     """
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[Secret]"},
+        "value": {"key": "value", "type": "[PlatformWorkloadIdentityRoleSet]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self,
+        *,
+        value: Optional[list["_models.PlatformWorkloadIdentityRoleSet"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
     ) -> None:
         """
-        :keyword value: The list of secrets.
-        :paramtype value: list[~azure.mgmt.redhatopenshift.models.Secret]
-        :keyword next_link: The link used to get the next page of operations.
+        :keyword value: The list of role sets.
+        :paramtype value: list[~azure.mgmt.redhatopenshift.models.PlatformWorkloadIdentityRoleSet]
+        :keyword next_link: Next Link to next operation.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class SecretUpdate(_serialization.Model):
-    """Secret represents a secret.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar secret_resources: The Secrets Resources.
-    :vartype secret_resources: str
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "secret_resources": {"key": "properties.secretResources", "type": "str"},
-    }
-
-    def __init__(self, *, secret_resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword secret_resources: The Secrets Resources.
-        :paramtype secret_resources: str
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.secret_resources = secret_resources
 
 
 class ServicePrincipalProfile(_serialization.Model):
@@ -1259,214 +1377,6 @@ class ServicePrincipalProfile(_serialization.Model):
         super().__init__(**kwargs)
         self.client_id = client_id
         self.client_secret = client_secret
-
-
-class SyncIdentityProvider(ProxyResource):
-    """SyncIdentityProvider represents a SyncIdentityProvider.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar resources:
-    :vartype resources: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "resources": {"key": "properties.resources", "type": "str"},
-    }
-
-    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resources:
-        :paramtype resources: str
-        """
-        super().__init__(**kwargs)
-        self.resources = resources
-
-
-class SyncIdentityProviderList(_serialization.Model):
-    """SyncSetList represents a list of SyncSets.
-
-    :ivar value: The list of sync identity providers.
-    :vartype value: list[~azure.mgmt.redhatopenshift.models.SyncIdentityProvider]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SyncIdentityProvider]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SyncIdentityProvider"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of sync identity providers.
-        :paramtype value: list[~azure.mgmt.redhatopenshift.models.SyncIdentityProvider]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class SyncIdentityProviderUpdate(_serialization.Model):
-    """SyncIdentityProvider represents a SyncIdentityProvider.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar resources:
-    :vartype resources: str
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "resources": {"key": "properties.resources", "type": "str"},
-    }
-
-    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resources:
-        :paramtype resources: str
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.resources = resources
-
-
-class SyncSet(ProxyResource):
-    """SyncSet represents a SyncSet for an Azure Red Hat OpenShift Cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar resources: Resources represents the SyncSets configuration.
-    :vartype resources: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "resources": {"key": "properties.resources", "type": "str"},
-    }
-
-    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resources: Resources represents the SyncSets configuration.
-        :paramtype resources: str
-        """
-        super().__init__(**kwargs)
-        self.resources = resources
-
-
-class SyncSetList(_serialization.Model):
-    """SyncSetList represents a list of SyncSets.
-
-    :ivar value: The list of syncsets.
-    :vartype value: list[~azure.mgmt.redhatopenshift.models.SyncSet]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SyncSet]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: Optional[List["_models.SyncSet"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of syncsets.
-        :paramtype value: list[~azure.mgmt.redhatopenshift.models.SyncSet]
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class SyncSetUpdate(_serialization.Model):
-    """SyncSet represents a SyncSet for an Azure Red Hat OpenShift Cluster.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~azure.mgmt.redhatopenshift.models.SystemData
-    :ivar resources: Resources represents the SyncSets configuration.
-    :vartype resources: str
-    """
-
-    _validation = {
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "resources": {"key": "properties.resources", "type": "str"},
-    }
-
-    def __init__(self, *, resources: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword resources: Resources represents the SyncSets configuration.
-        :paramtype resources: str
-        """
-        super().__init__(**kwargs)
-        self.system_data = None
-        self.resources = resources
 
 
 class SystemData(_serialization.Model):
@@ -1531,6 +1441,34 @@ class SystemData(_serialization.Model):
         self.last_modified_by = last_modified_by
         self.last_modified_by_type = last_modified_by_type
         self.last_modified_at = last_modified_at
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """User assigned identity properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id: Optional[str] = None
+        self.client_id: Optional[str] = None
 
 
 class WorkerProfile(_serialization.Model):

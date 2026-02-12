@@ -1,12 +1,21 @@
 # Release History
 
 
+## 1.0.0b11 (2026-02-10)
+
+### Features Added
+
+- Added conversation persistence: automatically save input and output items to conversation when `store=True` in request
+- Added server startup success log message
+
+
 ## 1.0.0b10 (2026-01-27)
 
 ### Bugs Fixed
 
 - Support implicit message item type.
 - Make AZURE_AI_PROJECTS_ENDPOINT optional.
+
 
 ## 1.0.0b9 (2026-01-23)
 

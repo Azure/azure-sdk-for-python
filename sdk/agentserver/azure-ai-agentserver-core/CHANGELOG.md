@@ -1,6 +1,20 @@
 # Release History
 
 
+## 1.0.0b11 (2026-02-10)
+
+### Features Added
+
+- Added conversation persistence: automatically save input and output items to conversation when `store=True` in request
+- Added deduplication check to avoid saving duplicate input items
+- Added server startup success log message
+
+### Other Changes
+
+- Improved logging: replaced confusing print statements with proper logger calls
+- Changed logger to use stdout instead of stderr for consistency with uvicorn
+- Added `_items_are_equal()` method for comparing conversation items
+
 ## 1.0.0b10 (2026-01-27)
 
 ### Bugs Fixed

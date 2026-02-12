@@ -13,7 +13,7 @@ from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
 from azure.ai.agentserver.core.constants import Constants as AdapterConstants
-from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger
+from azure.ai.agentserver.core.logger import APPINSIGHT_CONNSTR_ENV_NAME, get_logger, get_project_endpoint
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
@@ -23,6 +23,7 @@ from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:
 
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
+from .persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
 from .persistence import AgentThreadRepository
 
 if TYPE_CHECKING:
@@ -50,15 +51,23 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
     def __init__(self,
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 thread_repository: Optional[AgentThreadRepository] = None):
+                 thread_repository: Optional[AgentThreadRepository] = None,
+                 project_endpoint: Optional[str] = None,
+                 **kwargs) -> None:
         """Initialize the AgentFrameworkAgent with an AgentProtocol.
 
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
         :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
         :type thread_repository: Optional[AgentThreadRepository]
+        :param project_endpoint: The endpoint of the Azure AI Project.
+        :type project_endpoint: Optional[str]
         """
-        super().__init__(credentials=credentials)  # pylint: disable=unexpected-keyword-arg
+        super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
+        project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
+        if not thread_repository and project_endpoint and self.credentials:
+            logger.warning("No thread repository provided. FoundryConversationThreadRepository will be used.")
+            thread_repository = self._create_foundry_conversation_thread_repository(project_endpoint, self.credentials)
         self._thread_repository = thread_repository
         self._hitl_helper = HumanInTheLoopHelper()
 
@@ -183,9 +192,9 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :return: The loaded AgentThread if available, None otherwise.
         :rtype: Optional[AgentThread]
         """
-        if self._thread_repository:
+        if self._thread_repository and context.conversation_id:
             conversation_id = context.conversation_id
-            agent_thread = await self._thread_repository.get(conversation_id)
+            agent_thread = await self._thread_repository.get(conversation_id, agent=agent)
             if agent_thread:
                 logger.info(f"Loaded agent thread for conversation: {conversation_id}")
                 return agent_thread
@@ -280,3 +289,24 @@ class AgentFrameworkAgent(FoundryCBAgent):
                 pass
 
         return stream_updates()
+
+    def _create_foundry_conversation_thread_repository(
+        self,
+        project_endpoint: str,
+        credential: AsyncTokenCredential,
+    ) -> FoundryConversationThreadRepository:
+        """Helper method to create a FoundryConversationThreadRepository instance.
+
+        :param project_endpoint: The endpoint of the Azure AI Project.
+        :type project_endpoint: str
+        :param credential: The credential for authenticating with the Azure AI Project.
+        :type credential: AsyncTokenCredential
+
+        :return: An instance of FoundryConversationThreadRepository.
+        :rtype: FoundryConversationThreadRepository
+        """
+        return FoundryConversationThreadRepository(
+            agent=None,  # Agent will be provided during get/set calls
+            project_endpoint=project_endpoint,
+            credential=credential,
+        )

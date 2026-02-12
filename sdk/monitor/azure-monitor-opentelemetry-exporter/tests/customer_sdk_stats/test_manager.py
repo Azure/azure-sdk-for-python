@@ -4,13 +4,12 @@
 import os
 import threading
 import unittest
-from unittest import mock
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
 from azure.monitor.opentelemetry.exporter._constants import (
     DropCode,
     RetryCode,
-    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
+    _APPLICATIONINSIGHTS_SDKSTATS_DISABLED,
     _REQUEST,
     _DEPENDENCY,
     _CUSTOM_EVENT,
@@ -20,18 +19,16 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._manager import (
     CustomerSdkStatsStatus,
     _CustomerSdkStatsTelemetryCounters,
 )
-from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
-    get_customer_stats_manager,
-)
 
 
+# pylint: disable=too-many-public-methods
 class TestCustomerSdkStatsManager(unittest.TestCase):
     """Test suite for CustomerSdkStatsManager."""
 
     def setUp(self):
         """Set up test environment."""
         # Enable customer SDK stats for testing
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "false"
 
         # Reset singleton state - only clear CustomerSdkStatsManager instances
         if CustomerSdkStatsManager in CustomerSdkStatsManager._instances:
@@ -43,12 +40,12 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def tearDown(self):
         """Clean up test environment."""
         # Clean up environment variables
-        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED, None)
 
         # Shutdown manager if needed
         try:
             self.manager.shutdown()
-        except:
+        except:  # pylint: disable=bare-except
             pass
 
         # Reset singleton state - only clear CustomerSdkStatsManager instances
@@ -65,7 +62,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def test_manager_initialization_disabled(self):
         """Test manager initialization when customer SDK stats is disabled."""
         # Disable customer SDK stats
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "false"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "true"
 
         # Create new manager with disabled state
         if hasattr(CustomerSdkStatsManager, "_instances"):
@@ -112,7 +109,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
     def test_initialize_disabled_manager(self):
         """Test that initialization fails when manager is disabled."""
         # Disable customer SDK stats
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "false"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "true"
 
         # Create disabled manager
         if hasattr(CustomerSdkStatsManager, "_instances"):
@@ -392,7 +389,7 @@ class TestCustomerSdkStatsManager(unittest.TestCase):
 
             # Define a function to run in threads
             def count_items():
-                for i in range(100):
+                for _ in range(100):
                     self.manager.count_successful_items(1, _REQUEST)
                     self.manager.count_dropped_items(1, _REQUEST, DropCode.UNKNOWN, True)
                     self.manager.count_retry_items(1, _REQUEST, RetryCode.CLIENT_TIMEOUT)

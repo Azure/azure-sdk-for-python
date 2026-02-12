@@ -25,7 +25,10 @@ from starlette.types import ASGIApp
 
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultTokenCredential
+from azure.identity.aio import (
+    DefaultAzureCredential as AsyncDefaultTokenCredential,
+    get_bearer_token_provider,
+)
 
 from ._context import AgentServerContext
 from ._response_metadata import (
@@ -99,8 +102,9 @@ class FoundryCBAgent:
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
                  project_endpoint: Optional[str] = None) -> None:
         self.credentials = AsyncTokenCredentialAdapter(credentials) if credentials else AsyncDefaultTokenCredential()
-        project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        AgentServerContext(create_tool_runtime(project_endpoint, self.credentials))
+        self._project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
+        AgentServerContext(create_tool_runtime(self._project_endpoint, self.credentials))
+        self._port: Optional[int] = None
 
         async def runs_endpoint(request):
             # Set up tracing context and span
@@ -113,6 +117,11 @@ class FoundryCBAgent:
             ):
                 try:
                     logger.info("Start processing CreateResponse request.")
+
+                    # Save input to conversation if store=True
+                    if self._should_store(context):
+                        logger.debug("Storing input to conversation.")
+                        await self._save_input_to_conversation(context)
 
                     context_carrier = {}
                     TraceContextTextMapPropagator().inject(context_carrier)
@@ -131,6 +140,10 @@ class FoundryCBAgent:
                         message=_format_error(ex))
                     if not ex:
                         attach_foundry_metadata_to_response(result)
+                        # Save output to conversation if store=True
+                        if self._should_store(context):
+                            logger.debug("Storing output to conversation.")
+                            await self._save_output_to_conversation(context, result)
                     return JSONResponse(result.as_dict(), headers=self.create_response_headers())
 
                 async def gen_async(ex):
@@ -138,6 +151,7 @@ class FoundryCBAgent:
                     prev_ctx = otel_context.get_current()
                     otel_context.attach(ctx)
                     seq = 0
+                    output_events = []  # Collect events for saving to conversation
                     try:
                         if ex:
                             return
@@ -150,8 +164,13 @@ class FoundryCBAgent:
                             else:
                                 try_attach_foundry_metadata_to_event(event)
                                 seq += 1
+                                output_events.append(event)
                                 yield _event_to_sse_chunk(event)
                         logger.info("End of processing CreateResponse request.")
+                        # Save output to conversation if store=True
+                        if self._should_store(context):
+                            logger.debug("Storing output to conversation.")
+                            await self._save_output_events_to_conversation(context, output_events)
                     except Exception as e:  # noqa: BLE001
                         logger.error("Error in async generator: %s", e, exc_info=True)
                         ex = e
@@ -216,6 +235,205 @@ class FoundryCBAgent:
 
         self.tracer = None
 
+    def _should_store(self, context: AgentRunContext) -> bool:
+        """Determine whether conversation artifacts should be persisted.
+
+        :param context: Agent run context that contains the incoming request payload.
+        :type context: AgentRunContext
+        :return: ``True`` when storage is requested and the conversation is scoped to a project.
+        :rtype: bool
+        """
+        return context.request.get("store", False) and context.conversation_id and self._project_endpoint
+
+    def _items_are_equal(self, item1: dict, item2: dict) -> bool:
+        """Compare two conversation items for equality based on type and content.
+
+        :param item1: First conversation item.
+        :type item1: dict
+        :param item2: Second conversation item.
+        :type item2: dict
+        :return: ``True`` when both the metadata and content match.
+        :rtype: bool
+        """
+        if item1.get("type") != item2.get("type"):
+            return False
+        if item1.get("role") != item2.get("role"):
+            return False
+        # Compare content - handle both string and structured content
+        content1 = item1.get("content")
+        content2 = item2.get("content")
+        if isinstance(content1, str) and isinstance(content2, str):
+            return content1 == content2
+        if isinstance(content1, list) and isinstance(content2, list):
+            # For structured content, compare text parts
+            text1 = "".join(p.get("text", "") for p in content1 if isinstance(p, dict))
+            text2 = "".join(p.get("text", "") for p in content2 if isinstance(p, dict))
+            return text1 == text2
+        return content1 == content2
+
+    async def _create_openai_client(self) -> "AsyncOpenAI":
+        """Create an AsyncOpenAI client for conversation operations.
+
+        :return: Configured AsyncOpenAI client scoped to the Foundry project endpoint.
+        :rtype: AsyncOpenAI
+        """
+        from openai import AsyncOpenAI
+
+        token_provider = get_bearer_token_provider(
+            self.credentials, "https://ai.azure.com/.default"
+        )
+        token = await token_provider()
+        return AsyncOpenAI(
+            base_url=f"{self._project_endpoint}/openai",
+            api_key=token,
+            default_query={"api-version": "2025-11-15-preview"},
+        )
+
+    async def _save_input_to_conversation(self, context: AgentRunContext) -> None:
+        """Persist request input items when storage is enabled on the request.
+
+        :param context: Agent run context containing the request payload and conversation metadata.
+        :type context: AgentRunContext
+        :return: None
+        :rtype: None
+        """
+        try:
+            conversation_id = context.conversation_id
+            input_items = context.request.get("input", [])
+            if not input_items:
+                return
+
+            # Handle string input as a single item
+            if isinstance(input_items, str):
+                input_items = [input_items]
+
+            # Convert input items to the format expected by the API
+            items_to_save = []
+            for item in input_items:
+                if isinstance(item, str):
+                    items_to_save.append({"type": "message", "role": "user", "content": item})
+                elif isinstance(item, dict):
+                    items_to_save.append(item)
+                elif hasattr(item, 'as_dict'):
+                    items_to_save.append(item.as_dict())
+                else:
+                    items_to_save.append({"type": "message", "role": "user", "content": str(item)})
+
+            if not items_to_save:
+                return
+
+            openai_client = await self._create_openai_client()
+
+            # Check for duplicates by comparing the last N historical items with current N items
+            try:
+                historical_items = []
+                async for item in openai_client.conversations.items.list(conversation_id):
+                    historical_items.append(item)
+                # API returns items in reverse order (newest first), so reverse to get chronological order
+                historical_items.reverse()
+
+                n = len(items_to_save)
+                if len(historical_items) >= n:
+                    # Get last N historical items (in chronological order)
+                    last_n_historical = historical_items[-n:]
+                    # Compare as a whole - all N items must match in order
+                    all_match = True
+                    for i in range(n):
+                        hist_dict = last_n_historical[i].model_dump() \
+                                if hasattr(last_n_historical[i], 'model_dump') \
+                                else dict(last_n_historical[i])
+                        if not self._items_are_equal(hist_dict, items_to_save[i]):
+                            all_match = False
+                            break
+                    if all_match:
+                        logger.debug(f"All {n} input items already exist in " +
+                                     f"conversation {conversation_id}, skipping save")
+                        return
+            except Exception as e:
+                logger.debug(f"Could not check for duplicates: {e}")
+
+            await openai_client.conversations.items.create(
+                conversation_id=conversation_id,
+                items=items_to_save,
+            )
+            logger.debug(f"Saved {len(items_to_save)} input items to conversation {conversation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save input items to conversation: {e}", exc_info=True)
+
+    async def _save_output_to_conversation(
+            self, context: AgentRunContext, response: project_models.Response) -> None:
+        """
+        Save output items from a non-streaming response to the conversation.
+        
+        :param context: The agent run context containing conversation information.
+        :type context: AgentRunContext
+        :param response: The response object containing output items to save.
+        :type response: project_models.Response
+        :return: None
+        :rtype: None
+        """
+        try:
+            conversation_id = context.conversation_id
+            output_items = response.get("output", [])
+            if not output_items:
+                return
+
+            # Convert output items to the format expected by the API
+            items_to_save = []
+            for item in output_items:
+                if isinstance(item, dict):
+                    items_to_save.append(item)
+                elif hasattr(item, 'as_dict'):
+                    items_to_save.append(item.as_dict())
+                else:
+                    items_to_save.append(dict(item))
+
+            openai_client = await self._create_openai_client()
+            await openai_client.conversations.items.create(
+                conversation_id=conversation_id,
+                items=items_to_save,
+            )
+            logger.debug(f"Saved {len(items_to_save)} output items to conversation {conversation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
+
+    async def _save_output_events_to_conversation(self, context: AgentRunContext, events: list) -> None:
+        """Persist streaming output events for later retrieval.
+
+        :param context: Agent run context containing conversation identifiers.
+        :type context: AgentRunContext
+        :param events: Response stream events captured during execution.
+        :type events: list
+        :return: None
+        :rtype: None
+        """
+        try:
+            conversation_id = context.conversation_id
+            # Extract completed items from ResponseOutputItemDoneEvent
+            items_to_save = []
+            for event in events:
+                if hasattr(event, 'type') and event.type == 'response.output_item.done':
+                    item = getattr(event, 'item', None)
+                    if item:
+                        if isinstance(item, dict):
+                            items_to_save.append(item)
+                        elif hasattr(item, 'as_dict'):
+                            items_to_save.append(item.as_dict())
+                        else:
+                            items_to_save.append(dict(item))
+
+            if not items_to_save:
+                return
+
+            openai_client = await self._create_openai_client()
+            await openai_client.conversations.items.create(
+                conversation_id=conversation_id,
+                items=items_to_save,
+            )
+            logger.debug(f"Saved {len(items_to_save)} output items to conversation {conversation_id}")
+        except Exception as e:
+            logger.warning(f"Failed to save output items to conversation: {e}", exc_info=True)
+
     @abstractmethod
     async def agent_run(
         self, context: AgentRunContext
@@ -274,6 +492,7 @@ class FoundryCBAgent:
             "metadata": context.request.get("metadata"),
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": []
         })
         yield project_models.ResponseCreatedEvent(sequence_number=sequence_number, response=response)
         sequence_number += 1
@@ -286,6 +505,7 @@ class FoundryCBAgent:
             "metadata": context.request.get("metadata"),
             "status": "in_progress",
             "created_at": int(time.time()),
+            "output": []
         })
         yield project_models.ResponseInProgressEvent(sequence_number=sequence_number, response=response)
 

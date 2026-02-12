@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Bing Custom Search capabilities
-    using the BingCustomSearchAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the BingCustomSearchPreviewTool and synchronous Azure AI Projects client. The agent can search
     custom search instances and provide responses with relevant results.
 
 USAGE:
@@ -25,6 +25,7 @@ USAGE:
     3) BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID - The Bing Custom Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
     4) BING_CUSTOM_SEARCH_INSTANCE_NAME - The Bing Custom Search instance name
+    5) BING_CUSTOM_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
@@ -33,7 +34,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingCustomSearchAgentTool,
+    BingCustomSearchPreviewTool,
     BingCustomSearchToolParameters,
     BingCustomSearchConfiguration,
 )
@@ -49,7 +50,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = BingCustomSearchAgentTool(
+    tool = BingCustomSearchPreviewTool(
         bing_custom_search_preview=BingCustomSearchToolParameters(
             search_configurations=[
                 BingCustomSearchConfiguration(
@@ -72,7 +73,7 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'Tell me more about foundry agent service'): \n")
+    user_input = os.environ.get("BING_CUSTOM_USER_INPUT") or input("Enter your question: \n")
 
     # Send initial request that will trigger the Bing Custom Search tool
     stream_response = openai_client.responses.create(

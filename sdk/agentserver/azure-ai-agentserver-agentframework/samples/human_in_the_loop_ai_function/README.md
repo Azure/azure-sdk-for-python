@@ -1,6 +1,6 @@
 # Human-in-the-Loop Agent Framework Sample
 
-This sample demonstrates how to host a Microsoft Agent Framework agent inside Azure AI Agent Server and escalate function-call responses to a human reviewer whenever approval is required. It is adapted from the [agent-framework sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/getting_started/tools/ai_function_with_approval_and_threads.py).
+This sample demonstrates how to host a Microsoft Agent Framework agent inside Azure AI Agent Server and escalate function-call responses to a human reviewer whenever approval is required. It is adapted from the [agent-framework sample](https://github.com/microsoft/agent-framework/blob/main/python/samples/getting_started/).
 
 ## Prerequisites
 

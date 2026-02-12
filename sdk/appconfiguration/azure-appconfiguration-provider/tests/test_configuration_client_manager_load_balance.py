@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import unittest
 from unittest.mock import patch
+import pytest
 from azure.appconfiguration.provider._client_manager import ConfigurationClientManager
 
 

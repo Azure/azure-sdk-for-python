@@ -1,21 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import random
-import sys
 import threading
 import time
 import unittest
-from typing import List, Optional
+import random
+from typing import Optional
 from unittest.mock import patch, Mock
 
-from opentelemetry.context import Context
-from opentelemetry.trace import SpanContext, TraceFlags, set_span_in_context
-from opentelemetry.trace.span import NonRecordingSpan
+from opentelemetry.trace import SpanContext, TraceFlags
 
 from azure.monitor.opentelemetry.exporter.export.trace._rate_limited_sampling import (
     Decision,
-    RateLimitedSamplingPercentage,
     RateLimitedSampler,
     SamplingResult,
 )
@@ -46,6 +42,7 @@ def create_parent_span(sampled: bool, sample_rate: Optional[float] = None, is_re
     return mock_span
 
 
+# pylint: disable=too-many-public-methods
 class TestRateLimitedSampler(unittest.TestCase):
     def setUp(self):
         # Use a mock for time.time_ns() instead of nano_time_supplier injection
@@ -111,8 +108,6 @@ class TestRateLimitedSampler(unittest.TestCase):
         num_spans = 500
         sampled_count = 0
 
-        import random
-
         random.seed(42)
         trace_ids = [random.getrandbits(128) for _ in range(num_spans)]
 
@@ -146,8 +141,6 @@ class TestRateLimitedSampler(unittest.TestCase):
 
         sampled_phase1 = 0
         sampled_phase2 = 0
-
-        import random
 
         random.seed(123)
         trace_ids_phase1 = [random.getrandbits(128) for _ in range(phase1_spans)]
@@ -272,7 +265,7 @@ class TestRateLimitedSampler(unittest.TestCase):
                     result = sampler.should_sample(None, i, f"thread-span-{i}")
                     results.append(result)
                     time.sleep(0.001)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 errors.append(e)
 
         threads = [threading.Thread(target=worker) for _ in range(5)]
