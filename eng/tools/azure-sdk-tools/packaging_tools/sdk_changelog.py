@@ -4,6 +4,7 @@ import logging
 import multiprocessing
 import os
 from pathlib import Path
+import re
 import sys
 import time
 
@@ -130,18 +131,44 @@ def main(package_path: Path, *, enable_changelog: bool = True, package_result: d
 
         def edit_changelog_proc(content: list[str]):
             if last_version:
-                if md_output:
-                    content[1:1] = [
-                        "\n",
+                new_section_content = (
+                    md_output
+                    if md_output
+                    else "tool can't generate changelog for this release, please update manually."
+                )
+
+                # Check if the topmost version section is from a previous unreleased generation.
+                # If its version differs from last_version (the latest released version on PyPI),
+                # it's an unreleased entry that should be replaced instead of duplicated.
+                version_pattern = re.compile(r"^## (\d+\.\d+\.\d+\S*)")
+                first_ver_idx = -1
+                first_ver = ""
+                for i, line in enumerate(content):
+                    m = version_pattern.match(line)
+                    if m:
+                        first_ver_idx = i
+                        first_ver = m.group(1)
+                        break
+
+                if first_ver_idx != -1 and first_ver != last_version:
+                    # Find end of this version section (next version header or end of content)
+                    next_ver_idx = len(content)
+                    for i in range(first_ver_idx + 1, len(content)):
+                        if version_pattern.match(content[i]):
+                            next_ver_idx = i
+                            break
+                    # Replace the existing unreleased section
+                    content[first_ver_idx:next_ver_idx] = [
                         version_line,
-                        md_output,
+                        new_section_content,
                         "\n",
                     ]
                 else:
+                    # No existing version or topmost is the last released version - insert new
                     content[1:1] = [
                         "\n",
                         version_line,
-                        "tool can't generate changelog for this release, please update manually.",
+                        new_section_content,
                         "\n",
                     ]
             else:
