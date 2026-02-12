@@ -15,7 +15,6 @@ from azure.ai.agentserver.core.server.base import FoundryCBAgent
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:disable=import-error,no-name-in-module
 from ._context import LanggraphRunContext
-from ._exceptions import LangGraphMissingConversationIdError
 from .models.response_api_converter import GraphInputArguments, ResponseAPIConverter
 from .models.response_api_default_converter import ResponseAPIDefaultConverter
 from .models.utils import is_state_schema_valid
@@ -67,7 +66,6 @@ class LangGraphAdapter(FoundryCBAgent):
         # Resolve graph - always resolve if it's a factory function to get fresh graph each time
         # For factories, get a new graph instance per request to avoid concurrency issues
         try:
-            self._check_missing_thread_id(context)
             lg_run_context = await self.setup_lg_run_context(context)
             input_arguments = await self.converter.convert_request(lg_run_context)
             self.ensure_runnable_config(input_arguments, lg_run_context)
@@ -116,11 +114,6 @@ class LangGraphAdapter(FoundryCBAgent):
         attrs = super().get_trace_attributes()
         attrs["service.namespace"] = "azure.ai.agentserver.langgraph"
         return attrs
-
-    def _check_missing_thread_id(self, context: AgentRunContext) -> None:
-        checkpointer = getattr(self._graph, "checkpointer", None)
-        if checkpointer and checkpointer is not False and not context.conversation_id:
-            raise LangGraphMissingConversationIdError()
 
     async def agent_run_non_stream(self, input_arguments: GraphInputArguments):
         """
@@ -176,6 +169,9 @@ class LangGraphAdapter(FoundryCBAgent):
         thread_id = input_arguments["context"].agent_run.conversation_id
         if thread_id:
             configurable["thread_id"] = thread_id
+        else:
+            configurable["thread_id"] = f"langgraph-{input_arguments['context'].agent_run.response_id}"
+            logger.debug(f"Conversation ID not provided, generate one: thread_id={configurable['thread_id']}")
         config["configurable"] = configurable
         context.attach_to_config(config)
 
