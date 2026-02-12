@@ -1,5 +1,11 @@
 # Release History
 
+## 15.1.0b3 (2026-02-05)
+
+### Other Changes
+
+- Minor parameter renaming: `read_io_gi_b` to `read_io_gib`, `write_io_gi_b` to `write_io_gib`, and `v_tpm_enabled` to `vtpm_enabled`.
+
 ## 15.1.0b2 (2025-11-20)
 
 ### Features Added

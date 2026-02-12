@@ -4,17 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import pytest
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
-from azure.appconfiguration.provider import SettingSelector
 from test_constants import FEATURE_MANAGEMENT_KEY
 from testcase import (
     AppConfigTestCase,
     has_feature_flag,
-    create_config_setting,
 )
+from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR
 
 

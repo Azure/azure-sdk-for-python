@@ -40,9 +40,7 @@ async def sample_send_request_async():
 
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction.
-    request = HttpRequest(
-        method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}"
-    )
+    request = HttpRequest(method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}")
     async with search_client:
         response = await search_client.send_request(request)
     response.raise_for_status()
