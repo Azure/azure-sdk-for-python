@@ -10,72 +10,72 @@ import datetime
 from azure.core.exceptions import HttpResponseError
 
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    _try_get_fixed_backoff,
+    _get_fixed_backoff,
     _calculate_backoff_duration,
     _is_failoverable,
 )
 from azure.appconfiguration.provider._constants import (
     DEFAULT_STARTUP_TIMEOUT,
-    MAX_BACKOFF_DURATION,
+    MAX_STARTUP_BACKOFF_DURATION,
     MIN_STARTUP_BACKOFF_DURATION,
     STARTUP_BACKOFF_INTERVALS,
     JITTER_RATIO,
 )
 
 
-class TestTryGetFixedBackoff(unittest.TestCase):
-    """Test the _try_get_fixed_backoff function."""
+class TestGetFixedBackoff(unittest.TestCase):
+    """Test the _get_fixed_backoff function."""
 
     def test_within_first_interval(self):
         """Test backoff within first 100 seconds returns 5 seconds."""
         # STARTUP_BACKOFF_INTERVALS[0] = (100, 5)
-        result = _try_get_fixed_backoff(0)
+        result = _get_fixed_backoff(0, 1)
         self.assertEqual(result, 5)
 
-        result = _try_get_fixed_backoff(50)
+        result = _get_fixed_backoff(50, 1)
         self.assertEqual(result, 5)
 
-        result = _try_get_fixed_backoff(99)
+        result = _get_fixed_backoff(99, 1)
         self.assertEqual(result, 5)
 
     def test_within_second_interval(self):
         """Test backoff within 100-200 seconds returns 10 seconds."""
         # STARTUP_BACKOFF_INTERVALS[1] = (200, 10)
-        result = _try_get_fixed_backoff(100)
+        result = _get_fixed_backoff(100, 1)
         self.assertEqual(result, 10)
 
-        result = _try_get_fixed_backoff(150)
+        result = _get_fixed_backoff(150, 1)
         self.assertEqual(result, 10)
 
-        result = _try_get_fixed_backoff(199)
+        result = _get_fixed_backoff(199, 1)
         self.assertEqual(result, 10)
 
     def test_within_third_interval(self):
         """Test backoff within 200-600 seconds returns MIN_STARTUP_BACKOFF_DURATION."""
         # STARTUP_BACKOFF_INTERVALS[2] = (600, MIN_STARTUP_BACKOFF_DURATION)
-        result = _try_get_fixed_backoff(200)
+        result = _get_fixed_backoff(200, 1)
         self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
 
-        result = _try_get_fixed_backoff(400)
+        result = _get_fixed_backoff(400, 1)
         self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
 
-        result = _try_get_fixed_backoff(599)
+        result = _get_fixed_backoff(599, 1)
         self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
 
-    def test_beyond_fixed_window(self):
-        """Test backoff beyond 600 seconds returns None (exponential backoff)."""
-        result = _try_get_fixed_backoff(600)
-        self.assertIsNone(result)
+    def test_beyond_fixed_window_uses_exponential_backoff(self):
+        """Test backoff beyond 600 seconds returns exponential backoff based on attempts."""
+        # Beyond fixed window, uses _calculate_backoff_duration(attempts)
+        result = _get_fixed_backoff(600, 1)
+        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)  # First attempt returns min
 
-        result = _try_get_fixed_backoff(1000)
-        self.assertIsNone(result)
-
-        result = _try_get_fixed_backoff(3600)
-        self.assertIsNone(result)
+        # For attempt 2, should be jittered value around 60 (30 * 2^1)
+        result = _get_fixed_backoff(1000, 2)
+        self.assertGreaterEqual(result, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertLessEqual(result, 60 * (1 + JITTER_RATIO))
 
     def test_negative_elapsed_time(self):
         """Test negative elapsed time returns first interval backoff."""
-        result = _try_get_fixed_backoff(-1)
+        result = _get_fixed_backoff(-1, 1)
         self.assertEqual(result, 5)
 
     def test_boundary_conditions(self):
@@ -83,7 +83,7 @@ class TestTryGetFixedBackoff(unittest.TestCase):
         # Test at exact threshold boundaries
         for threshold, expected_backoff in STARTUP_BACKOFF_INTERVALS:
             # Just before threshold should return expected_backoff
-            result = _try_get_fixed_backoff(threshold - 0.001)
+            result = _get_fixed_backoff(threshold - 0.001, 1)
             self.assertEqual(result, expected_backoff)
 
 
@@ -92,76 +92,48 @@ class TestCalculateBackoffDuration(unittest.TestCase):
 
     def test_first_attempt_returns_min_duration(self):
         """Test that first attempt returns minimum duration."""
-        result = _calculate_backoff_duration(30, 600, 1)
-        self.assertEqual(result, 30)
+        result = _calculate_backoff_duration(1)
+        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
 
     def test_exponential_growth(self):
         """Test that backoff grows exponentially."""
-        min_duration = 30
-        max_duration = 600
-
         # For attempts=2, calculated = 30 * 2^1 = 60
-        result2 = _calculate_backoff_duration(min_duration, max_duration, 2)
+        result2 = _calculate_backoff_duration(2)
         # Result should be within jitter range of calculated value
-        self.assertGreaterEqual(result2, min_duration * (1 - JITTER_RATIO))
+        self.assertGreaterEqual(result2, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result2, 60 * (1 + JITTER_RATIO))
 
         # For attempts=3, calculated = 30 * 2^2 = 120
-        result3 = _calculate_backoff_duration(min_duration, max_duration, 3)
-        self.assertGreaterEqual(result3, min_duration * (1 - JITTER_RATIO))
+        result3 = _calculate_backoff_duration(3)
+        self.assertGreaterEqual(result3, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result3, 120 * (1 + JITTER_RATIO))
 
         # For attempts=4, calculated = 30 * 2^3 = 240
-        result4 = _calculate_backoff_duration(min_duration, max_duration, 4)
-        self.assertGreaterEqual(result4, min_duration * (1 - JITTER_RATIO))
+        result4 = _calculate_backoff_duration(4)
+        self.assertGreaterEqual(result4, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result4, 240 * (1 + JITTER_RATIO))
 
     def test_caps_at_max_duration(self):
         """Test that backoff is capped at max duration."""
-        min_duration = 30
-        max_duration = 100
-
-        # For attempts=5, calculated = 30 * 2^4 = 480, but should cap at 100
-        result = _calculate_backoff_duration(min_duration, max_duration, 5)
-        self.assertLessEqual(result, max_duration * (1 + JITTER_RATIO))
-
-    def test_invalid_min_duration_raises_error(self):
-        """Test that min_duration <= 0 raises ValueError."""
-        with self.assertRaises(ValueError) as context:
-            _calculate_backoff_duration(0, 600, 1)
-        self.assertIn("Minimum backoff duration must be greater than 0", str(context.exception))
-
-        with self.assertRaises(ValueError):
-            _calculate_backoff_duration(-1, 600, 1)
-
-    def test_invalid_max_less_than_min_raises_error(self):
-        """Test that max_duration < min_duration raises ValueError."""
-        with self.assertRaises(ValueError) as context:
-            _calculate_backoff_duration(100, 50, 1)
-        self.assertIn("Maximum backoff duration must be greater than or equal to minimum", str(context.exception))
+        # For attempts=6, calculated = 30 * 2^5 = 960, but should cap at MAX_STARTUP_BACKOFF_DURATION (600)
+        result = _calculate_backoff_duration(6)
+        self.assertLessEqual(result, MAX_STARTUP_BACKOFF_DURATION * (1 + JITTER_RATIO))
 
     def test_invalid_attempts_raises_error(self):
         """Test that attempts < 1 raises ValueError."""
         with self.assertRaises(ValueError) as context:
-            _calculate_backoff_duration(30, 600, 0)
+            _calculate_backoff_duration(0)
         self.assertIn("Number of attempts must be at least 1", str(context.exception))
 
         with self.assertRaises(ValueError):
-            _calculate_backoff_duration(30, 600, -1)
+            _calculate_backoff_duration(-1)
 
     def test_very_large_attempts_does_not_overflow(self):
         """Test that very large attempt numbers don't cause overflow."""
         # Should not raise an exception and should return a reasonable value
-        result = _calculate_backoff_duration(30, 600, 100)
+        result = _calculate_backoff_duration(100)
         self.assertGreater(result, 0)
-        self.assertLessEqual(result, 600 * (1 + JITTER_RATIO))
-
-    def test_equal_min_max_duration(self):
-        """Test when min and max duration are equal."""
-        result = _calculate_backoff_duration(100, 100, 5)
-        # Should be within jitter range of 100
-        self.assertGreaterEqual(result, 100 * (1 - JITTER_RATIO))
-        self.assertLessEqual(result, 100 * (1 + JITTER_RATIO))
+        self.assertLessEqual(result, MAX_STARTUP_BACKOFF_DURATION * (1 + JITTER_RATIO))
 
 
 class TestIsFailoverable(unittest.TestCase):
@@ -262,8 +234,8 @@ class TestStartupRetryIntegration(unittest.TestCase):
         self.assertEqual(DEFAULT_STARTUP_TIMEOUT, 100)
 
     def test_max_backoff_duration_value(self):
-        """Test that MAX_BACKOFF_DURATION has expected value."""
-        self.assertEqual(MAX_BACKOFF_DURATION, 600)
+        """Test that MAX_STARTUP_BACKOFF_DURATION has expected value."""
+        self.assertEqual(MAX_STARTUP_BACKOFF_DURATION, 600)
 
     def test_min_startup_backoff_duration_value(self):
         """Test that MIN_STARTUP_BACKOFF_DURATION has expected value."""
@@ -309,6 +281,7 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
             times = [
                 start_time,  # Initial startup_start_time
                 start_time,  # First loop elapsed check (0 seconds elapsed)
+                start_time,  # First loop remaining timeout check
                 start_time + datetime.timedelta(seconds=2),  # Second loop check exceeds timeout
             ]
             mock_datetime.datetime.now.side_effect = times

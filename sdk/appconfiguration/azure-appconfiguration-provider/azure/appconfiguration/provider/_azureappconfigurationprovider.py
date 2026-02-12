@@ -28,8 +28,6 @@ from ._key_vault._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
-    MIN_STARTUP_BACKOFF_DURATION,
-    MAX_BACKOFF_DURATION,
     DEFAULT_STARTUP_TIMEOUT,
 )
 from ._azureappconfigurationproviderbase import (
@@ -37,8 +35,7 @@ from ._azureappconfigurationproviderbase import (
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,
-    _try_get_fixed_backoff,
-    _calculate_backoff_duration,
+    _get_fixed_backoff,
     _is_failoverable,
 )
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper as ConfigurationClient
@@ -112,7 +109,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     configurations before they are added to the provider.
     :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     :keyword startup_timeout: The amount of time in seconds allowed to load data from Azure App Configuration on
-     startup. Default value is 100 seconds.
+     startup. The default value is 100 seconds.
     :paramtype startup_timeout: int
     """
 
@@ -182,7 +179,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     configurations before they are added to the provider.
     :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
     :keyword startup_timeout: The amount of time in seconds allowed to load data from Azure App Configuration on
-     startup. Default value is 100 seconds.
+     startup. The default value is 100 seconds.
     :paramtype startup_timeout: int
     """
 
@@ -381,7 +378,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     def _load_all(self, **kwargs: Any) -> None:
         startup_start_time = datetime.datetime.now()
-        post_fixed_window_attempts = 0
+        attempts = 0
         startup_exceptions: List[Exception] = []
 
         while True:
@@ -398,18 +395,11 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 return  # Successfully loaded
 
             # Calculate delay before next retry attempt
-            fixed_backoff = _try_get_fixed_backoff(elapsed_seconds)
-            if fixed_backoff is not None:
-                delay = fixed_backoff
-            else:
-                post_fixed_window_attempts += 1
-                delay = _calculate_backoff_duration(
-                    MIN_STARTUP_BACKOFF_DURATION,
-                    MAX_BACKOFF_DURATION,
-                    post_fixed_window_attempts,
-                )
+            attempts += 1
+            delay = _get_fixed_backoff(elapsed_seconds, attempts)
 
             # Check if delay would exceed remaining timeout
+            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
             remaining_timeout = self._startup_timeout - elapsed_seconds
             if delay > remaining_timeout:
                 delay = max(0, remaining_timeout)

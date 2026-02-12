@@ -36,7 +36,7 @@ DEFAULT_STARTUP_TIMEOUT = 100  # seconds
 
 # Backoff durations
 MIN_STARTUP_BACKOFF_DURATION = 30  # seconds - minimum backoff after fixed window
-MAX_BACKOFF_DURATION = 600  # seconds (10 minutes) - caps exponential backoff
+MAX_STARTUP_BACKOFF_DURATION = 600  # seconds (10 minutes) - caps exponential backoff
 
 # Jitter ratio for randomizing backoff durations (+/- 25% variation)
 JITTER_RATIO = 0.25

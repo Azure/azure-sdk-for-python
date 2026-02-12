@@ -44,7 +44,7 @@ from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
     DEFAULT_STARTUP_TIMEOUT,
-    MAX_BACKOFF_DURATION,
+    MAX_STARTUP_BACKOFF_DURATION,
     MIN_STARTUP_BACKOFF_DURATION,
     JITTER_RATIO,
     STARTUP_BACKOFF_INTERVALS,
@@ -133,8 +133,8 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
     if startup_timeout < MIN_STARTUP_BACKOFF_DURATION:
         raise ValueError(f"Startup timeout must be at least {MIN_STARTUP_BACKOFF_DURATION} seconds.")
-    if startup_timeout > MAX_BACKOFF_DURATION:
-        raise ValueError(f"Startup timeout must be at most {MAX_BACKOFF_DURATION} seconds.")
+    if startup_timeout > MAX_STARTUP_BACKOFF_DURATION:
+        raise ValueError(f"Startup timeout must be at most {MAX_STARTUP_BACKOFF_DURATION} seconds.")
 
     return {
         "endpoint": endpoint,
@@ -233,52 +233,46 @@ def _jitter(duration: float, ratio: float = JITTER_RATIO) -> float:
     return duration * (1 + jitter)
 
 
-def _try_get_fixed_backoff(elapsed_seconds: float) -> Optional[float]:
+def _get_fixed_backoff(elapsed_seconds: float, attempts: int) -> float:
     """
     Try to get a fixed backoff duration based on elapsed startup time.
 
     :param elapsed_seconds: The time elapsed since startup began, in seconds.
     :type elapsed_seconds: float
+    :param attempts: The number of retry attempts made (1-based).
+    :type attempts: int
     :return: The fixed backoff duration in seconds if within the fixed backoff window, None otherwise.
     :rtype: Optional[float]
     """
     for threshold, backoff in STARTUP_BACKOFF_INTERVALS:
         if elapsed_seconds < threshold:
             return backoff
-    return None
+    return _calculate_backoff_duration(attempts)
 
 
-def _calculate_backoff_duration(min_duration: float, max_duration: float, attempts: int) -> float:
+def _calculate_backoff_duration(attempts: int) -> float:
     """
     Calculate the jittered exponential backoff duration.
 
-    :param min_duration: The minimum backoff duration in seconds.
-    :type min_duration: float
-    :param max_duration: The maximum backoff duration in seconds.
-    :type max_duration: float
     :param attempts: The number of retry attempts made (1-based).
     :type attempts: int
     :return: The calculated backoff duration with jitter applied.
     :rtype: float
     """
-    if min_duration <= 0:
-        raise ValueError("Minimum backoff duration must be greater than 0.")
-    if max_duration < min_duration:
-        raise ValueError("Maximum backoff duration must be greater than or equal to minimum.")
     if attempts < 1:
         raise ValueError("Number of attempts must be at least 1.")
 
     if attempts == 1:
-        return min_duration
+        return MIN_STARTUP_BACKOFF_DURATION
 
     # Calculate exponential backoff: min * 2^(attempts-1)
     # Cap the shift amount to prevent overflow
     safe_shift = min(attempts - 1, 63)
-    calculated = max(1.0, min_duration) * (1 << safe_shift)
+    calculated = MIN_STARTUP_BACKOFF_DURATION * (1 << safe_shift)
 
     # Cap at max duration
-    if calculated > max_duration or calculated <= 0:  # Check for overflow
-        calculated = max_duration
+    if calculated > MAX_STARTUP_BACKOFF_DURATION or calculated <= 0:  # Check for overflow
+        calculated = MAX_STARTUP_BACKOFF_DURATION
 
     return _jitter(calculated, JITTER_RATIO)
 
