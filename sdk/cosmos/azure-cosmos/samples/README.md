@@ -44,6 +44,7 @@ The following are code samples that show common scenario operations with the Azu
     * Getting a feed range for a specific partition key
     * Checking feed range subset relationships
     * Querying items scoped to a feed range
+    * Comparing queries scoped to feed ranges with `partition_key`-based queries
     * Consuming change feed scoped to a feed range
     * Parallel change feed processing using feed ranges
 
