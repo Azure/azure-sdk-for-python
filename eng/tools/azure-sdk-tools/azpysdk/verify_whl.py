@@ -102,10 +102,9 @@ def should_verify_package(package_name):
     return package_name not in EXCLUDED_PACKAGES and "nspkg" not in package_name and "-mgmt" not in package_name
 
 
-def has_stable_version_on_pypi(package_name: str, pypi_versions: List[str]) -> bool:
+def has_stable_version_on_pypi(all_versions: List[str]) -> bool:
     """Check if the package has any stable (non-prerelease) version on PyPI."""
     try:
-        all_versions = pypi_versions
         stable_versions = [Version(v) for v in all_versions if not Version(v).is_prerelease]
         return len(stable_versions) > 0
     except Exception:
@@ -116,7 +115,7 @@ def verify_conda_section(
     package_dir: str, package_name: str, parsed_pkg: ParsedSetup, pypi_versions: List[str]
 ) -> bool:
     """Verify that packages with stable versions on PyPI have [tool.azure-sdk-conda] section in pyproject.toml."""
-    if not has_stable_version_on_pypi(package_name, pypi_versions=pypi_versions):
+    if not has_stable_version_on_pypi(pypi_versions):
         logger.info(f"Package {package_name} has no stable version on PyPI, skipping conda section check")
         return True
 
@@ -136,6 +135,7 @@ def verify_conda_section(
     elif "in_bundle" not in config:
         logger.error(f"[tool.azure-sdk-conda] section in pyproject.toml is missing required field `in_bundle`.")
         return False
+    logger.info(f"Verified conda section for package {package_name}")
     return True
 
 
@@ -307,9 +307,7 @@ class verify_whl(Check):
                     results.append(1)
 
                 # Verify conda section for packages with stable versions on PyPI
-                if verify_conda_section(package_dir, package_name, parsed, pypi_versions=pypi_versions):
-                    logger.info(f"Verified conda section for package {package_name}")
-                else:
+                if not verify_conda_section(package_dir, package_name, parsed, pypi_versions=pypi_versions):
                     results.append(1)
 
         return max(results) if results else 0
