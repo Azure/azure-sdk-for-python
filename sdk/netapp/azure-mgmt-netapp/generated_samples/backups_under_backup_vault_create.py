@@ -39,13 +39,13 @@ def main():
         body={
             "properties": {
                 "label": "myLabel",
-                "volumeResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPool/pool1/volumes/volume1",
+                "volumeResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.NetApp/netAppAccounts/account1/capacityPools/pool1/volumes/volume1",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01-preview/BackupsUnderBackupVault_Create.json
+# x-ms-original-file: 2025-12-01/BackupsUnderBackupVault_Create.json
 if __name__ == "__main__":
     main()
