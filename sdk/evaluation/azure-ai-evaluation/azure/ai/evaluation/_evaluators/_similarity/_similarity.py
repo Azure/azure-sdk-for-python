@@ -8,6 +8,7 @@ from typing import Dict
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 
 
 class SimilarityEvaluator(PromptyEvaluatorBase):
@@ -134,3 +135,37 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         :rtype: Dict[str, float]
         """
         return super().__call__(*args, **kwargs)
+
+    @override
+    def _convert_kwargs_to_eval_input(self, **kwargs):
+        """Convert keyword arguments to evaluation input, with validation."""
+        query = kwargs.get("query")
+        response = kwargs.get("response")
+        ground_truth = kwargs.get("ground_truth")
+
+        # Validate required fields are not None
+        if query is None:
+            raise EvaluationException(
+                message="SimilarityEvaluator: 'query' is a required input and cannot be None.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        if response is None:
+            raise EvaluationException(
+                message="SimilarityEvaluator: 'response' is a required input and cannot be None.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        if ground_truth is None:
+            raise EvaluationException(
+                message="SimilarityEvaluator: 'ground_truth' is a required input and cannot be None.",
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.MISSING_FIELD,
+                target=ErrorTarget.SIMILARITY_EVALUATOR,
+            )
+
+        return super()._convert_kwargs_to_eval_input(**kwargs)

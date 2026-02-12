@@ -167,11 +167,11 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             )
         eval_input["query"] = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
-        if "tool_definitions" in eval_input and eval_input["tool_definitions"] is not None:
+        if "tool_definitions" in eval_input and eval_input["tool_definitions"]:
             eval_input["tool_definitions"] = reformat_tool_definitions(eval_input["tool_definitions"], logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             success_value = llm_output.get("success", False)

@@ -169,8 +169,7 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict["llm_output"]
-        # llm_output should always be a dictionary because the response_format of prompty is set to json_object, but checking anyway
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         score = math.nan
         if isinstance(llm_output, dict):
             score = llm_output.get("score", math.nan)
