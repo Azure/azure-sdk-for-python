@@ -443,9 +443,6 @@
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
 
-# PRLabel: %Media
-/sdk/media/                                                          @naiteeks @giakas
-
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
 # ServiceOwners: @toddysm @northtyphoon
