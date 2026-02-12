@@ -51,7 +51,7 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
 
         message_store = FoundryConversationMessageStore(conversation_id, self._client)
         await message_store.retrieve_messages()
-        self._inventory[conversation_id] = AgentThread(message_store=message_store)
+        self._inventory[conversation_id] = FoundryConversationThread(message_store=message_store)
         return self._inventory[conversation_id]
 
     async def set(self,
@@ -67,3 +67,15 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
         if not conversation_id:
             raise ValueError("conversation_id is required to save an AgentThread.")
         self._inventory[conversation_id] = thread
+
+
+class FoundryConversationThread(AgentThread):
+    @property
+    def service_thread_id(self) -> str | None:
+        return self._service_thread_id
+
+    @service_thread_id.setter
+    def service_thread_id(self, service_thread_id: str | None) -> None:
+        if service_thread_id is None:
+            return
+        self._service_thread_id = service_thread_id
