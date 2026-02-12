@@ -196,7 +196,18 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, base_url=self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
+        # Build a URL without the snapshot query parameter for the generated client.
+        # The snapshot is passed as a method parameter by operations that need it, so including
+        # it in the base URL would cause it to appear twice in requests.
+        client_query_str, _ = self._format_query_string(sas_token, self._raw_credential)
+        client_url = _format_url(
+            container_name=self.container_name,
+            scheme=self.scheme,
+            blob_name=self.blob_name,
+            query_str=client_query_str,
+            hostname=self._hosts[self._location_mode],
+        )
+        self._client = AzureBlobStorage(client_url, base_url=client_url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
