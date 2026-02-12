@@ -130,6 +130,9 @@ def verify_conda_section(package_dir: str, package_name: str) -> bool:
                 "specify if the package should be released individually or bundled to Conda."
             )
             return False
+        elif "in_bundle" not in content:
+            logger.error(f"[tool.azure-sdk-conda] section in pyproject.toml is missing required field `in_bundle`.")
+            return False
         return True
     except Exception as e:
         logger.error(f"Failed to read pyproject.toml for {package_name}: {e}")
