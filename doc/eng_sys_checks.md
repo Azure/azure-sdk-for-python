@@ -2,7 +2,7 @@
 
 - [Azure SDK for Python - Engineering System](#azure-sdk-for-python---engineering-system)
   - [Targeting a specific package at build queue time](#targeting-a-specific-package-at-build-queue-time)
-  - [Skipping a tox test environment at build queue time](#skipping-a-tox-test-environment-at-build-queue-time)
+  - [Skipping a check at build queue time](#skipping-a-check-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
     - [Coverage Enforcement](#coverage-enforcement)
@@ -22,7 +22,7 @@
       - [Running locally](#running-locally)
     - [Change log verification](#change-log-verification)
   - [PR Validation Checks](#pr-validation-checks)
-    - [PR validation tox test environments](#pr-validation-tox-test-environments)
+    - [PR validation checks](#pr-validation-checks-1)
       - [whl](#whl)
       - [sdist](#sdist)
       - [depends](#depends)
@@ -38,7 +38,7 @@
 
 There are various tests currently enabled in Azure pipeline for Python SDK and some of them are enabled only for nightly CI checks. We also run some static analysis tool to verify code completeness, security and lint check.
 
-Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `tox`. For a deeper dive into the tooling that enables the CI checks below and additional detail on reproducing builds locally please refer to the azure-sdk-tools README.md.
+Check the [contributing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#building-and-testing) for an intro to `azpysdk`. For a deeper dive into the tooling that enables the CI checks below and additional detail on reproducing builds locally please refer to the [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md).
 
 As a contributor, you will see the build jobs run in two modes: `Nightly Scheduled` and `Pull Request`.
 
@@ -48,8 +48,8 @@ Example PR build:
 
 ![res/job_snippet.png](res/job_snippet.png)
 
-* `Analyze` tox envs run during the `Analyze job.
-* `Test <platform>_<pyversion>` runs PR/Nightly tox envs, depending on context.
+* `Analyze` checks run during the `Analyze` job.
+* `Test <platform>_<pyversion>` runs PR/Nightly checks, depending on context.
 
 ## Targeting a specific package at build queue time
 
@@ -60,20 +60,20 @@ In both `public` and `internal` projects, all builds allow a filter to be introd
    1. For example, setting filter string `azure-mgmt-*` will filter a build to only management packages. A value of `azure-keyvault-secrets` will result in only building THAT specific package.
 3. Once it's set, run the build!
 
-## Skipping a tox test environment at build queue time
+## Skipping a check at build queue time
 
-All build definitions allow choice at queue time as to which `tox` environments actually run during the test phase.
+All build definitions allow choice at queue time as to which checks actually run during the test phase.
 
 1. Find your target service `internal` build.
 2. Click `Run New`.
-3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `Run.ToxCustomEnvs`. The value should be a comma separated list of tox environments that you want to run in the test phase.
+3. Before clicking `run` against `main` or your target commit, click `Variables` and add a variable of name `ChecksOverride`. The value should be a comma separated list of checks that you want to run in the test phase.
 4. Once it's set, run the build!
 
-This is an example setting of that narrows the default set from `whl, sdist, depends, latestdependency, minimumdependency`.
+This is an example setting of that narrows the default set from `whl, sdist, depends, latestdependency, mindependency`.
 
 ![res/queue_time_variable.png](res/queue_time_variable.png)
 
-Any combination of valid valid tox environments will work. Reference either this document or the file present at `eng/tox/tox.ini` to find what options are available.
+Any combination of valid check names will work. Reference either this document, `azpysdk -h`, or the [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md) to find what options are available.
 
 ## Skipping entire sections of builds
 
@@ -126,16 +126,16 @@ We default to **enabling** most of our checks like `pylint`, `mypy`, etc. Due to
 Here's an example:
 
 ```toml
-# from sdk/core/azure-servicemanagement-legacy/pyproject.toml, which is a legacy package
+# from sdk/core/azure-common/pyproject.toml, which is a legacy package
 # as a result, all of these checks are disabled
 [tool.azure-sdk-build]
-mypy = false
 type_check_samples = false
 verifytypes = false
 pyright = false
+mypy = false
 pylint = false
+regression = false
 black = false
-sphinx = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
@@ -154,15 +154,15 @@ After it is implemented, the `relative_cov` key will enable the prevention of **
 
 ## Environment variables important to CI
 
-There are a few differences from a standard local invocation of `tox <env>`. Primarily, these differences adjust the checks to be friendly to parallel invocation. These adjustments are necessary to prevent random CI crashes.
+There are a few differences from a standard local invocation of `azpysdk <check>`. Primarily, these differences adjust the checks to be friendly to parallel invocation. These adjustments are necessary to prevent random CI crashes.
 
 | Environment Variable | Affect on Build |
 |---|---|
-| `TF_BUILD` | EngSys uses the presence of any value in this variable as the bit indicating "in CI" or not. The primary effect of this is that all relative dev dependencies will be prebuilt prior to running the tox environments. |
-| `PREBUILT_WHEEL_DIR` | Setting this env variables means that instead of generating a fresh wheel or sdist to test, `tox` will look in this directory for the targeted package. |
+| `TF_BUILD` | EngSys uses the presence of any value in this variable as the bit indicating "in CI" or not. The primary effect of this is that all relative dev dependencies will be prebuilt prior to running the checks. |
+| `PREBUILT_WHEEL_DIR` | Setting this env variable means that instead of generating a fresh wheel or sdist to test, the check will look in this directory for the targeted package. |
 | `PIP_INDEX_URL` | Standard `pip` environment variable. During nightly `alpha` builds, this environment variable is set to a public dev feed. |
 
-The various tooling abstracted by the environments within `eng/tox/tox.ini` take the above variables into account automatically.
+The various tooling abstracted by `azpysdk` takes the above variables into account automatically.
 
 ### Atomic Overrides
 
@@ -177,7 +177,7 @@ To temporarily **override** this restriction, a dev need only set the queue time
 
 This same methodology also applies to _individual checks_ that run during various phases of CI. Developers can use a queue time variable of format `PACKAGE_NAME_CHECK=true/false`.
 
-The name that you should use is visible based on what the `tox environment` that the check refers to! Here are a few examples of enabling/disabling checks:
+The name that you should use is visible based on the check name. Here are a few examples of enabling/disabling checks:
 
 - `AZURE_SERVICEBUS_PYRIGHT=true` <-- enable a check that normally is disabled in `pyproject.toml`
 - `AZURE_CORE_PYLINT=false` <-- disable a check that normally runs
@@ -188,7 +188,7 @@ You can enable test logging in a pipeline by setting the queue time variable `PY
 
 `PYTEST_LOG_LEVEL=INFO`
 
-This also works locally with tox by setting the `PYTEST_LOG_LEVEL` environment variable.
+This also works locally by setting the `PYTEST_LOG_LEVEL` environment variable.
 
 Note that if you want DEBUG level logging with sensitive information unredacted in the test logs, then you still must pass `logging_enable=True` into the client(s) being used in tests.
 
@@ -201,14 +201,14 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 [`MyPy`](https://pypi.org/project/mypy/)  is a static analysis tool that runs type checking of python package. Following are the steps to run `MyPy` locally for a specific package:
 
 1. Go to root of the package
-2. Execute following command: `tox run -e mypy -c ../../../eng/tox/tox.ini --root .`
+2. Execute following command: `azpysdk mypy .`
 
 ### Pyright
 
 [`Pyright`](https://github.com/microsoft/pyright/)  is a static analysis tool that runs type checking of python package. Following are the steps to run `pyright` locally for a specific package:
 
 1. Go to root of the package
-2. Execute following command: `tox run -e pyright -c ../../../eng/tox/tox.ini --root .`
+2. Execute following command: `azpysdk pyright .`
 
 
 ### Verifytypes
@@ -216,7 +216,7 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 [`Verifytypes`](https://github.com/microsoft/pyright/blob/main/docs/typed-libraries.md#verifying-type-completeness) is a feature of pyright that checks the type completeness of a python package. Following are the steps to run `verifytypes` locally for a specific package:
 
 1. Go to root of the package
-2. Execute following command: `tox run -e verifytypes -c ../../../eng/tox/tox.ini --root .`
+2. Execute following command: `azpysdk verifytypes .`
 
 
 ### Pylint
@@ -224,9 +224,9 @@ Analyze job in both nightly CI and pull request validation pipeline runs a set o
 [`Pylint`](https://pypi.org/project/pylint/) is a static analysis tool to run lint checking, it is automatically run on all PRs. Following are the steps to run `pylint` locally for a specific package.
 
 1. Go to root of the package.
-2. Execute following command: `tox run -e pylint -c ../../../eng/tox/tox.ini --root .`
+2. Execute following command: `azpysdk pylint .`
 
-Note that the `pylint` environment is configured to run against the **earliest supported python version**. This means that users **must** have `python 3.7` installed on their machine to run this check locally.
+Note that the `pylint` check is configured to run against the **earliest supported python version**. This means that users **must** have `python 3.9` installed on their machine to run this check locally.
 
 ### Sphinx and docstring checker
 
@@ -234,14 +234,14 @@ Note that the `pylint` environment is configured to run against the **earliest s
 fail if docstring are invalid, helping to ensure the resulting documentation will be of high quality. Following are the steps to run `sphinx` locally for a specific package with strict docstring checking:
 
 1. Go to root of the package.
-2. Execute following command: `tox run -e sphinx -c ../../../eng/tox/tox.ini --root .`
+2. Execute following command: `azpysdk sphinx .`
 
 ### Bandit
 
 `Bandit` is static security analysis tool. This check is triggered for all Azure SDK package as part of analyze job. Following are the steps to `Bandit` tool locally for a specific package.
 
 1. Got to package root directory.
-2. Execute command: `tox run -e bandit -c ../../../eng/tox/tox.ini --root .`
+2. Execute command: `azpysdk bandit .`
 
 ### ApiStubGen
 
@@ -267,9 +267,7 @@ to opt into the black invocation.
 #### Running locally
 
 1. Go to package root directory.
-2. Execute command: `tox run -e black -c ../../../eng/tox/tox.ini --root . -- .`
-
-**Tip**: You can provide any arguments that `black` accepts after the `--`. Example: `tox run -e black -c ../../../eng/tox/tox.ini --root . -- path/to/file.py`
+2. Execute command: `azpysdk black .`
 
 ### Change log verification
 
@@ -281,39 +279,39 @@ Each pull request runs various tests using `pytest` in addition to all the tests
 
 |`Python  Version`|`Platform`  |
 |--|--|
-|2.7|Linux|
-|3.5|Windows|
-|3.8|Linux|
+|3.9|Linux|
+|3.9|Windows|
+|3.13|Linux|
 
-### PR validation tox test environments
+### PR validation checks
 
-Tests are executed using tox environment and following are the tox test names that are part of pull request validation
+Tests are executed as part of pull request validation. Following are the checks that are part of pull request validation:
 
 #### whl
 
-This test installs wheel of the package being tested and runs all tests cases in the package using `pytest`. Following is the command to run this test environment locally.
+This test installs wheel of the package being tested and runs all tests cases in the package using `pytest`. Following is the command to run this check locally.
 
 1. Go to package root folder on a command line
 2. Run following command
-   `tox run -e whl -c ../../../eng/tox/tox.ini --root .`
+   `azpysdk whl .`
 
 #### sdist
 
-This test installs sdist of the package being tested and runs all tests cases in the package using `pytest`. Following is the command to run this test environment locally.
+This test installs sdist of the package being tested and runs all tests cases in the package using `pytest`. Following is the command to run this check locally.
 
 1. Go to package root folder on a command line
 2. Run following command
-   `tox run -e sdist -c ../../../eng/tox/tox.ini --root .`
+   `azpysdk sdist .`
 
 #### depends
 
 The `depends` check ensures all modules in a target package can be successfully imported. Actually installing and importing will verify that all package requirements are properly set in setup.py and that the `__all__` set for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked:  `from azure.core import *`.
 
-Following is the command to run this test environment locally.
+Following is the command to run this check locally.
 
 1. Go to package root folder on a command line
 2. Run following command
-   `tox run -e sdist -c ../../../eng/tox/tox.ini --root .`
+   `azpysdk import_all .`
 
 ## Nightly CI Checks
 
@@ -358,10 +356,10 @@ Note: Any dependency mentioned only in dev_requirements are not considered to id
 4. Install current package that is being tested
 5. Run pytest of all test cases in current package
 
-Tox name of this test is `latestdependency` and steps to manually run this test locally is as follows.
+Steps to manually run this test locally:
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
-2. Run command `tox run -e latestdependency -c ../../../eng/tox/tox.ini --root .`
+2. Run command `azpysdk latestdependency .`
 
 #### Minimum Dependency Test
 
@@ -374,11 +372,11 @@ Note: Any dependency mentioned only in dev_requirements are not considered to id
 4. Install current package that is being tested
 5. Run pytest of all test cases in current package
 
-Tox name of this test is `mindependency` and steps to manually run this test locally is as follows.
+Steps to manually run this test locally:
 
 1. Go to package root. For e.g azure-storage-blob or azure-identity
 2. Run following command
-`tox run -e mindependency -c ../../../eng/tox/tox.ini --root .`
+`azpysdk mindependency .`
 
 #### Regression Test
 

@@ -6,11 +6,11 @@
 import time
 import unittest
 from unittest.mock import Mock, patch
-from azure.appconfiguration import SecretReferenceConfigurationSetting
-from azure.appconfiguration.provider import SettingSelector, WatchKey
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator_aad
 from testcase import AppConfigTestCase
+from azure.appconfiguration import SecretReferenceConfigurationSetting
+from azure.appconfiguration.provider import SettingSelector, WatchKey
 
 
 class TestSecretRefresh(AppConfigTestCase, unittest.TestCase):
