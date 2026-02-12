@@ -115,37 +115,50 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         query = kwargs.get("query")
         response = kwargs.get("response")
 
-        # Extract tool calls from response
         if not response:
             return {"error_message": "Response parameter is required to extract tool calls."}
 
+        # Try to parse tool calls from response
         tool_calls = self._parse_tools_from_response(response)
-        if not tool_calls:
-            return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
 
-        if not isinstance(tool_calls, list):
+        if not tool_calls:
+            # If no tool calls found and response is string, use response string as tool calls as is
+            if isinstance(response, str):
+                tool_calls = response
+            else:
+                return {"error_message": self._NO_TOOL_CALLS_MESSAGE}
+
+        # Normalize tool_calls and tool_definitions (skip for strings)
+        if not isinstance(tool_calls, list) and not isinstance(tool_calls, str):
             tool_calls = [tool_calls]
-        if not isinstance(tool_definitions, list):
+        if not isinstance(tool_definitions, list) and not isinstance(tool_definitions, str):
             tool_definitions = [tool_definitions] if tool_definitions else []
 
-        try:
-            # Type cast to satisfy static type checker
-            tool_calls_typed = cast(List[Dict], tool_calls)
-            needed_tool_definitions = self._extract_needed_tool_definitions(
-                tool_calls_typed, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
-            )
-        except EvaluationException as e:
-            # Check if this is because no tool definitions were provided at all
-            if len(tool_definitions) == 0:
-                return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
-            else:
-                return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
+        # Cross-validation (skip when either is string)
+        if isinstance(tool_calls, str) or isinstance(tool_definitions, str):
+            needed_tool_definitions = tool_definitions
+        else:
+            try:
+                # Type cast to satisfy static type checker
+                tool_calls_typed = cast(List[Dict], tool_calls)
+                needed_tool_definitions = self._extract_needed_tool_definitions(
+                    tool_calls_typed, tool_definitions, ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR
+                )
+            except EvaluationException:
+                # Check if this is because no tool definitions were provided at all
+                if len(tool_definitions) == 0:
+                    return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
+                else:
+                    return {"error_message": self._TOOL_DEFINITIONS_MISSING_MESSAGE}
 
-        if len(needed_tool_definitions) == 0:
+        if not needed_tool_definitions:
             return {"error_message": self._NO_TOOL_DEFINITIONS_MESSAGE}
 
-        # Reformat agent response with tool calls and results using reformat_agent_response
-        agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
+        # Reformat response for LLM (skip for strings - already a string)
+        if isinstance(tool_calls, str):
+            agent_response_with_tools = tool_calls
+        else:
+            agent_response_with_tools = reformat_agent_response(response, include_tool_messages=True)
 
         return {
             "query": query,
