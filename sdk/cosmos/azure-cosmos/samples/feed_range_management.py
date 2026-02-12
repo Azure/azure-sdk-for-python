@@ -12,6 +12,9 @@ from azure.cosmos.partition_key import PartitionKey
 
 import config
 
+# Use unique suffixes so the sample never collides with pre-existing resources
+_SUFFIX = str(uuid.uuid4())[:8]
+
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites -
 #
@@ -47,8 +50,8 @@ import config
 
 HOST = config.settings['host']
 MASTER_KEY = config.settings['master_key']
-DATABASE_ID = config.settings['database_id']
-CONTAINER_ID = config.settings['container_id']
+DATABASE_ID = config.settings['database_id'] + '-feed-range-sample-' + _SUFFIX
+CONTAINER_ID = config.settings['container_id'] + '-feed-range-sample-' + _SUFFIX
 
 # Partition key values used throughout the sample
 PARTITION_KEY_VALUES = ['Seattle', 'Portland', 'Denver', 'Austin', 'Chicago']
@@ -315,24 +318,19 @@ def parallel_change_feed_processing(container):
 
 def run_sample():
     client = cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY})
+    db = None
 
     try:
-        # Setup database and container
-        try:
-            db = client.create_database(id=DATABASE_ID)
-        except exceptions.CosmosResourceExistsError:
-            db = client.get_database_client(DATABASE_ID)
+        # Setup database and container (unique IDs so we never touch pre-existing resources)
+        db = client.create_database(id=DATABASE_ID)
+        print('Database with id \'{0}\' created'.format(DATABASE_ID))
 
-        try:
-            container = db.create_container(
-                id=CONTAINER_ID,
-                partition_key=PartitionKey(path='/city'),
-                offer_throughput=400
-            )
-            print('Container with id \'{0}\' created'.format(CONTAINER_ID))
-        except exceptions.CosmosResourceExistsError:
-            container = db.get_container_client(CONTAINER_ID)
-            print('Container with id \'{0}\' already exists'.format(CONTAINER_ID))
+        container = db.create_container(
+            id=CONTAINER_ID,
+            partition_key=PartitionKey(path='/city'),
+            offer_throughput=400
+        )
+        print('Container with id \'{0}\' created'.format(CONTAINER_ID))
 
         # Create sample data
         create_sample_items(container)
@@ -358,16 +356,17 @@ def run_sample():
         # 7. Parallel change feed processing using feed ranges
         parallel_change_feed_processing(container)
 
-        # Cleanup
-        try:
-            client.delete_database(db)
-        except exceptions.CosmosResourceNotFoundError:
-            pass
-
     except exceptions.CosmosHttpResponseError as e:
         print('\nrun_sample has caught an error. {0}'.format(e.message))
 
     finally:
+        # Clean up the sample database if it was created by this run
+        if db is not None:
+            try:
+                client.delete_database(db)
+                print('\nSample database \'{0}\' deleted'.format(DATABASE_ID))
+            except exceptions.CosmosResourceNotFoundError:
+                pass
         print("\nrun_sample done")
 
 
