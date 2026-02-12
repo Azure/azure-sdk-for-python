@@ -82,6 +82,7 @@ is_stable = true
 title = "ManagementGroupsAPI"
 package_nspkg = "azure-mgmt-nspkg"
 is_arm = true
+no_sub = true
 need_msrestazure = false
 need_azuremgmtcore = true
 sample_link = ""
