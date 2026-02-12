@@ -11,6 +11,20 @@ from typing import Any, Mapping, Optional
 
 from azure.core import MatchConditions
 
+from .._utils import utils as _generated_utils
+
+
+# Override quote_etag to be a no-op pass-through.
+# The generated quote_etag wraps etags in double quotes per RFC 7232,
+# but the old storage SDK never did this and existing recordings/behavior
+# expect unquoted etag values in If-Match/If-None-Match headers.
+def _quote_etag_passthrough(etag):
+    return etag
+
+
+_generated_utils.quote_etag = _quote_etag_passthrough
+
+
 from ..models import (
     AppendPositionAccessConditions,
     BlobHTTPHeaders,
@@ -75,7 +89,9 @@ def _extract_blob_http_headers(
         _set_if_not_none(kwargs, "blob_content_md5", getattr(blob_http_headers, "blob_content_md5", None))
         _set_if_not_none(kwargs, "blob_content_encoding", getattr(blob_http_headers, "blob_content_encoding", None))
         _set_if_not_none(kwargs, "blob_content_language", getattr(blob_http_headers, "blob_content_language", None))
-        _set_if_not_none(kwargs, "blob_content_disposition", getattr(blob_http_headers, "blob_content_disposition", None))
+        _set_if_not_none(
+            kwargs, "blob_content_disposition", getattr(blob_http_headers, "blob_content_disposition", None)
+        )
 
 
 def _extract_lease_access_conditions(
@@ -114,7 +130,9 @@ def _extract_modified_access_conditions(
     """Extract ModifiedAccessConditions fields into kwargs if not already set."""
     if modified_access_conditions is not None:
         _set_if_not_none(kwargs, "if_modified_since", getattr(modified_access_conditions, "if_modified_since", None))
-        _set_if_not_none(kwargs, "if_unmodified_since", getattr(modified_access_conditions, "if_unmodified_since", None))
+        _set_if_not_none(
+            kwargs, "if_unmodified_since", getattr(modified_access_conditions, "if_unmodified_since", None)
+        )
         _set_if_not_none(kwargs, "if_tags", getattr(modified_access_conditions, "if_tags", None))
         # Convert if_match/if_none_match to etag/match_condition
         _convert_to_etag_match_condition(
@@ -131,15 +149,21 @@ def _extract_source_modified_access_conditions(
     """Extract SourceModifiedAccessConditions fields into kwargs if not already set."""
     if source_modified_access_conditions is not None:
         _set_if_not_none(
-            kwargs, "source_if_modified_since", getattr(source_modified_access_conditions, "source_if_modified_since", None)
+            kwargs,
+            "source_if_modified_since",
+            getattr(source_modified_access_conditions, "source_if_modified_since", None),
         )
         _set_if_not_none(
-            kwargs, "source_if_unmodified_since", getattr(source_modified_access_conditions, "source_if_unmodified_since", None)
+            kwargs,
+            "source_if_unmodified_since",
+            getattr(source_modified_access_conditions, "source_if_unmodified_since", None),
         )
         _set_if_not_none(kwargs, "source_if_tags", getattr(source_modified_access_conditions, "source_if_tags", None))
         # Pass source_if_match and source_if_none_match directly (they are used as-is in the generated code)
         _set_if_not_none(kwargs, "source_if_match", getattr(source_modified_access_conditions, "source_if_match", None))
-        _set_if_not_none(kwargs, "source_if_none_match", getattr(source_modified_access_conditions, "source_if_none_match", None))
+        _set_if_not_none(
+            kwargs, "source_if_none_match", getattr(source_modified_access_conditions, "source_if_none_match", None)
+        )
 
 
 def _extract_source_cpk_info(
@@ -149,8 +173,12 @@ def _extract_source_cpk_info(
     """Extract SourceCpkInfo fields into kwargs if not already set."""
     if source_cpk_info is not None:
         _set_if_not_none(kwargs, "source_encryption_key", getattr(source_cpk_info, "source_encryption_key", None))
-        _set_if_not_none(kwargs, "source_encryption_key_sha256", getattr(source_cpk_info, "source_encryption_key_sha256", None))
-        _set_if_not_none(kwargs, "source_encryption_algorithm", getattr(source_cpk_info, "source_encryption_algorithm", None))
+        _set_if_not_none(
+            kwargs, "source_encryption_key_sha256", getattr(source_cpk_info, "source_encryption_key_sha256", None)
+        )
+        _set_if_not_none(
+            kwargs, "source_encryption_algorithm", getattr(source_cpk_info, "source_encryption_algorithm", None)
+        )
 
 
 def _extract_sequence_number_access_conditions(
@@ -170,7 +198,9 @@ def _extract_sequence_number_access_conditions(
             getattr(sequence_number_access_conditions, "if_sequence_number_less_than", None),
         )
         _set_if_not_none(
-            kwargs, "if_sequence_number_equal_to", getattr(sequence_number_access_conditions, "if_sequence_number_equal_to", None)
+            kwargs,
+            "if_sequence_number_equal_to",
+            getattr(sequence_number_access_conditions, "if_sequence_number_equal_to", None),
         )
 
 
@@ -190,7 +220,9 @@ def _extract_container_cpk_scope_info(
 ) -> None:
     """Extract ContainerCpkScopeInfo fields into kwargs if not already set."""
     if container_cpk_scope_info is not None:
-        _set_if_not_none(kwargs, "default_encryption_scope", getattr(container_cpk_scope_info, "default_encryption_scope", None))
+        _set_if_not_none(
+            kwargs, "default_encryption_scope", getattr(container_cpk_scope_info, "default_encryption_scope", None)
+        )
         _set_if_not_none(
             kwargs,
             "prevent_encryption_scope_override",
@@ -204,8 +236,12 @@ def _extract_blob_modified_access_conditions(
 ) -> None:
     """Extract BlobModifiedAccessConditions fields into kwargs if not already set."""
     if blob_modified_access_conditions is not None:
-        _set_if_not_none(kwargs, "if_modified_since", getattr(blob_modified_access_conditions, "if_modified_since", None))
-        _set_if_not_none(kwargs, "if_unmodified_since", getattr(blob_modified_access_conditions, "if_unmodified_since", None))
+        _set_if_not_none(
+            kwargs, "if_modified_since", getattr(blob_modified_access_conditions, "if_modified_since", None)
+        )
+        _set_if_not_none(
+            kwargs, "if_unmodified_since", getattr(blob_modified_access_conditions, "if_unmodified_since", None)
+        )
         # Convert if_match/if_none_match to etag/match_condition
         _convert_to_etag_match_condition(
             getattr(blob_modified_access_conditions, "if_match", None),
