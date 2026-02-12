@@ -183,12 +183,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             }
 
         binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
 
     @staticmethod
     def _get_built_in_tool_definition(tool_name: str):
