@@ -17,7 +17,7 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
 from azure.appconfiguration.provider._constants import (
     DEFAULT_STARTUP_TIMEOUT,
     MAX_STARTUP_BACKOFF_DURATION,
-    MIN_STARTUP_BACKOFF_DURATION,
+    MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION,
     STARTUP_BACKOFF_INTERVALS,
     JITTER_RATIO,
 )
@@ -51,26 +51,26 @@ class TestGetFixedBackoff(unittest.TestCase):
         self.assertEqual(result, 10)
 
     def test_within_third_interval(self):
-        """Test backoff within 200-600 seconds returns MIN_STARTUP_BACKOFF_DURATION."""
-        # STARTUP_BACKOFF_INTERVALS[2] = (600, MIN_STARTUP_BACKOFF_DURATION)
+        """Test backoff within 200-600 seconds returns MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION."""
+        # STARTUP_BACKOFF_INTERVALS[2] = (600, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
         result = _get_fixed_backoff(200, 1)
-        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
+        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
         result = _get_fixed_backoff(400, 1)
-        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
+        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
         result = _get_fixed_backoff(599, 1)
-        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
+        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
     def test_beyond_fixed_window_uses_exponential_backoff(self):
         """Test backoff beyond 600 seconds returns exponential backoff based on attempts."""
         # Beyond fixed window, uses _calculate_backoff_duration(attempts)
         result = _get_fixed_backoff(600, 1)
-        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)  # First attempt returns min
+        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)  # First attempt returns min
 
         # For attempt 2, should be jittered value around 60 (30 * 2^1)
         result = _get_fixed_backoff(1000, 2)
-        self.assertGreaterEqual(result, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertGreaterEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result, 60 * (1 + JITTER_RATIO))
 
     def test_negative_elapsed_time(self):
@@ -93,24 +93,24 @@ class TestCalculateBackoffDuration(unittest.TestCase):
     def test_first_attempt_returns_min_duration(self):
         """Test that first attempt returns minimum duration."""
         result = _calculate_backoff_duration(1)
-        self.assertEqual(result, MIN_STARTUP_BACKOFF_DURATION)
+        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
     def test_exponential_growth(self):
         """Test that backoff grows exponentially."""
         # For attempts=2, calculated = 30 * 2^1 = 60
         result2 = _calculate_backoff_duration(2)
         # Result should be within jitter range of calculated value
-        self.assertGreaterEqual(result2, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertGreaterEqual(result2, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result2, 60 * (1 + JITTER_RATIO))
 
         # For attempts=3, calculated = 30 * 2^2 = 120
         result3 = _calculate_backoff_duration(3)
-        self.assertGreaterEqual(result3, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertGreaterEqual(result3, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result3, 120 * (1 + JITTER_RATIO))
 
         # For attempts=4, calculated = 30 * 2^3 = 240
         result4 = _calculate_backoff_duration(4)
-        self.assertGreaterEqual(result4, MIN_STARTUP_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertGreaterEqual(result4, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result4, 240 * (1 + JITTER_RATIO))
 
     def test_caps_at_max_duration(self):
@@ -237,9 +237,9 @@ class TestStartupRetryIntegration(unittest.TestCase):
         """Test that MAX_STARTUP_BACKOFF_DURATION has expected value."""
         self.assertEqual(MAX_STARTUP_BACKOFF_DURATION, 600)
 
-    def test_min_startup_backoff_duration_value(self):
-        """Test that MIN_STARTUP_BACKOFF_DURATION has expected value."""
-        self.assertEqual(MIN_STARTUP_BACKOFF_DURATION, 30)
+    def test_MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION_value(self):
+        """Test that MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION has expected value."""
+        self.assertEqual(MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION, 30)
 
     def test_startup_backoff_intervals_structure(self):
         """Test that STARTUP_BACKOFF_INTERVALS has expected structure."""

@@ -45,7 +45,7 @@ from ._constants import (
     FEATURE_FLAG_KEY,
     DEFAULT_STARTUP_TIMEOUT,
     MAX_STARTUP_BACKOFF_DURATION,
-    MIN_STARTUP_BACKOFF_DURATION,
+    MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION,
     JITTER_RATIO,
     STARTUP_BACKOFF_INTERVALS,
 )
@@ -131,8 +131,8 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
 
     # Get startup timeout
     startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
-    if startup_timeout < MIN_STARTUP_BACKOFF_DURATION:
-        raise ValueError(f"Startup timeout must be at least {MIN_STARTUP_BACKOFF_DURATION} seconds.")
+    if startup_timeout < MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION:
+        raise ValueError(f"Startup timeout must be at least {MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION} seconds.")
     if startup_timeout > MAX_STARTUP_BACKOFF_DURATION:
         raise ValueError(f"Startup timeout must be at most {MAX_STARTUP_BACKOFF_DURATION} seconds.")
 
@@ -263,12 +263,12 @@ def _calculate_backoff_duration(attempts: int) -> float:
         raise ValueError("Number of attempts must be at least 1.")
 
     if attempts == 1:
-        return MIN_STARTUP_BACKOFF_DURATION
+        return MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION
 
     # Calculate exponential backoff: min * 2^(attempts-1)
     # Cap the shift amount to prevent overflow
     safe_shift = min(attempts - 1, 63)
-    calculated = MIN_STARTUP_BACKOFF_DURATION * (1 << safe_shift)
+    calculated = MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 << safe_shift)
 
     # Cap at max duration
     if calculated > MAX_STARTUP_BACKOFF_DURATION or calculated <= 0:  # Check for overflow

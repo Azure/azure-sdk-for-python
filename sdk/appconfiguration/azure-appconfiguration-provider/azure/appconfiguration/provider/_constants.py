@@ -35,7 +35,7 @@ APP_CONFIG_AICC_MIME_PROFILE = "https://azconfig.io/mime-profiles/ai/chat-comple
 DEFAULT_STARTUP_TIMEOUT = 100  # seconds
 
 # Backoff durations
-MIN_STARTUP_BACKOFF_DURATION = 30  # seconds - minimum backoff after fixed window
+MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION = 30  # seconds - minimum backoff after fixed window
 MAX_STARTUP_BACKOFF_DURATION = 600  # seconds (10 minutes) - caps exponential backoff
 
 # Jitter ratio for randomizing backoff durations (+/- 25% variation)
@@ -46,5 +46,5 @@ JITTER_RATIO = 0.25
 STARTUP_BACKOFF_INTERVALS = [
     (100, 5),  # 0-100 seconds elapsed: 5 second backoff
     (200, 10),  # 100-200 seconds elapsed: 10 second backoff
-    (600, MIN_STARTUP_BACKOFF_DURATION),  # 200-600 seconds elapsed: 30 second backoff
+    (600, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION),  # 200-600 seconds elapsed: 30 second backoff
 ]
