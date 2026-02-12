@@ -188,11 +188,14 @@ def main(
         # delete it (from its header up to the next version header or end of file).
         # This handles re-generation where the same changelog content is inserted again.
         if first_version_index >= 0:
-            version_pattern = re.compile(r"^## \d+\.\d+\.\d+(b\d+)?")
+            # Capture the version token from each version header (e.g., "1.2.3" or "1.2.3b1").
+            version_pattern = re.compile(r"^## (?P<ver>\d+\.\d+\.\d+(b\d+)?)")
             duplicate_start = -1
             for j in range(first_version_index + 1, len(content)):
-                if version_pattern.match(content[j]):
-                    if content[j].strip() == version_line.strip():
+                match = version_pattern.match(content[j])
+                if match:
+                    # Compare only the version token, ignoring the release date or other suffixes.
+                    if match.group("ver") == version:
                         duplicate_start = j
                     break  # stop at the next version header regardless
 
