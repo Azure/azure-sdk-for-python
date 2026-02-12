@@ -114,6 +114,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator = ConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=False,
+            check_for_unsupported_tools=True,
         )
 
         self._validator_with_query = ConversationValidator(

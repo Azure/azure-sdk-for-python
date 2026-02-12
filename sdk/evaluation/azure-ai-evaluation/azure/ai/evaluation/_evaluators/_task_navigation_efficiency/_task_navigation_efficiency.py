@@ -79,7 +79,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                     {"role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_3", "name": "call_tool_B", "arguments": {}}]},
                     {"role": "assistant", "content": [{"type": "tool_call", "tool_call_id": "call_4", "name": "response_synthesis", "arguments": {}}]}
                 ],
-                ground_truth=["identify_tools_to_call", ""call_tool_A", "call_tool_B", "response_synthesis"]
+                ground_truth=["identify_tools_to_call", "call_tool_A", "call_tool_B", "response_synthesis"]
             )
 
             # Example 2: Using tool names with parameters (exact parameter matching required)
