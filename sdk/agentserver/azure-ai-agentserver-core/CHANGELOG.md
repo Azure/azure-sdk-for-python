@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b12 (2026-02-12)
+
+### Bugs Fixed
+
+- Minor bugs fixed for -langgraph and -agentframework.
+
+
 ## 1.0.0b11 (2026-02-10)
 
 ### Features Added
