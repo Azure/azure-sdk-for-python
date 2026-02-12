@@ -840,9 +840,9 @@
 /.github/workflows/                                                  @Azure/azure-sdk-eng
 /.github/CODEOWNERS                                                  @lmazuel @xiangyan99 @kashifkhan @Azure/azure-sdk-eng
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan @maririos
-/.github/agents                                                      @mccoyp @l0lawrence
-/.github/prompts                                                     @mccoyp @l0lawrence
-/.github/skills                                                      @mccoyp @l0lawrence
+/.github/agents/                                                     @mccoyp @l0lawrence
+/.github/prompts/                                                    @mccoyp @l0lawrence
+/.github/skills/                                                     @mccoyp @l0lawrence
 /sdk/pullrequest.yml                                                 @scbedd @weshaggard @benbp
 
 /.config/1espt/                                                      @benbp @weshaggard
