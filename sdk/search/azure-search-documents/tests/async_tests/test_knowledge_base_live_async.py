@@ -16,12 +16,17 @@ from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
     KnowledgeSourceReference,
+    SearchField,
+    SearchFieldDataType,
+    SearchIndex,
+    SearchIndexKnowledgeSource,
+    SearchIndexKnowledgeSourceParameters,
     SearchServiceStatistics,
+    SemanticConfiguration,
+    SemanticField,
+    SemanticPrioritizedFields,
+    SemanticSearch,
     ServiceIndexersRuntime,
-    WebKnowledgeSource,
-    WebKnowledgeSourceDomain,
-    WebKnowledgeSourceDomains,
-    WebKnowledgeSourceParameters,
 )
 
 from search_service_preparer import SearchEnvVarPreparer, search_decorator
@@ -31,12 +36,14 @@ class _AsyncTestContext:
     def __init__(
         self,
         index_client: SearchIndexClient,
+        index_name: str,
         source_name: str,
-        created_source: WebKnowledgeSource,
+        created_source: SearchIndexKnowledgeSource,
         base_name: str,
         created_base: KnowledgeBase,
     ) -> None:
         self.index_client = index_client
+        self.index_name = index_name
         self.source_name = source_name
         self.created_source = created_source
         self.base_name = base_name
@@ -48,21 +55,36 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
         credential = get_credential(is_async=True)
         index_client = SearchIndexClient(endpoint, credential, retry_backoff_factor=60)
 
+        index_name = self.get_resource_name("kbidx")
         source_name = self.get_resource_name("ksrc")
         base_name = self.get_resource_name("kb")
-        create_source = WebKnowledgeSource(
+
+        # Create a search index with semantic configuration (required for SearchIndexKnowledgeSource)
+        index = SearchIndex(
+            name=index_name,
+            fields=[
+                SearchField(name="id", type=SearchFieldDataType.String, key=True),
+                SearchField(name="content", type=SearchFieldDataType.String, searchable=True),
+            ],
+            semantic_search=SemanticSearch(
+                default_configuration_name="default",
+                configurations=[
+                    SemanticConfiguration(
+                        name="default",
+                        prioritized_fields=SemanticPrioritizedFields(
+                            content_fields=[SemanticField(field_name="content")]
+                        ),
+                    )
+                ],
+            ),
+        )
+        await index_client.create_index(index)
+
+        # Create knowledge source pointing to the index
+        create_source = SearchIndexKnowledgeSource(
             name=source_name,
             description="knowledge base dependent source",
-            web_parameters=WebKnowledgeSourceParameters(
-                domains=WebKnowledgeSourceDomains(
-                    allowed_domains=[
-                        WebKnowledgeSourceDomain(
-                            address="https://learn.microsoft.com",
-                            include_subpages=True,
-                        )
-                    ]
-                )
-            ),
+            search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
         )
         created_source = await index_client.create_knowledge_source(create_source)
 
@@ -72,9 +94,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
             knowledge_sources=[KnowledgeSourceReference(name=source_name)],
         )
         created_base = await index_client.create_knowledge_base(create_base)
-        return _AsyncTestContext(
-            index_client, source_name, created_source, base_name, created_base
-        )
+        return _AsyncTestContext(index_client, index_name, source_name, created_source, base_name, created_base)
 
     async def _cleanup(self, ctx: "_AsyncTestContext") -> None:
         try:
@@ -90,6 +110,10 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
                     ctx.created_source,
                     match_condition=MatchConditions.IfNotModified,
                 )
+            except HttpResponseError:
+                pass
+            try:
+                await ctx.index_client.delete_index(ctx.index_name)
             except HttpResponseError:
                 pass
         finally:
@@ -156,10 +180,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
             listed = [item async for item in ctx.index_client.list_knowledge_bases()]
 
             assert fetched.name == ctx.base_name
-            assert (
-                fetched.knowledge_sources
-                and fetched.knowledge_sources[0].name == ctx.source_name
-            )
+            assert fetched.knowledge_sources and fetched.knowledge_sources[0].name == ctx.source_name
             assert any(item.name == ctx.base_name for item in listed)
         finally:
             await self._cleanup(ctx)
@@ -212,9 +233,7 @@ class TestKnowledgeBaseLiveAsync(AzureRecordedTestCase):
             snapshots = await self._poll_status_snapshots(ctx)
             assert snapshots, "Expected at least one status snapshot"
 
-            service_stats = (
-                await ctx.index_client._client.get_service_statistics()
-            )  # pylint:disable=protected-access
+            service_stats = await ctx.index_client.get_service_statistics()  # pylint:disable=protected-access
             assert isinstance(service_stats, SearchServiceStatistics)
 
             runtime = service_stats.indexers_runtime
