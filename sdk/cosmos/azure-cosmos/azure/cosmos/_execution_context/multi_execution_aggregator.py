@@ -133,7 +133,30 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             except exceptions.CosmosHttpResponseError as e:
                 if exceptions._partition_range_is_gone(e):
                     # repairing document producer context on partition split
-                    self._repair_document_producer()
+                    # Support back-to-back splits by retrying if repair itself encounters another split
+                    repair_retries = 3
+                    for repair_attempt in range(repair_retries):
+                        try:
+                            self._repair_document_producer()
+                            break  # Success, exit retry loop
+                        except exceptions.CosmosHttpResponseError as repair_error:
+                            if exceptions._partition_range_is_gone(repair_error):
+                                if repair_attempt < repair_retries - 1:
+                                    _LOGGER.warning(
+                                        "Multi-execution aggregator: Partition split during repair. "
+                                        "Retry attempt %d of %d",
+                                        repair_attempt + 1,
+                                        repair_retries
+                                    )
+                                    continue  # Retry repair
+                                else:
+                                    _LOGGER.error(
+                                        "Multi-execution aggregator: Exhausted all %d repair retries",
+                                        repair_retries
+                                    )
+                                    raise  # Exhausted retries
+                            else:
+                                raise  # Different error, propagate
                 else:
                     raise
 
