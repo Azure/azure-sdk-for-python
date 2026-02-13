@@ -10,7 +10,7 @@ import datetime
 from azure.core.exceptions import HttpResponseError
 
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    _get_fixed_backoff,
+    _get_startup_backoff,
     _calculate_backoff_duration,
 )
 from azure.appconfiguration.provider._constants import (
@@ -23,58 +23,58 @@ from azure.appconfiguration.provider._constants import (
 
 
 class TestGetFixedBackoff(unittest.TestCase):
-    """Test the _get_fixed_backoff function."""
+    """Test the _get_startup_backoff function."""
 
     def test_within_first_interval(self):
         """Test backoff within first 100 seconds returns 5 seconds."""
         # STARTUP_BACKOFF_INTERVALS[0] = (100, 5)
-        result = _get_fixed_backoff(0, 1)
+        result = _get_startup_backoff(0, 1)
         self.assertEqual(result, 5)
 
-        result = _get_fixed_backoff(50, 1)
+        result = _get_startup_backoff(50, 1)
         self.assertEqual(result, 5)
 
-        result = _get_fixed_backoff(99, 1)
+        result = _get_startup_backoff(99, 1)
         self.assertEqual(result, 5)
 
     def test_within_second_interval(self):
         """Test backoff within 100-200 seconds returns 10 seconds."""
         # STARTUP_BACKOFF_INTERVALS[1] = (200, 10)
-        result = _get_fixed_backoff(100, 1)
+        result = _get_startup_backoff(100, 1)
         self.assertEqual(result, 10)
 
-        result = _get_fixed_backoff(150, 1)
+        result = _get_startup_backoff(150, 1)
         self.assertEqual(result, 10)
 
-        result = _get_fixed_backoff(199, 1)
+        result = _get_startup_backoff(199, 1)
         self.assertEqual(result, 10)
 
     def test_within_third_interval(self):
         """Test backoff within 200-600 seconds returns MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION."""
         # STARTUP_BACKOFF_INTERVALS[2] = (600, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
-        result = _get_fixed_backoff(200, 1)
+        result = _get_startup_backoff(200, 1)
         self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
-        result = _get_fixed_backoff(400, 1)
+        result = _get_startup_backoff(400, 1)
         self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
-        result = _get_fixed_backoff(599, 1)
+        result = _get_startup_backoff(599, 1)
         self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
     def test_beyond_fixed_window_uses_exponential_backoff(self):
         """Test backoff beyond 600 seconds returns exponential backoff based on attempts."""
         # Beyond fixed window, uses _calculate_backoff_duration(attempts)
-        result = _get_fixed_backoff(600, 1)
+        result = _get_startup_backoff(600, 1)
         self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)  # First attempt returns min
 
         # For attempt 2, should be jittered value around 60 (30 * 2^1)
-        result = _get_fixed_backoff(1000, 2)
+        result = _get_startup_backoff(1000, 2)
         self.assertGreaterEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result, 60 * (1 + JITTER_RATIO))
 
     def test_negative_elapsed_time(self):
         """Test negative elapsed time returns first interval backoff."""
-        result = _get_fixed_backoff(-1, 1)
+        result = _get_startup_backoff(-1, 1)
         self.assertEqual(result, 5)
 
     def test_boundary_conditions(self):
@@ -82,7 +82,7 @@ class TestGetFixedBackoff(unittest.TestCase):
         # Test at exact threshold boundaries
         for threshold, expected_backoff in STARTUP_BACKOFF_INTERVALS:
             # Just before threshold should return expected_backoff
-            result = _get_fixed_backoff(threshold - 0.001, 1)
+            result = _get_startup_backoff(threshold - 0.001, 1)
             self.assertEqual(result, expected_backoff)
 
 
