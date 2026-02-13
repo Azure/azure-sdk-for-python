@@ -2186,4 +2186,30 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_block_blob_smart_access_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        data = b"abc123" * 4
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
+        props = await blob.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.SMART
+        assert props.smart_access_tier is not None
+
+        block_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await block_blob.stage_block('1', b'abc123')
+        block_list = [BlobBlock(block_id='1')]
+        put_block_list_resp = await block_blob.commit_block_list(
+            block_list=block_list, standard_blob_tier=StandardBlobTier.SMART
+        )
+        assert put_block_list_resp is not None
+        props = await block_blob.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.SMART
+        assert props.smart_access_tier is not None
+
 # ------------------------------------------------------------------------------

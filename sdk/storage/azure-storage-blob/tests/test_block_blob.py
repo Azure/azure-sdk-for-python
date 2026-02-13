@@ -2062,4 +2062,30 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         return variables
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_block_blob_smart_access_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+
+        data = b"abc123" * 4
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(data, standard_blob_tier=StandardBlobTier.SMART, overwrite=True)
+        props = blob.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.SMART
+        assert props.smart_access_tier is not None
+
+        block_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        block_blob.stage_block('1', b'abc123')
+        block_list = [BlobBlock(block_id='1')]
+        put_block_list_resp = block_blob.commit_block_list(
+            block_list=block_list, standard_blob_tier=StandardBlobTier.SMART
+        )
+        assert put_block_list_resp is not None
+        props = block_blob.get_blob_properties()
+        assert props.blob_tier == StandardBlobTier.SMART
+        assert props.smart_access_tier is not None
+
 #------------------------------------------------------------------------------
