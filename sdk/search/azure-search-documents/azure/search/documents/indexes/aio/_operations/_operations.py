@@ -926,7 +926,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_indexes_with_selected_properties(
+    def _list_indexes_with_selected_properties(
         self, *, select: Optional[list[str]] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models2.SearchIndexResponse"]:
         """Lists all indexes available for a search service.

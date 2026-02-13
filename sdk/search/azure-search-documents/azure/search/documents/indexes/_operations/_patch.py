@@ -348,7 +348,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            return self.list_indexes_with_selected_properties(select=select, **kwargs)
+            return self._list_indexes_with_selected_properties(select=select, **kwargs)
         return self._list_indexes(**kwargs)
 
     @distributed_trace
