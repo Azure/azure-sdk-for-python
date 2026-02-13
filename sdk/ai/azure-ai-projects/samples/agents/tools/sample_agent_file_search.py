@@ -76,7 +76,7 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="Tell me about Contoso products",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Agent response: {response.output_text}")
     print("\nCleaning up...")

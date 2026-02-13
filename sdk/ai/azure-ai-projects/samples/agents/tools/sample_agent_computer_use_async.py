@@ -70,7 +70,7 @@ async def main():
         computer_use_tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
 
         agent = await project_client.agents.create_version(
-            agent_name="ComputerUseAgent",
+            agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
                 instructions="""
@@ -103,7 +103,7 @@ async def main():
                     ],
                 }
             ],
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 
@@ -155,7 +155,7 @@ async def main():
                         },
                     }
                 ],
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 truncation="auto",
             )
 

@@ -66,7 +66,7 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="Please summarize the Azure REST API specifications Readme",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     # Process any MCP approval requests that were generated
@@ -92,7 +92,7 @@ with (
     response = openai_client.responses.create(
         input=input_list,
         previous_response_id=response.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print(f"Agent response: {response.output_text}")

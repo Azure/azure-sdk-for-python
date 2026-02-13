@@ -1024,7 +1024,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             function_calls = [item for item in response.output if item.type == "function_call"]
@@ -1047,7 +1047,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             assert hasattr(response2, "output")
@@ -1283,7 +1283,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -1321,7 +1321,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -1607,7 +1607,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             function_calls = [item for item in response.output if item.type == "function_call"]
@@ -1630,7 +1630,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
             assert hasattr(response2, "output")
@@ -1843,7 +1843,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -1882,7 +1882,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -2161,7 +2161,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -2182,7 +2182,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -2311,7 +2311,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response = client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -2332,7 +2332,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             response2 = client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=False,
             )
 
@@ -5055,7 +5055,7 @@ trigger:
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="1 + 1 = ?",
                 stream=False,
             )
@@ -5175,7 +5175,7 @@ trigger:
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -5371,7 +5371,7 @@ trigger:
 
             stream = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="1 + 1 = ?",
                 stream=True,
             )
@@ -5494,7 +5494,7 @@ trigger:
 
             stream = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )
@@ -5605,7 +5605,7 @@ trigger:
             # Create response with agent name and id
             response = client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
             )
 
@@ -5675,7 +5675,7 @@ trigger:
             # Create streaming response with agent name and id
             stream = client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
                 stream=True,
             )

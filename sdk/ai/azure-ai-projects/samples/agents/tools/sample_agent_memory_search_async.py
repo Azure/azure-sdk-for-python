@@ -117,7 +117,7 @@ async def main() -> None:
         response = await openai_client.responses.create(
             input="I prefer dark roast coffee",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 
@@ -133,7 +133,7 @@ async def main() -> None:
         new_response = await openai_client.responses.create(
             input="Please order my usual coffee",
             conversation=new_conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {new_response.output_text}")
 

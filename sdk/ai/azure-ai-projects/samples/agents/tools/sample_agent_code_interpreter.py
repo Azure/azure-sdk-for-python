@@ -73,7 +73,7 @@ with (
     response = openai_client.responses.create(
         conversation=conversation.id,
         input="Could you please create bar chart in TRANSPORTATION sector for the operating profit from the uploaded csv file and provide file to me?",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response completed (id: {response.id})")
 

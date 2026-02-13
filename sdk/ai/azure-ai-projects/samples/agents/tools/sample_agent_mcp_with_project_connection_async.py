@@ -74,7 +74,7 @@ async def main():
         response = await openai_client.responses.create(
             conversation=conversation.id,
             input="What is my username in GitHub profile?",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Process any MCP approval requests that were generated
@@ -99,7 +99,7 @@ async def main():
         response = await openai_client.responses.create(
             input=input_list,
             previous_response_id=response.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response: {response.output_text}")

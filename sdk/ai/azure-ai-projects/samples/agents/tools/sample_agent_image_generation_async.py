@@ -79,7 +79,7 @@ async def main():
             extra_headers={
                 "x-ms-oai-image-generation-deployment": image_generation_model
             },  # this is required at the moment for image generation
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response created: {response.id}")
 

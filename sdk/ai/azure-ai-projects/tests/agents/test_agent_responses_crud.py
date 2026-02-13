@@ -73,7 +73,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "5280" in response.output_text or "5,280" in response.output_text
@@ -112,7 +112,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert "1609" in response.output_text or "1,609" in response.output_text
@@ -139,7 +139,7 @@ class TestAgentResponsesCrud(TestBase):
 
         # response = openai_client.responses.create(
         #     conversation=conversation.id,
-        #     extra_body={"agent": {"name": agent.name, "type": "agent_reference"}}
+        #     extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}}
         # )
         # print(f"Response id: {response.id}, output text: {response.output_text}")
 
@@ -201,7 +201,7 @@ class TestAgentResponsesCrud(TestBase):
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response id: {response.id}, output text: {response.output_text}")
         assert response.output_text == '{"name":"Science Fair","date":"2025-11-07","participants":["Alice","Bob"]}'

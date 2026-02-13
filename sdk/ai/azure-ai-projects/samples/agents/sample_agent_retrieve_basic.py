@@ -61,6 +61,8 @@ with (
     print(f"Added a user message to the conversation")
 
     response = openai_client.responses.create(
-        conversation=conversation.id, extra_body={"agent": {"name": agent.name, "type": "agent_reference"}}, input=""
+        conversation=conversation.id,
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
+        input="",
     )
     print(f"Response output: {response.output_text}")

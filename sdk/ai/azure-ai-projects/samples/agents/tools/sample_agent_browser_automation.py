@@ -79,7 +79,7 @@ with (
             Enter the value 'MSFT', to get information about the Microsoft stock price.
             At the top of the resulting page you will see a default chart of Microsoft stock price.
             Click on 'YTD' at the top of that chart, and report the percent value that shows up just below it.""",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

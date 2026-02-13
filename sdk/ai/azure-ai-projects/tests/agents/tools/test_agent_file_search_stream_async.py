@@ -71,7 +71,7 @@ class TestAgentFileSearchStreamAsync(TestBase):
             stream_response = await openai_client.responses.create(
                 stream=True,
                 input="What products are mentioned in the document? Please provide a brief summary.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Collect streamed response

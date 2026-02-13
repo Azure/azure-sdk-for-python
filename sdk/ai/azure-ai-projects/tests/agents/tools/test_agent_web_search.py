@@ -70,7 +70,7 @@ class TestAgentWebSearch(TestBase):
 
             response = openai_client.responses.create(
                 input="What is the current weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response)

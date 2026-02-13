@@ -84,7 +84,7 @@ with (
 
     response = openai_client.responses.create(
         input="Recommend me 5 top hotels in paris, France",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
     print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")

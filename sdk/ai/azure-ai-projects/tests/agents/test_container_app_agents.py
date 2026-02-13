@@ -52,7 +52,7 @@ class TestContainerAppAgents(TestBase):
             try:
                 response = openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": {"name": agent_version.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent_version.name, "type": "agent_reference"}},
                 )
                 print(f"Response id: {response.id}, output text: {response.output_text}")
                 assert "5280" in response.output_text or "5,280" in response.output_text

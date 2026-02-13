@@ -90,7 +90,7 @@ async def main() -> None:
                 },
             ],
             tool_choice="required",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print("Processing streaming file search results...\n")
@@ -122,7 +122,7 @@ async def main() -> None:
                 },
             ],
             tool_choice="required",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print("Processing follow-up streaming response...\n")

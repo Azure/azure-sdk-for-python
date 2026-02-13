@@ -71,7 +71,7 @@ with (
     response = openai_client.responses.create(
         tool_choice="required",
         input=user_input,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print(f"Response output: {response.output_text}")

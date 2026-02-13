@@ -148,7 +148,7 @@ trigger:
 
     stream = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
         input="1 + 1 = ?",
         stream=True,
         # REMOVE ME? metadata={"x-ms-debug-mode-enabled": "1"},
