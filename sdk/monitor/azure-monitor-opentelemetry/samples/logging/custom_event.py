@@ -13,7 +13,6 @@ logging library are tracked and telemetry is exported to application insights wi
 from logging import getLogger
 
 from azure.monitor.opentelemetry import configure_azure_monitor
-from opentelemetry import trace
 
 configure_azure_monitor(
     logger_name=__name__,

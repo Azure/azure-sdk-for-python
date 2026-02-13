@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 import datetime
-import os
 import platform
 import time
 import unittest
+from unittest.mock import patch
 
+from opentelemetry.sdk.resources import Resource
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import TelemetryItem
 from opentelemetry.sdk.resources import Resource
@@ -29,6 +30,7 @@ TEST_KUBERNETES_SERVICE_HOST = "TEST_KUBERNETES_SERVICE_HOST"
 TEST_AKS_ARM_NAMESPACE_ID = "TEST_AKS_ARM_NAMESPACE_ID"
 
 
+# pylint: disable=unused-argument, too-many-public-methods
 class TestUtils(unittest.TestCase):
     def setUp(self):
         self._valid_instrumentation_key = "1234abcd-5678-4efa-8abc-1234567890ab"
