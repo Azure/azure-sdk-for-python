@@ -14,6 +14,5 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --checks="update_snippet"
         --disable-compatibility-filter
-        --filter-type="Omit_management"
         ${{ parameters.AdditionalTestArgs }}
     condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))
