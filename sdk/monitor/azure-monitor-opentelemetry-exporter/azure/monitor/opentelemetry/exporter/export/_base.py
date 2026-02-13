@@ -234,7 +234,7 @@ class BaseExporter:
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
-                envelopes_to_store = [TelemetryItem(x) for x in envelopes]
+                envelopes_to_store = [x.as_dict() for x in envelopes]
                 result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)

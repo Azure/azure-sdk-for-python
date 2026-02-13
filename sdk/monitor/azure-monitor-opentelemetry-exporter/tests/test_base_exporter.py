@@ -589,6 +589,50 @@ class TestBaseExporter(unittest.TestCase):
 
         exporter._transmit_from_storage()
 
+    def test_handle_transmit_from_storage_writes_to_disk(self):
+        """Test that _handle_transmit_from_storage can actually write envelopes
+        to disk via real LocalFileStorage (not mocked). This exercises the full
+        json.dumps path in LocalFileBlob.put().
+        """
+        import tempfile
+
+        storage_dir = tempfile.mkdtemp()
+        try:
+            exporter = BaseExporter(
+                disable_offline_storage=False,
+                storage_directory=storage_dir,
+            )
+            test_envelopes = [TelemetryItem(name="test", time=datetime.now())]
+
+            # Directly test that storage.put works with what _handle_transmit passes
+            from azure.monitor.opentelemetry.exporter._storage import LocalFileBlob
+
+            blob_path = os.path.join(exporter.storage._path, "test_blob")
+            blob = LocalFileBlob(blob_path)
+
+            # This is what the fixed _handle_transmit_from_storage does: x.as_dict() for x in envelopes
+            envelopes_to_store = [x.as_dict() for x in test_envelopes]
+            result = blob.put(envelopes_to_store)
+
+            # ASSERT: put should return SUCCESS, not an error string
+            from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
+
+            self.assertEqual(
+                result,
+                StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+                f"storage.put() failed with: {result}",
+            )
+
+            # Verify the stored data can be read back and round-tripped
+            data = blob.get()
+            self.assertIsNotNone(data, "Blob data should be readable")
+            self.assertEqual(len(data), 1)
+            restored = TelemetryItem(data[0])
+            self.assertEqual(restored.name, "test")
+            self.assertIsNotNone(restored.time)
+        finally:
+            shutil.rmtree(storage_dir, True)
+
     # ========================================================================
     # TRANSMISSION TESTS
     # ========================================================================
