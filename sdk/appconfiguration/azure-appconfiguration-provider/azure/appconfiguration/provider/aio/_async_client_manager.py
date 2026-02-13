@@ -293,24 +293,28 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
         # Parse the snapshot reference
         snapshot_name = SnapshotReferenceParser.parse(setting)
+        snapshot = None
 
         try:
             snapshot = await self._client.get_snapshot(snapshot_name)
-            if snapshot.composition_type != SnapshotComposition.KEY:
-                raise ValueError(f"Snapshot '{snapshot_name}' does not have a 'key' composition type.")
-
-            # Create a selector for the snapshot
-            snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
-
-            # Use existing load_configuration_settings to load from snapshot
-            configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
-
-            return configurations
         except HttpResponseError as e:
             if e.status_code == 404:
                 self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", snapshot_name)
                 return []
             raise e
+        if snapshot is None:
+            self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", snapshot_name)
+            return []
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Snapshot '{snapshot_name}' does not have a 'key' composition type.")
+
+        # Create a selector for the snapshot
+        snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+        # Use existing load_configuration_settings to load from snapshot
+        configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
+
+        return configurations
 
 
 class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
