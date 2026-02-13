@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, cast, List, overload, Sequence, Union, Optional, TYPE_CHECKING
+from typing import Any, cast, List, Sequence, Union, Optional, TYPE_CHECKING
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
@@ -23,6 +23,31 @@ from ._operations import (
 
 if TYPE_CHECKING:
     import azure.search.documents.aio
+
+
+def _convert_index_response(response: _models.SearchIndexResponse) -> _models.SearchIndex:
+    """Convert a SearchIndexResponse to a SearchIndex."""
+    return _models.SearchIndex(
+        name=response.name,
+        fields=response.fields or [],
+        description=response.description,
+        scoring_profiles=response.scoring_profiles,
+        default_scoring_profile=response.default_scoring_profile,
+        cors_options=response.cors_options,
+        suggesters=response.suggesters,
+        analyzers=response.analyzers,
+        tokenizers=response.tokenizers,
+        token_filters=response.token_filters,
+        char_filters=response.char_filters,
+        normalizers=response.normalizers,
+        encryption_key=response.encryption_key,
+        similarity=response.similarity,
+        semantic_search=response.semantic,
+        vector_search=response.vector_search,
+        permission_filter_option=response.permission_filter_option,
+        purview_enabled=response.purview_enabled,
+        e_tag=response.e_tag,
+    )
 
 
 class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
@@ -336,30 +361,27 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
                 **kwargs,
             )
 
-    @overload
-    def list_indexes(self, *, select: None = None, **kwargs: Any) -> AsyncItemPaged[_models.SearchIndex]: ...
-
-    @overload
-    def list_indexes(self, *, select: List[str], **kwargs: Any) -> AsyncItemPaged[_models.SearchIndexResponse]: ...
-
     @distributed_trace
-    def list_indexes(
-        self, *, select: Optional[List[str]] = None, **kwargs: Any
-    ) -> Union[AsyncItemPaged[_models.SearchIndex], AsyncItemPaged[_models.SearchIndexResponse]]:
+    def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> AsyncItemPaged[_models.SearchIndex]:
         """Lists all indexes available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
-            list of JSON property names, or '*' for all properties. The default is all properties. If
-            select is provided, uses the list_indexes_with_selected_properties endpoint which returns
-            SearchIndexResponse objects. Default value is None.
+            list of JSON property names, or '*' for all properties. The default is all properties.
+            Default value is None.
         :paramtype select: list[str]
-        :return: An async iterator like instance of SearchIndex or SearchIndexResponse
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex] or
-            ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndexResponse]
+        :return: An async iterator like instance of SearchIndex
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         if select is not None:
-            return self._list_indexes_with_selected_properties(select=select, **kwargs)
+            return cast(
+                AsyncItemPaged[_models.SearchIndex],
+                self._list_indexes_with_selected_properties(
+                    select=select,
+                    cls=lambda objs: [_convert_index_response(x) for x in objs],
+                    **kwargs,
+                ),
+            )
         return self._list_indexes(**kwargs)
 
     @distributed_trace

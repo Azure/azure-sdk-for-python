@@ -928,7 +928,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
     @distributed_trace
     def _list_indexes_with_selected_properties(
         self, *, select: Optional[list[str]] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models2.SearchIndexResponse"]:
+    ) -> AsyncItemPaged["_models2._models.SearchIndexResponse"]:
         """Lists all indexes available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
@@ -937,13 +937,13 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         :paramtype select: list[str]
         :return: An iterator like instance of SearchIndexResponse
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndexResponse]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models._models.SearchIndexResponse]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models2.SearchIndexResponse]] = kwargs.pop("cls", None)
+        cls: ClsType[list[_models2._models.SearchIndexResponse]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -993,7 +993,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models2.SearchIndexResponse], deserialized.get("value", []))
+            list_of_elem = _deserialize(list[_models2._models.SearchIndexResponse], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, AsyncList(list_of_elem)
