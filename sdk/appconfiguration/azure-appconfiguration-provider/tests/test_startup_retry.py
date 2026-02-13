@@ -134,6 +134,7 @@ class TestCalculateBackoffDuration(unittest.TestCase):
         self.assertGreater(result, 0)
         self.assertLessEqual(result, MAX_STARTUP_BACKOFF_DURATION * (1 + JITTER_RATIO))
 
+
 class TestStartupRetryIntegration(unittest.TestCase):
     """Integration tests for startup retry behavior."""
 

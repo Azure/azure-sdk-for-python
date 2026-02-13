@@ -30,7 +30,6 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
 )
-from azure.core.exceptions import HttpResponseError
 from ._models import SettingSelector
 from ._constants import (
     NULL_CHAR,

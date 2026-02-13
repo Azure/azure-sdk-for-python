@@ -437,9 +437,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         # Check if any selector uses snapshot_name
         has_snapshot_selector = any(select.snapshot_name is not None for select in self._selects)
-        has_feature_flag_snapshot_selector = (
-            self._feature_flag_enabled
-            and any(select.snapshot_name is not None for select in self._feature_flag_selectors)
+        has_feature_flag_snapshot_selector = self._feature_flag_enabled and any(
+            select.snapshot_name is not None for select in self._feature_flag_selectors
         )
 
         while client := self._replica_client_manager.get_next_active_client():
