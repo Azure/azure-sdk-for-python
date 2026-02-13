@@ -12,7 +12,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     _get_fixed_backoff,
     _calculate_backoff_duration,
-    _is_failoverable,
 )
 from azure.appconfiguration.provider._constants import (
     DEFAULT_STARTUP_TIMEOUT,
@@ -134,97 +133,6 @@ class TestCalculateBackoffDuration(unittest.TestCase):
         result = _calculate_backoff_duration(100)
         self.assertGreater(result, 0)
         self.assertLessEqual(result, MAX_STARTUP_BACKOFF_DURATION * (1 + JITTER_RATIO))
-
-
-class TestIsFailoverable(unittest.TestCase):
-    """Test the _is_failoverable function."""
-
-    def test_http_429_too_many_requests(self):
-        """Test that HTTP 429 Too Many Requests is failoverable."""
-        exception = HttpResponseError(message="Too many requests")
-        exception.status_code = 429
-        self.assertTrue(_is_failoverable(exception))
-
-    def test_http_408_request_timeout(self):
-        """Test that HTTP 408 Request Timeout is failoverable."""
-        exception = HttpResponseError(message="Request timeout")
-        exception.status_code = 408
-        self.assertTrue(_is_failoverable(exception))
-
-    def test_http_5xx_server_errors(self):
-        """Test that HTTP 5xx server errors are failoverable."""
-        for status_code in [500, 501, 502, 503, 504]:
-            exception = HttpResponseError(message=f"Server error {status_code}")
-            exception.status_code = status_code
-            with self.subTest(status_code=status_code):
-                self.assertTrue(_is_failoverable(exception))
-
-    def test_http_4xx_client_errors_not_failoverable(self):
-        """Test that most HTTP 4xx client errors are not failoverable."""
-        for status_code in [400, 401, 403, 404, 405, 409]:
-            exception = HttpResponseError(message=f"Client error {status_code}")
-            exception.status_code = status_code
-            with self.subTest(status_code=status_code):
-                self.assertFalse(_is_failoverable(exception))
-
-    def test_connection_error_is_failoverable(self):
-        """Test that ConnectionError is failoverable."""
-        exception = ConnectionError("Connection refused")
-        self.assertTrue(_is_failoverable(exception))
-
-    def test_timeout_error_is_failoverable(self):
-        """Test that TimeoutError is failoverable."""
-        exception = TimeoutError("Connection timed out")
-        self.assertTrue(_is_failoverable(exception))
-
-    def test_os_error_is_failoverable(self):
-        """Test that OSError is failoverable."""
-        exception = OSError("Network unreachable")
-        self.assertTrue(_is_failoverable(exception))
-
-    def test_io_error_is_failoverable(self):
-        """Test that IOError is failoverable."""
-        exception = IOError("I/O operation failed")
-        self.assertTrue(_is_failoverable(exception))
-
-    def test_value_error_not_failoverable(self):
-        """Test that ValueError is not failoverable."""
-        exception = ValueError("Invalid value")
-        self.assertFalse(_is_failoverable(exception))
-
-    def test_key_error_not_failoverable(self):
-        """Test that KeyError is not failoverable."""
-        exception = KeyError("Missing key")
-        self.assertFalse(_is_failoverable(exception))
-
-    def test_generic_exception_not_failoverable(self):
-        """Test that generic Exception is not failoverable."""
-        exception = Exception("Generic error")
-        self.assertFalse(_is_failoverable(exception))
-
-    def test_http_response_error_without_status_code(self):
-        """Test HttpResponseError without status_code attribute."""
-        exception = HttpResponseError(message="Unknown error")
-        # HttpResponseError without status_code should not be failoverable
-        # unless it has a failoverable inner exception
-        if not hasattr(exception, "status_code"):
-            exception.status_code = None
-        self.assertFalse(_is_failoverable(exception))
-
-    def test_exception_with_failoverable_cause(self):
-        """Test exception with failoverable __cause__."""
-        inner_exception = ConnectionError("Connection refused")
-        outer_exception = Exception("Outer error")
-        outer_exception.__cause__ = inner_exception
-        self.assertTrue(_is_failoverable(outer_exception))
-
-    def test_exception_with_failoverable_context(self):
-        """Test exception with failoverable __context__."""
-        inner_exception = TimeoutError("Timeout")
-        outer_exception = Exception("Outer error")
-        outer_exception.__context__ = inner_exception
-        self.assertTrue(_is_failoverable(outer_exception))
-
 
 class TestStartupRetryIntegration(unittest.TestCase):
     """Integration tests for startup retry behavior."""

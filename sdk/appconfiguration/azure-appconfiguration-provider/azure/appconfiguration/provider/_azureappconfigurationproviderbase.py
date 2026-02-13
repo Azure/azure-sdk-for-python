@@ -277,45 +277,6 @@ def _calculate_backoff_duration(attempts: int) -> float:
     return _jitter(calculated, JITTER_RATIO)
 
 
-def _is_failoverable(exception: Exception) -> bool:
-    """
-    Determine if an exception is failoverable (should trigger retry).
-
-    :param exception: The exception to check.
-    :type exception: Exception
-    :return: True if the exception is failoverable, False otherwise.
-    :rtype: bool
-    """
-    if isinstance(exception, HttpResponseError):
-        # Check for retryable HTTP status codes
-        status_code = getattr(exception, "status_code", None)
-        if status_code:
-            # TooManyRequests (429), RequestTimeout (408), or Server errors (5xx)
-            if status_code == 429 or status_code == 408 or status_code >= 500:
-                return True
-
-    # Check for network-related exceptions
-    # These indicate transient failures that may succeed on retry
-    exception_types_to_check = (
-        "ConnectionError",
-        "TimeoutError",
-        "OSError",
-        "IOError",
-    )
-    exception_type_name = type(exception).__name__
-    if exception_type_name in exception_types_to_check:
-        return True
-
-    # Check inner exception if available
-    inner = getattr(exception, "__cause__", None) or getattr(exception, "__context__", None)
-    if inner:
-        inner_type_name = type(inner).__name__
-        if inner_type_name in exception_types_to_check:
-            return True
-
-    return False
-
-
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
