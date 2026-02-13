@@ -65,7 +65,6 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -77,7 +76,6 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -88,7 +86,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -100,7 +97,6 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -119,7 +115,6 @@ def build_service_list_containers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -139,7 +134,6 @@ def build_service_list_containers_request(
         _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -175,7 +169,6 @@ def build_service_get_account_info_request(*, timeout: Optional[int] = None, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=account&comp=properties"
@@ -185,7 +178,6 @@ def build_service_get_account_info_request(*, timeout: Optional[int] = None, **k
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -228,7 +220,6 @@ def build_service_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -247,7 +238,6 @@ def build_service_filter_blobs_request(
         _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -266,7 +256,6 @@ def build_container_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=container"
@@ -276,7 +265,6 @@ def build_container_create_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
@@ -300,7 +288,6 @@ def build_container_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=container"
@@ -310,7 +297,6 @@ def build_container_get_properties_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -329,7 +315,6 @@ def build_container_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=container"
@@ -339,7 +324,6 @@ def build_container_delete_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -362,7 +346,6 @@ def build_container_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=container&comp=metadata"
@@ -372,7 +355,6 @@ def build_container_set_metadata_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -390,7 +372,6 @@ def build_container_get_access_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -402,7 +383,6 @@ def build_container_get_access_policy_request(  # pylint: disable=name-too-long
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -457,7 +437,6 @@ def build_container_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=container&comp=undelete"
@@ -467,7 +446,6 @@ def build_container_restore_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if deleted_container_name is not None:
         _headers["x-ms-deleted-container-name"] = _SERIALIZER.header(
@@ -487,7 +465,6 @@ def build_container_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=container&comp=rename"
@@ -497,7 +474,6 @@ def build_container_rename_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-source-container-name"] = _SERIALIZER.header("source_container_name", source_container_name, "str")
     if source_lease_id is not None:
@@ -543,7 +519,6 @@ def build_container_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -562,7 +537,6 @@ def build_container_filter_blobs_request(
         _params["include"] = _SERIALIZER.query("include", include, "[str]", div=",")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -615,7 +589,6 @@ def build_container_release_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -626,7 +599,6 @@ def build_container_release_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
@@ -649,7 +621,6 @@ def build_container_renew_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -660,7 +631,6 @@ def build_container_renew_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
@@ -683,7 +653,6 @@ def build_container_break_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -694,7 +663,6 @@ def build_container_break_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -719,7 +687,6 @@ def build_container_change_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -730,7 +697,6 @@ def build_container_change_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     _headers["x-ms-proposed-lease-id"] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, "str")
@@ -756,7 +722,6 @@ def build_container_list_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -778,7 +743,6 @@ def build_container_list_blobs_request(
         _params["startFrom"] = _SERIALIZER.query("start_from", start_from, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -799,7 +763,6 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -822,7 +785,6 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
         _params["startFrom"] = _SERIALIZER.query("start_from", start_from, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
@@ -833,7 +795,6 @@ def build_container_get_account_info_request(*, timeout: Optional[int] = None, *
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=account&comp=properties"
@@ -843,7 +804,6 @@ def build_container_get_account_info_request(*, timeout: Optional[int] = None, *
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1006,7 +966,6 @@ def build_blob_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/"
@@ -1022,7 +981,6 @@ def build_blob_delete_request(
         _params["deletetype"] = _SERIALIZER.query("blob_delete_type", blob_delete_type, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -1056,7 +1014,6 @@ def build_blob_undelete_request(*, timeout: Optional[int] = None, **kwargs: Any)
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=undelete"
@@ -1066,7 +1023,6 @@ def build_blob_undelete_request(*, timeout: Optional[int] = None, **kwargs: Any)
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1082,7 +1038,6 @@ def build_blob_set_expiry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=expiry"
@@ -1092,7 +1047,6 @@ def build_blob_set_expiry_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-expiry-option"] = _SERIALIZER.header("expiry_options", expiry_options, "str")
     if expires_on is not None:
@@ -1121,7 +1075,6 @@ def build_blob_set_http_headers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=properties"
@@ -1131,7 +1084,6 @@ def build_blob_set_http_headers_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if blob_cache_control is not None:
         _headers["x-ms-blob-cache-control"] = _SERIALIZER.header("blob_cache_control", blob_cache_control, "str")
@@ -1182,7 +1134,6 @@ def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=immutabilityPolicies"
@@ -1196,7 +1147,6 @@ def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
         _params["versionid"] = _SERIALIZER.query("version_id", version_id, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
@@ -1215,7 +1165,6 @@ def build_blob_delete_immutability_policy_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=immutabilityPolicies"
@@ -1229,7 +1178,6 @@ def build_blob_delete_immutability_policy_request(  # pylint: disable=name-too-l
         _params["versionid"] = _SERIALIZER.query("version_id", version_id, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1246,7 +1194,6 @@ def build_blob_set_legal_hold_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=legalhold"
@@ -1260,7 +1207,6 @@ def build_blob_set_legal_hold_request(
         _params["versionid"] = _SERIALIZER.query("version_id", version_id, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-legal-hold"] = _SERIALIZER.header("legal_hold", legal_hold, "bool")
 
@@ -1286,7 +1232,6 @@ def build_blob_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=metadata"
@@ -1296,7 +1241,6 @@ def build_blob_set_metadata_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
@@ -1388,7 +1332,6 @@ def build_blob_release_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -1399,7 +1342,6 @@ def build_blob_release_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
@@ -1433,7 +1375,6 @@ def build_blob_renew_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -1444,7 +1385,6 @@ def build_blob_renew_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
@@ -1479,7 +1419,6 @@ def build_blob_change_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -1490,7 +1429,6 @@ def build_blob_change_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     _headers["x-ms-proposed-lease-id"] = _SERIALIZER.header("proposed_lease_id", proposed_lease_id, "str")
@@ -1525,7 +1463,6 @@ def build_blob_break_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -1536,7 +1473,6 @@ def build_blob_break_lease_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if break_period is not None:
         _headers["x-ms-lease-break-period"] = _SERIALIZER.header("break_period", break_period, "int")
@@ -1576,7 +1512,6 @@ def build_blob_create_snapshot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=snapshot"
@@ -1586,7 +1521,6 @@ def build_blob_create_snapshot_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
@@ -1646,7 +1580,6 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     requires_sync: Literal[True] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", True))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -1657,7 +1590,6 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
@@ -1743,7 +1675,6 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
@@ -1754,7 +1685,6 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
@@ -1822,7 +1752,6 @@ def build_blob_abort_copy_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
@@ -1836,7 +1765,6 @@ def build_blob_abort_copy_from_url_request(
     _params["copyid"] = _SERIALIZER.query("copy_id", copy_id, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -1859,7 +1787,6 @@ def build_blob_set_tier_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=tier"
@@ -1873,7 +1800,6 @@ def build_blob_set_tier_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-access-tier"] = _SERIALIZER.header("tier", tier, "str")
     if rehydrate_priority is not None:
@@ -1890,7 +1816,6 @@ def build_blob_get_account_info_request(*, timeout: Optional[int] = None, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?restype=account&comp=properties"
@@ -1900,7 +1825,6 @@ def build_blob_get_account_info_request(*, timeout: Optional[int] = None, **kwar
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1922,7 +1846,6 @@ def build_blob_get_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -1938,7 +1861,6 @@ def build_blob_get_tags_request(
         _params["versionid"] = _SERIALIZER.query("version_id", version_id, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -2238,7 +2160,6 @@ def build_append_blob_append_block_from_url_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=appendblock"
@@ -2248,7 +2169,6 @@ def build_append_blob_append_block_from_url_request(  # pylint: disable=name-too
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-copy-source"] = _SERIALIZER.header("source_url", source_url, "str")
     if source_range is not None:
@@ -2340,7 +2260,6 @@ def build_append_blob_seal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=seal"
@@ -2350,7 +2269,6 @@ def build_append_blob_seal_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -2740,7 +2658,6 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=block"
@@ -2751,7 +2668,6 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     _headers["x-ms-copy-source"] = _SERIALIZER.header("source_url", source_url, "str")
@@ -2935,7 +2851,6 @@ def build_block_blob_get_block_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -2950,7 +2865,6 @@ def build_block_blob_get_block_list_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -3453,7 +3367,6 @@ def build_page_blob_get_page_ranges_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -3471,7 +3384,6 @@ def build_page_blob_get_page_ranges_request(
         _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
         _headers["Range"] = _SERIALIZER.header("range", range, "str")
@@ -3514,7 +3426,6 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     accept = _headers.pop("Accept", "application/xml")
 
@@ -3534,7 +3445,6 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
         _params["maxresults"] = _SERIALIZER.query("maxresults", maxresults, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if prev_snapshot_url is not None:
         _headers["x-ms-previous-snapshot-url"] = _SERIALIZER.header("prev_snapshot_url", prev_snapshot_url, "str")
@@ -3578,7 +3488,6 @@ def build_page_blob_resize_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=properties"
@@ -3588,7 +3497,6 @@ def build_page_blob_resize_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -3635,7 +3543,6 @@ def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=properties"
@@ -3645,7 +3552,6 @@ def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -3684,7 +3590,6 @@ def build_page_blob_copy_incremental_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/?comp=incrementalcopy"
@@ -3694,7 +3599,6 @@ def build_page_blob_copy_incremental_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if if_modified_since is not None:
         _headers["If-Modified-Since"] = _SERIALIZER.header("if_modified_since", if_modified_since, "rfc-1123")
@@ -3828,15 +3732,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.StorageServiceProperties] = kwargs.pop("cls", None)
 
         _request = build_service_get_properties_request(
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -3907,15 +3809,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.StorageServiceStats] = kwargs.pop("cls", None)
 
         _request = build_service_get_statistics_request(
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4012,10 +3912,9 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.ListContainersSegmentResponse] = kwargs.pop("cls", None)
 
         _request = build_service_list_containers_request(
@@ -4024,7 +3923,6 @@ class ServiceOperations:
             maxresults=maxresults,
             timeout=timeout,
             include=include,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4180,15 +4078,13 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_service_get_account_info_request(
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4365,10 +4261,9 @@ class ServiceOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
         _request = build_service_filter_blobs_request(
@@ -4377,7 +4272,6 @@ class ServiceOperations:
             marker=marker,
             maxresults=maxresults,
             include=include,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4487,10 +4381,9 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_create_request(
@@ -4499,7 +4392,6 @@ class ContainerOperations:
             access=access,
             default_encryption_scope=default_encryption_scope,
             prevent_encryption_scope_override=prevent_encryption_scope_override,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4563,16 +4455,14 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_get_properties_request(
             timeout=timeout,
             lease_id=lease_id,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4668,10 +4558,9 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_delete_request(
@@ -4679,7 +4568,6 @@ class ContainerOperations:
             lease_id=lease_id,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4751,10 +4639,9 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_set_metadata_request(
@@ -4762,7 +4649,6 @@ class ContainerOperations:
             lease_id=lease_id,
             metadata=metadata,
             if_modified_since=if_modified_since,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -4826,16 +4712,14 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.SignedIdentifiers] = kwargs.pop("cls", None)
 
         _request = build_container_get_access_policy_request(
             timeout=timeout,
             lease_id=lease_id,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5020,17 +4904,15 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_restore_request(
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5099,17 +4981,15 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_rename_request(
             source_container_name=source_container_name,
             source_lease_id=source_lease_id,
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5280,10 +5160,9 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
         _request = build_container_filter_blobs_request(
@@ -5292,7 +5171,6 @@ class ContainerOperations:
             marker=marker,
             maxresults=maxresults,
             include=include,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5473,11 +5351,10 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_release_lease_request(
@@ -5485,7 +5362,6 @@ class ContainerOperations:
             timeout=timeout,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -5561,11 +5437,10 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_renew_lease_request(
@@ -5573,7 +5448,6 @@ class ContainerOperations:
             timeout=timeout,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -5656,11 +5530,10 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_break_lease_request(
@@ -5668,7 +5541,6 @@ class ContainerOperations:
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             break_period=break_period,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -5748,11 +5620,10 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_change_lease_request(
@@ -5761,7 +5632,6 @@ class ContainerOperations:
             timeout=timeout,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -5856,10 +5726,9 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.ListBlobsResponse] = kwargs.pop("cls", None)
 
         _request = build_container_list_blobs_request(
@@ -5869,7 +5738,6 @@ class ContainerOperations:
             include=include,
             timeout=timeout,
             start_from=start_from,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -5981,10 +5849,9 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
 
         _request = build_container_list_blob_hierarchy_segment_request(
@@ -5995,7 +5862,6 @@ class ContainerOperations:
             include=include,
             timeout=timeout,
             start_from=start_from,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6066,15 +5932,13 @@ class ContainerOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_container_get_account_info_request(
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6781,10 +6645,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_delete_request(
@@ -6801,7 +6664,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             access_tier_if_unmodified_since=access_tier_if_unmodified_since,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6859,15 +6721,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_undelete_request(
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -6935,17 +6795,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_expiry_request(
             expiry_options=expiry_options,
             timeout=timeout,
             expires_on=expires_on,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7062,10 +6920,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_http_headers_request(
@@ -7082,7 +6939,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7172,10 +7028,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_immutability_policy_request(
@@ -7185,7 +7040,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_mode=immutability_policy_mode,
             snapshot=snapshot,
             version_id=version_id,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7264,17 +7118,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_delete_immutability_policy_request(
             timeout=timeout,
             snapshot=snapshot,
             version_id=version_id,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7350,10 +7202,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_legal_hold_request(
@@ -7361,7 +7212,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             timeout=timeout,
             snapshot=snapshot,
             version_id=version_id,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7478,10 +7328,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_metadata_request(
@@ -7497,7 +7346,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -7714,11 +7562,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_release_lease_request(
@@ -7729,7 +7576,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -7822,11 +7668,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_renew_lease_request(
@@ -7837,7 +7682,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -7934,11 +7778,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_change_lease_request(
@@ -7950,7 +7793,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -8050,11 +7892,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_break_lease_request(
@@ -8065,7 +7906,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             action=action,
             version=self._config.version,
             headers=_headers,
@@ -8184,10 +8024,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_create_snapshot_request(
@@ -8203,7 +8042,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=lease_id,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -8359,11 +8197,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         requires_sync: Literal[True] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", True))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_start_copy_from_url_request(
@@ -8388,7 +8225,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             requires_sync=requires_sync,
             version=self._config.version,
             headers=_headers,
@@ -8552,11 +8388,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_copy_from_url_request(
@@ -8583,7 +8418,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             file_request_intent=file_request_intent,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             requires_sync=requires_sync,
             version=self._config.version,
             headers=_headers,
@@ -8661,20 +8495,18 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         copy_action_abort_constant: Literal["abort"] = kwargs.pop(
             "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
         )
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_abort_copy_from_url_request(
             copy_id=copy_id,
             timeout=timeout,
             lease_id=lease_id,
-            content_type=content_type,
             copy_action_abort_constant=copy_action_abort_constant,
             version=self._config.version,
             headers=_headers,
@@ -8768,10 +8600,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_tier_request(
@@ -8782,7 +8613,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             rehydrate_priority=rehydrate_priority,
             lease_id=lease_id,
             if_tags=if_tags,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -8840,15 +8670,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_get_account_info_request(
             timeout=timeout,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -8952,10 +8780,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.BlobTags] = kwargs.pop("cls", None)
 
         _request = build_blob_get_tags_request(
@@ -8968,7 +8795,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_unmodified_since=if_unmodified_since,
             if_match=if_match,
             if_none_match=if_none_match,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -9719,10 +9545,9 @@ class AppendBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_append_blob_append_block_from_url_request(
@@ -9754,7 +9579,6 @@ class AppendBlobOperations:
             source_encryption_algorithm=source_encryption_algorithm,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -9869,10 +9693,9 @@ class AppendBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_append_blob_seal_request(
@@ -9883,7 +9706,6 @@ class AppendBlobOperations:
             append_position=append_position,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -10737,10 +10559,9 @@ class BlockBlobOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_block_blob_stage_block_from_url_request(
@@ -10765,7 +10586,6 @@ class BlockBlobOperations:
             source_encryption_key=source_encryption_key,
             source_encryption_key_sha256=source_encryption_key_sha256,
             source_encryption_algorithm=source_encryption_algorithm,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -11090,10 +10910,9 @@ class BlockBlobOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.BlockList] = kwargs.pop("cls", None)
 
         _request = build_block_blob_get_block_list_request(
@@ -11102,7 +10921,6 @@ class BlockBlobOperations:
             timeout=timeout,
             lease_id=lease_id,
             if_tags=if_tags,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -12194,7 +12012,7 @@ class PageBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def get_page_ranges(  # pylint: disable=too-many-locals
+    def get_page_ranges(
         self,
         *,
         snapshot: Optional[str] = None,
@@ -12272,10 +12090,9 @@ class PageBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
 
         _request = build_page_blob_get_page_ranges_request(
@@ -12290,7 +12107,6 @@ class PageBlobOperations:
             maxresults=maxresults,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -12437,10 +12253,9 @@ class PageBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
 
         _request = build_page_blob_get_page_ranges_diff_request(
@@ -12457,7 +12272,6 @@ class PageBlobOperations:
             maxresults=maxresults,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -12591,10 +12405,9 @@ class PageBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_page_blob_resize_request(
@@ -12610,7 +12423,6 @@ class PageBlobOperations:
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -12717,10 +12529,9 @@ class PageBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_page_blob_update_sequence_number_request(
@@ -12733,7 +12544,6 @@ class PageBlobOperations:
             blob_sequence_number=blob_sequence_number,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
@@ -12834,10 +12644,9 @@ class PageBlobOperations:
             error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_page_blob_copy_incremental_request(
@@ -12848,7 +12657,6 @@ class PageBlobOperations:
             if_tags=if_tags,
             etag=etag,
             match_condition=match_condition,
-            content_type=content_type,
             version=self._config.version,
             headers=_headers,
             params=_params,
