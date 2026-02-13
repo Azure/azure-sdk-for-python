@@ -464,8 +464,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
 
                 startup_exceptions.append(e)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                startup_exceptions.append(e)
 
         return False
 

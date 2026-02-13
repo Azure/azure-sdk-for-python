@@ -482,9 +482,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # Check if exception is failoverable (should continue retrying)
                 startup_exceptions.append(e)
 
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                startup_exceptions.append(e)
-
         return False
 
     async def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
