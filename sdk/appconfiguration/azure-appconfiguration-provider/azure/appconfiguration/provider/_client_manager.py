@@ -147,7 +147,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     snapshot = self._client.get_snapshot(select.snapshot_name)
                 except HttpResponseError as e:
                     if e.status_code == 404:
-                        self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name)
+                        self.LOGGER.warning(
+                            "Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name
+                        )
                         return []
                     raise e
                 if snapshot.composition_type != SnapshotComposition.KEY:
@@ -183,7 +185,9 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     snapshot = self._client.get_snapshot(select.snapshot_name)
                 except HttpResponseError as e:
                     if e.status_code == 404:
-                        self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name)
+                        self.LOGGER.warning(
+                            "Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name
+                        )
                         return []
                     raise e
                 if snapshot.composition_type != SnapshotComposition.KEY:
