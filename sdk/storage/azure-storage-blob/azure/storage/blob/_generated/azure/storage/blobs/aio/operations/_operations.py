@@ -708,7 +708,7 @@ class ServiceOperations:
     async def filter_blobs(
         self,
         *,
-        filter_expression: str,
+        where: str,
         timeout: Optional[int] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
@@ -718,9 +718,9 @@ class ServiceOperations:
         """The Filter Blobs operation enables callers to list blobs across all containers whose tags match
         a given search expression.
 
-        :keyword filter_expression: Filters the results to return only to return only blobs whose tags
-         match the specified expression. Required.
-        :paramtype filter_expression: str
+        :keyword where: Filters the results to return only to return only blobs whose tags match the
+         specified expression. Required.
+        :paramtype where: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -757,7 +757,7 @@ class ServiceOperations:
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
         _request = build_service_filter_blobs_request(
-            filter_expression=filter_expression,
+            where=where,
             timeout=timeout,
             marker=marker,
             maxresults=maxresults,
@@ -1607,7 +1607,7 @@ class ContainerOperations:
     async def filter_blobs(
         self,
         *,
-        filter_expression: str,
+        where: str,
         timeout: Optional[int] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
@@ -1617,9 +1617,9 @@ class ContainerOperations:
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
         given search expression.  Filter blobs searches within the given container.
 
-        :keyword filter_expression: Filters the results to return only to return only blobs whose tags
-         match the specified expression. Required.
-        :paramtype filter_expression: str
+        :keyword where: Filters the results to return only to return only blobs whose tags match the
+         specified expression. Required.
+        :paramtype where: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -1656,7 +1656,7 @@ class ContainerOperations:
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
         _request = build_container_filter_blobs_request(
-            filter_expression=filter_expression,
+            where=where,
             timeout=timeout,
             marker=marker,
             maxresults=maxresults,
