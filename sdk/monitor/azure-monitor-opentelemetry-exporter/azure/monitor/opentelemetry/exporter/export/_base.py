@@ -27,7 +27,6 @@ from azure.monitor.opentelemetry.exporter._generated.exporter._configuration imp
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     MessageData,
     MetricsData,
-    MonitorDomain,
     RemoteDependencyData,
     RequestData,
     TelemetryEventData,
@@ -222,7 +221,7 @@ class BaseExporter:
             if blob.lease(self._timeout + 5):
                 blob_data = blob.get()
                 if blob_data is not None:
-                    envelopes = [_format_storage_telemetry_item(TelemetryItem(x)) for x in blob_data]
+                    envelopes = [TelemetryItem(x) for x in blob_data]
                     result = self._transmit(envelopes)
                     if result == ExportResult.FAILED_RETRYABLE:
                         blob.lease(1)
@@ -235,7 +234,7 @@ class BaseExporter:
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
-                envelopes_to_store = [x.as_dict() for x in envelopes]
+                envelopes_to_store = [TelemetryItem(x) for x in envelopes]
                 result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)
@@ -290,9 +289,6 @@ class BaseExporter:
                 else:  # 206
                     reach_ingestion = True
                     resend_envelopes = []
-                    retry_error = None
-                    drop_status_code = None
-                    drop_envelopes: List[TelemetryItem] = []
                     for error in track_response.errors:
                         # Check for sampling rejection - these should not be retried
                         # because the server will always reject them based on sampling rules
@@ -305,27 +301,26 @@ class BaseExporter:
                                 )
                         elif _is_retryable_code(error.status_code):
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
-                            if retry_error is None:
-                                retry_error = error
+                            # Track retried items in customer sdkstats
+                            if self._should_collect_customer_sdkstats():
+                                track_retry_items(resend_envelopes, error)
                         else:
-                            if drop_status_code is None and isinstance(error.status_code, int):
-                                drop_status_code = error.status_code
-                            if error is not None and hasattr(error, "index") and error.index is not None:
-                                drop_envelopes.append(envelopes[error.index])  # type: ignore
                             if not self._is_stats_exporter():
+                                # Track dropped items in customer sdkstats, non-retryable scenario
+                                if self._should_collect_customer_sdkstats():
+                                    if (
+                                        error is not None
+                                        and hasattr(error, "index")
+                                        and error.index is not None
+                                        and isinstance(error.status_code, int)
+                                    ):
+                                        track_dropped_items([envelopes[error.index]], error.status_code)
                                 logger.error(
                                     "Data drop %s: %s %s.",
                                     error.status_code,
                                     error.message,
                                     envelopes[error.index] if error.index is not None else "",
                                 )
-
-                    if self._should_collect_customer_sdkstats():
-                        if resend_envelopes and retry_error:
-                            track_retry_items(resend_envelopes, retry_error)
-                        if drop_status_code is not None:
-                            track_dropped_items(drop_envelopes or envelopes, drop_status_code)
-
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         result_from_storage = self.storage.put(envelopes_to_store, 0)
@@ -333,6 +328,7 @@ class BaseExporter:
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
                     elif resend_envelopes:
+                        # Track items that would have been retried but are dropped since client has local storage disabled
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items(resend_envelopes, DropCode.CLIENT_STORAGE_DISABLED)
                     # Mark as not retryable because we already write to storage here
@@ -598,38 +594,6 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     if message is None:
         return False
     return message.lower() == "telemetry sampled out."
-
-
-_MONITOR_DOMAIN_MAPPING = {
-    "EventData": TelemetryEventData,
-    "ExceptionData": TelemetryExceptionData,
-    "MessageData": MessageData,
-    "MetricData": MetricsData,
-    "RemoteDependencyData": RemoteDependencyData,
-    "RequestData": RequestData,
-}
-
-
-# Set base_data to correct type if deserialized from storage
-def _format_storage_telemetry_item(item: TelemetryItem) -> TelemetryItem:
-    # item.data.base_data is of type MonitorDomain instead of a child class
-    if hasattr(item, "data") and item.data is not None:
-        if hasattr(item.data, "base_type") and isinstance(item.data.base_type, str):
-            base_type = _MONITOR_DOMAIN_MAPPING.get(item.data.base_type)
-            if base_type and hasattr(item.data, "base_data"):
-                base_data = item.data.base_data
-                base_data_dict = None
-                if isinstance(base_data, base_type):
-                    return item
-                if isinstance(base_data, MonitorDomain):
-                    base_data_dict = base_data.as_dict()
-                elif isinstance(base_data, dict):
-                    base_data_dict = base_data
-
-                if base_data_dict is not None:
-                    item.data.base_data = base_type(base_data_dict)
-    return item
-
 
 # mypy: disable-error-code="union-attr"
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:

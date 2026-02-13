@@ -10,8 +10,6 @@ from datetime import datetime
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
-    _MONITOR_DOMAIN_MAPPING,
-    _format_storage_telemetry_item,
     _get_auth_policy,
     _get_authentication_credential,
     _is_sampling_rejection,
@@ -60,6 +58,13 @@ def throw(exc_type, *args, **kwargs):
         raise exc_type(*args, **kwargs)
 
     return func
+
+
+def _make_http_response_error(status_code):
+    """Create an HttpResponseError with a specific status code for testing."""
+    response = HttpResponse(None, None)
+    response.status_code = status_code
+    return HttpResponseError(response=response)
 
 
 def clean_folder(folder):
@@ -379,7 +384,9 @@ class TestBaseExporter(unittest.TestCase):
         blob_mock.delete.assert_called_once()  # Corrupted blob should be deleted
         transmit_mock.assert_not_called()  # No transmission should occur
 
-    def test_format_storage_telemetry_item(self):
+    def test_telemetry_item_dict_roundtrip(self):
+        """Test that TelemetryItem correctly round-trips through as_dict() -> TelemetryItem(dict)
+        for all telemetry data types used in offline storage."""
         time = datetime.now()
         base = MonitorBase(base_type="", base_data=None)
         ti = TelemetryItem(
@@ -392,6 +399,7 @@ class TestBaseExporter(unittest.TestCase):
             tags={"tag1": "val1", "tag2": "val2"},
             data=base,
         )
+
         # MessageData
         message_data = MessageData(
             version=2,
@@ -400,16 +408,15 @@ class TestBaseExporter(unittest.TestCase):
             properties={"key1": "val1"},
         )
         base.base_type = "MessageData"
-        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), MessageData)
         base.base_data = message_data
         ti.data = base
 
-        # Format is called on custom serialized TelemetryItem
-        converted_ti = TelemetryItem(ti.as_dict())
-        format_ti = _format_storage_telemetry_item(converted_ti)
-        self.assertTrue(validate_telemetry_item(format_ti, ti))
-        self.assertEqual(format_ti.data.base_type, "MessageData")
-        self.assertEqual(message_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+        restored_ti = TelemetryItem(ti.as_dict())
+        self.assertTrue(validate_telemetry_item(restored_ti, ti))
+        self.assertEqual(restored_ti.data.base_type, "MessageData")
+        self.assertEqual(restored_ti.data.base_data.message, "test_message")
+        self.assertEqual(restored_ti.data.base_data.severity_level, "Warning")
+        self.assertEqual(restored_ti.data.base_data.properties, {"key1": "val1"})
 
         # EventData
         event_data = TelemetryEventData(
@@ -418,16 +425,14 @@ class TestBaseExporter(unittest.TestCase):
             properties={"key1": "val1"},
         )
         base.base_type = "EventData"
-        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), TelemetryEventData)
         base.base_data = event_data
         ti.data = base
 
-        # Format is called on custom serialized TelemetryItem
-        converted_ti = TelemetryItem(ti.as_dict())
-        format_ti = _format_storage_telemetry_item(converted_ti)
-        self.assertTrue(validate_telemetry_item(format_ti, ti))
-        self.assertEqual(format_ti.data.base_type, "EventData")
-        self.assertEqual(event_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+        restored_ti = TelemetryItem(ti.as_dict())
+        self.assertTrue(validate_telemetry_item(restored_ti, ti))
+        self.assertEqual(restored_ti.data.base_type, "EventData")
+        self.assertEqual(restored_ti.data.base_data.name, "test_name")
+        self.assertEqual(restored_ti.data.base_data.properties, {"key1": "val1"})
 
         # ExceptionData
         exc_data_details = TelemetryExceptionDetails(
@@ -440,22 +445,19 @@ class TestBaseExporter(unittest.TestCase):
             version=2, properties={"key1": "val1"}, severity_level="3", exceptions=[exc_data_details]
         )
         base.base_type = "ExceptionData"
-        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), TelemetryExceptionData)
         base.base_data = exc_data
         ti.data = base
 
-        # Format is called on custom serialized TelemetryItem
-        converted_ti = TelemetryItem(ti.as_dict())
-        format_ti = _format_storage_telemetry_item(converted_ti)
-        self.assertTrue(validate_telemetry_item(format_ti, ti))
-        self.assertEqual(format_ti.data.base_type, "ExceptionData")
-        self.assertEqual(exc_data.version, format_ti.data.base_data.version)
-        self.assertEqual(exc_data.properties, format_ti.data.base_data.properties)
-        self.assertEqual(exc_data.severity_level, format_ti.data.base_data.severity_level)
-        self.assertEqual(exc_data.exceptions[0].type_name, format_ti.data.base_data.exceptions[0].type_name)
-        self.assertEqual(exc_data.exceptions[0].message, format_ti.data.base_data.exceptions[0].message)
-        self.assertEqual(exc_data.exceptions[0].has_full_stack, format_ti.data.base_data.exceptions[0].has_full_stack)
-        self.assertEqual(exc_data.exceptions[0].stack, format_ti.data.base_data.exceptions[0].stack)
+        restored_ti = TelemetryItem(ti.as_dict())
+        self.assertTrue(validate_telemetry_item(restored_ti, ti))
+        self.assertEqual(restored_ti.data.base_type, "ExceptionData")
+        self.assertEqual(restored_ti.data.base_data.version, exc_data.version)
+        self.assertEqual(restored_ti.data.base_data.properties, exc_data.properties)
+        self.assertEqual(restored_ti.data.base_data.severity_level, exc_data.severity_level)
+        self.assertEqual(restored_ti.data.base_data.exceptions[0].type_name, "ZeroDivisionError")
+        self.assertEqual(restored_ti.data.base_data.exceptions[0].message, "division by zero")
+        self.assertEqual(restored_ti.data.base_data.exceptions[0].has_full_stack, True)
+        self.assertEqual(restored_ti.data.base_data.exceptions[0].stack, "Traceback \n")
 
         # MetricsData
         counter_data_point = MetricDataPoint(
@@ -478,27 +480,22 @@ class TestBaseExporter(unittest.TestCase):
             metrics=[counter_data_point, hist_data_point],
         )
         base.base_type = "MetricData"
-        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), MetricsData)
         base.base_data = metric_data
         ti.data = base
 
-        # Format is called on custom serialized TelemetryItem
-        converted_ti = TelemetryItem(ti.as_dict())
-        format_ti = _format_storage_telemetry_item(converted_ti)
-        self.assertTrue(validate_telemetry_item(format_ti, ti))
-        self.assertEqual(format_ti.data.base_type, "MetricData")
-        self.assertEqual(metric_data.version, format_ti.data.base_data.version)
-        self.assertEqual(metric_data.properties, format_ti.data.base_data.properties)
-        self.assertEqual(metric_data.metrics[0].name, format_ti.data.base_data.metrics[0].name)
-        self.assertEqual(metric_data.metrics[0].value, format_ti.data.base_data.metrics[0].value)
-        self.assertEqual(metric_data.metrics[0].count, format_ti.data.base_data.metrics[0].count)
-        self.assertEqual(metric_data.metrics[0].min, format_ti.data.base_data.metrics[0].min)
-        self.assertEqual(metric_data.metrics[0].max, format_ti.data.base_data.metrics[0].max)
-        self.assertEqual(metric_data.metrics[1].name, format_ti.data.base_data.metrics[1].name)
-        self.assertEqual(metric_data.metrics[1].value, format_ti.data.base_data.metrics[1].value)
-        self.assertEqual(metric_data.metrics[1].count, format_ti.data.base_data.metrics[1].count)
-        self.assertEqual(metric_data.metrics[1].min, format_ti.data.base_data.metrics[1].min)
-        self.assertEqual(metric_data.metrics[1].max, format_ti.data.base_data.metrics[1].max)
+        restored_ti = TelemetryItem(ti.as_dict())
+        self.assertTrue(validate_telemetry_item(restored_ti, ti))
+        self.assertEqual(restored_ti.data.base_type, "MetricData")
+        self.assertEqual(restored_ti.data.base_data.version, metric_data.version)
+        self.assertEqual(restored_ti.data.base_data.properties, metric_data.properties)
+        self.assertEqual(restored_ti.data.base_data.metrics[0].name, "counter")
+        self.assertEqual(restored_ti.data.base_data.metrics[0].value, 1.0)
+        self.assertEqual(restored_ti.data.base_data.metrics[0].count, 1)
+        self.assertEqual(restored_ti.data.base_data.metrics[1].name, "histogram")
+        self.assertEqual(restored_ti.data.base_data.metrics[1].value, 99.0)
+        self.assertEqual(restored_ti.data.base_data.metrics[1].count, 1)
+        self.assertEqual(restored_ti.data.base_data.metrics[1].min, 99.0)
+        self.assertEqual(restored_ti.data.base_data.metrics[1].max, 99.0)
 
         # RemoteDependencyData
         dep_data = RemoteDependencyData(
@@ -514,16 +511,16 @@ class TestBaseExporter(unittest.TestCase):
             properties={"key1": "val1"},
         )
         base.base_type = "RemoteDependencyData"
-        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), RemoteDependencyData)
         base.base_data = dep_data
         ti.data = base
 
-        # Format is called on custom serialized TelemetryItem
-        converted_ti = TelemetryItem(ti.as_dict())
-        format_ti = _format_storage_telemetry_item(converted_ti)
-        self.assertTrue(validate_telemetry_item(format_ti, ti))
-        self.assertEqual(format_ti.data.base_type, "RemoteDependencyData")
-        self.assertEqual(dep_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+        restored_ti = TelemetryItem(ti.as_dict())
+        self.assertTrue(validate_telemetry_item(restored_ti, ti))
+        self.assertEqual(restored_ti.data.base_type, "RemoteDependencyData")
+        self.assertEqual(restored_ti.data.base_data.name, "GET /")
+        self.assertEqual(restored_ti.data.base_data.result_code, "200")
+        self.assertEqual(restored_ti.data.base_data.target, "example.com")
+        self.assertEqual(restored_ti.data.base_data.success, True)
 
         # RequestData
         req_data = RequestData(
@@ -538,16 +535,16 @@ class TestBaseExporter(unittest.TestCase):
             properties={"key1": "val1"},
         )
         base.base_type = "RequestData"
-        self.assertEqual(_MONITOR_DOMAIN_MAPPING.get(base.base_type), RequestData)
         base.base_data = req_data
         ti.data = base
 
-        # Format is called on custom serialized TelemetryItem
-        converted_ti = TelemetryItem(ti.as_dict())
-        format_ti = _format_storage_telemetry_item(converted_ti)
-        self.assertTrue(validate_telemetry_item(format_ti, ti))
-        self.assertEqual(format_ti.data.base_type, "RequestData")
-        self.assertEqual(req_data.__dict__.items(), format_ti.data.base_data.__dict__.items())
+        restored_ti = TelemetryItem(ti.as_dict())
+        self.assertTrue(validate_telemetry_item(restored_ti, ti))
+        self.assertEqual(restored_ti.data.base_type, "RequestData")
+        self.assertEqual(restored_ti.data.base_data.name, "GET /")
+        self.assertEqual(restored_ti.data.base_data.response_code, "200")
+        self.assertEqual(restored_ti.data.base_data.url, "http://localhost:8080/")
+        self.assertEqual(restored_ti.data.base_data.success, True)
 
     def test_handle_transmit_from_storage_success_result(self):
         """Test that when storage.put() returns StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
@@ -811,56 +808,47 @@ class TestBaseExporter(unittest.TestCase):
         self.assertFalse(_is_sampling_rejection("Sampled out"))
 
     def test_transmission_400(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(400, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(400)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_402(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(402, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(402)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_408(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(408, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(408)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_429(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(429, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_439(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(439, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(439)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
 
     def test_transmission_500(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(500, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(500)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_502(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(503, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(502)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_503(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(503, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(503)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_504(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(504, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(504)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
@@ -1021,8 +1009,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_400(self, stats_mock, stats_shutdown_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(400, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(400)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         stats_shutdown_mock.assert_called_once()
@@ -1041,8 +1028,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_402(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(402, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(402)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1060,8 +1046,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_408(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(408, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(408)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1079,8 +1064,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_429(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(429, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(429)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1098,8 +1082,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_439(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(439, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(439)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1117,8 +1100,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_500(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(500, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(500)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1136,8 +1118,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_502(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(502, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(502)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1153,8 +1134,7 @@ class TestBaseExporter(unittest.TestCase):
         },
     )
     def test_statsbeat_503(self):
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(503, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(503)):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_RETRY_NAME[1]][503], 1)
@@ -1171,8 +1151,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_504(self, stats_mock):
         exporter = BaseExporter(disable_offline_storage=True)
-        with mock.patch("requests.Session.request") as post:
-            post.return_value = MockResponse(504, "{}")
+        with mock.patch.object(AzureMonitorClient, "track", side_effect=_make_http_response_error(504)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
@@ -1369,19 +1348,6 @@ class MockResponse:
         self.reason = reason
         self.content = content
         self.raw = MockRaw()
-        self._content_consumed = False
-
-    def iter_content(self, chunk_size=1):
-        content_bytes = self.content.encode() if isinstance(self.content, str) else self.content
-        for i in range(0, len(content_bytes), chunk_size):
-            yield content_bytes[i : i + chunk_size]
-        self._content_consumed = True
-
-    def iter_bytes(self, chunk_size=None):
-        return self.iter_content(chunk_size or 1)
-
-    def close(self):
-        pass
 
 
 class MockRaw:
