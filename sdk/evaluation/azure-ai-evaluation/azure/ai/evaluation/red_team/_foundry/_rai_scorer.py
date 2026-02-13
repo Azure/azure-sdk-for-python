@@ -151,7 +151,7 @@ class RAIServiceScorer(TrueFalseScorer):
 
         # Prepare evaluation input
         eval_input = {
-            "query": task or "query",
+            "query": "query",
             "response": response_text,
             "context": context,
         }

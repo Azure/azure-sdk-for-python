@@ -546,7 +546,7 @@ def mock_validate_trace_destination():
     try:
         with patch("promptflow._sdk._tracing.TraceDestinationConfig.validate", return_value=None):
             yield
-    except ModuleNotFoundError:
+    except (ModuleNotFoundError, AttributeError, ImportError):
         yield
 
 
