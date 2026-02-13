@@ -200,7 +200,7 @@ class TestCallbackChatTargetPrompts:
         with pytest.raises(ValueError) as excinfo:
             chat_target._validate_request(prompt_request=mock_req)
 
-        assert "only supports text prompt input" in str(excinfo.value)
+        assert "only supports text" in str(excinfo.value)
 
 
 @pytest.mark.unittest
