@@ -25,12 +25,6 @@ from azure.monitor.opentelemetry.exporter._generated.exporter._configuration imp
     AzureMonitorClientConfiguration,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
-    MessageData,
-    MetricsData,
-    RemoteDependencyData,
-    RequestData,
-    TelemetryEventData,
-    TelemetryExceptionData,
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -594,6 +588,7 @@ def _is_sampling_rejection(message: Optional[str]) -> bool:
     if message is None:
         return False
     return message.lower() == "telemetry sampled out."
+
 
 # mypy: disable-error-code="union-attr"
 def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCredential]:
