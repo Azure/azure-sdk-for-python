@@ -459,27 +459,6 @@
 # ServiceLabel: %Alerts Management %Service Attention
 # ServiceOwners:          @liadtal @yairgil
 
-# ServiceLabel: %ARM %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Templates %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Tags %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Core %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Managed Applications %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Service Catalog %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - RBAC %Service Attention
-# ServiceOwners:          @armleads-azure
-
 # ServiceLabel: %Advisor %Service Attention
 # ServiceOwners:          @mojayara @Prasanna-Padmanabhan
 
@@ -821,6 +800,27 @@
 ####################
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
+
+# ServiceLabel: %ARM %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Templates %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Tags %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Core %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Managed Applications %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Service Catalog %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - RBAC %Service Attention
+# ServiceOwners:          @armleads-azure
 
 ###########
 # Eng Sys and other
