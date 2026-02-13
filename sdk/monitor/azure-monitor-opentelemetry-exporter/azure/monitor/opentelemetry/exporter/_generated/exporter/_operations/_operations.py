@@ -23,7 +23,6 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import HttpRequest, HttpResponse
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
@@ -113,7 +112,6 @@ class _AzureMonitorClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
     def track(
         self, body: Union[list[_models.TelemetryItem], list[JSON], IO[bytes]], **kwargs: Any
     ) -> _models.TrackResponse:
