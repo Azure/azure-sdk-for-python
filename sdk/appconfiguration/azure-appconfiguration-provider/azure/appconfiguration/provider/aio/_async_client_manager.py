@@ -151,7 +151,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 except HttpResponseError as e:
                     if e.status_code == 404:
                         self.LOGGER.warning(
-                            "Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name
+                            "Snapshot '%s' not found when resolving snapshot.", select.snapshot_name
                         )
                         return []
                     raise e
@@ -190,7 +190,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 except HttpResponseError as e:
                     if e.status_code == 404:
                         self.LOGGER.warning(
-                            "Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name
+                            "Snapshot '%s' not found when resolving snapshot.", select.snapshot_name
                         )
                         return []
                     raise e
