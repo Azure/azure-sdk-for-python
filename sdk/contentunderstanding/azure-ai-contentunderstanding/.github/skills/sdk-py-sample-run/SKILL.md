@@ -7,12 +7,20 @@ description: Run a specific sample for the Azure AI Content Understanding SDK. U
 
 Run a specific sample from the Azure AI Content Understanding SDK.
 
+> **[COPILOT INTERACTION MODEL]:** This skill is designed to be interactive. At each step marked with **[ASK USER]**, pause execution and prompt the user for input or confirmation before proceeding. Do NOT silently skip these prompts. Use the `ask_questions` tool when available.
+
 ## Prerequisites
 
 - Python >= 3.9
 - Virtual environment set up with SDK installed (see `sdk-py-setup` skill)
 - Environment variables configured in `.env`
 - For prebuilt analyzers: model deployments configured (run `sample_update_defaults.py` first)
+
+> **[ASK USER] Prerequisites check:**
+> Before proceeding, verify the user's environment:
+> 1. "Have you already set up your Python environment and installed the SDK?" -- If no, direct them to the `sdk-py-setup` skill first.
+> 2. "Have you configured your `.env` file with your endpoint and credentials?" -- If no, direct them to Step 4 of the `sdk-py-setup` skill.
+> 3. "Have you run `sample_update_defaults.py` to configure model defaults?" -- If no and they want to use prebuilt analyzers, guide them to run it first.
 
 ## Package Directory
 
@@ -26,10 +34,10 @@ All sync samples have async versions with `_async` suffix in `samples/async_samp
 
 ### Getting Started (Run These First)
 
-#### `sample_update_defaults` ⭐ Required First!
+#### `sample_update_defaults` -- Required First!
 **One-time setup** - Configures model deployment mappings (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) for your Microsoft Foundry resource. Must run before using prebuilt analyzers.
 
-#### `sample_analyze_url` ⭐ Start Here!
+#### `sample_analyze_url` -- Start Here!
 Analyzes content from a URL using `prebuilt-documentSearch`. Works with documents, images, audio, and video.
 - Key concepts: URL input, markdown extraction, multi-modal content
 
@@ -107,7 +115,27 @@ source .venv/bin/activate  # Linux/macOS
 # .venv\Scripts\activate   # Windows
 ```
 
-### Step 3: Run the Sample
+> **[ASK USER] Confirm venv active:**
+> Ask: "Is your virtual environment active? Run `which python` (or `where python` on Windows) and confirm it points to a path inside `.venv`."
+> If the user reports it is not active or does not exist, direct them to the `sdk-py-setup` skill.
+
+### Step 3: Choose and Run the Sample
+
+> **[ASK USER] Which sample?:**
+> Ask the user: "Which sample would you like to run?" with options:
+> - `sample_analyze_url` -- Analyze content from a URL (recommended for first-time users)
+> - `sample_analyze_binary` -- Analyze a local PDF/image file
+> - `sample_analyze_invoice` -- Extract structured fields from an invoice
+> - `sample_create_analyzer` -- Create a custom analyzer
+> - `sample_update_defaults` -- Configure model defaults (one-time setup)
+> - Other -- Let me see the full list
+>
+> If the user picks "Other", show the full Available Samples list above or run `.github/skills/sdk-py-sample-run/scripts/run_sample.sh --list`.
+
+> **[ASK USER] Sync or async?:**
+> Ask: "Would you like to run the **sync** or **async** version of this sample?"
+> - Sync (default) -- Runs in `samples/`
+> - Async -- Runs in `samples/async_samples/` with `_async` suffix
 
 **Using the script (recommended):**
 
@@ -139,6 +167,14 @@ python sample_analyze_url.py
 cd samples/async_samples
 python sample_analyze_url_async.py
 ```
+
+> **[ASK USER] Sample result:**
+> After running the sample, ask: "Did the sample run successfully?"
+> - If yes: "Would you like to run another sample, or are you all set?"
+> - If no: Help troubleshoot using the Troubleshooting section below. Common issues include missing `.env` configuration, inactive venv, or model defaults not configured.
+
+> **[ASK USER] Run another?:**
+> If the user wants to run another sample, loop back to the "Which sample?" prompt above.
 
 ## Quick Reference
 

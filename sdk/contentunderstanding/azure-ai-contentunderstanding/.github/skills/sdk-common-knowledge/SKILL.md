@@ -7,6 +7,14 @@ description: Comprehensive domain knowledge for Azure AI Content Understanding -
 
 This skill provides comprehensive domain knowledge for Azure AI Content Understanding, a multimodal AI service that extracts semantic content from documents, video, audio, and image files.
 
+> **[COPILOT GUIDANCE]:** This is a knowledge reference skill covering many topics. When a user's question is broad or ambiguous, ask them to clarify their goal before answering. For example:
+> - "Are you looking to understand a specific concept, or do you need help writing code?"
+> - "Which modality are you working with -- documents, images, audio, or video?"
+> - "Are you using a prebuilt analyzer, or building a custom one?"
+> - "Are you asking about the Python SDK specifically, or the service in general?"
+>
+> Narrowing the user's intent helps you provide a focused, relevant answer from this reference material rather than overwhelming them with the full scope.
+
 ## Service Overview
 
 **Azure AI Content Understanding** transforms unstructured content into structured, machine-readable data optimized for:
