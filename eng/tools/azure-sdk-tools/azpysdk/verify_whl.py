@@ -105,10 +105,7 @@ def should_verify_package(package_name):
 def has_stable_version_on_pypi(all_versions: List[str]) -> bool:
     """Check if the package has any stable (non-prerelease) version on PyPI."""
     try:
-        stable_versions = [
-            pv for v in all_versions
-            if not (pv := Version(v)).is_prerelease and pv > Version("0.0.0")
-        ]
+        stable_versions = [pv for v in all_versions if not (pv := Version(v)).is_prerelease and pv > Version("0.0.0")]
         return len(stable_versions) > 0
     except Exception:
         return False
