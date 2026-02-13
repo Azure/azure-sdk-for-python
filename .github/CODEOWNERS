@@ -267,7 +267,7 @@
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang @pankopon @emilyjiji
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
