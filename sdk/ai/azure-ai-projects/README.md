@@ -8,6 +8,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Agent Memory Search
   * Agent-to-Agent (A2A)
   * Azure AI Search
+  * Azure Functions
   * Bing Custom Search
   * Bing Grounding
   * Browser Automation
@@ -287,7 +288,9 @@ Discover up-to-date web content with the GA Web Search tool or try the Web Searc
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
 ```python
-tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
+tool = WebSearchTool(
+    user_location=WebSearchApproximateLocation(type="approximate", country="GB", city="London", region="London")
+)
 ```
 
 <!-- END SNIPPET -->
@@ -412,6 +415,45 @@ tool = FunctionTool(
 *After calling `responses.create()`, process `function_call` items from response output, execute your function logic with the provided arguments, and send back `FunctionCallOutput` with the results.*
 
 See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the [Samples][samples] folder.
+
+**Azure Functions**
+
+Integrate Azure Functions with agents to extend capabilities via serverless compute. Functions are invoked through Azure Storage Queue triggers, allowing asynchronous execution of custom logic.
+
+<!-- SNIPPET:sample_agent_azure_function.tool_declaration -->
+
+```python
+tool = AzureFunctionTool(
+    azure_function=AzureFunctionDefinition(
+        input_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_INPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        output_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_OUTPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        function=AzureFunctionDefinitionFunction(
+            name="queue_trigger",
+            description="Get weather for a given location",
+            parameters={
+                "type": "object",
+                "properties": {"location": {"type": "string", "description": "location to determine weather for"}},
+            },
+        ),
+    )
+)
+```
+
+<!-- END SNIPPET -->
+
+*After calling `responses.create()`, the agent enqueues function arguments to the input queue. Your Azure Function processes the request and returns results via the output queue.*
+
+See the full sample in file `\agents\tools\sample_agent_azure_function.py` and the Azure Function implementation in `\agents\tools\get_weather_func_app.py` in the [Samples][samples] folder.
 
 * **Memory Search Tool**
 
