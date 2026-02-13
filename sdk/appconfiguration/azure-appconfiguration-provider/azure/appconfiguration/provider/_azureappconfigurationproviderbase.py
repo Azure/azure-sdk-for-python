@@ -130,10 +130,8 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
 
     # Get startup timeout
     startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
-    if startup_timeout < MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION:
-        raise ValueError(f"Startup timeout must be at least {MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION} seconds.")
-    if startup_timeout > MAX_STARTUP_BACKOFF_DURATION:
-        raise ValueError(f"Startup timeout must be at most {MAX_STARTUP_BACKOFF_DURATION} seconds.")
+    if startup_timeout >= 0:
+        raise ValueError(f"Startup timeout must be greater than or equal to 0 seconds.")
 
     return {
         "endpoint": endpoint,
