@@ -158,7 +158,11 @@ class update_snippet(Check):
 
             # Run black on sample files before extracting snippets
             if not args.no_black:
-                if not self._run_black(pkg_dir, pkg_name, args):
+                samples_dir = os.path.join(pkg_dir, "samples")
+                if not os.path.isdir(samples_dir):
+                    logger.info(f"No samples directory found for {pkg_name}, skipping.")
+                    continue
+                if not self._run_black(pkg_dir, pkg_name, samples_dir, args):
                     logger.error(
                         f"Black formatting failed for {pkg_name}, skipping snippet update. Run `azpysdk update_snippet .` locally from the package root to format samples and update snippets."
                     )
@@ -199,14 +203,9 @@ class update_snippet(Check):
         return max(results) if results else 0
 
     def _run_black(
-        self, pkg_dir: str, pkg_name: str, args: argparse.Namespace
+        self, pkg_dir: str, pkg_name: str, samples_dir: str, args: argparse.Namespace
     ) -> Optional[subprocess.CompletedProcess]:
         """Run black on the sample files of a package using the repo-wide config."""
-        samples_dir = os.path.join(pkg_dir, "samples")
-        if not os.path.isdir(samples_dir):
-            logger.info(f"No samples directory found for {pkg_name}, skipping black.")
-            return
-
         executable, _ = self.get_executable(args.isolate, args.command, sys.executable, pkg_dir)
         logger.info(f"Running black on samples for {pkg_name} to format before snippet extraction.")
         return black.format_directory(executable, samples_dir)
