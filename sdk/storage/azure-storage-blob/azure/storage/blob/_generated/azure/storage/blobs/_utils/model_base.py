@@ -515,8 +515,6 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         return self._data.setdefault(key, default)
 
     def __eq__(self, other: typing.Any) -> bool:
-        if isinstance(other, _MyMutableMapping):
-            return self._data == other._data
         try:
             other_model = self.__class__(other)
         except Exception:
@@ -674,18 +672,9 @@ class Model(_MyMutableMapping):
             # we know the last nine classes in mro are going to be 'Model', '_MyMutableMapping', 'MutableMapping',
             # 'Mapping', 'Collection', 'Sized', 'Iterable', 'Container' and 'object'
             mros = cls.__mro__[:-9][::-1]  # ignore parents, and reverse the mro order
-            # Copy each _RestField so per-class mutations (_module, _type) don't bleed
-            # between parent and subclass when import/instantiation order varies.
-            # Track the original defining module so forward references in annotations
-            # resolve correctly regardless of which subclass is processed first.
-            attr_to_rest_field: dict[str, _RestField] = {}
-            for mro_class in mros:
-                for k, v in mro_class.__dict__.items():
-                    if k[0] != "_" and hasattr(v, "_type"):
-                        rf_copy = copy.copy(v)
-                        if not hasattr(rf_copy, "_defining_module"):
-                            rf_copy._defining_module = mro_class.__module__
-                        attr_to_rest_field[k] = rf_copy
+            attr_to_rest_field: dict[str, _RestField] = {  # map attribute name to rest_field property
+                k: v for mro_class in mros for k, v in mro_class.__dict__.items() if k[0] != "_" and hasattr(v, "_type")
+            }
             annotations = {
                 k: v
                 for mro_class in mros
@@ -693,13 +682,11 @@ class Model(_MyMutableMapping):
                 for k, v in mro_class.__annotations__.items()
             }
             for attr, rf in attr_to_rest_field.items():
-                rf._module = rf._defining_module
+                rf._module = cls.__module__
                 if not rf._type:
                     rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
                 if not rf._rest_name_input:
                     rf._rest_name_input = attr
-                # Install copy as class descriptor so __get__/__set__ use this class's version
-                setattr(cls, attr, rf)
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
                 Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
@@ -1218,7 +1205,9 @@ def _get_element(
     exclude_readonly: bool = False,
     parent_meta: typing.Optional[dict[str, typing.Any]] = None,
     wrapped_element: typing.Optional[ET.Element] = None,
-) -> typing.Union[ET.Element, list[ET.Element]]:
+) -> typing.Union[ET.Element, list[ET.Element], None]:
+    if o is None:
+        return None
     if _is_model(o):
         model_meta = getattr(o, "_xml", {})
 

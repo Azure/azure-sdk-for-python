@@ -187,13 +187,10 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted. If enabled=True, the number of days must be specified.
     """
 
-    enabled: bool = False
-    days: Optional[int] = None
-
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
-        if self.enabled and (self.days is None):
+        if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -220,17 +217,6 @@ class BlobAnalyticsLogging(GeneratedLogging):
         Determines how long the associated data should persist. If not specified the retention
         policy will be disabled by default.
     """
-
-    version: str = '1.0'
-    """The version of Storage Analytics to configure."""
-    delete: bool = False
-    """Indicates whether all delete requests should be logged."""
-    read: bool = False
-    """Indicates whether all read requests should be logged."""
-    write: bool = False
-    """Indicates whether all write requests should be logged."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
-    """Determines how long the associated data should persist."""
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -270,15 +256,6 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
-    version: str = '1.0'
-    """The version of Storage Analytics to configure."""
-    enabled: bool = False
-    """Indicates whether metrics are enabled for the Blob service."""
-    include_apis: Optional[bool]
-    """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
-    """Determines how long the associated data should persist."""
-
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
@@ -312,15 +289,6 @@ class StaticWebsite(GeneratedStaticWebsite):
     :keyword str default_index_document_path:
         Absolute path of the default index page.
     """
-
-    enabled: bool = False
-    """Indicates whether this account is hosting a static website."""
-    index_document: Optional[str]
-    """The default name of the index page under each directory."""
-    error_document404_path: Optional[str]
-    """The absolute path of the custom 404 page."""
-    default_index_document_path: Optional[str]
-    """Absolute path of the default index page."""
 
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -373,20 +341,6 @@ class CorsRule(GeneratedCorsRule):
         The number of seconds that the client/browser should cache a
         preflight response.
     """
-
-    allowed_origins: str
-    """The comma-delimited string representation of the list of origin domains that will be allowed via
-        CORS, or "*" to allow all domains."""
-    allowed_methods: str
-    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
-        by the origin."""
-    exposed_headers: str
-    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
-    allowed_headers: str
-    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
-        request."""
-    max_age_in_seconds: int
-    """The number of seconds that the client/browser should cache a pre-flight response."""
 
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -1048,14 +1002,6 @@ class AccessPolicy(GenAccessPolicy):
         be UTC.
     :paramtype start: Optional[Union[str, datetime]]
     """
-
-    permission: Optional[Union[ContainerSasPermissions, str]]  # type: ignore [assignment]
-    """The permissions associated with the shared access signature. The user is restricted to
-        operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
-    """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
-    """The time at which the shared access signature becomes valid."""
 
     def __init__(
         self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
