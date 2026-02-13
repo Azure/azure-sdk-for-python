@@ -103,7 +103,7 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_service_list_containers_request(
+def build_service_list_containers_segment_request(  # pylint: disable=name-too-long
     *,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
@@ -709,7 +709,7 @@ def build_container_change_lease_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_container_list_blobs_request(
+def build_container_list_blob_flat_segment_request(  # pylint: disable=name-too-long
     *,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
@@ -3863,7 +3863,7 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_containers(
+    def list_containers_segment(
         self,
         *,
         prefix: Optional[str] = None,
@@ -3915,7 +3915,7 @@ class ServiceOperations:
 
         cls: ClsType[_models.ListContainersSegmentResponse] = kwargs.pop("cls", None)
 
-        _request = build_service_list_containers_request(
+        _request = build_service_list_containers_segment_request(
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -5674,7 +5674,7 @@ class ContainerOperations:
         params_added_on={"2026-02-06": ["start_from"]},
         api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
     )
-    def list_blobs(
+    def list_blob_flat_segment(
         self,
         *,
         prefix: Optional[str] = None,
@@ -5729,7 +5729,7 @@ class ContainerOperations:
 
         cls: ClsType[_models.ListBlobsResponse] = kwargs.pop("cls", None)
 
-        _request = build_container_list_blobs_request(
+        _request = build_container_list_blob_flat_segment_request(
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,

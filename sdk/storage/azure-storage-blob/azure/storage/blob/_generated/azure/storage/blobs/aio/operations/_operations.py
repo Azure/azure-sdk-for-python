@@ -76,8 +76,8 @@ from ...operations._operations import (
     build_container_get_access_policy_request,
     build_container_get_account_info_request,
     build_container_get_properties_request,
+    build_container_list_blob_flat_segment_request,
     build_container_list_blob_hierarchy_segment_request,
-    build_container_list_blobs_request,
     build_container_release_lease_request,
     build_container_rename_request,
     build_container_renew_lease_request,
@@ -99,7 +99,7 @@ from ...operations._operations import (
     build_service_get_properties_request,
     build_service_get_statistics_request,
     build_service_get_user_delegation_key_request,
-    build_service_list_containers_request,
+    build_service_list_containers_segment_request,
     build_service_set_properties_request,
     build_service_submit_batch_request,
 )
@@ -357,7 +357,7 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_containers(
+    async def list_containers_segment(
         self,
         *,
         prefix: Optional[str] = None,
@@ -409,7 +409,7 @@ class ServiceOperations:
 
         cls: ClsType[_models.ListContainersSegmentResponse] = kwargs.pop("cls", None)
 
-        _request = build_service_list_containers_request(
+        _request = build_service_list_containers_segment_request(
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -2166,7 +2166,7 @@ class ContainerOperations:
         params_added_on={"2026-02-06": ["start_from"]},
         api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
     )
-    async def list_blobs(
+    async def list_blob_flat_segment(
         self,
         *,
         prefix: Optional[str] = None,
@@ -2221,7 +2221,7 @@ class ContainerOperations:
 
         cls: ClsType[_models.ListBlobsResponse] = kwargs.pop("cls", None)
 
-        _request = build_container_list_blobs_request(
+        _request = build_container_list_blob_flat_segment_request(
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
