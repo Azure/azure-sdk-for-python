@@ -30,7 +30,7 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._generated.azure.storage.blobs import AzureBlobStorage
-from ._generated.azure.storage.blobs.models import SignedIdentifier
+from ._generated.azure.storage.blobs.models import SignedIdentifier, SignedIdentifiers
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     BlobNamesPaged,
@@ -782,7 +782,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         timeout = kwargs.pop('timeout', None)
         try:
             return cast(Dict[str, Union[str, datetime]], self._client.container.set_access_policy(
-                container_acl=signed_identifiers or None,
+                container_acl=SignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None,
                 timeout=timeout,
                 access=public_access,
                 lease_access_conditions=access_conditions,
