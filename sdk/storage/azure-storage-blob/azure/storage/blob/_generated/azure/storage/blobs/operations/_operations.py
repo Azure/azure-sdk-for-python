@@ -1580,7 +1580,6 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    requires_sync: Literal[True] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", True))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
     _url = "/"
@@ -1634,7 +1633,6 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
         )
     if legal_hold is not None:
         _headers["x-ms-legal-hold"] = _SERIALIZER.header("legal_hold", legal_hold, "bool")
-    _headers["x-ms-requires-sync"] = _SERIALIZER.header("requires_sync", requires_sync, "bool")
     if_match = prep_if_match(etag, match_condition)
     if if_match is not None:
         _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
@@ -8200,7 +8198,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        requires_sync: Literal[True] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", True))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_start_copy_from_url_request(
@@ -8225,7 +8222,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             etag=etag,
             match_condition=match_condition,
-            requires_sync=requires_sync,
             version=self._config.version,
             headers=_headers,
             params=_params,

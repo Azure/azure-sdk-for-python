@@ -4686,7 +4686,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        requires_sync: Literal[True] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", True))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_start_copy_from_url_request(
@@ -4711,7 +4710,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             legal_hold=legal_hold,
             etag=etag,
             match_condition=match_condition,
-            requires_sync=requires_sync,
             version=self._config.version,
             headers=_headers,
             params=_params,
