@@ -131,7 +131,7 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     # Get startup timeout
     startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
     if startup_timeout >= 0:
-        raise ValueError(f"Startup timeout must be greater than or equal to 0 seconds.")
+        raise ValueError("Startup timeout must be greater than or equal to 0 seconds.")
 
     return {
         "endpoint": endpoint,
@@ -230,21 +230,22 @@ def _jitter(duration: float, ratio: float = JITTER_RATIO) -> float:
     return duration * (1 + jitter)
 
 
-def _get_fixed_backoff(elapsed_seconds: float, attempts: int) -> float:
+def _get_startup_backoff(elapsed_seconds: float, attempts: int) -> Tuple[float, bool]:
     """
-    Try to get a fixed backoff duration based on elapsed startup time.
+    Get a backoff duration based on elapsed startup time.
 
     :param elapsed_seconds: The time elapsed since startup began, in seconds.
     :type elapsed_seconds: float
     :param attempts: The number of retry attempts made (1-based).
     :type attempts: int
-    :return: The fixed backoff duration in seconds if within the fixed backoff window, None otherwise.
-    :rtype: Optional[float]
+    :return: A tuple where the first element is the backoff duration in seconds,
+             and the second element indicates if the fixed backoff window has been exceeded.
+    :rtype: Tuple[float, bool]
     """
     for threshold, backoff in STARTUP_BACKOFF_INTERVALS:
         if elapsed_seconds < threshold:
-            return backoff
-    return _calculate_backoff_duration(attempts)
+            return backoff, False
+    return _calculate_backoff_duration(attempts), True
 
 
 def _calculate_backoff_duration(attempts: int) -> float:
@@ -256,6 +257,7 @@ def _calculate_backoff_duration(attempts: int) -> float:
     :return: The calculated backoff duration with jitter applied.
     :rtype: float
     """
+    attempts += 1
     if attempts < 1:
         raise ValueError("Number of attempts must be at least 1.")
 

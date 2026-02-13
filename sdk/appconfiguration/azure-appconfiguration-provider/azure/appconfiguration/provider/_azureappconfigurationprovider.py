@@ -35,7 +35,7 @@ from ._azureappconfigurationproviderbase import (
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,
-    _get_fixed_backoff,
+    _get_startup_backoff,
 )
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper as ConfigurationClient
 from ._user_agent import USER_AGENT
@@ -377,7 +377,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
     def _load_all(self, **kwargs: Any) -> None:
         startup_start_time = datetime.datetime.now()
-        attempts = 0
+        exponential_backoff_attempts = 0
         startup_exceptions: List[Exception] = []
 
         while True:
@@ -386,11 +386,13 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 return  # Successfully loaded
 
             # Calculate delay before next retry attempt
-            attempts += 1
-            delay = _get_fixed_backoff(elapsed_seconds, attempts)
+            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
+            delay, is_exponential_backoff = _get_startup_backoff(elapsed_seconds, exponential_backoff_attempts)
+
+            if is_exponential_backoff:
+                exponential_backoff_attempts += 1
 
             # Check if delay would exceed remaining timeout
-            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
             remaining_timeout = self._startup_timeout - elapsed_seconds
             if delay > remaining_timeout:
                 raise TimeoutError(
