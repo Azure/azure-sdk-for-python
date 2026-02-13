@@ -48,6 +48,12 @@
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
+# ServiceOwners: @lusu-msft @JC-386
+# ServiceLabel: %Hosted Agents
+
+# PRLabel: %Hosted Agents
+/sdk/agentserver/                                                    @lusu-msft @JC-386
+
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
@@ -80,7 +86,7 @@
 # PRLabel: %Batch
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
-# PRLabel: %CognitiveServices
+# PRLabel: %Cognitive - Mgmt
 /sdk/cognitiveservices/                                              @lmazuel
 
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang
@@ -139,8 +145,8 @@
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi @amruthashree18
 
-# ServiceLabel: %Content Safety
-# PRLabel: %Content Safety
+# ServiceLabel: %Cognitive - Content Safety
+# PRLabel: %Cognitive - Content Safety
 /sdk/contentsafety/                                                  @mengaims
 
 # ServiceLabel: %DevCenter
@@ -151,8 +157,8 @@
 # PRLabel: %Defender EASM
 /sdk/easm/                                                           @nathanfalke
 
-# ServiceLabel: %FaceAPI
-# PRLabel: %FaceAPI
+# ServiceLabel: %Cognitive - Face
+# PRLabel: %Cognitive - Face
 /sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
@@ -270,14 +276,10 @@
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
-
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang @pankopon @emilyjiji
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
-
-# PRLabel: %Models repository
-/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearning/                                                @shutchings
@@ -449,9 +451,6 @@
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
 
-# PRLabel: %Media
-/sdk/media/                                                          @naiteeks @giakas
-
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
 # ServiceOwners: @toddysm @northtyphoon
@@ -508,7 +507,7 @@
 # ServiceLabel: %API Management %Service Attention
 # ServiceOwners:          @miaojiang
 
-# ServiceLabel: %Application Insights %Service Attention
+# ServiceLabel: %Monitor - ApplicationInsights %Service Attention
 # ServiceOwners:          @azmonapplicationinsights
 
 # ServiceLabel: %App Services %Service Attention
@@ -643,9 +642,6 @@
 # ServiceLabel: %Devtestlab %Service Attention
 # ServiceOwners:          @Tanmayeekamath
 
-# ServiceLabel: %Device Provisioning Service %Service Attention
-# ServiceOwners:          @nberdy
-
 # ServiceLabel: %Functions %Service Attention
 # ServiceOwners:          @ahmedelnably @fabiocav
 
@@ -681,9 +677,6 @@
 
 # ServiceLabel: %Managed Identity %Service Attention
 # ServiceOwners:          @varunkch
-
-# ServiceLabel: %Managed Services %Service Attention
-# ServiceOwners:          @Lighthouse-Azure
 
 # ServiceLabel: %MariaDB %Service Attention
 # ServiceOwners:          @ambhatna @savjani
@@ -744,9 +737,6 @@
 
 # ServiceLabel: %Notification Hub %Service Attention
 # ServiceOwners:          @tjsomasundaram
-
-# ServiceLabel: %Operational Insights %Service Attention
-# ServiceOwners:          @AzmonLogA
 
 # ServiceLabel: %Policy %Service Attention
 # ServiceOwners:          @aperezcloud @kenieva

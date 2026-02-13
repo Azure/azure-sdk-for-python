@@ -25,7 +25,7 @@ class TestNetworkManagementLoadBalancerNetworkInterfacesOperationsAsync(AzureMgm
         response = self.client.load_balancer_network_interfaces.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

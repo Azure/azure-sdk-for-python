@@ -51,7 +51,7 @@ test = [
   "python-dotenv",
   "azure-identity",
   "soundfile",
-  "pyaudio; platform_python_implementation == 'CPython' and python_version < '3.13'",
+  "pyaudio; platform_python_implementation == 'CPython' and python_version < '3.13' and sys_platform == 'win32'",
 ]
 
 [project.urls]
@@ -77,3 +77,6 @@ pytyped = ["py.typed"]
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
+
+[tool.azure-sdk-conda]
+in_bundle = false

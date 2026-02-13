@@ -15,10 +15,29 @@ This directory contains sample applications demonstrating various capabilities o
 1. **Install dependencies**:
 
    ```bash
-   pip install azure-ai-voicelive[aiohttp] pyaudio python-dotenv
+   pip install azure-ai-voicelive[aiohttp] python-dotenv
    ```
 
-2. **Configure environment variables**:
+2. **Install PyAudio** (required for audio samples):
+
+   PyAudio requires PortAudio to be installed on your system:
+
+   - **Linux (Ubuntu/Debian)**:
+     ```bash
+     sudo apt-get install -y portaudio19-dev libasound2-dev
+     pip install pyaudio
+     ```
+   - **macOS**:
+     ```bash
+     brew install portaudio
+     pip install pyaudio
+     ```
+   - **Windows**:
+     ```bash
+     pip install pyaudio
+     ```
+
+3. **Configure environment variables**:
 
    Create a `.env` file at the root of the azure-ai-voicelive directory or in the samples directory with the following variables:
 
@@ -86,6 +105,7 @@ python basic_voice_assistant_async.py --help
 ## Sample descriptions
 
 - **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
+- **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using the `AgentSessionConfig` TypedDict. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, and conversation logging.
 - **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
 
 ## Troubleshooting
