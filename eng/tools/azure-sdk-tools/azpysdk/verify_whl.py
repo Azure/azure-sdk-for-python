@@ -62,7 +62,7 @@ def verify_whl_root_directory(
     expected_top_level_module: str,
     parsed_pkg: ParsedSetup,
     executable: str,
-    pypi_versions: List[str],
+    pypi_versions: Optional[List[str]] = None,
 ) -> bool:
     # Verify metadata compatibility with prior version
     version: str = parsed_pkg.version
