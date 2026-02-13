@@ -393,14 +393,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         startup_exceptions: List[Exception] = []
 
         while True:
-            # Check if we've exceeded the startup timeout
-            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
-            if elapsed_seconds >= self._startup_timeout:
-                raise TimeoutError(
-                    "The provider timed out while attempting to load.",
-                    startup_exceptions,
-                )
-
             # Try to initialize from all available clients
             if await self._try_initialize(startup_exceptions, **kwargs):
                 return  # Successfully loaded
@@ -434,12 +426,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
-
-        # Check if any selector uses snapshot_name
-        has_snapshot_selector = any(select.snapshot_name is not None for select in self._selects)
-        has_feature_flag_snapshot_selector = self._feature_flag_enabled and any(
-            select.snapshot_name is not None for select in self._feature_flag_selectors
-        )
 
         while client := self._replica_client_manager.get_next_active_client():
             headers = self._update_correlation_context_header(
@@ -488,17 +474,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
                 return True
-            except HttpResponseError as e:
-                # Check if this is a permanent error from snapshot loading (404 with snapshot selector)
-                if e.status_code == 404 and (has_snapshot_selector or has_feature_flag_snapshot_selector):
-                    # Snapshot not found is a permanent error, raise immediately without retrying
-                    logger.error("Failed to load snapshot from endpoint %s: %s", client.endpoint, e)
-                    raise e
-                # For other HTTP errors, treat as transient
-                logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, str(e))
-                self._replica_client_manager.backoff(client)
-                is_failover_request = True
-                startup_exceptions.append(e)
             except AzureError as e:
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
                 self._replica_client_manager.backoff(client)
