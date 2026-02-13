@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0 (2026-02-12)
+
+### Bugs Fixed
+
+  - Fixed import error when upgrading to latest azure-core
+
+### Other Changes
+
+  - Refreshed SDK code with latest code generator
+
 ## 1.1.0b2 (2024-11-05)
 
 ### Other Changes
