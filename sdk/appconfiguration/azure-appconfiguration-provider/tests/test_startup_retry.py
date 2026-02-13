@@ -174,15 +174,19 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
     def test_load_all_timeout_raises_timeout_error(self, mock_datetime, mock_sleep):
         """Test that _load_all raises TimeoutError when startup_timeout is exceeded."""
         from azure.appconfiguration.provider._azureappconfigurationprovider import AzureAppConfigurationProvider
+        from azure.appconfiguration.provider._azureappconfigurationproviderbase import AzureAppConfigurationProviderBase
 
-        # Create a mock provider
-        with patch.object(AzureAppConfigurationProvider, "__init__", lambda self, **kwargs: None):
+        # Create a mock provider - use a custom __init__ that calls base but doesn't set up client manager
+        def mock_init(self, **kwargs):
+            AzureAppConfigurationProviderBase.__init__(self, endpoint="http://test.endpoint", **kwargs)
+            self._startup_timeout = 1  # 1 second timeout
+            self._replica_client_manager = MagicMock()
+            self._secret_provider = MagicMock()
+            self._secret_provider.uses_key_vault = False
+
+        with patch.object(AzureAppConfigurationProvider, "__init__", mock_init):
             provider = AzureAppConfigurationProvider()
-            provider._startup_timeout = 1  # 1 second timeout
-            provider._replica_client_manager = MagicMock()
             provider._replica_client_manager.get_next_active_client.return_value = None
-            provider._secret_provider = MagicMock()
-            provider._secret_provider.uses_key_vault = False
 
             # Mock datetime to simulate time passing
             start_time = datetime.datetime(2026, 1, 1, 0, 0, 0)
@@ -203,18 +207,18 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
     def test_load_all_uses_fixed_backoff_initially(self, mock_sleep):
         """Test that _load_all uses fixed backoff during initial period."""
         from azure.appconfiguration.provider._azureappconfigurationprovider import AzureAppConfigurationProvider
+        from azure.appconfiguration.provider._azureappconfigurationproviderbase import AzureAppConfigurationProviderBase
 
-        with patch.object(AzureAppConfigurationProvider, "__init__", lambda self, **kwargs: None):
+        # Create a mock provider - use a custom __init__ that calls base but doesn't set up client manager
+        def mock_init(self, **kwargs):
+            AzureAppConfigurationProviderBase.__init__(self, endpoint="http://test.endpoint", **kwargs)
+            self._startup_timeout = 10
+            self._replica_client_manager = MagicMock()
+            self._secret_provider = MagicMock()
+            self._secret_provider.uses_key_vault = False
+
+        with patch.object(AzureAppConfigurationProvider, "__init__", mock_init):
             provider = AzureAppConfigurationProvider()
-            provider._startup_timeout = 10
-            provider._replica_client_manager = MagicMock()
-            provider._secret_provider = MagicMock()
-            provider._secret_provider.uses_key_vault = False
-            provider._selects = []
-            provider._feature_flag_enabled = False
-            provider._watched_settings = {}
-            provider._tracing_context = MagicMock()
-            provider._update_lock = MagicMock()
 
             # First attempt fails, second succeeds
             attempt_count = [0]
@@ -239,13 +243,18 @@ class TestLoadAllRetryBehavior(unittest.TestCase):
     def test_load_all_succeeds_on_first_try(self, mock_sleep):
         """Test that _load_all succeeds without retries when first attempt succeeds."""
         from azure.appconfiguration.provider._azureappconfigurationprovider import AzureAppConfigurationProvider
+        from azure.appconfiguration.provider._azureappconfigurationproviderbase import AzureAppConfigurationProviderBase
 
-        with patch.object(AzureAppConfigurationProvider, "__init__", lambda self, **kwargs: None):
+        # Create a mock provider - use a custom __init__ that calls base but doesn't set up client manager
+        def mock_init(self, **kwargs):
+            AzureAppConfigurationProviderBase.__init__(self, endpoint="http://test.endpoint", **kwargs)
+            self._startup_timeout = 100
+            self._replica_client_manager = MagicMock()
+            self._secret_provider = MagicMock()
+            self._secret_provider.uses_key_vault = False
+
+        with patch.object(AzureAppConfigurationProvider, "__init__", mock_init):
             provider = AzureAppConfigurationProvider()
-            provider._startup_timeout = 100
-            provider._replica_client_manager = MagicMock()
-            provider._secret_provider = MagicMock()
-            provider._secret_provider.uses_key_vault = False
 
             # First attempt succeeds
             provider._try_initialize = MagicMock(return_value=True)
