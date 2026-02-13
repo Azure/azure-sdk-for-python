@@ -3811,4 +3811,23 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         content = identity_blob.download_blob().readall()
         assert content == data
 
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_smart_rehydrate(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob.upload_blob(b"abc123", overwrite=True)
+        blob.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.ARCHIVE)
+        blob.set_standard_blob_tier(
+            standard_blob_tier=StandardBlobTier.SMART,
+            rehydrate_priority=RehydratePriority.HIGH
+        )
+
+        props = blob.get_blob_properties()
+        assert props is not None
+        assert props.archive_status == "rehydrate-pending-to-smart"
+
     # ------------------------------------------------------------------------------
