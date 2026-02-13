@@ -38,6 +38,7 @@
 ### Features Added
 
 - Added `TypeHandlerRegistry` to `azure.core.serialization` to allow developers to register custom serializers and deserializers for specific types or conditions.  #43051
+- Added `retry_jitter_factor` parameter to `RetryPolicy` and `AsyncRetryPolicy` to introduce randomized jitter in retry backoff delays. This helps avoid the situation where many clients or processes simultaneously retry a failed request and overwhelm a service. The jitter factor defaults to 0.2 (20% jitter) and can be set to 0 to disable jitter entirely.
 
 ### Bugs Fixed
 
