@@ -23,6 +23,7 @@ from ._operations import (
     _PageBlobClientOperationsMixin,
     _ServiceClientOperationsMixin,
 )
+from .._patch import RangeHeaderPolicy
 from .._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
@@ -161,6 +162,7 @@ class AzureBlobStorage:
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
+                    RangeHeaderPolicy(),
                     policies.RequestIdPolicy(**kwargs),
                     self._config.headers_policy,
                     self._config.user_agent_policy,

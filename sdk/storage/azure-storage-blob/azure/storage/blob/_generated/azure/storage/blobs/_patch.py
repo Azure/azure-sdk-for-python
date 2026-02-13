@@ -11,6 +11,7 @@ from typing import Any, Optional, TYPE_CHECKING, Union
 
 from azure.core import PipelineClient
 from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
@@ -26,6 +27,17 @@ from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+
+
+class RangeHeaderPolicy(SansIOHTTPPolicy):
+    """Policy that converts the 'Range' header to 'x-ms-range'.
+
+    """
+
+    def on_request(self, request: PipelineRequest) -> None:
+        range_value = request.http_request.headers.pop("Range", None)
+        if range_value is not None:
+            request.http_request.headers["x-ms-range"] = range_value
 
 
 class BlobClientConfiguration(GeneratedBlobClientConfiguration):
@@ -148,6 +160,7 @@ class AzureBlobStorage:
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
+                    RangeHeaderPolicy(),
                     policies.RequestIdPolicy(**kwargs),
                     self._config.headers_policy,
                     self._config.user_agent_policy,
@@ -187,7 +200,7 @@ class AzureBlobStorage:
         self._client.__exit__(*exc_details)
 
 
-__all__: list[str] = ["AzureBlobStorage", "BlobClientConfiguration"]
+__all__: list[str] = ["AzureBlobStorage", "BlobClientConfiguration", "RangeHeaderPolicy"]
 
 
 def patch_sdk():
