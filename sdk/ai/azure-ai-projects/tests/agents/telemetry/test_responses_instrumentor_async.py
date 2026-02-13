@@ -2948,7 +2948,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(self, **kwargs):
+    async def test_async_responses_stream_method_with_tools_with_content_recording_simple_format_attributes(
+        self, **kwargs
+    ):
         """Test async responses.stream() with tools, content recording, simple OTEL format (attribute mode)."""
         await self._test_async_responses_stream_method_with_tools_with_content_recording_impl(
             False, use_simple_tool_call_format=True, **kwargs
@@ -3170,7 +3172,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(self, **kwargs):
+    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_events(
+        self, **kwargs
+    ):
         """Test async responses.stream() with tools, without content recording, simple OTEL format (event mode)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(
             True, use_simple_tool_call_format=True, **kwargs
@@ -3179,7 +3183,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.HTTPX)
-    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(self, **kwargs):
+    async def test_async_responses_stream_method_with_tools_without_content_recording_simple_format_attributes(
+        self, **kwargs
+    ):
         """Test async responses.stream() with tools, without content recording, simple OTEL format (attribute mode)."""
         await self._test_async_responses_stream_method_with_tools_without_content_recording_impl(
             False, use_simple_tool_call_format=True, **kwargs
@@ -3682,7 +3688,7 @@ trigger:
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing async prompt agent with responses API (non-streaming).
-        
+
         Args:
             use_events: If True, use event-based message tracing. If False, use attribute-based.
             use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
@@ -3820,7 +3826,7 @@ trigger:
         self, use_events, use_simple_tool_call_format=False, **kwargs
     ):
         """Implementation for testing async prompt agent with responses API (streaming).
-        
+
         Args:
             use_events: If True, use event-based message tracing. If False, use attribute-based.
             use_simple_tool_call_format: If True, use simple OTEL-compliant tool call format.
