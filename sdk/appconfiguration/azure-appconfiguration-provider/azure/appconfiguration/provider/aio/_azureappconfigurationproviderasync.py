@@ -483,7 +483,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 startup_exceptions.append(e)
 
             except Exception as e:  # pylint: disable=broad-exception-caught
-                # For non-AzureError exceptions, check if they're failoverable
                 startup_exceptions.append(e)
 
         return False
