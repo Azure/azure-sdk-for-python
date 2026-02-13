@@ -1,3 +1,6 @@
 {
-  "apiVersion": "2025-05-15-preview"
+  "apiVersion": "2025-05-15-preview",
+  "apiVersions": {
+    "Azure.AI.Agents": "2025-05-15-preview"
+  }
 }
