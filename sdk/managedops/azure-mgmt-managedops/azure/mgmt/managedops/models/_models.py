@@ -614,20 +614,20 @@ class ManagedOpUpdate(_Model):
 class ManagedOpUpdateProperties(_Model):
     """Updatable properties in the ManagedOps resource.
 
-    :ivar desired_configuration: Desired configuration input by the user. Required.
+    :ivar desired_configuration: Desired configuration input by the user.
     :vartype desired_configuration: ~azure.mgmt.managedops.models.DesiredConfigurationUpdate
     """
 
-    desired_configuration: "_models.DesiredConfigurationUpdate" = rest_field(
+    desired_configuration: Optional["_models.DesiredConfigurationUpdate"] = rest_field(
         name="desiredConfiguration", visibility=["read", "create", "update"]
     )
-    """Desired configuration input by the user. Required."""
+    """Desired configuration input by the user."""
 
     @overload
     def __init__(
         self,
         *,
-        desired_configuration: "_models.DesiredConfigurationUpdate",
+        desired_configuration: Optional["_models.DesiredConfigurationUpdate"] = None,
     ) -> None: ...
 
     @overload
