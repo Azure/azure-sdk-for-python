@@ -4,7 +4,30 @@
 
 ### Features Added
 
+- **Agent Session Configuration**: Added `AgentSessionConfig` TypedDict for configuring Azure AI Foundry agents at connection time:
+  - `agent_name`: The name of the agent (required)
+  - `project_name`: The Foundry project containing the agent (required)
+  - `agent_version`: Optional version specification
+  - `conversation_id`: Optional existing conversation ID to continue
+  - `authentication_identity_client_id`: Optional client ID for authentication
+  - `foundry_resource_override`: Optional Foundry resource override
+- **Server Warning Events**: Added `ServerEventWarning` and `ServerEventWarningDetails` for handling non-fatal warnings from the service
+- **New Event Type**: Added `ServerEventType.WARNING` for warning event handling
+
 ### Breaking Changes
+
+- **Removed Foundry Agent Tools**: The following classes and enums related to Foundry agent tools have been removed:
+  - `FoundryAgentTool` - Use `AgentSessionConfig` with `connect()` instead
+  - `ResponseFoundryAgentCallItem`
+  - `FoundryAgentContextType` enum
+  - `ToolType.FOUNDRY_AGENT` enum value
+  - `ItemType.FOUNDRY_AGENT_CALL` enum value
+  - `ServerEventResponseFoundryAgentCallArgumentsDelta`
+  - `ServerEventResponseFoundryAgentCallArgumentsDone`
+  - `ServerEventResponseFoundryAgentCallInProgress`
+  - `ServerEventResponseFoundryAgentCallCompleted`
+  - `ServerEventResponseFoundryAgentCallFailed`
+  - Related `ServerEventType` enum values for Foundry agent events
 
 ### Bugs Fixed
 
@@ -15,11 +38,11 @@
 ### Features Added
 
 - **Support for Explicit Null Values**: Enhanced `RequestSession` to properly serialize explicitly set `None` values (e.g., `turn_detection=None` now correctly sends `"turn_detection": null` in the WebSocket message)
-- **Filler Response Configuration**: Added support for filler response generation during latency or tool calls:
-  - `BasicFillerResponseConfig` for static filler texts that are randomly selected
-  - `LlmFillerResponseConfig` for LLM-generated context-aware filler responses
-  - `FillerTrigger` enum with `latency` and `tool` triggers
-  - `filler_response` field in `RequestSession` and `ResponseSession`
+- **Interim Response Configuration**: Added support for interim response generation during latency or tool calls:
+  - `StaticInterimResponseConfig` for static interim response texts that are randomly selected
+  - `LlmInterimResponseConfig` for LLM-generated context-aware interim responses
+  - `InterimResponseTrigger` enum with `latency` and `tool` triggers
+  - `interim_response` field in `RequestSession` and `ResponseSession`
 - **Foundry Agent Integration**: Added support for Azure AI Foundry agents:
   - `FoundryAgentTool` for defining Foundry agent configurations
   - `ResponseFoundryAgentCallItem` for Foundry agent call responses
