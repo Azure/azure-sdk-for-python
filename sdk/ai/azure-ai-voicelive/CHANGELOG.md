@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b4 (Unreleased)
+## 1.2.0b4 (2026-02-12)
 
 ### Features Added
 
@@ -28,10 +28,6 @@
   - `ServerEventResponseFoundryAgentCallCompleted`
   - `ServerEventResponseFoundryAgentCallFailed`
   - Related `ServerEventType` enum values for Foundry agent events
-
-### Bugs Fixed
-
-### Other Changes
 
 ## 1.2.0b3 (2026-02-02)
 
