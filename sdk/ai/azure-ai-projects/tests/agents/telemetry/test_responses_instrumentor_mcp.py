@@ -91,7 +91,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input="Please summarize the Azure REST API specifications Readme",
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Collect approval requests
@@ -112,7 +112,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input=input_list,
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response2.output_text is not None
@@ -421,7 +421,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input="Please summarize the Azure REST API specifications Readme",
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Collect approval requests
@@ -442,7 +442,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input=input_list,
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response2.output_text is not None
@@ -738,7 +738,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input="Please summarize the Azure REST API specifications Readme",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Collect approval requests from stream
@@ -762,7 +762,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input=input_list,
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume second stream
@@ -1014,7 +1014,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input="Please summarize the Azure REST API specifications Readme",
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Collect approval requests from stream
@@ -1038,7 +1038,7 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
                     conversation=conversation.id,
                     input=input_list,
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 # Consume second stream

@@ -44,7 +44,9 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # [START tool_declaration]
-    tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
+    tool = WebSearchTool(
+        user_location=WebSearchApproximateLocation(type="approximate", country="GB", city="London", region="London")
+    )
     # [END tool_declaration]
     # Create Agent with web search tool
     agent = project_client.agents.create_version(
@@ -68,7 +70,7 @@ with (
         stream=True,
         input=user_input,
         tool_choice="required",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

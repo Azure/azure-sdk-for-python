@@ -63,7 +63,7 @@ class TestAgentImageGenerationAsync(TestBase):
             response = await openai_client.responses.create(
                 input="Generate an image of a blue circle on a white background.",
                 extra_headers={"x-ms-oai-image-generation-deployment": image_model},  # Required for image generation
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             print(f"Response created (id: {response.id})")

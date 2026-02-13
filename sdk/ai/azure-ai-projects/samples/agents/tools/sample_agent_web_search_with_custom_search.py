@@ -80,7 +80,7 @@ with (
         stream=True,
         input=user_input,
         tool_choice="required",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

@@ -72,7 +72,7 @@ with (
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the size of France in square miles?",
             )
             print(f"Response output: {response.output_text}")

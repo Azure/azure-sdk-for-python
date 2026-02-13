@@ -457,7 +457,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = await client.responses.create(
                 conversation=conversation.id,
                 input="What's the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -495,7 +495,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = await client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -718,7 +718,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream = await client.responses.create(
                 conversation=conversation.id,
                 input="What\\'s the weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the stream and collect function calls
@@ -757,7 +757,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             stream2 = await client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 stream=True,
             )
             # Consume the second stream
@@ -3241,7 +3241,7 @@ trigger:
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -3357,7 +3357,7 @@ trigger:
 
             response = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=False,
             )
@@ -3480,7 +3480,7 @@ trigger:
 
             stream = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )
@@ -3601,7 +3601,7 @@ trigger:
 
             stream = await openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": workflow_agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": workflow_agent.name, "type": "agent_reference"}},
                 input="Test workflow",
                 stream=True,
             )
@@ -3730,7 +3730,7 @@ trigger:
             # Create response with agent name and id
             response = await client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
             )
 
@@ -3868,7 +3868,7 @@ trigger:
             # Create streaming response with agent name and id
             stream = await client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the capital of France?",
                 stream=True,
             )

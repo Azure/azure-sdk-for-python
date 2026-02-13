@@ -27,8 +27,12 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
-                sample_filename="sample_agent_computer_use.py",
-                env_vars={"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
+                test_id="sample_agent_azure_function",
+                sample_filename="sample_agent_azure_function.py",
+                env_vars={"STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+                    "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+                    "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+                },
             ),
         ]
     )
@@ -47,6 +51,7 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_web_search.py",
                 "sample_agent_web_search_preview.py",
                 "sample_agent_web_search_with_custom_search.py",
+                "sample_agent_azure_function.py",
             ],
         ),
     )

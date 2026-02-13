@@ -78,7 +78,7 @@ with (
         stream=True,
         tool_choice="required",
         input="What is today's date and whether in Seattle?",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

@@ -245,7 +245,7 @@ trigger:
                 # Non-streaming request
                 response = openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=False,
                     # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
@@ -410,7 +410,7 @@ trigger:
                 # Non-streaming request
                 response = openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=False,
                     # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
@@ -577,7 +577,7 @@ trigger:
                 # Streaming request
                 stream = openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=True,
                     # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
@@ -745,7 +745,7 @@ trigger:
                 # Streaming request
                 stream = openai_client.responses.create(
                     conversation=conversation.id,
-                    extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
                     input="1 + 1 = ?",
                     stream=True,
                     # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},

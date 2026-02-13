@@ -35,7 +35,8 @@
 
 ### Sample updates
 
-* Add and update samples for `WebSearchTool` and `WebSearchPreviewTool`
+* Add and update samples for `AzureFunctionTool`, `WebSearchTool`, and `WebSearchPreviewTool`
+* All samples for agent tools call `responses.create` API with `agent_reference` instead of `agent`
 
 ## 2.0.0b3 (2026-01-06)
 

@@ -63,7 +63,7 @@ class TestAgentMCPAsync(TestBase):
             response = await openai_client.responses.create(
                 conversation=conversation.id,
                 input="Please summarize the Azure REST API specifications Readme",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -101,7 +101,7 @@ class TestAgentMCPAsync(TestBase):
             response = await openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")

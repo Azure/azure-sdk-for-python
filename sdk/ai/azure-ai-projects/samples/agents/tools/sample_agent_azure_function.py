@@ -14,16 +14,16 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) FABRIC_PROJECT_CONNECTION_ID - The Fabric project connection ID,
-       as found in the "Connections" tab in your Microsoft Foundry project.
-    4) FABRIC_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    3) STORAGE_INPUT_QUEUE_NAME - The name of the Azure Storage Queue to use for input and output in the Azure Function tool.
+    4) STORAGE_OUTPUT_QUEUE_NAME - The name of the Azure Storage Queue to use for output in the Azure Function tool.
+    5) STORAGE_QUEUE_SERVICE_ENDPOINT - The endpoint of the Azure Storage Queue service.
 """
 
 import os
@@ -31,13 +31,17 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    AzureFunctionBinding,
+    AzureFunctionDefinition,
+    AzureFunctionStorageQueue,
+    AzureFunctionDefinitionFunction,
+    AzureFunctionTool,
     PromptAgentDefinition,
-    MicrosoftFabricPreviewTool,
-    FabricDataAgentToolParameters,
-    ToolProjectConnection,
 )
 
 load_dotenv()
+
+agent = None
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 
@@ -46,12 +50,31 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
+
+
     # [START tool_declaration]
-    tool = MicrosoftFabricPreviewTool(
-        fabric_dataagent_preview=FabricDataAgentToolParameters(
-            project_connections=[
-                ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])
-            ]
+    tool = AzureFunctionTool(
+        azure_function=AzureFunctionDefinition(
+            input_binding=AzureFunctionBinding(
+                storage_queue=AzureFunctionStorageQueue(
+                    queue_name=os.environ["STORAGE_INPUT_QUEUE_NAME"],
+                    queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+                )
+            ),
+            output_binding=AzureFunctionBinding(
+                storage_queue=AzureFunctionStorageQueue(
+                    queue_name=os.environ["STORAGE_OUTPUT_QUEUE_NAME"],
+                    queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+                )
+            ),
+            function=AzureFunctionDefinitionFunction(
+                name="queue_trigger",
+                description="Get weather for a given location",
+                parameters={
+                    "type": "object",
+                    "properties": {"location": {"type": "string", "description": "location to determine weather for"}},
+                },
+            ),
         )
     )
     # [END tool_declaration]
@@ -66,7 +89,7 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = os.environ.get("FABRIC_USER_INPUT") or input("Enter your question: \n")
+    user_input = "What is the weather in Seattle?"
 
     response = openai_client.responses.create(
         tool_choice="required",
