@@ -16,6 +16,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ... import models as _models
+from ..._operations._patch import _convert_index_response
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
@@ -23,31 +24,6 @@ from ._operations import (
 
 if TYPE_CHECKING:
     import azure.search.documents.aio
-
-
-def _convert_index_response(response: _models.SearchIndexResponse) -> _models.SearchIndex:
-    """Convert a SearchIndexResponse to a SearchIndex."""
-    return _models.SearchIndex(
-        name=response.name,
-        fields=response.fields or [],
-        description=response.description,
-        scoring_profiles=response.scoring_profiles,
-        default_scoring_profile=response.default_scoring_profile,
-        cors_options=response.cors_options,
-        suggesters=response.suggesters,
-        analyzers=response.analyzers,
-        tokenizers=response.tokenizers,
-        token_filters=response.token_filters,
-        char_filters=response.char_filters,
-        normalizers=response.normalizers,
-        encryption_key=response.encryption_key,
-        similarity=response.similarity,
-        semantic_search=response.semantic,
-        vector_search=response.vector_search,
-        permission_filter_option=response.permission_filter_option,
-        purview_enabled=response.purview_enabled,
-        e_tag=response.e_tag,
-    )
 
 
 class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):

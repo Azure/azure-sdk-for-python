@@ -15,6 +15,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from ..models._models import SearchIndexResponse as _SearchIndexResponse
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
     import azure.search.documents
 
 
-def _convert_index_response(response: _models.SearchIndexResponse) -> _models.SearchIndex:
+def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchIndex:
     """Convert a SearchIndexResponse to a SearchIndex."""
     return _models.SearchIndex(
         name=response.name,
