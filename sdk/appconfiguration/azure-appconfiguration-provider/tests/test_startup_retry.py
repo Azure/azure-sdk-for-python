@@ -28,62 +28,77 @@ class TestGetFixedBackoff(unittest.TestCase):
     def test_within_first_interval(self):
         """Test backoff within first 100 seconds returns 5 seconds."""
         # STARTUP_BACKOFF_INTERVALS[0] = (100, 5)
-        result = _get_startup_backoff(0, 1)
-        self.assertEqual(result, 5)
+        backoff, exceeded = _get_startup_backoff(0, 1)
+        self.assertEqual(backoff, 5)
+        self.assertFalse(exceeded)
 
-        result = _get_startup_backoff(50, 1)
-        self.assertEqual(result, 5)
+        backoff, exceeded = _get_startup_backoff(50, 1)
+        self.assertEqual(backoff, 5)
+        self.assertFalse(exceeded)
 
-        result = _get_startup_backoff(99, 1)
-        self.assertEqual(result, 5)
+        backoff, exceeded = _get_startup_backoff(99, 1)
+        self.assertEqual(backoff, 5)
+        self.assertFalse(exceeded)
 
     def test_within_second_interval(self):
         """Test backoff within 100-200 seconds returns 10 seconds."""
         # STARTUP_BACKOFF_INTERVALS[1] = (200, 10)
-        result = _get_startup_backoff(100, 1)
-        self.assertEqual(result, 10)
+        backoff, exceeded = _get_startup_backoff(100, 1)
+        self.assertEqual(backoff, 10)
+        self.assertFalse(exceeded)
 
-        result = _get_startup_backoff(150, 1)
-        self.assertEqual(result, 10)
+        backoff, exceeded = _get_startup_backoff(150, 1)
+        self.assertEqual(backoff, 10)
+        self.assertFalse(exceeded)
 
-        result = _get_startup_backoff(199, 1)
-        self.assertEqual(result, 10)
+        backoff, exceeded = _get_startup_backoff(199, 1)
+        self.assertEqual(backoff, 10)
+        self.assertFalse(exceeded)
 
     def test_within_third_interval(self):
         """Test backoff within 200-600 seconds returns MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION."""
         # STARTUP_BACKOFF_INTERVALS[2] = (600, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
-        result = _get_startup_backoff(200, 1)
-        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
+        backoff, exceeded = _get_startup_backoff(200, 1)
+        self.assertEqual(backoff, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
+        self.assertFalse(exceeded)
 
-        result = _get_startup_backoff(400, 1)
-        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
+        backoff, exceeded = _get_startup_backoff(400, 1)
+        self.assertEqual(backoff, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
+        self.assertFalse(exceeded)
 
-        result = _get_startup_backoff(599, 1)
-        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
+        backoff, exceeded = _get_startup_backoff(599, 1)
+        self.assertEqual(backoff, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
+        self.assertFalse(exceeded)
 
     def test_beyond_fixed_window_uses_exponential_backoff(self):
         """Test backoff beyond 600 seconds returns exponential backoff based on attempts."""
         # Beyond fixed window, uses _calculate_backoff_duration(attempts)
-        result = _get_startup_backoff(600, 1)
-        self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)  # First attempt returns min
+        # For attempt 1, _calculate_backoff_duration(1) does attempts+=1 -> 2, so jittered(30 * 2^1 = 60)
+        backoff, exceeded = _get_startup_backoff(600, 1)
+        self.assertTrue(exceeded)
+        self.assertGreaterEqual(backoff, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertLessEqual(backoff, 60 * (1 + JITTER_RATIO))
 
-        # For attempt 2, should be jittered value around 60 (30 * 2^1)
-        result = _get_startup_backoff(1000, 2)
-        self.assertGreaterEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
-        self.assertLessEqual(result, 60 * (1 + JITTER_RATIO))
+        # For attempt 2, _calculate_backoff_duration(2) does attempts+=1 -> 3, so jittered(30 * 2^2 = 120)
+        backoff, exceeded = _get_startup_backoff(1000, 2)
+        self.assertTrue(exceeded)
+        self.assertGreaterEqual(backoff, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
+        self.assertLessEqual(backoff, 120 * (1 + JITTER_RATIO))
 
     def test_negative_elapsed_time(self):
         """Test negative elapsed time returns first interval backoff."""
-        result = _get_startup_backoff(-1, 1)
-        self.assertEqual(result, 5)
+        backoff, exceeded = _get_startup_backoff(-1, 1)
+        self.assertEqual(backoff, 5)
+        self.assertFalse(exceeded)
 
     def test_boundary_conditions(self):
         """Test exact boundary values."""
         # Test at exact threshold boundaries
         for threshold, expected_backoff in STARTUP_BACKOFF_INTERVALS:
             # Just before threshold should return expected_backoff
-            result = _get_startup_backoff(threshold - 0.001, 1)
-            self.assertEqual(result, expected_backoff)
+            backoff, exceeded = _get_startup_backoff(threshold - 0.001, 1)
+            self.assertEqual(backoff, expected_backoff)
+            self.assertFalse(exceeded)
 
 
 class TestCalculateBackoffDuration(unittest.TestCase):
@@ -91,41 +106,44 @@ class TestCalculateBackoffDuration(unittest.TestCase):
 
     def test_first_attempt_returns_min_duration(self):
         """Test that first attempt returns minimum duration."""
-        result = _calculate_backoff_duration(1)
+        # attempts=0 -> internal attempts=1 after +=1, returns MIN
+        result = _calculate_backoff_duration(0)
         self.assertEqual(result, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION)
 
     def test_exponential_growth(self):
         """Test that backoff grows exponentially."""
-        # For attempts=2, calculated = 30 * 2^1 = 60
-        result2 = _calculate_backoff_duration(2)
+        # Input attempts are shifted by +1 internally
+        # For attempts=1, internal=2, calculated = 30 * 2^1 = 60
+        result2 = _calculate_backoff_duration(1)
         # Result should be within jitter range of calculated value
         self.assertGreaterEqual(result2, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result2, 60 * (1 + JITTER_RATIO))
 
-        # For attempts=3, calculated = 30 * 2^2 = 120
-        result3 = _calculate_backoff_duration(3)
+        # For attempts=2, internal=3, calculated = 30 * 2^2 = 120
+        result3 = _calculate_backoff_duration(2)
         self.assertGreaterEqual(result3, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result3, 120 * (1 + JITTER_RATIO))
 
-        # For attempts=4, calculated = 30 * 2^3 = 240
-        result4 = _calculate_backoff_duration(4)
+        # For attempts=3, internal=4, calculated = 30 * 2^3 = 240
+        result4 = _calculate_backoff_duration(3)
         self.assertGreaterEqual(result4, MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 - JITTER_RATIO))
         self.assertLessEqual(result4, 240 * (1 + JITTER_RATIO))
 
     def test_caps_at_max_duration(self):
         """Test that backoff is capped at max duration."""
-        # For attempts=6, calculated = 30 * 2^5 = 960, but should cap at MAX_STARTUP_BACKOFF_DURATION (600)
-        result = _calculate_backoff_duration(6)
+        # For attempts=5, internal=6, calculated = 30 * 2^5 = 960, but should cap at MAX_STARTUP_BACKOFF_DURATION (600)
+        result = _calculate_backoff_duration(5)
         self.assertLessEqual(result, MAX_STARTUP_BACKOFF_DURATION * (1 + JITTER_RATIO))
 
     def test_invalid_attempts_raises_error(self):
         """Test that attempts < 1 raises ValueError."""
+        # Input -1 -> internal 0, which is < 1
         with self.assertRaises(ValueError) as context:
-            _calculate_backoff_duration(0)
+            _calculate_backoff_duration(-1)
         self.assertIn("Number of attempts must be at least 1", str(context.exception))
 
         with self.assertRaises(ValueError):
-            _calculate_backoff_duration(-1)
+            _calculate_backoff_duration(-2)
 
     def test_very_large_attempts_does_not_overflow(self):
         """Test that very large attempt numbers don't cause overflow."""
