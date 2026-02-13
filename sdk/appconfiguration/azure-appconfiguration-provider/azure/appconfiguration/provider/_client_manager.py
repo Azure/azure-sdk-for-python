@@ -142,7 +142,14 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             configurations: List[ConfigurationSetting] = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = self._client.get_snapshot(select.snapshot_name)
+                snapshot = None
+                try:
+                    snapshot = self._client.get_snapshot(select.snapshot_name)
+                except HttpResponseError as e:
+                    if e.status_code == 404:
+                        self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name)
+                        return []
+                    raise e
                 if snapshot.composition_type != SnapshotComposition.KEY:
                     raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
@@ -171,7 +178,14 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             feature_flags = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = self._client.get_snapshot(select.snapshot_name)
+                snapshot = None
+                try:
+                    snapshot = self._client.get_snapshot(select.snapshot_name)
+                except HttpResponseError as e:
+                    if e.status_code == 404:
+                        self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", select.snapshot_name)
+                        return []
+                    raise e
                 if snapshot.composition_type != SnapshotComposition.KEY:
                     raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
@@ -294,9 +308,6 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", snapshot_name)
                 return []
             raise e
-        if snapshot is None:
-            self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", snapshot_name)
-            return []
 
         if snapshot.composition_type != SnapshotComposition.KEY:
             raise ValueError(f"Snapshot '{snapshot_name}' does not have a 'key' composition type.")
