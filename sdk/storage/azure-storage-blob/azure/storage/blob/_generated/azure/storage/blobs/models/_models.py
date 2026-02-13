@@ -161,10 +161,10 @@ class BlobFlatListSegment(_Model):
     """The blob flat list segment.
 
     :ivar blob_items: The blob items. Required.
-    :vartype blob_items: ~azure.storage.blobs.models.BlobItemInternal
+    :vartype blob_items: ~azure.storage.blobs.models.BlobItem
     """
 
-    blob_items: list["_models.BlobItemInternal"] = rest_field(
+    blob_items: list["_models.BlobItem"] = rest_field(
         name="blobItems",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
@@ -177,7 +177,7 @@ class BlobFlatListSegment(_Model):
     def __init__(
         self,
         *,
-        blob_items: list["_models.BlobItemInternal"],
+        blob_items: list["_models.BlobItem"],
     ) -> None: ...
 
     @overload
@@ -195,12 +195,12 @@ class BlobHierarchyListSegment(_Model):
     """Represents an array of blobs.
 
     :ivar blob_items: The blob items. Required.
-    :vartype blob_items: ~azure.storage.blobs.models.BlobItemInternal
+    :vartype blob_items: ~azure.storage.blobs.models.BlobItem
     :ivar blob_prefixes: The blob prefixes.
     :vartype blob_prefixes: ~azure.storage.blobs.models.BlobPrefix
     """
 
-    blob_items: list["_models.BlobItemInternal"] = rest_field(
+    blob_items: list["_models.BlobItem"] = rest_field(
         name="blobItems",
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "itemsName": "Blob", "name": "Blob", "text": False, "unwrapped": True},
@@ -219,7 +219,7 @@ class BlobHierarchyListSegment(_Model):
     def __init__(
         self,
         *,
-        blob_items: list["_models.BlobItemInternal"],
+        blob_items: list["_models.BlobItem"],
         blob_prefixes: Optional[list["_models.BlobPrefix"]] = None,
     ) -> None: ...
 
@@ -234,7 +234,7 @@ class BlobHierarchyListSegment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobItemInternal(_Model):
+class BlobItem(_Model):
     """An Azure Storage Blob.
 
     :ivar name: The name of the blob. Required.
@@ -248,7 +248,7 @@ class BlobItemInternal(_Model):
     :ivar is_current_version: Whether the blob is the current version.
     :vartype is_current_version: bool
     :ivar properties: The properties of the blob. Required.
-    :vartype properties: ~azure.storage.blobs.models.BlobPropertiesInternal
+    :vartype properties: ~azure.storage.blobs.models.BlobProperties
     :ivar metadata: The metadata of the blob.
     :vartype metadata: ~azure.storage.blobs.models.BlobMetadata
     :ivar blob_tags: The tags of the blob.
@@ -286,7 +286,7 @@ class BlobItemInternal(_Model):
         xml={"attribute": False, "name": "IsCurrentVersion", "text": False, "unwrapped": False},
     )
     """Whether the blob is the current version."""
-    properties: "_models.BlobPropertiesInternal" = rest_field(
+    properties: "_models.BlobProperties" = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Properties", "text": False, "unwrapped": False},
     )
@@ -324,7 +324,7 @@ class BlobItemInternal(_Model):
         name: "_models.BlobName",
         deleted: bool,
         snapshot: str,
-        properties: "_models.BlobPropertiesInternal",
+        properties: "_models.BlobProperties",
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
         metadata: Optional["_models.BlobMetadata"] = None,
@@ -451,7 +451,7 @@ class BlobPrefix(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobPropertiesInternal(_Model):
+class BlobProperties(_Model):
     """The properties of a blob.
 
     :ivar creation_time: The date-time the blob was created in RFC1123 format.
@@ -1729,91 +1729,6 @@ class KeyInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListBlobsFlatSegmentResponse(_Model):
-    """An enumeration of blobs.
-
-    :ivar service_endpoint: The service endpoint. Required.
-    :vartype service_endpoint: str
-    :ivar container_name: The container name. Required.
-    :vartype container_name: str
-    :ivar prefix: The prefix of the blobs.
-    :vartype prefix: str
-    :ivar marker: The marker of the blobs.
-    :vartype marker: str
-    :ivar max_results: The max results of the blobs.
-    :vartype max_results: int
-    :ivar segment: The blob segment. Required.
-    :vartype segment: ~azure.storage.blobs.models.BlobFlatListSegment
-    :ivar next_marker: The next marker of the blobs.
-    :vartype next_marker: str
-    """
-
-    service_endpoint: str = rest_field(
-        name="serviceEndpoint",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
-    )
-    """The service endpoint. Required."""
-    container_name: str = rest_field(
-        name="containerName",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": True, "name": "ContainerName", "text": False, "unwrapped": False},
-    )
-    """The container name. Required."""
-    prefix: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
-    )
-    """The prefix of the blobs."""
-    marker: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
-    )
-    """The marker of the blobs."""
-    max_results: Optional[int] = rest_field(
-        name="maxResults",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
-    )
-    """The max results of the blobs."""
-    segment: "_models.BlobFlatListSegment" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Blobs", "text": False, "unwrapped": False},
-    )
-    """The blob segment. Required."""
-    next_marker: Optional[str] = rest_field(
-        name="nextMarker",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
-    )
-    """The next marker of the blobs."""
-
-    _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
-
-    @overload
-    def __init__(
-        self,
-        *,
-        service_endpoint: str,
-        container_name: str,
-        segment: "_models.BlobFlatListSegment",
-        prefix: Optional[str] = None,
-        marker: Optional[str] = None,
-        max_results: Optional[int] = None,
-        next_marker: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ListBlobsHierarchySegmentResponse(_Model):
     """An enumeration of blobs.
 
@@ -1890,6 +1805,91 @@ class ListBlobsHierarchySegmentResponse(_Model):
         container_name: str,
         segment: "_models.BlobHierarchyListSegment",
         delimiter: Optional[str] = None,
+        prefix: Optional[str] = None,
+        marker: Optional[str] = None,
+        max_results: Optional[int] = None,
+        next_marker: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ListBlobsResponse(_Model):
+    """An enumeration of blobs.
+
+    :ivar service_endpoint: The service endpoint. Required.
+    :vartype service_endpoint: str
+    :ivar container_name: The container name. Required.
+    :vartype container_name: str
+    :ivar prefix: The prefix of the blobs.
+    :vartype prefix: str
+    :ivar marker: The marker of the blobs.
+    :vartype marker: str
+    :ivar max_results: The max results of the blobs.
+    :vartype max_results: int
+    :ivar segment: The blob segment. Required.
+    :vartype segment: ~azure.storage.blobs.models.BlobFlatListSegment
+    :ivar next_marker: The next marker of the blobs.
+    :vartype next_marker: str
+    """
+
+    service_endpoint: str = rest_field(
+        name="serviceEndpoint",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ServiceEndpoint", "text": False, "unwrapped": False},
+    )
+    """The service endpoint. Required."""
+    container_name: str = rest_field(
+        name="containerName",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": True, "name": "ContainerName", "text": False, "unwrapped": False},
+    )
+    """The container name. Required."""
+    prefix: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Prefix", "text": False, "unwrapped": False},
+    )
+    """The prefix of the blobs."""
+    marker: Optional[str] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Marker", "text": False, "unwrapped": False},
+    )
+    """The marker of the blobs."""
+    max_results: Optional[int] = rest_field(
+        name="maxResults",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "MaxResults", "text": False, "unwrapped": False},
+    )
+    """The max results of the blobs."""
+    segment: "_models.BlobFlatListSegment" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Blobs", "text": False, "unwrapped": False},
+    )
+    """The blob segment. Required."""
+    next_marker: Optional[str] = rest_field(
+        name="nextMarker",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "NextMarker", "text": False, "unwrapped": False},
+    )
+    """The next marker of the blobs."""
+
+    _xml = {"attribute": False, "name": "EnumerationResults", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        service_endpoint: str,
+        container_name: str,
+        segment: "_models.BlobFlatListSegment",
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
@@ -2575,58 +2575,103 @@ class StaticWebsite(_Model):
 class StorageError(_Model):
     """The error response.
 
-    :ivar code: The error code.
-    :vartype code: str
+    This defines the wire format only. Language SDKs wrap this in idiomatic error types.
+
+    :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
+     "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
+     "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
+     "InsufficientAccountPermissions", "InternalError", "InvalidAuthenticationInfo",
+     "InvalidHeaderValue", "InvalidHttpVerb", "InvalidInput", "InvalidMd5", "InvalidMetadata",
+     "InvalidQueryParameterValue", "InvalidRange", "InvalidRequestUrl", "InvalidUri",
+     "InvalidXmlDocument", "InvalidXmlNodeValue", "Md5Mismatch", "MetadataTooLarge",
+     "MissingContentLengthHeader", "MissingRequiredXmlNode", "MissingRequiredHeader",
+     "MissingRequiredQueryParameter", "MultipleConditionHeadersNotSupported", "OperationTimedOut",
+     "OutOfRangeInput", "OutOfRangeQueryParameterValue", "RequestBodyTooLarge",
+     "ResourceTypeMismatch", "RequestUrlFailedToParse", "ResourceAlreadyExists", "ResourceNotFound",
+     "ServerBusy", "UnsupportedHeader", "UnsupportedXmlNode", "UnsupportedQueryParameter",
+     "UnsupportedHttpVerb", "AppendPositionConditionNotMet", "BlobAlreadyExists",
+     "BlobImmutableDueToPolicy", "BlobNotFound", "BlobOverwritten",
+     "BlobTierInadequateForContentLength", "BlobUsesCustomerSpecifiedEncryption",
+     "BlockCountExceedsLimit", "BlockListTooLong", "CannotChangeToLowerTier",
+     "CannotVerifyCopySource", "ContainerAlreadyExists", "ContainerBeingDeleted",
+     "ContainerDisabled", "ContainerNotFound", "ContentLengthLargerThanTierLimit",
+     "CopyAcrossAccountsNotSupported", "CopyIdMismatch", "FeatureVersionMismatch",
+     "IncrementalCopyBlobMismatch", "IncrementalCopyOfEarlierVersionSnapshotNotAllowed",
+     "IncrementalCopySourceMustBeSnapshot", "InfiniteLeaseDurationRequired", "InvalidBlobOrBlock",
+     "InvalidBlobTier", "InvalidBlobType", "InvalidBlockId", "InvalidBlockList", "InvalidOperation",
+     "InvalidPageRange", "InvalidSourceBlobType", "InvalidSourceBlobUrl",
+     "InvalidVersionForPageBlobOperation", "LeaseAlreadyPresent", "LeaseAlreadyBroken",
+     "LeaseIdMismatchWithBlobOperation", "LeaseIdMismatchWithContainerOperation",
+     "LeaseIdMismatchWithLeaseOperation", "LeaseIdMissing", "LeaseIsBreakingAndCannotBeAcquired",
+     "LeaseIsBreakingAndCannotBeChanged", "LeaseIsBrokenAndCannotBeRenewed", "LeaseLost",
+     "LeaseNotPresentWithBlobOperation", "LeaseNotPresentWithContainerOperation",
+     "LeaseNotPresentWithLeaseOperation", "MaxBlobSizeConditionNotMet", "NoPendingCopyOperation",
+     "OperationNotAllowedOnIncrementalCopyBlob", "PendingCopyOperation", "PreviousSnapshotNotFound",
+     "PreviousSnapshotOperationNotSupported", "PreviousSnapshotCannotBeNewer",
+     "SequenceNumberConditionNotMet", "SequenceNumberIncrementTooLarge", "SnapshotCountExceeded",
+     "SnapshotOperationRateExceeded", "SnapshotsPresent", "SourceConditionNotMet", "SystemInUse",
+     "TargetConditionNotMet", "UnauthorizedBlobOverwrite", "BlobBeingRehydrated", "BlobArchived",
+     "BlobNotArchived", "AuthorizationSourceIPMismatch", "AuthorizationProtocolMismatch",
+     "AuthorizationPermissionMismatch", "AuthorizationServiceMismatch",
+     "AuthorizationResourceTypeMismatch", and "BlobAccessTierNotSupportedForAccountType".
+    :vartype code: str or ~azure.storage.blobs.models.StorageErrorCode
     :ivar message: The error message.
     :vartype message: str
-    :ivar copy_source_status_code: Copy source status code.
-    :vartype copy_source_status_code: int
-    :ivar copy_source_error_code: Copy source error code.
-    :vartype copy_source_error_code: str
-    :ivar copy_source_error_message: Copy source error message.
-    :vartype copy_source_error_message: str
     """
 
-    code: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
+    code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
+        name="Code", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The error code."""
-    message: Optional[str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
-    )
+    """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
+     \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
+     \"ConditionHeadersNotSupported\", \"ConditionNotMet\", \"EmptyMetadataKey\",
+     \"InsufficientAccountPermissions\", \"InternalError\", \"InvalidAuthenticationInfo\",
+     \"InvalidHeaderValue\", \"InvalidHttpVerb\", \"InvalidInput\", \"InvalidMd5\",
+     \"InvalidMetadata\", \"InvalidQueryParameterValue\", \"InvalidRange\", \"InvalidRequestUrl\",
+     \"InvalidUri\", \"InvalidXmlDocument\", \"InvalidXmlNodeValue\", \"Md5Mismatch\",
+     \"MetadataTooLarge\", \"MissingContentLengthHeader\", \"MissingRequiredXmlNode\",
+     \"MissingRequiredHeader\", \"MissingRequiredQueryParameter\",
+     \"MultipleConditionHeadersNotSupported\", \"OperationTimedOut\", \"OutOfRangeInput\",
+     \"OutOfRangeQueryParameterValue\", \"RequestBodyTooLarge\", \"ResourceTypeMismatch\",
+     \"RequestUrlFailedToParse\", \"ResourceAlreadyExists\", \"ResourceNotFound\", \"ServerBusy\",
+     \"UnsupportedHeader\", \"UnsupportedXmlNode\", \"UnsupportedQueryParameter\",
+     \"UnsupportedHttpVerb\", \"AppendPositionConditionNotMet\", \"BlobAlreadyExists\",
+     \"BlobImmutableDueToPolicy\", \"BlobNotFound\", \"BlobOverwritten\",
+     \"BlobTierInadequateForContentLength\", \"BlobUsesCustomerSpecifiedEncryption\",
+     \"BlockCountExceedsLimit\", \"BlockListTooLong\", \"CannotChangeToLowerTier\",
+     \"CannotVerifyCopySource\", \"ContainerAlreadyExists\", \"ContainerBeingDeleted\",
+     \"ContainerDisabled\", \"ContainerNotFound\", \"ContentLengthLargerThanTierLimit\",
+     \"CopyAcrossAccountsNotSupported\", \"CopyIdMismatch\", \"FeatureVersionMismatch\",
+     \"IncrementalCopyBlobMismatch\", \"IncrementalCopyOfEarlierVersionSnapshotNotAllowed\",
+     \"IncrementalCopySourceMustBeSnapshot\", \"InfiniteLeaseDurationRequired\",
+     \"InvalidBlobOrBlock\", \"InvalidBlobTier\", \"InvalidBlobType\", \"InvalidBlockId\",
+     \"InvalidBlockList\", \"InvalidOperation\", \"InvalidPageRange\", \"InvalidSourceBlobType\",
+     \"InvalidSourceBlobUrl\", \"InvalidVersionForPageBlobOperation\", \"LeaseAlreadyPresent\",
+     \"LeaseAlreadyBroken\", \"LeaseIdMismatchWithBlobOperation\",
+     \"LeaseIdMismatchWithContainerOperation\", \"LeaseIdMismatchWithLeaseOperation\",
+     \"LeaseIdMissing\", \"LeaseIsBreakingAndCannotBeAcquired\",
+     \"LeaseIsBreakingAndCannotBeChanged\", \"LeaseIsBrokenAndCannotBeRenewed\", \"LeaseLost\",
+     \"LeaseNotPresentWithBlobOperation\", \"LeaseNotPresentWithContainerOperation\",
+     \"LeaseNotPresentWithLeaseOperation\", \"MaxBlobSizeConditionNotMet\",
+     \"NoPendingCopyOperation\", \"OperationNotAllowedOnIncrementalCopyBlob\",
+     \"PendingCopyOperation\", \"PreviousSnapshotNotFound\",
+     \"PreviousSnapshotOperationNotSupported\", \"PreviousSnapshotCannotBeNewer\",
+     \"SequenceNumberConditionNotMet\", \"SequenceNumberIncrementTooLarge\",
+     \"SnapshotCountExceeded\", \"SnapshotOperationRateExceeded\", \"SnapshotsPresent\",
+     \"SourceConditionNotMet\", \"SystemInUse\", \"TargetConditionNotMet\",
+     \"UnauthorizedBlobOverwrite\", \"BlobBeingRehydrated\", \"BlobArchived\", \"BlobNotArchived\",
+     \"AuthorizationSourceIPMismatch\", \"AuthorizationProtocolMismatch\",
+     \"AuthorizationPermissionMismatch\", \"AuthorizationServiceMismatch\",
+     \"AuthorizationResourceTypeMismatch\", and \"BlobAccessTierNotSupportedForAccountType\"."""
+    message: Optional[str] = rest_field(name="Message", visibility=["read", "create", "update", "delete", "query"])
     """The error message."""
-    copy_source_status_code: Optional[int] = rest_field(
-        name="copySourceStatusCode",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "CopySourceStatusCode", "text": False, "unwrapped": False},
-    )
-    """Copy source status code."""
-    copy_source_error_code: Optional[str] = rest_field(
-        name="copySourceErrorCode",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "CopySourceErrorCode", "text": False, "unwrapped": False},
-    )
-    """Copy source error code."""
-    copy_source_error_message: Optional[str] = rest_field(
-        name="copySourceErrorMessage",
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "CopySourceErrorMessage", "text": False, "unwrapped": False},
-    )
-    """Copy source error message."""
-
-    _xml = {"attribute": False, "name": "StorageError", "text": False, "unwrapped": False}
 
     @overload
     def __init__(
         self,
         *,
-        code: Optional[str] = None,
+        code: Optional[Union[str, "_models.StorageErrorCode"]] = None,
         message: Optional[str] = None,
-        copy_source_status_code: Optional[int] = None,
-        copy_source_error_code: Optional[str] = None,
-        copy_source_error_message: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2803,9 +2848,9 @@ class UserDelegationKey(_Model):
     :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
     :vartype signed_tid: str
     :ivar signed_start: The date-time the key is active. Required.
-    :vartype signed_start: ~datetime.datetime
+    :vartype signed_start: str
     :ivar signed_expiry: The date-time the key expires. Required.
-    :vartype signed_expiry: ~datetime.datetime
+    :vartype signed_expiry: str
     :ivar signed_service: Abbreviation of the Azure Storage service that accepts the key. Required.
     :vartype signed_service: str
     :ivar signed_version: The service version that created the key. Required.
@@ -2829,17 +2874,15 @@ class UserDelegationKey(_Model):
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
     )
     """The Azure Active Directory tenant ID in GUID format. Required."""
-    signed_start: datetime.datetime = rest_field(
+    signed_start: str = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
         xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
     )
     """The date-time the key is active. Required."""
-    signed_expiry: datetime.datetime = rest_field(
+    signed_expiry: str = rest_field(
         name="signedExpiry",
         visibility=["read", "create", "update", "delete", "query"],
-        format="rfc3339",
         xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
     )
     """The date-time the key expires. Required."""
@@ -2876,8 +2919,8 @@ class UserDelegationKey(_Model):
         *,
         signed_oid: str,
         signed_tid: str,
-        signed_start: datetime.datetime,
-        signed_expiry: datetime.datetime,
+        signed_start: str,
+        signed_expiry: str,
         signed_service: str,
         signed_version: str,
         value: bytes,

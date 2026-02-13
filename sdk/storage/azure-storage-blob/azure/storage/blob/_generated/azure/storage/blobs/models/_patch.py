@@ -536,9 +536,14 @@ class LeaseAccessConditions(_Model):
         super().__init__(*args, **kwargs)
 
 
+
+# Alias: the old autorest-generated name was BlobItemInternal; the new TypeSpec-generated name is BlobItem.
+from ._models import BlobItem as BlobItemInternal  # noqa: E402
+
 __all__: list[str] = [
     "AppendPositionAccessConditions",
     "BlobHTTPHeaders",
+    "BlobItemInternal",
     "BlobModifiedAccessConditions",
     "ContainerCpkScopeInfo",
     "CpkInfo",
@@ -549,6 +554,7 @@ __all__: list[str] = [
     "SourceModifiedAccessConditions",
     "LeaseAccessConditions",
 ]
+
 
 
 def patch_sdk():

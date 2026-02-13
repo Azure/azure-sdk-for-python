@@ -41,6 +41,7 @@ from .policies import (
     StorageHosts,
     StorageRequestHook,
 )
+from .._generated.azure.storage.blobs._patch import RangeHeaderPolicy
 from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
@@ -127,6 +128,7 @@ class AsyncStorageAccountHostsMixin(object):
             transport = AioHttpTransport(**kwargs)
         hosts = self._hosts
         policies = [
+            RangeHeaderPolicy(),
             QueueMessagePolicy(),
             config.proxy_policy,
             config.user_agent_policy,

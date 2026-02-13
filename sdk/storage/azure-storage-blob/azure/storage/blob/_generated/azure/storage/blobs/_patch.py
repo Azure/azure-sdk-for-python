@@ -7,32 +7,21 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.core.rest import HttpRequest, HttpResponse
 
+from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
-from ._operations import (
-    _AppendBlobClientOperationsMixin,
-    _BlobClientOperationsMixin,
-    _BlockBlobClientOperationsMixin,
-    _ContainerClientOperationsMixin,
-    _PageBlobClientOperationsMixin,
-    _ServiceClientOperationsMixin,
-)
-from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
 class RangeHeaderPolicy(SansIOHTTPPolicy):
-    """Policy that converts the 'Range' header to 'x-ms-range'.
-
-    """
+    """Policy that converts the 'Range' header to 'x-ms-range'."""
 
     def on_request(self, request: PipelineRequest) -> None:
         range_value = request.http_request.headers.pop("Range", None)
@@ -72,76 +61,17 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         self._configure(**kwargs)
 
 
-class _ServiceOperationsWrapper(_ServiceClientOperationsMixin):
-    """Wrapper to provide service operations with shared pipeline client."""
-
-    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
-        self._config = config
-        self._client = client
-        self._serialize = serialize
-        self._deserialize = deserialize
-
-
-class _ContainerOperationsWrapper(_ContainerClientOperationsMixin):
-    """Wrapper to provide container operations with shared pipeline client."""
-
-    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
-        self._config = config
-        self._client = client
-        self._serialize = serialize
-        self._deserialize = deserialize
-
-
-class _BlobOperationsWrapper(_BlobClientOperationsMixin):
-    """Wrapper to provide blob operations with shared pipeline client."""
-
-    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
-        self._config = config
-        self._client = client
-        self._serialize = serialize
-        self._deserialize = deserialize
-
-
-class _PageBlobOperationsWrapper(_PageBlobClientOperationsMixin):
-    """Wrapper to provide page blob operations with shared pipeline client."""
-
-    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
-        self._config = config
-        self._client = client
-        self._serialize = serialize
-        self._deserialize = deserialize
-
-
-class _AppendBlobOperationsWrapper(_AppendBlobClientOperationsMixin):
-    """Wrapper to provide append blob operations with shared pipeline client."""
-
-    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
-        self._config = config
-        self._client = client
-        self._serialize = serialize
-        self._deserialize = deserialize
-
-
-class _BlockBlobOperationsWrapper(_BlockBlobClientOperationsMixin):
-    """Wrapper to provide block blob operations with shared pipeline client."""
-
-    def __init__(self, config: Any, client: PipelineClient, serialize: Serializer, deserialize: Deserializer) -> None:
-        self._config = config
-        self._client = client
-        self._serialize = serialize
-        self._deserialize = deserialize
-
-
-class AzureBlobStorage:
-    """Combined client that exposes all blob storage operations as attributes.
-
-    This class wraps the individual operation mixins and exposes them as attributes
-    to maintain backward compatibility with the previous autorest-generated client structure.
+class AzureBlobStorage(GeneratedBlobClient):
+    """Subclass of the generated BlobClient that allows optional credentials,
+    accepts a pre-built pipeline, and injects the RangeHeaderPolicy.
 
     :param url: The host name of the blob storage account.
     :type url: str
     :param credential: Credential used to authenticate requests to the service.
-    :type credential: ~azure.core.credentials.TokenCredential
+     Can be None for anonymous access.
+    :type credential: ~azure.core.credentials.TokenCredential or None
+    :keyword pipeline: A pre-built pipeline to use instead of constructing one.
+    :paramtype pipeline: ~azure.core.pipeline.Pipeline
     :keyword version: Specifies the version of the operation to use for this request.
     :paramtype version: str
     """
@@ -149,14 +79,24 @@ class AzureBlobStorage:
     def __init__(
         self, url: str, credential: Optional["TokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
+        from azure.core.pipeline import policies
+
+        from ._utils.serialization import Deserializer, Serializer
+        from .operations import (
+            AppendBlobOperations,
+            BlobOperations,
+            BlockBlobOperations,
+            ContainerOperations,
+            PageBlobOperations,
+            ServiceOperations,
+        )
+
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
             self._client = PipelineClient(base_url=_endpoint, pipeline=pipeline)
         else:
-            from azure.core.pipeline import policies
-
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
@@ -181,26 +121,15 @@ class AzureBlobStorage:
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
 
-        # Create operation wrappers as attributes
-        self.service = _ServiceOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-        self.container = _ContainerOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-        self.blob = _BlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-        self.page_blob = _PageBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-        self.append_blob = _AppendBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-        self.block_blob = _BlockBlobOperationsWrapper(self._config, self._client, self._serialize, self._deserialize)
-
-    def close(self) -> None:
-        self._client.close()
-
-    def __enter__(self) -> "AzureBlobStorage":
-        self._client.__enter__()
-        return self
-
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.container = ContainerOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.blob = BlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.append_blob = AppendBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.block_blob = BlockBlobOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.page_blob = PageBlobOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-__all__: list[str] = ["AzureBlobStorage", "BlobClientConfiguration", "RangeHeaderPolicy"]
+__all__: list[str] = ["AzureBlobStorage"]
 
 
 def patch_sdk():

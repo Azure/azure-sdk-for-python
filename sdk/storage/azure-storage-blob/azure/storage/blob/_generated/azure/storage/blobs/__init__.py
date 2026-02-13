@@ -12,12 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._client import ServiceClient  # type: ignore
-from ._client import ContainerClient  # type: ignore
 from ._client import BlobClient  # type: ignore
-from ._client import PageBlobClient  # type: ignore
-from ._client import AppendBlobClient  # type: ignore
-from ._client import BlockBlobClient  # type: ignore
 from ._version import VERSION
 
 __version__ = VERSION
@@ -30,12 +25,7 @@ except ImportError:
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ServiceClient",
-    "ContainerClient",
     "BlobClient",
-    "PageBlobClient",
-    "AppendBlobClient",
-    "BlockBlobClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 

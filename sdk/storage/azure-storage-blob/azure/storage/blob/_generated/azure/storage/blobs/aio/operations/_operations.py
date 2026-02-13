@@ -28,7 +28,11 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._operations._operations import (
+from ..._utils.model_base import Model as _Model, _deserialize, _deserialize_xml, _failsafe_deserialize, _get_element
+from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.utils import prepare_multipart_form_data
+from ..._validation import api_version_validation
+from ...operations._operations import (
     build_append_blob_append_block_from_url_request,
     build_append_blob_append_block_request,
     build_append_blob_create_request,
@@ -72,8 +76,8 @@ from ..._operations._operations import (
     build_container_get_access_policy_request,
     build_container_get_account_info_request,
     build_container_get_properties_request,
-    build_container_list_blob_flat_segment_request,
     build_container_list_blob_hierarchy_segment_request,
+    build_container_list_blobs_request,
     build_container_release_lease_request,
     build_container_rename_request,
     build_container_renew_lease_request,
@@ -95,29 +99,32 @@ from ..._operations._operations import (
     build_service_get_properties_request,
     build_service_get_statistics_request,
     build_service_get_user_delegation_key_request,
-    build_service_list_containers_segment_request,
+    build_service_list_containers_request,
     build_service_set_properties_request,
     build_service_submit_batch_request,
 )
-from ..._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize_xml, _get_element
-from ..._utils.utils import ClientMixinABC, prepare_multipart_form_data
-from ..._validation import api_version_validation
-from .._configuration import (
-    AppendBlobClientConfiguration,
-    BlobClientConfiguration,
-    BlockBlobClientConfiguration,
-    ContainerClientConfiguration,
-    PageBlobClientConfiguration,
-    ServiceClientConfiguration,
-)
+from .._configuration import BlobClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class _ServiceClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ServiceClientConfiguration]
-):
+class ServiceOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blobs.aio.BlobClient`'s
+        :attr:`service` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: BlobClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def set_properties(
@@ -170,7 +177,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -178,7 +185,7 @@ class _ServiceClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -236,7 +243,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -249,7 +256,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -315,7 +322,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -328,7 +335,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -354,7 +361,7 @@ class _ServiceClientOperationsMixin(
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_containers_segment(
+    async def list_containers(
         self,
         *,
         prefix: Optional[str] = None,
@@ -407,7 +414,7 @@ class _ServiceClientOperationsMixin(
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[_models.ListContainersSegmentResponse] = kwargs.pop("cls", None)
 
-        _request = build_service_list_containers_segment_request(
+        _request = build_service_list_containers_request(
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -424,7 +431,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -437,7 +444,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -509,7 +516,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -522,7 +529,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -586,7 +593,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -594,7 +601,7 @@ class _ServiceClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -668,7 +675,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -681,7 +688,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -775,7 +782,7 @@ class _ServiceClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -788,7 +795,7 @@ class _ServiceClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -814,9 +821,22 @@ class _ServiceClientOperationsMixin(
         return deserialized  # type: ignore
 
 
-class _ContainerClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], ContainerClientConfiguration]
-):
+class ContainerOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blobs.aio.BlobClient`'s
+        :attr:`container` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: BlobClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def create(
@@ -884,7 +904,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -892,7 +912,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -957,7 +977,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -965,7 +985,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1064,7 +1084,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1072,7 +1092,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1147,7 +1167,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1155,7 +1175,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1220,7 +1240,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1233,7 +1253,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1334,7 +1354,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1342,7 +1362,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1415,7 +1435,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1423,7 +1443,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1494,7 +1514,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1502,7 +1522,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1573,7 +1593,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1586,7 +1606,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1677,7 +1697,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1690,7 +1710,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1781,7 +1801,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1789,7 +1809,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1871,7 +1891,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1879,7 +1899,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -1959,7 +1979,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -1967,7 +1987,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2054,7 +2074,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2062,7 +2082,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2147,7 +2167,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2155,7 +2175,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2180,7 +2200,7 @@ class _ContainerClientOperationsMixin(
         params_added_on={"2026-02-06": ["start_from"]},
         api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
     )
-    async def list_blob_flat_segment(
+    async def list_blobs(
         self,
         *,
         prefix: Optional[str] = None,
@@ -2190,7 +2210,7 @@ class _ContainerClientOperationsMixin(
         timeout: Optional[int] = None,
         start_from: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.ListBlobsFlatSegmentResponse:
+    ) -> _models.ListBlobsResponse:
         """The List Blobs operation returns a list of the blobs under the specified container.
 
         :keyword prefix: Filters the results to return only containers whose name begins with the
@@ -2218,9 +2238,8 @@ class _ContainerClientOperationsMixin(
          only one entity level is supported; For recursive list, multiple entity levels are supported.
          (Inclusive). Default value is None.
         :paramtype start_from: str
-        :return: ListBlobsFlatSegmentResponse. The ListBlobsFlatSegmentResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.storage.blobs.models.ListBlobsFlatSegmentResponse
+        :return: ListBlobsResponse. The ListBlobsResponse is compatible with MutableMapping
+        :rtype: ~azure.storage.blobs.models.ListBlobsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2235,9 +2254,9 @@ class _ContainerClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[_models.ListBlobsFlatSegmentResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ListBlobsResponse] = kwargs.pop("cls", None)
 
-        _request = build_container_list_blob_flat_segment_request(
+        _request = build_container_list_blobs_request(
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -2255,7 +2274,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2268,7 +2287,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2286,7 +2305,7 @@ class _ContainerClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize_xml(_models.ListBlobsFlatSegmentResponse, response.text())
+            deserialized = _deserialize_xml(_models.ListBlobsResponse, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2381,7 +2400,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2394,7 +2413,7 @@ class _ContainerClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2458,7 +2477,7 @@ class _ContainerClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2466,7 +2485,7 @@ class _ContainerClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2487,9 +2506,22 @@ class _ContainerClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], BlobClientConfiguration]
-):
+class BlobOperations:  # pylint: disable=too-many-public-methods
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blobs.aio.BlobClient`'s
+        :attr:`blob` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: BlobClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def download(  # pylint: disable=too-many-locals
@@ -2626,7 +2658,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2639,7 +2671,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -2938,7 +2970,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -2946,7 +2978,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3172,7 +3204,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3180,7 +3212,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3236,7 +3268,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3244,7 +3276,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3314,7 +3346,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3322,7 +3354,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3451,7 +3483,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3459,7 +3491,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3554,7 +3586,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3562,7 +3594,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3643,7 +3675,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3651,7 +3683,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3730,7 +3762,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3738,7 +3770,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3866,7 +3898,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3874,7 +3906,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -3989,7 +4021,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -3997,7 +4029,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4099,7 +4131,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4107,7 +4139,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4207,7 +4239,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4215,7 +4247,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4320,7 +4352,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4328,7 +4360,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4435,7 +4467,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4443,7 +4475,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4572,7 +4604,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4580,7 +4612,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4758,7 +4790,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4766,7 +4798,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -4953,7 +4985,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -4961,7 +4993,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -5044,7 +5076,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5052,7 +5084,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -5151,7 +5183,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5159,7 +5191,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -5215,7 +5247,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5223,7 +5255,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -5335,7 +5367,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5348,7 +5380,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -5474,7 +5506,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -5482,7 +5514,7 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -5500,1533 +5532,22 @@ class _BlobClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class _PageBlobClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], PageBlobClientConfiguration]
-):
-
-    @distributed_trace_async
-    async def create(  # pylint: disable=too-many-locals
-        self,
-        *,
-        size: int,
-        metadata: Optional[dict[str, str]] = None,
-        timeout: Optional[int] = None,
-        tier: Optional[Union[str, _models.PremiumPageBlobAccessTier]] = None,
-        blob_content_type: Optional[str] = None,
-        blob_content_encoding: Optional[str] = None,
-        blob_content_language: Optional[str] = None,
-        blob_content_md5: Optional[bytes] = None,
-        blob_cache_control: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        blob_content_disposition: Optional[str] = None,
-        encryption_key: Optional[str] = None,
-        encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
-        encryption_scope: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        blob_sequence_number: Optional[int] = None,
-        blob_tags_string: Optional[str] = None,
-        immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
-        legal_hold: Optional[bool] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Create operation creates a new page blob.
-
-        :keyword size: This header specifies the maximum size for the page blob, up to 1 TB. The page
-         blob size must be aligned to a 512-byte boundary. Required.
-        :paramtype size: int
-        :keyword metadata: The metadata headers. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword tier: Optional. Indicates the tier to be set on the page blob. Known values are: "P4",
-         "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80". Default value is None.
-        :paramtype tier: str or ~azure.storage.blobs.models.PremiumPageBlobAccessTier
-        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
-         is stored with the blob and returned with a read request. Default value is None.
-        :paramtype blob_content_type: str
-        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
-        :paramtype blob_content_encoding: str
-        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
-        :paramtype blob_content_language: str
-        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
-         not validated, as the hashes for the individual blocks were validated when each was uploaded.
-         Default value is None.
-        :paramtype blob_content_md5: bytes
-        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
-         property is stored with the blob and returned with a read request. Default value is None.
-        :paramtype blob_cache_control: str
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
-         this property is stored with the blob and returned with a read request. Default value is None.
-        :paramtype blob_content_disposition: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
-        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword blob_sequence_number: Set for page blobs only. The sequence number is a
-         user-controlled value that you can use to track requests. The value of the sequence number must
-         be between 0 and 2^63 - 1. Default value is None.
-        :paramtype blob_sequence_number: int
-        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
-         value is None.
-        :paramtype blob_tags_string: str
-        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
-         is set to expire. Default value is None.
-        :paramtype immutability_policy_expiry: ~datetime.datetime
-        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
-         Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or ~azure.storage.blobs.models.ImmutabilityPolicyMode
-        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
-         None.
-        :paramtype legal_hold: bool
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
-        blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_create_request(
-            size=size,
-            metadata=metadata,
-            timeout=timeout,
-            tier=tier,
-            blob_content_type=blob_content_type,
-            blob_content_encoding=blob_content_encoding,
-            blob_content_language=blob_content_language,
-            blob_content_md5=blob_content_md5,
-            blob_cache_control=blob_cache_control,
-            lease_id=lease_id,
-            blob_content_disposition=blob_content_disposition,
-            encryption_key=encryption_key,
-            encryption_key_sha256=encryption_key_sha256,
-            encryption_algorithm=encryption_algorithm,
-            encryption_scope=encryption_scope,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            blob_sequence_number=blob_sequence_number,
-            blob_tags_string=blob_tags_string,
-            immutability_policy_expiry=immutability_policy_expiry,
-            immutability_policy_mode=immutability_policy_mode,
-            legal_hold=legal_hold,
-            etag=etag,
-            match_condition=match_condition,
-            content_length=content_length,
-            blob_type=blob_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def upload_pages(  # pylint: disable=too-many-locals
-        self,
-        body: bytes,
-        *,
-        content_length: int,
-        range: str,
-        transactional_content_md5: Optional[bytes] = None,
-        transactional_content_crc64: Optional[bytes] = None,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        encryption_key: Optional[str] = None,
-        encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
-        encryption_scope: Optional[str] = None,
-        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
-        if_sequence_number_less_than: Optional[int] = None,
-        if_sequence_number_equal_to: Optional[int] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        structured_body_type: Optional[str] = None,
-        structured_content_length: Optional[int] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Upload Pages operation writes a range of pages to a page blob.
-
-        :param body: The body of the request. Required.
-        :type body: bytes
-        :keyword content_length: The length of the request. Required.
-        :paramtype content_length: int
-        :keyword range: Bytes of data in the specified range. Required.
-        :paramtype range: str
-        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
-         hash is not validated, as the hashes for the individual blocks were validated when each was
-         uploaded. Default value is None.
-        :paramtype transactional_content_md5: bytes
-        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
-         validated by the service. Default value is None.
-        :paramtype transactional_content_crc64: bytes
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
-        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
-         a blob if it has a sequence number less than or equal to the specified. Default value is None.
-        :paramtype if_sequence_number_less_than_or_equal_to: int
-        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
-         it has a sequence number less than the specified. Default value is None.
-        :paramtype if_sequence_number_less_than: int
-        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
-         has the specified sequence number. Default value is None.
-        :paramtype if_sequence_number_equal_to: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword structured_body_type: Required if the request body is a structured message. Specifies
-         the message schema version and properties. Default value is None.
-        :paramtype structured_body_type: str
-        :keyword structured_content_length: Required if the request body is a structured message.
-         Specifies the length of the blob/file content inside the message body. Will always be smaller
-         than Content-Length. Default value is None.
-        :paramtype structured_content_length: int
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = body
-
-        _request = build_page_blob_upload_pages_request(
-            content_length=content_length,
-            range=range,
-            transactional_content_md5=transactional_content_md5,
-            transactional_content_crc64=transactional_content_crc64,
-            timeout=timeout,
-            lease_id=lease_id,
-            encryption_key=encryption_key,
-            encryption_key_sha256=encryption_key_sha256,
-            encryption_algorithm=encryption_algorithm,
-            encryption_scope=encryption_scope,
-            if_sequence_number_less_than_or_equal_to=if_sequence_number_less_than_or_equal_to,
-            if_sequence_number_less_than=if_sequence_number_less_than,
-            if_sequence_number_equal_to=if_sequence_number_equal_to,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            structured_body_type=structured_body_type,
-            structured_content_length=structured_content_length,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            page_write=page_write,
-            version=self._config.version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-sequence-number")
-        )
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
-        response_headers["x-ms-structured-body"] = self._deserialize(
-            "str", response.headers.get("x-ms-structured-body")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def clear_pages(  # pylint: disable=too-many-locals
-        self,
-        *,
-        range: str,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        encryption_key: Optional[str] = None,
-        encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
-        encryption_scope: Optional[str] = None,
-        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
-        if_sequence_number_less_than: Optional[int] = None,
-        if_sequence_number_equal_to: Optional[int] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Clear Pages operation clears a range of pages from a page blob.
-
-        :keyword range: Bytes of data in the specified range. Required.
-        :paramtype range: str
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
-        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
-         a blob if it has a sequence number less than or equal to the specified. Default value is None.
-        :paramtype if_sequence_number_less_than_or_equal_to: int
-        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
-         it has a sequence number less than the specified. Default value is None.
-        :paramtype if_sequence_number_less_than: int
-        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
-         has the specified sequence number. Default value is None.
-        :paramtype if_sequence_number_equal_to: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
-        page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_clear_pages_request(
-            range=range,
-            timeout=timeout,
-            lease_id=lease_id,
-            encryption_key=encryption_key,
-            encryption_key_sha256=encryption_key_sha256,
-            encryption_algorithm=encryption_algorithm,
-            encryption_scope=encryption_scope,
-            if_sequence_number_less_than_or_equal_to=if_sequence_number_less_than_or_equal_to,
-            if_sequence_number_less_than=if_sequence_number_less_than,
-            if_sequence_number_equal_to=if_sequence_number_equal_to,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            etag=etag,
-            match_condition=match_condition,
-            content_length=content_length,
-            page_write=page_write,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-sequence-number")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        params_added_on={
-            "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
-        },
-        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
-    )
-    async def upload_pages_from_url(  # pylint: disable=too-many-locals
-        self,
-        *,
-        source_url: str,
-        source_range: str,
-        content_length: int,
-        range: str,
-        source_content_md5: Optional[bytes] = None,
-        source_content_crc64: Optional[bytes] = None,
-        timeout: Optional[int] = None,
-        encryption_key: Optional[str] = None,
-        encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
-        encryption_scope: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
-        if_sequence_number_less_than: Optional[int] = None,
-        if_sequence_number_equal_to: Optional[int] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        source_if_modified_since: Optional[datetime.datetime] = None,
-        source_if_unmodified_since: Optional[datetime.datetime] = None,
-        source_if_match: Optional[str] = None,
-        source_if_none_match: Optional[str] = None,
-        copy_source_authorization: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
-        source_encryption_key: Optional[str] = None,
-        source_encryption_key_sha256: Optional[str] = None,
-        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Upload Pages operation writes a range of pages to a page blob where the contents are read
-        from a URL.
-
-        :keyword source_url: Specify a URL to the copy source. Required.
-        :paramtype source_url: str
-        :keyword source_range: Bytes of source data in the specified range. The length of this range
-         should match the ContentLength header and x-ms-range/Range destination range header. Required.
-        :paramtype source_range: str
-        :keyword content_length: The length of the request. Required.
-        :paramtype content_length: int
-        :keyword range: Bytes of source data in the specified range. The length of this range should
-         match the ContentLength header and x-ms-range/Range destination range header. Required.
-        :paramtype range: str
-        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
-        :paramtype source_content_md5: bytes
-        :keyword source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
-         read from the copy source. Default value is None.
-        :paramtype source_content_crc64: bytes
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
-        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
-         a blob if it has a sequence number less than or equal to the specified. Default value is None.
-        :paramtype if_sequence_number_less_than_or_equal_to: int
-        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
-         it has a sequence number less than the specified. Default value is None.
-        :paramtype if_sequence_number_less_than: int
-        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
-         has the specified sequence number. Default value is None.
-        :paramtype if_sequence_number_equal_to: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
-         has been modified since the specified date/time. Default value is None.
-        :paramtype source_if_modified_since: ~datetime.datetime
-        :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
-         has not been modified since the specified date/time. Default value is None.
-        :paramtype source_if_unmodified_since: ~datetime.datetime
-        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
-         Default value is None.
-        :paramtype source_if_match: str
-        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
-         been modified since the specified date/time. Default value is None.
-        :paramtype source_if_none_match: str
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
-        :paramtype copy_source_authorization: str
-        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
-        :paramtype file_request_intent: str or ~azure.storage.blobs.models.FileShareTokenIntent
-        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
-         the source data provided in the request. Default value is None.
-        :paramtype source_encryption_key: str
-        :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
-         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
-        :paramtype source_encryption_key_sha256: str
-        :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
-         hash. Currently, the only accepted value is "AES256". Must be provided if the
-         x-ms-source-encryption-key is provided. "AES256" Default value is None.
-        :paramtype source_encryption_algorithm: str or
-         ~azure.storage.blobs.models.EncryptionAlgorithmType
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_upload_pages_from_url_request(
-            source_url=source_url,
-            source_range=source_range,
-            content_length=content_length,
-            range=range,
-            source_content_md5=source_content_md5,
-            source_content_crc64=source_content_crc64,
-            timeout=timeout,
-            encryption_key=encryption_key,
-            encryption_key_sha256=encryption_key_sha256,
-            encryption_algorithm=encryption_algorithm,
-            encryption_scope=encryption_scope,
-            lease_id=lease_id,
-            if_sequence_number_less_than_or_equal_to=if_sequence_number_less_than_or_equal_to,
-            if_sequence_number_less_than=if_sequence_number_less_than,
-            if_sequence_number_equal_to=if_sequence_number_equal_to,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            source_if_modified_since=source_if_modified_since,
-            source_if_unmodified_since=source_if_unmodified_since,
-            source_if_match=source_if_match,
-            source_if_none_match=source_if_none_match,
-            copy_source_authorization=copy_source_authorization,
-            file_request_intent=file_request_intent,
-            source_encryption_key=source_encryption_key,
-            source_encryption_key_sha256=source_encryption_key_sha256,
-            source_encryption_algorithm=source_encryption_algorithm,
-            etag=etag,
-            match_condition=match_condition,
-            page_write=page_write,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-content-crc64"] = self._deserialize(
-            "bytearray", response.headers.get("x-ms-content-crc64")
-        )
-        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-sequence-number")
-        )
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-key-sha256")
-        )
-        response_headers["x-ms-encryption-scope"] = self._deserialize(
-            "str", response.headers.get("x-ms-encryption-scope")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def get_page_ranges(  # pylint: disable=too-many-locals
-        self,
-        *,
-        snapshot: Optional[str] = None,
-        timeout: Optional[int] = None,
-        range: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        marker: Optional[str] = None,
-        maxresults: Optional[int] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> _models.PageList:
-        """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
-        of a page blob.
-
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
-        :paramtype snapshot: str
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword range: Return only the bytes of the blob in the specified range. Default value is
-         None.
-        :paramtype range: str
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
-        :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
-         not specify maxresults, or specifies a value greater than 5000, the server will return up to
-         5000 items. Default value is None.
-        :paramtype maxresults: int
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: PageList. The PageList is compatible with MutableMapping
-        :rtype: ~azure.storage.blobs.models.PageList
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_get_page_ranges_request(
-            snapshot=snapshot,
-            timeout=timeout,
-            range=range,
-            lease_id=lease_id,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            marker=marker,
-            maxresults=maxresults,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["x-ms-blob-content-length"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-content-length")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(_models.PageList, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_page_ranges_diff(  # pylint: disable=too-many-locals
-        self,
-        *,
-        snapshot: Optional[str] = None,
-        timeout: Optional[int] = None,
-        prevsnapshot: Optional[str] = None,
-        prev_snapshot_url: Optional[str] = None,
-        range: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        marker: Optional[str] = None,
-        maxresults: Optional[int] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> _models.PageList:
-        """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob or
-        snapshot of a page blob.
-
-        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
-         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
-         see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
-         a Snapshot of a Blob.</a>. Default value is None.
-        :paramtype snapshot: str
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword prevsnapshot: Optional in version 2015-07-08 and newer. The prevsnapshot parameter is
-         a DateTime value that specifies that the response will contain only pages that were changed
-         between target blob and previous snapshot. Changed pages include both updated and cleared
-         pages. The target blob may be a snapshot, as long as the snapshot specified by prevsnapshot is
-         the older of the two. Note that incremental snapshots are currently supported only for blobs
-         created on or after January 1, 2016. Default value is None.
-        :paramtype prevsnapshot: str
-        :keyword prev_snapshot_url: Optional. This header is only supported in service versions
-         2019-04-19 and after and specifies the URL of a previous snapshot of the target blob. The
-         response will only contain pages that were changed between the target blob and its previous
-         snapshot. Default value is None.
-        :paramtype prev_snapshot_url: str
-        :keyword range: Return only the bytes of the blob in the specified range. Default value is
-         None.
-        :paramtype range: str
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword marker: A string value that identifies the portion of the list of containers to be
-         returned with the next listing operation. The operation returns the NextMarker value within the
-         response body if the listing operation did not return all containers remaining to be listed
-         with the current page. The NextMarker value can be used as the value for the marker parameter
-         in a subsequent call to request the next page of list items. The marker value is opaque to the
-         client. Default value is None.
-        :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
-         not specify maxresults, or specifies a value greater than 5000, the server will return up to
-         5000 items. Default value is None.
-        :paramtype maxresults: int
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: PageList. The PageList is compatible with MutableMapping
-        :rtype: ~azure.storage.blobs.models.PageList
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_get_page_ranges_diff_request(
-            snapshot=snapshot,
-            timeout=timeout,
-            prevsnapshot=prevsnapshot,
-            prev_snapshot_url=prev_snapshot_url,
-            range=range,
-            lease_id=lease_id,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            marker=marker,
-            maxresults=maxresults,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["x-ms-blob-content-length"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-content-length")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize_xml(_models.PageList, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def resize(  # pylint: disable=too-many-locals
-        self,
-        *,
-        size: int,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        encryption_key: Optional[str] = None,
-        encryption_key_sha256: Optional[str] = None,
-        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
-        encryption_scope: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Resize operation increases the size of the page blob to the specified size.
-
-        :keyword size: This header specifies the maximum size for the page blob, up to 1 TB. The page
-         blob size must be aligned to a 512-byte boundary. Required.
-        :paramtype size: int
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
-         to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_key: str
-        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
-         hash of the encryption key used to encrypt the data provided in the request. This header is
-         only used for encryption with a customer-provided key. If the request is authenticated with a
-         client token, this header should be specified using the SHA256 hash of the encryption key.
-         Default value is None.
-        :paramtype encryption_key_sha256: str
-        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
-         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
-         value is None.
-        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
-        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
-         scope to use to encrypt the data provided in the request. If not specified, the request will be
-         encrypted with the root account key. Default value is None.
-        :paramtype encryption_scope: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_resize_request(
-            size=size,
-            timeout=timeout,
-            lease_id=lease_id,
-            encryption_key=encryption_key,
-            encryption_key_sha256=encryption_key_sha256,
-            encryption_algorithm=encryption_algorithm,
-            encryption_scope=encryption_scope,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-sequence-number")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def update_sequence_number(
-        self,
-        *,
-        sequence_number_action: Union[str, _models.SequenceNumberActionType],
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        blob_sequence_number: Optional[int] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Update Sequence Number operation sets the blob's sequence number. The operation will fail
-        if the specified sequence number is less than the current sequence number of the blob.
-
-        :keyword sequence_number_action: Required if the x-ms-blob-sequence-number header is set for
-         the request. This property applies to page blobs only. This property indicates how the service
-         should modify the blob's sequence number. Known values are: "increment", "max", and "update".
-         Required.
-        :paramtype sequence_number_action: str or ~azure.storage.blobs.models.SequenceNumberActionType
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
-         and matches this ID. Default value is None.
-        :paramtype lease_id: str
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword blob_sequence_number: Set for page blobs only. The sequence number is a
-         user-controlled value that you can use to track requests. The value of the sequence number must
-         be between 0 and 2^63 - 1. Default value is None.
-        :paramtype blob_sequence_number: int
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_update_sequence_number_request(
-            sequence_number_action=sequence_number_action,
-            timeout=timeout,
-            lease_id=lease_id,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            blob_sequence_number=blob_sequence_number,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
-            "int", response.headers.get("x-ms-blob-sequence-number")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def copy_incremental(
-        self,
-        *,
-        copy_source: str,
-        timeout: Optional[int] = None,
-        if_modified_since: Optional[datetime.datetime] = None,
-        if_unmodified_since: Optional[datetime.datetime] = None,
-        if_tags: Optional[str] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
-        blob. The snapshot is copied such that only the differential changes between the previously
-        copied snapshot are transferred to the destination. The copied snapshots are complete copies of
-        the original snapshot and can be read or copied from as usual. This API is supported since REST
-        version 2016-05-31.
-
-        :keyword copy_source: Specifies the name of the source page blob snapshot. This value is a URL
-         of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as
-         it would appear in a request URI. The source blob must either be public or must be
-         authenticated via a shared access signature. Required.
-        :paramtype copy_source: str
-        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
-         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
-         Timeouts for Blob Service Operations.</a>. Default value is None.
-        :paramtype timeout: int
-        :keyword if_modified_since: A date-time value. A request is made under the condition that the
-         resource has been modified since the specified date-time. Default value is None.
-        :paramtype if_modified_since: ~datetime.datetime
-        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
-         resource has not been modified since the specified date-time. Default value is None.
-        :paramtype if_unmodified_since: ~datetime.datetime
-        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
-         matching value. Default value is None.
-        :paramtype if_tags: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_page_blob_copy_incremental_request(
-            copy_source=copy_source,
-            timeout=timeout,
-            if_modified_since=if_modified_since,
-            if_unmodified_since=if_unmodified_since,
-            if_tags=if_tags,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.StorageError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-
-class _AppendBlobClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], AppendBlobClientConfiguration]
-):
+class AppendBlobOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blobs.aio.BlobClient`'s
+        :attr:`append_blob` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: BlobClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def create(  # pylint: disable=too-many-locals
@@ -7190,7 +5711,7 @@ class _AppendBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7198,7 +5719,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -7381,7 +5902,7 @@ class _AppendBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7389,7 +5910,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -7632,7 +6153,7 @@ class _AppendBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7640,7 +6161,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -7761,7 +6282,7 @@ class _AppendBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -7769,7 +6290,7 @@ class _AppendBlobClientOperationsMixin(
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -7790,9 +6311,22 @@ class _AppendBlobClientOperationsMixin(
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class _BlockBlobClientOperationsMixin(
-    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], BlockBlobClientConfiguration]
-):
+class BlockBlobOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blobs.aio.BlobClient`'s
+        :attr:`block_blob` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: BlobClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
     async def upload(  # pylint: disable=too-many-locals
@@ -7998,7 +6532,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8006,7 +6540,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -8282,7 +6816,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8290,7 +6824,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -8433,7 +6967,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8441,7 +6975,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -8630,7 +7164,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8638,7 +7172,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -8857,7 +7391,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8865,7 +7399,7 @@ class _BlockBlobClientOperationsMixin(
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -8967,7 +7501,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -8980,7 +7514,7 @@ class _BlockBlobClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -9124,7 +7658,7 @@ class _BlockBlobClientOperationsMixin(
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
@@ -9137,7 +7671,7 @@ class _BlockBlobClientOperationsMixin(
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
+            error = _failsafe_deserialize(
                 _models.StorageError,
                 response,
             )
@@ -9204,3 +7738,1540 @@ class _BlockBlobClientOperationsMixin(
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class PageBlobOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.blobs.aio.BlobClient`'s
+        :attr:`page_blob` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: BlobClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def create(  # pylint: disable=too-many-locals
+        self,
+        *,
+        size: int,
+        metadata: Optional[dict[str, str]] = None,
+        timeout: Optional[int] = None,
+        tier: Optional[Union[str, _models.PremiumPageBlobAccessTier]] = None,
+        blob_content_type: Optional[str] = None,
+        blob_content_encoding: Optional[str] = None,
+        blob_content_language: Optional[str] = None,
+        blob_content_md5: Optional[bytes] = None,
+        blob_cache_control: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        blob_content_disposition: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        blob_sequence_number: Optional[int] = None,
+        blob_tags_string: Optional[str] = None,
+        immutability_policy_expiry: Optional[datetime.datetime] = None,
+        immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
+        legal_hold: Optional[bool] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Create operation creates a new page blob.
+
+        :keyword size: This header specifies the maximum size for the page blob, up to 1 TB. The page
+         blob size must be aligned to a 512-byte boundary. Required.
+        :paramtype size: int
+        :keyword metadata: The metadata headers. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword tier: Optional. Indicates the tier to be set on the page blob. Known values are: "P4",
+         "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80". Default value is None.
+        :paramtype tier: str or ~azure.storage.blobs.models.PremiumPageBlobAccessTier
+        :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
+         is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_type: str
+        :keyword blob_content_encoding: Optional. Sets the blob's content encoding. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_encoding: str
+        :keyword blob_content_language: Optional. Set the blob's content language. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_language: str
+        :keyword blob_content_md5: Optional. An MD5 hash of the blob content. Note that this hash is
+         not validated, as the hashes for the individual blocks were validated when each was uploaded.
+         Default value is None.
+        :paramtype blob_content_md5: bytes
+        :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
+         property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_cache_control: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword blob_content_disposition: Optional. Sets the blob's content disposition. If specified,
+         this property is stored with the blob and returned with a read request. Default value is None.
+        :paramtype blob_content_disposition: str
+        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
+         to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
+         hash of the encryption key used to encrypt the data provided in the request. This header is
+         only used for encryption with a customer-provided key. If the request is authenticated with a
+         client token, this header should be specified using the SHA256 hash of the encryption key.
+         Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
+         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+         value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
+         scope to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_scope: str
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword blob_sequence_number: Set for page blobs only. The sequence number is a
+         user-controlled value that you can use to track requests. The value of the sequence number must
+         be between 0 and 2^63 - 1. Default value is None.
+        :paramtype blob_sequence_number: int
+        :keyword blob_tags_string: Optional.  Used to set blob tags in various blob operations. Default
+         value is None.
+        :paramtype blob_tags_string: str
+        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire. Default value is None.
+        :paramtype immutability_policy_expiry: ~datetime.datetime
+        :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
+         Known values are: "mutable", "locked", and "unlocked". Default value is None.
+        :paramtype immutability_policy_mode: str or ~azure.storage.blobs.models.ImmutabilityPolicyMode
+        :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
+         None.
+        :paramtype legal_hold: bool
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
+        blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_create_request(
+            size=size,
+            metadata=metadata,
+            timeout=timeout,
+            tier=tier,
+            blob_content_type=blob_content_type,
+            blob_content_encoding=blob_content_encoding,
+            blob_content_language=blob_content_language,
+            blob_content_md5=blob_content_md5,
+            blob_cache_control=blob_cache_control,
+            lease_id=lease_id,
+            blob_content_disposition=blob_content_disposition,
+            encryption_key=encryption_key,
+            encryption_key_sha256=encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
+            encryption_scope=encryption_scope,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            blob_sequence_number=blob_sequence_number,
+            blob_tags_string=blob_tags_string,
+            immutability_policy_expiry=immutability_policy_expiry,
+            immutability_policy_mode=immutability_policy_mode,
+            legal_hold=legal_hold,
+            etag=etag,
+            match_condition=match_condition,
+            content_length=content_length,
+            blob_type=blob_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-version-id"] = self._deserialize("str", response.headers.get("x-ms-version-id"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def upload_pages(  # pylint: disable=too-many-locals
+        self,
+        body: bytes,
+        *,
+        content_length: int,
+        range: str,
+        transactional_content_md5: Optional[bytes] = None,
+        transactional_content_crc64: Optional[bytes] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
+        if_sequence_number_less_than: Optional[int] = None,
+        if_sequence_number_equal_to: Optional[int] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Upload Pages operation writes a range of pages to a page blob.
+
+        :param body: The body of the request. Required.
+        :type body: bytes
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword range: Bytes of data in the specified range. Required.
+        :paramtype range: str
+        :keyword transactional_content_md5: Optional. An MD5 hash of the blob content. Note that this
+         hash is not validated, as the hashes for the individual blocks were validated when each was
+         uploaded. Default value is None.
+        :paramtype transactional_content_md5: bytes
+        :keyword transactional_content_crc64: Specify the transactional crc64 for the body, to be
+         validated by the service. Default value is None.
+        :paramtype transactional_content_crc64: bytes
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
+         to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
+         hash of the encryption key used to encrypt the data provided in the request. This header is
+         only used for encryption with a customer-provided key. If the request is authenticated with a
+         client token, this header should be specified using the SHA256 hash of the encryption key.
+         Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
+         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+         value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
+         scope to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_scope: str
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
+         a blob if it has a sequence number less than or equal to the specified. Default value is None.
+        :paramtype if_sequence_number_less_than_or_equal_to: int
+        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
+         it has a sequence number less than the specified. Default value is None.
+        :paramtype if_sequence_number_less_than: int
+        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
+         has the specified sequence number. Default value is None.
+        :paramtype if_sequence_number_equal_to: int
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword structured_body_type: Required if the request body is a structured message. Specifies
+         the message schema version and properties. Default value is None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = body
+
+        _request = build_page_blob_upload_pages_request(
+            content_length=content_length,
+            range=range,
+            transactional_content_md5=transactional_content_md5,
+            transactional_content_crc64=transactional_content_crc64,
+            timeout=timeout,
+            lease_id=lease_id,
+            encryption_key=encryption_key,
+            encryption_key_sha256=encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
+            encryption_scope=encryption_scope,
+            if_sequence_number_less_than_or_equal_to=if_sequence_number_less_than_or_equal_to,
+            if_sequence_number_less_than=if_sequence_number_less_than,
+            if_sequence_number_equal_to=if_sequence_number_equal_to,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            page_write=page_write,
+            version=self._config.version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def clear_pages(  # pylint: disable=too-many-locals
+        self,
+        *,
+        range: str,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
+        if_sequence_number_less_than: Optional[int] = None,
+        if_sequence_number_equal_to: Optional[int] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Clear Pages operation clears a range of pages from a page blob.
+
+        :keyword range: Bytes of data in the specified range. Required.
+        :paramtype range: str
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
+         to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
+         hash of the encryption key used to encrypt the data provided in the request. This header is
+         only used for encryption with a customer-provided key. If the request is authenticated with a
+         client token, this header should be specified using the SHA256 hash of the encryption key.
+         Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
+         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+         value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
+         scope to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_scope: str
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
+         a blob if it has a sequence number less than or equal to the specified. Default value is None.
+        :paramtype if_sequence_number_less_than_or_equal_to: int
+        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
+         it has a sequence number less than the specified. Default value is None.
+        :paramtype if_sequence_number_less_than: int
+        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
+         has the specified sequence number. Default value is None.
+        :paramtype if_sequence_number_equal_to: int
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        content_length: Literal[0] = kwargs.pop("content_length", _headers.pop("Content-Length", 0))
+        page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_clear_pages_request(
+            range=range,
+            timeout=timeout,
+            lease_id=lease_id,
+            encryption_key=encryption_key,
+            encryption_key_sha256=encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
+            encryption_scope=encryption_scope,
+            if_sequence_number_less_than_or_equal_to=if_sequence_number_less_than_or_equal_to,
+            if_sequence_number_less_than=if_sequence_number_less_than,
+            if_sequence_number_equal_to=if_sequence_number_equal_to,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            etag=etag,
+            match_condition=match_condition,
+            content_length=content_length,
+            page_write=page_write,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        params_added_on={
+            "2026-04-06": ["source_encryption_key", "source_encryption_key_sha256", "source_encryption_algorithm"]
+        },
+        api_versions_list=["2025-11-05", "2026-02-06", "2026-04-06"],
+    )
+    async def upload_pages_from_url(  # pylint: disable=too-many-locals
+        self,
+        *,
+        source_url: str,
+        source_range: str,
+        content_length: int,
+        range: str,
+        source_content_md5: Optional[bytes] = None,
+        source_content_crc64: Optional[bytes] = None,
+        timeout: Optional[int] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        if_sequence_number_less_than_or_equal_to: Optional[int] = None,
+        if_sequence_number_less_than: Optional[int] = None,
+        if_sequence_number_equal_to: Optional[int] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        source_if_modified_since: Optional[datetime.datetime] = None,
+        source_if_unmodified_since: Optional[datetime.datetime] = None,
+        source_if_match: Optional[str] = None,
+        source_if_none_match: Optional[str] = None,
+        copy_source_authorization: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.FileShareTokenIntent]] = None,
+        source_encryption_key: Optional[str] = None,
+        source_encryption_key_sha256: Optional[str] = None,
+        source_encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Upload Pages operation writes a range of pages to a page blob where the contents are read
+        from a URL.
+
+        :keyword source_url: Specify a URL to the copy source. Required.
+        :paramtype source_url: str
+        :keyword source_range: Bytes of source data in the specified range. The length of this range
+         should match the ContentLength header and x-ms-range/Range destination range header. Required.
+        :paramtype source_range: str
+        :keyword content_length: The length of the request. Required.
+        :paramtype content_length: int
+        :keyword range: Bytes of source data in the specified range. The length of this range should
+         match the ContentLength header and x-ms-range/Range destination range header. Required.
+        :paramtype range: str
+        :keyword source_content_md5: Specify the md5 calculated for the range of bytes that must be
+         read from the copy source. Default value is None.
+        :paramtype source_content_md5: bytes
+        :keyword source_content_crc64: Specify the crc64 calculated for the range of bytes that must be
+         read from the copy source. Default value is None.
+        :paramtype source_content_crc64: bytes
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
+         to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
+         hash of the encryption key used to encrypt the data provided in the request. This header is
+         only used for encryption with a customer-provided key. If the request is authenticated with a
+         client token, this header should be specified using the SHA256 hash of the encryption key.
+         Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
+         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+         value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
+         scope to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_scope: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
+         a blob if it has a sequence number less than or equal to the specified. Default value is None.
+        :paramtype if_sequence_number_less_than_or_equal_to: int
+        :keyword if_sequence_number_less_than: Specify this header value to operate only on a blob if
+         it has a sequence number less than the specified. Default value is None.
+        :paramtype if_sequence_number_less_than: int
+        :keyword if_sequence_number_equal_to: Specify this header value to operate only on a blob if it
+         has the specified sequence number. Default value is None.
+        :paramtype if_sequence_number_equal_to: int
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
+         has been modified since the specified date/time. Default value is None.
+        :paramtype source_if_modified_since: ~datetime.datetime
+        :keyword source_if_unmodified_since: Specify this header value to operate only on a blob if it
+         has not been modified since the specified date/time. Default value is None.
+        :paramtype source_if_unmodified_since: ~datetime.datetime
+        :keyword source_if_match: Specify an ETag value to operate only on blobs with a matching value.
+         Default value is None.
+        :paramtype source_if_match: str
+        :keyword source_if_none_match: Specify this header value to operate only on a blob if it has
+         been modified since the specified date/time. Default value is None.
+        :paramtype source_if_none_match: str
+        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
+         valid OAuth access token to copy source. Default value is None.
+        :paramtype copy_source_authorization: str
+        :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.blobs.models.FileShareTokenIntent
+        :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
+         the source data provided in the request. Default value is None.
+        :paramtype source_encryption_key: str
+        :keyword source_encryption_key_sha256: The SHA-256 hash of the provided source encryption key.
+         Must be provided if the x-ms-source-encryption-key header is provided. Default value is None.
+        :paramtype source_encryption_key_sha256: str
+        :keyword source_encryption_algorithm: The algorithm used to produce the source encryption key
+         hash. Currently, the only accepted value is "AES256". Must be provided if the
+         x-ms-source-encryption-key is provided. "AES256" Default value is None.
+        :paramtype source_encryption_algorithm: str or
+         ~azure.storage.blobs.models.EncryptionAlgorithmType
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_upload_pages_from_url_request(
+            source_url=source_url,
+            source_range=source_range,
+            content_length=content_length,
+            range=range,
+            source_content_md5=source_content_md5,
+            source_content_crc64=source_content_crc64,
+            timeout=timeout,
+            encryption_key=encryption_key,
+            encryption_key_sha256=encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
+            encryption_scope=encryption_scope,
+            lease_id=lease_id,
+            if_sequence_number_less_than_or_equal_to=if_sequence_number_less_than_or_equal_to,
+            if_sequence_number_less_than=if_sequence_number_less_than,
+            if_sequence_number_equal_to=if_sequence_number_equal_to,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            source_if_modified_since=source_if_modified_since,
+            source_if_unmodified_since=source_if_unmodified_since,
+            source_if_match=source_if_match,
+            source_if_none_match=source_if_none_match,
+            copy_source_authorization=copy_source_authorization,
+            file_request_intent=file_request_intent,
+            source_encryption_key=source_encryption_key,
+            source_encryption_key_sha256=source_encryption_key_sha256,
+            source_encryption_algorithm=source_encryption_algorithm,
+            etag=etag,
+            match_condition=match_condition,
+            page_write=page_write,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-encryption-key-sha256"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-key-sha256")
+        )
+        response_headers["x-ms-encryption-scope"] = self._deserialize(
+            "str", response.headers.get("x-ms-encryption-scope")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def get_page_ranges(  # pylint: disable=too-many-locals
+        self,
+        *,
+        snapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.PageList:
+        """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
+        of a page blob.
+
+        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
+         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
+         see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>. Default value is None.
+        :paramtype snapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword range: Return only the bytes of the blob in the specified range. Default value is
+         None.
+        :paramtype range: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Default value is None.
+        :paramtype maxresults: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: PageList. The PageList is compatible with MutableMapping
+        :rtype: ~azure.storage.blobs.models.PageList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_get_page_ranges_request(
+            snapshot=snapshot,
+            timeout=timeout,
+            range=range,
+            lease_id=lease_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            marker=marker,
+            maxresults=maxresults,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-blob-content-length"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-content-length")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(_models.PageList, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_page_ranges_diff(  # pylint: disable=too-many-locals
+        self,
+        *,
+        snapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        prevsnapshot: Optional[str] = None,
+        prev_snapshot_url: Optional[str] = None,
+        range: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.PageList:
+        """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob or
+        snapshot of a page blob.
+
+        :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
+         specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
+         see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/creating-a-snapshot-of-a-blob">Creating
+         a Snapshot of a Blob.</a>. Default value is None.
+        :paramtype snapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword prevsnapshot: Optional in version 2015-07-08 and newer. The prevsnapshot parameter is
+         a DateTime value that specifies that the response will contain only pages that were changed
+         between target blob and previous snapshot. Changed pages include both updated and cleared
+         pages. The target blob may be a snapshot, as long as the snapshot specified by prevsnapshot is
+         the older of the two. Note that incremental snapshots are currently supported only for blobs
+         created on or after January 1, 2016. Default value is None.
+        :paramtype prevsnapshot: str
+        :keyword prev_snapshot_url: Optional. This header is only supported in service versions
+         2019-04-19 and after and specifies the URL of a previous snapshot of the target blob. The
+         response will only contain pages that were changed between the target blob and its previous
+         snapshot. Default value is None.
+        :paramtype prev_snapshot_url: str
+        :keyword range: Return only the bytes of the blob in the specified range. Default value is
+         None.
+        :paramtype range: str
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword marker: A string value that identifies the portion of the list of containers to be
+         returned with the next listing operation. The operation returns the NextMarker value within the
+         response body if the listing operation did not return all containers remaining to be listed
+         with the current page. The NextMarker value can be used as the value for the marker parameter
+         in a subsequent call to request the next page of list items. The marker value is opaque to the
+         client. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of containers to return. If the request does
+         not specify maxresults, or specifies a value greater than 5000, the server will return up to
+         5000 items. Default value is None.
+        :paramtype maxresults: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: PageList. The PageList is compatible with MutableMapping
+        :rtype: ~azure.storage.blobs.models.PageList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_get_page_ranges_diff_request(
+            snapshot=snapshot,
+            timeout=timeout,
+            prevsnapshot=prevsnapshot,
+            prev_snapshot_url=prev_snapshot_url,
+            range=range,
+            lease_id=lease_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            marker=marker,
+            maxresults=maxresults,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-blob-content-length"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-content-length")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize_xml(_models.PageList, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def resize(  # pylint: disable=too-many-locals
+        self,
+        *,
+        size: int,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        encryption_key: Optional[str] = None,
+        encryption_key_sha256: Optional[str] = None,
+        encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+        encryption_scope: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Resize operation increases the size of the page blob to the specified size.
+
+        :keyword size: This header specifies the maximum size for the page blob, up to 1 TB. The page
+         blob size must be aligned to a 512-byte boundary. Required.
+        :paramtype size: int
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword encryption_key: Optional.  Version 2019-07-07 and later.  Specifies the encryption key
+         to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_key: str
+        :keyword encryption_key_sha256: Optional.  Version 2019-07-07 and later.  Specifies the SHA256
+         hash of the encryption key used to encrypt the data provided in the request. This header is
+         only used for encryption with a customer-provided key. If the request is authenticated with a
+         client token, this header should be specified using the SHA256 hash of the encryption key.
+         Default value is None.
+        :paramtype encryption_key_sha256: str
+        :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
+         algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
+         value is None.
+        :paramtype encryption_algorithm: str or ~azure.storage.blobs.models.EncryptionAlgorithmType
+        :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
+         scope to use to encrypt the data provided in the request. If not specified, the request will be
+         encrypted with the root account key. Default value is None.
+        :paramtype encryption_scope: str
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_resize_request(
+            size=size,
+            timeout=timeout,
+            lease_id=lease_id,
+            encryption_key=encryption_key,
+            encryption_key_sha256=encryption_key_sha256,
+            encryption_algorithm=encryption_algorithm,
+            encryption_scope=encryption_scope,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def update_sequence_number(
+        self,
+        *,
+        sequence_number_action: Union[str, _models.SequenceNumberActionType],
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        blob_sequence_number: Optional[int] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Update Sequence Number operation sets the blob's sequence number. The operation will fail
+        if the specified sequence number is less than the current sequence number of the blob.
+
+        :keyword sequence_number_action: Required if the x-ms-blob-sequence-number header is set for
+         the request. This property applies to page blobs only. This property indicates how the service
+         should modify the blob's sequence number. Known values are: "increment", "max", and "update".
+         Required.
+        :paramtype sequence_number_action: str or ~azure.storage.blobs.models.SequenceNumberActionType
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
+         and matches this ID. Default value is None.
+        :paramtype lease_id: str
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword blob_sequence_number: Set for page blobs only. The sequence number is a
+         user-controlled value that you can use to track requests. The value of the sequence number must
+         be between 0 and 2^63 - 1. Default value is None.
+        :paramtype blob_sequence_number: int
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_update_sequence_number_request(
+            sequence_number_action=sequence_number_action,
+            timeout=timeout,
+            lease_id=lease_id,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            blob_sequence_number=blob_sequence_number,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-blob-sequence-number"] = self._deserialize(
+            "int", response.headers.get("x-ms-blob-sequence-number")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def copy_incremental(
+        self,
+        *,
+        copy_source: str,
+        timeout: Optional[int] = None,
+        if_modified_since: Optional[datetime.datetime] = None,
+        if_unmodified_since: Optional[datetime.datetime] = None,
+        if_tags: Optional[str] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Copy Incremental operation copies a snapshot of the source page blob to a destination page
+        blob. The snapshot is copied such that only the differential changes between the previously
+        copied snapshot are transferred to the destination. The copied snapshots are complete copies of
+        the original snapshot and can be read or copied from as usual. This API is supported since REST
+        version 2016-05-31.
+
+        :keyword copy_source: Specifies the name of the source page blob snapshot. This value is a URL
+         of up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as
+         it would appear in a request URI. The source blob must either be public or must be
+         authenticated via a shared access signature. Required.
+        :paramtype copy_source: str
+        :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
+         Timeouts for Blob Service Operations.</a>. Default value is None.
+        :paramtype timeout: int
+        :keyword if_modified_since: A date-time value. A request is made under the condition that the
+         resource has been modified since the specified date-time. Default value is None.
+        :paramtype if_modified_since: ~datetime.datetime
+        :keyword if_unmodified_since: A date-time value. A request is made under the condition that the
+         resource has not been modified since the specified date-time. Default value is None.
+        :paramtype if_unmodified_since: ~datetime.datetime
+        :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
+         matching value. Default value is None.
+        :paramtype if_tags: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_page_blob_copy_incremental_request(
+            copy_source=copy_source,
+            timeout=timeout,
+            if_modified_since=if_modified_since,
+            if_unmodified_since=if_unmodified_since,
+            if_tags=if_tags,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.StorageError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore

@@ -303,13 +303,13 @@ def extract_parameter_groups(kwargs: dict[str, Any]) -> None:
     _extract_blob_modified_access_conditions(blob_modified_access_conditions, kwargs)
 
 
-# Import the generated mixin classes
-from ._operations import _ServiceClientOperationsMixin as _ServiceClientOperationsMixinGenerated
-from ._operations import _ContainerClientOperationsMixin as _ContainerClientOperationsMixinGenerated
-from ._operations import _BlobClientOperationsMixin as _BlobClientOperationsMixinGenerated
-from ._operations import _PageBlobClientOperationsMixin as _PageBlobClientOperationsMixinGenerated
-from ._operations import _AppendBlobClientOperationsMixin as _AppendBlobClientOperationsMixinGenerated
-from ._operations import _BlockBlobClientOperationsMixin as _BlockBlobClientOperationsMixinGenerated
+# Import the generated operation classes
+from ._operations import ServiceOperations as ServiceOperationsGenerated
+from ._operations import ContainerOperations as ContainerOperationsGenerated
+from ._operations import BlobOperations as BlobOperationsGenerated
+from ._operations import PageBlobOperations as PageBlobOperationsGenerated
+from ._operations import AppendBlobOperations as AppendBlobOperationsGenerated
+from ._operations import BlockBlobOperations as BlockBlobOperationsGenerated
 
 
 class _ParameterGroupExtractionMixin:
@@ -328,49 +328,49 @@ class _ParameterGroupExtractionMixin:
         return attr
 
 
-class _ServiceClientOperationsMixin(_ParameterGroupExtractionMixin, _ServiceClientOperationsMixinGenerated):
-    """Wrapper for ServiceClient operations with parameter group support."""
+class ServiceOperations(_ParameterGroupExtractionMixin, ServiceOperationsGenerated):
+    """Wrapper for ServiceOperations with parameter group support."""
 
     pass
 
 
-class _ContainerClientOperationsMixin(_ParameterGroupExtractionMixin, _ContainerClientOperationsMixinGenerated):
-    """Wrapper for ContainerClient operations with parameter group support."""
+class ContainerOperations(_ParameterGroupExtractionMixin, ContainerOperationsGenerated):
+    """Wrapper for ContainerOperations with parameter group support."""
 
     pass
 
 
-class _BlobClientOperationsMixin(_ParameterGroupExtractionMixin, _BlobClientOperationsMixinGenerated):
-    """Wrapper for BlobClient operations with parameter group support."""
+class BlobOperations(_ParameterGroupExtractionMixin, BlobOperationsGenerated):
+    """Wrapper for BlobOperations with parameter group support."""
 
     pass
 
 
-class _PageBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _PageBlobClientOperationsMixinGenerated):
-    """Wrapper for PageBlobClient operations with parameter group support."""
+class PageBlobOperations(_ParameterGroupExtractionMixin, PageBlobOperationsGenerated):
+    """Wrapper for PageBlobOperations with parameter group support."""
 
     pass
 
 
-class _AppendBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _AppendBlobClientOperationsMixinGenerated):
-    """Wrapper for AppendBlobClient operations with parameter group support."""
+class AppendBlobOperations(_ParameterGroupExtractionMixin, AppendBlobOperationsGenerated):
+    """Wrapper for AppendBlobOperations with parameter group support."""
 
     pass
 
 
-class _BlockBlobClientOperationsMixin(_ParameterGroupExtractionMixin, _BlockBlobClientOperationsMixinGenerated):
-    """Wrapper for BlockBlobClient operations with parameter group support."""
+class BlockBlobOperations(_ParameterGroupExtractionMixin, BlockBlobOperationsGenerated):
+    """Wrapper for BlockBlobOperations with parameter group support."""
 
     pass
 
 
 __all__: list[str] = [
-    "_ServiceClientOperationsMixin",
-    "_ContainerClientOperationsMixin",
-    "_BlobClientOperationsMixin",
-    "_PageBlobClientOperationsMixin",
-    "_AppendBlobClientOperationsMixin",
-    "_BlockBlobClientOperationsMixin",
+    "ServiceOperations",
+    "ContainerOperations",
+    "BlobOperations",
+    "PageBlobOperations",
+    "AppendBlobOperations",
+    "BlockBlobOperations",
 ]
 
 
