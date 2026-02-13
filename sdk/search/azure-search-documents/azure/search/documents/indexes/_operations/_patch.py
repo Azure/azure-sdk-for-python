@@ -26,7 +26,13 @@ if TYPE_CHECKING:
 
 
 def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchIndex:
-    """Convert a SearchIndexResponse to a SearchIndex."""
+    """Convert a SearchIndexResponse to a SearchIndex.
+
+    :param response: The SearchIndexResponse to convert.
+    :type response: ~azure.search.documents.indexes.models._models.SearchIndexResponse
+    :return: The converted SearchIndex.
+    :rtype: ~azure.search.documents.indexes.models.SearchIndex
+    """
     return _models.SearchIndex(
         name=response.name,
         fields=response.fields or [],
