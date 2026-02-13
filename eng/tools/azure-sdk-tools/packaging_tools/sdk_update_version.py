@@ -175,12 +175,42 @@ def main(
     def edit_changelog_file(content: list[str]):
         nonlocal unchanged
         version_line = f"## {version} ({release_date})\n"
+        first_version_index = -1
         for i in range(0, len(content)):
             if re.match(r"^## \d+\.\d+\.\d+(b\d+)?", content[i]):
                 content[i] = version_line
                 unchanged = False
+                first_version_index = i
                 _LOGGER.info(f"Updated version line in CHANGELOG.md to: {version_line.strip()}")
                 break
+
+        # Remove duplicate version section: if a later section has the same version,
+        # delete it (from its header up to the next version header or end of file).
+        # This handles re-generation where the same changelog content is inserted again.
+        if first_version_index >= 0:
+            # Capture the version token from each version header (e.g., "1.2.3" or "1.2.3b1").
+            version_pattern = re.compile(r"^## (?P<ver>\d+\.\d+\.\d+(b\d+)?)")
+            duplicate_start = -1
+            for j in range(first_version_index + 1, len(content)):
+                match = version_pattern.match(content[j])
+                if match:
+                    # Compare only the version token, ignoring the release date or other suffixes.
+                    if match.group("ver") == version:
+                        duplicate_start = j
+                    break  # stop at the next version header regardless
+
+            if duplicate_start >= 0:
+                # Find end of the duplicate section (next version header or EOF)
+                duplicate_end = len(content)
+                for k in range(duplicate_start + 1, len(content)):
+                    if version_pattern.match(content[k]):
+                        duplicate_end = k
+                        break
+                _LOGGER.info(
+                    f"Removing duplicate version section for {version} "
+                    f"(lines {duplicate_start + 1}-{duplicate_end})"
+                )
+                del content[duplicate_start:duplicate_end]
 
     modify_file(str(changelog_path), edit_changelog_file)
     if unchanged:
