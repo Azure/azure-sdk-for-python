@@ -53,6 +53,7 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
                 assert answer.short_answer.confidence is not None
 
     def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+        deployment_name = "production"
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -71,9 +72,17 @@ class TestQnAKnowledgeBase(QuestionAnsweringTestCase):
             response = client.get_answers(
                 query_params,
                 project_name=qna_creds["qna_project"],
-                deployment_name="test",
+                deployment_name=deployment_name,
             )
             assert response.answers
+            assert any(
+                (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
+                for a in response.answers
+            )
+            assert any(
+                (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"
+                for a in response.answers
+            )
 
     def test_query_knowledgebase_only_id(self, recorded_test, qna_creds): # pylint: disable=unused-argument
         client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]))

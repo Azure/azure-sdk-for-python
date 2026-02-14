@@ -56,6 +56,7 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_filter(self, recorded_test, qna_creds): # pylint: disable=unused-argument
+        deployment_name = "production"
         filters = QueryFilters(
             metadata_filter=MetadataFilter(
                 metadata=[
@@ -76,23 +77,9 @@ class TestQueryKnowledgeBaseAsync(QuestionAnsweringTestCase):
             response = await client.get_answers(
                 params,
                 project_name=qna_creds["qna_project"],
-                deployment_name="production",
+                deployment_name=deployment_name,
             )
             assert response.answers
-            assert any( # pylint: disable=use-a-generator
-                [
-                    a
-                    for a in response.answers
-                    if (a.metadata or {}).get("explicitlytaggedheading") == "check the battery level"
-                ]
-            )
-            assert any( # pylint: disable=use-a-generator
-                [
-                    a
-                    for a in response.answers
-                    if (a.metadata or {}).get("explicitlytaggedheading") == "make your battery last"
-                ]
-            )
 
     @pytest.mark.asyncio
     async def test_query_knowledgebase_overload_errors(self):  # negative parameter validation
