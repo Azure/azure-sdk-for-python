@@ -16,7 +16,8 @@ steps:
             | ConvertFrom-Json
 
           if ($pkgInfo) {
-            python eng/tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
+            Write-Host "Running azpysdk update-snippets for $targetedPackage (includes black formatting)"
+            azpysdk update-snippets "$(Build.SourcesDirectory)/sdk/$($pkgInfo.ServiceDirectory)/$targetedPackage"
           }
           else {
             Write-Error "Unable to obtain package info for $targetedPackage."
@@ -34,5 +35,5 @@ steps:
           exit 1
         }
       }
-    displayName: Update Snippets
+    displayName: Update Snippets (with black formatting)
     condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))

@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import argparse
 import re
+import subprocess
 from typing import Dict
 
 _LOGGER = logging.getLogger(__name__)
@@ -17,6 +18,63 @@ not_up_to_date = False
 
 target_snippet_sources = ["samples/*.py", "samples/**/*.py"]
 target_md_files = ["README.md"]
+
+BLACK_VERSION = "24.4.0"
+
+
+def run_black_formatting(path: Path, no_black: bool = False) -> bool:
+    """Run black formatting on sample files before snippet extraction.
+    
+    Args:
+        path: The package directory path
+        no_black: If True, skip black formatting
+        
+    Returns:
+        True if black ran successfully or was skipped, False if black failed
+    """
+    if no_black:
+        _LOGGER.info("Skipping black formatting (--no-black flag provided)")
+        return True
+    
+    _LOGGER.info("Running black as a required step before snippet extraction...")
+    
+    # Find the black config file
+    repo_root = path
+    while repo_root.parent != repo_root:
+        black_config = repo_root / "eng" / "black-pyproject.toml"
+        if black_config.exists():
+            break
+        repo_root = repo_root.parent
+    else:
+        _LOGGER.warning("Could not find black config file, using default black settings")
+        black_config = None
+    
+    # Run black on sample files
+    for source in target_snippet_sources:
+        for py_file in path.rglob(source):
+            try:
+                cmd = [sys.executable, "-m", "black"]
+                if black_config:
+                    cmd.append(f"--config={black_config}")
+                cmd.append(str(py_file))
+                
+                result = subprocess.run(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    check=False,
+                )
+                
+                if result.returncode != 0:
+                    _LOGGER.error(f"Black formatting failed for {py_file}: {result.stderr.decode('utf-8')}")
+                    return False
+                    
+            except Exception as e:
+                _LOGGER.error(f"Error running black on {py_file}: {e}")
+                return False
+    
+    _LOGGER.info("Black formatting completed successfully")
+    return True
 
 
 def check_snippets() -> Dict:
@@ -109,12 +167,23 @@ if __name__ == "__main__":
         nargs="?",
         help=("The targeted path for update."),
     )
+    parser.add_argument(
+        "--no-black",
+        action="store_true",
+        help="Skip black formatting step (use only if you are confident snippets are already formatted)",
+    )
     args = parser.parse_args()
-    path = sys.argv[1]
+    path = Path(sys.argv[1])
 
     _LOGGER.info(f"Path: {path}")
+    
+    # Run black formatting as a prerequisite step
+    if not run_black_formatting(path, args.no_black):
+        _LOGGER.error("Black formatting failed. Cannot proceed with snippet update.")
+        exit(1)
+    
     for source in target_snippet_sources:
-        for py_file in Path(path).rglob(source):
+        for py_file in path.rglob(source):
             try:
                 get_snippet(py_file)
             except UnicodeDecodeError:
@@ -122,7 +191,7 @@ if __name__ == "__main__":
     for key in snippets.keys():
         _LOGGER.debug(f"Found snippet: {key}")
     for target in target_md_files:
-        for md_file in Path(path).rglob(target):
+        for md_file in path.rglob(target):
             try:
                 update_snippet(md_file)
             except UnicodeDecodeError:
