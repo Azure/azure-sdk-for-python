@@ -1,5 +1,106 @@
 # Release History
 
+## 19.0.0 (2026-02-11)
+
+### Features Added
+
+  - Model `BatchManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `BatchManagementClient` added method `send_request`
+  - Model `Application` added property `system_data`
+  - Model `ApplicationPackage` added property `system_data`
+  - Model `AzureResource` added property `system_data`
+  - Model `BatchAccount` added property `system_data`
+  - Model `BatchAccountCreateParameters` added property `properties`
+  - Model `BatchAccountUpdateParameters` added property `properties`
+  - Model `CheckNameAvailabilityParameters` added property `type`
+  - Model `DataDisk` added property `managed_disk`
+  - Model `DetectorResponse` added property `system_data`
+  - Model `DiskEncryptionConfiguration` added property `customer_managed_key`
+  - Model `IPRule` added property `action`
+  - Model `ManagedDisk` added property `disk_encryption_set`
+  - Model `Pool` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `PublicIPAddressConfiguration` added property `ip_families`
+  - Model `PublicIPAddressConfiguration` added property `ip_tags`
+  - Enum `SecurityEncryptionTypes` added member `DISK_WITH_VM_GUEST_STATE`
+  - Model `SecurityProfile` added property `proxy_agent_settings`
+  - Model `TaskSchedulingPolicy` added property `job_default_order`
+  - Model `VMDiskSecurityProfile` added property `disk_encryption_set`
+  - Added model `AccessRulePropertiesSubscription`
+  - Added model `BatchAccountCreateProperties`
+  - Added model `BatchAccountUpdateProperties`
+  - Added model `CloudError`
+  - Added enum `DiffDiskPlacement`
+  - Added model `DiskCustomerManagedKey`
+  - Added model `DiskEncryptionSetParameters`
+  - Added model `HostEndpointSettings`
+  - Added enum `HostEndpointSettingsModeTypes`
+  - Added enum `IPFamily`
+  - Added enum `IPRuleAction`
+  - Added model `IPTag`
+  - Added enum `JobDefaultOrder`
+  - Added model `ProxyAgentSettings`
+  - Added enum `ResourceType`
+  - Model `PoolOperations` added parameter `etag` in method `create`
+  - Model `PoolOperations` added parameter `match_condition` in method `create`
+  - Model `PoolOperations` added parameter `etag` in method `update`
+  - Model `PoolOperations` added parameter `match_condition` in method `update`
+  - Model `PrivateEndpointConnectionOperations` added parameter `etag` in method `begin_update`
+  - Model `PrivateEndpointConnectionOperations` added parameter `match_condition` in method `begin_update`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `BatchManagementClient.certificate`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `auto_storage`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `pool_allocation_mode`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `key_vault_reference`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `network_profile`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `encryption`
+  - Model `BatchAccountCreateParameters` deleted or renamed its instance variable `allowed_authentication_modes`
+  - Model `BatchAccountUpdateParameters` deleted or renamed its instance variable `auto_storage`
+  - Model `BatchAccountUpdateParameters` deleted or renamed its instance variable `encryption`
+  - Model `BatchAccountUpdateParameters` deleted or renamed its instance variable `allowed_authentication_modes`
+  - Model `BatchAccountUpdateParameters` deleted or renamed its instance variable `public_network_access`
+  - Model `BatchAccountUpdateParameters` deleted or renamed its instance variable `network_profile`
+  - Model `DataDisk` deleted or renamed its instance variable `storage_account_type`
+  - Deleted or renamed model `AccessRulePropertiesSubscriptionsItem`
+  - Deleted or renamed model `AzureProxyResource`
+  - Deleted or renamed model `Certificate`
+  - Deleted or renamed model `CertificateBaseProperties`
+  - Deleted or renamed model `CertificateCreateOrUpdateParameters`
+  - Deleted or renamed model `CertificateCreateOrUpdateProperties`
+  - Deleted or renamed model `CertificateFormat`
+  - Deleted or renamed model `CertificateProperties`
+  - Deleted or renamed model `CertificateProvisioningState`
+  - Deleted or renamed model `CertificateReference`
+  - Deleted or renamed model `CertificateStoreLocation`
+  - Deleted or renamed model `CertificateVisibility`
+  - Deleted or renamed model `DeleteCertificateError`
+  - Deleted or renamed model `ListApplicationPackagesResult`
+  - Deleted or renamed model `ListApplicationsResult`
+  - Deleted or renamed model `ListCertificatesResult`
+  - Deleted or renamed model `ListPoolsResult`
+  - Deleted or renamed model `ListPrivateEndpointConnectionsResult`
+  - Deleted or renamed model `ListPrivateLinkResourcesResult`
+  - Deleted or renamed model `NodeCommunicationMode`
+  - Deleted or renamed model `OutboundEnvironmentEndpointCollection`
+  - Deleted or renamed model `SupportedSkusResult`
+  - Method `ApplicationOperations.list` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `ApplicationPackageOperations.list` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `LocationOperations.list_supported_virtual_machine_skus` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `PoolOperations.create` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `PoolOperations.create` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `PoolOperations.list_by_batch_account` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `PoolOperations.list_by_batch_account` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Method `PoolOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `PrivateEndpointConnectionOperations.list_by_batch_account` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Method `PrivateLinkResourceOperations.list_by_batch_account` changed its parameter `maxresults` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `CertificateOperations`
+  - Method `PoolOperations.create` re-ordered its parameters from `['self', 'resource_group_name', 'account_name', 'pool_name', 'parameters', 'if_match', 'if_none_match', 'kwargs']` to `['self', 'resource_group_name', 'account_name', 'pool_name', 'parameters', 'etag', 'match_condition', 'kwargs']`
+
 ## 18.0.0 (2024-09-25)
 
 ### Features Added
