@@ -142,18 +142,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             configurations: List[ConfigurationSetting] = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = None
-                try:
-                    snapshot = self._client.get_snapshot(select.snapshot_name)
-                except HttpResponseError as e:
-                    if e.status_code == 404:
-                        self.LOGGER.warning(
-                            "Snapshot '%s' not found when resolving snapshot.", select.snapshot_name
-                        )
-                        return []
-                    raise e
-                if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
+                if not self._validate_snapshot(select.snapshot_name):
+                    return []
                 configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Use traditional filtering when not loading from a snapshot
@@ -180,18 +170,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             feature_flags = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
-                snapshot = None
-                try:
-                    snapshot = self._client.get_snapshot(select.snapshot_name)
-                except HttpResponseError as e:
-                    if e.status_code == 404:
-                        self.LOGGER.warning(
-                            "Snapshot '%s' not found when resolving snapshot.", select.snapshot_name
-                        )
-                        return []
-                    raise e
-                if snapshot.composition_type != SnapshotComposition.KEY:
-                    raise ValueError(f"Composition type for '{select.snapshot_name}' must be 'key'.")
+                if not self._validate_snapshot(select.snapshot_name):
+                    return []
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
             else:
                 # Handle None key_filter by converting to empty string
@@ -267,6 +247,30 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
+    def _validate_snapshot(self, snapshot_name: str) -> bool:
+        """Gets and validates a snapshot by name.
+
+        Returns True if the snapshot is found and has a valid composition type,
+        or False if the snapshot does not exist (404).
+
+        :param str snapshot_name: The name of the snapshot to retrieve
+        :return: True if the snapshot is valid, False if not found
+        :rtype: bool
+        :raises HttpResponseError: If the error is not a 404
+        :raises ValueError: If the snapshot composition type is not 'key'
+        """
+        snapshot = None
+        try:
+            snapshot = self._client.get_snapshot(snapshot_name)
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
+                return False
+            raise e
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
+        return True
+
     def is_active(self) -> bool:
         """
         Checks if the client is active and can be used.
@@ -303,18 +307,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
         # Parse the snapshot reference
         snapshot_name = SnapshotReferenceParser.parse(setting)
-        snapshot = None
-
-        try:
-            snapshot = self._client.get_snapshot(snapshot_name)
-        except HttpResponseError as e:
-            if e.status_code == 404:
-                self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot reference.", snapshot_name)
-                return []
-            raise e
-
-        if snapshot.composition_type != SnapshotComposition.KEY:
-            raise ValueError(f"Snapshot '{snapshot_name}' does not have a 'key' composition type.")
+        if not self._validate_snapshot(snapshot_name):
+            return []
 
         # Create a selector for the snapshot
         snapshot_selector = SettingSelector(snapshot_name=snapshot_name)

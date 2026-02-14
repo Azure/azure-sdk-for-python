@@ -231,7 +231,7 @@ class TestResolveSnapshotReference:
             content_type=SNAPSHOT_REF_CONTENT_TYPE,
         )
 
-        with pytest.raises(ValueError, match="does not have a 'key' composition type"):
+        with pytest.raises(ValueError, match="Composition type for 'test-snapshot' must be 'key'."):
             wrapper.resolve_snapshot_reference(setting)
 
     def test_resolve_snapshot_reference_invalid_content_type_raises(self):
