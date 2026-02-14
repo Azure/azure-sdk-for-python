@@ -1,0 +1,87 @@
+{
+  "name": "azure-ai-ml-issue-automation",
+  "description": "Automated handling of azure-ai-ml linting and type checking issues",
+  "version": "1.0.0",
+  "enabled": true,
+  "rules": [
+    {
+      "id": "auto-label-azure-ai-ml-issues",
+      "name": "Auto-label azure-ai-ml issues",
+      "description": "Automatically label issues that mention azure-ai-ml and mypy/pylint/pyright",
+      "enabled": true,
+      "triggers": {
+        "events": ["issues.opened", "issues.edited", "issues.labeled"],
+        "conditions": {
+          "package": "azure-ai-ml",
+          "tools": ["mypy", "pylint", "pyright"],
+          "match_type": "any"
+        }
+      },
+      "actions": {
+        "add_labels": [
+          "azure-ai-ml",
+          "Machine Learning",
+          "needs-copilot-action"
+        ],
+        "add_tool_specific_label": true,
+        "add_comment": true,
+        "create_tracking_file": true
+      }
+    }
+  ],
+  "labels": {
+    "azure-ai-ml": {
+      "description": "Issues related to azure-ai-ml package",
+      "color": "0e8a16"
+    },
+    "mypy": {
+      "description": "MyPy type checking issues",
+      "color": "d4c5f9"
+    },
+    "pylint": {
+      "description": "Pylint linting issues",
+      "color": "d4c5f9"
+    },
+    "pyright": {
+      "description": "Pyright type checking issues",
+      "color": "d4c5f9"
+    },
+    "needs-copilot-action": {
+      "description": "Issue needs Copilot automation action",
+      "color": "fbca04"
+    }
+  },
+  "assignees": {
+    "default": [],
+    "team": "@Azure/azure-sdk-for-python-team"
+  },
+  "notification_settings": {
+    "slack_webhook": null,
+    "teams_webhook": null,
+    "email": null
+  },
+  "copilot_instructions": {
+    "mypy": {
+      "command": "Fix mypy type checking errors in azure-ai-ml",
+      "reference_docs": [
+        "https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md"
+      ]
+    },
+    "pylint": {
+      "command": "Fix pylint warnings in azure-ai-ml",
+      "reference_docs": [
+        "https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md",
+        "https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md"
+      ]
+    },
+    "pyright": {
+      "command": "Fix pyright type checking errors in azure-ai-ml",
+      "reference_docs": [
+        "https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md"
+      ]
+    }
+  },
+  "workflow_file": ".github/workflows/auto-assign-azure-ai-ml-issues.yml",
+  "helper_script": "scripts/copilot_fix_trigger.py",
+  "documentation": ".github/workflows/README-AZURE-AI-ML-AUTOMATION.md"
+}

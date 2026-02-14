@@ -1,0 +1,152 @@
+name: Auto-assign azure-ai-ml lint/type check issues
+
+# This workflow automatically assigns issues related to azure-ai-ml mypy/pylint/pyright
+# updates to Copilot and triggers PR creation
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  check-and-assign:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check if issue needs auto-assignment
+        id: check
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          # Check if issue mentions azure-ai-ml and mypy/pylint/pyright
+          echo "Checking issue: #$ISSUE_NUMBER"
+          echo "Title: $ISSUE_TITLE"
+          
+          # Combine title and body for checking
+          ISSUE_TEXT="${ISSUE_TITLE} ${ISSUE_BODY}"
+          
+          # Check for azure-ai-ml package
+          if echo "$ISSUE_TEXT" | grep -iq "azure-ai-ml"; then
+            echo "Found azure-ai-ml reference"
+            MATCHES_PACKAGE=true
+          else
+            echo "No azure-ai-ml reference found"
+            MATCHES_PACKAGE=false
+          fi
+          
+          # Check for mypy, pylint, or pyright
+          if echo "$ISSUE_TEXT" | grep -iE "mypy|pylint|pyright"; then
+            echo "Found linter/type checker reference"
+            MATCHES_TOOL=true
+          else
+            echo "No linter/type checker reference found"
+            MATCHES_TOOL=false
+          fi
+          
+          # Set output
+          if [ "$MATCHES_PACKAGE" = "true" ] && [ "$MATCHES_TOOL" = "true" ]; then
+            echo "should_assign=true" >> $GITHUB_OUTPUT
+            echo "Issue matches criteria for auto-assignment"
+          else
+            echo "should_assign=false" >> $GITHUB_OUTPUT
+            echo "Issue does not match criteria"
+          fi
+
+      - name: Add labels to issue
+        if: steps.check.outputs.should_assign == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const labels = ['azure-ai-ml', 'needs-copilot-action', 'Machine Learning'];
+            
+            // Check which specific tool is mentioned
+            const issueText = `${context.payload.issue.title} ${context.payload.issue.body}`;
+            if (/mypy/i.test(issueText)) {
+              labels.push('mypy');
+            }
+            if (/pylint/i.test(issueText)) {
+              labels.push('pylint');
+            }
+            if (/pyright/i.test(issueText)) {
+              labels.push('pyright');
+            }
+            
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              labels: labels
+            });
+            
+            console.log(`Added labels: ${labels.join(', ')}`);
+
+      - name: Add comment with instructions
+        if: steps.check.outputs.should_assign == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issueText = `${context.payload.issue.title} ${context.payload.issue.body}`;
+            let tool = '';
+            if (/mypy/i.test(issueText)) tool = 'mypy';
+            else if (/pylint/i.test(issueText)) tool = 'pylint';
+            else if (/pyright/i.test(issueText)) tool = 'pyright';
+            
+            const comment = `🤖 **Automated Issue Detection**
+            
+            This issue has been automatically detected as related to **azure-ai-ml** ${tool ? `**${tool}**` : 'linting/type checking'} and has been labeled accordingly.
+            
+            **Next Steps:**
+            To have Copilot create a PR to fix this issue, a team member can:
+            1. Use GitHub Copilot Workspace to analyze the issue
+            2. Run the appropriate fix command:
+               ${tool === 'mypy' ? '- For mypy: Run mypy checks and fix type errors' : ''}
+               ${tool === 'pylint' ? '- For pylint: Run pylint and fix warnings' : ''}
+               ${tool === 'pyright' ? '- For pyright: Run pyright and fix type errors' : ''}
+            3. Create a PR with the fixes
+            
+            **Manual Process:**
+            Alternatively, you can manually trigger Copilot by:
+            - Opening GitHub Copilot Workspace
+            - Referencing this issue
+            - Asking Copilot to fix the ${tool || 'linting/type checking'} issues in azure-ai-ml
+            
+            ---
+            *This automation is configured in \`.github/workflows/auto-assign-azure-ai-ml-issues.yml\`*`;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              body: comment
+            });
+            
+            console.log('Added comment with Copilot instructions');
+
+      - name: Create tracking file for issue
+        if: steps.check.outputs.should_assign == 'true'
+        run: |
+          mkdir -p .github/copilot-tasks
+          cat > .github/copilot-tasks/issue-${{ github.event.issue.number }}.json << EOF
+          {
+            "issue_number": ${{ github.event.issue.number }},
+            "issue_title": "${{ github.event.issue.title }}",
+            "package": "azure-ai-ml",
+            "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "status": "pending"
+          }
+          EOF
+          
+          echo "Created tracking file for issue #${{ github.event.issue.number }}"
