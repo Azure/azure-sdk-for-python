@@ -23,6 +23,8 @@ SDK_TO_REST = {
     DistributionType.TENSORFLOW: RestDistributionType.TENSOR_FLOW,
     DistributionType.PYTORCH: RestDistributionType.PY_TORCH,
     DistributionType.RAY: RestDistributionType.RAY,
+    # Support legacy alias - maps to the same REST type as PYTORCH
+    DistributionType.TORCH_DISTRIBUTED: RestDistributionType.PY_TORCH,
 }
 
 
@@ -226,4 +228,6 @@ DISTRIBUTION_TYPE_MAP = {
     DistributionType.TENSORFLOW: TensorFlowDistribution,
     DistributionType.PYTORCH: PyTorchDistribution,
     DistributionType.RAY: RayDistribution,
+    # Support legacy alias for backwards compatibility with AML SDK v1.5
+    DistributionType.TORCH_DISTRIBUTED: PyTorchDistribution,
 }
