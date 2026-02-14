@@ -196,17 +196,15 @@ class BlobCheckpointStore(CheckpointStore):
             )
             raise OwnershipLostError() from exc
         except Exception as error:  # pylint:disable=broad-except
-            logger.warning(
+            logger.debug(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
                 "namespace %r eventhub %r consumer group %r partition %r. "
-                "The ownership is now lost. Exception "
-                "is %r",
+                "The ownership is now lost.",
                 updated_ownership["owner_id"],
                 updated_ownership["fully_qualified_namespace"],
                 updated_ownership["eventhub_name"],
                 updated_ownership["consumer_group"],
                 updated_ownership["partition_id"],
-                error,
             )
             return updated_ownership  # Keep the ownership if an unexpected error happens
 
@@ -253,14 +251,13 @@ class BlobCheckpointStore(CheckpointStore):
                 result.append(ownership)
             return result
         except Exception as error:
-            logger.warning(
+            # Using debug level to comply with rule C4762 (do-not-log-raised-errors)
+            logger.debug(
                 "An exception occurred during list_ownership for "
-                "namespace %r eventhub %r consumer group %r. "
-                "Exception is %r",
+                "namespace %r eventhub %r consumer group %r.",
                 fully_qualified_namespace,
                 eventhub_name,
                 consumer_group,
-                error,
             )
             raise
 
