@@ -5,7 +5,12 @@
       "mslearn",
       "envtemplate",
       "pysort",
-      "redef"
+      "redef",
+      "aifunction",
+      "ainvoke",
+      "hitl",
+      "HITL",
+      "inmemory"
     ],
     "ignorePaths": [
       "*.csv",

@@ -16,26 +16,30 @@ def converter() -> AgentFrameworkInputConverter:
 
 
 @pytest.mark.unit
-def test_transform_none_returns_none(converter: AgentFrameworkInputConverter) -> None:
-	assert converter.transform_input(None) is None
+@pytest.mark.asyncio
+async def test_transform_none_returns_none(converter: AgentFrameworkInputConverter) -> None:
+	assert await converter.transform_input(None) is None
 
 
 @pytest.mark.unit
-def test_transform_string_returns_same(converter: AgentFrameworkInputConverter) -> None:
-	assert converter.transform_input("hello") == "hello"
+@pytest.mark.asyncio
+async def test_transform_string_returns_same(converter: AgentFrameworkInputConverter) -> None:
+	assert await converter.transform_input("hello") == "hello"
 
 
 @pytest.mark.unit
-def test_transform_implicit_user_message_with_string(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_implicit_user_message_with_string(converter: AgentFrameworkInputConverter) -> None:
 	payload = [{"content": "How are you?"}]
 
-	result = converter.transform_input(payload)
+	result = await converter.transform_input(payload)
 
 	assert result == "How are you?"
 
 
 @pytest.mark.unit
-def test_transform_implicit_user_message_with_input_text_list(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_implicit_user_message_with_input_text_list(converter: AgentFrameworkInputConverter) -> None:
 	payload = [
 		{
 			"content": [
@@ -45,13 +49,14 @@ def test_transform_implicit_user_message_with_input_text_list(converter: AgentFr
 		}
 	]
 
-	result = converter.transform_input(payload)
+	result = await converter.transform_input(payload)
 
 	assert result == "Hello world"
 
 
 @pytest.mark.unit
-def test_transform_explicit_message_returns_chat_message(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_explicit_message_returns_chat_message(converter: AgentFrameworkInputConverter) -> None:
 	payload = [
 		{
 			"type": "message",
@@ -62,7 +67,7 @@ def test_transform_explicit_message_returns_chat_message(converter: AgentFramewo
 		}
 	]
 
-	result = converter.transform_input(payload)
+	result = await converter.transform_input(payload)
 
 	assert isinstance(result, ChatMessage)
 	assert result.role == ChatRole.ASSISTANT
@@ -70,7 +75,8 @@ def test_transform_explicit_message_returns_chat_message(converter: AgentFramewo
 
 
 @pytest.mark.unit
-def test_transform_multiple_explicit_messages_returns_list(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_multiple_explicit_messages_returns_list(converter: AgentFrameworkInputConverter) -> None:
 	payload = [
 		{
 			"type": "message",
@@ -86,7 +92,7 @@ def test_transform_multiple_explicit_messages_returns_list(converter: AgentFrame
 		},
 	]
 
-	result = converter.transform_input(payload)
+	result = await converter.transform_input(payload)
 
 	assert isinstance(result, list)
 	assert len(result) == 2
@@ -98,7 +104,8 @@ def test_transform_multiple_explicit_messages_returns_list(converter: AgentFrame
 
 
 @pytest.mark.unit
-def test_transform_mixed_messages_coerces_to_strings(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_mixed_messages_coerces_to_strings(converter: AgentFrameworkInputConverter) -> None:
 	payload = [
 		{"content": "First"},
 		{
@@ -110,21 +117,23 @@ def test_transform_mixed_messages_coerces_to_strings(converter: AgentFrameworkIn
 		},
 	]
 
-	result = converter.transform_input(payload)
+	result = await converter.transform_input(payload)
 
 	assert result == ["First", "Second"]
 
 
 @pytest.mark.unit
-def test_transform_invalid_input_type_raises(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_invalid_input_type_raises(converter: AgentFrameworkInputConverter) -> None:
 	with pytest.raises(Exception) as exc_info:
-		converter.transform_input({"content": "invalid"})
+		await converter.transform_input({"content": "invalid"})
 
 	assert "Unsupported input type" in str(exc_info.value)
 
 
 @pytest.mark.unit
-def test_transform_skips_non_text_entries(converter: AgentFrameworkInputConverter) -> None:
+@pytest.mark.asyncio
+async def test_transform_skips_non_text_entries(converter: AgentFrameworkInputConverter) -> None:
 	payload = [
 		{
 			"content": [
@@ -134,6 +143,6 @@ def test_transform_skips_non_text_entries(converter: AgentFrameworkInputConverte
 		}
 	]
 
-	result = converter.transform_input(payload)
+	result = await converter.transform_input(payload)
 
 	assert result is None

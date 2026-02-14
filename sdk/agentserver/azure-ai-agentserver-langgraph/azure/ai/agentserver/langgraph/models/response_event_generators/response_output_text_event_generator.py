@@ -6,12 +6,11 @@
 from typing import List
 
 from azure.ai.agentserver.core.models import projects as project_models
-from azure.ai.agentserver.core.server.common.agent_run_context import AgentRunContext
-
 from .response_event_generator import (
     ResponseEventGenerator,
     StreamEventState,
 )
+from ..._context import LanggraphRunContext
 
 
 class ResponseOutputTextEventGenerator(ResponseEventGenerator):
@@ -74,7 +73,7 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
                 self.aggregated_content += item
                 stream_state.sequence_number += 1
                 res.append(chunk_event)
-            return True, self, res   # mypy: ignore[return-value]
+            return True, self, res  # mypy: ignore[return-value]
         return False, self, []
 
     def has_finish_reason(self, message) -> bool:
@@ -92,8 +91,8 @@ class ResponseOutputTextEventGenerator(ResponseEventGenerator):
             return True
         return False
 
-    def on_end(   # mypy: ignore[override]
-        self, message, context: AgentRunContext, stream_state: StreamEventState
+    def on_end(  # mypy: ignore[override]
+        self, message, context: LanggraphRunContext, stream_state: StreamEventState
     ) -> tuple[bool, List[project_models.ResponseStreamEvent]]:
         if not self.started:
             return False, []

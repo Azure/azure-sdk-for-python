@@ -8,6 +8,7 @@ authors = [
 ]
 license = "MIT"
 classifiers = [
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -19,21 +20,26 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-monitor-opentelemetry>=1.5.0",
-    "azure-ai-projects",
-    "azure-ai-agents>=1.2.0b5",
+    "azure-monitor-opentelemetry>=1.5.0,<1.8.5",
+    "azure-ai-projects>=1.1.0b4",
+    "azure-ai-agents==1.2.0b5",
     "azure-core>=1.35.0",
-    "azure-identity",
+    "azure-identity>=1.25.1",
     "openai>=1.80.0",
     "opentelemetry-api>=1.35",
     "opentelemetry-exporter-otlp-proto-http",
     "starlette>=0.45.0",
     "uvicorn>=0.31.0",
+    "aiohttp>=3.13.0", # used by azure-identity aio
+    "cachetools>=6.0.0"
 ]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -69,3 +75,5 @@ combine-as-imports = true
 breaking = false   # incompatible python version
 pyright = false
 verifytypes = false
+latestdependency = false
+dependencies = false

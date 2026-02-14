@@ -2,13 +2,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # mypy: disable-error-code="assignment"
+from typing import Optional
+
+from langgraph.types import Interrupt
+
 from azure.ai.agentserver.core.models import projects as project_models
 
+from ..human_in_the_loop_helper import HumanInTheLoopHelper
 from ..utils import extract_function_call
 
 
 class ItemResourceHelper:
-    def __init__(self, item_type: str, item_id: str = None):
+    def __init__(self, item_type: str, item_id: Optional[str] = None):
         self.item_type = item_type
         self.item_id = item_id
 
@@ -53,6 +58,31 @@ class FunctionCallItemResourceHelper(ItemResourceHelper):
         _, _, argument = extract_function_call(item)
         if argument:
             self.arguments += argument
+
+    def get_aggregated_content(self):
+        return self.create_item_resource(is_done=True)
+
+
+class FunctionCallInterruptItemResourceHelper(ItemResourceHelper):
+    def __init__(self,
+            item_id: Optional[str] = None,
+            hitl_helper: Optional[HumanInTheLoopHelper] = None,
+            interrupt: Optional[Interrupt] = None):
+        super().__init__(project_models.ItemType.FUNCTION_CALL, item_id)
+        self.hitl_helper = hitl_helper
+        self.interrupt = interrupt
+
+    def create_item_resource(self, is_done: bool):
+        if self.hitl_helper is None or self.interrupt is None:
+            return None
+        item_resource = self.hitl_helper.convert_interrupt(self.interrupt)
+        if item_resource is not None and not is_done:
+            if hasattr(item_resource, 'arguments'):
+                item_resource.arguments = ""  # type: ignore[union-attr]
+        return item_resource
+
+    def add_aggregate_content(self, item):
+        pass
 
     def get_aggregated_content(self):
         return self.create_item_resource(is_done=True)

@@ -8,6 +8,7 @@ authors = [
 ]
 license = "MIT"
 classifiers = [
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -19,17 +20,18 @@ classifiers = [
 keywords = ["azure", "azure sdk"]
 
 dependencies = [
-    "azure-ai-agentserver-core",
-    "langchain>0.3.5",
-    "langchain-openai>0.3.10",
-    "langchain-azure-ai[opentelemetry]>=0.1.4",
-    "langgraph>0.5.0",
-    "opentelemetry-exporter-otlp-proto-http",
+    "azure-ai-agentserver-core==1.0.0b12",
+    "langchain>=1.0.3",
+    "langchain-openai>=1.0.3",
+    "langchain-azure-ai[opentelemetry]~=1.0.0",
 ]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -63,5 +65,6 @@ breaking = false   # incompatible python version
 pyright = false
 verifytypes = false   # incompatible python version for -core
 verify_keywords = false
-mindependency = false  # depends on -core package
 whl_no_aio = false
+mypy = false
+apistub = false
