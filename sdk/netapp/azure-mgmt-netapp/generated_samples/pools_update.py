@@ -15,7 +15,7 @@ from azure.mgmt.netapp import NetAppManagementClient
     pip install azure-identity
     pip install azure-mgmt-netapp
 # USAGE
-    python caches_delete.py
+    python pools_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.caches.begin_delete(
+    response = client.pools.begin_update(
         resource_group_name="myRG",
         account_name="account1",
         pool_name="pool1",
-        cache_name="cache1",
+        body={
+            "id": "str",
+            "location": "str",
+            "name": "str",
+            "properties": {"coolAccess": bool, "customThroughputMibps": 0, "qosType": "str", "size": 0},
+            "tags": {"str": "str"},
+            "type": "str",
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2025-09-01-preview/Caches_Delete.json
+# x-ms-original-file: 2025-12-01/Pools_Update.json
 if __name__ == "__main__":
     main()
