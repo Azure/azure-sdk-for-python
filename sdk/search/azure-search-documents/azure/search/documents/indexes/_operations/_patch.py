@@ -15,6 +15,7 @@ from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
 from .. import models as _models
+from ..models._models import SearchIndexResponse as _SearchIndexResponse
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
@@ -22,6 +23,37 @@ from ._operations import (
 
 if TYPE_CHECKING:
     import azure.search.documents
+
+
+def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchIndex:
+    """Convert a SearchIndexResponse to a SearchIndex.
+
+    :param response: The SearchIndexResponse to convert.
+    :type response: ~azure.search.documents.indexes.models._models.SearchIndexResponse
+    :return: The converted SearchIndex.
+    :rtype: ~azure.search.documents.indexes.models.SearchIndex
+    """
+    return _models.SearchIndex(
+        name=response.name,
+        fields=response.fields or [],
+        description=response.description,
+        scoring_profiles=response.scoring_profiles,
+        default_scoring_profile=response.default_scoring_profile,
+        cors_options=response.cors_options,
+        suggesters=response.suggesters,
+        analyzers=response.analyzers,
+        tokenizers=response.tokenizers,
+        token_filters=response.token_filters,
+        char_filters=response.char_filters,
+        normalizers=response.normalizers,
+        encryption_key=response.encryption_key,
+        similarity=response.similarity,
+        semantic_search=response.semantic,
+        vector_search=response.vector_search,
+        permission_filter_option=response.permission_filter_option,
+        purview_enabled=response.purview_enabled,
+        e_tag=response.e_tag,
+    )
 
 
 class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
@@ -326,6 +358,29 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             )
 
     @distributed_trace
+    def list_indexes(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> ItemPaged[_models.SearchIndex]:
+        """Lists all indexes available for a search service.
+
+        :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
+            list of JSON property names, or '*' for all properties. The default is all properties.
+            Default value is None.
+        :paramtype select: list[str]
+        :return: An iterator like instance of SearchIndex
+        :rtype: ~azure.core.paging.ItemPaged[~azure.search.documents.indexes.models.SearchIndex]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if select is not None:
+            return cast(
+                ItemPaged[_models.SearchIndex],
+                self._list_indexes_with_selected_properties(
+                    select=select,
+                    cls=lambda objs: [_convert_index_response(x) for x in objs],
+                    **kwargs,
+                ),
+            )
+        return self._list_indexes(**kwargs)
+
+    @distributed_trace
     def list_index_names(self, **kwargs: Any) -> ItemPaged[str]:
         """Lists the names of all indexes available for a search service.
 
@@ -333,7 +388,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self.list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self._list_indexes(cls=lambda objs: [x.name for x in objs], **kwargs)
         return cast(ItemPaged[str], names)
 
     @distributed_trace
