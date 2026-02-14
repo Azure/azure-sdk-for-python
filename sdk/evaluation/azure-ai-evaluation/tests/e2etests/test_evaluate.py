@@ -21,6 +21,7 @@ from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._user_agent import UserAgentSingleton
 from azure.ai.evaluation._version import VERSION
+from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 
 @pytest.fixture
@@ -158,6 +159,8 @@ class TestEvaluate:
     )
     @pytest.mark.parametrize("use_pf_client", [True, False])
     def test_evaluate_python_function(self, data_file, use_pf_client, function, column):
+        if use_pf_client and MISSING_LEGACY_SDK:
+            pytest.skip("This test requires promptflow to be installed")
         # data
         input_data = pd.read_json(data_file, lines=True)
 

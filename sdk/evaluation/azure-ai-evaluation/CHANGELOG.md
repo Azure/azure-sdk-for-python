@@ -6,6 +6,10 @@
 
 - Prevent recursive stdout/stderr forwarding when NodeLogManager is nested, avoiding RecursionError in concurrent evaluation runs.
 
+### Other Changes
+
+- The `[redteam]` extra now requires `pyrit==0.11.0`, which depends on `pillow>=12.1.0`. This conflicts with `promptflow-devkit` (`pillow<=11.3.0`). Use separate virtual environments if you need both packages.
+
 ## 1.14.0 (2026-01-05)
 
 ### Bugs Fixed

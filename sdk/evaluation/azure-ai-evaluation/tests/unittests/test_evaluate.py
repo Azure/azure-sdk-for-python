@@ -44,6 +44,7 @@ from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 
 def _get_file(name):
@@ -602,6 +603,7 @@ class TestEvaluate:
 
         assert "Please ensure the evaluate API is properly guarded with the '__main__' block" in exc_info.value.args[0]
 
+    @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
     def test_get_trace_destination(self, mock_validate_trace_destination, mock_project_scope):
         pf_client = PFClient()
         trace_destination_without_override = pf_client._config.get_trace_destination()
@@ -938,6 +940,7 @@ class TestEvaluate:
         eval1._set_conversation_aggregator(custom_aggregator)
         assert eval1._get_conversation_aggregator_type() == _AggregationType.CUSTOM
 
+    @pytest.mark.skipif(MISSING_LEGACY_SDK, reason="This test has a promptflow dependency")
     @pytest.mark.parametrize("use_async", ["true", "false"])  # Strings intended
     @pytest.mark.usefixtures("restore_env_vars")
     def test_aggregation_serialization(self, evaluate_test_data_conversion_jsonl_file, use_async):

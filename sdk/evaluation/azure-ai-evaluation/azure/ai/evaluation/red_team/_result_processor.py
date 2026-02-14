@@ -33,7 +33,11 @@ from ._red_team_result import (
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
 from .._common.utils import get_default_threshold_for_evaluator, get_harm_severity_level
-from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_attack_success
+from ._utils.formatting_utils import (
+    list_mean_nan_safe,
+    is_none_or_nan,
+    get_attack_success,
+)
 
 
 class ResultProcessor:
@@ -225,9 +229,13 @@ class ResultProcessor:
                                                                 properties = result_item.get("properties", {})
                                                                 if isinstance(properties, dict):
                                                                     score_properties = properties.get(
-                                                                        "scoreProperties", {}
+                                                                        "scoreProperties",
+                                                                        {},
                                                                     )
-                                                                    if isinstance(score_properties, dict):
+                                                                    if isinstance(
+                                                                        score_properties,
+                                                                        dict,
+                                                                    ):
                                                                         safe_value = score_properties.get("safe")
                                                                         # safe="false" means attack was successful
                                                                         if safe_value is not None:
@@ -767,11 +775,11 @@ class ResultProcessor:
 
             result_entry: Dict[str, Any] = {
                 "object": "eval.run.output_item.result",
-                "type": "azure_ai_evaluator" if isinstance(eval_row, dict) else "azure_ai_red_team",
+                "type": ("azure_ai_evaluator" if isinstance(eval_row, dict) else "azure_ai_red_team"),
                 "name": risk_value,
                 "metric": risk_value,
                 "passed": passed,
-                "label": "pass" if passed is True else ("fail" if passed is False else None),
+                "label": ("pass" if passed is True else ("fail" if passed is False else None)),
                 "score": score,
                 "threshold": threshold,
                 "reason": reason,
@@ -1662,7 +1670,9 @@ class ResultProcessor:
                             for message in sample_input:
                                 if isinstance(message, dict) and message.get("role") == "user":
                                     message["content"] = self._get_redacted_input_message(
-                                        risk_category, attack_technique, risk_sub_type
+                                        risk_category,
+                                        attack_technique,
+                                        risk_sub_type,
                                     )
 
         return redacted_results

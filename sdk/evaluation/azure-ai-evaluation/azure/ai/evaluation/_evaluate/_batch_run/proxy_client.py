@@ -22,7 +22,10 @@ import pandas as pd
 from azure.ai.evaluation._evaluate._batch_run.batch_clients import BatchClientRun, HasAsyncCallable
 
 
-Configuration.get_instance().set_config("trace.destination", "none")
+try:
+    Configuration.get_instance().set_config("trace.destination", "none")
+except Exception:
+    pass
 LOGGER = logging.getLogger(__name__)
 
 

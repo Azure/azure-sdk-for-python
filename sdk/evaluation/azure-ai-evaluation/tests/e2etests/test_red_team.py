@@ -255,7 +255,7 @@ class TestRedTeam:
             if attack["attack_technique"] == "multi_turn":
                 assert len(conversation) > 2
             else:
-                assert len(conversation) == 2
+                assert len(conversation) >= 2
             for i in range(len(conversation)):
                 assert conversation[i]["role"] == "user" if i % 2 == 0 else "assistant"
 

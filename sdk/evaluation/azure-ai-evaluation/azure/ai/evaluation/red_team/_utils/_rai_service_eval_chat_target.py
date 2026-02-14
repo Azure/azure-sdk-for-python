@@ -14,7 +14,7 @@ from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sy
 from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
     GeneratedRAIClient,
 )
-from pyrit.models import PromptRequestResponse, construct_response_from_request
+from pyrit.models import Message, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
 
 from .metric_mapping import (
@@ -55,15 +55,18 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         self.context = context
         self._use_legacy_endpoint = _use_legacy_endpoint
 
-    async def send_prompt_async(
-        self, *, prompt_request: PromptRequestResponse, objective: str = ""
-    ) -> PromptRequestResponse:
+    async def send_prompt_async(self, *, prompt_request: Message, objective: str = "") -> Message:
         self.logger.info("Starting send_prompt_async operation")
         self._validate_request(prompt_request=prompt_request)
 
-        thing_to_eval = prompt_request.request_pieces[0].to_dict()["original_value"]
+        request_piece = prompt_request.get_piece(0)
+        thing_to_eval = request_piece.original_value
 
-        thing_to_eval_qr = {"query": "query", "response": thing_to_eval, "context": self.context}
+        thing_to_eval_qr = {
+            "query": "query",
+            "response": thing_to_eval,
+            "context": self.context,
+        }
 
         metric_name = get_metric_from_risk_category(self.risk_category)
         annotation_task = get_annotation_task_from_risk_category(self.risk_category)
@@ -87,6 +90,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         # Handle EvalRunOutputItem structure
         if hasattr(eval_result, "results") or (isinstance(eval_result, dict) and "results" in eval_result):
             results = eval_result.results if hasattr(eval_result, "results") else eval_result.get("results", [])
+            results = results or []
 
             # Find the result matching our metric
             for result_item in results:
@@ -102,7 +106,9 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
                     # Convert score to severity label if needed
                     result = result_dict.get("label")
                     if result is None:
-                        from azure.ai.evaluation._common.utils import get_harm_severity_level
+                        from azure.ai.evaluation._common.utils import (
+                            get_harm_severity_level,
+                        )
 
                         result = get_harm_severity_level(score)
                     break
@@ -153,7 +159,7 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
 
         # Construct the response
         response = construct_response_from_request(
-            request=prompt_request.request_pieces[0],
+            request=request_piece,
             response_text_pieces=[response_json],
         )
         self.logger.info(f"Constructed response: {response}")
@@ -167,13 +173,13 @@ class RAIServiceEvalChatTarget(PromptChatTarget):
         # This target supports JSON responses
         return True
 
-    def _validate_request(self, *, prompt_request: PromptRequestResponse) -> None:
+    def _validate_request(self, *, prompt_request: Message) -> None:
         """Validate the request.
 
         :param prompt_request: The prompt request
         """
-        if len(prompt_request.request_pieces) != 1:
+        if len(prompt_request.message_pieces) != 1:
             raise ValueError("This target only supports a single prompt request piece.")
 
-        if prompt_request.request_pieces[0].converted_value_data_type != "text":
+        if prompt_request.get_piece(0).converted_value_data_type != "text":
             raise ValueError("This target only supports text prompt input.")

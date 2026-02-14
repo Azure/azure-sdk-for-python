@@ -17,7 +17,9 @@ from azure.ai.evaluation._constants import TokenScope
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation.red_team._attack_objective_generator import RiskCategory
 from azure.ai.evaluation.simulator._model_tools import ManagedIdentityAPITokenManager
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from ._agent_utils import AgentUtils
 
 # Setup logging
@@ -59,7 +61,8 @@ class RedTeamToolProvider:
 
         # Create the generated RAI client for fetching attack objectives
         self.generated_rai_client = GeneratedRAIClient(
-            azure_ai_project=self.azure_ai_project_endpoint, token_manager=self.token_manager.get_aad_credential()
+            azure_ai_project=self.azure_ai_project_endpoint,
+            token_manager=self.token_manager.get_aad_credential(),
         )
 
         # Cache for attack objectives to avoid repeated API calls
@@ -165,11 +168,15 @@ class RedTeamToolProvider:
             # Get strategy-specific dataset for tense strategy
             if "tense" in strategy:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_category=risk_cat_value, application_scenario=self.application_scenario or "", strategy="tense"
+                    risk_category=risk_cat_value,
+                    application_scenario=self.application_scenario or "",
+                    strategy="tense",
                 )
             else:
                 objectives_response = await self.generated_rai_client.get_attack_objectives(
-                    risk_category=risk_cat_value, application_scenario=self.application_scenario or "", strategy=None
+                    risk_category=risk_cat_value,
+                    application_scenario=self.application_scenario or "",
+                    strategy=None,
                 )
 
             # Handle jailbreak strategy - apply jailbreak prefixes to messages
@@ -199,7 +206,10 @@ class RedTeamToolProvider:
             return []
 
     async def fetch_harmful_prompt(
-        self, risk_category_text: str, strategy: str = "baseline", convert_with_strategy: Optional[str] = None
+        self,
+        risk_category_text: str,
+        strategy: str = "baseline",
+        convert_with_strategy: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Fetch a harmful prompt for a specific risk category.
 
@@ -276,7 +286,10 @@ class RedTeamToolProvider:
                         "note": "This prompt was generated and converted for responsible AI testing purposes only.",
                     }
                 except Exception as e:
-                    return {"status": "error", "message": f"Error converting prompt: {str(e)}"}
+                    return {
+                        "status": "error",
+                        "message": f"Error converting prompt: {str(e)}",
+                    }
 
             # Return with information about available strategies
             return {
@@ -394,7 +407,10 @@ class RedTeamToolProvider:
                     "note": f"This prompt was generated for responsible AI testing purposes only and converted using the {strategy} strategy.",
                 }
             except Exception as e:
-                return {"status": "error", "message": f"Error converting prompt with strategy {strategy}: {str(e)}"}
+                return {
+                    "status": "error",
+                    "message": f"Error converting prompt with strategy {strategy}: {str(e)}",
+                }
 
         except Exception as e:
             logger.error(f"Error in red_team: {str(e)}")

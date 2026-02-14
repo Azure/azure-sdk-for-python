@@ -83,8 +83,10 @@ setup(
         "aiohttp>=3.0",
     ],
     extras_require={
-        "redteam": ['pyrit==0.8.1;python_version>="3.10"', 'duckdb==1.3.2;python_version>="3.10"'],
-        "opentelemetry": ["opentelemetry-sdk>=1.17.0", "azure-monitor-opentelemetry-exporter>=1.0.0b17"],
+        "redteam": ['pyrit==0.11.0;python_version>="3.10"'],
+        # Cap opentelemetry-sdk<1.39.0: v1.39.0+ removed LogData from opentelemetry.sdk._logs,
+        # breaking azure-monitor-opentelemetry-exporter 1.0.0b45. See https://github.com/Azure/azure-sdk-for-python/issues/44236
+        "opentelemetry": ["opentelemetry-sdk>=1.17.0,<1.39.0", "azure-monitor-opentelemetry-exporter>=1.0.0b17"],
     },
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",
