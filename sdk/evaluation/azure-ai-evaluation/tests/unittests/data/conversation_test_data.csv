@@ -1,0 +1,3 @@
+conversation
+"{""messages"": [{""role"": ""user"", ""content"": ""What is the capital of France?""}, {""role"": ""assistant"", ""content"": ""Paris is the capital of France.""}]}"
+"{""messages"": [{""role"": ""user"", ""content"": ""What is 2+2?""}, {""role"": ""assistant"", ""content"": ""2+2 equals 4.""}]}"
