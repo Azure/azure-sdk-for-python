@@ -287,9 +287,9 @@ class BlockBlobChunkUploader(_ChunkUploader):
         index = f"{chunk_offset:032d}"
         block_id = encode_base64(url_quote(encode_base64(index)))
         await self.service.stage_block(
-            block_id,
-            len(chunk_data),
-            body=chunk_data,
+            chunk_data,
+            block_id=block_id,
+            content_length=len(chunk_data),
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
             **self.request_options,
@@ -300,9 +300,9 @@ class BlockBlobChunkUploader(_ChunkUploader):
         try:
             block_id = f"BlockId{(index//self.chunk_size):05}"
             await self.service.stage_block(
-                block_id,
-                len(block_stream),
                 block_stream,
+                block_id=block_id,
+                content_length=len(block_stream),
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
                 **self.request_options,

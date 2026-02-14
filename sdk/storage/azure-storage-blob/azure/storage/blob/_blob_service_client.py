@@ -22,8 +22,8 @@ from ._blob_service_client_helpers import _parse_url
 from ._container_client import ContainerClient
 from ._deserialize import service_properties_deserialize, service_stats_deserialize
 from ._encryption import StorageEncryptionMixin
-from ._generated import AzureBlobStorage
-from ._generated.models import KeyInfo, StorageServiceProperties
+from ._generated.azure.storage.blobs import AzureBlobStorage
+from ._generated.azure.storage.blobs.models import KeyInfo, StorageServiceProperties
 from ._list_blobs_helper import FilteredBlobPaged
 from ._models import BlobProperties, ContainerProperties, ContainerPropertiesPaged, CorsRule
 from ._serialize import get_api_version
@@ -127,7 +127,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
         super(BlobServiceClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._client = AzureBlobStorage(self.url, base_url=self.url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:

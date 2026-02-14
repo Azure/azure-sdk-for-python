@@ -58,8 +58,8 @@ from ._deserialize import (
 )
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from ._generated import AzureBlobStorage
-from ._generated.models import CpkInfo
+from ._generated.azure.storage.blobs import AzureBlobStorage
+from ._generated.azure.storage.blobs.models import CpkInfo
 from ._lease import BlobLeaseClient
 from ._models import BlobBlock, BlobProperties, BlobQueryError, BlobType, PageRange, PageRangePaged
 from ._quick_query_helper import BlobQueryReader
@@ -186,7 +186,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        # Build a URL without the snapshot query parameter for the generated client.
+        # The snapshot is passed as a method parameter by operations that need it, so including
+        # it in the base URL would cause it to appear twice in requests.
+        client_query_str, _ = self._format_query_string(sas_token, self._raw_credential)
+        client_url = _format_url(
+            container_name=self.container_name,
+            scheme=self.scheme,
+            blob_name=self.blob_name,
+            query_str=client_query_str,
+            hostname=self._hosts[self._location_mode],
+        )
+        self._client = AzureBlobStorage(client_url, base_url=client_url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -870,7 +881,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
         try:
-            headers, raw_response_body = self._client.blob.query(**options)
+            headers, raw_response_body = self._client.block_blob.query(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         return BlobQueryReader(
@@ -1344,7 +1355,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         version_id = get_version_id(self.version_id, kwargs)
         return cast(Dict[str, Union[str, datetime, bool]], self._client.blob.set_legal_hold(
-            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+            legal_hold=legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace
     def create_page_blob(

@@ -16,17 +16,17 @@ from azure.core.exceptions import HttpResponseError
 from ._shared import decode_base64_to_bytes
 from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
 from ._shared.models import DictMixin, get_enum_value
-from ._generated.models import AccessPolicy as GenAccessPolicy
-from ._generated.models import ArrowField
-from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import Logging as GeneratedLogging
-from ._generated.models import Metrics as GeneratedMetrics
-from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
-from ._generated.models import StaticWebsite as GeneratedStaticWebsite
+from ._generated.azure.storage.blobs.models import AccessPolicy as GenAccessPolicy
+from ._generated.azure.storage.blobs.models import ArrowField
+from ._generated.azure.storage.blobs.models import CorsRule as GeneratedCorsRule
+from ._generated.azure.storage.blobs.models import Logging as GeneratedLogging
+from ._generated.azure.storage.blobs.models import Metrics as GeneratedMetrics
+from ._generated.azure.storage.blobs.models import RetentionPolicy as GeneratedRetentionPolicy
+from ._generated.azure.storage.blobs.models import StaticWebsite as GeneratedStaticWebsite
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import PageList
+    from ._generated.azure.storage.blobs.models import PageList
 
 # Parse a generated PageList into a single list of PageRange sorted by start.
 def parse_page_list(page_list: "PageList") -> List["PageRange"]:
@@ -187,21 +187,18 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted. If enabled=True, the number of days must be specified.
     """
 
-    enabled: bool = False
-    days: Optional[int] = None
-
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
-        if self.enabled and (self.days is None):
+        if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
         return cls(
-            enabled=generated.enabled,
-            days=generated.days,
+            enabled=getattr(generated, 'enabled', None) or False,
+            days=getattr(generated, 'days', None),
         )
 
 
@@ -221,34 +218,25 @@ class BlobAnalyticsLogging(GeneratedLogging):
         policy will be disabled by default.
     """
 
-    version: str = '1.0'
-    """The version of Storage Analytics to configure."""
-    delete: bool = False
-    """Indicates whether all delete requests should be logged."""
-    read: bool = False
-    """Indicates whether all read requests should be logged."""
-    write: bool = False
-    """Indicates whether all write requests should be logged."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
-    """Determines how long the associated data should persist."""
-
     def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
         self.read = kwargs.get('read', False)
         self.write = kwargs.get('write', False)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
 
+
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
         return cls(
-            version=generated.version,
-            delete=generated.delete,
-            read=generated.read,
-            write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            version=getattr(generated, 'version'),
+            delete=getattr(generated, 'delete'),
+            read=getattr(generated, 'read'),
+            write=getattr(generated, 'write'),
+            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy'))  # pylint: disable=protected-access
         )
 
 
@@ -268,30 +256,23 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
-    version: str = '1.0'
-    """The version of Storage Analytics to configure."""
-    enabled: bool = False
-    """Indicates whether metrics are enabled for the Blob service."""
-    include_apis: Optional[bool]
-    """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
-    """Determines how long the associated data should persist."""
-
     def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis')
+        self.include_apis = kwargs.get('include_apis', None)
         self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
+
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
         return cls(
-            version=generated.version,
-            enabled=generated.enabled,
-            include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
+            version=getattr(generated, 'version', None) or '1.0',
+            enabled=getattr(generated, 'enabled') or False,
+            include_apis=getattr(generated, 'include_apis', None),
+            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy', None))  # pylint: disable=protected-access
         )
 
 
@@ -309,16 +290,8 @@ class StaticWebsite(GeneratedStaticWebsite):
         Absolute path of the default index page.
     """
 
-    enabled: bool = False
-    """Indicates whether this account is hosting a static website."""
-    index_document: Optional[str]
-    """The default name of the index page under each directory."""
-    error_document404_path: Optional[str]
-    """The absolute path of the custom 404 page."""
-    default_index_document_path: Optional[str]
-    """Absolute path of the default index page."""
-
     def __init__(self, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
             self.index_document = kwargs.get('index_document')
@@ -334,10 +307,10 @@ class StaticWebsite(GeneratedStaticWebsite):
         if not generated:
             return cls()
         return cls(
-            enabled=generated.enabled,
-            index_document=generated.index_document,
-            error_document404_path=generated.error_document404_path,
-            default_index_document_path=generated.default_index_document_path
+            enabled=getattr(generated, 'enabled'),
+            index_document=getattr(generated, 'index_document', None),
+            error_document404_path=getattr(generated, 'error_document404_path', None),
+            default_index_document_path=getattr(generated, 'default_index_document_path', None)
         )
 
 
@@ -369,21 +342,8 @@ class CorsRule(GeneratedCorsRule):
         preflight response.
     """
 
-    allowed_origins: str
-    """The comma-delimited string representation of the list of origin domains that will be allowed via
-        CORS, or "*" to allow all domains."""
-    allowed_methods: str
-    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
-        by the origin."""
-    exposed_headers: str
-    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
-    allowed_headers: str
-    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
-        request."""
-    max_age_in_seconds: int
-    """The number of seconds that the client/browser should cache a pre-flight response."""
-
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+        super().__init__(**kwargs)
         self.allowed_origins = ','.join(allowed_origins)
         self.allowed_methods = ','.join(allowed_methods)
         self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
@@ -411,11 +371,11 @@ class CorsRule(GeneratedCorsRule):
     @classmethod
     def _from_generated(cls, generated):
         return cls(
-            [generated.allowed_origins],
-            [generated.allowed_methods],
-            allowed_headers=[generated.allowed_headers],
-            exposed_headers=[generated.exposed_headers],
-            max_age_in_seconds=generated.max_age_in_seconds,
+            [getattr(generated, 'allowed_origins')],
+            [getattr(generated, 'allowed_methods')],
+            allowed_headers=[getattr(generated, 'allowed_headers')],
+            exposed_headers=[getattr(generated, 'exposed_headers')],
+            max_age_in_seconds=getattr(generated, 'max_age_in_seconds'),
         )
 
 
@@ -476,12 +436,12 @@ class ContainerProperties(DictMixin):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
-        props.etag = generated.properties.etag
+        props.etag = generated.properties.e_tag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled  # pylint: disable=line-too-long, name-too-long
-        props.deleted = generated.deleted
+        props.deleted = generated.delete
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
@@ -1043,19 +1003,12 @@ class AccessPolicy(GenAccessPolicy):
     :paramtype start: Optional[Union[str, datetime]]
     """
 
-    permission: Optional[Union[ContainerSasPermissions, str]]  # type: ignore [assignment]
-    """The permissions associated with the shared access signature. The user is restricted to
-        operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
-    """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
-    """The time at which the shared access signature becomes valid."""
-
     def __init__(
         self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
+        super().__init__(permission=permission, expiry=expiry, start=start)
         self.start = start
         self.expiry = expiry
         self.permission = permission

@@ -69,8 +69,8 @@ from .._deserialize import (
     parse_tags
 )
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
-from .._generated.aio import AzureBlobStorage
-from .._generated.models import CpkInfo
+from .._generated.azure.storage.blobs.aio import AzureBlobStorage
+from .._generated.azure.storage.blobs.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
 from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client import StorageAccountHostsMixin
@@ -196,7 +196,18 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        # Build a URL without the snapshot query parameter for the generated client.
+        # The snapshot is passed as a method parameter by operations that need it, so including
+        # it in the base URL would cause it to appear twice in requests.
+        client_query_str, _ = self._format_query_string(sas_token, self._raw_credential)
+        client_url = _format_url(
+            container_name=self.container_name,
+            scheme=self.scheme,
+            blob_name=self.blob_name,
+            query_str=client_query_str,
+            hostname=self._hosts[self._location_mode],
+        )
+        self._client = AzureBlobStorage(client_url, base_url=client_url, version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -910,7 +921,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             **kwargs
         )
         try:
-            headers, raw_response_body = await self._client.blob.query(**options)
+            headers, raw_response_body = await self._client.block_blob.query(**options)
         except HttpResponseError as error:
             process_storage_error(error)
         blob_query_reader = BlobQueryReader(
@@ -1389,7 +1400,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         version_id = get_version_id(self.version_id, kwargs)
         return cast(Dict[str, Union[str, datetime, bool]], await self._client.blob.set_legal_hold(
-            legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+            legal_hold=legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
 
     @distributed_trace_async
     async def create_page_blob(

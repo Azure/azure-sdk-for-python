@@ -29,7 +29,7 @@ from ._shared.response_handlers import deserialize_metadata
 
 if TYPE_CHECKING:
     from azure.core.pipeline import PipelineResponse
-    from ._generated.models import (
+    from ._generated.azure.storage.blobs.models import (
         BlobItemInternal,
         BlobTags,
         PageList,
@@ -87,14 +87,35 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
     return result_list
 
 
+class _DownloadResponse:
+    """Wrapper for download response that holds both the stream and properties."""
+    def __init__(
+        self,
+        stream: Any,
+        properties: BlobProperties,
+        response: "PipelineResponse"
+    ) -> None:
+        self._stream = stream
+        self.properties = properties
+        self.response = response.http_response
+        # Content-Length header contains the size of the response body
+        self.content_length = int(response.http_response.headers.get('Content-Length', 0))
+
+    def __iter__(self):
+        return iter(self._stream)
+
+    def __aiter__(self):
+        return self._stream.__aiter__()
+
+
 def deserialize_blob_stream(
     response: "PipelineResponse",
     obj: Any,
     headers: Dict[str, Any]
-) -> Tuple["LocationMode", Any]:
+) -> Tuple["LocationMode", "_DownloadResponse"]:
     blob_properties = deserialize_blob_properties(response, obj, headers)
-    obj.properties = blob_properties
-    return response.http_response.location_mode, obj
+    download_response = _DownloadResponse(obj, blob_properties, response)
+    return response.http_response.location_mode, download_response
 
 
 def deserialize_container_properties(
@@ -156,11 +177,11 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
         blob.name = generated.name.content  #type: ignore
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type)
-    blob.etag = generated.properties.etag
+    blob.etag = generated.properties.e_tag
     blob.deleted = generated.deleted
     blob.snapshot = generated.snapshot
     blob.is_append_blob_sealed = generated.properties.is_sealed
-    blob.metadata = generated.metadata.additional_properties if generated.metadata else {}  # type: ignore [assignment]
+    blob.metadata = dict(generated.metadata) if generated.metadata else {}  # type: ignore [assignment]
     blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
     blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
     blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
