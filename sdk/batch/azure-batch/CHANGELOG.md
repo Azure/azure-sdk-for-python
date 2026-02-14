@@ -1,5 +1,11 @@
 # Release History
 
+## 15.1.0 (2026-02-13)
+
+### Other Changes
+
+- This is the GA release of the features introduced in the 15.0.0 and 15.1.0 beta versions, including LRO support, job-level FIFO scheduling, CMK support on pools, IPv6 support, metadata security protocol support, IP tag support, and confidential VM enhancements. No additional changes were made from the last beta release.
+
 ## 15.1.0b3 (2026-02-05)
 
 ### Other Changes
