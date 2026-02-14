@@ -360,6 +360,109 @@ def test_servicebus_message_time_to_live():
     assert message.time_to_live == timedelta(days=1)
 
 
+def test_servicebus_received_message_from_bytes():
+    """Test that from_bytes can decode a basic AMQP message payload."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage, Header, Properties
+
+    # Construct a pyamqp Message with various sections
+    original = PyamqpMessage(
+        header=Header(durable=True, priority=4, ttl=30000, delivery_count=1),
+        properties=Properties(
+            message_id="test-message-id-123",
+            content_type=b"application/json",
+            correlation_id="corr-456",
+            subject=b"test-subject",
+            reply_to=b"reply-queue",
+            group_id=b"session-1",
+            reply_to_group_id=b"reply-session",
+        ),
+        message_annotations={
+            _X_OPT_PARTITION_KEY: b"pk-1",
+        },
+        application_properties={b"custom_prop": b"custom_value"},
+        data=[b"hello world"],
+    )
+
+    # Encode to bytes then decode via from_bytes
+    output = bytearray()
+    payload = _encode_payload(output, original)
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    # Validate message body
+    body = b"".join(received.body)
+    assert body == b"hello world"
+    assert received.body_type == AmqpMessageBodyType.DATA
+
+    # Validate properties
+    assert received.message_id == "test-message-id-123"
+    assert received.content_type == "application/json"
+    assert received.correlation_id == "corr-456"
+    assert received.subject == "test-subject"
+    assert received.reply_to == "reply-queue"
+    assert received.session_id == "session-1"
+    assert received.reply_to_session_id == "reply-session"
+
+    # Validate header fields
+    assert received.time_to_live == timedelta(milliseconds=30000)
+    assert received.delivery_count == 1
+
+    # Validate annotations
+    assert received.partition_key == "pk-1"
+
+    # Validate application properties
+    assert received.raw_amqp_message.application_properties == {b"custom_prop": b"custom_value"}
+
+    # Validate settled state (from_bytes creates settled messages)
+    assert received.lock_token is None
+
+
+def test_servicebus_received_message_from_bytes_minimal():
+    """Test from_bytes with a minimal AMQP message (data body only, no properties)."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage
+
+    original = PyamqpMessage(data=[b"minimal payload"])
+    output = bytearray()
+    payload = _encode_payload(output, original)
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    body = b"".join(received.body)
+    assert body == b"minimal payload"
+    assert received.message_id is None
+    assert received.content_type is None
+    assert received.session_id is None
+    assert received.lock_token is None
+
+
+def test_servicebus_received_message_from_bytes_value_body():
+    """Test from_bytes with an AMQP value body message."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage
+
+    original = PyamqpMessage(value={"key": "value"})
+    output = bytearray()
+    payload = _encode_payload(output, original)
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    assert received.body_type == AmqpMessageBodyType.VALUE
+    # AMQP encoding round-trips strings as bytes
+    assert received.body == {b"key": b"value"}
+
+
+def test_servicebus_received_message_from_bytes_sequence_body():
+    """Test from_bytes with an AMQP sequence body message."""
+    from azure.servicebus._pyamqp._encode import encode_payload as _encode_payload
+    from azure.servicebus._pyamqp.message import Message as PyamqpMessage
+
+    original = PyamqpMessage(sequence=[1, 2, 3])
+    output = bytearray()
+    payload = _encode_payload(output, original)
+    received = ServiceBusReceivedMessage.from_bytes(payload)
+
+    assert received.body_type == AmqpMessageBodyType.SEQUENCE
+
+
 class TestServiceBusMessageBackcompat(AzureMgmtRecordedTestCase):
 
     @pytest.mark.liveTest
