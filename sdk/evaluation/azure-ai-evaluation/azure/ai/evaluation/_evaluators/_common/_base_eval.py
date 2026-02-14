@@ -256,6 +256,25 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
             all_inputs.update(inputs)
         return list(all_inputs)
 
+    def _extract_text_from_list_content(self, content: List[Dict[str, Any]]) -> str:
+        """Extract text from list content parts.
+        
+        :param content: List of content parts (e.g., [{"type": "text", "text": "Hello"}])
+        :type content: List[Dict[str, Any]]
+        :return: Extracted text as a string
+        :rtype: str
+        """
+        text_parts = []
+        for item in content:
+            if isinstance(item, dict):
+                if item.get("type") in ("text", "input_text", "output_text") and "text" in item:
+                    text_parts.append(item["text"])
+                elif "text" in item:
+                    text_parts.append(item["text"])
+            elif isinstance(item, str):
+                text_parts.append(item)
+        return " ".join(text_parts) if text_parts else ""
+
     def _derive_conversation_converter(
         self,
     ) -> Callable[[Dict], List[DerivedEvalInput]]:
@@ -306,9 +325,17 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
 
                 eval_input: DerivedEvalInput = {}
                 if include_query:
-                    eval_input["query"] = query.get("content", "")
+                    query_content = query.get("content", "")
+                    # Handle both string and list content types
+                    if isinstance(query_content, list):
+                        query_content = self._extract_text_from_list_content(query_content)
+                    eval_input["query"] = query_content
                 if include_response:
-                    eval_input["response"] = response.get("content", "")
+                    response_content = response.get("content", "")
+                    # Handle both string and list content types
+                    if isinstance(response_content, list):
+                        response_content = self._extract_text_from_list_content(response_content)
+                    eval_input["response"] = response_content
                 if include_context:
                     eval_input["context"] = str(context)
                 if include_ground_truth:

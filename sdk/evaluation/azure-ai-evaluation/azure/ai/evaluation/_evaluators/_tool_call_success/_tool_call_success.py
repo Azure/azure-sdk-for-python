@@ -227,13 +227,20 @@ def _filter_to_used_tools(tool_definitions, msgs_list, logger=None):
 
         for msg in msgs_list:
             if msg.get("role") == "assistant" and "content" in msg:
-                for content in msg.get("content", []):
-                    if content.get("type") == "tool_call":
+                content = msg.get("content", [])
+                # Handle both string and list content types
+                if isinstance(content, str):
+                    continue  # String content doesn't contain tool calls
+                if not isinstance(content, list):
+                    continue  # Skip non-list, non-string content
+                
+                for content_item in content:
+                    if content_item.get("type") == "tool_call":
                         any_tools_used = True
-                        if "tool_call" in content and "function" in content["tool_call"]:
-                            used_tool_names.add(content["tool_call"]["function"])
-                        elif "name" in content:
-                            used_tool_names.add(content["name"])
+                        if "tool_call" in content_item and "function" in content_item["tool_call"]:
+                            used_tool_names.add(content_item["tool_call"]["function"])
+                        elif "name" in content_item:
+                            used_tool_names.add(content_item["name"])
 
         filtered_tools = [tool for tool in tool_definitions if tool.get("name") in used_tool_names]
         if any_tools_used and not filtered_tools:
@@ -265,19 +272,25 @@ def _get_tool_calls_results(agent_response_msgs):
     # Second pass: parse assistant messages and tool calls
     for msg in agent_response_msgs:
         if "role" in msg and msg.get("role") == "assistant" and "content" in msg:
+            content = msg.get("content", [])
+            # Handle both string and list content types
+            if isinstance(content, str):
+                continue  # String content doesn't contain structured tool calls
+            if not isinstance(content, list):
+                continue  # Skip non-list, non-string content
 
-            for content in msg.get("content", []):
+            for content_item in content:
 
-                if content.get("type") == "tool_call":
-                    if "tool_call" in content and "function" in content.get("tool_call", {}):
-                        tc = content.get("tool_call", {})
+                if content_item.get("type") == "tool_call":
+                    if "tool_call" in content_item and "function" in content_item.get("tool_call", {}):
+                        tc = content_item.get("tool_call", {})
                         func_name = tc.get("function", {}).get("name", "")
                         args = tc.get("function", {}).get("arguments", {})
                         tool_call_id = tc.get("id")
                     else:
-                        tool_call_id = content.get("tool_call_id")
-                        func_name = content.get("name", "")
-                        args = content.get("arguments", {})
+                        tool_call_id = content_item.get("tool_call_id")
+                        func_name = content_item.get("name", "")
+                        args = content_item.get("arguments", {})
                     args_str = ", ".join(f'{k}="{v}"' for k, v in args.items())
                     call_line = f"[TOOL_CALL] {func_name}({args_str})"
                     agent_response_text.append(call_line)
