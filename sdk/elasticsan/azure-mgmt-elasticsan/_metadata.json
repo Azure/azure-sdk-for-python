@@ -1,0 +1,7 @@
+{
+  "apiVersion": "2025-09-01",
+  "commit": "c86c7e36fb15171a9967d9fdc47784f2e4202ca6",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/elasticsan/resource-manager/Microsoft.ElasticSan/ElasticSan",
+  "emitterVersion": "0.52.2"
+}
