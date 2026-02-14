@@ -178,7 +178,7 @@ def trace_message(
                             message_span.add_attribute(key, value)
 
     except Exception as exp:  # pylint:disable=broad-except
-        _LOGGER.warning("trace_message had an exception %r", exp)
+        _LOGGER.debug("trace_message had an exception %r", exp)
 
     return message
 
