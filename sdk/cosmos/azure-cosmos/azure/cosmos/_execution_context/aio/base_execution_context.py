@@ -157,8 +157,11 @@ class _QueryExecutionContextBase(object):
             _LOGGER.debug("Partition split retry (async): Skipping 410 retry for internal PK range fetch")
             return await execute_fetch()
 
-        max_retries = 3
+        # Increased from 3 to 5 to support back-to-back partition splits
+        # Heavy workloads may trigger consecutive splits on the same partition
+        max_retries = 5
         attempt = 0
+        consecutive_splits = 0
 
         while attempt <= max_retries:
             try:
@@ -166,20 +169,23 @@ class _QueryExecutionContextBase(object):
             except exceptions.CosmosHttpResponseError as e:
                 if exceptions._partition_range_is_gone(e):
                     attempt += 1
+                    consecutive_splits += 1
+                    
                     if attempt > max_retries:
                         _LOGGER.error(
-                            "Partition split retry (async): Exhausted all %d retries. "
+                            "Partition split retry (async): Exhausted all %d retries after %d consecutive splits. "
                             "state: _has_started=%s, _continuation=%s",
-                            max_retries, self._has_started, self._continuation
+                            max_retries, consecutive_splits, self._has_started, self._continuation
                         )
                         raise  # Exhausted retries, propagate error
 
                     _LOGGER.warning(
-                        "Partition split retry (async): 410 error (sub_status=%s). Attempt %d of %d. "
+                        "Partition split retry (async): 410 error (sub_status=%s). Attempt %d of %d (consecutive splits: %d). "
                         "Refreshing routing map and resetting state.",
                         getattr(e, 'sub_status', 'N/A'),
                         attempt,
-                        max_retries
+                        max_retries,
+                        consecutive_splits
                     )
 
                     # Refresh routing map to get new partition key ranges

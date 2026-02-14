@@ -99,8 +99,31 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 except exceptions.CosmosHttpResponseError as e:
                     if exceptions._partition_range_is_gone(e):
                         # repairing document producer context on partition split
-                        global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
-                                                                                               target_all_ranges=True)
+                        # Support back-to-back splits by retrying if repair itself encounters another split
+                        repair_retries = 3
+                        for repair_attempt in range(repair_retries):
+                            try:
+                                global_statistics_doc_producers = await self._repair_document_producer(global_statistics_query,
+                                                                                                       target_all_ranges=True)
+                                break  # Success, exit retry loop
+                            except exceptions.CosmosHttpResponseError as repair_error:
+                                if exceptions._partition_range_is_gone(repair_error):
+                                    if repair_attempt < repair_retries - 1:
+                                        _LOGGER.warning(
+                                            "Hybrid search aggregator (async): Partition split during global stats repair. "
+                                            "Retry attempt %d of %d",
+                                            repair_attempt + 1,
+                                            repair_retries
+                                        )
+                                        continue  # Retry repair
+                                    else:
+                                        _LOGGER.error(
+                                            "Hybrid search aggregator (async): Exhausted all %d repair retries for global stats",
+                                            repair_retries
+                                        )
+                                        raise  # Exhausted retries
+                                else:
+                                    raise  # Different error, propagate
                     else:
                         raise
                 except StopAsyncIteration:
@@ -145,11 +168,34 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 component_query_results.append(target_query_ex_context)
             except exceptions.CosmosHttpResponseError as e:
                 if exceptions._partition_range_is_gone(e):
-                    component_query_results = []
                     # repairing document producer context on partition split
-                    for rewritten_query in rewritten_query_infos:
-                        component_query_results.extend(await self._repair_document_producer(
-                            rewritten_query['rewrittenQuery']))
+                    # Support back-to-back splits by retrying if repair itself encounters another split
+                    repair_retries = 3
+                    for repair_attempt in range(repair_retries):
+                        try:
+                            component_query_results = []
+                            for rewritten_query in rewritten_query_infos:
+                                component_query_results.extend(await self._repair_document_producer(
+                                    rewritten_query['rewrittenQuery']))
+                            break  # Success, exit retry loop
+                        except exceptions.CosmosHttpResponseError as repair_error:
+                            if exceptions._partition_range_is_gone(repair_error):
+                                if repair_attempt < repair_retries - 1:
+                                    _LOGGER.warning(
+                                        "Hybrid search aggregator (async): Partition split during component query repair. "
+                                        "Retry attempt %d of %d",
+                                        repair_attempt + 1,
+                                        repair_retries
+                                    )
+                                    continue  # Retry repair
+                                else:
+                                    _LOGGER.error(
+                                        "Hybrid search aggregator (async): Exhausted all %d repair retries for component queries",
+                                        repair_retries
+                                    )
+                                    raise  # Exhausted retries
+                            else:
+                                raise  # Different error, propagate
                 else:
                     raise
             except StopAsyncIteration:
