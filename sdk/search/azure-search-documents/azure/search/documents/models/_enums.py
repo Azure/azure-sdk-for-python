@@ -1,5 +1,4 @@
-# pylint: disable=enum-must-be-uppercase
-# # coding=utf-8
+# coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -322,7 +321,7 @@ class ScoringStatistics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     LOCAL = "local"
     """The scoring statistics will be calculated locally for lower latency."""
-    GLOBALEnum = "global"
+    GLOBAL_ENUM = "global"
     """The scoring statistics will be calculated globally for more consistent scoring."""
 
 

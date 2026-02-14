@@ -142,6 +142,7 @@ from .operations import (
     ServiceAssociationLinksOperations,
     ServiceEndpointPoliciesOperations,
     ServiceEndpointPolicyDefinitionsOperations,
+    ServiceGatewaysOperations,
     ServiceTagInformationOperations,
     ServiceTagsOperations,
     StaticCidrsOperations,
@@ -158,6 +159,7 @@ from .operations import (
     VirtualHubIpConfigurationOperations,
     VirtualHubRouteTableV2SOperations,
     VirtualHubsOperations,
+    VirtualNetworkAppliancesOperations,
     VirtualNetworkGatewayConnectionsOperations,
     VirtualNetworkGatewayNatRulesOperations,
     VirtualNetworkGatewaysOperations,
@@ -519,6 +521,8 @@ class NetworkManagementClient(
      operations
     :vartype service_endpoint_policy_definitions:
      azure.mgmt.network.aio.operations.ServiceEndpointPolicyDefinitionsOperations
+    :ivar service_gateways: ServiceGatewaysOperations operations
+    :vartype service_gateways: azure.mgmt.network.aio.operations.ServiceGatewaysOperations
     :ivar service_tags: ServiceTagsOperations operations
     :vartype service_tags: azure.mgmt.network.aio.operations.ServiceTagsOperations
     :ivar service_tag_information: ServiceTagInformationOperations operations
@@ -539,6 +543,9 @@ class NetworkManagementClient(
     :ivar virtual_network_peerings: VirtualNetworkPeeringsOperations operations
     :vartype virtual_network_peerings:
      azure.mgmt.network.aio.operations.VirtualNetworkPeeringsOperations
+    :ivar virtual_network_appliances: VirtualNetworkAppliancesOperations operations
+    :vartype virtual_network_appliances:
+     azure.mgmt.network.aio.operations.VirtualNetworkAppliancesOperations
     :ivar virtual_network_gateways: VirtualNetworkGatewaysOperations operations
     :vartype virtual_network_gateways:
      azure.mgmt.network.aio.operations.VirtualNetworkGatewaysOperations
@@ -996,6 +1003,9 @@ class NetworkManagementClient(
         self.service_endpoint_policy_definitions = ServiceEndpointPolicyDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.service_gateways = ServiceGatewaysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.service_tags = ServiceTagsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service_tag_information = ServiceTagInformationOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -1012,6 +1022,9 @@ class NetworkManagementClient(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_network_peerings = VirtualNetworkPeeringsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_appliances = VirtualNetworkAppliancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.virtual_network_gateways = VirtualNetworkGatewaysOperations(
