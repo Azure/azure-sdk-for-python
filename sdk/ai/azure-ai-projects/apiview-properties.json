@@ -136,7 +136,7 @@
         "azure.ai.projects.models.FunctionTool": "OpenAI.FunctionTool",
         "azure.ai.projects.models.HostedAgentDefinition": "Azure.AI.Projects.HostedAgentDefinition",
         "azure.ai.projects.models.HourlyRecurrenceSchedule": "Azure.AI.Projects.HourlyRecurrenceSchedule",
-        "azure.ai.projects.models.HumanEvaluationRuleAction": "Azure.AI.Projects.HumanEvaluationRuleAction",
+        "azure.ai.projects.models.HumanEvaluationPreviewRuleAction": "Azure.AI.Projects.HumanEvaluationPreviewRuleAction",
         "azure.ai.projects.models.HybridSearchOptions": "OpenAI.HybridSearchOptions",
         "azure.ai.projects.models.ImageGenTool": "OpenAI.ImageGenTool",
         "azure.ai.projects.models.ImageGenToolInputImageMask": "OpenAI.ImageGenToolInputImageMask",
@@ -286,8 +286,6 @@
         "azure.ai.projects.models.EvaluationTaxonomyInputType": "Azure.AI.Projects.EvaluationTaxonomyInputType",
         "azure.ai.projects.models.RiskCategory": "Azure.AI.Projects.RiskCategory",
         "azure.ai.projects.models.FoundryFeaturesOptInKeys": "Azure.AI.Projects.FoundryFeaturesOptInKeys",
-        "azure.ai.projects.models.EvaluationRuleActionType": "Azure.AI.Projects.EvaluationRuleActionType",
-        "azure.ai.projects.models.EvaluationRuleEventType": "Azure.AI.Projects.EvaluationRuleEventType",
         "azure.ai.projects.models.EvaluatorType": "Azure.AI.Projects.EvaluatorType",
         "azure.ai.projects.models.EvaluatorCategory": "Azure.AI.Projects.EvaluatorCategory",
         "azure.ai.projects.models.EvaluatorDefinitionType": "Azure.AI.Projects.EvaluatorDefinitionType",
@@ -345,6 +343,8 @@
         "azure.ai.projects.models.PendingUploadType": "Azure.AI.Projects.PendingUploadType",
         "azure.ai.projects.models.DeploymentType": "Azure.AI.Projects.DeploymentType",
         "azure.ai.projects.models.IndexType": "Azure.AI.Projects.IndexType",
+        "azure.ai.projects.models.EvaluationRuleActionType": "Azure.AI.Projects.EvaluationRuleActionType",
+        "azure.ai.projects.models.EvaluationRuleEventType": "Azure.AI.Projects.EvaluationRuleEventType",
         "azure.ai.projects.models.MemoryStoreUpdateStatus": "Azure.AI.Projects.MemoryStoreUpdateStatus",
         "azure.ai.projects.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
         "azure.ai.projects.aio.operations.AgentsOperations.get": "Azure.AI.Projects.Agents.getAgent",
@@ -399,6 +399,14 @@
         "azure.ai.projects.operations.IndexesOperations.delete": "Azure.AI.Projects.Indexes.deleteVersion",
         "azure.ai.projects.aio.operations.IndexesOperations.delete": "Azure.AI.Projects.Indexes.deleteVersion",
         "azure.ai.projects.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
-        "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion"
+        "azure.ai.projects.aio.operations.IndexesOperations.create_or_update": "Azure.AI.Projects.Indexes.createOrUpdateVersion",
+        "azure.ai.projects.operations.EvaluationRulesOperations.get": "Azure.AI.Projects.EvaluationRules.get",
+        "azure.ai.projects.aio.operations.EvaluationRulesOperations.get": "Azure.AI.Projects.EvaluationRules.get",
+        "azure.ai.projects.operations.EvaluationRulesOperations.delete": "Azure.AI.Projects.EvaluationRules.delete",
+        "azure.ai.projects.aio.operations.EvaluationRulesOperations.delete": "Azure.AI.Projects.EvaluationRules.delete",
+        "azure.ai.projects.operations.EvaluationRulesOperations.create_or_update": "Azure.AI.Projects.EvaluationRules.createOrUpdate",
+        "azure.ai.projects.aio.operations.EvaluationRulesOperations.create_or_update": "Azure.AI.Projects.EvaluationRules.createOrUpdate",
+        "azure.ai.projects.operations.EvaluationRulesOperations.list": "Azure.AI.Projects.EvaluationRules.list",
+        "azure.ai.projects.aio.operations.EvaluationRulesOperations.list": "Azure.AI.Projects.EvaluationRules.list"
     }
 }
