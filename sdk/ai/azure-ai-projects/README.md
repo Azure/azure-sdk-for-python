@@ -8,6 +8,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Agent Memory Search
   * Agent-to-Agent (A2A)
   * Azure AI Search
+  * Azure Functions
   * Bing Custom Search
   * Bing Grounding
   * Browser Automation
@@ -20,7 +21,7 @@ resources in your Microsoft Foundry Project. Use it to:
   * Model Context Protocol (MCP)
   * OpenAPI
   * SharePoint
-  * Web Search
+  * Web Search/Web Search Preview
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
 * **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
 * **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
@@ -32,7 +33,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
+The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
@@ -62,12 +63,6 @@ To report an issue with the client library, or request additional features, plea
 
 ```bash
 pip install --pre azure-ai-projects
-```
-
-Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) also need to be installed if you intend to call `get_openai_client()`:
-
-```bash
-pip install openai azure-identity
 ```
 
 ## Key concepts
@@ -167,8 +162,7 @@ with project_client.get_openai_client() as openai_client:
 
     response = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -180,8 +174,7 @@ with project_client.get_openai_client() as openai_client:
 
     response = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -288,11 +281,23 @@ if image_data and image_data[0]:
 
 See the full sample in file `\agents\tools\sample_agent_image_generation.py` in the [Samples][samples] folder.
 
-**Web Search**
+**Web Search/Web Search Preview**
 
-Perform general web searches to retrieve current information from the internet. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-web-search)
+Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option is in the documentation: https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases.
 
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
+
+```python
+tool = WebSearchTool(
+    user_location=WebSearchApproximateLocation(type="approximate", country="GB", city="London", region="London")
+)
+```
+
+<!-- END SNIPPET -->
+
+See the full sample in file `\agents\tools\sample_agent_web_search.py` in the [Samples][samples] folder.
+
+<!-- SNIPPET:sample_agent_web_search_preview.tool_declaration -->
 
 ```python
 tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
@@ -300,7 +305,25 @@ tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city
 
 <!-- END SNIPPET -->
 
-See the full sample in file `\agents\tools\sample_agent_web_search.py` in the [Samples][samples] folder.
+See the full sample in file `\agents\tools\sample_agent_web_search_preview.py` in the [Samples][samples] folder.
+
+Use the GA Web Search tool with a Bing Custom Search connection to scope results to your custom search instance:
+
+<!-- SNIPPET:sample_agent_web_search_with_custom_search.tool_declaration -->
+
+```python
+tool = WebSearchTool(
+    custom_search_configuration=WebSearchConfiguration(
+        project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
+        instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
+    )
+)
+```
+
+<!-- END SNIPPET -->
+
+See the full sample in file `\agents\tools\sample_agent_web_search_with_custom_search.py` in the [Samples][samples] folder.
+
 
 **Computer Use**
 
@@ -346,7 +369,7 @@ Call external APIs defined by OpenAPI specifications without additional client-s
 
 ```python
 with open(weather_asset_file_path, "r") as f:
-    openapi_weather = jsonref.loads(f.read())
+    openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
@@ -392,6 +415,45 @@ tool = FunctionTool(
 *After calling `responses.create()`, process `function_call` items from response output, execute your function logic with the provided arguments, and send back `FunctionCallOutput` with the results.*
 
 See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the [Samples][samples] folder.
+
+**Azure Functions**
+
+Integrate Azure Functions with agents to extend capabilities via serverless compute. Functions are invoked through Azure Storage Queue triggers, allowing asynchronous execution of custom logic.
+
+<!-- SNIPPET:sample_agent_azure_function.tool_declaration -->
+
+```python
+tool = AzureFunctionTool(
+    azure_function=AzureFunctionDefinition(
+        input_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_INPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        output_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_OUTPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        function=AzureFunctionDefinitionFunction(
+            name="queue_trigger",
+            description="Get weather for a given location",
+            parameters={
+                "type": "object",
+                "properties": {"location": {"type": "string", "description": "location to determine weather for"}},
+            },
+        ),
+    )
+)
+```
+
+<!-- END SNIPPET -->
+
+*After calling `responses.create()`, the agent enqueues function arguments to the input queue. Your Azure Function processes the request and returns results via the output queue.*
+
+See the full sample in file `\agents\tools\sample_agent_azure_function.py` and the Azure Function implementation in `\agents\tools\get_weather_func_app.py` in the [Samples][samples] folder.
 
 * **Memory Search Tool**
 
@@ -594,7 +656,7 @@ Call external APIs defined by OpenAPI specifications using project connection au
 
 ```python
 with open(tripadvisor_asset_file_path, "r") as f:
-    openapi_tripadvisor = jsonref.loads(f.read())
+    openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
@@ -954,7 +1016,7 @@ You can add an Application Insights Azure resource to your Microsoft Foundry pro
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
-pip install "azure-ai-projects>=2.0.0b1" azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
+pip install "azure-ai-projects>=2.0.0b4" opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
 ```
 
 You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).

@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -26,7 +26,7 @@ USAGE:
 import os
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
+from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType, FoundryFeaturesOptInKeys
 
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -52,7 +52,7 @@ with (
 ):
 
     print("Creating a single evaluator version - Code based (json style)")
-    code_evaluator = project_client.evaluators.create_version(
+    code_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_code",
         evaluator_version={
             "name": "my_custom_evaluator_code",
@@ -97,6 +97,7 @@ with (
                 },
             },
         },
+        foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW,
     )
 
     data_source_config = DataSourceConfigCustom(
@@ -199,9 +200,10 @@ with (
         print("Waiting for evaluation run to complete...")
 
     print("Deleting the created evaluator version")
-    project_client.evaluators.delete_version(
+    project_client.beta.evaluators.delete_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
+        foundry_features=FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW,
     )
 
     client.evals.delete(eval_id=eval_object.id)

@@ -42,8 +42,7 @@ async def main() -> None:
 
         openai = AsyncOpenAI(
             api_key=get_bearer_token_provider(credential, "https://ai.azure.com/.default"),
-            base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai",
-            default_query={"api-version": "2025-11-15-preview"},
+            base_url=os.environ["AZURE_AI_PROJECT_ENDPOINT"].rstrip("/") + "/openai/v1",
         )
 
         async with openai:

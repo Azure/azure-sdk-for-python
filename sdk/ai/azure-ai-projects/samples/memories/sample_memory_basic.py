@@ -16,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -37,6 +37,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EasyInputMessage,
+    FoundryFeaturesOptInKeys,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
@@ -54,7 +55,9 @@ with (
     # Delete memory store, if it already exists
     memory_store_name = "my_memory_store"
     try:
-        project_client.memory_stores.delete(memory_store_name)
+        project_client.beta.memory_stores.delete(
+            memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         print(f"Memory store `{memory_store_name}` deleted")
     except ResourceNotFoundError:
         pass
@@ -67,10 +70,11 @@ with (
             user_profile_enabled=True, chat_summary_enabled=True
         ),  # Note: This line will not be needed once the service is fixed to use correct defaults
     )
-    memory_store = project_client.memory_stores.create(
+    memory_store = project_client.beta.memory_stores.create(
         name=memory_store_name,
         description="Example memory store for conversations",
         definition=definition,
+        foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
     )
     print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
     if isinstance(memory_store.definition, MemoryStoreDefaultDefinition):
@@ -82,12 +86,15 @@ with (
     scope = "user_123"
 
     # Add a memory to the memory store
-    user_message = EasyInputMessage(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
-    update_poller = project_client.memory_stores.begin_update_memories(
+    user_message = EasyInputMessage(
+        role="user", content="I prefer dark roast coffee and usually drink it in the morning"
+    )
+    update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
         items=[user_message],  # Pass conversation items that you want to add to memory
         update_delay=0,  # Trigger update immediately without waiting for inactivity
+        foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
     )
 
     # Wait for the update operation to complete, but can also fire and forget
@@ -100,17 +107,25 @@ with (
 
     # Retrieve memories from the memory store
     query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
-    search_response = project_client.memory_stores.search_memories(
-        name=memory_store.name, scope=scope, items=[query_message], options=MemorySearchOptions(max_memories=5)
+    search_response = project_client.beta.memory_stores.search_memories(
+        name=memory_store.name,
+        scope=scope,
+        items=[query_message],
+        options=MemorySearchOptions(max_memories=5),
+        foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
     )
     print(f"Found {len(search_response.memories)} memories")
     for memory in search_response.memories:
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Delete memories for a specific scope
-    project_client.memory_stores.delete_scope(name=memory_store.name, scope=scope)
+    project_client.beta.memory_stores.delete_scope(
+        name=memory_store.name, scope=scope, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+    )
     print(f"Deleted memories for scope '{scope}'")
 
     # Delete memory store
-    project_client.memory_stores.delete(memory_store.name)
+    project_client.beta.memory_stores.delete(
+        memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+    )
     print(f"Deleted memory store `{memory_store.name}`")

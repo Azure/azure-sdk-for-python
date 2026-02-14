@@ -16,6 +16,9 @@ from sample_executor import (
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestSamples(AzureRecordedTestCase):
 
     # To run this test with a specific sample, use:
@@ -24,8 +27,12 @@ class TestSamples(AzureRecordedTestCase):
     @additionalSampleTests(
         [
             AdditionalSampleTestDetail(
-                sample_filename="sample_agent_computer_use.py",
-                env_vars={"COMPUTER_USE_MODEL_DEPLOYMENT_NAME": "sanitized_model"},
+                test_id="sample_agent_azure_function",
+                sample_filename="sample_agent_azure_function.py",
+                env_vars={"STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+                    "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+                    "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+                },
             ),
         ]
     )
@@ -41,6 +48,10 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_mcp_with_project_connection.py",
                 "sample_agent_openapi_with_project_connection.py",
                 "sample_agent_to_agent.py",
+                "sample_agent_web_search.py",
+                "sample_agent_web_search_preview.py",
+                "sample_agent_web_search_with_custom_search.py",
+                "sample_agent_azure_function.py",
             ],
         ),
     )
@@ -53,4 +64,5 @@ class TestSamples(AzureRecordedTestCase):
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
             project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )

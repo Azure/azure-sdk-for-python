@@ -20,7 +20,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -68,7 +68,7 @@ with (
     # [END tool_declaration]
 
     agent = project_client.agents.create_version(
-        agent_name="ComputerUseAgent",
+        agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
             instructions="""
@@ -101,7 +101,7 @@ with (
                 ],
             }
         ],
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         truncation="auto",
     )
 
@@ -151,7 +151,7 @@ with (
                     },
                 }
             ],
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 

@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +37,7 @@ from .. import models as _models
 from .._configuration import AIProjectClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from ..models._enums import FoundryFeaturesOptInKeys
 
 JSON = MutableMapping[str, Any]
 _Unset: Any = object()
@@ -52,7 +53,7 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,12 +73,22 @@ def build_agents_get_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_request(**kwargs: Any) -> HttpRequest:
+def build_agents_create_request(
+    *,
+    foundry_features: Optional[
+        Union[
+            Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+            Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+            Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+        ]
+    ] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -87,6 +98,8 @@ def build_agents_create_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if foundry_features is not None:
+        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -94,12 +107,23 @@ def build_agents_create_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_update_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_agents_update_request(
+    agent_name: str,
+    *,
+    foundry_features: Optional[
+        Union[
+            Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+            Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+            Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+        ]
+    ] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -114,6 +138,8 @@ def build_agents_update_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if foundry_features is not None:
+        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -126,7 +152,7 @@ def build_agents_create_from_manifest_request(**kwargs: Any) -> HttpRequest:  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +176,7 @@ def build_agents_update_from_manifest_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -176,7 +202,7 @@ def build_agents_delete_request(agent_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -208,14 +234,13 @@ def build_agents_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/agents"
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if kind is not None:
         _params["kind"] = _SERIALIZER.query("kind", kind, "str")
     if limit is not None:
@@ -226,6 +251,7 @@ def build_agents_list_request(
         _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
         _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -233,12 +259,23 @@ def build_agents_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_agents_create_version_request(agent_name: str, **kwargs: Any) -> HttpRequest:
+def build_agents_create_version_request(
+    agent_name: str,
+    *,
+    foundry_features: Optional[
+        Union[
+            Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+            Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+            Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+        ]
+    ] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -253,6 +290,8 @@ def build_agents_create_version_request(agent_name: str, **kwargs: Any) -> HttpR
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    if foundry_features is not None:
+        _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -267,7 +306,7 @@ def build_agents_create_version_from_manifest_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -293,7 +332,7 @@ def build_agents_get_version_request(agent_name: str, agent_version: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -318,7 +357,7 @@ def build_agents_delete_version_request(agent_name: str, agent_version: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -351,7 +390,7 @@ def build_agents_list_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -363,7 +402,6 @@ def build_agents_list_versions_request(
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if limit is not None:
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
     if order is not None:
@@ -372,267 +410,19 @@ def build_agents_list_versions_request(
         _params["after"] = _SERIALIZER.query("after", after, "str")
     if before is not None:
         _params["before"] = _SERIALIZER.query("before", before, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_agents_stream_agent_container_logs_request(  # pylint: disable=name-too-long
-    agent_name: str,
-    agent_version: str,
-    *,
-    kind: Optional[Union[str, _models.ContainerLogKind]] = None,
-    replica_name: Optional[str] = None,
-    tail: Optional[int] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    # Construct URL
-    _url = "/agents/{agent_name}/versions/{agent_version}/containers/default:logstream"
-    path_format_arguments = {
-        "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "agent_version": _SERIALIZER.url("agent_version", agent_version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if kind is not None:
-        _params["kind"] = _SERIALIZER.query("kind", kind, "str")
-    if replica_name is not None:
-        _params["replica_name"] = _SERIALIZER.query("replica_name", replica_name, "str")
-    if tail is not None:
-        _params["tail"] = _SERIALIZER.query("tail", tail, "int")
-
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
-
-
-def build_memory_stores_create_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_update_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_get_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_list_request(
-    *,
-    limit: Optional[int] = None,
-    order: Optional[Union[str, _models.PageOrder]] = None,
-    after: Optional[str] = None,
-    before: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if limit is not None:
-        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
-    if order is not None:
-        _params["order"] = _SERIALIZER.query("order", order, "str")
-    if after is not None:
-        _params["after"] = _SERIALIZER.query("after", after, "str")
-    if before is not None:
-        _params["before"] = _SERIALIZER.query("before", before, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_delete_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_search_memories_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}:search_memories"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_update_memories_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}:update_memories"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_memory_stores_delete_scope_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/memory_stores/{name}:delete_scope"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_connections_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -658,7 +448,7 @@ def build_connections_get_with_credentials_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -687,7 +477,7 @@ def build_connections_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -710,7 +500,7 @@ def build_datasets_list_versions_request(name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -734,7 +524,7 @@ def build_datasets_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -753,7 +543,7 @@ def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRe
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -777,7 +567,7 @@ def build_datasets_get_request(name: str, version: str, **kwargs: Any) -> HttpRe
 def build_datasets_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
     _url = "/datasets/{name}/versions/{version}"
     path_format_arguments = {
@@ -798,7 +588,7 @@ def build_datasets_create_or_update_request(name: str, version: str, **kwargs: A
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -826,7 +616,7 @@ def build_datasets_pending_upload_request(name: str, version: str, **kwargs: Any
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -853,7 +643,7 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -874,126 +664,11 @@ def build_datasets_get_credentials_request(name: str, version: str, **kwargs: An
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes/{name}/versions"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_list_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
-
-
-def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/indexes/{name}/versions/{version}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-        "version": _SERIALIZER.url("version", version, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_deployments_get_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1023,7 +698,7 @@ def build_deployments_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1044,15 +719,15 @@ def build_deployments_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_indexes_list_versions_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/redTeams/runs/{name}"
+    _url = "/indexes/{name}/versions"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -1068,15 +743,15 @@ def build_red_teams_get_request(name: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_red_teams_list_request(**kwargs: Any) -> HttpRequest:
+def build_indexes_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/redTeams/runs"
+    _url = "/indexes"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1087,16 +762,66 @@ def build_red_teams_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_red_teams_create_request(**kwargs: Any) -> HttpRequest:
+def build_indexes_get_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/indexes/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_indexes_delete_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/indexes/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_indexes_create_or_update_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/redTeams/runs:run"
+    _url = "/indexes/{name}/versions/{version}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+        "version": _SERIALIZER.url("version", version, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -1106,20 +831,22 @@ def build_red_teams_create_request(**kwargs: Any) -> HttpRequest:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_get_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_evaluation_taxonomies_get_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluationrules/{id}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1128,20 +855,53 @@ def build_evaluation_rules_get_request(id: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_evaluation_taxonomies_list_request(  # pylint: disable=name-too-long
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+    input_name: Optional[str] = None,
+    input_type: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    _url = "/evaluationrules/{id}"
+    _url = "/evaluationtaxonomies"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if input_name is not None:
+        _params["inputName"] = _SERIALIZER.query("input_name", input_name, "str")
+    if input_type is not None:
+        _params["inputType"] = _SERIALIZER.query("input_type", input_type, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1150,24 +910,25 @@ def build_evaluation_rules_delete_request(id: str, **kwargs: Any) -> HttpRequest
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
-    id: str, **kwargs: Any
+def build_beta_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/evaluationrules/{id}"
+    _url = "/evaluationtaxonomies/{name}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1176,6 +937,7 @@ def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1183,8 +945,120 @@ def build_evaluation_rules_create_or_update_request(  # pylint: disable=name-too
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_rules_list_request(
+def build_beta_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationtaxonomies/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_evaluation_rules_get_request(
+    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationrules/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_evaluation_rules_delete_request(  # pylint: disable=name-too-long
+    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    # Construct URL
+    _url = "/evaluationrules/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_evaluation_rules_create_or_update_request(  # pylint: disable=name-too-long
+    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/evaluationrules/{id}"
+    path_format_arguments = {
+        "id": _SERIALIZER.url("id", id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_evaluation_rules_list_request(
     *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
     action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
     agent_name: Optional[str] = None,
     enabled: Optional[bool] = None,
@@ -1193,7 +1067,7 @@ def build_evaluation_rules_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1209,144 +1083,16 @@ def build_evaluation_rules_list_request(
         _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluation_taxonomies_get_request(name: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_taxonomies_list_request(
-    *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if input_name is not None:
-        _params["inputName"] = _SERIALIZER.query("input_name", input_name, "str")
-    if input_type is not None:
-        _params["inputType"] = _SERIALIZER.query("input_type", input_type, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_taxonomies_delete_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_taxonomies_create_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluation_taxonomies_update_request(  # pylint: disable=name-too-long
-    name: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluationtaxonomies/{name}"
-    path_format_arguments = {
-        "name": _SERIALIZER.url("name", name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluators_list_versions_request(
+def build_beta_evaluators_list_versions_request(  # pylint: disable=name-too-long
     name: str,
     *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
     limit: Optional[int] = None,
     **kwargs: Any
@@ -1354,7 +1100,7 @@ def build_evaluators_list_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1373,13 +1119,15 @@ def build_evaluators_list_versions_request(
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_list_latest_versions_request(  # pylint: disable=name-too-long
+def build_beta_evaluators_list_latest_versions_request(  # pylint: disable=name-too-long
     *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
     type: Optional[Union[Literal["builtin"], Literal["custom"], Literal["all"], str]] = None,
     limit: Optional[int] = None,
     **kwargs: Any
@@ -1387,7 +1135,7 @@ def build_evaluators_list_latest_versions_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1401,16 +1149,23 @@ def build_evaluators_list_latest_versions_request(  # pylint: disable=name-too-l
         _params["limit"] = _SERIALIZER.query("limit", limit, "int")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_get_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_beta_evaluators_get_version_request(  # pylint: disable=name-too-long
+    name: str,
+    version: str,
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1426,15 +1181,23 @@ def build_evaluators_get_version_request(name: str, version: str, **kwargs: Any)
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_delete_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_beta_evaluators_delete_version_request(  # pylint: disable=name-too-long
+    name: str,
+    version: str,
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
     _url = "/evaluators/{name}/versions/{version}"
     path_format_arguments = {
@@ -1447,15 +1210,20 @@ def build_evaluators_delete_version_request(name: str, version: str, **kwargs: A
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_create_version_request(name: str, **kwargs: Any) -> HttpRequest:
+def build_beta_evaluators_create_version_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1470,6 +1238,7 @@ def build_evaluators_create_version_request(name: str, **kwargs: Any) -> HttpReq
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1477,12 +1246,18 @@ def build_evaluators_create_version_request(name: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_evaluators_update_version_request(name: str, version: str, **kwargs: Any) -> HttpRequest:
+def build_beta_evaluators_update_version_request(  # pylint: disable=name-too-long
+    name: str,
+    version: str,
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW],
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1498,6 +1273,7 @@ def build_evaluators_update_version_request(name: str, version: str, **kwargs: A
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1505,12 +1281,14 @@ def build_evaluators_update_version_request(name: str, version: str, **kwargs: A
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_insights_generate_request(**kwargs: Any) -> HttpRequest:
+def build_beta_insights_generate_request(
+    *, foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1520,6 +1298,7 @@ def build_insights_generate_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if "Repeatability-Request-ID" not in _headers:
         _headers["Repeatability-Request-ID"] = str(uuid.uuid4())
     if "Repeatability-First-Sent" not in _headers:
@@ -1533,11 +1312,17 @@ def build_insights_generate_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_insights_get_request(id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> HttpRequest:
+def build_beta_insights_get_request(
+    id: str,
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
+    include_coordinates: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1554,13 +1339,15 @@ def build_insights_get_request(id: str, *, include_coordinates: Optional[bool] =
         _params["includeCoordinates"] = _SERIALIZER.query("include_coordinates", include_coordinates, "bool")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_insights_list_request(
+def build_beta_insights_list_request(
     *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW],
     type: Optional[Union[str, _models.InsightType]] = None,
     eval_id: Optional[str] = None,
     run_id: Optional[str] = None,
@@ -1571,7 +1358,7 @@ def build_insights_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1591,16 +1378,328 @@ def build_insights_list_request(
         _params["includeCoordinates"] = _SERIALIZER.query("include_coordinates", include_coordinates, "bool")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_memory_stores_create_request(
+    *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_update_request(
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_get_request(
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_list_request(
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+    limit: Optional[int] = None,
+    order: Optional[Union[str, _models.PageOrder]] = None,
+    after: Optional[str] = None,
+    before: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores"
+
+    # Construct parameters
+    if limit is not None:
+        _params["limit"] = _SERIALIZER.query("limit", limit, "int")
+    if order is not None:
+        _params["order"] = _SERIALIZER.query("order", order, "str")
+    if after is not None:
+        _params["after"] = _SERIALIZER.query("after", after, "str")
+    if before is not None:
+        _params["before"] = _SERIALIZER.query("before", before, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_delete_request(
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_search_memories_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores/{name}:search_memories"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_update_memories_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores/{name}:update_memories"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_memory_stores_delete_scope_request(  # pylint: disable=name-too-long
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/memory_stores/{name}:delete_scope"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_red_teams_get_request(
+    name: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/runs/{name}"
+    path_format_arguments = {
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_red_teams_list_request(
+    *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/runs"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_red_teams_create_request(
+    *, foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/redTeams/runs:run"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_beta_schedules_delete_request(
+    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
     _url = "/schedules/{id}"
     path_format_arguments = {
@@ -1613,15 +1712,18 @@ def build_schedules_delete_request(id: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_get_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_schedules_get_request(
+    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1636,16 +1738,23 @@ def build_schedules_get_request(id: str, **kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_list_request(**kwargs: Any) -> HttpRequest:
+def build_beta_schedules_list_request(
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
+    type: Optional[Union[str, _models.ScheduleTaskType]] = None,
+    enabled: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1653,19 +1762,26 @@ def build_schedules_list_request(**kwargs: Any) -> HttpRequest:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
+    if enabled is not None:
+        _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_create_or_update_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_schedules_create_or_update_request(  # pylint: disable=name-too-long
+    id: str, *, foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW], **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1680,6 +1796,7 @@ def build_schedules_create_or_update_request(id: str, **kwargs: Any) -> HttpRequ
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -1687,18 +1804,24 @@ def build_schedules_create_or_update_request(id: str, **kwargs: Any) -> HttpRequ
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_schedules_get_run_request(
+    schedule_id: str,
+    run_id: str,
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/schedules/{scheduleId}/runs/{runId}"
+    _url = "/schedules/{schedule_id}/runs/{run_id}"
     path_format_arguments = {
-        "scheduleId": _SERIALIZER.url("schedule_id", schedule_id, "str"),
-        "runId": _SERIALIZER.url("run_id", run_id, "str"),
+        "schedule_id": _SERIALIZER.url("schedule_id", schedule_id, "str"),
+        "run_id": _SERIALIZER.url("run_id", run_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1707,16 +1830,24 @@ def build_schedules_get_run_request(schedule_id: str, run_id: str, **kwargs: Any
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_schedules_list_runs_request(id: str, **kwargs: Any) -> HttpRequest:
+def build_beta_schedules_list_runs_request(
+    id: str,
+    *,
+    foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW],
+    type: Optional[Union[str, _models.ScheduleTaskType]] = None,
+    enabled: Optional[bool] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-15-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1729,11 +1860,46 @@ def build_schedules_list_runs_request(id: str, **kwargs: Any) -> HttpRequest:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if type is not None:
+        _params["type"] = _SERIALIZER.query("type", type, "str")
+    if enabled is not None:
+        _params["enabled"] = _SERIALIZER.query("enabled", enabled, "bool")
 
     # Construct headers
+    _headers["Foundry-Features"] = _SERIALIZER.header("foundry_features", foundry_features, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class BetaOperations:  # pylint: disable=too-many-instance-attributes
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`beta` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+        self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.evaluation_rules = BetaEvaluationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.insights = BetaInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:
@@ -1823,6 +1989,13 @@ class AgentsOperations:
         *,
         name: str,
         definition: _models.AgentDefinition,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -1840,6 +2013,14 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1858,11 +2039,32 @@ class AgentsOperations:
         """
 
     @overload
-    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentDetails:
+    def create(
+        self,
+        body: JSON,
+        *,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Required.
         :type body: JSON
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1872,11 +2074,32 @@ class AgentsOperations:
         """
 
     @overload
-    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentDetails:
+    def create(
+        self,
+        body: IO[bytes],
+        *,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Required.
         :type body: IO[bytes]
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1892,6 +2115,13 @@ class AgentsOperations:
         *,
         name: str = _Unset,
         definition: _models.AgentDefinition = _Unset,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -1910,6 +2140,14 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -1952,6 +2190,7 @@ class AgentsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_agents_create_request(
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1999,19 +2238,34 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2031,15 +2285,35 @@ class AgentsOperations:
 
     @overload
     def update(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param body: Required.
         :type body: JSON
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2050,15 +2324,35 @@ class AgentsOperations:
 
     @overload
     def update(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2074,12 +2368,19 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
     ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition.
-        If no changes, returns the existing agent version.
+        """Updates the agent by adding a new version if there are any changes to the agent definition. If
+        no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
@@ -2088,6 +2389,14 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2129,6 +2438,7 @@ class AgentsOperations:
 
         _request = build_agents_update_request(
             agent_name=agent_name,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2377,8 +2687,7 @@ class AgentsOperations:
         **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2409,8 +2718,7 @@ class AgentsOperations:
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2429,8 +2737,7 @@ class AgentsOperations:
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2457,8 +2764,7 @@ class AgentsOperations:
         **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition.
-        If no changes, returns the existing agent version.
+        definition. If no changes, returns the existing agent version.
 
         :param agent_name: The name of the agent to update. Required.
         :type agent_name: str
@@ -2720,6 +3026,13 @@ class AgentsOperations:
         agent_name: str,
         *,
         definition: _models.AgentDefinition,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
@@ -2737,6 +3050,14 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2756,7 +3077,19 @@ class AgentsOperations:
 
     @overload
     def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: JSON,
+        *,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -2769,6 +3102,14 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: JSON
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2779,7 +3120,19 @@ class AgentsOperations:
 
     @overload
     def create_version(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
@@ -2792,6 +3145,14 @@ class AgentsOperations:
         :type agent_name: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2807,6 +3168,13 @@ class AgentsOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
+        foundry_features: Optional[
+            Union[
+                Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+                Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW],
+            ]
+        ] = None,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
@@ -2825,6 +3193,14 @@ class AgentsOperations:
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
+        :keyword foundry_features: A feature flag opt-in required when using preview operations or
+         modifying persisted preview resources. Is one of the following types:
+         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
+         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
+        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
+         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
+         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
         :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
          useful for storing additional information about the object in a structured
          format, and querying for objects via API or the dashboard.
@@ -2866,6 +3242,7 @@ class AgentsOperations:
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3339,1178 +3716,6 @@ class AgentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @distributed_trace
-    def stream_agent_container_logs(  # pylint: disable=inconsistent-return-statements
-        self,
-        agent_name: str,
-        agent_version: str,
-        *,
-        kind: Optional[Union[str, _models.ContainerLogKind]] = None,
-        replica_name: Optional[str] = None,
-        tail: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """Container log entry streamed from the container as text chunks.
-        Each chunk is a UTF-8 string that may be either a plain text log line
-        or a JSON-formatted log entry, depending on the type of container log being streamed.
-        Clients should treat each chunk as opaque text and, if needed, attempt
-        to parse it as JSON based on their logging requirements.
-
-        For system logs, the format is JSON with the following structure:
-        {"TimeStamp":"2025-12-15T16:51:33Z","Type":"Normal","ContainerAppName":null,"RevisionName":null,"ReplicaName":null,"Msg":"Connecting
-        to the events
-        collector...","Reason":"StartingGettingEvents","EventSource":"ContainerAppController","Count":1}
-        {"TimeStamp":"2025-12-15T16:51:34Z","Type":"Normal","ContainerAppName":null,"RevisionName":null,"ReplicaName":null,"Msg":"Successfully
-        connected to events
-        server","Reason":"ConnectedToEventsServer","EventSource":"ContainerAppController","Count":1}
-
-        For console logs, the format is plain text as emitted by the container's stdout/stderr.
-        2025-12-15T08:43:48.72656  Connecting to the container 'agent-container'...
-        2025-12-15T08:43:48.75451  Successfully Connected to container: 'agent-container' [Revision:
-        'je90fe655aa742ef9a188b9fd14d6764--7tca06b', Replica:
-        'je90fe655aa742ef9a188b9fd14d6764--7tca06b-6898b9c89f-mpkjc']
-        2025-12-15T08:33:59.0671054Z stdout F INFO:     127.0.0.1:42588 - "GET /readiness HTTP/1.1" 200
-        OK
-        2025-12-15T08:34:29.0649033Z stdout F INFO:     127.0.0.1:60246 - "GET /readiness HTTP/1.1" 200
-        OK
-        2025-12-15T08:34:59.0644467Z stdout F INFO:     127.0.0.1:43994 - "GET /readiness HTTP/1.1" 200
-        OK.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param agent_version: The version of the agent. Required.
-        :type agent_version: str
-        :keyword kind: console returns container stdout/stderr, system returns container app event
-         stream. defaults to console. Known values are: "console" and "system". Default value is None.
-        :paramtype kind: str or ~azure.ai.projects.models.ContainerLogKind
-        :keyword replica_name: When omitted, the server chooses the first replica for console logs.
-         Required to target a specific replica. Default value is None.
-        :paramtype replica_name: str
-        :keyword tail: Number of trailing lines returned. Enforced to 1-300. Defaults to 20. Default
-         value is None.
-        :paramtype tail: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_agents_stream_agent_container_logs_request(
-            agent_name=agent_name,
-            agent_version=agent_version,
-            kind=kind,
-            replica_name=replica_name,
-            tail=tail,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-
-class MemoryStoresOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`memory_stores` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    def create(
-        self,
-        *,
-        name: str,
-        definition: _models.MemoryStoreDefinition,
-        content_type: str = "application/json",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Create a memory store.
-
-        :keyword name: The name of the memory store. Required.
-        :paramtype name: str
-        :keyword definition: The memory store definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword description: A human-readable description of the memory store. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
-         value is None.
-        :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Create a memory store.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Create a memory store.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        definition: _models.MemoryStoreDefinition = _Unset,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Create a memory store.
-
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: The name of the memory store. Required.
-        :paramtype name: str
-        :keyword definition: The memory store definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
-        :keyword description: A human-readable description of the memory store. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
-         value is None.
-        :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata, "name": name}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_memory_stores_create_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update(
-        self,
-        name: str,
-        *,
-        content_type: str = "application/json",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword description: A human-readable description of the memory store. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
-         value is None.
-        :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.MemoryStoreDetails:
-        """Update a memory store.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword description: A human-readable description of the memory store. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
-         value is None.
-        :paramtype metadata: dict[str, str]
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"description": description, "metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_memory_stores_update_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
-        """Retrieve a memory store.
-
-        :param name: The name of the memory store to retrieve. Required.
-        :type name: str
-        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
-
-        _request = build_memory_stores_get_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.MemoryStoreDetails"]:
-        """List all memory stores.
-
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of MemoryStoreDetails
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.MemoryStoreDetails]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_memory_stores_list_request(
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.MemoryStoreDetails], deserialized.get("data", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
-
-        def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
-        """Delete a memory store.
-
-        :param name: The name of the memory store to delete. Required.
-        :type name: str
-        :return: DeleteMemoryStoreResult. The DeleteMemoryStoreResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
-
-        _request = build_memory_stores_delete_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.DeleteMemoryStoreResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def search_memories(
-        self,
-        name: str,
-        *,
-        scope: str,
-        content_type: str = "application/json",
-        items: Optional[List[_models.InputItem]] = None,
-        previous_search_id: Optional[str] = None,
-        options: Optional[_models.MemorySearchOptions] = None,
-        **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
-        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
-         memory search from where the last operation left off. Default value is None.
-        :paramtype previous_search_id: str
-        :keyword options: Memory search options. Default value is None.
-        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def search_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def search_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def search_memories(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
-        previous_search_id: Optional[str] = None,
-        options: Optional[_models.MemorySearchOptions] = None,
-        **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult:
-        """Search for relevant memories from a memory store based on conversation context.
-
-        :param name: The name of the memory store to search. Required.
-        :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
-        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
-         memory search from where the last operation left off. Default value is None.
-        :paramtype previous_search_id: str
-        :keyword options: Memory search options. Default value is None.
-        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
-        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreSearchResult] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {
-                "items": items,
-                "options": options,
-                "previous_search_id": previous_search_id,
-                "scope": scope,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_memory_stores_search_memories_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreSearchResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    def _update_memories_initial(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
-        previous_update_id: Optional[str] = None,
-        update_delay: Optional[int] = None,
-        **kwargs: Any
-    ) -> Iterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {
-                "items": items,
-                "previous_update_id": previous_update_id,
-                "scope": scope,
-                "update_delay": update_delay,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_memory_stores_update_memories_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = True
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-
-        deserialized = response.iter_bytes()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def _begin_update_memories(
-        self,
-        name: str,
-        *,
-        scope: str,
-        content_type: str = "application/json",
-        items: Optional[List[_models.InputItem]] = None,
-        previous_update_id: Optional[str] = None,
-        update_delay: Optional[int] = None,
-        **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
-    @overload
-    def _begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
-    @overload
-    def _begin_update_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
-
-    @distributed_trace
-    def _begin_update_memories(
-        self,
-        name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
-        previous_update_id: Optional[str] = None,
-        update_delay: Optional[int] = None,
-        **kwargs: Any
-    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
-        :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Default value is None.
-        :paramtype previous_update_id: str
-        :keyword update_delay: Timeout period before processing the memory update in seconds.
-         If a new update request is received during this period, it will cancel the current request and
-         reset the timeout.
-         Set to 0 to immediately trigger the update without delay.
-         Defaults to 300 (5 minutes). Default value is None.
-        :paramtype update_delay: int
-        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = self._update_memories_initial(
-                name=name,
-                body=body,
-                scope=scope,
-                items=items,
-                previous_update_id=previous_update_id,
-                update_delay=update_delay,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-
-            deserialized = _deserialize(_models.MemoryStoreUpdateCompletedResult, response.json().get("result", {}))
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: PollingMethod = cast(
-                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(PollingMethod, NoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return LROPoller[_models.MemoryStoreUpdateCompletedResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return LROPoller[_models.MemoryStoreUpdateCompletedResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @overload
-    def delete_scope(
-        self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
-         user ID. Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def delete_scope(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def delete_scope(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def delete_scope(
-        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
-    ) -> _models.MemoryStoreDeleteScopeResult:
-        """Delete all memories associated with a specific scope from a memory store.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
-         user ID. Required.
-        :paramtype scope: str
-        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreDeleteScopeResult] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if scope is _Unset:
-                raise TypeError("missing required argument: scope")
-            body = {"scope": scope}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_memory_stores_delete_scope_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreDeleteScopeResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
 
 class ConnectionsOperations:
     """
@@ -4671,7 +3876,7 @@ class ConnectionsOperations:
 
         :keyword connection_type: List connections of this specific type. Known values are:
          "AzureOpenAI", "AzureBlob", "AzureStorageAccount", "CognitiveSearch", "CosmosDB", "ApiKey",
-         "AppConfig", "AppInsights", "CustomKeys", and "RemoteTool". Default value is None.
+         "AppConfig", "AppInsights", "CustomKeys", and "RemoteTool_Preview". Default value is None.
         :paramtype connection_type: str or ~azure.ai.projects.models.ConnectionType
         :keyword default_connection: List connections that are default connections. Default value is
          None.
@@ -5438,6 +4643,189 @@ class DatasetsOperations:
         return deserialized  # type: ignore
 
 
+class DeploymentsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`deployments` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(self, name: str, **kwargs: Any) -> _models.Deployment:
+        """Get a deployed model.
+
+        :param name: Name of the deployment. Required.
+        :type name: str
+        :return: Deployment. The Deployment is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.Deployment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+
+        _request = build_deployments_get_request(
+            name=name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.Deployment, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        model_publisher: Optional[str] = None,
+        model_name: Optional[str] = None,
+        deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Deployment"]:
+        """List all deployed models in the project.
+
+        :keyword model_publisher: Model publisher to filter models by. Default value is None.
+        :paramtype model_publisher: str
+        :keyword model_name: Model name (the publisher specific name) to filter models by. Default
+         value is None.
+        :paramtype model_name: str
+        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
+         is None.
+        :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
+        :return: An iterator like instance of Deployment
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Deployment]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Deployment]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_deployments_list_request(
+                    model_publisher=model_publisher,
+                    model_name=model_name,
+                    deployment_type=deployment_type,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.Deployment], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
 class IndexesOperations:
     """
     .. warning::
@@ -5889,14 +5277,14 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
-class DeploymentsOperations:
+class BetaEvaluationTaxonomiesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`deployments` attribute.
+        :attr:`evaluation_taxonomies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -5907,15 +5295,18 @@ class DeploymentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.Deployment:
-        """Get a deployed model.
+    def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
+        """Get an evaluation run by name.
 
-        :param name: Name of the deployment. Required.
+        :param name: The name of the resource. Required.
         :type name: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.Deployment
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5927,10 +5318,11 @@ class DeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
 
-        _request = build_deployments_get_request(
+        _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5956,48 +5348,37 @@ class DeploymentsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
     def list(
-        self,
-        *,
-        model_publisher: Optional[str] = None,
-        model_name: Optional[str] = None,
-        deployment_type: Optional[Union[str, _models.DeploymentType]] = None,
-        **kwargs: Any
-    ) -> ItemPaged["_models.Deployment"]:
-        """List all deployed models in the project.
+        self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.EvaluationTaxonomy"]:
+        """List evaluation taxonomies.
 
-        :keyword model_publisher: Model publisher to filter models by. Default value is None.
-        :paramtype model_publisher: str
-        :keyword model_name: Model name (the publisher specific name) to filter models by. Default
-         value is None.
-        :paramtype model_name: str
-        :keyword deployment_type: Type of deployment to filter list by. "ModelDeployment" Default value
-         is None.
-        :paramtype deployment_type: str or ~azure.ai.projects.models.DeploymentType
-        :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Deployment]
+        :keyword input_name: Filter by the evaluation input name. Default value is None.
+        :paramtype input_name: str
+        :keyword input_type: Filter by taxonomy input type. Default value is None.
+        :paramtype input_type: str
+        :return: An iterator like instance of EvaluationTaxonomy
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.Deployment]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.EvaluationTaxonomy]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6010,10 +5391,10 @@ class DeploymentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_deployments_list_request(
-                    model_publisher=model_publisher,
-                    model_name=model_name,
-                    deployment_type=deployment_type,
+                _request = build_beta_evaluation_taxonomies_list_request(
+                    foundry_features=foundry_features,
+                    input_name=input_name,
+                    input_type=input_type,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6049,7 +5430,7 @@ class DeploymentsOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Deployment], deserialized.get("value", []))
+            list_of_elem = _deserialize(List[_models.EvaluationTaxonomy], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6071,34 +5452,19 @@ class DeploymentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-
-class RedTeamsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`red_teams` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
-        """Get a redteam by name.
+    def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an evaluation taxonomy by name.
 
-        :param name: Identifier of the red team run. Required.
+        :param name: The name of the resource. Required.
         :type name: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :return: None
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6110,10 +5476,11 @@ class RedTeamsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_red_teams_get_request(
+        _request = build_beta_evaluation_taxonomies_delete_request(
             name=name,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6123,174 +5490,92 @@ class RedTeamsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = kwargs.pop("stream", False)
+        _stream = False
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.RedTeam, response.json())
-
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
-        """List a redteam by name.
-
-        :return: An iterator like instance of RedTeam
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RedTeam]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.RedTeam]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_red_teams_list_request(
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.RedTeam], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def create(
-        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RedTeam:
-        """Creates a redteam run.
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
 
-        :param red_team: Redteam to be run. Required.
-        :type red_team: ~azure.ai.projects.models.RedTeam
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
+    def create(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
 
-        :param red_team: Redteam to be run. Required.
-        :type red_team: JSON
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    def create(self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
+    def create(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
 
-        :param red_team: Redteam to be run. Required.
-        :type red_team: IO[bytes]
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace
-    def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
-        """Creates a redteam run.
+    def create(
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Create an evaluation taxonomy.
 
-        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
-         Required.
-        :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
-        :return: RedTeam. The RedTeam is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.RedTeam
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6303,16 +5588,18 @@ class RedTeamsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(red_team, (IOBase, bytes)):
-            _content = red_team
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
         else:
-            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_red_teams_create_request(
+        _request = build_beta_evaluation_taxonomies_create_request(
+            name=name,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6331,7 +5618,7 @@ class RedTeamsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200, 201]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
@@ -6343,7 +5630,140 @@ class RedTeamsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.RedTeam, response.json())
+            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update(
+        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluationTaxonomy:
+        """Update an evaluation taxonomy.
+
+        :param name: The name of the evaluation taxonomy. Required.
+        :type name: str
+        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
+         IO[bytes] Required.
+        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
+        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_evaluation_taxonomies_update_request(
+            name=name,
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6351,7 +5771,7 @@ class RedTeamsOperations:
         return deserialized  # type: ignore
 
 
-class EvaluationRulesOperations:
+class BetaEvaluationRulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6378,6 +5798,9 @@ class EvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6391,8 +5814,9 @@ class EvaluationRulesOperations:
 
         cls: ClsType[_models.EvaluationRule] = kwargs.pop("cls", None)
 
-        _request = build_evaluation_rules_get_request(
+        _request = build_beta_evaluation_rules_get_request(
             id=id,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6418,18 +5842,13 @@ class EvaluationRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.EvaluationRule, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -6443,6 +5862,9 @@ class EvaluationRulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6456,8 +5878,9 @@ class EvaluationRulesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluation_rules_delete_request(
+        _request = build_beta_evaluation_rules_delete_request(
             id=id,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6478,13 +5901,8 @@ class EvaluationRulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @overload
     def create_or_update(
@@ -6555,6 +5973,9 @@ class EvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6576,8 +5997,9 @@ class EvaluationRulesOperations:
         else:
             _content = json.dumps(evaluation_rule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluation_rules_create_or_update_request(
+        _request = build_beta_evaluation_rules_create_or_update_request(
             id=id,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6637,6 +6059,9 @@ class EvaluationRulesOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationRule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6653,7 +6078,8 @@ class EvaluationRulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_evaluation_rules_list_request(
+                _request = build_beta_evaluation_rules_list_request(
+                    foundry_features=foundry_features,
                     action_type=action_type,
                     agent_name=agent_name,
                     enabled=enabled,
@@ -6715,491 +6141,7 @@ class EvaluationRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EvaluationTaxonomiesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.AIProjectClient`'s
-        :attr:`evaluation_taxonomies` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
-        """Get an evaluation run by name.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
-
-        _request = build_evaluation_taxonomies_get_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.EvaluationTaxonomy"]:
-        """List evaluation taxonomies.
-
-        :keyword input_name: Filter by the evaluation input name. Default value is None.
-        :paramtype input_name: str
-        :keyword input_type: Filter by taxonomy input type. Default value is None.
-        :paramtype input_type: str
-        :return: An iterator like instance of EvaluationTaxonomy
-        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.EvaluationTaxonomy]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_evaluation_taxonomies_list_request(
-                    input_name=input_name,
-                    input_type=input_type,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.EvaluationTaxonomy], deserialized.get("value", []))
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, iter(list_of_elem)
-
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def delete(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Delete an evaluation taxonomy by name.
-
-        :param name: The name of the resource. Required.
-        :type name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_evaluation_taxonomies_delete_request(
-            name=name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @overload
-    def create(
-        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create(
-        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Create an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_evaluation_taxonomies_create_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def update(
-        self, name: str, body: _models.EvaluationTaxonomy, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def update(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def update(
-        self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
-    ) -> _models.EvaluationTaxonomy:
-        """Update an evaluation taxonomy.
-
-        :param name: The name of the evaluation taxonomy. Required.
-        :type name: str
-        :param body: The evaluation taxonomy. Is one of the following types: EvaluationTaxonomy, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.ai.projects.models.EvaluationTaxonomy or JSON or IO[bytes]
-        :return: EvaluationTaxonomy. The EvaluationTaxonomy is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluationTaxonomy] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_evaluation_taxonomies_update_request(
-            name=name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.EvaluationTaxonomy, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class EvaluatorsOperations:
+class BetaEvaluatorsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7240,6 +6182,9 @@ class EvaluatorsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7256,8 +6201,9 @@ class EvaluatorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_evaluators_list_versions_request(
+                _request = build_beta_evaluators_list_versions_request(
                     name=name,
+                    foundry_features=foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -7338,6 +6284,9 @@ class EvaluatorsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -7354,7 +6303,8 @@ class EvaluatorsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_evaluators_list_latest_versions_request(
+                _request = build_beta_evaluators_list_latest_versions_request(
+                    foundry_features=foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -7427,6 +6377,9 @@ class EvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7440,9 +6393,10 @@ class EvaluatorsOperations:
 
         cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
 
-        _request = build_evaluators_get_version_request(
+        _request = build_beta_evaluators_get_version_request(
             name=name,
             version=version,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7493,6 +6447,9 @@ class EvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7506,9 +6463,10 @@ class EvaluatorsOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_evaluators_delete_version_request(
+        _request = build_beta_evaluators_delete_version_request(
             name=name,
             version=version,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7545,7 +6503,7 @@ class EvaluatorsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Evaluator resource. Required.
+        :param evaluator_version: Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -7563,7 +6521,7 @@ class EvaluatorsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Evaluator resource. Required.
+        :param evaluator_version: Required.
         :type evaluator_version: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -7581,7 +6539,7 @@ class EvaluatorsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Evaluator resource. Required.
+        :param evaluator_version: Required.
         :type evaluator_version: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -7599,13 +6557,16 @@ class EvaluatorsOperations:
 
         :param name: The name of the resource. Required.
         :type name: str
-        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
-         JSON, IO[bytes] Required.
+        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
+         Required.
         :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
         :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7627,8 +6588,9 @@ class EvaluatorsOperations:
         else:
             _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluators_create_version_request(
+        _request = build_beta_evaluators_create_version_request(
             name=name,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7759,6 +6721,9 @@ class EvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7780,9 +6745,10 @@ class EvaluatorsOperations:
         else:
             _content = json.dumps(evaluator_version, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_evaluators_update_version_request(
+        _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7821,7 +6787,7 @@ class EvaluatorsOperations:
         return deserialized  # type: ignore
 
 
-class InsightsOperations:
+class BetaInsightsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7896,6 +6862,9 @@ class InsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7917,7 +6886,8 @@ class InsightsOperations:
         else:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_insights_generate_request(
+        _request = build_beta_insights_generate_request(
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7968,6 +6938,9 @@ class InsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7981,8 +6954,9 @@ class InsightsOperations:
 
         cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
 
-        _request = build_insights_get_request(
+        _request = build_beta_insights_get_request(
             id=id,
+            foundry_features=foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8009,18 +6983,13 @@ class InsightsOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.Insight, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
@@ -8053,6 +7022,9 @@ class InsightsOperations:
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8069,7 +7041,8 @@ class InsightsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_insights_list_request(
+                _request = build_beta_insights_list_request(
+                    foundry_features=foundry_features,
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -8133,7 +7106,1403 @@ class InsightsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SchedulesOperations:
+class BetaMemoryStoresOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`memory_stores` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    def create(
+        self,
+        *,
+        name: str,
+        definition: _models.MemoryStoreDefinition,
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Create a memory store.
+
+        :keyword name: The name of the memory store. Required.
+        :paramtype name: str
+        :keyword definition: The memory store definition. Required.
+        :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the memory store. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
+         value is None.
+        :paramtype metadata: dict[str, str]
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Create a memory store.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Create a memory store.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        definition: _models.MemoryStoreDefinition = _Unset,
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Create a memory store.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The name of the memory store. Required.
+        :paramtype name: str
+        :keyword definition: The memory store definition. Required.
+        :paramtype definition: ~azure.ai.projects.models.MemoryStoreDefinition
+        :keyword description: A human-readable description of the memory store. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
+         value is None.
+        :paramtype metadata: dict[str, str]
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            if definition is _Unset:
+                raise TypeError("missing required argument: definition")
+            body = {"definition": definition, "description": description, "metadata": metadata, "name": name}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_memory_stores_create_request(
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update(
+        self,
+        name: str,
+        *,
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the memory store. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
+         value is None.
+        :paramtype metadata: dict[str, str]
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.MemoryStoreDetails:
+        """Update a memory store.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword description: A human-readable description of the memory store. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
+         value is None.
+        :paramtype metadata: dict[str, str]
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"description": description, "metadata": metadata}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_memory_stores_update_request(
+            name=name,
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
+        """Retrieve a memory store.
+
+        :param name: The name of the memory store to retrieve. Required.
+        :type name: str
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
+
+        _request = build_beta_memory_stores_get_request(
+            name=name,
+            foundry_features=foundry_features,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.MemoryStoreDetails"]:
+        """List all memory stores.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of MemoryStoreDetails
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MemoryStoreDetails]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_memory_stores_list_request(
+                foundry_features=foundry_features,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.MemoryStoreDetails], deserialized.get("data", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, iter(list_of_elem)
+
+        def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
+        """Delete a memory store.
+
+        :param name: The name of the memory store to delete. Required.
+        :type name: str
+        :return: DeleteMemoryStoreResult. The DeleteMemoryStoreResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DeleteMemoryStoreResult] = kwargs.pop("cls", None)
+
+        _request = build_beta_memory_stores_delete_request(
+            name=name,
+            foundry_features=foundry_features,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.DeleteMemoryStoreResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def search_memories(
+        self,
+        name: str,
+        *,
+        scope: str,
+        content_type: str = "application/json",
+        items: Optional[List[_models.InputItem]] = None,
+        previous_search_id: Optional[str] = None,
+        options: Optional[_models.MemorySearchOptions] = None,
+        **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+         Required.
+        :paramtype scope: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword items: Items for which to search for relevant memories. Default value is None.
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
+         memory search from where the last operation left off. Default value is None.
+        :paramtype previous_search_id: str
+        :keyword options: Memory search options. Default value is None.
+        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def search_memories(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def search_memories(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def search_memories(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        scope: str = _Unset,
+        items: Optional[List[_models.InputItem]] = None,
+        previous_search_id: Optional[str] = None,
+        options: Optional[_models.MemorySearchOptions] = None,
+        **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+         Required.
+        :paramtype scope: str
+        :keyword items: Items for which to search for relevant memories. Default value is None.
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
+         memory search from where the last operation left off. Default value is None.
+        :paramtype previous_search_id: str
+        :keyword options: Memory search options. Default value is None.
+        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MemoryStoreSearchResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if scope is _Unset:
+                raise TypeError("missing required argument: scope")
+            body = {
+                "items": items,
+                "options": options,
+                "previous_search_id": previous_search_id,
+                "scope": scope,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_memory_stores_search_memories_request(
+            name=name,
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.MemoryStoreSearchResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    def _update_memories_initial(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
+        scope: str = _Unset,
+        items: Optional[List[_models.InputItem]] = None,
+        previous_update_id: Optional[str] = None,
+        update_delay: Optional[int] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if scope is _Unset:
+                raise TypeError("missing required argument: scope")
+            body = {
+                "items": items,
+                "previous_update_id": previous_update_id,
+                "scope": scope,
+                "update_delay": update_delay,
+            }
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_memory_stores_update_memories_request(
+            name=name,
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+
+        deserialized = response.iter_bytes()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def _begin_update_memories(
+        self,
+        name: str,
+        *,
+        scope: str,
+        content_type: str = "application/json",
+        items: Optional[List[_models.InputItem]] = None,
+        previous_update_id: Optional[str] = None,
+        update_delay: Optional[int] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
+    @overload
+    def _begin_update_memories(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
+    @overload
+    def _begin_update_memories(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
+
+    @distributed_trace
+    def _begin_update_memories(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        scope: str = _Unset,
+        items: Optional[List[_models.InputItem]] = None,
+        previous_update_id: Optional[str] = None,
+        update_delay: Optional[int] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.MemoryStoreUpdateCompletedResult]:
+        """Update memory store with conversation memories.
+
+        :param name: The name of the memory store to update. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+         Required.
+        :paramtype scope: str
+        :keyword items: Conversation items from which to extract memories. Default value is None.
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
+         memory updates from where the last operation left off. Default value is None.
+        :paramtype previous_update_id: str
+        :keyword update_delay: Timeout period before processing the memory update in seconds.
+         If a new update request is received during this period, it will cancel the current request and
+         reset the timeout.
+         Set to 0 to immediately trigger the update without delay.
+         Defaults to 300 (5 minutes). Default value is None.
+        :paramtype update_delay: int
+        :return: An instance of LROPoller that returns MemoryStoreUpdateCompletedResult. The
+         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_memories_initial(
+                name=name,
+                body=body,
+                foundry_features=foundry_features,
+                scope=scope,
+                items=items,
+                previous_update_id=previous_update_id,
+                update_delay=update_delay,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+
+            deserialized = _deserialize(_models.MemoryStoreUpdateCompletedResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.MemoryStoreUpdateCompletedResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.MemoryStoreUpdateCompletedResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    def delete_scope(
+        self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDeleteScopeResult:
+        """Delete all memories associated with a specific scope from a memory store.
+
+        :param name: The name of the memory store. Required.
+        :type name: str
+        :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
+         user ID. Required.
+        :paramtype scope: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def delete_scope(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDeleteScopeResult:
+        """Delete all memories associated with a specific scope from a memory store.
+
+        :param name: The name of the memory store. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def delete_scope(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreDeleteScopeResult:
+        """Delete all memories associated with a specific scope from a memory store.
+
+        :param name: The name of the memory store. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def delete_scope(
+        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
+    ) -> _models.MemoryStoreDeleteScopeResult:
+        """Delete all memories associated with a specific scope from a memory store.
+
+        :param name: The name of the memory store. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword scope: The namespace that logically groups and isolates memories to delete, such as a
+         user ID. Required.
+        :paramtype scope: str
+        :return: MemoryStoreDeleteScopeResult. The MemoryStoreDeleteScopeResult is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MemoryStoreDeleteScopeResult] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if scope is _Unset:
+                raise TypeError("missing required argument: scope")
+            body = {"scope": scope}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_memory_stores_delete_scope_request(
+            name=name,
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.MemoryStoreDeleteScopeResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaRedTeamsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s
+        :attr:`red_teams` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
+        """Get a redteam by name.
+
+        :param name: Identifier of the red team run. Required.
+        :type name: str
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+
+        _request = build_beta_red_teams_get_request(
+            name=name,
+            foundry_features=foundry_features,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RedTeam, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, **kwargs: Any) -> ItemPaged["_models.RedTeam"]:
+        """List a redteam by name.
+
+        :return: An iterator like instance of RedTeam
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.RedTeam]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.RedTeam]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_beta_red_teams_list_request(
+                    foundry_features=foundry_features,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(List[_models.RedTeam], deserialized.get("value", []))
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
+    def create(
+        self, red_team: _models.RedTeam, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.RedTeam:
+        """Creates a redteam run.
+
+        :param red_team: Redteam to be run. Required.
+        :type red_team: ~azure.ai.projects.models.RedTeam
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(self, red_team: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
+        """Creates a redteam run.
+
+        :param red_team: Redteam to be run. Required.
+        :type red_team: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create(self, red_team: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.RedTeam:
+        """Creates a redteam run.
+
+        :param red_team: Redteam to be run. Required.
+        :type red_team: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
+        """Creates a redteam run.
+
+        :param red_team: Redteam to be run. Is one of the following types: RedTeam, JSON, IO[bytes]
+         Required.
+        :type red_team: ~azure.ai.projects.models.RedTeam or JSON or IO[bytes]
+        :return: RedTeam. The RedTeam is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.RedTeam
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
+        )
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RedTeam] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(red_team, (IOBase, bytes)):
+            _content = red_team
+        else:
+            _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_red_teams_create_request(
+            foundry_features=foundry_features,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes()
+        else:
+            deserialized = _deserialize(_models.RedTeam, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaSchedulesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8160,6 +8529,9 @@ class SchedulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8173,8 +8545,9 @@ class SchedulesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_schedules_delete_request(
+        _request = build_beta_schedules_delete_request(
             id=id,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8195,13 +8568,8 @@ class SchedulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
     def get(self, id: str, **kwargs: Any) -> _models.Schedule:
@@ -8213,6 +8581,9 @@ class SchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8226,8 +8597,9 @@ class SchedulesOperations:
 
         cls: ClsType[_models.Schedule] = kwargs.pop("cls", None)
 
-        _request = build_schedules_get_request(
+        _request = build_beta_schedules_get_request(
             id=id,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8253,29 +8625,38 @@ class SchedulesOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        response_headers = {}
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-
         if _stream:
             deserialized = response.iter_bytes()
         else:
             deserialized = _deserialize(_models.Schedule, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.Schedule"]:
+    def list(
+        self,
+        *,
+        type: Optional[Union[str, _models.ScheduleTaskType]] = None,
+        enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.Schedule"]:
         """List all schedules.
 
+        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
+         Default value is None.
+        :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
+        :keyword enabled: Filter by the enabled status. Default value is None.
+        :paramtype enabled: bool
         :return: An iterator like instance of Schedule
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8292,7 +8673,10 @@ class SchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedules_list_request(
+                _request = build_beta_schedules_list_request(
+                    foundry_features=foundry_features,
+                    type=type,
+                    enabled=enabled,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -8354,11 +8738,11 @@ class SchedulesOperations:
     def create_or_update(
         self, id: str, schedule: _models.Schedule, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update a schedule by id.
+        """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param schedule: Schedule resource. Required.
+        :param schedule: The resource instance. Required.
         :type schedule: ~azure.ai.projects.models.Schedule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -8372,11 +8756,11 @@ class SchedulesOperations:
     def create_or_update(
         self, id: str, schedule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update a schedule by id.
+        """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param schedule: Schedule resource. Required.
+        :param schedule: The resource instance. Required.
         :type schedule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -8390,11 +8774,11 @@ class SchedulesOperations:
     def create_or_update(
         self, id: str, schedule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update a schedule by id.
+        """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param schedule: Schedule resource. Required.
+        :param schedule: The resource instance. Required.
         :type schedule: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -8408,17 +8792,20 @@ class SchedulesOperations:
     def create_or_update(
         self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
-        """Create or update a schedule by id.
+        """Create or update operation template.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
-        :param schedule: Schedule resource. Is one of the following types: Schedule, JSON, IO[bytes]
-         Required.
+        :param schedule: The resource instance. Is one of the following types: Schedule, JSON,
+         IO[bytes] Required.
         :type schedule: ~azure.ai.projects.models.Schedule or JSON or IO[bytes]
         :return: Schedule. The Schedule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8440,8 +8827,9 @@ class SchedulesOperations:
         else:
             _content = json.dumps(schedule, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_schedules_create_or_update_request(
+        _request = build_beta_schedules_create_or_update_request(
             id=id,
+            foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8483,14 +8871,17 @@ class SchedulesOperations:
     def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
         """Get a schedule run by id.
 
-        :param schedule_id: Identifier of the schedule. Required.
+        :param schedule_id: The unique identifier of the schedule. Required.
         :type schedule_id: str
-        :param run_id: Identifier of the schedule run. Required.
+        :param run_id: The unique identifier of the schedule run. Required.
         :type run_id: str
         :return: ScheduleRun. The ScheduleRun is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8504,9 +8895,10 @@ class SchedulesOperations:
 
         cls: ClsType[_models.ScheduleRun] = kwargs.pop("cls", None)
 
-        _request = build_schedules_get_run_request(
+        _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
+            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8530,7 +8922,11 @@ class SchedulesOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes()
@@ -8543,15 +8939,30 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_runs(self, id: str, **kwargs: Any) -> ItemPaged["_models.ScheduleRun"]:
+    def list_runs(
+        self,
+        id: str,
+        *,
+        type: Optional[Union[str, _models.ScheduleTaskType]] = None,
+        enabled: Optional[bool] = None,
+        **kwargs: Any
+    ) -> ItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
 
         :param id: Identifier of the schedule. Required.
         :type id: str
+        :keyword type: Filter by the type of schedule. Known values are: "Evaluation" and "Insight".
+         Default value is None.
+        :paramtype type: str or ~azure.ai.projects.models.ScheduleTaskType
+        :keyword enabled: Filter by the enabled status. Default value is None.
+        :paramtype enabled: bool
         :return: An iterator like instance of ScheduleRun
         :rtype: ~azure.core.paging.ItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
+        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -8568,8 +8979,11 @@ class SchedulesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_schedules_list_runs_request(
+                _request = build_beta_schedules_list_runs_request(
                     id=id,
+                    foundry_features=foundry_features,
+                    type=type,
+                    enabled=enabled,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,

@@ -25,7 +25,6 @@ from azure.ai.projects.models import (
     Index,
     IndexType,
     InputContentType,
-    ItemResource,
     InputItemType,
     ModelDeployment,
 )

@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -59,8 +59,7 @@ with (
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 
@@ -72,8 +71,7 @@ with (
 
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-            input="",
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 

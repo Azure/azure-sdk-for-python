@@ -10,7 +10,7 @@ from typing import Optional
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 
 from azure.ai.projects.models import (
     Reasoning,
@@ -61,6 +61,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for AI agents instrumentor."""
 
@@ -548,7 +551,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
@@ -734,7 +737,7 @@ trigger:
 
             agent_definition = PromptAgentDefinition(
                 model=model,
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,

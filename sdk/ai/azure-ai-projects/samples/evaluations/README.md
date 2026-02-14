@@ -7,7 +7,7 @@ This folder contains samples demonstrating how to use Azure AI Foundry's evaluat
 Before running any sample:
 
 ```bash
-pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 ```
 
 Set these environment variables:

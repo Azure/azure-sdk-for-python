@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
 
     Deploy a chat model (e.g. gpt-4.1) and an embedding model (e.g. text-embedding-3-small).
     Once you have deployed models, set the deployment name in the variables below.
@@ -41,6 +41,7 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    FoundryFeaturesOptInKeys,
     MemoryStoreDefaultDefinition,
     MemorySearchPreviewTool,
     PromptAgentDefinition,
@@ -63,7 +64,9 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.memory_stores.delete(memory_store_name)
+            await project_client.beta.memory_stores.delete(
+                memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+            )
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -76,10 +79,11 @@ async def main() -> None:
                 user_profile_enabled=True, chat_summary_enabled=True
             ),  # Note: This line will not be needed once the service is fixed to use correct defaults
         )
-        memory_store = await project_client.memory_stores.create(
+        memory_store = await project_client.beta.memory_stores.create(
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
+            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
@@ -113,7 +117,7 @@ async def main() -> None:
         response = await openai_client.responses.create(
             input="I prefer dark roast coffee",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 
@@ -129,7 +133,7 @@ async def main() -> None:
         new_response = await openai_client.responses.create(
             input="Please order my usual coffee",
             conversation=new_conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {new_response.output_text}")
 
@@ -141,7 +145,9 @@ async def main() -> None:
         await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
         print("Agent deleted")
 
-        await project_client.memory_stores.delete(memory_store.name)
+        await project_client.beta.memory_stores.delete(
+            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         print("Memory store deleted")
 
 

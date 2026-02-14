@@ -13,10 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import urlparse
-from azure.ai.projects.models._models import (
-    Tool,
-    ItemResource,
-)
+from azure.ai.projects.models._models import Tool
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -715,7 +712,7 @@ class _AIAgentsInstrumentorPreview:
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         _tools: Optional[List[Tool]] = None,
-        _tool_resources: Optional[ItemResource] = None,
+        _tool_resources: Optional[Any] = None,  # TODO: Used to be: _tool_resources: Optional[ItemResource] = None,
         # _toolset: Optional["ToolSet"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -925,7 +922,7 @@ class _AIAgentsInstrumentorPreview:
         if text:
             # Handle different types of text objects
             if hasattr(text, "format"):
-                # Azure AI Agents PromptAgentDefinitionText model object
+                # Azure AI Agents PromptAgentDefinitionTextOptions model object
                 format_info = getattr(text, "format", None)
                 if format_info:
                     if hasattr(format_info, "type"):

@@ -20,6 +20,9 @@ from azure.ai.projects.models import (
 # https://arxiv.org/pdf/2508.03680
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentAISearch(TestBase):
 
     # Test questions with expected answers
@@ -148,7 +151,7 @@ class TestAgentAISearch(TestBase):
                     stream=True,
                     tool_choice="required",
                     input=f"Answer this question with only 'True' or 'False': {question}",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 for event in stream_response:

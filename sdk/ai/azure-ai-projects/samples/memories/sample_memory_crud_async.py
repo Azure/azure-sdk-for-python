@@ -17,7 +17,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -34,7 +34,7 @@ from dotenv import load_dotenv
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import MemoryStoreDefaultDefinition
+from azure.ai.projects.models import FoundryFeaturesOptInKeys, MemoryStoreDefaultDefinition
 
 load_dotenv()
 
@@ -51,7 +51,9 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.memory_stores.delete(memory_store_name)
+            await project_client.beta.memory_stores.delete(
+                memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+            )
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -61,31 +63,42 @@ async def main() -> None:
             chat_model=os.environ["MEMORY_STORE_CHAT_MODEL_DEPLOYMENT_NAME"],
             embedding_model=os.environ["MEMORY_STORE_EMBEDDING_MODEL_DEPLOYMENT_NAME"],
         )
-        memory_store = await project_client.memory_stores.create(
-            name=memory_store_name, description="Example memory store for conversations", definition=definition
+        memory_store = await project_client.beta.memory_stores.create(
+            name=memory_store_name,
+            description="Example memory store for conversations",
+            definition=definition,
+            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
 
         # Get Memory Store
-        get_store = await project_client.memory_stores.get(memory_store.name)
+        get_store = await project_client.beta.memory_stores.get(
+            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         print(f"Retrieved: {get_store.name} ({get_store.id}): {get_store.description}")
 
         # Update Memory Store
-        updated_store = await project_client.memory_stores.update(
-            name=memory_store.name, description="Updated description"
+        updated_store = await project_client.beta.memory_stores.update(
+            name=memory_store.name,
+            description="Updated description",
+            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Updated: {updated_store.name} ({updated_store.id}): {updated_store.description}")
 
         # List Memory Store
         memory_stores = []
-        async for store in project_client.memory_stores.list(limit=10):
+        async for store in project_client.beta.memory_stores.list(
+            limit=10, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        ):
             memory_stores.append(store)
         print(f"Found {len(memory_stores)} memory stores")
         for store in memory_stores:
             print(f"  - {store.name} ({store.id}): {store.description}")
 
         # Delete Memory Store
-        delete_response = await project_client.memory_stores.delete(memory_store.name)
+        delete_response = await project_client.beta.memory_stores.delete(
+            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
         print(f"Deleted: {delete_response.deleted}")
 
 

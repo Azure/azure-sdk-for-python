@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: Code Interpreter + Function Tool
 
@@ -24,6 +26,9 @@ from azure.ai.projects.models import (
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
@@ -79,7 +84,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         # 17^4 = 83521 - not something easily computed mentally
         response = openai_client.responses.create(
             input="Calculate 17 to the power of 4 using code, then save the result.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         self.validate_response(response)
         print("✓ Code Interpreter + Function Tool works!")
@@ -140,7 +145,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         # Request data generation and report - use a fixed seed for reproducibility in verification
         response = openai_client.responses.create(
             input="Using Python with random.seed(42), generate exactly 10 random integers between 1 and 100, calculate their average, and create a report with the results.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         self.validate_response(response)

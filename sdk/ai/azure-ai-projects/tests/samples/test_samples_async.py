@@ -15,6 +15,9 @@ from sample_executor import (
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestSamplesAsync(AzureRecordedTestCase):
     """Async test cases for samples."""
 
@@ -25,7 +28,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents/tools",
-            samples_to_skip=["sample_agent_mcp_with_project_connection_async.py"],
+            samples_to_skip=[],
         ),
     )
     @SamplePathPasser()
@@ -42,4 +45,5 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
             project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
         )

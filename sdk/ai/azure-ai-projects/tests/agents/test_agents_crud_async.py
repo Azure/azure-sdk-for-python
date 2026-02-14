@@ -9,8 +9,12 @@ import io
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
+import pytest
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentCrudAsync(TestBase):
 
     @servicePreparer()

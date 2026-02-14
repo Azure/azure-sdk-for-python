@@ -33,7 +33,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.36.0",
+    "azure-core>=1.37.0",
     "typing-extensions>=4.11",
     "azure-identity>=1.15.0",
     "openai>=2.8.0",
@@ -52,13 +52,14 @@ readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
 exclude = [
-    "tests*",
+    "agent-scripts*",
+    "azure.ai",
+    "azure",
+    "doc*",
+    "generated_samples*",
     "generated_tests*",
     "samples*",
-    "generated_samples*",
-    "doc*",
-    "azure",
-    "azure.ai",
+    "tests*",
 ]
 
 [tool.setuptools.package-data]

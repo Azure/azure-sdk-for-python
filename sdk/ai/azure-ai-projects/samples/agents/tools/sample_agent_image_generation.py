@@ -22,7 +22,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -84,7 +84,7 @@ with (
         extra_headers={
             "x-ms-oai-image-generation-deployment": image_generation_model
         },  # this is required at the moment for image generation
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response created: {response.id}")
 

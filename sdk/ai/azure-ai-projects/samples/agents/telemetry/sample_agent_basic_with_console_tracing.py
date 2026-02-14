@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv opentelemetry-sdk azure-core-tracing-opentelemetry
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -106,7 +106,7 @@ with tracer.start_as_current_span(scenario):
         request = "Hello, tell me a joke."
         response = openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             input=request,
         )
         print(f"Answer: {response.output}")
@@ -114,7 +114,7 @@ with tracer.start_as_current_span(scenario):
         response = openai_client.responses.create(
             conversation=conversation.id,
             input="Tell another one about computers.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Answer: {response.output}")
 
