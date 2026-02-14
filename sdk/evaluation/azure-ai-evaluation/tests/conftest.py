@@ -317,7 +317,7 @@ def simple_conversation():
 def redirect_openai_requests():
     """Route requests from the openai package to the test proxy."""
     config = TestProxyConfig(
-        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL
+        recording_id=get_recording_id(), recording_mode="record" if is_live() else "playback", proxy_url=PROXY_URL()
     )
 
     with TestProxyHttpxClientBase.record_with_proxy(config):
