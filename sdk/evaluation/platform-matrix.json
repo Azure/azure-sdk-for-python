@@ -59,6 +59,17 @@
           "TestSamples": "false"
         }
       }
+    },
+    {
+      "Config": {
+        "Ubuntu2404_314": {
+          "OSVmImage": "env:LINUXVMIMAGE",
+          "Pool": "env:LINUXPOOL",
+          "PythonVersion": "3.14",
+          "CoverageArg": "--disablecov",
+          "TestSamples": "false"
+        }
+      }
     }
   ]
 }
