@@ -12,6 +12,8 @@ from opentelemetry.semconv.metrics.http_metrics import (
 from azure.core import CaseInsensitiveEnumMeta
 
 
+_EXPORTER_DOMAIN_SCHEMA_VERSION = 2
+
 # Environment variables
 
 _APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL = "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"

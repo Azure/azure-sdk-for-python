@@ -17,7 +17,7 @@ from opentelemetry.sdk.trace.id_generator import RandomIdGenerator
 from opentelemetry.semconv.trace import SpanAttributes
 from opentelemetry.trace import SpanKind
 
-from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
+from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._quickpulse._constants import (
     _COMMITTED_BYTES_NAME,
     _DEPENDENCY_DURATION_NAME,
