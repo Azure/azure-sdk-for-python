@@ -6,10 +6,11 @@
 
 from marshmallow import fields, post_load
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._schema.core.fields import StringTransformedEnum
 
 
 class ComputeConfigurationSchema(metaclass=PatchedSchemaMeta):
-    compute_type = fields.Str(allowed_values=["ServerlessSpark"])
+    compute_type = StringTransformedEnum(allowed_values=["ServerlessSpark"])
 
 
 class ServerlessSparkComputeSchema(ComputeConfigurationSchema):
