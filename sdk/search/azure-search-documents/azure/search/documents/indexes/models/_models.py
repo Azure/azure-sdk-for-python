@@ -1843,7 +1843,7 @@ class ChatCompletionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.C
      appended to the chat completions call. Follows Azure AI Foundry's extensibility pattern.
     :vartype extra_parameters: dict[str, any]
     :ivar extra_parameters_behavior: How extra parameters are handled by Azure AI Foundry. Default
-     is 'error'. Known values are: "pass-through", "drop", and "error".
+     is 'error'. Known values are: "passThrough", "drop", and "error".
     :vartype extra_parameters_behavior: str or
      ~azure.search.documents.indexes.models.ChatCompletionExtraParametersBehavior
     :ivar response_format: Determines how the LLM should format its response. Defaults to 'text'
@@ -1905,7 +1905,7 @@ class ChatCompletionSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.C
         name="extraParametersBehavior", visibility=["read", "create", "update", "delete", "query"]
     )
     """How extra parameters are handled by Azure AI Foundry. Default is 'error'. Known values are:
-     \"pass-through\", \"drop\", and \"error\"."""
+     \"passThrough\", \"drop\", and \"error\"."""
     response_format: Optional["_models.ChatCompletionResponseFormat"] = rest_field(
         name="responseFormat", visibility=["read", "create", "update", "delete", "query"]
     )

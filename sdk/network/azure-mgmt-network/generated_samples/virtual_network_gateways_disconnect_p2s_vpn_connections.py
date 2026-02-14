@@ -38,6 +38,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-03-01/examples/VirtualNetworkGatewaysDisconnectP2sVpnConnections.json
+# x-ms-original-file: specification/network/resource-manager/Microsoft.Network/stable/2025-05-01/examples/VirtualNetworkGatewaysDisconnectP2sVpnConnections.json
 if __name__ == "__main__":
     main()

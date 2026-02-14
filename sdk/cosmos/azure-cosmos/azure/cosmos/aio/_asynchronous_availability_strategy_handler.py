@@ -81,9 +81,9 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
         :raises: CancelledError if request is cancelled due to completion status
         """
 
-        availability_strategy_config = request_params.availability_strategy_config
-        if availability_strategy_config is None:
-            raise ValueError("availability_strategy_config should not be null")
+        availability_strategy = request_params.availability_strategy
+        if availability_strategy is None:
+            raise ValueError("availability_strategy should not be null")
 
         delay: int
         # Calculate delay based on location index
@@ -91,12 +91,12 @@ class CrossRegionAsyncHedgingHandler(AvailabilityStrategyHandlerMixin):
             delay = 0  # No delay for initial request
         elif location_index == 1:
             # First hedged request after threshold
-            delay = availability_strategy_config.threshold_ms
+            delay = availability_strategy.threshold_ms
         else:
             # Subsequent requests after threshold steps
             steps = location_index - 1
-            delay = (availability_strategy_config.threshold_ms+
-                    (steps * availability_strategy_config.threshold_steps_ms))
+            delay = (availability_strategy.threshold_ms+
+                    (steps * availability_strategy.threshold_steps_ms))
 
         if delay > 0:
             await asyncio.sleep(delay / 1000)

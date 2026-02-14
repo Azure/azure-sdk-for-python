@@ -15,7 +15,7 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos import _location_cache
-from azure.cosmos._availability_strategy_config import _validate_hedging_config
+from azure.cosmos._availability_strategy_config import _validate_hedging_strategy
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -104,14 +104,14 @@ async def _perform_read_operation(
         created_doc,
         expected_uris,
         excluded_uris,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         excluded_locations: Optional[list[str]] = None,
         **kwargs):
     excluded_locations = [] if excluded_locations is None else excluded_locations
 
     """Execute different types of read operations"""
-    if availability_strategy_config is not _Unset:
-        kwargs['availability_strategy_config'] = availability_strategy_config
+    if availability_strategy is not _Unset:
+        kwargs['availability_strategy'] = availability_strategy
 
     if operation == READ:
         await container.read_item(
@@ -161,13 +161,13 @@ async def _perform_write_operation(
         expected_uris,
         excluded_uris,
         retry_write=False,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         excluded_locations: Optional[list[str]] = None,
         **kwargs):
     """Execute different types of write operations"""
     excluded_locations = [] if excluded_locations is None else excluded_locations
-    if availability_strategy_config is not _Unset:
-        kwargs['availability_strategy_config'] = availability_strategy_config
+    if availability_strategy is not _Unset:
+        kwargs['availability_strategy'] = availability_strategy
 
     if operation == CREATE:
         doc = _create_doc()
@@ -361,7 +361,7 @@ class TestAsyncAvailabilityStrategy:
         with pytest.raises(ValueError, match=error_message):
             config = {'threshold_ms': threshold_ms,
                       'threshold_steps_ms': threshold_steps_ms}
-            _validate_hedging_config(config)
+            _validate_hedging_strategy(config)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
@@ -383,7 +383,7 @@ class TestAsyncAvailabilityStrategy:
             setup['write_locations'],
             setup['read_locations'],
             None,
-            availability_strategy_config=client_availability_strategy)
+            availability_strategy=client_availability_strategy)
         doc = _create_doc()
         await setup_with_transport['col'].create_item(doc)
         await asyncio.sleep(0.5)
@@ -400,7 +400,7 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         else:
             await _perform_write_operation(
                 operation,
@@ -408,7 +408,7 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 expected_uris,
                 excluded_uris,
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         await setup_with_transport['client'].close()
         await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
 
@@ -444,7 +444,7 @@ class TestAsyncAvailabilityStrategy:
             setup['read_locations'],
             custom_transport,
             multiple_write_locations=True,
-            availability_strategy_config=client_availability_strategy)
+            availability_strategy=client_availability_strategy)
         setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
             setup['read_locations'],
@@ -461,7 +461,7 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 [uri_down, failed_over_uri],
                 [],
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         else:
             await _perform_write_operation(
                 operation,
@@ -470,7 +470,7 @@ class TestAsyncAvailabilityStrategy:
                 [uri_down, failed_over_uri],
                 [],
                 retry_write=True,
-                availability_strategy_config=request_availability_strategy)
+                availability_strategy=request_availability_strategy)
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
         await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id, setup_with_transport['col'].id)
@@ -530,7 +530,7 @@ class TestAsyncAvailabilityStrategy:
                     doc,
                     expected_uris,
                     [],
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
             else:
                 await _perform_write_operation(
                     operation,
@@ -539,7 +539,7 @@ class TestAsyncAvailabilityStrategy:
                     expected_uris,
                     [],
                     retry_write=True,
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == status_code
@@ -603,7 +603,7 @@ class TestAsyncAvailabilityStrategy:
                     doc,
                     expected_uris,
                     [],
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
             else:
                 await _perform_write_operation(
                     operation,
@@ -612,7 +612,7 @@ class TestAsyncAvailabilityStrategy:
                     expected_uris,
                     [],
                     retry_write=True,
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
 
         # Verify error code matches first region's error
         assert exc_info.value.status_code == 400
@@ -644,7 +644,7 @@ class TestAsyncAvailabilityStrategy:
             setup['write_locations'],
             setup['read_locations'],
             custom_transport,
-            availability_strategy_config=client_strategy)
+            availability_strategy=client_strategy)
 
         setup_without_fault = await self._setup_method_with_custom_transport(
             setup['write_locations'],
@@ -660,9 +660,9 @@ class TestAsyncAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, availability_strategy_config=None)
+                await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, availability_strategy=None)
             else:
-                await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy_config=None)
+                await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy=None)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -707,9 +707,9 @@ class TestAsyncAvailabilityStrategy:
         # Test operation with fault injection
 
         if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-            await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, [], availability_strategy_config=request_strategy)
+            await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, [], availability_strategy=request_strategy)
         else:
-            await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, [], retry_write=True, availability_strategy_config=request_strategy)
+            await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, [], retry_write=True, availability_strategy=request_strategy)
 
         await setup_with_transport['client'].close()
         await setup_without_fault['client'].close()
@@ -759,7 +759,7 @@ class TestAsyncAvailabilityStrategy:
                 expected_uris,
                 excluded_uris,
                 retry_write=False,
-                availability_strategy_config=strategy)
+                availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -813,7 +813,7 @@ class TestAsyncAvailabilityStrategy:
                     expected_uris,
                     excluded_uris,
                     excluded_locations=[setup['region_2']],
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
             else:
                 await _perform_write_operation(
                     operation,
@@ -823,7 +823,7 @@ class TestAsyncAvailabilityStrategy:
                     excluded_uris,
                     retry_write=True,
                     excluded_locations=[setup['region_2']],
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -886,7 +886,7 @@ class TestAsyncAvailabilityStrategy:
                         doc,
                         expected_uris,
                         [],
-                        availability_strategy_config=strategy)
+                        availability_strategy=strategy)
                 else:
                     await _perform_write_operation(
                         operation,
@@ -895,7 +895,7 @@ class TestAsyncAvailabilityStrategy:
                         expected_uris,
                         [],
                         retry_write=True,
-                        availability_strategy_config=strategy)
+                        availability_strategy=strategy)
 
             # Subsequent operations should go directly to second region due to per partition circular breaker
             expected_uris = [failed_over_uri]
@@ -912,7 +912,7 @@ class TestAsyncAvailabilityStrategy:
                     doc,
                     expected_uris,
                     excluded_uris,
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
             else:
                 await _perform_write_operation(
                     operation,
@@ -921,7 +921,7 @@ class TestAsyncAvailabilityStrategy:
                     expected_uris,
                     excluded_uris,
                     retry_write=True,
-                    availability_strategy_config=strategy)
+                    availability_strategy=strategy)
 
             await setup_with_fault_injection['client'].close()
             await setup_without_fault['client'].close()
@@ -968,7 +968,7 @@ class TestAsyncAvailabilityStrategy:
                 doc,
                 [uri_down],
                 [failed_over_uri],
-                availability_strategy_config=strategy)
+                availability_strategy=strategy)
 
         # Verify error code matches first region's error
         assert exc_info.value.status_code == 400
