@@ -17,7 +17,7 @@ authors = [
 description = "Microsoft Corporation Azure AI Content Understanding Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -32,7 +32,7 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "isodate>=0.6.1",
-    "azure-core>=1.35.0",
+    "azure-core>=1.37.0",
     "typing-extensions>=4.6.0",
 ]
 dynamic = [
@@ -59,13 +59,3 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-norecursedirs = [
-    "TempTypeSpecFiles",
-    ".venv",
-    "node_modules",
-    ".git",
-    "__pycache__",
-]

@@ -397,7 +397,7 @@
 # ServiceOwners: @yungshinlintw @bojunehsu
 
 # PRLabel: %Cognitive - Content Understanding
-/sdk/contentunderstanding/                                           @yungshinlintw @bojunehsu
+/sdk/contentunderstanding/                                           @bojunehsu @changjian-wang @chienyuanchang @yungshinlintw 
 
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/                                           @yungshinlintw @bojunehsu

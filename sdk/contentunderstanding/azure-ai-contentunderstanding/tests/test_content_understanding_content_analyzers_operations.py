@@ -216,9 +216,7 @@ class TestContentUnderstandingContentAnalyzersOperations(ContentUnderstandingCli
 
     @ContentUnderstandingPreparer()
     @recorded_by_proxy
-    def test_content_analyzers_begin_create_with_content_analyzer(
-        self, contentunderstanding_endpoint: str
-    ) -> None:
+    def test_content_analyzers_begin_create_with_content_analyzer(self, contentunderstanding_endpoint: str) -> None:
         """
         Test Summary:
         - Create analyzer using ContentAnalyzer object
