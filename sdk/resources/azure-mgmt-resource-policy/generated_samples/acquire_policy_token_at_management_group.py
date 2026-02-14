@@ -16,7 +16,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python delete_variable.py
+    python acquire_policy_token_at_management_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,14 +28,21 @@ from azure.mgmt.resource.policy import PolicyClient
 def main():
     client = PolicyClient(
         credential=DefaultAzureCredential(),
-        subscription_id="ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.variables.delete(
-        variable_name="DemoTestVariable",
+    response = client.policy_tokens.acquire_at_management_group(
+        management_group_name="MyManagementGroup",
+        parameters={
+            "operation": {
+                "httpMethod": "delete",
+                "uri": "https://management.azure.com/providers/Microsoft.Management/managementGroups/MyManagementGroup/providers/Microsoft.Authorization/roleAssignments/00000000-0000-0000-0000-000000000000?api-version=2022-04-01",
+            }
+        },
     )
+    print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/preview/2022-08-01-preview/examples/deleteVariable.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/acquirePolicyTokenAtManagementGroup.json
 if __name__ == "__main__":
     main()

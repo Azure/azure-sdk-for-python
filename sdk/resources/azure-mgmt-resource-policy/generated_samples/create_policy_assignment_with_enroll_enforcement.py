@@ -16,7 +16,7 @@ from azure.mgmt.resource.policy import PolicyClient
     pip install azure-identity
     pip install azure-mgmt-resource-policy
 # USAGE
-    python get_policy_assignment_with_identity_by_id.py
+    python create_policy_assignment_with_enroll_enforcement.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,12 +31,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.policy_assignments.get_by_id(
-        policy_assignment_id="providers/Microsoft.Management/managementGroups/MyManagementGroup/providers/Microsoft.Authorization/policyAssignments/LowCostStorage",
+    response = client.policy_assignments.create(
+        scope="subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2",
+        policy_assignment_name="EnforceNamingEnroll",
+        parameters={
+            "properties": {
+                "description": "Force resource names to begin with given DeptA and end with -LC",
+                "displayName": "Enforce resource naming rules",
+                "enforcementMode": "Enroll",
+                "metadata": {"assignedBy": "Special Someone"},
+                "parameters": {"prefix": {"value": "DeptA"}, "suffix": {"value": "-LC"}},
+                "policyDefinitionId": "/subscriptions/ae640e6b-ba3e-4256-9d62-2993eecfa6f2/providers/Microsoft.Authorization/policyDefinitions/ResourceNaming",
+            }
+        },
     )
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2023-04-01/examples/getPolicyAssignmentWithIdentityById.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Authorization/policy/stable/2025-03-01/examples/createPolicyAssignmentWithEnrollEnforcement.json
 if __name__ == "__main__":
     main()

@@ -13,23 +13,30 @@ from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGrou
 AZURE_LOCATION = "eastus"
 
 
-@pytest.mark.live_test_only
-class TestPolicyPolicyExemptionsOperations(AzureMgmtRecordedTestCase):
+@pytest.mark.skip("you may need to update the auto-generated test case before run it")
+class TestPolicyPolicyTokensOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(PolicyClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_policy_exemptions_list(self, resource_group):
-        response = self.client.policy_exemptions.list()
-        result = [r for r in response]
-        assert response
+    def test_policy_tokens_acquire_at_management_group(self, resource_group):
+        response = self.client.policy_tokens.acquire_at_management_group(
+            management_group_name="str",
+            parameters={"operation": {"httpMethod": "str", "uri": "str", "content": {}}, "changeReference": "str"},
+            api_version="2025-03-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_policy_exemptions_list_for_resource_group(self, resource_group):
-        response = self.client.policy_exemptions.list_for_resource_group(
-            resource_group_name=resource_group.name,
+    def test_policy_tokens_acquire(self, resource_group):
+        response = self.client.policy_tokens.acquire(
+            parameters={"operation": {"httpMethod": "str", "uri": "str", "content": {}}, "changeReference": "str"},
+            api_version="2025-03-01",
         )
-        result = [r for r in response]
-        assert response
+
+        # please add some check logic here by yourself
+        # ...
