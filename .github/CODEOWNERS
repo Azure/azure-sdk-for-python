@@ -854,3 +854,9 @@
 
 /pylintrc                                                            @l0lawrence @scbedd @mccoyp
 /sdk/**/ci.yml                                                       @msyyc @lmazuel @scbedd
+
+# Add Johnathan Walker as code owner for Event Hubs SDK
+/sdk/eventhub/azure-eventhub/* @j7nw4r
+
+# Add Johnathan Walker as code owner for Service Bus SDK
+/sdk/servicebus/azure-servicebus/* @j7nw4r
