@@ -27,7 +27,10 @@ if TYPE_CHECKING:
 
 
 class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
-    """Microsoft Azure Confidential Compute Ledger Control Plane REST API version 2020-12-01-preview.
+    """Microsoft Azure Confidential Compute Ledger Control Plane.
+
+    Default REST API version: 2024-09-19-preview.
+    A newer preview (2025-06-10-preview) is available in published TypeSpec; specify api_version to opt-in.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.confidentialledger.operations.Operations
