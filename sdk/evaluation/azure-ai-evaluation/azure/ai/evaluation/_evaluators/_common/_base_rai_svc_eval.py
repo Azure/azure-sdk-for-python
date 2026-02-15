@@ -299,23 +299,23 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                         # Extract token counts from metrics
                         metrics = properties.get("metrics", {})
-                        prompt_tokens = metrics.get("promptTokens", "")
-                        completion_tokens = metrics.get("completionTokens", "")
+                        prompt_tokens = int(metrics.get("promptTokens", 0)) if metrics.get("promptTokens") else 0
+                        completion_tokens = int(metrics.get("completionTokens", 0)) if metrics.get("completionTokens") else 0
 
                         # Calculate total tokens
                         try:
                             total_tokens = (
-                                str(int(prompt_tokens) + int(completion_tokens))
+                                int(prompt_tokens) + int(completion_tokens)
                                 if prompt_tokens and completion_tokens
-                                else ""
+                                else 0
                             )
                         except (ValueError, TypeError):
-                            total_tokens = ""
+                            total_tokens = 0
 
                         # Add token metadata (matching old format)
                         parsed_result[f"{self._eval_metric. value}_total_tokens"] = total_tokens
-                        parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = prompt_tokens
-                        parsed_result[f"{self._eval_metric.value}_completion_tokens"] = completion_tokens
+                        parsed_result[f"{self._eval_metric.value}_prompt_tokens"] = int(prompt_tokens) if prompt_tokens else 0
+                        parsed_result[f"{self._eval_metric.value}_completion_tokens"] = int(completion_tokens) if completion_tokens else 0
 
                         # Add empty placeholders for fields that sync_evals doesn't provide
                         parsed_result[f"{self._eval_metric.value}_finish_reason"] = ""
@@ -334,17 +334,17 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                     # Extract token counts
                     metrics = properties.get("metrics", {})
-                    prompt_tokens = metrics.get("promptTokens", "")
-                    completion_tokens = metrics.get("completionTokens", "")
+                    prompt_tokens = int(metrics.get("promptTokens", 0)) if metrics.get("promptTokens") else 0
+                    completion_tokens = int(metrics.get("completionTokens", 0)) if metrics.get("completionTokens") else 0
 
                     try:
                         total_tokens = (
-                            str(int(prompt_tokens) + int(completion_tokens))
+                            int(prompt_tokens) + int(completion_tokens)
                             if prompt_tokens and completion_tokens
-                            else ""
+                            else 0
                         )
                     except (ValueError, TypeError):
-                        total_tokens = ""
+                        total_tokens = 0
 
                     # Return in the expected format matching parse_response output
                     return {
