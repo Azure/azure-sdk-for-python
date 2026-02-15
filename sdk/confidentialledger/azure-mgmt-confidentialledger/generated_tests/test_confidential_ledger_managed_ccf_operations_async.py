@@ -25,7 +25,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
         response = await self.client.managed_ccf.get(
             resource_group_name=resource_group.name,
             app_name="str",
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
             await self.client.managed_ccf.begin_delete(
                 resource_group_name=resource_group.name,
                 app_name="str",
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -78,7 +78,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -118,7 +118,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -130,7 +130,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_managed_ccf_list_by_resource_group(self, resource_group):
         response = self.client.managed_ccf.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -140,7 +140,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
     @recorded_by_proxy_async
     async def test_managed_ccf_list_by_subscription(self, resource_group):
         response = self.client.managed_ccf.list_by_subscription(
-            api_version="2024-09-19-preview",
+            api_version="2025-06-10-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -154,7 +154,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 app_name="str",
                 managed_ccf={"uri": "str", "restoreRegion": "str"},
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -169,7 +169,7 @@ class TestConfidentialLedgerManagedCCFOperationsAsync(AzureMgmtRecordedTestCase)
                 resource_group_name=resource_group.name,
                 app_name="str",
                 managed_ccf={"fileShareName": "str", "restoreRegion": "str", "uri": "str"},
-                api_version="2024-09-19-preview",
+                api_version="2025-06-10-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 

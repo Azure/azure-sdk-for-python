@@ -1,5 +1,14 @@
 # Release History
 
+## 2.0.0b6 (Unreleased)
+
+### Other Changes
+
+  - Updated default `api_version` from `2024-09-19-preview` to `2025-06-10-preview`
+  - This change aligns the SDK with the latest preview API version published in azure-rest-api-specs
+  - Users can still explicitly override `api_version` parameter if they need to use the older version: `ConfidentialLedger(credential=credential, subscription_id=subscription_id, api_version="2024-09-19-preview")`
+  - Updated generated samples to reference the new API version
+
 ## 2.0.0b5 (2025-05-19)
 
 ### Features Added
