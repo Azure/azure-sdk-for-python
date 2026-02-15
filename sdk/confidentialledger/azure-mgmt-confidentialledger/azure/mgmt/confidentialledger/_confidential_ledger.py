@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
-    """Microsoft Azure Confidential Compute Ledger Control Plane REST API version 2020-12-01-preview.
+    """Microsoft Azure Confidential Compute Ledger Control Plane REST API version 2025-06-10-preview.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.confidentialledger.operations.Operations
@@ -41,7 +41,7 @@ class ConfidentialLedger(ConfidentialLedgerOperationsMixin):
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2024-09-19-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2025-06-10-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
