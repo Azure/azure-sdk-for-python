@@ -57,6 +57,11 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 
 <!-- END SNIPPET -->
 
+> **Security note:** `SecretClient` performs an authentication challenge to obtain tokens. The optional keyword
+> `verify_challenge_resource` (default `True`) ensures the resource indicated by the challenge matches the vault's
+> domain, preventing acceptance of tokens for unintended resources. Do **not** set this to `False` unless you fully
+> trust the endpoint and understand the implications (CWE-346 / OWASP A07).
+
 > **NOTE:** For an asynchronous client, import `azure.keyvault.secrets.aio`'s `SecretClient` instead.
 
 ## Key concepts
