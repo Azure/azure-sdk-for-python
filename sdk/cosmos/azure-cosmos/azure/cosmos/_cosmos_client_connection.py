@@ -48,7 +48,7 @@ from azure.core.pipeline.transport import HttpRequest, \
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _base as base
-from .user_agent_policy import CosmosUserAgentPolicy
+from ._user_agent_policy import CosmosUserAgentPolicy
 from ._global_partition_endpoint_manager_per_partition_automatic_failover import _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailover # pylint: disable=line-too-long
 from . import _query_iterable as query_iterable
 from . import _runtime_constants as runtime_constants
