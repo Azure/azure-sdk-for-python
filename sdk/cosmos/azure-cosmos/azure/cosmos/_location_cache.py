@@ -524,8 +524,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             else:
                                 regional_endpoints.append(regional_endpoint)
 
-                # If all preferred locations are unavailable, honor the preferred list by trying them anyway.
-                if not regional_endpoints and unavailable_endpoints:
+                # Always append unavailable endpoints to the end of the list so they can be
+                # used as a last resort. This ensures that when all healthy endpoints are filtered
+                # out (e.g., by excluded_locations), the SDK can still fall back to unavailable
+                # regional endpoints rather than the global endpoint.
+                if unavailable_endpoints:
                     regional_endpoints.extend(unavailable_endpoints)
 
                 # If there are no preferred locations or none of the preferred locations are in the account,
