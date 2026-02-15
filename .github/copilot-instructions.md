@@ -1,5 +1,7 @@
 # AZURE SDK FOR PYTHON - COPILOT INSTRUCTIONS
 
+> **Note**: For general AI agent guidelines and repository overview, see [AGENTS.md](https://github.com/Azure/azure-sdk-for-python/blob/main/AGENTS.md) at the repository root.
+
 ---
 
 ## CORE PRINCIPLES
