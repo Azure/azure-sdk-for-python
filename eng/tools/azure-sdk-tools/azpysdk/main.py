@@ -40,6 +40,7 @@ from .latestdependency import latestdependency
 from .samples import samples
 from .devtest import devtest
 from .optional import optional
+from .update_snippet import update_snippet
 
 from ci_tools.logging import configure_logging, logger
 
@@ -110,6 +111,7 @@ def build_parser() -> argparse.ArgumentParser:
     samples().register(subparsers, [common])
     devtest().register(subparsers, [common])
     optional().register(subparsers, [common])
+    update_snippet().register(subparsers, [common])
 
     return parser
 
