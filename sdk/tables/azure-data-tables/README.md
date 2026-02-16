@@ -15,6 +15,7 @@ Please note, this package is a replacement for [`azure-cosmosdb-tables`](https:/
 ## Getting started
 The Azure Tables SDK can access an Azure Storage or CosmosDB account.
 
+
 ### Prerequisites
 * Python 3.8 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and either
