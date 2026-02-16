@@ -51,7 +51,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-
     # [START tool_declaration]
     tool = AzureFunctionTool(
         azure_function=AzureFunctionDefinition(

@@ -219,6 +219,88 @@ class BaseSampleExecutor:
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
 
+    def _write_error_log(self, reason: str, exception_info: Optional[str] = None) -> Optional[str]:
+        """Write captured print statements to a log file for debugging.
+
+        Args:
+            reason: Description of why logging is occurring (validation error or exception message)
+            exception_info: Optional traceback or exception details to include in log
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        # Only log if SAMPLE_TEST_ERROR_LOG environment variable is set
+        log_format = os.environ.get("SAMPLE_TEST_ERROR_LOG")
+        if not log_format:
+            return None
+
+        import tempfile
+        from datetime import datetime
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        sample_filename = os.path.basename(self.sample_path).replace(".py", "")
+
+        # Replace placeholders in the format template
+        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
+        log_file = os.path.join(tempfile.gettempdir(), log_filename)
+
+        # Remove existing file if present to ensure clean overwrite
+        if os.path.exists(log_file):
+            os.remove(log_file)
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            if exception_info:
+                f.write(f"Execution Error:\n{reason}\n\n")
+                f.write("Exception Details:\n")
+                f.write("=" * 80 + "\n")
+                f.write(exception_info)
+                f.write("\n" + "=" * 80 + "\n\n")
+            else:
+                f.write(f"Validation Error: {reason}\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
+    def _write_success_log(self, reason: str = "Sample executed successfully") -> Optional[str]:
+        """Write captured print statements to a success log file.
+
+        Args:
+            reason: Description of successful execution
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        # Only log if SAMPLE_TEST_SUCCESS_LOG environment variable is set
+        log_format = os.environ.get("SAMPLE_TEST_SUCCESS_LOG")
+        if not log_format:
+            return None
+
+        import tempfile
+        from datetime import datetime
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        sample_filename = os.path.basename(self.sample_path).replace(".py", "")
+
+        # Replace placeholders in the format template
+        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
+        log_file = os.path.join(tempfile.gettempdir(), log_filename)
+
+        # Remove existing file if present to ensure clean overwrite
+        if os.path.exists(log_file):
+            os.remove(log_file)
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Status: {reason}\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
     def _get_validation_request_params(self, instructions: str, model: str = "gpt-4o") -> dict:
         """Get common parameters for validation request."""
         return {
@@ -241,20 +323,14 @@ class BaseSampleExecutor:
     def _assert_validation_result(self, test_report: dict) -> None:
         """Assert validation result and print reason."""
         if not test_report["correct"]:
-            # Write print statements to log file in temp folder for debugging
-            import tempfile
-            from datetime import datetime
-
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            log_file = os.path.join(tempfile.gettempdir(), f"sample_validation_error_{timestamp}.log")
-            with open(log_file, "w", encoding="utf-8") as f:
-                f.write(f"Sample: {self.sample_path}\n")
-                f.write(f"Validation Error: {test_report['reason']}\n\n")
-                f.write("Print Statements:\n")
-                f.write("=" * 80 + "\n")
-                for i, print_call in enumerate(self.print_calls, 1):
-                    f.write(f"{i}. {print_call}\n")
-            print(f"\nValidation failed! Print statements logged to: {log_file}")
+            log_file = self._write_error_log(test_report["reason"])
+            if log_file:
+                print(f"\nValidation failed! Print statements logged to: {log_file}")
+        else:
+            # Write success log when validation passes
+            log_file = self._write_success_log(f"Validation passed: {test_report['reason']}")
+            if log_file:
+                print(f"\nValidation passed! Print statements logged to: {log_file}")
         assert test_report["correct"], f"Error is identified: {test_report['reason']}"
         print(f"Reason: {test_report['reason']}")
 
@@ -317,17 +393,34 @@ class SyncSampleExecutor(BaseSampleExecutor):
                 mock.patch("builtins.print", side_effect=self._capture_print),
                 mock.patch("builtins.open", side_effect=patched_open_fn),
             ):
-                self.spec.loader.exec_module(self.module)
-                # In playback mode, patch time functions on the module:
-                # - time.sleep: avoid waiting for polling loops (instant)
-                # - time.time: return fixed value for deterministic request bodies
-                # Must be done after exec_module so the module's 'time' reference can be patched.
-                if not is_live() and hasattr(self.module, "time"):
-                    self.module.time.sleep = lambda _: None
-                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-                # Call main() if it exists (samples wrap their code in main())
-                if hasattr(self.module, "main") and callable(self.module.main):
-                    self.module.main()
+                try:
+                    self.spec.loader.exec_module(self.module)
+                    # In playback mode, patch time functions on the module:
+                    # - time.sleep: avoid waiting for polling loops (instant)
+                    # - time.time: return fixed value for deterministic request bodies
+                    # Must be done after exec_module so the module's 'time' reference can be patched.
+                    if not is_live() and hasattr(self.module, "time"):
+                        self.module.time.sleep = lambda _: None
+                        self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                    # Call main() if it exists (samples wrap their code in main())
+                    if hasattr(self.module, "main") and callable(self.module.main):
+                        self.module.main()
+                except Exception as e:
+                    # Log print statements with exception details before re-raising
+                    import traceback
+
+                    exception_info = traceback.format_exc()
+                    log_file = self._write_error_log(
+                        reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info
+                    )
+                    if log_file:
+                        print(f"\nSample execution failed! Print statements logged to: {log_file}")
+                    raise
+                else:
+                    # Write success log when execution completes without exception
+                    log_file = self._write_success_log("Sample executed successfully")
+                    if log_file:
+                        print(f"\nSample executed successfully! Print statements logged to: {log_file}")
 
     def validate_print_calls_by_llm(
         self,
@@ -394,17 +487,32 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                 mp.setenv(var_name, var_value)
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-            self.spec.loader.exec_module(self.module)
-            # In playback mode, patch time functions on the module:
-            # - time.sleep: avoid waiting for polling loops (instant)
-            # - time.time: return fixed value for deterministic request bodies
-            # Must be done after exec_module so the module's 'time' reference can be patched.
-            if not is_live() and hasattr(self.module, "time"):
-                self.module.time.sleep = lambda _: None
-                self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-            # Call main() if it exists (samples wrap their code in main())
-            if hasattr(self.module, "main") and callable(self.module.main):
-                await self.module.main()
+            try:
+                self.spec.loader.exec_module(self.module)
+                # In playback mode, patch time functions on the module:
+                # - time.sleep: avoid waiting for polling loops (instant)
+                # - time.time: return fixed value for deterministic request bodies
+                # Must be done after exec_module so the module's 'time' reference can be patched.
+                if not is_live() and hasattr(self.module, "time"):
+                    self.module.time.sleep = lambda _: None
+                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                # Call main() if it exists (samples wrap their code in main())
+                if hasattr(self.module, "main") and callable(self.module.main):
+                    await self.module.main()  # type: ignore[misc]
+            except Exception as e:
+                # Log print statements with exception details before re-raising
+                import traceback
+
+                exception_info = traceback.format_exc()
+                log_file = self._write_error_log(reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info)
+                if log_file:
+                    print(f"\nSample execution failed! Print statements logged to: {log_file}")
+                raise
+            else:
+                # Write success log when execution completes without exception
+                log_file = self._write_success_log("Sample executed successfully")
+                if log_file:
+                    print(f"\nSample executed successfully! Print statements logged to: {log_file}")
 
     async def validate_print_calls_by_llm_async(
         self,
