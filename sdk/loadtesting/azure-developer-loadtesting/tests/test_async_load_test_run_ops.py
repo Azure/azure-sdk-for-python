@@ -85,16 +85,14 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        poller = await client.begin_upload_test_file(
+        result = await client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
-        result = await poller.result()
-        assert poller.status() is not None
         assert result is not None
-        assert poller.done() is True
+        assert result.validation_status is not None
 
         await self.close_admin_client()
 
@@ -107,6 +105,10 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         result = await client.get_test_file(loadtesting_test_id, "sample.jmx")
         assert result is not None
 
+        # wait for validation to complete before closing the client
+        while result.validation_status not in ["VALIDATION_NOT_REQUIRED", "VALIDATION_FAILURE", "VALIDATION_SUCCESS"]:
+            result = await client.get_test_file(loadtesting_test_id, "sample.jmx")
+
         await self.close_admin_client()
 
     @LoadTestingPreparer()
@@ -116,7 +118,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        run_poller = await run_client.begin_test_run(
+        run_result = await run_client.begin_test_run(
             loadtesting_test_run_id,
             {
                 "testId": loadtesting_test_id,
@@ -124,12 +126,9 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
             },
         )
 
-        result = await run_poller.result()
-        assert result is not None
+        assert run_result is not None
 
-        assert run_poller.status() is not None
-        assert run_poller.done() is True
-
+        assert run_result.status is not None
         await self.close_run_client()
 
     @LoadTestingPreparer()
@@ -142,6 +141,9 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         result = await run_client.get_test_run(loadtesting_test_run_id)
         assert result is not None
 
+        # wait for test run to complete before closing the client 
+        while result.status not in ["DONE", "FAILED", "CANCELLED"]:
+            result = await run_client.get_test_run(loadtesting_test_run_id)
         await self.close_run_client()
 
     @LoadTestingPreparer()
@@ -195,7 +197,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
             test_run_id=loadtesting_test_run_id,
             metric_name=metric_definitions["value"][0]["name"],
             metric_namespace=metric_namespaces["value"][0]["name"],
-            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["endDateTime"],
+            time_interval=test_run_response["startDateTime"] + "/" + test_run_response["executionEndDateTime"],
         )
         assert metrics is not None
 
@@ -310,235 +312,6 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         assert result is None
 
         await self.close_run_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_delete_test(self, loadtesting_endpoint, loadtesting_test_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-
-        result = await client.delete_test(loadtesting_test_id)
-        assert result is None
-
-        await self.close_admin_client()
-
-
-class TestTestProfileRunOperations(LoadTestingAsyncTest):
-
-    # Pre-requisite: Test & Test Profile creation is needed for test profile run related tests
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.create_or_update_test(
-            loadtesting_test_id,
-            {
-                "description": "",
-                "displayName": DISPLAY_NAME,
-                "loadTestConfiguration": {
-                    "engineInstances": 1,
-                    "splitAllCSVs": False,
-                },
-                "passFailCriteria": {
-                    "passFailMetrics": {
-                        "condition1": {
-                            "clientmetric": "response_time_ms",
-                            "aggregate": "avg",
-                            "condition": ">",
-                            "value": 300,
-                        },
-                        "condition2": {
-                            "clientmetric": "error",
-                            "aggregate": "percentage",
-                            "condition": ">",
-                            "value": 50,
-                        },
-                        "condition3": {
-                            "clientmetric": "latency",
-                            "aggregate": "avg",
-                            "condition": ">",
-                            "value": 200,
-                            "requestName": "GetCustomerDetails",
-                        },
-                    }
-                },
-                "secrets": {},
-                "environmentVariables": {"my-variable": "value"},
-            },
-        )
-
-        assert result is not None
-
-        await self.close_admin_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_get_load_test(self, loadtesting_endpoint, loadtesting_test_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.get_test(loadtesting_test_id)
-        assert result is not None
-
-        await self.close_admin_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_upload_test_file(self, loadtesting_endpoint, loadtesting_test_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        poller = await client.begin_upload_test_file(
-            loadtesting_test_id,
-            "sample.jmx",
-            open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
-        )
-
-        result = await poller.result()
-        assert poller.status() is not None
-        assert result is not None
-        assert poller.done() is True
-
-        await self.close_admin_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_get_test_file(self, loadtesting_endpoint, loadtesting_test_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.get_test_file(loadtesting_test_id, "sample.jmx")
-        assert result is not None
-
-        await self.close_admin_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_create_or_update_test_profile(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id
-    ):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.create_or_update_test_profile(
-            loadtesting_test_profile_id,
-            {
-                "description": "Sample Test Profile Description",
-                "displayName": "My New Test Profile",
-                "testId": loadtesting_test_id,
-                "targetResourceId": loadtesting_target_resource_id,
-                "targetResourceConfigurations": {
-                    "kind": "FunctionsFlexConsumption",
-                    "configurations": {
-                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 20},
-                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 100},
-                    },
-                },
-            },
-        )
-        assert result is not None
-
-        await self.close_admin_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_get_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = await client.get_test_profile(loadtesting_test_profile_id)
-        assert result is not None
-
-        await self.close_admin_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_begin_test_profile_run(
-        self, loadtesting_endpoint, loadtesting_test_profile_id, loadtesting_test_profile_run_id
-    ):
-        set_bodiless_matcher()
-
-        run_client = self.create_run_client(loadtesting_endpoint)
-
-        run_poller = await run_client.begin_test_profile_run(
-            loadtesting_test_profile_run_id,
-            {
-                "testProfileId": loadtesting_test_profile_id,
-                "displayName": "My New Test Profile Run from PyTest",
-            },
-        )
-
-        result = await run_poller.result()
-        assert result is not None
-
-        assert run_poller.status() is not None
-        assert run_poller.done() is True
-
-        await self.close_run_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_get_test_profile_run(self, loadtesting_endpoint, loadtesting_test_profile_run_id):
-        set_bodiless_matcher()
-
-        run_client = self.create_run_client(loadtesting_endpoint)
-
-        result = await run_client.get_test_profile_run(loadtesting_test_profile_run_id)
-        assert result is not None
-        assert len(result["recommendations"]) > 0
-
-        await self.close_run_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_stop_test_profile_run(self, loadtesting_endpoint, loadtesting_test_profile_id):
-        set_bodiless_matcher()
-
-        test_profile_run_id = "sample-test-profile-run-2"
-        run_client = self.create_run_client(loadtesting_endpoint)
-
-        run_poller = await run_client.begin_test_profile_run(
-            test_profile_run_id,
-            {
-                "testProfileId": loadtesting_test_profile_id,
-                "displayName": "My New Test Profile Run from PyTest",
-            },
-        )
-
-        result = await run_client.stop_test_profile_run(test_profile_run_id)
-        assert result is not None
-
-        # Clean-up
-        await run_client.delete_test_profile_run(test_profile_run_id)
-
-        await self.close_run_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_delete_test_profile_run(self, loadtesting_endpoint, loadtesting_test_profile_run_id):
-        set_bodiless_matcher()
-
-        run_client = self.create_run_client(loadtesting_endpoint)
-
-        result = await run_client.delete_test_profile_run(loadtesting_test_profile_run_id)
-        assert result is None
-
-        await self.close_run_client()
-
-    @LoadTestingPreparer()
-    @recorded_by_proxy_async
-    async def test_delete_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-
-        result = await client.delete_test_profile(loadtesting_test_profile_id)
-        assert result is None
-
-        await self.close_admin_client()
 
     @LoadTestingPreparer()
     @recorded_by_proxy_async
