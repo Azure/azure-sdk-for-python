@@ -190,6 +190,12 @@ class ScenarioOrchestrator:
 
         UNDETERMINED outcomes are excluded from the denominator per strategy.
 
+        .. note::
+            For single-turn attacks, PyRIT's PromptSendingAttack is used regardless
+            of converter, so all results group under "PromptSendingAttack". Use
+            calculate_asr() for overall ASR and the requested strategy list for
+            per-strategy attribution instead.
+
         :return: Dictionary mapping strategy name to ASR
         :rtype: Dict[str, float]
         """

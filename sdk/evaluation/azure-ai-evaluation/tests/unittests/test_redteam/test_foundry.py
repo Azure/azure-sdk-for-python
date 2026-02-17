@@ -1421,7 +1421,7 @@ class TestFoundryExecutionManager:
         assert manager.get_dataset_configs() == {}
 
     def test_group_results_by_strategy(self, mock_credential, mock_azure_ai_project, mock_logger):
-        """Test grouping results by strategy."""
+        """Test grouping results by strategy uses get_strategy_name() keys."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
             azure_ai_project=mock_azure_ai_project,
@@ -1430,27 +1430,26 @@ class TestFoundryExecutionManager:
         )
 
         mock_orchestrator = MagicMock()
-        mock_orchestrator.calculate_asr_by_strategy.return_value = {
-            "Base64Attack": 0.75,
-            "MorseConverter": 0.50,
-        }
+        mock_orchestrator.calculate_asr.return_value = 0.75
 
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
             output_path="/test/output.jsonl",
+            attack_strategies=[AttackStrategy.Base64, AttackStrategy.ROT13],
+            include_baseline=False,
         )
 
-        # Strategy names should be cleaned
-        assert "Base64" in results
-        assert results["Base64"]["asr"] == 0.75
-        assert results["Base64"]["status"] == "completed"
+        # Keys should match get_strategy_name() values (AttackStrategy.value)
+        assert "base64" in results
+        assert results["base64"]["asr"] == 0.75
+        assert results["base64"]["status"] == "completed"
 
-        assert "Morse" in results
-        assert results["Morse"]["asr"] == 0.50
+        assert "rot13" in results
+        assert results["rot13"]["asr"] == 0.75
 
-    def test_group_results_by_strategy_empty(self, mock_credential, mock_azure_ai_project, mock_logger):
-        """Test grouping results by strategy with no strategy-specific results."""
+    def test_group_results_by_strategy_with_baseline(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Test grouping results includes baseline when requested."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
             azure_ai_project=mock_azure_ai_project,
@@ -1459,13 +1458,70 @@ class TestFoundryExecutionManager:
         )
 
         mock_orchestrator = MagicMock()
-        mock_orchestrator.calculate_asr_by_strategy.return_value = {}
         mock_orchestrator.calculate_asr.return_value = 0.6
 
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
             output_path="/test/output.jsonl",
+            attack_strategies=[AttackStrategy.Base64, AttackStrategy.Baseline],
+            include_baseline=True,
+        )
+
+        # Should have base64 + baseline entries
+        assert "base64" in results
+        assert "baseline" in results
+        assert results["baseline"]["asr"] == 0.6
+
+    def test_group_results_by_strategy_keys_match_complexity_map(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Test that strategy keys match ATTACK_STRATEGY_COMPLEXITY_MAP."""
+        from azure.ai.evaluation.red_team._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
+
+        manager = FoundryExecutionManager(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            logger=mock_logger,
+            output_dir="/test/output",
+        )
+
+        mock_orchestrator = MagicMock()
+        mock_orchestrator.calculate_asr.return_value = 0.5
+
+        strategies = [AttackStrategy.Base64, AttackStrategy.ROT13, AttackStrategy.Morse]
+        results = manager._group_results_by_strategy(
+            orchestrator=mock_orchestrator,
+            risk_value="violence",
+            output_path="/test/output.jsonl",
+            attack_strategies=strategies,
+            include_baseline=False,
+        )
+
+        # All keys should exist in ATTACK_STRATEGY_COMPLEXITY_MAP
+        for key in results:
+            assert (
+                key in ATTACK_STRATEGY_COMPLEXITY_MAP
+            ), f"Strategy key '{key}' not found in ATTACK_STRATEGY_COMPLEXITY_MAP"
+
+    def test_group_results_by_strategy_empty(self, mock_credential, mock_azure_ai_project, mock_logger):
+        """Test grouping results by strategy with no strategies falls back to Foundry."""
+        manager = FoundryExecutionManager(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            logger=mock_logger,
+            output_dir="/test/output",
+        )
+
+        mock_orchestrator = MagicMock()
+        mock_orchestrator.calculate_asr.return_value = 0.6
+
+        results = manager._group_results_by_strategy(
+            orchestrator=mock_orchestrator,
+            risk_value="violence",
+            output_path="/test/output.jsonl",
+            attack_strategies=[],
+            include_baseline=False,
         )
 
         # Should fall back to "Foundry" entry

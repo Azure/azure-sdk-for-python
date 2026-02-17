@@ -222,11 +222,8 @@ class FoundryResultProcessor:
             # Add strategy information
             attack_identifier = attack_result.attack_identifier or {}
             raw_strategy = attack_identifier.get("__type__", "Unknown")
-            # Map PyRIT attack type names to SDK technique names
-            pyrit_technique_map = {
-                "PromptSendingAttack": "indirect_jailbreak",
-            }
-            entry["attack_strategy"] = pyrit_technique_map.get(raw_strategy, raw_strategy)
+            # Clean PyRIT class name for display (e.g., "PromptSendingAttack" → "PromptSending")
+            entry["attack_strategy"] = raw_strategy.replace("Attack", "").replace("Converter", "")
 
             # Add score information if available
             if attack_result.last_score:

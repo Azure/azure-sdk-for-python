@@ -195,6 +195,8 @@ class FoundryExecutionManager:
                     orchestrator=orchestrator,
                     risk_value=risk_value,
                     output_path=output_path,
+                    attack_strategies=attack_strategies,
+                    include_baseline=include_baseline,
                 )
 
                 for strategy_name, strategy_data in strategy_results.items():
@@ -327,8 +329,15 @@ class FoundryExecutionManager:
         orchestrator: ScenarioOrchestrator,
         risk_value: str,
         output_path: str,
+        attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]],
+        include_baseline: bool,
     ) -> Dict[str, Dict[str, Any]]:
         """Group attack results by strategy for red_team_info format.
+
+        Uses the requested attack strategies as keys (via get_strategy_name) rather than
+        extracting from PyRIT attack identifiers, since PyRIT's PromptSendingAttack
+        is used for all single-turn attacks regardless of converter. The overall ASR is
+        used for each strategy because Foundry batches all strategies per risk category.
 
         :param orchestrator: Completed scenario orchestrator
         :type orchestrator: ScenarioOrchestrator
@@ -336,37 +345,46 @@ class FoundryExecutionManager:
         :type risk_value: str
         :param output_path: Path to JSONL output file
         :type output_path: str
+        :param attack_strategies: Original list of requested attack strategies
+        :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
+        :param include_baseline: Whether baseline was included in execution
+        :type include_baseline: bool
         :return: Dictionary mapping strategy name to result data
         :rtype: Dict[str, Dict[str, Any]]
         """
-        asr_by_strategy = orchestrator.calculate_asr_by_strategy()
+        from .._utils.formatting_utils import get_strategy_name
+
+        overall_asr = orchestrator.calculate_asr()
 
         results: Dict[str, Dict[str, Any]] = {}
 
-        # Map PyRIT attack type names to SDK technique names
-        pyrit_technique_map = {
-            "PromptSendingAttack": "indirect_jailbreak",
-        }
+        # Get the Foundry strategies that were actually executed
+        foundry_strategies, _ = StrategyMapper.filter_for_foundry(attack_strategies)
 
-        for strategy_name, asr in asr_by_strategy.items():
-            # Map known PyRIT types, otherwise clean for display
-            clean_name = pyrit_technique_map.get(
-                strategy_name,
-                strategy_name.replace("Attack", "").replace("Converter", ""),
-            )
-
-            results[clean_name] = {
+        # Create an entry per requested Foundry strategy using get_strategy_name() as key
+        # so it matches ATTACK_STRATEGY_COMPLEXITY_MAP and _red_team.py eval matching
+        for strategy in foundry_strategies:
+            strategy_key = get_strategy_name(strategy)
+            results[strategy_key] = {
                 "data_file": output_path,
                 "status": "completed",
-                "asr": asr,
+                "asr": overall_asr,
             }
 
-        # If no strategy-specific results, use overall stats
+        # Add baseline entry if it was included
+        if include_baseline:
+            results[get_strategy_name(AttackStrategy.Baseline)] = {
+                "data_file": output_path,
+                "status": "completed",
+                "asr": overall_asr,
+            }
+
+        # Fallback if no strategies produced results
         if not results:
             results["Foundry"] = {
                 "data_file": output_path,
                 "status": "completed",
-                "asr": orchestrator.calculate_asr(),
+                "asr": overall_asr,
             }
 
         return results
