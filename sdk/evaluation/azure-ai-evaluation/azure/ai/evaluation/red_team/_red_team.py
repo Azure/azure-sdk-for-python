@@ -1810,8 +1810,9 @@ class RedTeam:
                             )
                             if risk_category_enum and self.evaluation_processor:
                                 # Find matching strategy for evaluation
+                                all_strategies = foundry_strategies + special_strategies
                                 strategy_for_eval = next(
-                                    (s for s in foundry_strategies if get_strategy_name(s) == strategy_name),
+                                    (s for s in all_strategies if get_strategy_name(s) == strategy_name),
                                     AttackStrategy.Baseline,  # Fallback
                                 )
 

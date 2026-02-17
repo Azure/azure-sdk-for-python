@@ -1528,6 +1528,33 @@ class TestFoundryExecutionManager:
         assert "Foundry" in results
         assert results["Foundry"]["asr"] == 0.6
 
+    def test_group_results_by_strategy_with_indirect_jailbreak(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Test grouping results includes IndirectJailbreak as a special strategy."""
+        manager = FoundryExecutionManager(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            logger=mock_logger,
+            output_dir="/test/output",
+        )
+
+        mock_orchestrator = MagicMock()
+        mock_orchestrator.calculate_asr.return_value = 0.3
+
+        results = manager._group_results_by_strategy(
+            orchestrator=mock_orchestrator,
+            risk_value="violence",
+            output_path="/test/output.jsonl",
+            attack_strategies=[AttackStrategy.IndirectJailbreak],
+            include_baseline=False,
+        )
+
+        # IndirectJailbreak should appear with its get_strategy_name() value
+        assert "indirect_jailbreak" in results
+        assert results["indirect_jailbreak"]["asr"] == 0.3
+        assert "Foundry" not in results  # Should NOT fall back
+
     @pytest.mark.asyncio
     async def test_execute_attacks_empty_objectives(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test execute_attacks with no objectives."""

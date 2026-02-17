@@ -359,7 +359,7 @@ class FoundryExecutionManager:
         results: Dict[str, Dict[str, Any]] = {}
 
         # Get the Foundry strategies that were actually executed
-        foundry_strategies, _ = StrategyMapper.filter_for_foundry(attack_strategies)
+        foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
 
         # Create an entry per requested Foundry strategy using get_strategy_name() as key
         # so it matches ATTACK_STRATEGY_COMPLEXITY_MAP and _red_team.py eval matching
@@ -370,6 +370,18 @@ class FoundryExecutionManager:
                 "status": "completed",
                 "asr": overall_asr,
             }
+
+        # Add entries for special strategies that were executed (e.g., IndirectJailbreak via XPIA)
+        # Baseline is handled separately below
+        for strategy in special_strategies:
+            flat = strategy if not isinstance(strategy, list) else strategy[0]
+            if flat != AttackStrategy.Baseline:
+                strategy_key = get_strategy_name(strategy)
+                results[strategy_key] = {
+                    "data_file": output_path,
+                    "status": "completed",
+                    "asr": overall_asr,
+                }
 
         # Add baseline entry if it was included
         if include_baseline:
