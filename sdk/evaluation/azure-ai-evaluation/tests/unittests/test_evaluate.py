@@ -39,6 +39,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _convert_results_to_aoai_evaluation_results,
     _process_rows,
     _aggregate_label_defect_metrics,
+    _update_metric_value,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -1744,3 +1745,111 @@ class TestTagsInLoggingFunctions:
         call_args = mock_client.start_evaluation_run.call_args
         eval_upload = call_args[1]["evaluation"]
         assert eval_upload.tags == tags
+
+
+@pytest.mark.unittest
+class TestUpdateMetricValueTokenCoercion:
+    """Test that _update_metric_value correctly coerces token counts to integers."""
+
+    def _call_update(self, metric_key_suffix, metric_value):
+        """Helper to call _update_metric_value for a token metric and return the usage dict."""
+        import logging
+
+        metric_dict = {}
+        _update_metric_value(
+            criteria_type="azure_ai_evaluator",
+            metric_dict=metric_dict,
+            metric_key=f"evaluator{metric_key_suffix}",
+            metric="evaluator",
+            metric_value=metric_value,
+            logger=logging.getLogger("test"),
+        )
+        return metric_dict.get("sample", {}).get("usage", {})
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_integer_value_passthrough(self, suffix, usage_key):
+        usage = self._call_update(suffix, 100)
+        assert usage[usage_key] == 100
+        assert isinstance(usage[usage_key], int)
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_string_integer_coerced_to_int(self, suffix, usage_key):
+        usage = self._call_update(suffix, "123")
+        assert usage[usage_key] == 123
+        assert isinstance(usage[usage_key], int)
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_string_float_coerced_to_int(self, suffix, usage_key):
+        usage = self._call_update(suffix, "123.0")
+        assert usage[usage_key] == 123
+        assert isinstance(usage[usage_key], int)
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_none_value_returns_none(self, suffix, usage_key):
+        usage = self._call_update(suffix, None)
+        assert usage[usage_key] is None
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_nan_value_returns_none(self, suffix, usage_key):
+        usage = self._call_update(suffix, float("nan"))
+        assert usage[usage_key] is None
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_nan_string_returns_none(self, suffix, usage_key):
+        usage = self._call_update(suffix, "nan")
+        assert usage[usage_key] is None
+
+    @pytest.mark.parametrize(
+        "suffix,usage_key",
+        [
+            ("_total_tokens", "total_tokens"),
+            ("_prompt_tokens", "prompt_tokens"),
+            ("_completion_tokens", "completion_tokens"),
+        ],
+    )
+    def test_float_value_coerced_to_int(self, suffix, usage_key):
+        usage = self._call_update(suffix, 50.0)
+        assert usage[usage_key] == 50
+        assert isinstance(usage[usage_key], int)
