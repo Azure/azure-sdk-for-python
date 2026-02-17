@@ -194,9 +194,6 @@
 # PRLabel: %Container Registry
 /sdk/containerregistry/    @kashifkhan
 
-# PRLabel: %Container Registry
-
-
 # AzureSdkOwners: @kashifkhan
 # ServiceLabel: %Container Registry
 # ServiceOwners: @northtyphoon @toddysm
@@ -335,7 +332,7 @@
 /sdk/loganalytics/azure-loganalytics/    @azmonapplicationinsights
 
 # PRLabel: %Monitor
-/sdk/monitor/azure-mgmt-monitor    @msyyc @lirenhe
+/sdk/monitor/azure-mgmt-monitor    @lirenhe @msyyc
 
 # AzureSdkOwners: @pvaneck
 # ServiceLabel: %Monitor
@@ -790,7 +787,7 @@
 /sdk/videoanalyzer/    @hivyas
 
 # PRLabel: %WebPubSub
-/sdk/webpubsub/    @Y-Sindo @cqnguy23 @chenkennt
+/sdk/webpubsub/    @chenkennt @cqnguy23 @Y-Sindo
 
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
