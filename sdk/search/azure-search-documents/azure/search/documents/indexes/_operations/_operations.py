@@ -2385,7 +2385,7 @@ class _SearchIndexClientOperationsMixin(  # pylint: disable=too-many-public-meth
         def extract_data(pipeline_response):
             # pylint: disable=protected-access
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models1._models.SearchIndexResponse], deserialized.get("value", []))  
+            list_of_elem = _deserialize(list[_models1._models.SearchIndexResponse], deserialized.get("value", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
