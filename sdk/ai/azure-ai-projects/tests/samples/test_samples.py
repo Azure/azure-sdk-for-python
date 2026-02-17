@@ -29,7 +29,8 @@ class TestSamples(AzureRecordedTestCase):
             AdditionalSampleTestDetail(
                 test_id="sample_agent_azure_function",
                 sample_filename="sample_agent_azure_function.py",
-                env_vars={"STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+                env_vars={
+                    "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
                     "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
                     "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
                 },

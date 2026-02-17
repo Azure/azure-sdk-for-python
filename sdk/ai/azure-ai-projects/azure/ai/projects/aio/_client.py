@@ -22,6 +22,7 @@ from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
+    EvaluationRulesOperations,
     IndexesOperations,
 )
 
@@ -29,7 +30,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AIProjectClient:
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
     :ivar beta: BetaOperations operations
@@ -44,6 +45,8 @@ class AIProjectClient:
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -89,6 +92,9 @@ class AIProjectClient:
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluation_rules = EvaluationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

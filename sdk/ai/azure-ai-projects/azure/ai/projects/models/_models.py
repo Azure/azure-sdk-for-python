@@ -2960,17 +2960,17 @@ class EvaluationRuleAction(_Model):
     """Evaluation action model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ContinuousEvaluationRuleAction, HumanEvaluationRuleAction
+    ContinuousEvaluationRuleAction, HumanEvaluationPreviewRuleAction
 
-    :ivar type: Type of the evaluation action. Required. Known values are: "continuousEvaluation"
-     and "humanEvaluation".
+    :ivar type: Type of the evaluation action. Required. Known values are: "continuousEvaluation",
+     "humanEvaluation", and "humanEvaluationPreview".
     :vartype type: str or ~azure.ai.projects.models.EvaluationRuleActionType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Type of the evaluation action. Required. Known values are: \"continuousEvaluation\" and
-     \"humanEvaluation\"."""
+    """Type of the evaluation action. Required. Known values are: \"continuousEvaluation\",
+     \"humanEvaluation\", and \"humanEvaluationPreview\"."""
 
     @overload
     def __init__(
@@ -5745,17 +5745,17 @@ class HourlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Hourly"):
         self.type = RecurrenceType.HOURLY  # type: ignore
 
 
-class HumanEvaluationRuleAction(EvaluationRuleAction, discriminator="humanEvaluation"):
+class HumanEvaluationPreviewRuleAction(EvaluationRuleAction, discriminator="humanEvaluationPreview"):
     """Evaluation rule action for human evaluation.
 
-    :ivar type: Required. Human evaluation.
-    :vartype type: str or ~azure.ai.projects.models.HUMAN_EVALUATION
+    :ivar type: Required. Human evaluation preview.
+    :vartype type: str or ~azure.ai.projects.models.HUMAN_EVALUATION_PREVIEW
     :ivar template_id: Human evaluation template Id. Required.
     :vartype template_id: str
     """
 
-    type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Human evaluation."""
+    type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Human evaluation preview."""
     template_id: str = rest_field(name="templateId", visibility=["read", "create", "update", "delete", "query"])
     """Human evaluation template Id. Required."""
 
@@ -5775,7 +5775,7 @@ class HumanEvaluationRuleAction(EvaluationRuleAction, discriminator="humanEvalua
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = EvaluationRuleActionType.HUMAN_EVALUATION  # type: ignore
+        self.type = EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW  # type: ignore
 
 
 class HybridSearchOptions(_Model):
@@ -11069,12 +11069,14 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     :vartype mode: str or str
     :ivar tools: A list of tool definitions that the model should be allowed to call. For the
      Responses API, the list of tool definitions might look like:
+
      .. code-block:: json
-     [
-     { "type": "function", "name": "get_weather" },
-     { "type": "mcp", "server_label": "deepwiki" },
-     { "type": "image_generation" }
-     ]. Required.
+
+        [
+          { "type": "function", "name": "get_weather" },
+          { "type": "mcp", "server_label": "deepwiki" },
+          { "type": "image_generation" }
+        ]. Required.
     :vartype tools: list[dict[str, any]]
     """
 
@@ -11088,12 +11090,14 @@ class ToolChoiceAllowed(ToolChoiceParam, discriminator="allowed_tools"):
     tools: list[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A list of tool definitions that the model should be allowed to call. For the Responses API, the
      list of tool definitions might look like:
+     
      .. code-block:: json
-     [
-     { \"type\": \"function\", \"name\": \"get_weather\" },
-     { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
-     { \"type\": \"image_generation\" }
-     ]. Required."""
+     
+        [
+          { \"type\": \"function\", \"name\": \"get_weather\" },
+          { \"type\": \"mcp\", \"server_label\": \"deepwiki\" },
+          { \"type\": \"image_generation\" }
+        ]. Required."""
 
     @overload
     def __init__(

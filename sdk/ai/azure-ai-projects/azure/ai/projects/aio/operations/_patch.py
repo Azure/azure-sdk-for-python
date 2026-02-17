@@ -13,7 +13,7 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._operations import (
-    BetaEvaluationRulesOperations,
+    EvaluationRulesOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
@@ -42,7 +42,7 @@ class BetaOperations(GenerateBetaOperations):
 
 
 __all__: List[str] = [
-    "BetaEvaluationRulesOperations",
+    "EvaluationRulesOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
