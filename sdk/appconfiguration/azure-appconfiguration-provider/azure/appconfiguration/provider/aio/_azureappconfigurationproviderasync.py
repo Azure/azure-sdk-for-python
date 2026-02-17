@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import asyncio  # pylint: disable=do-not-import-asyncio
 import datetime
 import logging
 from typing import (
@@ -29,6 +30,7 @@ from ._key_vault._async_secret_provider import SecretProvider
 from .._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    DEFAULT_STARTUP_TIMEOUT,
     SNAPSHOT_REF_CONTENT_TYPE,
 )
 from .._azureappconfigurationproviderbase import (
@@ -36,6 +38,7 @@ from .._azureappconfigurationproviderbase import (
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,
+    _get_startup_backoff,
 )
 from ._async_client_manager import (
     AsyncConfigurationClientManager as ConfigurationClientManager,
@@ -65,6 +68,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
+    startup_timeout: int = DEFAULT_STARTUP_TIMEOUT,
     **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
@@ -109,6 +113,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
     configurations before they are added to the provider.
     :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
+    :keyword startup_timeout: The amount of time in seconds allowed to load data from Azure App Configuration on
+     startup. The default value is 100 seconds.
+    :paramtype startup_timeout: int
     """
 
 
@@ -129,6 +136,7 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
+    startup_timeout: int = DEFAULT_STARTUP_TIMEOUT,
     **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
@@ -175,6 +183,9 @@ async def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
     configurations before they are added to the provider.
     :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], Awaitable[None]]]
+    :keyword startup_timeout: The amount of time in seconds allowed to load data from Azure App Configuration on
+     startup. The default value is 100 seconds.
+    :paramtype startup_timeout: int
     """
 
 
@@ -189,6 +200,7 @@ async def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         params["endpoint"],
         params["credential"],
         uses_key_vault=params["uses_key_vault"],
+        startup_timeout=params["startup_timeout"],
         **params["kwargs"],
     )
     kwargs = sdk_allowed_kwargs(params["kwargs"])
@@ -238,6 +250,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
+        self._startup_timeout: int = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
 
         self._replica_client_manager = ConfigurationClientManager(
             connection_string=kwargs.pop("connection_string", None),
@@ -375,15 +389,46 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._refresh_lock.release()
 
     async def _load_all(self, **kwargs: Any) -> None:
+        startup_start_time = datetime.datetime.now()
+        exponential_backoff_attempts = 0
+        startup_exceptions: List[Exception] = []
+
+        while True:
+            # Try to initialize from all available clients
+            if await self._try_initialize(startup_exceptions, **kwargs):
+                return  # Successfully loaded
+
+            # Calculate delay before next retry attempt
+            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
+            delay, is_exponential_backoff = _get_startup_backoff(elapsed_seconds, exponential_backoff_attempts)
+
+            if is_exponential_backoff:
+                exponential_backoff_attempts += 1
+
+            # Check if delay would exceed remaining timeout
+            remaining_timeout = self._startup_timeout - elapsed_seconds
+            if delay > remaining_timeout:
+                raise TimeoutError(
+                    "The provider timed out while attempting to load.",
+                    startup_exceptions,
+                )
+
+            if delay > 0:
+                await asyncio.sleep(delay)
+
+    async def _try_initialize(self, startup_exceptions: List[Exception], **kwargs: Any) -> bool:
+        """
+        Try to initialize the provider from all available clients.
+
+        :param startup_exceptions: List to collect exceptions from failed attempts.
+        :type startup_exceptions: List[Exception]
+        :return: True if initialization succeeded, False otherwise.
+        :rtype: bool
+        """
         await self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
-
-        error_message = """
-        Failed to load configuration settings. No Azure App Configuration stores successfully loaded from.
-        """
-        exception: Exception = RuntimeError(error_message)
 
         while client := self._replica_client_manager.get_next_active_client():
             headers = self._update_correlation_context_header(
@@ -431,13 +476,16 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 with self._update_lock:
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
-                return
+                return True
             except AzureError as e:
-                exception = e
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
-        raise exception
+
+                # Check if exception is failoverable (should continue retrying)
+                startup_exceptions.append(e)
+
+        return False
 
     async def _expand_snapshot_references(
         self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
