@@ -745,14 +745,20 @@ class BlobBlock(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        try:
-            decoded_bytes = decode_base64_to_bytes(generated.name)
-            block_id = decoded_bytes.decode('utf-8')
-        # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
-        # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
-        # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
-        except UnicodeDecodeError:
-            block_id = generated.name
+        # The generated Block model declares name with format="base64", so the
+        # TypeSpec deserialization framework has already base64-decoded the XML
+        # text into raw bytes.  We just need to convert to str.
+        if isinstance(generated.name, bytes):
+            block_id = generated.name.decode('utf-8')
+        else:
+            try:
+                decoded_bytes = decode_base64_to_bytes(generated.name)
+                block_id = decoded_bytes.decode('utf-8')
+            # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
+            # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
+            # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
+            except UnicodeDecodeError:
+                block_id = generated.name
         block = cls(block_id)
         block.size = generated.size
         return block
