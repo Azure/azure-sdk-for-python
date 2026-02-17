@@ -18,6 +18,7 @@ from ._enums import IndexActionType, ScoringStatistics
 # Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
 ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM  # type: ignore[attr-defined]
 
+
 def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
     """Flatten variadic arguments into a single list of documents.
 
