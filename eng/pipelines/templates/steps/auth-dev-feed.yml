@@ -3,10 +3,13 @@ parameters:
 
 steps:
   - pwsh: |
-      # Authenticate to the public feed for all builds (public repo and PR builds)
-      # Both need access to https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python
-      # to pull packages from the upstream pypi.org source
-      $devopsFeedName = '${{ parameters.DevFeedName }}'
+      # For safety default to publishing to the private feed.
+      # Publish to https://dev.azure.com/azure-sdk/internal/_packaging?_a=feed&feed=azure-sdk-for-python-pr
+      $devopsFeedName = 'internal/azure-sdk-for-python-pr'
+      if ('$(Build.Repository.Name)' -eq 'Azure/azure-sdk-for-python') {
+        # Publish to https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python
+        $devopsFeedName = '${{ parameters.DevFeedName }}'
+      }
       echo "##vso[task.setvariable variable=DevFeedName]$devopsFeedName"
       echo "Using DevopsFeed = $devopsFeedName"
     displayName: Setup DevOpsFeedName
