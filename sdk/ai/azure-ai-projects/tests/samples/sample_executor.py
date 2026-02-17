@@ -11,6 +11,10 @@ import pytest
 import inspect
 import importlib.util
 import functools
+import traceback
+import tempfile
+from datetime import datetime
+
 
 from dataclasses import dataclass, field
 from typing import overload, Union, Optional
@@ -219,23 +223,19 @@ class BaseSampleExecutor:
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
 
-    def _write_error_log(self, reason: str, exception_info: Optional[str] = None) -> Optional[str]:
-        """Write captured print statements to a log file for debugging.
+    def _get_log_file_path(self, log_env_var: str) -> Optional[str]:
+        """Get and prepare log file path based on environment variable.
 
         Args:
-            reason: Description of why logging is occurring (validation error or exception message)
-            exception_info: Optional traceback or exception details to include in log
+            log_env_var: Environment variable name to check for log format
 
         Returns:
-            Path to the created log file, or None if logging is disabled
+            Path to the log file (cleaned up and ready to write), or None if logging is disabled
         """
-        # Only log if SAMPLE_TEST_ERROR_LOG environment variable is set
-        log_format = os.environ.get("SAMPLE_TEST_ERROR_LOG")
+        # Only log if environment variable is set
+        log_format = os.environ.get(log_env_var)
         if not log_format:
             return None
-
-        import tempfile
-        from datetime import datetime
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         sample_filename = os.path.basename(self.sample_path).replace(".py", "")
@@ -247,6 +247,22 @@ class BaseSampleExecutor:
         # Remove existing file if present to ensure clean overwrite
         if os.path.exists(log_file):
             os.remove(log_file)
+
+        return log_file
+
+    def _write_error_log(self, reason: str, exception_info: Optional[str] = None) -> Optional[str]:
+        """Write captured print statements to a log file for debugging.
+
+        Args:
+            reason: Description of why logging is occurring (validation error or exception message)
+            exception_info: Optional traceback or exception details to include in log
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_ERROR_LOG")
+        if not log_file:
+            return None
 
         with open(log_file, "w", encoding="utf-8") as f:
             f.write(f"Sample: {self.sample_path}\n")
@@ -273,24 +289,9 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        # Only log if SAMPLE_TEST_SUCCESS_LOG environment variable is set
-        log_format = os.environ.get("SAMPLE_TEST_SUCCESS_LOG")
-        if not log_format:
+        log_file = self._get_log_file_path("SAMPLE_TEST_SUCCESS_LOG")
+        if not log_file:
             return None
-
-        import tempfile
-        from datetime import datetime
-
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        sample_filename = os.path.basename(self.sample_path).replace(".py", "")
-
-        # Replace placeholders in the format template
-        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
-        log_file = os.path.join(tempfile.gettempdir(), log_filename)
-
-        # Remove existing file if present to ensure clean overwrite
-        if os.path.exists(log_file):
-            os.remove(log_file)
 
         with open(log_file, "w", encoding="utf-8") as f:
             f.write(f"Sample: {self.sample_path}\n")
@@ -407,8 +408,6 @@ class SyncSampleExecutor(BaseSampleExecutor):
                         self.module.main()
                 except Exception as e:
                     # Log print statements with exception details before re-raising
-                    import traceback
-
                     exception_info = traceback.format_exc()
                     log_file = self._write_error_log(
                         reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info
@@ -501,8 +500,6 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                     await self.module.main()  # type: ignore[misc]
             except Exception as e:
                 # Log print statements with exception details before re-raising
-                import traceback
-
                 exception_info = traceback.format_exc()
                 log_file = self._write_error_log(reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info)
                 if log_file:
