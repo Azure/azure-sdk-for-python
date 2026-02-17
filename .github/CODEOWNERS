@@ -787,7 +787,7 @@
 /sdk/videoanalyzer/    @hivyas
 
 # PRLabel: %WebPubSub
-/sdk/webpubsub/    @chenkennt @cqnguy23 @Y-Sindo
+/sdk/webpubsub/    @chenkennt @Y-Sindo
 
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
