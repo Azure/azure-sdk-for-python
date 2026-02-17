@@ -234,6 +234,10 @@ def add_sanitizers(
         # The response can include conversation_objective which varies per attack
         add_body_key_sanitizer(json_path="$.data_source.source.content.item.response", value="sanitized_response")
 
+        # Sanitize the query field in sync_evals requests to handle dynamic adversarial prompts
+        # The query contains generated attack text that varies between live and playback
+        add_body_key_sanitizer(json_path="$.data_source.source.content.item.query", value="sanitized_query")
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()
