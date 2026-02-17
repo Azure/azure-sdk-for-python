@@ -1385,52 +1385,58 @@ class RedTeam:
                 self.result_processor.ai_studio_url = self.mlflow_integration.ai_studio_url
 
             # Process strategies and execute scan
-            flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
-            self._validate_strategies(flattened_attack_strategies)
+            try:
+                flattened_attack_strategies = get_flattened_attack_strategies(attack_strategies)
+                self._validate_strategies(flattened_attack_strategies)
 
-            # Calculate total tasks and initialize tracking
-            self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
-            tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
-            self._initialize_tracking_dict(flattened_attack_strategies)
+                # Calculate total tasks and initialize tracking
+                self.total_tasks = len(self.risk_categories) * len(flattened_attack_strategies)
+                tqdm.write(f"📋 Planning {self.total_tasks} total tasks")
+                self._initialize_tracking_dict(flattened_attack_strategies)
 
-            # Fetch attack objectives
-            all_objectives = await self._fetch_all_objectives(
-                flattened_attack_strategies,
-                application_scenario,
-                is_agent_target,
-                client_id,
-            )
-
-            chat_target = get_chat_target(target, credential=self.credential)
-            self.chat_target = chat_target
-
-            # Execute attacks - use Foundry if orchestrator is not available
-            if _ORCHESTRATOR_AVAILABLE:
-                self.logger.info("Using orchestrator-based execution (legacy PyRIT path)")
-                self.logger.info("Consider upgrading to PyRIT 0.11+ for improved Foundry-based execution")
-                await self._execute_attacks(
+                # Fetch attack objectives
+                all_objectives = await self._fetch_all_objectives(
                     flattened_attack_strategies,
-                    all_objectives,
-                    scan_name,
-                    skip_upload,
-                    output_path,
-                    timeout,
-                    skip_evals,
-                    parallel_execution,
-                    max_parallel_tasks,
-                )
-            else:
-                self.logger.info("Using Foundry-based execution (orchestrator not available)")
-                await self._execute_attacks_with_foundry(
-                    flattened_attack_strategies,
-                    all_objectives,
-                    chat_target,
-                    timeout,
-                    skip_evals,
+                    application_scenario,
+                    is_agent_target,
+                    client_id,
                 )
 
-            # Process and return results
-            return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
+                chat_target = get_chat_target(target, credential=self.credential)
+                self.chat_target = chat_target
+
+                # Execute attacks - use Foundry if orchestrator is not available
+                if _ORCHESTRATOR_AVAILABLE:
+                    self.logger.info("Using orchestrator-based execution (legacy PyRIT path)")
+                    self.logger.info("Consider upgrading to PyRIT 0.11+ for improved Foundry-based execution")
+                    await self._execute_attacks(
+                        flattened_attack_strategies,
+                        all_objectives,
+                        scan_name,
+                        skip_upload,
+                        output_path,
+                        timeout,
+                        skip_evals,
+                        parallel_execution,
+                        max_parallel_tasks,
+                    )
+                else:
+                    self.logger.info("Using Foundry-based execution (orchestrator not available)")
+                    await self._execute_attacks_with_foundry(
+                        flattened_attack_strategies,
+                        all_objectives,
+                        chat_target,
+                        timeout,
+                        skip_evals,
+                    )
+
+                # Process and return results
+                return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
+            except Exception:
+                # Ensure the run status is updated to Failed if an upload was started
+                if not skip_upload and self.mlflow_integration is not None:
+                    self.mlflow_integration.update_run_status(eval_run, "Failed")
+                raise
 
     def _initialize_scan(self, scan_name: Optional[str], application_scenario: Optional[str]):
         """Initialize scan-specific variables."""
