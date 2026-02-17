@@ -28,7 +28,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, _deserialize, _deserialize_xml, _failsafe_deserialize, _get_element
+from ..._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize_xml, _get_element
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import prepare_multipart_form_data
 from ..._validation import api_version_validation
@@ -185,8 +185,8 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -254,8 +254,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -331,8 +331,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -438,8 +438,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -523,8 +523,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -593,8 +593,8 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -649,7 +649,7 @@ class ServiceOperations:
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["body"]
-        _data_fields: list[str] = ["name"]
+        _data_fields: list[str] = []
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_service_submit_batch_request(
@@ -680,8 +680,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -785,8 +785,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -900,8 +900,8 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -971,8 +971,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1076,8 +1076,8 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1157,8 +1157,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1233,8 +1233,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1342,8 +1342,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1421,8 +1421,8 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1498,8 +1498,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1551,7 +1551,7 @@ class ContainerOperations:
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["body"]
-        _data_fields: list[str] = ["name"]
+        _data_fields: list[str] = []
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_container_submit_batch_request(
@@ -1582,8 +1582,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1684,8 +1684,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1783,8 +1783,8 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1871,8 +1871,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -1957,8 +1957,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2050,8 +2050,8 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2141,8 +2141,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2251,8 +2251,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2375,8 +2375,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2445,8 +2445,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2631,8 +2631,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -2938,8 +2938,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3170,8 +3170,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3232,8 +3232,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3308,8 +3308,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3443,8 +3443,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3469,7 +3469,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     async def set_immutability_policy(
         self,
         *,
-        expiry: datetime.datetime,
+        immutability_policy_expiry: datetime.datetime,
         timeout: Optional[int] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
@@ -3479,9 +3479,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Set the immutability policy of a blob.
 
-        :keyword expiry: Specifies the date time when the blobs immutability policy is set to expire.
-         Required.
-        :paramtype expiry: ~datetime.datetime
+        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire. Required.
+        :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -3520,7 +3520,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_immutability_policy_request(
-            expiry=expiry,
+            immutability_policy_expiry=immutability_policy_expiry,
             timeout=timeout,
             if_unmodified_since=if_unmodified_since,
             immutability_policy_mode=immutability_policy_mode,
@@ -3544,8 +3544,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3631,8 +3631,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3716,8 +3716,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3850,8 +3850,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3973,8 +3973,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4081,8 +4081,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4187,8 +4187,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4298,8 +4298,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4411,8 +4411,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4546,8 +4546,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4728,8 +4728,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4921,8 +4921,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5010,8 +5010,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5115,8 +5115,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5177,8 +5177,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5300,8 +5300,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5434,8 +5434,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5639,8 +5639,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5830,8 +5830,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6079,8 +6079,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6206,8 +6206,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6456,8 +6456,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6740,8 +6740,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6891,8 +6891,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7086,8 +7086,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7313,8 +7313,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7426,8 +7426,8 @@ class BlockBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7583,8 +7583,8 @@ class BlockBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7855,8 +7855,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8051,8 +8051,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8223,8 +8223,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8458,8 +8458,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8612,8 +8612,8 @@ class PageBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8777,8 +8777,8 @@ class PageBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8923,8 +8923,8 @@ class PageBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9044,8 +9044,8 @@ class PageBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9157,8 +9157,8 @@ class PageBlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)

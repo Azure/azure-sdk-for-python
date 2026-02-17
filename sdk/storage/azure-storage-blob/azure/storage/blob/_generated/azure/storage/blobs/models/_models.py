@@ -1469,6 +1469,127 @@ class DelimitedTextConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Error(_Model):
+    """The error response.
+
+    This defines the wire format only. Language SDKs wrap this in idiomatic error types.
+
+    :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
+     "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
+     "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
+     "InsufficientAccountPermissions", "InternalError", "InvalidAuthenticationInfo",
+     "InvalidHeaderValue", "InvalidHttpVerb", "InvalidInput", "InvalidMd5", "InvalidMetadata",
+     "InvalidQueryParameterValue", "InvalidRange", "InvalidRequestUrl", "InvalidUri",
+     "InvalidXmlDocument", "InvalidXmlNodeValue", "Md5Mismatch", "MetadataTooLarge",
+     "MissingContentLengthHeader", "MissingRequiredXmlNode", "MissingRequiredHeader",
+     "MissingRequiredQueryParameter", "MultipleConditionHeadersNotSupported", "OperationTimedOut",
+     "OutOfRangeInput", "OutOfRangeQueryParameterValue", "RequestBodyTooLarge",
+     "ResourceTypeMismatch", "RequestUrlFailedToParse", "ResourceAlreadyExists", "ResourceNotFound",
+     "ServerBusy", "UnsupportedHeader", "UnsupportedXmlNode", "UnsupportedQueryParameter",
+     "UnsupportedHttpVerb", "AppendPositionConditionNotMet", "BlobAlreadyExists",
+     "BlobImmutableDueToPolicy", "BlobNotFound", "BlobOverwritten",
+     "BlobTierInadequateForContentLength", "BlobUsesCustomerSpecifiedEncryption",
+     "BlockCountExceedsLimit", "BlockListTooLong", "CannotChangeToLowerTier",
+     "CannotVerifyCopySource", "ContainerAlreadyExists", "ContainerBeingDeleted",
+     "ContainerDisabled", "ContainerNotFound", "ContentLengthLargerThanTierLimit",
+     "CopyAcrossAccountsNotSupported", "CopyIdMismatch", "FeatureVersionMismatch",
+     "IncrementalCopyBlobMismatch", "IncrementalCopyOfEarlierVersionSnapshotNotAllowed",
+     "IncrementalCopySourceMustBeSnapshot", "InfiniteLeaseDurationRequired", "InvalidBlobOrBlock",
+     "InvalidBlobTier", "InvalidBlobType", "InvalidBlockId", "InvalidBlockList", "InvalidOperation",
+     "InvalidPageRange", "InvalidSourceBlobType", "InvalidSourceBlobUrl",
+     "InvalidVersionForPageBlobOperation", "LeaseAlreadyPresent", "LeaseAlreadyBroken",
+     "LeaseIdMismatchWithBlobOperation", "LeaseIdMismatchWithContainerOperation",
+     "LeaseIdMismatchWithLeaseOperation", "LeaseIdMissing", "LeaseIsBreakingAndCannotBeAcquired",
+     "LeaseIsBreakingAndCannotBeChanged", "LeaseIsBrokenAndCannotBeRenewed", "LeaseLost",
+     "LeaseNotPresentWithBlobOperation", "LeaseNotPresentWithContainerOperation",
+     "LeaseNotPresentWithLeaseOperation", "MaxBlobSizeConditionNotMet", "NoPendingCopyOperation",
+     "OperationNotAllowedOnIncrementalCopyBlob", "PendingCopyOperation", "PreviousSnapshotNotFound",
+     "PreviousSnapshotOperationNotSupported", "PreviousSnapshotCannotBeNewer",
+     "SequenceNumberConditionNotMet", "SequenceNumberIncrementTooLarge", "SnapshotCountExceeded",
+     "SnapshotOperationRateExceeded", "SnapshotsPresent", "SourceConditionNotMet", "SystemInUse",
+     "TargetConditionNotMet", "UnauthorizedBlobOverwrite", "BlobBeingRehydrated", "BlobArchived",
+     "BlobNotArchived", "AuthorizationSourceIPMismatch", "AuthorizationProtocolMismatch",
+     "AuthorizationPermissionMismatch", "AuthorizationServiceMismatch",
+     "AuthorizationResourceTypeMismatch", and "BlobAccessTierNotSupportedForAccountType".
+    :vartype code: str or ~azure.storage.blobs.models.StorageErrorCode
+    :ivar message: The error message.
+    :vartype message: str
+    """
+
+    code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
+        name="Code",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Code", "text": False, "unwrapped": False},
+    )
+    """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
+     \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
+     \"ConditionHeadersNotSupported\", \"ConditionNotMet\", \"EmptyMetadataKey\",
+     \"InsufficientAccountPermissions\", \"InternalError\", \"InvalidAuthenticationInfo\",
+     \"InvalidHeaderValue\", \"InvalidHttpVerb\", \"InvalidInput\", \"InvalidMd5\",
+     \"InvalidMetadata\", \"InvalidQueryParameterValue\", \"InvalidRange\", \"InvalidRequestUrl\",
+     \"InvalidUri\", \"InvalidXmlDocument\", \"InvalidXmlNodeValue\", \"Md5Mismatch\",
+     \"MetadataTooLarge\", \"MissingContentLengthHeader\", \"MissingRequiredXmlNode\",
+     \"MissingRequiredHeader\", \"MissingRequiredQueryParameter\",
+     \"MultipleConditionHeadersNotSupported\", \"OperationTimedOut\", \"OutOfRangeInput\",
+     \"OutOfRangeQueryParameterValue\", \"RequestBodyTooLarge\", \"ResourceTypeMismatch\",
+     \"RequestUrlFailedToParse\", \"ResourceAlreadyExists\", \"ResourceNotFound\", \"ServerBusy\",
+     \"UnsupportedHeader\", \"UnsupportedXmlNode\", \"UnsupportedQueryParameter\",
+     \"UnsupportedHttpVerb\", \"AppendPositionConditionNotMet\", \"BlobAlreadyExists\",
+     \"BlobImmutableDueToPolicy\", \"BlobNotFound\", \"BlobOverwritten\",
+     \"BlobTierInadequateForContentLength\", \"BlobUsesCustomerSpecifiedEncryption\",
+     \"BlockCountExceedsLimit\", \"BlockListTooLong\", \"CannotChangeToLowerTier\",
+     \"CannotVerifyCopySource\", \"ContainerAlreadyExists\", \"ContainerBeingDeleted\",
+     \"ContainerDisabled\", \"ContainerNotFound\", \"ContentLengthLargerThanTierLimit\",
+     \"CopyAcrossAccountsNotSupported\", \"CopyIdMismatch\", \"FeatureVersionMismatch\",
+     \"IncrementalCopyBlobMismatch\", \"IncrementalCopyOfEarlierVersionSnapshotNotAllowed\",
+     \"IncrementalCopySourceMustBeSnapshot\", \"InfiniteLeaseDurationRequired\",
+     \"InvalidBlobOrBlock\", \"InvalidBlobTier\", \"InvalidBlobType\", \"InvalidBlockId\",
+     \"InvalidBlockList\", \"InvalidOperation\", \"InvalidPageRange\", \"InvalidSourceBlobType\",
+     \"InvalidSourceBlobUrl\", \"InvalidVersionForPageBlobOperation\", \"LeaseAlreadyPresent\",
+     \"LeaseAlreadyBroken\", \"LeaseIdMismatchWithBlobOperation\",
+     \"LeaseIdMismatchWithContainerOperation\", \"LeaseIdMismatchWithLeaseOperation\",
+     \"LeaseIdMissing\", \"LeaseIsBreakingAndCannotBeAcquired\",
+     \"LeaseIsBreakingAndCannotBeChanged\", \"LeaseIsBrokenAndCannotBeRenewed\", \"LeaseLost\",
+     \"LeaseNotPresentWithBlobOperation\", \"LeaseNotPresentWithContainerOperation\",
+     \"LeaseNotPresentWithLeaseOperation\", \"MaxBlobSizeConditionNotMet\",
+     \"NoPendingCopyOperation\", \"OperationNotAllowedOnIncrementalCopyBlob\",
+     \"PendingCopyOperation\", \"PreviousSnapshotNotFound\",
+     \"PreviousSnapshotOperationNotSupported\", \"PreviousSnapshotCannotBeNewer\",
+     \"SequenceNumberConditionNotMet\", \"SequenceNumberIncrementTooLarge\",
+     \"SnapshotCountExceeded\", \"SnapshotOperationRateExceeded\", \"SnapshotsPresent\",
+     \"SourceConditionNotMet\", \"SystemInUse\", \"TargetConditionNotMet\",
+     \"UnauthorizedBlobOverwrite\", \"BlobBeingRehydrated\", \"BlobArchived\", \"BlobNotArchived\",
+     \"AuthorizationSourceIPMismatch\", \"AuthorizationProtocolMismatch\",
+     \"AuthorizationPermissionMismatch\", \"AuthorizationServiceMismatch\",
+     \"AuthorizationResourceTypeMismatch\", and \"BlobAccessTierNotSupportedForAccountType\"."""
+    message: Optional[str] = rest_field(
+        name="Message",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Message", "text": False, "unwrapped": False},
+    )
+    """The error message."""
+
+    _xml = {"attribute": False, "name": "Error", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[Union[str, "_models.StorageErrorCode"]] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FilterBlobItem(_Model):
     """The filter blob item.
 
@@ -2572,119 +2693,6 @@ class StaticWebsite(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageError(_Model):
-    """The error response.
-
-    This defines the wire format only. Language SDKs wrap this in idiomatic error types.
-
-    :ivar code: The error code. Known values are: "AccountAlreadyExists", "AccountBeingCreated",
-     "AccountIsDisabled", "AuthenticationFailed", "AuthorizationFailure",
-     "ConditionHeadersNotSupported", "ConditionNotMet", "EmptyMetadataKey",
-     "InsufficientAccountPermissions", "InternalError", "InvalidAuthenticationInfo",
-     "InvalidHeaderValue", "InvalidHttpVerb", "InvalidInput", "InvalidMd5", "InvalidMetadata",
-     "InvalidQueryParameterValue", "InvalidRange", "InvalidRequestUrl", "InvalidUri",
-     "InvalidXmlDocument", "InvalidXmlNodeValue", "Md5Mismatch", "MetadataTooLarge",
-     "MissingContentLengthHeader", "MissingRequiredXmlNode", "MissingRequiredHeader",
-     "MissingRequiredQueryParameter", "MultipleConditionHeadersNotSupported", "OperationTimedOut",
-     "OutOfRangeInput", "OutOfRangeQueryParameterValue", "RequestBodyTooLarge",
-     "ResourceTypeMismatch", "RequestUrlFailedToParse", "ResourceAlreadyExists", "ResourceNotFound",
-     "ServerBusy", "UnsupportedHeader", "UnsupportedXmlNode", "UnsupportedQueryParameter",
-     "UnsupportedHttpVerb", "AppendPositionConditionNotMet", "BlobAlreadyExists",
-     "BlobImmutableDueToPolicy", "BlobNotFound", "BlobOverwritten",
-     "BlobTierInadequateForContentLength", "BlobUsesCustomerSpecifiedEncryption",
-     "BlockCountExceedsLimit", "BlockListTooLong", "CannotChangeToLowerTier",
-     "CannotVerifyCopySource", "ContainerAlreadyExists", "ContainerBeingDeleted",
-     "ContainerDisabled", "ContainerNotFound", "ContentLengthLargerThanTierLimit",
-     "CopyAcrossAccountsNotSupported", "CopyIdMismatch", "FeatureVersionMismatch",
-     "IncrementalCopyBlobMismatch", "IncrementalCopyOfEarlierVersionSnapshotNotAllowed",
-     "IncrementalCopySourceMustBeSnapshot", "InfiniteLeaseDurationRequired", "InvalidBlobOrBlock",
-     "InvalidBlobTier", "InvalidBlobType", "InvalidBlockId", "InvalidBlockList", "InvalidOperation",
-     "InvalidPageRange", "InvalidSourceBlobType", "InvalidSourceBlobUrl",
-     "InvalidVersionForPageBlobOperation", "LeaseAlreadyPresent", "LeaseAlreadyBroken",
-     "LeaseIdMismatchWithBlobOperation", "LeaseIdMismatchWithContainerOperation",
-     "LeaseIdMismatchWithLeaseOperation", "LeaseIdMissing", "LeaseIsBreakingAndCannotBeAcquired",
-     "LeaseIsBreakingAndCannotBeChanged", "LeaseIsBrokenAndCannotBeRenewed", "LeaseLost",
-     "LeaseNotPresentWithBlobOperation", "LeaseNotPresentWithContainerOperation",
-     "LeaseNotPresentWithLeaseOperation", "MaxBlobSizeConditionNotMet", "NoPendingCopyOperation",
-     "OperationNotAllowedOnIncrementalCopyBlob", "PendingCopyOperation", "PreviousSnapshotNotFound",
-     "PreviousSnapshotOperationNotSupported", "PreviousSnapshotCannotBeNewer",
-     "SequenceNumberConditionNotMet", "SequenceNumberIncrementTooLarge", "SnapshotCountExceeded",
-     "SnapshotOperationRateExceeded", "SnapshotsPresent", "SourceConditionNotMet", "SystemInUse",
-     "TargetConditionNotMet", "UnauthorizedBlobOverwrite", "BlobBeingRehydrated", "BlobArchived",
-     "BlobNotArchived", "AuthorizationSourceIPMismatch", "AuthorizationProtocolMismatch",
-     "AuthorizationPermissionMismatch", "AuthorizationServiceMismatch",
-     "AuthorizationResourceTypeMismatch", and "BlobAccessTierNotSupportedForAccountType".
-    :vartype code: str or ~azure.storage.blobs.models.StorageErrorCode
-    :ivar message: The error message.
-    :vartype message: str
-    """
-
-    code: Optional[Union[str, "_models.StorageErrorCode"]] = rest_field(
-        name="Code", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The error code. Known values are: \"AccountAlreadyExists\", \"AccountBeingCreated\",
-     \"AccountIsDisabled\", \"AuthenticationFailed\", \"AuthorizationFailure\",
-     \"ConditionHeadersNotSupported\", \"ConditionNotMet\", \"EmptyMetadataKey\",
-     \"InsufficientAccountPermissions\", \"InternalError\", \"InvalidAuthenticationInfo\",
-     \"InvalidHeaderValue\", \"InvalidHttpVerb\", \"InvalidInput\", \"InvalidMd5\",
-     \"InvalidMetadata\", \"InvalidQueryParameterValue\", \"InvalidRange\", \"InvalidRequestUrl\",
-     \"InvalidUri\", \"InvalidXmlDocument\", \"InvalidXmlNodeValue\", \"Md5Mismatch\",
-     \"MetadataTooLarge\", \"MissingContentLengthHeader\", \"MissingRequiredXmlNode\",
-     \"MissingRequiredHeader\", \"MissingRequiredQueryParameter\",
-     \"MultipleConditionHeadersNotSupported\", \"OperationTimedOut\", \"OutOfRangeInput\",
-     \"OutOfRangeQueryParameterValue\", \"RequestBodyTooLarge\", \"ResourceTypeMismatch\",
-     \"RequestUrlFailedToParse\", \"ResourceAlreadyExists\", \"ResourceNotFound\", \"ServerBusy\",
-     \"UnsupportedHeader\", \"UnsupportedXmlNode\", \"UnsupportedQueryParameter\",
-     \"UnsupportedHttpVerb\", \"AppendPositionConditionNotMet\", \"BlobAlreadyExists\",
-     \"BlobImmutableDueToPolicy\", \"BlobNotFound\", \"BlobOverwritten\",
-     \"BlobTierInadequateForContentLength\", \"BlobUsesCustomerSpecifiedEncryption\",
-     \"BlockCountExceedsLimit\", \"BlockListTooLong\", \"CannotChangeToLowerTier\",
-     \"CannotVerifyCopySource\", \"ContainerAlreadyExists\", \"ContainerBeingDeleted\",
-     \"ContainerDisabled\", \"ContainerNotFound\", \"ContentLengthLargerThanTierLimit\",
-     \"CopyAcrossAccountsNotSupported\", \"CopyIdMismatch\", \"FeatureVersionMismatch\",
-     \"IncrementalCopyBlobMismatch\", \"IncrementalCopyOfEarlierVersionSnapshotNotAllowed\",
-     \"IncrementalCopySourceMustBeSnapshot\", \"InfiniteLeaseDurationRequired\",
-     \"InvalidBlobOrBlock\", \"InvalidBlobTier\", \"InvalidBlobType\", \"InvalidBlockId\",
-     \"InvalidBlockList\", \"InvalidOperation\", \"InvalidPageRange\", \"InvalidSourceBlobType\",
-     \"InvalidSourceBlobUrl\", \"InvalidVersionForPageBlobOperation\", \"LeaseAlreadyPresent\",
-     \"LeaseAlreadyBroken\", \"LeaseIdMismatchWithBlobOperation\",
-     \"LeaseIdMismatchWithContainerOperation\", \"LeaseIdMismatchWithLeaseOperation\",
-     \"LeaseIdMissing\", \"LeaseIsBreakingAndCannotBeAcquired\",
-     \"LeaseIsBreakingAndCannotBeChanged\", \"LeaseIsBrokenAndCannotBeRenewed\", \"LeaseLost\",
-     \"LeaseNotPresentWithBlobOperation\", \"LeaseNotPresentWithContainerOperation\",
-     \"LeaseNotPresentWithLeaseOperation\", \"MaxBlobSizeConditionNotMet\",
-     \"NoPendingCopyOperation\", \"OperationNotAllowedOnIncrementalCopyBlob\",
-     \"PendingCopyOperation\", \"PreviousSnapshotNotFound\",
-     \"PreviousSnapshotOperationNotSupported\", \"PreviousSnapshotCannotBeNewer\",
-     \"SequenceNumberConditionNotMet\", \"SequenceNumberIncrementTooLarge\",
-     \"SnapshotCountExceeded\", \"SnapshotOperationRateExceeded\", \"SnapshotsPresent\",
-     \"SourceConditionNotMet\", \"SystemInUse\", \"TargetConditionNotMet\",
-     \"UnauthorizedBlobOverwrite\", \"BlobBeingRehydrated\", \"BlobArchived\", \"BlobNotArchived\",
-     \"AuthorizationSourceIPMismatch\", \"AuthorizationProtocolMismatch\",
-     \"AuthorizationPermissionMismatch\", \"AuthorizationServiceMismatch\",
-     \"AuthorizationResourceTypeMismatch\", and \"BlobAccessTierNotSupportedForAccountType\"."""
-    message: Optional[str] = rest_field(name="Message", visibility=["read", "create", "update", "delete", "query"])
-    """The error message."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: Optional[Union[str, "_models.StorageErrorCode"]] = None,
-        message: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class StorageServiceProperties(_Model):
     """The service properties.
 
@@ -2808,14 +2816,10 @@ class StorageServiceStats(_Model):
 class SubmitBatchRequest(_Model):
     """SubmitBatchRequest.
 
-    :ivar name: Required.
-    :vartype name: str
     :ivar body: Required.
     :vartype body: ~azure.storage.blobs._utils.utils.FileType
     """
 
-    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
     body: FileType = rest_field(
         visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
     )
@@ -2825,7 +2829,6 @@ class SubmitBatchRequest(_Model):
     def __init__(
         self,
         *,
-        name: str,
         body: FileType,
     ) -> None: ...
 
@@ -2848,9 +2851,9 @@ class UserDelegationKey(_Model):
     :ivar signed_tid: The Azure Active Directory tenant ID in GUID format. Required.
     :vartype signed_tid: str
     :ivar signed_start: The date-time the key is active. Required.
-    :vartype signed_start: str
+    :vartype signed_start: ~datetime.datetime
     :ivar signed_expiry: The date-time the key expires. Required.
-    :vartype signed_expiry: str
+    :vartype signed_expiry: ~datetime.datetime
     :ivar signed_service: Abbreviation of the Azure Storage service that accepts the key. Required.
     :vartype signed_service: str
     :ivar signed_version: The service version that created the key. Required.
@@ -2874,15 +2877,17 @@ class UserDelegationKey(_Model):
         xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
     )
     """The Azure Active Directory tenant ID in GUID format. Required."""
-    signed_start: str = rest_field(
+    signed_start: datetime.datetime = rest_field(
         name="signedStart",
         visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
         xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
     )
     """The date-time the key is active. Required."""
-    signed_expiry: str = rest_field(
+    signed_expiry: datetime.datetime = rest_field(
         name="signedExpiry",
         visibility=["read", "create", "update", "delete", "query"],
+        format="rfc7231",
         xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
     )
     """The date-time the key expires. Required."""
@@ -2919,8 +2924,8 @@ class UserDelegationKey(_Model):
         *,
         signed_oid: str,
         signed_tid: str,
-        signed_start: str,
-        signed_expiry: str,
+        signed_start: datetime.datetime,
+        signed_expiry: datetime.datetime,
         signed_service: str,
         signed_version: str,
         value: bytes,

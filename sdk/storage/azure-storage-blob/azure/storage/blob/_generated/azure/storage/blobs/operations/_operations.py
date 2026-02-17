@@ -29,7 +29,7 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import BlobClientConfiguration
-from .._utils.model_base import Model as _Model, _deserialize, _deserialize_xml, _failsafe_deserialize, _get_element
+from .._utils.model_base import Model as _Model, _deserialize_xml, _failsafe_deserialize_xml, _get_element
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match, prepare_multipart_form_data
 from .._validation import api_version_validation
@@ -48,15 +48,15 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=service&comp=properties"
+    _url = "?restype=service&comp=properties"
 
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
@@ -69,7 +69,7 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=properties"
+    _url = "?restype=service&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -90,7 +90,7 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=stats"
+    _url = "?restype=service&comp=stats"
 
     # Construct parameters
     if timeout is not None:
@@ -119,7 +119,7 @@ def build_service_list_containers_segment_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=list"
+    _url = "?comp=list"
 
     # Construct parameters
     if prefix is not None:
@@ -151,7 +151,7 @@ def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=userdelegationkey"
+    _url = "?restype=service&comp=userdelegationkey"
 
     # Construct parameters
     if timeout is not None:
@@ -171,7 +171,7 @@ def build_service_get_account_info_request(*, timeout: Optional[int] = None, **k
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=account&comp=properties"
+    _url = "?restype=account&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -194,7 +194,7 @@ def build_service_submit_batch_request(
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
-    _url = "/?comp=batch"
+    _url = "?comp=batch"
 
     # Construct parameters
     if timeout is not None:
@@ -224,7 +224,7 @@ def build_service_filter_blobs_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=blobs"
+    _url = "?comp=blobs"
 
     # Construct parameters
     if timeout is not None:
@@ -258,7 +258,7 @@ def build_container_create_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container"
+    _url = "?restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -290,7 +290,7 @@ def build_container_get_properties_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container"
+    _url = "?restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -317,7 +317,7 @@ def build_container_delete_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container"
+    _url = "?restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -348,7 +348,7 @@ def build_container_set_metadata_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container&comp=metadata"
+    _url = "?restype=container&comp=metadata"
 
     # Construct parameters
     if timeout is not None:
@@ -376,7 +376,7 @@ def build_container_get_access_policy_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=container&comp=acl"
+    _url = "?restype=container&comp=acl"
 
     # Construct parameters
     if timeout is not None:
@@ -406,15 +406,15 @@ def build_container_set_access_policy_request(  # pylint: disable=name-too-long
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container&comp=acl"
+    _url = "?restype=container&comp=acl"
 
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
     if access is not None:
@@ -439,7 +439,7 @@ def build_container_restore_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container&comp=undelete"
+    _url = "?restype=container&comp=undelete"
 
     # Construct parameters
     if timeout is not None:
@@ -467,7 +467,7 @@ def build_container_rename_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=container&comp=rename"
+    _url = "?restype=container&comp=rename"
 
     # Construct parameters
     if timeout is not None:
@@ -493,7 +493,7 @@ def build_container_submit_batch_request(
     accept = _headers.pop("Accept", "multipart/mixed")
 
     # Construct URL
-    _url = "/?restype=container&comp=batch"
+    _url = "?restype=container&comp=batch"
 
     # Construct parameters
     if timeout is not None:
@@ -523,7 +523,7 @@ def build_container_filter_blobs_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=container&comp=blobs"
+    _url = "?restype=container&comp=blobs"
 
     # Construct parameters
     if timeout is not None:
@@ -558,7 +558,7 @@ def build_container_acquire_lease_request(
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -592,7 +592,7 @@ def build_container_release_lease_request(
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -624,7 +624,7 @@ def build_container_renew_lease_request(
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -656,7 +656,7 @@ def build_container_break_lease_request(
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -690,7 +690,7 @@ def build_container_change_lease_request(
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease&restype=container"
+    _url = "?comp=lease&restype=container"
 
     # Construct parameters
     if timeout is not None:
@@ -726,7 +726,7 @@ def build_container_list_blob_flat_segment_request(  # pylint: disable=name-too-
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=container&comp=list"
+    _url = "?restype=container&comp=list"
 
     # Construct parameters
     if prefix is not None:
@@ -767,7 +767,7 @@ def build_container_list_blob_hierarchy_segment_request(  # pylint: disable=name
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=container&comp=list"
+    _url = "?restype=container&comp=list"
 
     # Construct parameters
     _params["delimiter"] = _SERIALIZER.query("delimiter", delimiter, "str")
@@ -797,7 +797,7 @@ def build_container_get_account_info_request(*, timeout: Optional[int] = None, *
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=account&comp=properties"
+    _url = "?restype=account&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -836,7 +836,7 @@ def build_blob_download_request(
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if snapshot is not None:
@@ -908,7 +908,7 @@ def build_blob_get_properties_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if snapshot is not None:
@@ -968,7 +968,7 @@ def build_blob_delete_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if snapshot is not None:
@@ -1016,7 +1016,7 @@ def build_blob_undelete_request(*, timeout: Optional[int] = None, **kwargs: Any)
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=undelete"
+    _url = "?comp=undelete"
 
     # Construct parameters
     if timeout is not None:
@@ -1040,7 +1040,7 @@ def build_blob_set_expiry_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=expiry"
+    _url = "?comp=expiry"
 
     # Construct parameters
     if timeout is not None:
@@ -1077,7 +1077,7 @@ def build_blob_set_http_headers_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=properties"
+    _url = "?comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -1123,7 +1123,7 @@ def build_blob_set_http_headers_request(
 
 def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
     *,
-    expiry: datetime.datetime,
+    immutability_policy_expiry: datetime.datetime,
     timeout: Optional[int] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
@@ -1136,7 +1136,7 @@ def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=immutabilityPolicies"
+    _url = "?comp=immutabilityPolicies"
 
     # Construct parameters
     if timeout is not None:
@@ -1150,7 +1150,9 @@ def build_blob_set_immutability_policy_request(  # pylint: disable=name-too-long
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if if_unmodified_since is not None:
         _headers["If-Unmodified-Since"] = _SERIALIZER.header("if_unmodified_since", if_unmodified_since, "rfc-1123")
-    _headers["x-ms-immutability-policy-until-date"] = _SERIALIZER.header("expiry", expiry, "rfc-1123")
+    _headers["x-ms-immutability-policy-until-date"] = _SERIALIZER.header(
+        "immutability_policy_expiry", immutability_policy_expiry, "rfc-1123"
+    )
     if immutability_policy_mode is not None:
         _headers["x-ms-immutability-policy-mode"] = _SERIALIZER.header(
             "immutability_policy_mode", immutability_policy_mode, "str"
@@ -1167,7 +1169,7 @@ def build_blob_delete_immutability_policy_request(  # pylint: disable=name-too-l
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=immutabilityPolicies"
+    _url = "?comp=immutabilityPolicies"
 
     # Construct parameters
     if timeout is not None:
@@ -1196,7 +1198,7 @@ def build_blob_set_legal_hold_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=legalhold"
+    _url = "?comp=legalhold"
 
     # Construct parameters
     if timeout is not None:
@@ -1234,7 +1236,7 @@ def build_blob_set_metadata_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=metadata"
+    _url = "?comp=metadata"
 
     # Construct parameters
     if timeout is not None:
@@ -1290,7 +1292,7 @@ def build_blob_acquire_lease_request(
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease"
+    _url = "?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1335,7 +1337,7 @@ def build_blob_release_lease_request(
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease"
+    _url = "?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1378,7 +1380,7 @@ def build_blob_renew_lease_request(
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease"
+    _url = "?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1422,7 +1424,7 @@ def build_blob_change_lease_request(
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease"
+    _url = "?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1466,7 +1468,7 @@ def build_blob_break_lease_request(
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=lease"
+    _url = "?comp=lease"
 
     # Construct parameters
     if timeout is not None:
@@ -1514,7 +1516,7 @@ def build_blob_create_snapshot_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=snapshot"
+    _url = "?comp=snapshot"
 
     # Construct parameters
     if timeout is not None:
@@ -1582,7 +1584,7 @@ def build_blob_start_copy_from_url_request(  # pylint: disable=too-many-locals
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -1676,7 +1678,7 @@ def build_blob_copy_from_url_request(  # pylint: disable=too-many-locals
     requires_sync: Literal["true"] = kwargs.pop("requires_sync", _headers.pop("x-ms-requires-sync", "true"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=copy"
+    _url = "?comp=copy"
 
     # Construct parameters
     if timeout is not None:
@@ -1755,7 +1757,7 @@ def build_blob_abort_copy_from_url_request(
     )
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=copy"
+    _url = "?comp=copy"
 
     # Construct parameters
     if timeout is not None:
@@ -1787,7 +1789,7 @@ def build_blob_set_tier_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=tier"
+    _url = "?comp=tier"
 
     # Construct parameters
     if snapshot is not None:
@@ -1816,7 +1818,7 @@ def build_blob_get_account_info_request(*, timeout: Optional[int] = None, **kwar
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?restype=account&comp=properties"
+    _url = "?restype=account&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -1848,7 +1850,7 @@ def build_blob_get_tags_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=tags"
+    _url = "?comp=tags"
 
     # Construct parameters
     if timeout is not None:
@@ -1899,7 +1901,7 @@ def build_blob_set_tags_request(
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=tags"
+    _url = "?comp=tags"
 
     # Construct parameters
     if timeout is not None:
@@ -1908,8 +1910,8 @@ def build_blob_set_tags_request(
         _params["versionid"] = _SERIALIZER.query("version_id", version_id, "str")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
             "transactional_content_md5", transactional_content_md5, "bytearray"
@@ -1969,7 +1971,7 @@ def build_append_blob_create_request(  # pylint: disable=too-many-locals
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -2067,15 +2069,15 @@ def build_append_blob_append_block_request(  # pylint: disable=too-many-locals
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=appendblock"
+    _url = "?comp=appendblock"
 
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
@@ -2160,7 +2162,7 @@ def build_append_blob_append_block_from_url_request(  # pylint: disable=name-too
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=appendblock"
+    _url = "?comp=appendblock"
 
     # Construct parameters
     if timeout is not None:
@@ -2260,7 +2262,7 @@ def build_append_blob_seal_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=seal"
+    _url = "?comp=seal"
 
     # Construct parameters
     if timeout is not None:
@@ -2325,15 +2327,15 @@ def build_block_blob_upload_request(  # pylint: disable=too-many-locals,too-many
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if metadata is not None:
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
     if transactional_content_md5 is not None:
@@ -2458,7 +2460,7 @@ def build_block_blob_put_blob_from_url_request(  # pylint: disable=name-too-long
     blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -2587,7 +2589,7 @@ def build_block_blob_stage_block_request(
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=block"
+    _url = "?comp=block"
 
     # Construct parameters
     _params["blockid"] = _SERIALIZER.query("block_id", block_id, "str")
@@ -2595,8 +2597,8 @@ def build_block_blob_stage_block_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
@@ -2658,7 +2660,7 @@ def build_block_blob_stage_block_from_url_request(  # pylint: disable=name-too-l
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=block"
+    _url = "?comp=block"
 
     # Construct parameters
     _params["blockid"] = _SERIALIZER.query("block_id", block_id, "str")
@@ -2758,15 +2760,15 @@ def build_block_blob_commit_block_list_request(  # pylint: disable=name-too-long
     content_type: str = kwargs.pop("content_type")
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=blocklist"
+    _url = "?comp=blocklist"
 
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     if blob_cache_control is not None:
         _headers["x-ms-blob-cache-control"] = _SERIALIZER.header("blob_cache_control", blob_cache_control, "str")
     if blob_content_type is not None:
@@ -2853,7 +2855,7 @@ def build_block_blob_get_block_list_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=blocklist"
+    _url = "?comp=blocklist"
 
     # Construct parameters
     if snapshot is not None:
@@ -2896,7 +2898,7 @@ def build_block_blob_query_request(
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
-    _url = "/?comp=query"
+    _url = "?comp=query"
 
     # Construct parameters
     if snapshot is not None:
@@ -2970,7 +2972,7 @@ def build_page_blob_create_request(  # pylint: disable=too-many-locals
     blob_type: Literal["PageBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "PageBlob"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/"
+    _url = ""
 
     # Construct parameters
     if timeout is not None:
@@ -3076,15 +3078,15 @@ def build_page_blob_upload_pages_request(  # pylint: disable=too-many-locals
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=page"
+    _url = "?comp=page"
 
     # Construct parameters
     if timeout is not None:
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
 
     # Construct headers
-    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
     if transactional_content_md5 is not None:
         _headers["Content-MD5"] = _SERIALIZER.header(
@@ -3168,7 +3170,7 @@ def build_page_blob_clear_pages_request(
     page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=page"
+    _url = "?comp=page"
 
     # Construct parameters
     if timeout is not None:
@@ -3258,7 +3260,7 @@ def build_page_blob_upload_pages_from_url_request(  # pylint: disable=name-too-l
     page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=page"
+    _url = "?comp=page"
 
     # Construct parameters
     if timeout is not None:
@@ -3369,7 +3371,7 @@ def build_page_blob_get_page_ranges_request(
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=pagelist"
+    _url = "?comp=pagelist"
 
     # Construct parameters
     if snapshot is not None:
@@ -3428,7 +3430,7 @@ def build_page_blob_get_page_ranges_diff_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?comp=pagelist"
+    _url = "?comp=pagelist"
 
     # Construct parameters
     if snapshot is not None:
@@ -3488,7 +3490,7 @@ def build_page_blob_resize_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=properties"
+    _url = "?comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -3543,7 +3545,7 @@ def build_page_blob_update_sequence_number_request(  # pylint: disable=name-too-
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=properties"
+    _url = "?comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -3590,7 +3592,7 @@ def build_page_blob_copy_incremental_request(
 
     version: str = kwargs.pop("version", _headers.pop("x-ms-version", "2026-04-06"))
     # Construct URL
-    _url = "/?comp=incrementalcopy"
+    _url = "?comp=incrementalcopy"
 
     # Construct parameters
     if timeout is not None:
@@ -3691,8 +3693,8 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3760,8 +3762,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3837,8 +3839,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -3944,8 +3946,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4029,8 +4031,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4101,8 +4103,8 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4157,7 +4159,7 @@ class ServiceOperations:
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["body"]
-        _data_fields: list[str] = ["name"]
+        _data_fields: list[str] = []
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_service_submit_batch_request(
@@ -4188,8 +4190,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4293,8 +4295,8 @@ class ServiceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4408,8 +4410,8 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4479,8 +4481,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4584,8 +4586,8 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4665,8 +4667,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4741,8 +4743,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4850,8 +4852,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -4929,8 +4931,8 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5006,8 +5008,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5059,7 +5061,7 @@ class ContainerOperations:
 
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["body"]
-        _data_fields: list[str] = ["name"]
+        _data_fields: list[str] = []
         _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_container_submit_batch_request(
@@ -5090,8 +5092,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5192,8 +5194,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5291,8 +5293,8 @@ class ContainerOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5379,8 +5381,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5465,8 +5467,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5558,8 +5560,8 @@ class ContainerOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5649,8 +5651,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5759,8 +5761,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5883,8 +5885,8 @@ class ContainerOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -5955,8 +5957,8 @@ class ContainerOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6141,8 +6143,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6448,8 +6450,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6680,8 +6682,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6744,8 +6746,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6820,8 +6822,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6955,8 +6957,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -6981,7 +6983,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     def set_immutability_policy(  # pylint: disable=inconsistent-return-statements
         self,
         *,
-        expiry: datetime.datetime,
+        immutability_policy_expiry: datetime.datetime,
         timeout: Optional[int] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, _models.ImmutabilityPolicyMode]] = None,
@@ -6991,9 +6993,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
     ) -> None:
         """Set the immutability policy of a blob.
 
-        :keyword expiry: Specifies the date time when the blobs immutability policy is set to expire.
-         Required.
-        :paramtype expiry: ~datetime.datetime
+        :keyword immutability_policy_expiry: Specifies the date time when the blobs immutability policy
+         is set to expire. Required.
+        :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -7032,7 +7034,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_blob_set_immutability_policy_request(
-            expiry=expiry,
+            immutability_policy_expiry=immutability_policy_expiry,
             timeout=timeout,
             if_unmodified_since=if_unmodified_since,
             immutability_policy_mode=immutability_policy_mode,
@@ -7056,8 +7058,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7143,8 +7145,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7228,8 +7230,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7362,8 +7364,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7485,8 +7487,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7593,8 +7595,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7699,8 +7701,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7810,8 +7812,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -7923,8 +7925,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8058,8 +8060,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8240,8 +8242,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8433,8 +8435,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8522,8 +8524,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8627,8 +8629,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8691,8 +8693,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8814,8 +8816,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -8948,8 +8950,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9153,8 +9155,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9344,8 +9346,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9593,8 +9595,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9720,8 +9722,8 @@ class AppendBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -9970,8 +9972,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -10254,8 +10256,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -10405,8 +10407,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -10600,8 +10602,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -10827,8 +10829,8 @@ class BlockBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -10940,8 +10942,8 @@ class BlockBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -11097,8 +11099,8 @@ class BlockBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -11369,8 +11371,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -11565,8 +11567,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -11737,8 +11739,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -11972,8 +11974,8 @@ class PageBlobOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -12126,8 +12128,8 @@ class PageBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -12291,8 +12293,8 @@ class PageBlobOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -12437,8 +12439,8 @@ class PageBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -12558,8 +12560,8 @@ class PageBlobOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
@@ -12671,8 +12673,8 @@ class PageBlobOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.StorageError,
+            error = _failsafe_deserialize_xml(
+                _models.Error,
                 response,
             )
             raise HttpResponseError(response=response, model=error)
