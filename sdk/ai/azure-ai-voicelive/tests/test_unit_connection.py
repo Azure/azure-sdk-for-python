@@ -18,7 +18,9 @@ from azure.ai.voicelive.aio import (
     ResponseResource,
     ConnectionError,
     ConnectionClosed,
+    AgentSessionConfig,
 )
+from azure.ai.voicelive.aio._patch import _VoiceLiveConnectionManager
 from azure.ai.voicelive.models import (
     ClientEventSessionUpdate,
     ClientEventResponseCreate,
@@ -378,3 +380,277 @@ class TestAsyncContextBehavior:
         await response_resource.create()
 
         assert mock_connection.send.call_count == 2
+
+
+class TestAgentSessionConfig:
+    """Test AgentSessionConfig TypedDict and URL preparation with agent configuration."""
+
+    def test_agent_session_config_required_fields(self):
+        """Test AgentSessionConfig with required fields only."""
+        config: AgentSessionConfig = {
+            "agent_name": "my-agent",
+            "project_name": "my-project",
+        }
+        assert config["agent_name"] == "my-agent"
+        assert config["project_name"] == "my-project"
+
+    def test_agent_session_config_all_fields(self):
+        """Test AgentSessionConfig with all fields."""
+        config: AgentSessionConfig = {
+            "agent_name": "my-agent",
+            "project_name": "my-project",
+            "agent_version": "1.0",
+            "conversation_id": "conv-123",
+            "authentication_identity_client_id": "client-456",
+            "foundry_resource_override": "custom-resource",
+        }
+        assert config["agent_name"] == "my-agent"
+        assert config["project_name"] == "my-project"
+        assert config["agent_version"] == "1.0"
+        assert config["conversation_id"] == "conv-123"
+        assert config["authentication_identity_client_id"] == "client-456"
+        assert config["foundry_resource_override"] == "custom-resource"
+
+    def test_agent_session_config_optional_fields_absent(self):
+        """Test AgentSessionConfig with optional fields not present."""
+        config: AgentSessionConfig = {
+            "agent_name": "test-agent",
+            "project_name": "test-project",
+        }
+        assert config.get("agent_version") is None
+        assert config.get("conversation_id") is None
+        assert config.get("authentication_identity_client_id") is None
+        assert config.get("foundry_resource_override") is None
+
+
+class TestAgentConfigUrlPreparation:
+    """Test URL preparation with agent configuration."""
+
+    def setup_method(self):
+        """Set up test fixtures."""
+        self.credential = AzureKeyCredential("test-key")
+        self.endpoint = "https://test-endpoint.azure.com"
+
+    def test_url_with_agent_config_required_params(self):
+        """Test URL preparation with required agent config parameters."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "my-agent",
+            "project_name": "my-project",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        # Verify required agent params are in URL
+        assert "agent-name=my-agent" in url
+        assert "agent-project-name=my-project" in url
+        # Verify optional params are NOT in URL
+        assert "agent-version" not in url
+        assert "conversation-id" not in url
+        assert "agent-authentication-identity-client-id" not in url
+        assert "foundry-resource-override" not in url
+
+    def test_url_with_agent_config_all_params(self):
+        """Test URL preparation with all agent config parameters."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "my-agent",
+            "project_name": "my-project",
+            "agent_version": "2.0",
+            "conversation_id": "conv-abc123",
+            "authentication_identity_client_id": "client-xyz",
+            "foundry_resource_override": "custom-foundry",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        # Verify all agent params are in URL
+        assert "agent-name=my-agent" in url
+        assert "agent-project-name=my-project" in url
+        assert "agent-version=2.0" in url
+        assert "conversation-id=conv-abc123" in url
+        assert "agent-authentication-identity-client-id=client-xyz" in url
+        assert "foundry-resource-override=custom-foundry" in url
+
+    def test_url_with_agent_config_partial_optional_params(self):
+        """Test URL preparation with some optional agent config parameters."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "test-agent",
+            "project_name": "test-project",
+            "agent_version": "1.5",
+            "conversation_id": "existing-conv",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        # Verify present params
+        assert "agent-name=test-agent" in url
+        assert "agent-project-name=test-project" in url
+        assert "agent-version=1.5" in url
+        assert "conversation-id=existing-conv" in url
+        # Verify absent params are NOT in URL
+        assert "agent-authentication-identity-client-id" not in url
+        assert "foundry-resource-override" not in url
+
+    def test_url_without_agent_config(self):
+        """Test URL preparation without agent configuration."""
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            model="gpt-4o-realtime",
+            agent_config=None,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        # Verify agent params are NOT in URL
+        assert "agent-name" not in url
+        assert "agent-project-name" not in url
+        # Verify model param IS in URL
+        assert "model=gpt-4o-realtime" in url
+
+    def test_url_with_agent_config_and_model(self):
+        """Test URL preparation with both agent config and model."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "agent-with-model",
+            "project_name": "project-name",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            model="gpt-4o-realtime",
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        # Verify both model and agent params are in URL
+        assert "model=gpt-4o-realtime" in url
+        assert "agent-name=agent-with-model" in url
+        assert "agent-project-name=project-name" in url
+
+    def test_url_with_agent_config_and_extra_query(self):
+        """Test URL preparation with agent config and extra query parameters."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "my-agent",
+            "project_name": "my-project",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint=self.endpoint,
+            agent_config=agent_config,
+            extra_query={"custom-param": "custom-value"},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        # Verify all params are in URL
+        assert "agent-name=my-agent" in url
+        assert "agent-project-name=my-project" in url
+        assert "custom-param=custom-value" in url
+
+    def test_url_scheme_conversion_https_to_wss(self):
+        """Test that https endpoint is converted to wss scheme."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "test",
+            "project_name": "test",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint="https://test.azure.com",
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        assert url.startswith("wss://")
+
+    def test_url_scheme_conversion_http_to_ws(self):
+        """Test that http endpoint is converted to ws scheme."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "test",
+            "project_name": "test",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint="http://localhost:8080",
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        assert url.startswith("ws://")
+
+    def test_url_path_includes_voice_live_realtime(self):
+        """Test that URL path includes /voice-live/realtime."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "test",
+            "project_name": "test",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint="https://test.azure.com/some/path",
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        assert "/voice-live/realtime" in url
+
+    def test_url_includes_api_version(self):
+        """Test that URL includes api-version parameter."""
+        agent_config: AgentSessionConfig = {
+            "agent_name": "test",
+            "project_name": "test",
+        }
+
+        manager = _VoiceLiveConnectionManager(
+            credential=self.credential,
+            endpoint="https://test.azure.com",
+            api_version="2025-10-01",
+            agent_config=agent_config,
+            extra_query={},
+            extra_headers={},
+        )
+
+        url = manager._prepare_url()
+
+        assert "api-version=2025-10-01" in url
