@@ -989,7 +989,7 @@ class _LoadTestAdministrationClientOperationsMixin(  # pylint: disable=too-many-
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def _begin_upload_test_file(
+    async def begin_upload_test_file(
         self,
         test_id: str,
         file_name: str,
@@ -2796,7 +2796,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
 ):
 
     @overload
-    async def _begin_test_run(
+    async def begin_test_run(
         self,
         test_run_id: str,
         body: _models.TestRun,
@@ -2806,7 +2806,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         **kwargs: Any
     ) -> _models.TestRun: ...
     @overload
-    async def _begin_test_run(
+    async def begin_test_run(
         self,
         test_run_id: str,
         body: JSON,
@@ -2816,7 +2816,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
         **kwargs: Any
     ) -> _models.TestRun: ...
     @overload
-    async def _begin_test_run(
+    async def begin_test_run(
         self,
         test_run_id: str,
         body: IO[bytes],
@@ -2827,7 +2827,7 @@ class _LoadTestRunClientOperationsMixin(  # pylint: disable=too-many-public-meth
     ) -> _models.TestRun: ...
 
     @distributed_trace_async
-    async def _begin_test_run(
+    async def begin_test_run(
         self,
         test_run_id: str,
         body: Union[_models.TestRun, JSON, IO[bytes]],

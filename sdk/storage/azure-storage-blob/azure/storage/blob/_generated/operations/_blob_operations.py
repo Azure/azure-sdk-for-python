@@ -40,6 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_download_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -62,7 +63,6 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -125,6 +125,7 @@ def build_download_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -143,7 +144,6 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -194,6 +194,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -206,12 +207,13 @@ def build_delete_request(
     if_tags: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     blob_delete_type: Literal["Permanent"] = "Permanent",
+    access_tier_if_modified_since: Optional[datetime.datetime] = None,
+    access_tier_if_unmodified_since: Optional[datetime.datetime] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -250,19 +252,26 @@ def build_delete_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if access_tier_if_modified_since is not None:
+        _headers["x-ms-access-tier-if-modified-since"] = _SERIALIZER.header(
+            "access_tier_if_modified_since", access_tier_if_modified_since, "rfc-1123"
+        )
+    if access_tier_if_unmodified_since is not None:
+        _headers["x-ms-access-tier-if-unmodified-since"] = _SERIALIZER.header(
+            "access_tier_if_unmodified_since", access_tier_if_unmodified_since, "rfc-1123"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_undelete_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -291,6 +300,7 @@ def build_set_expiry_request(
     url: str,
     *,
     expiry_options: Union[str, _models.BlobExpiryOptions],
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     expires_on: Optional[str] = None,
@@ -300,7 +310,6 @@ def build_set_expiry_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -331,6 +340,7 @@ def build_set_expiry_request(
 def build_set_http_headers_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     blob_cache_control: Optional[str] = None,
     blob_content_type: Optional[str] = None,
@@ -351,7 +361,6 @@ def build_set_http_headers_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -409,6 +418,7 @@ def build_set_http_headers_request(
 def build_set_immutability_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -422,7 +432,6 @@ def build_set_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -464,6 +473,7 @@ def build_set_immutability_policy_request(
 def build_delete_immutability_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     snapshot: Optional[str] = None,
@@ -474,7 +484,6 @@ def build_delete_immutability_policy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -507,6 +516,7 @@ def build_set_legal_hold_request(
     url: str,
     *,
     legal_hold: bool,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     snapshot: Optional[str] = None,
@@ -517,7 +527,6 @@ def build_set_legal_hold_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["legalhold"] = kwargs.pop("comp", _params.pop("comp", "legalhold"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -550,6 +559,7 @@ def build_set_legal_hold_request(
 def build_set_metadata_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     lease_id: Optional[str] = None,
@@ -569,7 +579,6 @@ def build_set_metadata_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -621,6 +630,7 @@ def build_set_metadata_request(
 def build_acquire_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
@@ -637,7 +647,6 @@ def build_acquire_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -681,6 +690,7 @@ def build_release_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -695,7 +705,6 @@ def build_release_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -736,6 +745,7 @@ def build_renew_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -750,7 +760,6 @@ def build_renew_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -792,6 +801,7 @@ def build_change_lease_request(
     *,
     lease_id: str,
     proposed_lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -806,7 +816,6 @@ def build_change_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -847,6 +856,7 @@ def build_change_lease_request(
 def build_break_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     break_period: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -862,7 +872,6 @@ def build_break_lease_request(
 
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -903,6 +912,7 @@ def build_break_lease_request(
 def build_create_snapshot_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     encryption_key: Optional[str] = None,
@@ -922,7 +932,6 @@ def build_create_snapshot_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -971,10 +980,11 @@ def build_create_snapshot_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_start_copy_from_url_request(
+def build_start_copy_from_url_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     copy_source: str,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     tier: Optional[Union[str, _models.AccessTierOptional]] = None,
@@ -1001,7 +1011,6 @@ def build_start_copy_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1072,10 +1081,11 @@ def build_start_copy_from_url_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_copy_from_url_request(
+def build_copy_from_url_request(  # pylint: disable=too-many-locals
     url: str,
     *,
     copy_source: str,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     tier: Optional[Union[str, _models.AccessTierOptional]] = None,
@@ -1105,7 +1115,6 @@ def build_copy_from_url_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     x_ms_requires_sync: Literal["true"] = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1187,6 +1196,7 @@ def build_abort_copy_from_url_request(
     url: str,
     *,
     copy_id: str,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -1199,7 +1209,6 @@ def build_abort_copy_from_url_request(
     copy_action_abort_constant: Literal["abort"] = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
     )
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1232,6 +1241,7 @@ def build_set_tier_request(
     url: str,
     *,
     tier: Union[str, _models.AccessTierRequired],
+    version: str,
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -1245,7 +1255,6 @@ def build_set_tier_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["tier"] = kwargs.pop("comp", _params.pop("comp", "tier"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1282,14 +1291,13 @@ def build_set_tier_request(
 
 
 def build_get_account_info_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1318,6 +1326,7 @@ def build_get_account_info_request(
 def build_query_request(
     url: str,
     *,
+    version: str,
     snapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
@@ -1338,7 +1347,6 @@ def build_query_request(
 
     comp: Literal["query"] = kwargs.pop("comp", _params.pop("comp", "query"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1390,6 +1398,7 @@ def build_query_request(
 def build_get_tags_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     snapshot: Optional[str] = None,
@@ -1406,7 +1415,6 @@ def build_get_tags_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1452,6 +1460,7 @@ def build_get_tags_request(
 def build_set_tags_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     version_id: Optional[str] = None,
     transactional_content_md5: Optional[bytes] = None,
@@ -1471,7 +1480,6 @@ def build_set_tags_request(
 
     comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1639,6 +1647,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_download_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -1656,7 +1665,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1944,6 +1952,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -1957,7 +1966,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2077,6 +2085,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
         request_id_parameter: Optional[str] = None,
         blob_delete_type: Literal["Permanent"] = "Permanent",
+        access_tier_if_modified_since: Optional[datetime.datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime.datetime] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
@@ -2122,6 +2132,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          permanently delete a blob if blob soft delete is enabled. Known values are "Permanent" and
          None. Default value is "Permanent".
         :type blob_delete_type: str
+        :param access_tier_if_modified_since: Specify this header value to operate only on a blob if
+         the access-tier has been modified since the specified date/time. Default value is None.
+        :type access_tier_if_modified_since: ~datetime.datetime
+        :param access_tier_if_unmodified_since: Specify this header value to operate only on a blob if
+         the access-tier has not been modified since the specified date/time. Default value is None.
+        :type access_tier_if_unmodified_since: ~datetime.datetime
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
@@ -2160,6 +2176,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -2172,7 +2189,8 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             blob_delete_type=blob_delete_type,
-            version=self._config.version,
+            access_tier_if_modified_since=access_tier_if_modified_since,
+            access_tier_if_unmodified_since=access_tier_if_unmodified_since,
             headers=_headers,
             params=_params,
         )
@@ -2239,10 +2257,10 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_undelete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2320,11 +2338,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_expiry_request(
             url=self._config.url,
             expiry_options=expiry_options,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             expires_on=expires_on,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2433,6 +2451,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_http_headers_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             blob_cache_control=_blob_cache_control,
             blob_content_type=_blob_content_type,
@@ -2448,7 +2467,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             blob_content_disposition=_blob_content_disposition,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2550,6 +2568,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_immutability_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             if_unmodified_since=_if_unmodified_since,
@@ -2558,7 +2577,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2646,12 +2664,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_delete_immutability_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2737,12 +2755,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_legal_hold_request(
             url=self._config.url,
             legal_hold=legal_hold,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
             version_id=version_id,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2860,6 +2878,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
@@ -2874,7 +2893,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2983,6 +3001,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -2994,7 +3013,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3088,6 +3106,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -3097,7 +3116,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3190,6 +3208,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -3199,7 +3218,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3299,6 +3317,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -3308,7 +3327,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3407,6 +3425,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -3417,7 +3436,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3536,6 +3554,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_create_snapshot_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             encryption_key=_encryption_key,
@@ -3550,7 +3569,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3590,7 +3608,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def start_copy_from_url(  # pylint: disable=inconsistent-return-statements
+    def start_copy_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -3706,6 +3724,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_start_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             tier=tier,
@@ -3727,7 +3746,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             immutability_policy_expiry=immutability_policy_expiry,
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -3765,7 +3783,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def copy_from_url(  # pylint: disable=inconsistent-return-statements
+    def copy_from_url(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         copy_source: str,
         timeout: Optional[int] = None,
@@ -3897,6 +3915,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_copy_from_url_request(
             url=self._config.url,
             copy_source=copy_source,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             tier=tier,
@@ -3921,7 +3940,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             copy_source_tags=copy_source_tags,
             file_request_intent=file_request_intent,
             x_ms_requires_sync=x_ms_requires_sync,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -4019,12 +4037,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_abort_copy_from_url_request(
             url=self._config.url,
             copy_id=copy_id,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -4133,6 +4151,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         _request = build_set_tier_request(
             url=self._config.url,
             tier=tier,
+            version=self._config.version,
             snapshot=snapshot,
             version_id=version_id,
             timeout=timeout,
@@ -4141,7 +4160,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             lease_id=_lease_id,
             if_tags=_if_tags,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -4208,11 +4226,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -4333,6 +4351,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_query_request(
             url=self._config.url,
+            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             lease_id=_lease_id,
@@ -4347,7 +4366,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             request_id_parameter=request_id_parameter,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4576,6 +4594,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_get_tags_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             snapshot=snapshot,
@@ -4587,7 +4606,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_match=_if_match,
             if_none_match=_if_none_match,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -4708,6 +4726,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         _request = build_set_tags_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             version_id=version_id,
             transactional_content_md5=transactional_content_md5,
@@ -4721,7 +4740,6 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             if_none_match=_if_none_match,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,

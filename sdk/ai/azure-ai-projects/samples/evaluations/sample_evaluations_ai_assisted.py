@@ -7,7 +7,8 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list evaluation and and eval runs.
+    `openai.evals.*` methods to create, get and list evaluation and eval runs
+    with AI-assisted evaluators (Similarity, ROUGE, METEOR, GLEU, F1, BLEU).
 
 USAGE:
     python sample_evaluations_ai_assisted.py
@@ -20,53 +21,33 @@ USAGE:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
-    3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
-    4) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
-    5) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
 """
 
 import os
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    DatasetVersion,
-)
-
 import time
 from pprint import pprint
-from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+    SourceFileContentContent,
+)
 from openai.types.eval_create_params import DataSourceConfigCustom
 from dotenv import load_dotenv
-from datetime import datetime
 
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-
 model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
-dataset_name = os.environ.get("DATASET_NAME", "")
-dataset_version = os.environ.get("DATASET_VERSION", "1")
-
-# Construct the paths to the data folder and data file used in this sample
-script_dir = os.path.dirname(os.path.abspath(__file__))
-data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
-data_file = os.path.join(data_folder, "sample_data_evaluation.jsonl")
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as client,
 ):
-
-    print("Upload a single file and create a new Dataset to reference the file.")
-    dataset: DatasetVersion = project_client.datasets.upload_file(
-        name=dataset_name or f"eval-data-{datetime.utcnow().strftime('%Y-%m-%d_%H%M%S_UTC')}",
-        version=dataset_version,
-        file_path=data_file,
-    )
-    pprint(dataset)
 
     data_source_config = DataSourceConfigCustom(
         {
@@ -133,9 +114,9 @@ with (
         },
     ]
 
-    print("Creating evaluation")
+    print("Creating evaluation with AI-assisted evaluators")
     eval_object = client.evals.create(
-        name="ai assisted evaluators test",
+        name="AI assisted evaluators test",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -146,13 +127,42 @@ with (
     print("Evaluation Response:")
     pprint(eval_object_response)
 
-    print("Creating evaluation run")
+    print("Creating evaluation run with inline data")
     eval_run_object = client.evals.runs.create(
         eval_id=eval_object.id,
-        name="dataset",
-        metadata={"team": "eval-exp", "scenario": "notifications-v1"},
+        name="inline_data_ai_assisted_run",
+        metadata={"team": "eval-exp", "scenario": "ai-assisted-inline-v1"},
         data_source=CreateEvalJSONLRunDataSourceParam(
-            source=SourceFileID(id=dataset.id or "", type="file_id"), type="jsonl"
+            type="jsonl",
+            source=SourceFileContent(
+                type="file_content",
+                content=[
+                    SourceFileContentContent(
+                        item={
+                            "response": "The capital of France is Paris, which is also known as the City of Light.",
+                            "ground_truth": "Paris is the capital of France.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "response": "Python is a high-level programming language known for its simplicity and readability.",
+                            "ground_truth": "Python is a popular programming language that is easy to learn.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "response": "Machine learning is a subset of artificial intelligence that enables systems to learn from data.",
+                            "ground_truth": "Machine learning allows computers to learn from data without being explicitly programmed.",
+                        }
+                    ),
+                    SourceFileContentContent(
+                        item={
+                            "response": "The sun rises in the east and sets in the west due to Earth's rotation.",
+                            "ground_truth": "The sun appears to rise in the east and set in the west because of Earth's rotation.",
+                        }
+                    ),
+                ],
+            ),
         ),
     )
     print(f"Eval Run created")
@@ -173,9 +183,6 @@ with (
 
         time.sleep(5)
         print("Waiting for evaluation run to complete...")
-
-    project_client.datasets.delete(name=dataset.name, version=dataset.version)
-    print("Dataset deleted")
 
     client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

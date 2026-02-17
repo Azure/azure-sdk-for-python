@@ -99,16 +99,14 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        poller = await client.begin_upload_test_file(
+        result = await client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
-        result = await poller.result()
-        assert poller.status() is not None
         assert result is not None
-        assert poller.done() is True
+        assert result.validation_status is not None
 
         await self.close_admin_client()
 
@@ -165,6 +163,10 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
                 "components": {
                     loadtesting_app_component_id: {
                         "resourceId": loadtesting_app_component_id,
+                        "resourceName": "ado-sampleapp",
+                        "resourceType": "Microsoft.Insights/components",
+                        "resourceGroup": "nikita-rg",
+                        "subscriptionId": "7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a"
                         "resourceName": "ado-sampleapp",
                         "resourceType": "Microsoft.Insights/components",
                         "resourceGroup": "nikita-rg",
@@ -269,6 +271,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
         result = await client.get_trigger(trigger_id)
         assert result is not None
 
+
         await self.close_admin_client()
 
     @LoadTestingPreparer()
@@ -345,6 +348,7 @@ class TestLoadTestAdministrationOperations(LoadTestingAsyncTest):
 
         await self.close_admin_client()
 
+    # Test Plan Recommendations Test
     @LoadTestingPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio

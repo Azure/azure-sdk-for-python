@@ -27,6 +27,7 @@ from ._key_vault._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    SNAPSHOT_REF_CONTENT_TYPE,
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
@@ -299,7 +300,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             if settings_refreshed:
                 # Configuration Settings have been refreshed
-                processed_settings = self._process_configurations(configuration_settings)
+                processed_settings = self._process_configurations(configuration_settings, client)
 
             processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
@@ -383,7 +384,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             try:
                 configuration_settings = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
                 watched_settings = self._update_watched_settings(configuration_settings)
-                processed_settings = self._process_configurations(configuration_settings)
+                processed_settings = self._process_configurations(configuration_settings, client)
 
                 if self._feature_flag_enabled:
                     feature_flags: List[FeatureFlagConfigurationSetting] = client.load_feature_flags(
@@ -422,27 +423,69 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 is_failover_request = True
         raise exception
 
-    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+    def _expand_snapshot_references(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> List[ConfigurationSetting]:
+        """
+        Expands snapshot references in configuration settings to their actual settings.
+
+        :param configuration_settings: List of configuration settings that may contain snapshot references.
+        :type configuration_settings: List[~azure.appconfiguration.ConfigurationSetting]
+        :param client: The configuration client used to resolve snapshot references.
+        :type client: ~azure.appconfiguration.provider.ConfigurationClient
+        :return: List of configuration settings with snapshot references expanded.
+        :rtype: List[~azure.appconfiguration.ConfigurationSetting]
+        """
+        expanded_settings: List[ConfigurationSetting] = []
+
+        for setting in configuration_settings:
+            if SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
+                # Check if this is a snapshot reference
+
+                # Track snapshot reference usage for telemetry
+                self._tracing_context.uses_snapshot_reference = True
+                try:
+                    # Resolve the snapshot reference to actual settings
+                    expanded_settings.extend(client.resolve_snapshot_reference(setting))
+                except AzureError as e:
+                    logger.warning(
+                        "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
+                        setting.key,
+                        setting.label,
+                        str(e),
+                    )
+                    raise e
+            else:
+                expanded_settings.append(setting)
+
+        return expanded_settings
+
+    def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> Dict[str, Any]:
+        # Snapshot references must be expanded in place to support override by key ordering.
+        expanded_settings = self._expand_snapshot_references(configuration_settings, client)
+
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
-        unique_settings = self._deduplicate_settings(configuration_settings)
+        unique_settings = self._deduplicate_settings(expanded_settings)
 
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in unique_settings.values():
+        for setting in unique_settings:
             if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
-                self._configuration_mapper(settings)
-            if isinstance(settings, FeatureFlagConfigurationSetting):
+                self._configuration_mapper(setting)
+            if isinstance(setting, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
-                feature_flag_value = self._process_feature_flag(settings)
+                feature_flag_value = self._process_feature_flag(setting)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
-                    self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
+                    self._watched_feature_flags[(setting.key, setting.label)] = setting.etag
             else:
-                key = self._process_key_name(settings)
-                value = self._process_key_value(settings)
+                key = self._process_key_name(setting)
+                value = self._process_key_value(setting)
                 configuration_settings_processed[key] = value
         return configuration_settings_processed
 

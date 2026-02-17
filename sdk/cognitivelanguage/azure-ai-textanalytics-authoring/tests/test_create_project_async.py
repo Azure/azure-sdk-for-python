@@ -26,7 +26,7 @@ class TestConversationsCaseAsync(AzureRecordedTestCase):
     @pytest.mark.asyncio
     async def test_create_project_async(self, authoring_endpoint, authoring_key):
         async with TextAuthoringClient(authoring_endpoint, AzureKeyCredential(authoring_key)) as authoring_client:
-            project_name = "MyTextProject0902"
+            project_name = "MyTextProject0902Async"
 
             # Arrange
             body = CreateProjectOptions(

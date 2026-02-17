@@ -88,16 +88,14 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        poller = client.begin_upload_test_file(
+        result = client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
-        result = poller.result(1000)
-        assert poller.status() is not None
         assert result is not None
-        assert poller.done() is True
+        assert result.validation_status is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy

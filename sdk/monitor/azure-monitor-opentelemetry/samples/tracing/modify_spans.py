@@ -4,11 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 from opentelemetry.sdk.trace import SpanProcessor
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 
+# pylint: disable=protected-access
 # Define a custom processor to modify your spans
 class SpanEnrichingProcessor(SpanProcessor):
     def on_end(self, span):

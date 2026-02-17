@@ -220,7 +220,7 @@ class LoadTestAdministrationClientOperationsMixin(GeneratedAdministrationClientO
         polling_interval = kwargs.pop("_polling_interval", None)
         if polling_interval is None:
             polling_interval = 5
-        upload_test_file_operation = super()._begin_upload_test_file(
+        upload_test_file_operation = super().begin_upload_test_file(
             test_id=test_id, file_name=file_name, file_type=file_type, body=body, **kwargs
         )
 
@@ -367,7 +367,7 @@ class LoadTestRunClientOperationsMixin(GeneratedRunClientOperations):
         if polling_interval is None:
             polling_interval = 5
 
-        create_or_update_test_run_operation = super()._begin_test_run(
+        create_or_update_test_run_operation = super().begin_test_run(
             test_run_id, body, old_test_run_id=old_test_run_id, **kwargs
         )
         command = partial(self.get_test_run, test_run_id=test_run_id)

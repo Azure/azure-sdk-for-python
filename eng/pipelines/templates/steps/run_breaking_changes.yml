@@ -11,7 +11,6 @@ steps:
       scriptPath: 'eng/scripts/dispatch_checks.py'
       arguments: >-
         "$(TargetingString)"
-        --mark_arg="${{ parameters.TestMarkArgument }}"
         --service="${{ parameters.ServiceDirectory }}"
         --checks="breaking"
         --disable-compatibility-filter

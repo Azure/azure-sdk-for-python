@@ -85,16 +85,14 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        poller = await client.begin_upload_test_file(
+        result = await client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
-        result = await poller.result()
-        assert poller.status() is not None
         assert result is not None
-        assert poller.done() is True
+        assert result.validation_status is not None
 
         await self.close_admin_client()
 
@@ -107,6 +105,10 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         result = await client.get_test_file(loadtesting_test_id, "sample.jmx")
         assert result is not None
 
+        # wait for validation to complete before closing the client
+        while result.validation_status not in ["VALIDATION_NOT_REQUIRED", "VALIDATION_FAILURE", "VALIDATION_SUCCESS"]:
+            result = await client.get_test_file(loadtesting_test_id, "sample.jmx")
+
         await self.close_admin_client()
 
     @LoadTestingPreparer()
@@ -116,7 +118,7 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        run_poller = await run_client.begin_test_run(
+        run_result = await run_client.begin_test_run(
             loadtesting_test_run_id,
             {
                 "testId": loadtesting_test_id,
@@ -124,12 +126,9 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
             },
         )
 
-        result = await run_poller.result()
-        assert result is not None
+        assert run_result is not None
 
-        assert run_poller.status() is not None
-        assert run_poller.done() is True
-
+        assert run_result.status is not None
         await self.close_run_client()
 
     @LoadTestingPreparer()
@@ -142,6 +141,9 @@ class TestLoadTestRunOperations(LoadTestingAsyncTest):
         result = await run_client.get_test_run(loadtesting_test_run_id)
         assert result is not None
 
+        # wait for test run to complete before closing the client 
+        while result.status not in ["DONE", "FAILED", "CANCELLED"]:
+            result = await run_client.get_test_run(loadtesting_test_run_id)
         await self.close_run_client()
 
     @LoadTestingPreparer()

@@ -199,8 +199,8 @@ class TestOutputAudioFormat:
     def test_pcm_formats(self):
         """Test PCM format values."""
         assert OutputAudioFormat.PCM16 == "pcm16"
-        assert OutputAudioFormat.PCM16_8000_HZ == "pcm16-8000hz"
-        assert OutputAudioFormat.PCM16_16000_HZ == "pcm16-16000hz"
+        assert OutputAudioFormat.PCM16_8000_HZ == "pcm16_8000hz"
+        assert OutputAudioFormat.PCM16_16000_HZ == "pcm16_16000hz"
 
     def test_g711_formats(self):
         """Test G.711 format values."""

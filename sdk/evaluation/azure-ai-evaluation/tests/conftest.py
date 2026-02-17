@@ -218,6 +218,22 @@ def add_sanitizers(
         ]
         add_remove_header_sanitizer(headers=",".join(headers_to_ignore))
 
+        # Sanitize the aml-user-token header to prevent recording mismatches
+        add_header_regex_sanitizer(key="aml-user-token", regex="^.*$", value="YOU SHALL NOT PASS")
+
+        # Sanitize the category field in sync_evals requests to handle taxonomy variations
+        # The category comes from risk_sub_type/taxonomy and can vary between live and playback
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.properties.category", value="sanitized_category"
+        )
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.properties.taxonomy", value="sanitized_taxonomy"
+        )
+
+        # Sanitize the response field in sync_evals requests to handle variable content
+        # The response can include conversation_objective which varies per attack
+        add_body_key_sanitizer(json_path="$.data_source.source.content.item.response", value="sanitized_response")
+
     azure_workspace_triad_sanitizer()
     azureopenai_connection_sanitizer()
     openai_stainless_default_headers()

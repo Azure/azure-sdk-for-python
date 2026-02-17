@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
-from azure.appconfiguration.provider import load, SettingSelector
 import os
 from sample_utilities import get_authority, get_credential, get_client_modifications
+from azure.appconfiguration.provider import load, SettingSelector
 
 endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 key_vault_uri = os.environ["KEYVAULT_URL"]

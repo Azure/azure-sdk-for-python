@@ -78,16 +78,14 @@ class TestLoadTestRunOperations(LoadTestingTest):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        poller = client.begin_upload_test_file(
+        result = client.begin_upload_test_file(
             loadtesting_test_id,
             "sample.jmx",
             open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"),
         )
 
-        result = poller.result(1000)
-        assert poller.status() is not None
         assert result is not None
-        assert poller.done() is True
+        assert result.validation_status is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
@@ -96,6 +94,11 @@ class TestLoadTestRunOperations(LoadTestingTest):
 
         client = self.create_administration_client(loadtesting_endpoint)
         result = client.get_test_file(loadtesting_test_id, "sample.jmx")
+
+        # wait for validation to complete before closing the client
+        while result.validation_status not in ["VALIDATION_NOT_REQUIRED", "VALIDATION_FAILURE", "VALIDATION_SUCCESS"]:
+            result = client.get_test_file(loadtesting_test_id, "sample.jmx")
+
         assert result is not None
 
     @LoadTestingPreparer()
@@ -105,7 +108,7 @@ class TestLoadTestRunOperations(LoadTestingTest):
 
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        run_poller = run_client.begin_test_run(
+        result = run_client.begin_test_run(
             loadtesting_test_run_id,
             {
                 "testId": loadtesting_test_id,
@@ -113,11 +116,9 @@ class TestLoadTestRunOperations(LoadTestingTest):
             },
         )
 
-        result = run_poller.result(10800)
         assert result is not None
 
-        assert run_poller.status() is not None
-        assert run_poller.done() is True
+        assert result.status is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
@@ -127,7 +128,10 @@ class TestLoadTestRunOperations(LoadTestingTest):
         run_client = self.create_run_client(loadtesting_endpoint)
 
         result = run_client.get_test_run(loadtesting_test_run_id)
-        assert result is not None
+        
+        # wait for test run to complete before closing the client 
+        while result.status not in ["DONE", "FAILED", "CANCELLED"]:
+            result = run_client.get_test_run(loadtesting_test_run_id)
 
     @LoadTestingPreparer()
     @recorded_by_proxy
@@ -259,7 +263,7 @@ class TestLoadTestRunOperations(LoadTestingTest):
         test_run_id = "sample-test-run-3"
         run_client = self.create_run_client(loadtesting_endpoint)
 
-        run_poller = run_client.begin_test_run(
+        run_client.begin_test_run(
             test_run_id,
             {
                 "testId": loadtesting_test_id,

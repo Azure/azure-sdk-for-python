@@ -97,7 +97,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -138,7 +138,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -151,7 +151,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True, write=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
@@ -193,7 +193,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -206,7 +206,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True, write=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
@@ -242,7 +242,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             blob_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             permission=BlobSasPermissions(read=True, write=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE_2,
@@ -272,7 +272,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -314,7 +314,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # create_blob_from_bytes forces the in-memory chunks to be used
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -354,7 +354,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Act
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -388,7 +388,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -460,7 +460,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -494,7 +494,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -547,7 +547,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -581,7 +581,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -617,7 +617,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -670,7 +670,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -706,7 +706,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -748,7 +748,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            storage_account_key,
+            storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -775,7 +775,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -803,7 +803,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -814,7 +814,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             generate_container_sas,
             storage_account_name,
             self.container_name,
-            storage_account_key,
+            storage_account_key.secret,
             permission=ContainerSasPermissions(read=True, write=True, list=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE
@@ -835,7 +835,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             generate_container_sas,
             storage_account_name,
             self.container_name,
-            storage_account_key,
+            storage_account_key.secret,
             permission=ContainerSasPermissions(read=True, write=True, list=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE_2
@@ -870,7 +870,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -891,7 +891,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         sas_token2 = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -929,7 +929,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         sas_token = self.generate_sas(
             generate_account_sas,
             storage_account_name,
-            account_key=storage_account_key,
+            account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
@@ -947,7 +947,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -1022,7 +1022,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,
@@ -1059,7 +1059,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
+            credential=storage_account_key.secret,
             max_single_put_size=1024,
             min_large_block_upload_threshold=1024,
             max_block_size=1024,

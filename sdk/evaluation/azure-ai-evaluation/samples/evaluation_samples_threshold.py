@@ -10,7 +10,7 @@
 """
 DESCRIPTION:
     These samples demonstrate usage of various classes and methods used to perform evaluation with thresholds in the azure-ai-evaluation library.
-    
+
 USAGE:
     python evaluation_samples_threshold.py
 

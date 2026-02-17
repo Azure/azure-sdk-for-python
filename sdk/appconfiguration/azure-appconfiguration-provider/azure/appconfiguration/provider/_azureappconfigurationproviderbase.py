@@ -114,16 +114,6 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     if kwargs.get("keyvault_credential") is not None and kwargs.get("secret_resolver") is not None:
         raise ValueError("A keyvault credential and secret resolver can't both be configured.")
 
-    # Validate feature flag selectors don't use snapshots
-    feature_flag_selectors = kwargs.get("feature_flag_selectors")
-    if feature_flag_selectors:
-        for selector in feature_flag_selectors:
-            if hasattr(selector, "snapshot_name") and selector.snapshot_name is not None:
-                raise ValueError(
-                    "snapshot_name cannot be used with feature_flag_selectors. "
-                    "Use snapshot_name with regular selects instead to load feature flags from snapshots."
-                )
-
     # Determine Key Vault usage
     uses_key_vault = (
         "keyvault_credential" in kwargs
@@ -177,6 +167,7 @@ def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, s
 
 def sdk_allowed_kwargs(kwargs):
     allowed_kwargs = [
+        "audience",
         "headers",
         "request_id",
         "user_agent",
@@ -230,7 +221,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
-        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", [SettingSelector(key_filter="*")])
+        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", None)
+        if self._feature_flag_selectors is None:
+            self._feature_flag_selectors = [SettingSelector(key_filter="*")]
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
@@ -501,10 +494,14 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         return processed_settings
 
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
-        feature_flag_value = json.loads(feature_flag.value)
-        self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._tracing_context.update_feature_filter_telemetry(feature_flag)
-        return feature_flag_value
+        try:
+            feature_flag_value = json.loads(feature_flag.value)
+            self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
+            self._tracing_context.update_feature_filter_telemetry(feature_flag)
+            return feature_flag_value
+        except json.JSONDecodeError:
+            # Feature flag value is not a valid JSON
+            return {}
 
     def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]
@@ -568,17 +565,15 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             is_failover_request=is_failover_request,
         )
 
-    def _deduplicate_settings(
-        self, configuration_settings: List[ConfigurationSetting]
-    ) -> Dict[str, ConfigurationSetting]:
+    def _deduplicate_settings(self, configuration_settings: List[ConfigurationSetting]) -> List[ConfigurationSetting]:
         """
         Deduplicates configuration settings by key.
 
         :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
-        :return: A dictionary mapping keys to their unique configuration settings
-        :rtype: Dict[str, ConfigurationSetting]
+        :return: A list of unique configuration settings
+        :rtype: List[ConfigurationSetting]
         """
         unique_settings: Dict[str, ConfigurationSetting] = {}
         for settings in configuration_settings:
             unique_settings[settings.key] = settings
-        return unique_settings
+        return list(unique_settings.values())

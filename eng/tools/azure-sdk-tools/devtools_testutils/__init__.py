@@ -16,7 +16,7 @@ from .storage_testcase import (
 )
 
 # cSpell:disable
-from .envvariable_loader import EnvironmentVariableLoader
+from .envvariable_loader import EnvironmentVariable, EnvironmentVariableLoader, EnvironmentVariableOptions
 from .exceptions import AzureTestError, ReservedResourceNameError
 from .proxy_fixtures import environment_variables, recorded_test, variable_recorder
 from .proxy_startup import start_test_proxy, stop_test_proxy, test_proxy
@@ -102,7 +102,9 @@ __all__ = [
     "CachedResourceGroupPreparer",
     "PemCertificate",
     "PowerShellPreparer",
+    "EnvironmentVariable",
     "EnvironmentVariableLoader",
+    "EnvironmentVariableOptions",
     "environment_variables",
     "recorded_by_proxy",
     "RecordedTransport",

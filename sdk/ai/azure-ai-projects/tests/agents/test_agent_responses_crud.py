@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseTextFormatConfigurationJsonSchema,
+    TextResponseFormatJsonSchema,
     PromptAgentDefinitionText,
 )
 
@@ -176,9 +176,7 @@ class TestAgentResponsesCrud(TestBase):
             definition=PromptAgentDefinition(
                 model=model,
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
-                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
-                    )
+                    format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
                     You are a helpful assistant that extracts calendar event information from the input user messages,

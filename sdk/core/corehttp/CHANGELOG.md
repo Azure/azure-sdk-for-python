@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b7 (2026-02-05)
 
 ### Features Added
 
@@ -12,10 +12,19 @@
   - `DistributedHttpTracingPolicy` and `distributed_trace`/`distributed_trace_async` decorators were added to support OpenTelemetry tracing for SDK operations.
     - SDK clients can define an `_instrumentation_config` class variable to configure the OpenTelemetry tracer used in method span creation. Possible configuration options are `library_name`, `library_version`, `schema_url`, and `attributes`.
 - Added a global settings object, `corehttp.settings`, to the `corehttp` package. This object can be used to set global settings for the `corehttp` package. Currently the only setting is `tracing_enabled` for enabling/disabling tracing. [#39172](https://github.com/Azure/azure-sdk-for-python/pull/39172)
-
-### Breaking Changes
+- Added `start_time` and `context` keyword arguments to `OpenTelemetryTracer.start_span` and `start_as_current_span` methods.
+- Added `set_span_error_status` static method to `OpenTelemetryTracer` for setting a span's status to ERROR.
+- Added `is_generated_model`, `attribute_list`, and `TypeHandlerRegistry` to `corehttp.serialization` module for SDK model handling.
 
 ### Bugs Fixed
+
+- Fixed `retry_backoff_max` being ignored in retry policies when configuring retries.
+- Raise correct exception if transport is used while already closed.
+- A timeout error when using the `aiohttp` transport will now be raised as a `corehttp.exceptions.ServiceResponseTimeoutError`, a subtype of the previously raised `ServiceResponseError`.
+- When using with `aiohttp` 3.10 or later, a connection timeout error will now be raised as a `corehttp.exceptions.ServiceRequestTimeoutError`, which can be retried.
+- Fixed leaked requests and aiohttp exceptions for streamed responses.
+- Improved granularity of `ServiceRequestError` and `ServiceResponseError` exceptions raised in timeout scenarios from the requests and aiohttp transports.
+- `BearerTokenCredentialPolicy` and `AsyncBearerTokenCredentialPolicy` will now properly chain exceptions raised during claims challenge handling. If a credential raises an exception when attempting to acquire a token in response to a claims challenge, that exception will be raised with the original 401 response as the cause.
 
 ### Other Changes
 

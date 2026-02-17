@@ -11,7 +11,7 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
     - [Dependency installation](#dependency-installation)
     - [Open code in IDE](#open-code-in-ide)
   - [Integrate with the pytest test framework](#integrate-with-the-pytest-test-framework)
-  - [Tox](#tox)
+  - [Running Checks Locally](#running-checks-locally)
   - [The `devtools_testutils` package](#the-devtools_testutils-package)
   - [Write or run tests](#write-or-run-tests)
     - [Set up test resources](#set-up-test-resources)
@@ -119,34 +119,33 @@ If you have print statements in your tests for debugging you can add the `-s` fl
 (env) azure-sdk-for-python\sdk\my-service\my-package> pytest <test_file.py> -s
 ```
 
-## Tox
+## Running Checks Locally
 
-The Python SDK uses the [tox project](https://tox.wiki/en/latest/) to automate releases, run tests, run linters, and build our documentation. The `tox.ini` file is located at `azure-sdk-for-python/eng/tox/tox.ini` for reference. You do not need to make any changes to the tox file for tox to work with your project. Tox will create a directory (`.tox`) in the head of your branch. The first time you run tox commands it may take several moments, but subsequent runs will be quicker. To install tox run the following command from within your virtual environment.
-`(env) > pip install "tox<5"`.
+The Python SDK uses the `azpysdk` CLI to run linters, type checkers, tests, and build documentation. The `azpysdk` entrypoint is provided by the `eng/tools/azure-sdk-tools` package and is installed as part of each package's `dev_requirements.txt`. For full setup instructions and the list of available checks, see the [Tool Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md).
 
-To run a tox command from your directory use the following commands:
+To run checks from your package directory:
 
 ```cmd
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sphinx -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pylint -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e mypy -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e pyright -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e verifytypes -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e whl -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e sdist -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e samples -c ../../../eng/tox/tox.ini --root .
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox run -e apistub -c ../../../eng/tox/tox.ini --root .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk sphinx .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk pylint .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk mypy .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk pyright .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk verifytypes .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk verifywhl .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk verifysdist .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk samples .
+(env) azure-sdk-for-python\sdk\my-service\my-package> azpysdk apistub .
 ```
 
-A quick description of the nine commands above:
+A quick description of the commands above:
 
 - sphinx: documentation generation using the inline comments written in our code
-- lint: runs pylint to make sure our code adheres to the style guidance
+- pylint: runs pylint to make sure our code adheres to the style guidance
 - mypy: runs the mypy static type checker for Python to make sure that our types are valid.
 - pyright: runs the pyright static type checker for Python to make sure that our types are valid.
 - verifytypes: runs pyright's verifytypes tool to verify the type completeness of the library.
-- whl: creates a whl package for installing our package
-- sdist: creates a zipped distribution of our files that the end user could install with pip
+- verifywhl: verifies the wheel contents and manifest
+- verifysdist: verifies the sdist contents and manifest
 - samples: runs all of the samples in the `samples` directory and verifies they are working correctly
 - apistub: runs the [apistubgenerator](https://github.com/Azure/azure-sdk-tools/tree/main/packages/python-packages/apiview-stub-generator) tool on your code
 
@@ -445,6 +444,7 @@ There are two primary ways to keep secrets from being written into recordings:
 
 1. The `EnvironmentVariableLoader` will automatically sanitize the values of captured environment variables with the
    provided fake values.
+    1. For sensitive variables, also [use the `options` argument][env_var_options] to shield values in test logs.
 2. Additional sanitizers can be registered via `add_*_sanitizer` methods in `devtools_testutils`. For example, the general-use
    method for sanitizing recording bodies, headers, and URIs is `add_general_string_sanitizer`. Other sanitizers are
    available for more specific scenarios and can be found at [devtools_testutils/sanitizers.py][py_sanitizers].
@@ -582,6 +582,7 @@ For information about more advanced testing scenarios, refer to the [advanced te
 [central_conftest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/conftest.py
 [env_var_docs]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#use-the-environmentvariableloader
 [env_var_loader]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tools/azure-sdk-tools/devtools_testutils/envvariable_loader.py
+[env_var_options]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils#hide-secret-environment-variables-in-test-logs
 [get_credential]: https://github.com/Azure/azure-sdk-for-python/blob/4df650d2ce4c292942009ed648cae21eb9c2121d/eng/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L78
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json
