@@ -15,14 +15,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import LoadTestAdministrationClientConfiguration, LoadTestRunClientConfiguration
-from ._operations import _LoadTestAdministrationClientOperationsMixin, _LoadTestRunClientOperationsMixin
+from ._operations import LoadTestAdministrationClientOperationsMixin, _LoadTestRunClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class LoadTestAdministrationClient(_LoadTestAdministrationClientOperationsMixin):
+class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
     """LoadTestAdministrationClient.
 
     :param endpoint: Required.

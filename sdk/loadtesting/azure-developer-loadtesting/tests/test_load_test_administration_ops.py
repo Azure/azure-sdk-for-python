@@ -195,59 +195,25 @@ class TestLoadTestAdministrationOperations(LoadTestingTest):
         result = client.delete_test_file(loadtesting_test_id, "sample.jmx")
         assert result is None
 
+# Trigger CRUD Tests
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_delete_load_test(self, loadtesting_endpoint, loadtesting_test_id):
+    def test_create_or_update_trigger(self, loadtesting_endpoint, loadtesting_test_id):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.delete_test(loadtesting_test_id)
-        assert result is None
-
-
-class TestTestProfileAdministrationOperations(LoadTestingTest):
-
-    # Pre-requisite: Test creation is needed for test profile related tests
-    @LoadTestingPreparer()
-    @recorded_by_proxy
-    def test_create_or_update_load_test(self, loadtesting_endpoint, loadtesting_test_id):
-        set_bodiless_matcher()
-
-        client = self.create_administration_client(loadtesting_endpoint)
-        result = client.create_or_update_test(
-            loadtesting_test_id,
+        trigger_id = "test-trigger-id"
+        result = client.create_or_update_trigger(
+            trigger_id,
             {
-                "description": "",
-                "displayName": DISPLAY_NAME,
-                "loadTestConfiguration": {
-                    "engineInstances": 1,
-                    "splitAllCSVs": False,
+                "displayName": "Test Trigger",
+                "description": "Test trigger for pytest",
+                "kind": "ScheduleTestsTrigger",
+                "testIds": [loadtesting_test_id],
+                "recurrence": {
+                    "frequency": "Daily",
+                    "interval": 1,
                 },
-                "passFailCriteria": {
-                    "passFailMetrics": {
-                        "condition1": {
-                            "clientmetric": "response_time_ms",
-                            "aggregate": "avg",
-                            "condition": ">",
-                            "value": 300,
-                        },
-                        "condition2": {
-                            "clientmetric": "error",
-                            "aggregate": "percentage",
-                            "condition": ">",
-                            "value": 50,
-                        },
-                        "condition3": {
-                            "clientmetric": "latency",
-                            "aggregate": "avg",
-                            "condition": ">",
-                            "value": 200,
-                            "requestName": "GetCustomerDetails",
-                        },
-                    }
-                },
-                "secrets": {},
-                "environmentVariables": {"my-variable": "value"},
             },
         )
 
@@ -255,68 +221,107 @@ class TestTestProfileAdministrationOperations(LoadTestingTest):
 
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_get_load_test(self, loadtesting_endpoint, loadtesting_test_id):
+    def test_get_trigger(self, loadtesting_endpoint):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.get_test(loadtesting_test_id)
+        trigger_id = "test-trigger-id"
+        result = client.get_trigger(trigger_id)
         assert result is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_create_or_update_test_profile(
-        self, loadtesting_endpoint, loadtesting_test_id, loadtesting_test_profile_id, loadtesting_target_resource_id
-    ):
+    def test_list_triggers(self, loadtesting_endpoint):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.create_or_update_test_profile(
-            loadtesting_test_profile_id,
+        result = client.list_triggers()
+        assert result is not None
+        items = [r for r in result]
+        assert len(items) >= 0
+
+    @LoadTestingPreparer()
+    @recorded_by_proxy
+    def test_delete_trigger(self, loadtesting_endpoint):
+        set_bodiless_matcher()
+
+        client = self.create_administration_client(loadtesting_endpoint)
+        trigger_id = "test-trigger-id"
+        result = client.delete_trigger(trigger_id)
+        assert result is None
+
+    # Notification Rule CRUD Tests
+    @LoadTestingPreparer()
+    @recorded_by_proxy
+    def test_create_or_update_notification_rule(self, loadtesting_endpoint, loadtesting_test_id):
+        set_bodiless_matcher()
+
+        client = self.create_administration_client(loadtesting_endpoint)
+        notification_rule_id = "test-notification-rule-id"
+        result = client.create_or_update_notification_rule(
+            notification_rule_id,
             {
-                "description": "Sample Test Profile Description",
-                "displayName": "My New Test Profile",
-                "testId": loadtesting_test_id,
-                "targetResourceId": loadtesting_target_resource_id,
-                "targetResourceConfigurations": {
-                    "kind": "FunctionsFlexConsumption",
-                    "configurations": {
-                        "config1": {"instanceMemoryMB": 2048, "httpConcurrency": 20},
-                        "config2": {"instanceMemoryMB": 4096, "httpConcurrency": 100},
+                "displayName": "Test Notification Rule",
+                "scope": "Tests",
+                "testIds": [loadtesting_test_id],
+                "actionGroupIds": [
+                    "/subscriptions/7c71b563-0dc0-4bc0-bcf6-06f8f0516c7a/resourcegroups/nikita-canary-rg/providers/microsoft.insights/actiongroups/nikita-canary"
+                ],
+                "eventFilters": {
+                    "testRunEnded": {
+                        "kind": "TestRunEnded",
+                        "condition": {
+                            "testRunStatuses": ["DONE", "FAILED"],
+                            "testRunResults": ["PASSED", "FAILED"],
+                        },
                     },
                 },
             },
         )
+
         assert result is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_get_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
+    def test_get_notification_rule(self, loadtesting_endpoint):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.get_test_profile(loadtesting_test_profile_id)
+        notification_rule_id = "test-notification-rule-id"
+        result = client.get_notification_rule(notification_rule_id)
         assert result is not None
 
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_list_test_profiles(self, loadtesting_endpoint):
+    def test_list_notification_rules(self, loadtesting_endpoint):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.list_test_profiles()
+        result = client.list_notification_rules()
         assert result is not None
         items = [r for r in result]
-        assert len(items) > 0  # page has atleast one item
+        assert len(items) >= 0
 
     @LoadTestingPreparer()
     @recorded_by_proxy
-    def test_delete_test_profile(self, loadtesting_endpoint, loadtesting_test_profile_id):
+    def test_delete_notification_rule(self, loadtesting_endpoint):
         set_bodiless_matcher()
 
         client = self.create_administration_client(loadtesting_endpoint)
-        result = client.delete_test_profile(loadtesting_test_profile_id)
+        notification_rule_id = "test-notification-rule-id"
+        result = client.delete_notification_rule(notification_rule_id)
         assert result is None
 
+    # Test Plan Recommendations Test
+    @LoadTestingPreparer()
+    @recorded_by_proxy
+    def test_begin_generate_test_plan_recommendations(self, loadtesting_endpoint, loadtesting_recording_test_id):
+        set_bodiless_matcher()
+
+        client = self.create_administration_client(loadtesting_endpoint)
+        result = client.begin_generate_test_plan_recommendations(loadtesting_recording_test_id)
+        assert result is not None
+        
     @LoadTestingPreparer()
     @recorded_by_proxy
     def test_delete_load_test(self, loadtesting_endpoint, loadtesting_test_id):

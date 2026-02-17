@@ -16,13 +16,13 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import LoadTestAdministrationClientConfiguration, LoadTestRunClientConfiguration
-from ._operations import _LoadTestAdministrationClientOperationsMixin, _LoadTestRunClientOperationsMixin
+from ._operations import LoadTestAdministrationClientOperationsMixin, LoadTestRunClientOperationsMixin
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class LoadTestAdministrationClient(_LoadTestAdministrationClientOperationsMixin):
+class LoadTestAdministrationClient(LoadTestAdministrationClientOperationsMixin):
     """LoadTestAdministrationClient.
 
     :param endpoint: Required.
@@ -103,7 +103,7 @@ class LoadTestAdministrationClient(_LoadTestAdministrationClientOperationsMixin)
         await self._client.__aexit__(*exc_details)
 
 
-class LoadTestRunClient(_LoadTestRunClientOperationsMixin):
+class LoadTestRunClient(LoadTestRunClientOperationsMixin):
     """LoadTestRunClient.
 
     :param endpoint: Required.
