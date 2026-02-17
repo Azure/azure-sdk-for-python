@@ -18,8 +18,6 @@ from azure.ai.evaluation._common.utils import (
 )
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorMessage
 
-from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
-
 
 @pytest.mark.unittest
 class TestUtils(unittest.TestCase):
