@@ -192,12 +192,12 @@
 # AzureSdkOwners: @lmazuel
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
-/sdk/containerregistry/    @lmazuel
+/sdk/containerregistry/    @kashifkhan 
 
 # PRLabel: %Container Registry
-/sdk/containerregistry/    @YalinLi0312
 
-# AzureSdkOwners: @YalinLi0312
+
+# AzureSdkOwners: @kashifkhan 
 # ServiceLabel: %Container Registry
 # ServiceOwners: @northtyphoon @toddysm
 
@@ -332,15 +332,15 @@
 /sdk/loganalytics/    @pvaneck
 
 # PRLabel: %Monitor
-/sdk/loganalytics/azure-loganalytics/    @azmonapplicationinsights @pvaneck
+/sdk/loganalytics/azure-loganalytics/    @azmonapplicationinsights
 
 # PRLabel: %Monitor
-/sdk/monitor/    @pvaneck
+/sdk/monitor/azure-mgmt-monitor    @msyyc @lirenhe 
 
 # AzureSdkOwners: @pvaneck
 # ServiceLabel: %Monitor
 # PRLabel: %Monitor
-/sdk/monitor/azure-monitor-ingestion/    @Azure/azure-sdk-write-monitor-data-plane @pvaneck
+/sdk/monitor/azure-monitor-ingestion/    @Azure/azure-sdk-write-monitor-data-plane
 
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-query/    @Azure/azure-sdk-write-monitor-query-logs
@@ -349,7 +349,7 @@
 /sdk/monitor/azure-monitor-querymetrics/    @Azure/azure-sdk-write-monitor-query-metrics
 
 # PRLabel: %Monitor - ApplicationInsights
-/sdk/applicationinsights/azure-applicationinsights/    @azmonapplicationinsights @pvaneck
+/sdk/applicationinsights/azure-applicationinsights/    @azmonapplicationinsights
 
 # ServiceLabel: %Monitor - Distro
 # PRLabel: %Monitor - Distro
@@ -790,7 +790,7 @@
 /sdk/videoanalyzer/    @hivyas
 
 # PRLabel: %WebPubSub
-/sdk/webpubsub/    @iscai-msft @msyyc
+/sdk/webpubsub/    @Y-Sindo @cqnguy23 @chenkennt 
 
 # ServiceLabel: %SQL
 # ServiceOwners: @azureSQLGitHub
