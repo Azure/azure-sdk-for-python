@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Azure AI Search capabilities
-    using the AzureAISearchAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the AzureAISearchTool and synchronous Azure AI Projects client. The agent can search
     indexed content and provide responses with citations from search results.
 
 USAGE:
@@ -32,7 +32,7 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAISearchAgentTool,
+    AzureAISearchTool,
     PromptAgentDefinition,
     AzureAISearchToolResource,
     AISearchIndexResource,
@@ -50,7 +50,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = AzureAISearchAgentTool(
+    tool = AzureAISearchTool(
         azure_ai_search=AzureAISearchToolResource(
             indexes=[
                 AISearchIndexResource(

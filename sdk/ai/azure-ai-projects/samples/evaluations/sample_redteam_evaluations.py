@@ -19,12 +19,11 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    3) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    2) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 import os
-
+import tempfile
 from dotenv import load_dotenv
 from pprint import pprint
 from azure.ai.projects.models._models import PromptAgentDefinition
@@ -48,10 +47,6 @@ def main() -> None:
     #
     endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
     agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
-
-    # Construct the paths to the data folder and data file used in this sample
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    data_folder = os.environ.get("DATA_FOLDER", os.path.join(script_dir, "data_folder"))
 
     with (
         DefaultAzureCredential() as credential,
@@ -99,9 +94,7 @@ def main() -> None:
         )
 
         taxonomy = project_client.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
-        taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
-        # Create the data folder if it doesn't exist
-        os.makedirs(data_folder, exist_ok=True)
+        taxonomy_path = os.path.join(tempfile.gettempdir(), f"taxonomy_{agent_name}.json")
         with open(taxonomy_path, "w") as f:
             f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
         print(f"Red teaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
@@ -134,9 +127,7 @@ def main() -> None:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
             if run.status == "completed" or run.status == "failed":
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
-                output_items_path = os.path.join(data_folder, f"redteam_eval_output_items_{agent_name}.json")
-                # Create the data folder if it doesn't exist
-                os.makedirs(data_folder, exist_ok=True)
+                output_items_path = os.path.join(tempfile.gettempdir(), f"redteam_eval_output_items_{agent_name}.json")
                 with open(output_items_path, "w") as f:
                     f.write(json.dumps(_to_json_primitive(output_items), indent=2))
                 print(

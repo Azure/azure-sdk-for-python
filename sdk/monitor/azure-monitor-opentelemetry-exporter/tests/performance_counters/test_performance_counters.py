@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 import collections
-import psutil
 import unittest
 from datetime import datetime
 from unittest import mock
 from unittest.mock import MagicMock
+import psutil
 
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
@@ -44,6 +44,7 @@ from azure.monitor.opentelemetry.exporter._performance_counters._manager import 
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 
+# pylint: disable=unused-variable
 class TestPerformanceCounterFunctions(unittest.TestCase):
     """Test individual performance counter callback functions."""
 

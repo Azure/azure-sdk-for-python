@@ -31,9 +31,8 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    ResponseStreamEventType,
     WorkflowAgentDefinition,
-    ItemType,
+    ItemResourceType,
 )
 
 load_dotenv()
@@ -159,9 +158,8 @@ trigger:
         async for event in stream:
             print(f"Event {event.sequence_number} type '{event.type}'", end="")
             if (
-                event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                or event.type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE
-            ) and event.item.type == ItemType.WORKFLOW_ACTION:
+                event.type == "response.output_item.added" or event.type == "response.output_item.done"
+            ) and event.item.type == ItemResourceType.WORKFLOW_ACTION:
                 print(
                     f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
                     end="",

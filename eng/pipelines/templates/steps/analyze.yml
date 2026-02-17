@@ -26,10 +26,10 @@ steps:
         DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: PythonScript@0
-    displayName: 'Set Tox Environment Skips'
+    displayName: 'Set Checks Environment Skips'
     condition: succeededOrFailed()
     inputs:
-      scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
+      scriptPath: 'eng/scripts/set_checks.py'
       arguments: '"$(TargetingString)" --team-project="$(System.TeamProject)" --service="${{ parameters.ServiceDirectory }}"'
 
   - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
@@ -48,7 +48,7 @@ steps:
             Condition: succeededOrFailed()
 
   - script: |
-      $(PIP_EXE) install "./eng/tools/azure-sdk-tools[build]"
+      $(PIP_EXE) install "./eng/tools/azure-sdk-tools"
       sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
@@ -88,15 +88,23 @@ steps:
     displayName: 'Verify sdist'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifySdist'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verifysdist ${{ parameters.AdditionalTestArgs }}'
+     scriptPath: 'eng/scripts/dispatch_checks.py'
+     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks="verifysdist" ${{ parameters.AdditionalTestArgs }}'
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
 
   - task: PythonScript@0
     displayName: 'Verify whl'
     condition: and(succeededOrFailed(), ne(variables['Skip.VerifyWhl'],'true'))
     inputs:
-     scriptPath: 'scripts/devops_tasks/dispatch_tox.py'
-     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl ${{ parameters.AdditionalTestArgs }}'
+     scriptPath: 'eng/scripts/dispatch_checks.py'
+     arguments: '"$(TargetingString)" --disable-compatibility-filter --service=${{parameters.ServiceDirectory}} --checks="verifywhl" ${{ parameters.AdditionalTestArgs }}'
+    env:
+      TOX_PIP_IMPL: "uv"
+      VIRTUAL_ENV: ""
+      PYTHONHOME: ""
 
   - template: run_mypy.yml
     parameters:

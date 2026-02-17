@@ -44,3 +44,6 @@ pytyped = ["py.typed"]
 [tool.azure-sdk-build]
 pyright = false
 black = true
+
+[tool.azure-sdk-conda]
+in_bundle = false

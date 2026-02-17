@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/managementgroups/resource-manager/Microsoft.Management/stable/2021-04-01/examples/GetManagementGroupWithPath.json
+# x-ms-original-file: specification/management/resource-manager/Microsoft.Management/ManagementGroups/stable/2021-04-01/examples/GetManagementGroupWithPath.json
 if __name__ == "__main__":
     main()

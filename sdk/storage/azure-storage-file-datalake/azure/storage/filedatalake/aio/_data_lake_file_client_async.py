@@ -7,7 +7,7 @@
 
 from datetime import datetime
 from typing import (
-    Any, AnyStr, AsyncIterable, cast, Dict, IO, Optional, Union,
+    Any, AnyStr, AsyncIterable, cast, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -398,7 +398,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def upload_data(
-        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         **kwargs: Any
@@ -407,7 +407,7 @@ class DataLakeFileClient(PathClient):
         Upload data to a file.
 
         :param data: Content to be uploaded to file
-        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[bytes]]
         :param int length: Size of the data in bytes.
         :param bool overwrite: to overwrite an existing file or not.
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
@@ -497,7 +497,7 @@ class DataLakeFileClient(PathClient):
 
     @distributed_trace_async
     async def append_data(
-        self, data: Union[bytes, str, AsyncIterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
         **kwargs: Any
@@ -505,9 +505,11 @@ class DataLakeFileClient(PathClient):
         """Append data to the file.
 
         :param data: Content to be appended to file
-        :type data: bytes, str, AsyncIterable[AnyStr], or IO[AnyStr]
+        :type data: Union[bytes, Iterable[bytes], AsyncIterable[bytes], IO[bytes]]
         :param int offset: start position of the data to be appended to.
-        :param length: Size of the data in bytes.
+        :param length: 
+            Size of the data to append. Optional if the length of data can be determined. For Iterable and IO,
+            if the length is not provided and cannot be determined, all data will be read into memory.
         :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.

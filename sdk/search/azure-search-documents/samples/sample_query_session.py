@@ -1,24 +1,20 @@
 # coding: utf-8
 
 # -------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See License.txt in the project root for
-# license information.
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_query_session.py
 DESCRIPTION:
-    To ensure more consistent and unique search results within a user's session, you can use session id.
-    Simply include the session_id parameter in your queries to create a unique identifier for each user session.
-    This ensures a uniform experience for users throughout their "query session".
+    Demonstrates how to use session IDs for consistent scoring.
 USAGE:
     python sample_query_session.py
 
-    Set the environment variables with your own values before running the sample:
-    1) AZURE_SEARCH_SERVICE_ENDPOINT - the endpoint of your Azure Cognitive Search service
-    2) AZURE_SEARCH_INDEX_NAME - the name of your search index (e.g. "hotels-sample-index")
-    3) AZURE_SEARCH_API_KEY - your search API key
+    Set the following environment variables before running the sample:
+    1) AZURE_SEARCH_SERVICE_ENDPOINT - base URL of your Azure AI Search service
+    2) AZURE_SEARCH_INDEX_NAME - target search index name (e.g., "hotels-sample-index")
+    3) AZURE_SEARCH_API_KEY - the primary admin key for your search service
 """
 
 import os
@@ -37,9 +33,9 @@ def query_session():
 
     results = search_client.search(search_text="spa", session_id="session-1")
 
-    print("Hotels containing 'spa' in the name (or other fields):")
+    print("Results: hotels with 'spa'")
     for result in results:
-        print("    Name: {} (rating {})".format(result["hotelName"], result["rating"]))
+        print(f"  HotelName: {result['HotelName']} (rating {result['Rating']})")
     # [END query_session]
 
 

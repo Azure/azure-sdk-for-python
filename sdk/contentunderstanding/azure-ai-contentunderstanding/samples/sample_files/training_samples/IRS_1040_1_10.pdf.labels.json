@@ -1,0 +1,184 @@
+{
+    "$schema": "https://schema.ai.azure.com/mmi/2025-11-01/labels.json",
+    "fileId": "",
+    "fieldLabels": {
+        "FieldYourFirstNameAndMiddleInitial": {
+            "type": "string",
+            "valueString": "Anthony",
+            "spans": [
+                {
+                    "offset": 643,
+                    "length": 7
+                }
+            ],
+            "confidence": null,
+            "source": "D(1,0.5169,1.5941,0.9795,1.5982,0.9795,1.7254,0.516,1.7206)",
+            "kind": "confirmed",
+            "metadata": {
+                "original_label": "{\"type\":\"string\",\"content\":\"Anthony\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[0.5288,1.6137,0.9632,1.6137,0.9632,1.7194000000000003,0.5288,1.7194000000000003]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                "status": "ocr_mapped"
+            }
+        },
+        "FieldYourFirstNameAndMiddleInitialLastName": {
+            "type": "string",
+            "valueString": "Kelly",
+            "spans": [
+                {
+                    "offset": 660,
+                    "length": 5
+                }
+            ],
+            "confidence": null,
+            "source": "D(1,3.3352,1.5969,3.6136,1.5998,3.6136,1.7217,3.3347,1.7207)",
+            "kind": "confirmed",
+            "metadata": {
+                "original_label": "{\"type\":\"string\",\"content\":\"Kelly\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[3.349,1.6137,3.5921,1.6137,3.5921,1.7194000000000003,3.349,1.7194000000000003]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                "status": "ocr_mapped"
+            }
+        },
+        "FieldWagesSalariesTipsEtcAttachFormSW2": {
+            "type": "string",
+            "valueString": "2501",
+            "spans": [
+                {
+                    "offset": 3167,
+                    "length": 4
+                }
+            ],
+            "confidence": null,
+            "source": "D(1,7.7188,4.9479,7.9632,4.9485,7.9632,5.0565,7.7183,5.0562)",
+            "kind": "confirmed",
+            "metadata": {
+                "original_label": "{\"type\":\"string\",\"content\":\"2501\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[7.7308,4.9625,7.9439,4.9625,7.9439,5.0419,7.7308,5.0419]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                "status": "ocr_mapped"
+            }
+        },
+        "CheckboxYouAsADependent": {
+            "type": "boolean",
+            "valueBoolean": false,
+            "spans": [
+                {
+                    "offset": 1750,
+                    "length": 1
+                }
+            ],
+            "confidence": null,
+            "source": "D(1,2.519,3.3518,2.6497,3.3514,2.6499,3.4789,2.5197,3.48)",
+            "kind": "confirmed",
+            "metadata": {
+                "original_label": "{\"type\":\"selectionMark\",\"content\":\"unselected\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[2.5169000000000006,3.348,2.6461,3.348,2.6461,3.4745,2.5169000000000006,3.4745]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                "status": "ocr_mapped"
+            }
+        },
+        "TableDependents": {
+            "type": "array",
+            "kind": "confirmed",
+            "valueArray": [
+                {
+                    "type": "object",
+                    "kind": "confirmed",
+                    "valueObject": {
+                        "CheckboxChildTaxCredit": {
+                            "type": "boolean",
+                            "valueBoolean": false,
+                            "spans": [
+                                {
+                                    "offset": 2492,
+                                    "length": 1
+                                }
+                            ],
+                            "confidence": null,
+                            "source": "D(1,6.2852,4.2704,6.4115,4.2708,6.4118,4.394,6.2858,4.394)",
+                            "kind": "confirmed",
+                            "metadata": {
+                                "original_label": "{\"type\":\"selectionMark\",\"content\":\"unselected\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[6.2822,4.2705,6.4094,4.2705,6.4094,4.392,6.2822,4.392]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                                "status": "ocr_mapped"
+                            }
+                        },
+                        "CheckboxCreditForOtherDependents": {
+                            "type": "boolean",
+                            "valueBoolean": false,
+                            "spans": [
+                                {
+                                    "offset": 2513,
+                                    "length": 1
+                                }
+                            ],
+                            "confidence": null,
+                            "source": "D(1,7.3871,4.27,7.512,4.2711,7.5122,4.3961,7.3874,4.3957)",
+                            "kind": "confirmed",
+                            "metadata": {
+                                "original_label": "{\"type\":\"selectionMark\",\"content\":\"unselected\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[7.383,4.2672,7.5214,4.2672,7.5214,4.3993,7.383,4.3993]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                                "status": "ocr_mapped"
+                            }
+                        },
+                        "FirstNameLastName": {
+                            "type": "string",
+                            "valueString": "Evelyn Collins",
+                            "spans": [
+                                {
+                                    "offset": 2384,
+                                    "length": 6
+                                },
+                                {
+                                    "offset": 2400,
+                                    "length": 7
+                                }
+                            ],
+                            "confidence": null,
+                            "source": "D(1,1.4789,4.2651,1.8428,4.2691,1.8428,4.3941,1.4785,4.3897);D(1,2.5233,4.2959,2.8167,4.2961,2.8166,4.3956,2.523,4.3947)",
+                            "kind": "confirmed",
+                            "metadata": {
+                                "original_label": "{\"type\":\"string\",\"content\":\"Evelyn Collins\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[1.4964,4.2821,1.8388,4.2821,1.8388,4.3878,1.4964,4.3878]},{\"pageNumber\":1,\"polygon\":[2.5261,4.3016,2.8222,4.3064,2.8174,4.3924,2.5261,4.3924]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                                "status": "ocr_mapped"
+                            }
+                        },
+                        "SocialSecurityNumber": {
+                            "type": "string",
+                            "valueString": "005 78 5758",
+                            "spans": [
+                                {
+                                    "offset": 2427,
+                                    "length": 3
+                                },
+                                {
+                                    "offset": 2440,
+                                    "length": 2
+                                },
+                                {
+                                    "offset": 2452,
+                                    "length": 4
+                                }
+                            ],
+                            "confidence": null,
+                            "source": "D(1,3.87,4.2597,4.0221,4.2599,4.0218,4.3456,3.8699,4.3449);D(1,4.1094,4.2592,4.2168,4.2606,4.2168,4.3452,4.1091,4.3444);D(1,4.4368,4.2775,4.6374,4.2784,4.6374,4.3723,4.4365,4.3712)",
+                            "kind": "confirmed",
+                            "metadata": {
+                                "original_label": "{\"type\":\"string\",\"content\":\"005 78 5758\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[3.868,4.2635,4.016,4.2635,4.016,4.3446,3.868,4.3446]},{\"pageNumber\":1,\"polygon\":[4.1211,4.2587,4.207,4.2587,4.207,4.3398,4.1211,4.3398]},{\"pageNumber\":1,\"polygon\":[4.441,4.2778,4.6272,4.2826,4.6272,4.3637,4.4362,4.3589]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                                "status": "ocr_mapped"
+                            }
+                        },
+                        "RelationshipToYou": {
+                            "type": "string",
+                            "valueString": "friend",
+                            "spans": [
+                                {
+                                    "offset": 2476,
+                                    "length": 6
+                                }
+                            ],
+                            "confidence": null,
+                            "source": "D(1,5.2828,4.2663,5.5339,4.266,5.5339,4.3679,5.2824,4.3679)",
+                            "kind": "confirmed",
+                            "metadata": {
+                                "original_label": "{\"type\":\"string\",\"content\":\"friend\",\"boundingRegions\":[{\"pageNumber\":1,\"polygon\":[5.2862,4.2682,5.520200000000001,4.273,5.5154,4.3589,5.2862,4.3542]}],\"spans\":null,\"confidence\":null,\"metadata\":null,\"kind\":\"confirmed\",\"valueArray\":null,\"valueObject\":null,\"valueString\":null,\"valueNumber\":null,\"valueBoolean\":null,\"valueDate\":null,\"valueTime\":null,\"valuePhoneNumber\":null,\"valueSelectionMark\":null,\"valueCountryRegion\":null,\"valueSignature\":null,\"valueCurrency\":null}",
+                                "status": "ocr_mapped"
+                            }
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "metadata": {}
+}

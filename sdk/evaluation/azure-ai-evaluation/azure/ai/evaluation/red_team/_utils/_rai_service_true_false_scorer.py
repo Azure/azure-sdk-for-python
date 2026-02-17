@@ -38,6 +38,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
         prompt_template_key: Optional[str] = None,
         logger: Optional[logging.Logger] = None,
         context: Optional[str] = None,
+        **kwargs,
     ) -> None:
         """Initialize the scorer.
 
@@ -62,6 +63,7 @@ class AzureRAIServiceTrueFalseScorer(Scorer):
             azure_ai_project=azure_ai_project,
             risk_category=risk_category,
             context=context,
+            _use_legacy_endpoint=kwargs.get("_use_legacy_endpoint", False),
         )
 
     async def score_async(

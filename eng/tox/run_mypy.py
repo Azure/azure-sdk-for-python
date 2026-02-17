@@ -23,7 +23,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 
-PYTHON_VERSION = "3.9"
+PYTHON_VERSION = "3.10"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run mypy against target folder. ")

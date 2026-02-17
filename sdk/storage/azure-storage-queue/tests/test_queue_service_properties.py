@@ -103,7 +103,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         # Act
         resp = qsc.set_service_properties(
             analytics_logging=QueueAnalyticsLogging(), hour_metrics=Metrics(), minute_metrics=Metrics(), cors=[]
@@ -122,7 +122,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         logging = QueueAnalyticsLogging(
             read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
         )
@@ -141,7 +141,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
@@ -158,7 +158,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
             enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
         )
@@ -177,7 +177,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         cors_rule1 = CorsRule(["www.xyz.com"], ["GET"])
 
         allowed_origins = ["www.xyz.com", "www.ab.com", "www.bc.com"]
@@ -218,7 +218,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         cors = []
         for i in range(0, 6):
             cors.append(CorsRule(["www.xyz.com"], ["GET"]))
@@ -233,7 +233,7 @@ class TestQueueServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         minute_metrics = Metrics(
             enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=366)
         )

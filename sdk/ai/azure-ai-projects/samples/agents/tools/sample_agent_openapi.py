@@ -6,7 +6,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with OpenAPI tool capabilities
-    using the OpenApiAgentTool and synchronous Azure AI Projects client. The agent can
+    using the OpenApiTool and synchronous Azure AI Projects client. The agent can
     call external APIs defined by OpenAPI specifications.
 
 USAGE:
@@ -31,7 +31,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    OpenApiAgentTool,
+    OpenApiTool,
     OpenApiFunctionDefinition,
     OpenApiAnonymousAuthDetails,
 )
@@ -52,7 +52,7 @@ with (
     with open(weather_asset_file_path, "r") as f:
         openapi_weather = jsonref.loads(f.read())
 
-    tool = OpenApiAgentTool(
+    tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
             name="get_weather",
             spec=openapi_weather,

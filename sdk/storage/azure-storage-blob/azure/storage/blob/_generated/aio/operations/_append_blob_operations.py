@@ -58,7 +58,7 @@ class AppendBlobOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=too-many-locals
         self,
         content_length: int,
         timeout: Optional[int] = None,
@@ -176,6 +176,7 @@ class AppendBlobOperations:
         _request = build_create_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             blob_content_type=_blob_content_type,
             blob_content_encoding=_blob_content_encoding,
@@ -200,7 +201,6 @@ class AppendBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             blob_type=blob_type,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -246,7 +246,7 @@ class AppendBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def append_block(
+    async def append_block(  # pylint: disable=too-many-locals
         self,
         content_length: int,
         body: IO[bytes],
@@ -357,6 +357,7 @@ class AppendBlobOperations:
         _request = build_append_block_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
@@ -377,7 +378,6 @@ class AppendBlobOperations:
             structured_content_length=structured_content_length,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -435,7 +435,7 @@ class AppendBlobOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def append_block_from_url(
+    async def append_block_from_url(  # pylint: disable=too-many-locals
         self,
         source_url: str,
         content_length: int,
@@ -453,6 +453,7 @@ class AppendBlobOperations:
         append_position_access_conditions: Optional[_models.AppendPositionAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
+        source_cpk_info: Optional[_models.SourceCpkInfo] = None,
         **kwargs: Any
     ) -> None:
         """The Append Block operation commits a new block of data to the end of an existing append blob
@@ -503,6 +504,8 @@ class AppendBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :param source_cpk_info: Parameter group. Default value is None.
+        :type source_cpk_info: ~azure.storage.blob.models.SourceCpkInfo
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -537,6 +540,9 @@ class AppendBlobOperations:
         _source_if_unmodified_since = None
         _source_if_match = None
         _source_if_none_match = None
+        _source_encryption_key = None
+        _source_encryption_key_sha256 = None
+        _source_encryption_algorithm = None
         if cpk_info is not None:
             _encryption_algorithm = cpk_info.encryption_algorithm
             _encryption_key = cpk_info.encryption_key
@@ -559,11 +565,16 @@ class AppendBlobOperations:
             _source_if_modified_since = source_modified_access_conditions.source_if_modified_since
             _source_if_none_match = source_modified_access_conditions.source_if_none_match
             _source_if_unmodified_since = source_modified_access_conditions.source_if_unmodified_since
+        if source_cpk_info is not None:
+            _source_encryption_algorithm = source_cpk_info.source_encryption_algorithm
+            _source_encryption_key = source_cpk_info.source_encryption_key
+            _source_encryption_key_sha256 = source_cpk_info.source_encryption_key_sha256
 
         _request = build_append_block_from_url_request(
             url=self._config.url,
             source_url=source_url,
             content_length=content_length,
+            version=self._config.version,
             source_range=source_range,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
@@ -588,8 +599,10 @@ class AppendBlobOperations:
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
             file_request_intent=file_request_intent,
+            source_encryption_key=_source_encryption_key,
+            source_encryption_key_sha256=_source_encryption_key_sha256,
+            source_encryption_algorithm=_source_encryption_algorithm,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -704,6 +717,7 @@ class AppendBlobOperations:
 
         _request = build_seal_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
@@ -713,7 +727,6 @@ class AppendBlobOperations:
             if_none_match=_if_none_match,
             append_position=_append_position,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

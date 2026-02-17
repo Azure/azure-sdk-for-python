@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See License in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Configure Azure monitor collection telemetry pipeline
 configure_azure_monitor()
 
 # Import Flask after running configure_azure_monitor()
-import flask
+import flask  # pylint: disable=wrong-import-position, wrong-import-order
 
 app = flask.Flask(__name__)
 
@@ -23,7 +24,7 @@ def test():
 # Exceptions that are raised within the request are automatically captured
 @app.route("/exception")
 def exception():
-    raise Exception("Hit an exception")
+    raise Exception("Hit an exception")  # pylint: disable=broad-exception-raised
 
 
 # Requests sent to this endpoint will not be tracked due to

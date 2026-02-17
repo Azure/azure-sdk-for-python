@@ -46,7 +46,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         assert service is not None
         assert service.account_name == self.account_name
         assert service.credential.account_name == self.account_name
-        assert service.credential.account_key == self.account_key
+        assert service.credential.account_key == self.account_key.secret
         assert service.primary_endpoint.startswith('{}://{}.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
         assert service.secondary_endpoint.startswith('{}://{}-secondary.{}.core.windows.net/'.format(protocol, self.account_name, service_type)) is True
 
@@ -61,7 +61,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "file"), credential=self.account_key,
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -113,14 +113,14 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key,
+                url, credential=self.account_key.secret,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == '{}.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
 
@@ -134,7 +134,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             service = service_type[0](
-                url, credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                url, credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             self.validate_standard_account_endpoints(service, service_type[1], protocol='http')
@@ -165,10 +165,10 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for service_type in SERVICES.items():
             # Act
             default_service = service_type[0](
-                self.account_url(storage_account_name, "file"), credential=self.account_key,
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret,
                 share_name='foo', directory_path='bar', file_path='baz')
             service = service_type[0](
-                self.account_url(storage_account_name, "file"), credential=self.account_key, connection_timeout=22,
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret, connection_timeout=22,
                 share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
@@ -184,7 +184,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key)
+        conn_string = 'AccountName={};AccountKey={};'.format(self.account_name, self.account_key.secret)
 
         for service_type in SERVICES.items():
             # Act
@@ -221,7 +221,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.account_name, self.account_key)
+            self.account_name, self.account_key.secret)
 
         for service_type in SERVICES.items():
             # Act
@@ -232,7 +232,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname, '{}.{}.core.chinacloudapi.cn'.format(self.account_name == service_type[1])
             assert service.secondary_hostname == '{}-secondary.{}.core.chinacloudapi.cn'.format(self.account_name, service_type[1])
             assert service.scheme == 'http'
@@ -259,7 +259,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for service_type in SERVICES.items():
             self._setup(storage_account_name, storage_account_key)
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;'.format(
-                self.account_name, self.account_key, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
+                self.account_name, self.account_key.secret, _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
             # Act
 
@@ -276,7 +276,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for service_type in SERVICES.items():
             self._setup(storage_account_name, storage_account_key)
             conn_string = 'AccountName={};AccountKey={};{}=www.mydomain.com;{}=www-sec.mydomain.com;'.format(
-                self.account_name, self.account_key,
+                self.account_name, self.account_key.secret,
                 _CONNECTION_ENDPOINTS.get(service_type[1]),
                 _CONNECTION_ENDPOINTS_SECONDARY.get(service_type[1]))
 
@@ -288,7 +288,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
             assert service is not None
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == 'www.mydomain.com'
             assert service.secondary_hostname == 'www-sec.mydomain.com'
 
@@ -301,7 +301,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         custom_account_url = "http://local-machine:11002/custom/account/path/" + self.sas_token
         for service_type in SERVICES.items():
             conn_string = 'DefaultEndpointsProtocol=http;AccountName={};AccountKey={};FileEndpoint={};'.format(
-                self.account_name, self.account_key, custom_account_url)
+                self.account_name, self.account_key.secret, custom_account_url)
 
             # Act
             service = service_type[0].from_connection_string(
@@ -310,7 +310,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
             # Assert
             assert service.account_name == self.account_name
             assert service.credential.account_name == self.account_name
-            assert service.credential.account_key == self.account_key
+            assert service.credential.account_key == self.account_key.secret
             assert service.primary_hostname == 'local-machine:11002/custom/account/path'
         
         service = ShareServiceClient(account_url=custom_account_url)
@@ -375,7 +375,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         request_id_header_name = 'x-ms-client-request-id'
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key.secret)
 
         # Act make the client request ID slightly different
         def callback(response):
@@ -401,7 +401,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key.secret)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -418,7 +418,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         custom_app = "TestApp/v1.0"
         service = ShareServiceClient(
-            self.account_url(storage_account_name, "file"), credential=self.account_key, user_agent=custom_app)
+            self.account_url(storage_account_name, "file"), credential=self.account_key.secret, user_agent=custom_app)
 
         def callback1(response):
             assert 'User-Agent' in response.http_request.headers
@@ -445,7 +445,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key)
+        service = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=self.account_key.secret)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -484,7 +484,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
 
             # Assert
             with service:
@@ -501,6 +501,6 @@ class TestStorageFileClient(StorageRecordedTestCase):
         for client, url in SERVICES.items():
             # Act
             service = client(
-                self.account_url(storage_account_name, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
+                self.account_url(storage_account_name, "file"), credential=self.account_key.secret, share_name='foo', directory_path='bar', file_path='baz')
             service.close()
 

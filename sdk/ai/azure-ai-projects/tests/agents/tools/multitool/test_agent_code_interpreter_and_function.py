@@ -15,7 +15,12 @@ All tests use the same tool combination but different inputs and workflows.
 import json
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto, FunctionTool
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    CodeInterpreterTool,
+    CodeInterpreterContainerAuto,
+    FunctionTool,
+)
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
@@ -62,7 +67,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a calculator assistant. Use code interpreter to perform calculations, then ALWAYS save the result using the save_result function.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                     func_tool,
                 ],
             ),
@@ -124,7 +129,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a data analyst. Use code interpreter to generate and analyze data, then ALWAYS create a report using the generate_report function with the exact statistics you computed.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                     report_function,
                 ],
             ),

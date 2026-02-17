@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Optional, Union, TypeVar, cast, MutableMapping, TYPE_CHECKING
+from typing import Optional, Union, TypeVar, MutableMapping, TYPE_CHECKING
 from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     ProtocolError,
@@ -35,7 +35,9 @@ import requests  # pylint: disable=networking-import-outside-azure-core-transpor
 
 from ...exceptions import (
     ServiceRequestError,
+    ServiceRequestTimeoutError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
     IncompleteReadError,
     HttpResponseError,
 )
@@ -84,6 +86,7 @@ class RequestsTransport(HttpTransport):
             raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = _create_connection_config(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
+        self._has_been_opened = False
 
     def __enter__(self) -> "RequestsTransport":
         self.open()
@@ -106,19 +109,26 @@ class RequestsTransport(HttpTransport):
             session.mount(p, adapter)
 
     def open(self):
-        if not self.session and self._session_owner:
-            self.session = requests.Session()
-            self._init_session(self.session)
-        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
-        self.session = cast(requests.Session, self.session)
+        if self._has_been_opened and not self.session:
+            raise ValueError(
+                "HTTP transport has already been closed. "
+                "You may check if you're calling a function outside of the `with` of your client creation, "
+                "or if you called `close()` on your client already."
+            )
+        if not self.session:
+            if self._session_owner:
+                self.session = requests.Session()
+                self._init_session(self.session)
+            else:
+                raise ValueError("session_owner cannot be False and no session is available")
+        self._has_been_opened = True
 
     def close(self):
         if self._session_owner and self.session:
             self.session.close()
-            self._session_owner = False
             self.session = None
 
-    def send(
+    def send(  # pylint: disable=too-many-statements
         self,
         request: "RestHttpRequest",
         *,
@@ -165,13 +175,18 @@ class RequestsTransport(HttpTransport):
             )
             response.raw.enforce_content_length = True
 
-        except (
-            NewConnectionError,
-            ConnectTimeoutError,
-        ) as err:
+        except AttributeError as err:
+            if self.session is None:
+                raise ValueError("No session available for request.") from err
+            raise
+        except NewConnectionError as err:
             error = ServiceRequestError(err, error=err)
+        except ConnectTimeoutError as err:
+            error = ServiceRequestTimeoutError(err, error=err)
+        except requests.exceptions.ConnectTimeout as err:
+            error = ServiceRequestTimeoutError(err, error=err)
         except requests.exceptions.ReadTimeout as err:
-            error = ServiceResponseError(err, error=err)
+            error = ServiceResponseTimeoutError(err, error=err)
         except requests.exceptions.ConnectionError as err:
             if err.args and isinstance(err.args[0], ProtocolError):
                 error = ServiceResponseError(err, error=err)
@@ -180,13 +195,13 @@ class RequestsTransport(HttpTransport):
         except requests.exceptions.ChunkedEncodingError as err:
             msg = err.__str__()
             if "IncompleteRead" in msg:
-                _LOGGER.warning("Incomplete download: %s", err)
+                _LOGGER.warning("Incomplete download.")
                 error = IncompleteReadError(err, error=err)
             else:
-                _LOGGER.warning("Unable to stream download: %s", err)
+                _LOGGER.warning("Unable to stream download.")
                 error = HttpResponseError(err, error=err)
         except requests.RequestException as err:
-            error = ServiceRequestError(err, error=err)
+            error = ServiceResponseError(err, error=err)
 
         if error:
             raise error

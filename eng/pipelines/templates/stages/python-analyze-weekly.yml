@@ -26,9 +26,9 @@ stages:
 
         steps:
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.9'
+            displayName: 'Use Python 3.10'
             inputs:
-              versionSpec: '3.9'
+              versionSpec: '3.10'
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'

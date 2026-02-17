@@ -52,7 +52,7 @@ def get_strategy_name(attack_strategy: Union[AttackStrategy, List[AttackStrategy
 
 
 def get_flattened_attack_strategies(
-    attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
+    attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]],
 ) -> List[Union[AttackStrategy, List[AttackStrategy]]]:
     """Flatten complex attack strategies into individual strategies.
 

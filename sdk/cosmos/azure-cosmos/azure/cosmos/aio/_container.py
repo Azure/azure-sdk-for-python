@@ -37,7 +37,7 @@ from azure.cosmos._change_feed.change_feed_utils import validate_kwargs
 from ._cosmos_client_connection_async import CosmosClientConnection
 from ._scripts import ScriptsProxy
 from .. import _utils as utils
-from .._availability_strategy_config import _validate_hedging_config
+from .._availability_strategy_config import _validate_hedging_strategy
 from .._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput,
                      build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
@@ -228,7 +228,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Create an item in the container.
@@ -261,7 +261,7 @@ class ContainerProxy:
             the operation is not guaranteed to be idempotent. This should only be enabled if the application can
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: Item with the given ID already exists.
@@ -297,8 +297,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = not enable_automatic_id_generation
         if indexing_directive is not None:
@@ -323,7 +323,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Get the item identified by `item`.
@@ -350,7 +350,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item couldn't be retrieved.
@@ -378,8 +378,8 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
 
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -401,7 +401,7 @@ class ContainerProxy:
         max_integrated_cache_staleness_in_ms: Optional[int] = None,
         priority: Optional[Literal["High", "Low"]] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """List all the items in the container.
@@ -422,7 +422,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An AsyncItemPaged of items (dicts).
@@ -436,8 +436,8 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
 
         feed_options = _build_options(kwargs)
         if max_item_count is not None:
@@ -469,7 +469,7 @@ class ContainerProxy:
             excluded_locations: Optional[list[str]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
     ) -> CosmosList:
         """Reads multiple items from the container.
@@ -490,7 +490,7 @@ class ContainerProxy:
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
             before high priority requests start getting throttled. Feature must first be enabled at the account level.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
@@ -511,8 +511,8 @@ class ContainerProxy:
             kwargs['priority'] = priority
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
 
         kwargs['max_concurrency'] = max_concurrency
         kwargs["containerProperties"] = self._get_properties_with_options
@@ -546,7 +546,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -590,7 +590,7 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -632,7 +632,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -673,7 +673,7 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -714,7 +714,7 @@ class ContainerProxy:
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
             session_token: Optional[str] = None,
             throughput_bucket: Optional[int] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Return all results matching the given `query`.
@@ -754,7 +754,7 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], Dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -829,7 +829,7 @@ class ContainerProxy:
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword str session_token: Token for use with Session consistency.
         :keyword int throughput_bucket: The desired throughput bucket for the client.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :returns: An Iterable of items (dicts).
@@ -871,11 +871,11 @@ class ContainerProxy:
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
 
-        # populate availability_strategy_config
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] is not _Unset):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] =\
-                _validate_hedging_config(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG))
+        # populate availability_strategy
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not _Unset):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
+                _validate_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
 
@@ -924,7 +924,7 @@ class ContainerProxy:
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, str], dict[str, Any]], None]] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -954,7 +954,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -974,7 +974,7 @@ class ContainerProxy:
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
         """Get a sorted list of items that were changed, in the order in which they were modified.
@@ -1000,7 +1000,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -1017,7 +1017,7 @@ class ContainerProxy:
             continuation: str,
             max_item_count: Optional[int] = None,
             priority: Optional[Literal["High", "Low"]] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
@@ -1034,7 +1034,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -1053,7 +1053,7 @@ class ContainerProxy:
             start_time: Optional[Union[datetime, Literal["Now", "Beginning"]]] = None,
             priority: Optional[Literal["High", "Low"]] = None,
             mode: Optional[Literal["LatestVersion", "AllVersionsAndDeletes"]] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+            availability_strategy: Optional[dict[str, Any]] = _Unset,
             response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
             **kwargs: Any
     ) -> AsyncItemPaged[dict[str, Any]]:
@@ -1080,7 +1080,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -1123,7 +1123,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :keyword response_hook: A callable invoked with the response metadata.
@@ -1158,11 +1158,11 @@ class ContainerProxy:
         feed_options["changeFeedStateContext"] = change_feed_state_context
         feed_options["containerProperties"] = self._get_properties_with_options(feed_options)
 
-        # populate availability_strategy_config
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] is not _Unset):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG] =\
-                _validate_hedging_config(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG))
+        # populate availability_strategy
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
+                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not _Unset):
+            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
+                _validate_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
 
         response_hook = kwargs.pop("response_hook", None)
         if hasattr(response_hook, "clear"):
@@ -1191,7 +1191,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Insert or update the specified item.
@@ -1224,7 +1224,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
@@ -1251,8 +1251,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
@@ -1327,7 +1327,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """Replaces the specified item if it exists in the container.
@@ -1361,7 +1361,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
@@ -1391,8 +1391,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         await self._get_properties_with_options(request_options)
@@ -1420,7 +1420,7 @@ class ContainerProxy:
         no_response: Optional[bool] = None,
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> CosmosDict:
         """ Patches the specified item with the provided operations if it
@@ -1460,7 +1460,7 @@ class ContainerProxy:
             in this list are specified as the names of the azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
@@ -1487,8 +1487,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
         request_options = _build_options(kwargs)
         request_options["disableAutomaticIdGeneration"] = True
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
@@ -1517,7 +1517,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> None:
         """Delete the specified item from the container.
@@ -1552,7 +1552,7 @@ class ContainerProxy:
         :keyword response_hook: A callable invoked with the response metadata.
         :paramtype response_hook: Callable[[Mapping[str, str], None], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
@@ -1577,8 +1577,8 @@ class ContainerProxy:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
         if throughput_bucket is not None:
             kwargs["throughput_bucket"] = throughput_bucket
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         await self._get_properties_with_options(request_options)
@@ -1871,7 +1871,7 @@ class ContainerProxy:
         priority: Optional[Literal["High", "Low"]] = None,
         retry_write: Optional[int] = None,
         throughput_bucket: Optional[int] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[dict[str, Any]] = _Unset,
         **kwargs: Any
     ) -> CosmosList:
         """ Executes the transactional batch for the specified partition key.
@@ -1899,7 +1899,7 @@ class ContainerProxy:
             tolerate such risks or has logic to safely detect and handle duplicate operations. Default is None (no retries).
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :returns: A CosmosList representing the items after the batch operations went through.
-        :keyword dict[str, Any] availability_strategy_config:
+        :keyword dict[str, Any] availability_strategy:
             The threshold-based availability strategy to use for this request.
             If not provided, the client's default strategy will be used.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The batch failed to execute.
@@ -1931,8 +1931,8 @@ class ContainerProxy:
             kwargs["throughput_bucket"] = throughput_bucket
         if retry_write is not None:
             kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-        if availability_strategy_config is not _Unset:
-            kwargs["availability_strategy_config"] = _validate_hedging_config(availability_strategy_config)
+        if availability_strategy is not _Unset:
+            kwargs["availability_strategy"] = _validate_hedging_strategy(availability_strategy)
         request_options = _build_options(kwargs)
         request_options["partitionKey"] = await self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True

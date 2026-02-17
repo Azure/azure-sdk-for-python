@@ -8,11 +8,10 @@ import asyncio
 import unittest
 from unittest.mock import Mock, patch
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.appconfiguration import SecretReferenceConfigurationSetting
-from azure.appconfiguration.provider import SettingSelector, WatchKey
-from devtools_testutils import recorded_by_proxy
 from async_preparers import app_config_aad_decorator_async
 from asynctestcase import AppConfigTestCase
+from azure.appconfiguration import SecretReferenceConfigurationSetting
+from azure.appconfiguration.provider import SettingSelector, WatchKey
 
 
 class TestAsyncSecretRefresh(AppConfigTestCase, unittest.TestCase):
