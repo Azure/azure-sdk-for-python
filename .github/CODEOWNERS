@@ -32,68 +32,104 @@
 # Client Libraries
 ####################
 
-# ServiceLabel: %AI
-# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
-
-# PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @paulshealy1 @singankit @trrwilson
-
-# ServiceLabel: %Evaluation
-# ServiceOwners: @luigiw @needuv @singankit
-
-# PRLabel: %Evaluation
-/sdk/evaluation/    @Azure/azure-sdk-write-evaluation
-
 # ServiceLabel: %AgriFood
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
-# ServiceLabel: %Hosted Agents
-# ServiceOwners: @JC-386 @lusu-msft
+# PRLabel: %AI
+/sdk/ai/    @dargilco @luigiw @needuv @paulshealy1 @singankit @trrwilson
 
-# PRLabel: %Hosted Agents
-/sdk/agentserver/    @JC-386 @lusu-msft
+# ServiceLabel: %AI
+# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+
+# ServiceLabel: %AI Agents %Service Attention
+# PRLabel: %AI Agents
+/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi @trrwilson
+
+# ServiceLabel: %AI Model Inference %Service Attention
+# PRLabel: %AI Model Inference
+/sdk/ai/azure-ai-inference/    @dargilco @trangevi @trrwilson
+
+# ServiceLabel: %AI Projects %Service Attention
+# PRLabel: %AI Projects
+/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson
+
+# PRLabel: %App Configuration
+/sdk/appconfiguration/    @albertofori @avanigupta @jimmyca15 @mrm9084 @rossgrambo @xiangyan99
+
+# AzureSdkOwners: @mrm9084
+# ServiceLabel: %App Configuration
+# ServiceOwners: @albertofori @avanigupta @mrm9084
+
+# ServiceLabel: %Attestation
+# PRLabel: %Attestation
+/sdk/attestation/azure-security-attestation/    @anilba06 @Azure/azure-sdk-write-attestation @gkostal
+
+# PRLabel: %Azure Projects
+/sdk/projects/    @annatisch
+
+# AzureSdkOwners: @annatisch
+# ServiceLabel: %Azure Projects
+# ServiceOwners: @annatisch
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity
 /sdk/identity/    @Azure/azure-sdk-write-identity @pvaneck @xiangyan99
 
-# ServiceLabel: %Event Hubs
-# ServiceOwners: @axisc @hmlam @sjkwak
-
-# PRLabel: %Event Hubs
-/sdk/eventhub/    @axisc @hmlam @sjkwak
-
-# ServiceLabel: %Storage
-# ServiceOwners: @jalauzon-msft @vincenttran-msft
-
-# PRLabel: %Storage
-/sdk/storage/    @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
-
-# AzureSdkOwners: @mrm9084
-# ServiceLabel: %App Configuration
-# ServiceOwners: @albertofori @avanigupta @mrm9084
-
-# PRLabel: %App Configuration
-/sdk/appconfiguration/    @albertofori @avanigupta @jimmyca15 @mrm9084 @rossgrambo @xiangyan99
-
-# ServiceLabel: %Attestation
-# PRLabel: %Attestation
-/sdk/attestation/azure-security-attestation/    @anilba06 @Azure/azure-sdk-write-attestation @gkostal
-
 # ServiceLabel: %Batch
 # PRLabel: %Batch
 /sdk/batch/    @cRui861 @dpwatrous @jingjlii @JJJessieWang @wanghoppe @wiboris
 
+# ServiceLabel: %Cognitive - Anomaly Detector
+# PRLabel: %Cognitive - Anomaly Detector
+/sdk/anomalydetector/    @conhua @juaduan @mengaims @moreOver0
+
+# ServiceLabel: %Cognitive - Content Safety
+# PRLabel: %Cognitive - Content Safety
+/sdk/contentsafety/    @mengaims
+
+# PRLabel: %Cognitive - Content Understanding
+/sdk/contentunderstanding/    @bojunehsu @yungshinlintw
+
+# ServiceLabel: %Cognitive - Face
+# PRLabel: %Cognitive - Face
+/sdk/face/    @zihyunting
+
+# PRLabel: %Cognitive - Form Recognizer
+/sdk/formrecognizer/    @bojunehsu @yungshinlintw
+
+# AzureSdkOwners: @bojunehsu @yungshinlintw
+# ServiceLabel: %Cognitive - Form Recognizer
+# ServiceOwners: @bojunehsu @yungshinlintw
+
+# ServiceLabel: %Cognitive - Health Insights
+# PRLabel: %Cognitive - Health Insights
+/sdk/healthinsights/    @koen-mertens @tomsft
+
+# PRLabel: %Cognitive - Language
+/sdk/cognitivelanguage/    @ahmedaashour @bidisha-c @mikaelsitruk @quentinRobinson @sarkar-rajarshi
+
+# AzureSdkOwners: @xiangyan99
+# ServiceLabel: %Cognitive - Metrics Advisor
+# PRLabel: %Cognitive - Metrics Advisor
+/sdk/metricsadvisor/    @iscai-msft @xiangyan99
+
 # PRLabel: %Cognitive - Mgmt
 /sdk/cognitiveservices/    @lmazuel
 
-# ServiceLabel: %Speech Transcription
-# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# PRLabel: %Cognitive - Personalizer
+/sdk/personalizer/    @sharathmalladi
 
-# PRLabel: %Speech Transcription
-/sdk/cognitiveservices/azure-ai-transcription/    @amber-yujueWang @rhurey @xitzhang
+# ServiceLabel: %Cognitive - Text Analytics
+# PRLabel: %Cognitive - Text Analytics
+/sdk/textanalytics/    @quentinRobinson @wangyuantao
+
+# PRLabel: %Cognitive - Translator
+/sdk/translation/    @jrjrguo @SG-MS
+
+# ServiceLabel: %Cognitive - Translator
+# ServiceOwners: @jrjrguo @SG-MS
 
 # ServiceLabel: %Communication
 # PRLabel: %Communication
@@ -107,13 +143,25 @@
 # PRLabel: %Communication - Chat
 /sdk/communication/azure-communication-chat/    @AikoBB @LuChen-Microsoft
 
+# ServiceLabel: %Communication - Common
+# PRLabel: %Communication - Common
+/sdk/communication/**/_shared/    @AikoBB @Azure/acs-identity-sdk @maximrytych-ms @mjafferi-msft
+
 # ServiceLabel: %Communication - Email
 # PRLabel: %Communication - Email
 /sdk/communication/azure-communication-email/    @yogeshmo
 
+# ServiceLabel: %Communication - Identity
+# PRLabel: %Communication - Identity
+/sdk/communication/azure-communication-identity/    @AikoBB @Azure/acs-identity-sdk @maximrytych-ms @mjafferi-msft
+
 # ServiceLabel: %Communication - Job Router
 # PRLabel: %Communication - Job Router
 /sdk/communication/azure-communication-jobrouter/    @sarkar-rajarshi
+
+# ServiceLabel: %Communication - Messages
+# PRLabel: %Communication - Messages
+/sdk/communication/azure-communication-messages/    @shamkh
 
 # ServiceLabel: %Communication - Phone Numbers
 # PRLabel: %Communication - Phone Numbers
@@ -127,59 +175,164 @@
 # PRLabel: %Communication - SMS
 /sdk/communication/azure-communication-sms/    @besh2014 @dinazavyr @gfeitosa-msft @ilyapaliakou-msft @phermanov-msft
 
-# ServiceLabel: %Communication - Messages
-# PRLabel: %Communication - Messages
-/sdk/communication/azure-communication-messages/    @shamkh
-
-# ServiceLabel: %Communication - Identity
-# PRLabel: %Communication - Identity
-/sdk/communication/azure-communication-identity/    @AikoBB @Azure/acs-identity-sdk @maximrytych-ms @mjafferi-msft
-
-# ServiceLabel: %Communication - Common
-# PRLabel: %Communication - Common
-/sdk/communication/**/_shared/    @AikoBB @Azure/acs-identity-sdk @maximrytych-ms @mjafferi-msft
+# PRLabel: %Confidential Ledger
+/sdk/confidentialledger/azure-confidentialledger/    @amruthashree18 @lynshi @PallabPaul
 
 # ServiceLabel: %Confidential Ledger
 # ServiceOwners: @PallabPaul
 
-# PRLabel: %Confidential Ledger
-/sdk/confidentialledger/azure-confidentialledger/    @amruthashree18 @lynshi @PallabPaul
+# ServiceLabel: %Consumption
+# PRLabel: %Consumption
+/sdk/consumption/    @sandeepnl
 
-# ServiceLabel: %Cognitive - Content Safety
-# PRLabel: %Cognitive - Content Safety
-/sdk/contentsafety/    @mengaims
+# ServiceLabel: %Container Instances
+# PRLabel: %Container Instances
+/sdk/containerinstance/    @samkreter @xizhamsft
 
-# ServiceLabel: %DevCenter
-# PRLabel: %DevCenter
-/sdk/devcenter/    @drielenr @leti367 @sebrenna
+# AzureSdkOwners: @lmazuel
+# ServiceLabel: %Container Registry
+# PRLabel: %Container Registry
+/sdk/containerregistry/    @lmazuel
+
+# PRLabel: %Container Registry
+/sdk/containerregistry/    @YalinLi0312
+
+# AzureSdkOwners: @YalinLi0312
+# ServiceLabel: %Container Registry
+# ServiceOwners: @northtyphoon @toddysm
+
+# ServiceLabel: %Container Service
+# PRLabel: %Container Service
+/sdk/containerservice/    @zqingqing1
+
+# ServiceLabel: %Cosmos
+# PRLabel: %Cosmos
+/sdk/cosmos/    @Azure/azure-cosmos-python-sdk
+
+# ServiceLabel: %Data Factory
+# PRLabel: %Data Factory
+/sdk/datafactory/    @hvermis
+
+# ServiceLabel: %Data Lake
+# PRLabel: %Data Lake
+/sdk/datalake/    @ro-joowan
+
+# ServiceLabel: %Data Migration
+# PRLabel: %Data Migration
+/sdk/datamigration/    @vchske
 
 # ServiceLabel: %Defender EASM
 # PRLabel: %Defender EASM
 /sdk/easm/    @nathanfalke
 
-# ServiceLabel: %Cognitive - Face
-# PRLabel: %Cognitive - Face
-/sdk/face/    @zihyunting
+# ServiceLabel: %DevCenter
+# PRLabel: %DevCenter
+/sdk/devcenter/    @drielenr @leti367 @sebrenna
 
-# ServiceLabel: %Cognitive - Health Insights
-# PRLabel: %Cognitive - Health Insights
-/sdk/healthinsights/    @koen-mertens @tomsft
+# PRLabel: %Device Provisioning
+/sdk/iothub/azure-iot-deviceprovisioning    @c-ryan-k @digimaun
+
+# ServiceLabel: %Device Update
+# PRLabel: %Device Update
+/sdk/deviceupdate/    @dpokluda @sedols
+
+# ServiceLabel: %Digital Twins
+# PRLabel: %Digital Twins
+/sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
+
+# PRLabel: %Document Intelligence
+/sdk/documentintelligence/    @bojunehsu @yungshinlintw
+
+# AzureSdkOwners: @bojunehsu @yungshinlintw
+# ServiceLabel: %Document Intelligence
+# ServiceOwners: @bojunehsu @yungshinlintw
+
+# ServiceLabel: %Durable Task Scheduler %Service Attention
+# PRLabel: %Durable Task Scheduler
+/sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
+
+# PRLabel: %EngSys
+/sdk/template/    @benbp @scbedd @weshaggard
+
+# PRLabel: %Evaluation
+/sdk/evaluation/    @Azure/azure-sdk-write-evaluation
+
+# ServiceLabel: %Evaluation
+# ServiceOwners: @luigiw @needuv @singankit
+
+# AzureSdkOwners: @rajeshka @shankarsama
+# ServiceLabel: %Event Grid
+# PRLabel: %Event Grid
+/sdk/eventgrid/    @rajeshka @shankarsama
+
+# PRLabel: %Event Hubs
+/sdk/eventhub/    @axisc @hmlam @sjkwak
+
+# ServiceLabel: %Event Hubs
+# ServiceOwners: @axisc @hmlam @sjkwak
+
+# PRLabel: %Graph
+/sdk/graphrbac/    @lmazuel
+
+# PRLabel: %HDInsight
+/sdk/hdinsight/    @idear1203
+
+# ServiceLabel: %Health Deidentification
+# PRLabel: %Health Deidentification
+/sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
+
+# PRLabel: %Hosted Agents
+/sdk/agentserver/    @JC-386 @lusu-msft
+
+# ServiceLabel: %Hosted Agents
+# ServiceOwners: @JC-386 @lusu-msft
+
+# ServiceLabel: %Image Analysis %Service Attention
+# PRLabel: %Image Analysis
+/sdk/vision/azure-ai-vision-imageanalysis/    @dargilco @rhurey
+
+# PRLabel: %KeyVault
+/sdk/keyvault/    @Azure/azure-sdk-write-keyvault
 
 # AzureSdkOwners: @Azure/azure-sdk-write-keyvault
 # ServiceLabel: %KeyVault
 # ServiceOwners: @Azure/azure-sdk-write-keyvault @cheathamb36 @chen-karen
 
-# PRLabel: %KeyVault
-/sdk/keyvault/    @Azure/azure-sdk-write-keyvault
-
 # PRLabel: %Load Test Service
 /sdk/loadtesting/azure-developer-loadtesting/    @mitsha-microsoft @ninallam @prativen
 
-# PRLabel: %Monitor
-/sdk/loganalytics/azure-loganalytics/    @azmonapplicationinsights @pvaneck
+# PRLabel: %Machine Learning
+/sdk/ml/    @achauhan-scc @jayesh-tanna @kingernupur
+
+# PRLabel: %Machine Learning
+/sdk/ml/azure-ai-ml/    @achauhan-scc @arunsu @jayesh-tanna @jialiu103 @JustinFirsching @kingernupur @nick863 @NonStatic2014 @novaturient95 @PhaniShekhar @raduk @rtanase @sharma-riti @vivram @yuanzhuangyuanzhuang
+
+# ServiceLabel: %Machine Learning
+# ServiceOwners: @Azure/azure-ml-sdk @azureml-github
+
+# ServiceLabel: %Machine Learning
+# ServiceOwners: @achauhan-scc @jayesh-tanna @kingernupur
+
+# PRLabel: %Machine Learning Compute
+/sdk/machinelearning/    @shutchings
+
+# ServiceLabel: %Maps
+# PRLabel: %Maps
+/sdk/maps/    @andykao1213 @dubiety
+
+# ServiceLabel: %Mixed Reality
+# PRLabel: %Mixed Reality
+/sdk/mixedreality/azure-mixedreality-authentication/    @RamonArguelles
+
+# ServiceLabel: %Mixed Reality
+# PRLabel: %Mixed Reality
+/sdk/remoterendering/    @FlorianBorn71
 
 # PRLabel: %Monitor
 /sdk/loganalytics/    @pvaneck
+
+# PRLabel: %Monitor
+/sdk/loganalytics/azure-loganalytics/    @azmonapplicationinsights @pvaneck
 
 # PRLabel: %Monitor
 /sdk/monitor/    @pvaneck
@@ -206,117 +359,15 @@
 # PRLabel: %Monitor - Exporter
 /sdk/monitor/azure-monitor-opentelemetry-exporter/    @hectorhdzg @JacksonWeber @jeremydvoss @lzchen @MSNev @rads-1996
 
-# ServiceLabel: %Consumption
-# PRLabel: %Consumption
-/sdk/consumption/    @sandeepnl
-
-# ServiceLabel: %Container Instances
-# PRLabel: %Container Instances
-/sdk/containerinstance/    @samkreter @xizhamsft
-
-# AzureSdkOwners: @lmazuel
-# ServiceLabel: %Container Registry
-# PRLabel: %Container Registry
-/sdk/containerregistry/    @lmazuel
-
-# ServiceLabel: %Container Service
-# PRLabel: %Container Service
-/sdk/containerservice/    @zqingqing1
-
-# ServiceLabel: %Cosmos
-# PRLabel: %Cosmos
-/sdk/cosmos/    @Azure/azure-cosmos-python-sdk
-
-# ServiceLabel: %Cosmos %Service Attention
-# ServiceOwners: @AbhinavTrips @bambriz @pilchie @pjohari-ms @simorenoh
-
-# ServiceLabel: %Data Factory
-# PRLabel: %Data Factory
-/sdk/datafactory/    @hvermis
-
-# ServiceLabel: %Data Lake
-# PRLabel: %Data Lake
-/sdk/datalake/    @ro-joowan
-
-# ServiceLabel: %Data Migration
-# PRLabel: %Data Migration
-/sdk/datamigration/    @vchske
-
-# PRLabel: %Device Provisioning
-/sdk/iothub/azure-iot-deviceprovisioning    @c-ryan-k @digimaun
-
-# ServiceLabel: %Device Update
-# PRLabel: %Device Update
-/sdk/deviceupdate/    @dpokluda @sedols
-
-# ServiceLabel: %Durable Task Scheduler %Service Attention
-# PRLabel: %Durable Task Scheduler
-/sdk/durabletask/    @berndverst @cgillum @kaibocai @philliphoff @RyanLettieri @torosent
-
-# AzureSdkOwners: @rajeshka @shankarsama
-# ServiceLabel: %Event Grid
-# PRLabel: %Event Grid
-/sdk/eventgrid/    @rajeshka @shankarsama
-
-# ServiceLabel: %Image Analysis %Service Attention
-# PRLabel: %Image Analysis
-/sdk/vision/azure-ai-vision-imageanalysis/    @dargilco @rhurey
-
-# ServiceLabel: %AI Model Inference %Service Attention
-# PRLabel: %AI Model Inference
-/sdk/ai/azure-ai-inference/    @dargilco @trangevi @trrwilson
-
-# ServiceLabel: %AI Agents %Service Attention
-# PRLabel: %AI Agents
-/sdk/ai/azure-ai-agents/    @dargilco @glharper @howieleung @nick863 @trangevi @trrwilson
-
-# ServiceLabel: %AI Projects %Service Attention
-# PRLabel: %AI Projects
-/sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson
-
-# ServiceLabel: %Service Attention %Voice Live
-# PRLabel: %Voice Live
-/sdk/ai/azure-ai-voicelive/    @amber-yujueWang @emilyjiji @pankopon @rhurey @xitzhang
-
-# PRLabel: %HDInsight
-/sdk/hdinsight/    @idear1203
-
-# PRLabel: %Machine Learning Compute
-/sdk/machinelearning/    @shutchings
-
-# ServiceLabel: %Machine Learning
-# ServiceOwners: @Azure/azure-ml-sdk @azureml-github
-
-# PRLabel: %Machine Learning
-/sdk/ml/    @achauhan-scc @jayesh-tanna @kingernupur
-
-# PRLabel: %Machine Learning
-/sdk/ml/azure-ai-ml/    @achauhan-scc @arunsu @jayesh-tanna @jialiu103 @JustinFirsching @kingernupur @nick863 @NonStatic2014 @novaturient95 @PhaniShekhar @raduk @rtanase @sharma-riti @vivram @yuanzhuangyuanzhuang
-
-# ServiceLabel: %Machine Learning
-# ServiceOwners: @achauhan-scc @jayesh-tanna @kingernupur
-
-# ServiceLabel: %Maps
-# PRLabel: %Maps
-/sdk/maps/    @andykao1213 @dubiety
-
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/mixedreality/azure-mixedreality-authentication/    @RamonArguelles
-
-# ServiceLabel: %Mixed Reality
-# PRLabel: %Mixed Reality
-/sdk/remoterendering/    @FlorianBorn71
-
 # ServiceLabel: %Online Experimentation
 # PRLabel: %Online Experimentation
 /sdk/onlineexperimentation/    @Azure/azure-sdk-write-onlineexperimentation
 
-# ServiceLabel: %OpenAI
-# ServiceOwners: @trrwilson
-
 # PRLabel: %OpenAI
 /sdk/openai/    @kashifkhan @trrwilson
+
+# ServiceLabel: %OpenAI
+# ServiceOwners: @trrwilson
 
 # ServiceLabel: %Operator Nexus - Network Cloud
 # PRLabel: %Operator Nexus - Network Cloud
@@ -326,132 +377,38 @@
 # PRLabel: %Planetary Computer
 /sdk/planetarycomputer/    @chahibi @mandarinamdar
 
-# AzureSdkOwners: @annatisch
-# ServiceLabel: %Azure Projects
-# ServiceOwners: @annatisch
-
-# PRLabel: %Azure Projects
-/sdk/projects/    @annatisch
-
 # ServiceLabel: %Purview
 # PRLabel: %Purview
 /sdk/purview/    @adyabansal-ms
 
+# PRLabel: %Recovery Services
+/sdk/recoveryservices/    @DheerendraRathor
+
 # ServiceLabel: %Recovery Services
 # ServiceOwners: @Daya-Patil @Sharmistha-Rai
 
-# PRLabel: %Recovery Services
-/sdk/recoveryservices/    @DheerendraRathor
+# PRLabel: %Schema Registry
+/sdk/schemaregistry/    @axisc @hmlam @sjkwak
 
 # ServiceLabel: %Schema Registry
 # ServiceOwners: @axisc @hmlam @sjkwak
 
-# PRLabel: %Schema Registry
-/sdk/schemaregistry/    @axisc @hmlam @sjkwak
+# PRLabel: %Search
+/sdk/search/    @Azure/azsdk-search @Azure/azure-sdk-write-search
 
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Search
 # ServiceOwners: @kuanlu95 @mattgotteiner
 
-# PRLabel: %Search
-/sdk/search/    @Azure/azsdk-search @Azure/azure-sdk-write-search
-
-# PRLabel: %Service Fabric
-/sdk/servicefabric/    @QingChenmsft @samedder
-
-# ServiceLabel: %SQL
-# ServiceOwners: @azureSQLGitHub
-
-# ServiceLabel: %Service Bus
-# ServiceOwners: @EldertGrootenboer @skarri-microsoft
-
-# PRLabel: %Service Bus
-/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft
-
-# ServiceLabel: %Synapse
-# ServiceOwners: @wanyang7 @zesluo
-
-# PRLabel: %Synapse
-/sdk/synapse/    @wanyang7 @yanjungao718
-
-# PRLabel: %EngSys
-/sdk/template/    @benbp @scbedd @weshaggard
-
-# ServiceLabel: %Cognitive - Text Analytics
-# PRLabel: %Cognitive - Text Analytics
-/sdk/textanalytics/    @quentinRobinson @wangyuantao
-
-# ServiceLabel: %Health Deidentification
-# PRLabel: %Health Deidentification
-/sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
-
-# AzureSdkOwners: @bojunehsu @yungshinlintw
-# ServiceLabel: %Cognitive - Form Recognizer
-# ServiceOwners: @bojunehsu @yungshinlintw
-
-# PRLabel: %Cognitive - Form Recognizer
-/sdk/formrecognizer/    @bojunehsu @yungshinlintw
-
-# AzureSdkOwners: @bojunehsu @yungshinlintw
-# ServiceLabel: %Document Intelligence
-# ServiceOwners: @bojunehsu @yungshinlintw
-
-# PRLabel: %Cognitive - Content Understanding
-/sdk/contentunderstanding/    @bojunehsu @yungshinlintw
-
-# PRLabel: %Document Intelligence
-/sdk/documentintelligence/    @bojunehsu @yungshinlintw
-
-# AzureSdkOwners: @xiangyan99
-# ServiceLabel: %Cognitive - Metrics Advisor
-# PRLabel: %Cognitive - Metrics Advisor
-/sdk/metricsadvisor/    @iscai-msft @xiangyan99
-
-# ServiceLabel: %Cognitive - Anomaly Detector
-# PRLabel: %Cognitive - Anomaly Detector
-/sdk/anomalydetector/    @conhua @juaduan @mengaims @moreOver0
-
-# ServiceLabel: %Cognitive - Translator
-# ServiceOwners: @jrjrguo @SG-MS
-
-# PRLabel: %Cognitive - Translator
-/sdk/translation/    @jrjrguo @SG-MS
-
-# PRLabel: %Cognitive - Language
-/sdk/cognitivelanguage/    @ahmedaashour @bidisha-c @mikaelsitruk @quentinRobinson @sarkar-rajarshi
-
-# PRLabel: %Cognitive - Personalizer
-/sdk/personalizer/    @sharathmalladi
-
-# PRLabel: %Graph
-/sdk/graphrbac/    @lmazuel
-
-# AzureSdkOwners: @YalinLi0312
-# ServiceLabel: %Tables
-# ServiceOwners: @klaaslanghout
-
-# PRLabel: %Tables
-/sdk/tables/    @YalinLi0312
-
-# AzureSdkOwners: @YalinLi0312
-# ServiceLabel: %Container Registry
-# ServiceOwners: @northtyphoon @toddysm
-
-# PRLabel: %Container Registry
-/sdk/containerregistry/    @YalinLi0312
-
-# ServiceLabel: %Digital Twins
-# PRLabel: %Digital Twins
-/sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
-
-# PRLabel: %VideoAnalyzer
-/sdk/videoanalyzer/    @hivyas
-
-# PRLabel: %WebPubSub
-/sdk/webpubsub/    @iscai-msft @msyyc
+# ServiceLabel: %Service Attention %Voice Live
+# PRLabel: %Voice Live
+/sdk/ai/azure-ai-voicelive/    @amber-yujueWang @emilyjiji @pankopon @rhurey @xitzhang
 
 # ServiceLabel: %AAD %Service Attention
 # ServiceOwners: @adamedx
+
+# ServiceLabel: %Advisor %Service Attention
+# ServiceOwners: @mojayara @Prasanna-Padmanabhan
 
 # ServiceLabel: %AKS %Service Attention
 # ServiceOwners: @Azure/aks-pm
@@ -459,17 +416,11 @@
 # ServiceLabel: %Alerts Management %Service Attention
 # ServiceOwners: @liadtal @yairgil
 
-# ServiceLabel: %Advisor %Service Attention
-# ServiceOwners: @mojayara @Prasanna-Padmanabhan
-
 # ServiceLabel: %Analysis Services %Service Attention
 # ServiceOwners: @athipp @minghan @taiwu
 
 # ServiceLabel: %API Management %Service Attention
 # ServiceOwners: @miaojiang
-
-# ServiceLabel: %Monitor - ApplicationInsights %Service Attention
-# ServiceOwners: @azmonapplicationinsights
 
 # ServiceLabel: %App Services %Service Attention
 # ServiceOwners: @antcp @AzureAppServiceCLI
@@ -485,6 +436,12 @@
 
 # ServiceLabel: %AVS %Service Attention
 # ServiceOwners: @aishu @amitchat @divka78
+
+# ServiceLabel: %Azure Arc enabled servers %Service Attention
+# ServiceOwners: @edyoung @rpsqrd
+
+# ServiceLabel: %Azure Data Explorer %Service Attention
+# ServiceOwners: @ilayrn @orhasban @zoharHenMicrosoft
 
 # ServiceLabel: %Azure Stack %Service Attention
 # ServiceOwners: @bganapa @rakku-ms @sarathys @sijuman
@@ -504,29 +461,20 @@
 # ServiceLabel: %Cloud Shell %Service Attention
 # ServiceOwners: @mbifeld
 
-# ServiceLabel: %Cognitive - Custom Vision %Service Attention
-# ServiceOwners: @areddish @tburns10
+# ServiceLabel: %Cognitive - Bing %Service Attention
+# ServiceOwners: @arwong @jaggerbodas-ms
 
 # ServiceLabel: %Cognitive - Computer Vision %Service Attention
 # ServiceOwners: @ryogok @tburns10 @TFR258
 
-# ServiceLabel: %Cognitive - Face %Service Attention
-# ServiceOwners: @dipidoo @JinyuID @SteveMSFT
-
-# ServiceLabel: %Cognitive - QnA Maker %Service Attention
-# ServiceOwners: @bingisbestest @nerajput1607
-
-# ServiceLabel: %Cognitive - Speech %Service Attention
-# ServiceOwners: @oscholz @robch
-
-# ServiceLabel: %Cognitive - LUIS %Service Attention
-# ServiceOwners: @cahann @kayousef
-
 # ServiceLabel: %Cognitive - Content Moderator %Service Attention
 # ServiceOwners: @swiftarrow11
 
-# ServiceLabel: %Cognitive - Personalizer %Service Attention
-# ServiceOwners: @dwaijam @sharathmalladi
+# ServiceLabel: %Cognitive - Custom Vision %Service Attention
+# ServiceOwners: @areddish @tburns10
+
+# ServiceLabel: %Cognitive - Face %Service Attention
+# ServiceOwners: @dipidoo @JinyuID @SteveMSFT
 
 # ServiceLabel: %Cognitive - Immersive Reader %Service Attention
 # ServiceOwners: @metanMSFT
@@ -534,17 +482,23 @@
 # ServiceLabel: %Cognitive - Ink Recognizer %Service Attention
 # ServiceOwners: @olduroja
 
-# ServiceLabel: %Cognitive - Bing %Service Attention
-# ServiceOwners: @arwong @jaggerbodas-ms
+# ServiceLabel: %Cognitive - LUIS %Service Attention
+# ServiceOwners: @cahann @kayousef
 
 # ServiceLabel: %Cognitive - Mgmt %Service Attention
 # ServiceOwners: @yangyuan
 
+# ServiceLabel: %Cognitive - Personalizer %Service Attention
+# ServiceOwners: @dwaijam @sharathmalladi
+
+# ServiceLabel: %Cognitive - QnA Maker %Service Attention
+# ServiceOwners: @bingisbestest @nerajput1607
+
+# ServiceLabel: %Cognitive - Speech %Service Attention
+# ServiceOwners: @oscholz @robch
+
 # ServiceLabel: %Commerce %Service Attention
 # ServiceOwners: @ms-premp @qiaozha
-
-# ServiceLabel: %Compute %Service Attention
-# ServiceOwners: @amjads1 @Drewm3 @GabstaMSFT @sandeepraichura @TravisCragg-MSFT
 
 # ServiceLabel: %Compute - Extensions %Service Attention
 # ServiceOwners: @amjads1 @Drewm3 @GabstaMSFT
@@ -558,32 +512,50 @@
 # ServiceLabel: %Compute - RDFE %Service Attention
 # ServiceOwners: @Drewm3 @TravisCragg-MSFT
 
+# ServiceLabel: %Compute - VMSS %Service Attention
+# ServiceOwners: @Drewm3 @Kanik09
+
 # ServiceLabel: %Compute - VM %Service Attention
 # ServiceOwners: @Drewm3 @TravisCragg-MSFT
 
-# ServiceLabel: %Compute - VMSS %Service Attention
-# ServiceOwners: @Drewm3 @Kanik09
+# ServiceLabel: %Compute %Service Attention
+# ServiceOwners: @amjads1 @Drewm3 @GabstaMSFT @sandeepraichura @TravisCragg-MSFT
 
 # ServiceLabel: %Connected Kubernetes %Service Attention
 # ServiceOwners: @akashkeshari
 
-# ServiceLabel: %Customer Insights %Service Attention
-# ServiceOwners: @shefymk
+# ServiceLabel: %Consumption - Billing %Service Attention
+# ServiceOwners: @ccmbpxpcrew
+
+# ServiceLabel: %Cosmos %Service Attention
+# ServiceOwners: @AbhinavTrips @bambriz @pilchie @pjohari-ms @simorenoh
+
+# ServiceLabel: %Cost Management - Billing %Service Attention
+# ServiceOwners: @ccmbpxpcrew
+
+# ServiceLabel: %Cost Management - Budget %Service Attention
+# ServiceOwners: @ccmaxpcrew
+
+# ServiceLabel: %Cost Management - Query %Service Attention
+# ServiceOwners: @ccmixpdevs
+
+# ServiceLabel: %Cost Management - RIandShowBack %Service Attention
+# ServiceOwners: @ccmshowbackdevs
+
+# ServiceLabel: %Cost Management - UsageDetailsAndExport %Service Attention
+# ServiceOwners: @TiagoCrewGitHubIssues
 
 # ServiceLabel: %Custom Providers %Service Attention
 # ServiceOwners: @manoharp @MSEvanhi
+
+# ServiceLabel: %Customer Insights %Service Attention
+# ServiceOwners: @shefymk
 
 # ServiceLabel: %CycleCloud %Service Attention
 # ServiceOwners: @adriankjohnson
 
 # ServiceLabel: %Data Bricks %Service Attention
 # ServiceOwners: @arindamc
-
-# ServiceLabel: %DataBox %Service Attention
-# ServiceOwners: @madhurinms @manuaery @matdickson @tmvishwajit
-
-# ServiceLabel: %DataBox Edge %Service Attention
-# ServiceOwners: @a-t-mason @ganzee @manuaery
 
 # ServiceLabel: %Data Catalog %Service Attention
 # ServiceOwners: @ingave
@@ -594,11 +566,17 @@
 # ServiceLabel: %Data Share %Service Attention
 # ServiceOwners: @jifems @raedJarrar
 
-# ServiceLabel: %DevOps %Service Attention
-# ServiceOwners: @ashishonce @narula0781 @romil07
+# ServiceLabel: %DataBox Edge %Service Attention
+# ServiceOwners: @a-t-mason @ganzee @manuaery
+
+# ServiceLabel: %DataBox %Service Attention
+# ServiceOwners: @madhurinms @manuaery @matdickson @tmvishwajit
 
 # ServiceLabel: %Dev Spaces %Service Attention
 # ServiceOwners: @greenie-msft @johnsta @yuzorMa
+
+# ServiceLabel: %DevOps %Service Attention
+# ServiceOwners: @ashishonce @narula0781 @romil07
 
 # ServiceLabel: %Devtestlab %Service Attention
 # ServiceOwners: @Tanmayeekamath
@@ -621,11 +599,11 @@
 # ServiceLabel: %Import Export %Service Attention
 # ServiceOwners: @madhurinms
 
+# ServiceLabel: %IoT - CLI %Service Attention
+# ServiceOwners: @Azure/azure-iot-cli-triage
+
 # ServiceLabel: %Kubernetes Configuration %Service Attention
 # ServiceOwners: @NarayanThiru
-
-# ServiceLabel: %Azure Data Explorer %Service Attention
-# ServiceOwners: @ilayrn @orhasban @zoharHenMicrosoft
 
 # ServiceLabel: %Lab Services %Service Attention
 # ServiceOwners: @Tanmayeekamath
@@ -654,20 +632,26 @@
 # ServiceLabel: %Mobile Engagement %Service Attention
 # ServiceOwners: @kpiteira
 
+# ServiceLabel: %Monitor - ApplicationInsights %Service Attention
+# ServiceOwners: @azmonapplicationinsights
+
 # ServiceLabel: %MySQL %Service Attention
 # ServiceOwners: @ambhatna @savjani
 
-# ServiceLabel: %Network %Service Attention
-# ServiceOwners: @aznetsuppgithub
-
 # ServiceLabel: %Network - Application Gateway %Service Attention
 # ServiceOwners: @appgwsuppgithub
+
+# ServiceLabel: %Network - Bastion %Service Attention
+# ServiceOwners: @bastionsuppgithub
 
 # ServiceLabel: %Network - CDN %Service Attention
 # ServiceOwners: @cdnfdsuppgithub
 
 # ServiceLabel: %Network - DDOS Protection %Service Attention
 # ServiceOwners: @ddossuppgithub
+
+# ServiceLabel: %Network - DNS %Service Attention
+# ServiceOwners: @dnssuppgithub
 
 # ServiceLabel: %Network - ExpressRoute %Service Attention
 # ServiceOwners: @exrsuppgithub
@@ -681,29 +665,41 @@
 # ServiceLabel: %Network - Load Balancer %Service Attention
 # ServiceOwners: @slbsupportgithub
 
-# ServiceLabel: %Network - Virtual Network NAT %Service Attention
-# ServiceOwners: @vnetsuppgithub
+# ServiceLabel: %Network - Network Virtual Appliance %Service Attention
+# ServiceOwners: @nvasuppgithub
 
 # ServiceLabel: %Network - Network Watcher %Service Attention
 # ServiceOwners: @netwatchsuppgithub
 
-# ServiceLabel: %Network - DNS %Service Attention
-# ServiceOwners: @dnssuppgithub
+# ServiceLabel: %Network - Private Link %Service Attention
+# ServiceOwners: @privlinksuppgithub
 
 # ServiceLabel: %Network - Traffic Manager %Service Attention
 # ServiceOwners: @tmsuppgithub
 
+# ServiceLabel: %Network - Virtual Network NAT %Service Attention
+# ServiceOwners: @vnetsuppgithub
+
+# ServiceLabel: %Network - Virtual Network %Service Attention
+# ServiceOwners: @vnetsuppgithub
+
+# ServiceLabel: %Network - Virtual WAN %Service Attention
+# ServiceOwners: @vwansuppgithub
+
 # ServiceLabel: %Network - VPN Gateway %Service Attention
 # ServiceOwners: @vpngwsuppgithub
+
+# ServiceLabel: %Network %Service Attention
+# ServiceOwners: @aznetsuppgithub
 
 # ServiceLabel: %Notification Hub %Service Attention
 # ServiceOwners: @tjsomasundaram
 
-# ServiceLabel: %Policy %Service Attention
-# ServiceOwners: @aperezcloud @kenieva
-
 # ServiceLabel: %Policy Insights %Service Attention
 # ServiceOwners: @kenieva
+
+# ServiceLabel: %Policy %Service Attention
+# ServiceOwners: @aperezcloud @kenieva
 
 # ServiceLabel: %PostgreSQL %Service Attention
 # ServiceOwners: @lfittl-msft @niklarin @sr-msft @sunilagarwal
@@ -725,6 +721,9 @@
 
 # ServiceLabel: %Scheduler %Service Attention
 # ServiceOwners: @derek1ee
+
+# ServiceLabel: %SecurityInsights %Service Attention
+# ServiceOwners: @amirkeren
 
 # ServiceLabel: %Security %Service Attention
 # ServiceOwners: @chlahav
@@ -753,47 +752,48 @@
 # ServiceLabel: %Service Attention %Web Apps
 # ServiceOwners: @antcp @AzureAppServiceCLI
 
-# ServiceLabel: %Network - Virtual Network %Service Attention
-# ServiceOwners: @vnetsuppgithub
+# PRLabel: %Service Bus
+/sdk/servicebus/    @EldertGrootenboer @skarri-microsoft
 
-# ServiceLabel: %Network - Virtual WAN %Service Attention
-# ServiceOwners: @vwansuppgithub
+# ServiceLabel: %Service Bus
+# ServiceOwners: @EldertGrootenboer @skarri-microsoft
 
-# ServiceLabel: %Network - Network Virtual Appliance %Service Attention
-# ServiceOwners: @nvasuppgithub
+# PRLabel: %Service Fabric
+/sdk/servicefabric/    @QingChenmsft @samedder
 
-# ServiceLabel: %Network - Bastion %Service Attention
-# ServiceOwners: @bastionsuppgithub
+# PRLabel: %Speech Transcription
+/sdk/cognitiveservices/azure-ai-transcription/    @amber-yujueWang @rhurey @xitzhang
 
-# ServiceLabel: %Network - Private Link %Service Attention
-# ServiceOwners: @privlinksuppgithub
+# ServiceLabel: %Speech Transcription
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
 
-# ServiceLabel: %Azure Arc enabled servers %Service Attention
-# ServiceOwners: @edyoung @rpsqrd
+# PRLabel: %Storage
+/sdk/storage/    @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
 
-# ServiceLabel: %SecurityInsights %Service Attention
-# ServiceOwners: @amirkeren
+# ServiceLabel: %Storage
+# ServiceOwners: @jalauzon-msft @vincenttran-msft
 
-# ServiceLabel: %IoT - CLI %Service Attention
-# ServiceOwners: @Azure/azure-iot-cli-triage
+# PRLabel: %Synapse
+/sdk/synapse/    @wanyang7 @yanjungao718
 
-# ServiceLabel: %Cost Management - Budget %Service Attention
-# ServiceOwners: @ccmaxpcrew
+# ServiceLabel: %Synapse
+# ServiceOwners: @wanyang7 @zesluo
 
-# ServiceLabel: %Cost Management - Query %Service Attention
-# ServiceOwners: @ccmixpdevs
+# PRLabel: %Tables
+/sdk/tables/    @YalinLi0312
 
-# ServiceLabel: %Cost Management - Billing %Service Attention
-# ServiceOwners: @ccmbpxpcrew
+# AzureSdkOwners: @YalinLi0312
+# ServiceLabel: %Tables
+# ServiceOwners: @klaaslanghout
 
-# ServiceLabel: %Consumption - Billing %Service Attention
-# ServiceOwners: @ccmbpxpcrew
+# PRLabel: %VideoAnalyzer
+/sdk/videoanalyzer/    @hivyas
 
-# ServiceLabel: %Cost Management - UsageDetailsAndExport %Service Attention
-# ServiceOwners: @TiagoCrewGitHubIssues
+# PRLabel: %WebPubSub
+/sdk/webpubsub/    @iscai-msft @msyyc
 
-# ServiceLabel: %Cost Management - RIandShowBack %Service Attention
-# ServiceOwners: @ccmshowbackdevs
+# ServiceLabel: %SQL
+# ServiceOwners: @azureSQLGitHub
 
 ####################
 # Management Libraries
