@@ -29,6 +29,7 @@ from azure.ai.evaluation.red_team._foundry._scenario_orchestrator import (
 )
 from azure.ai.evaluation.red_team._foundry._foundry_result_processor import (
     FoundryResultProcessor,
+    _get_attack_type_name,
 )
 from azure.ai.evaluation.red_team._foundry._execution_manager import (
     FoundryExecutionManager,
@@ -99,6 +100,38 @@ def sample_context_items():
             "tool_name": "web_browser",
         },
     ]
+
+
+# =============================================================================
+# Tests for _get_attack_type_name helper
+# =============================================================================
+@pytest.mark.unittest
+class TestGetAttackTypeName:
+    """Test the _get_attack_type_name defensive helper."""
+
+    def test_with_dict_identifier(self):
+        """Test with current pyrit 0.11.0 dict form."""
+        identifier = {"__type__": "PromptSendingAttack", "__module__": "pyrit.executor", "id": "abc"}
+        assert _get_attack_type_name(identifier) == "PromptSendingAttack"
+
+    def test_with_dict_missing_type(self):
+        """Test dict without __type__ key."""
+        assert _get_attack_type_name({"id": "abc"}) == "Unknown"
+
+    def test_with_identifier_object(self):
+        """Test with future Identifier-style object (has class_name)."""
+        obj = MagicMock()
+        obj.class_name = "RedTeamingAttack"
+        # Ensure isinstance(obj, dict) is False
+        assert _get_attack_type_name(obj) == "RedTeamingAttack"
+
+    def test_with_none(self):
+        """Test with None input."""
+        assert _get_attack_type_name(None) == "Unknown"
+
+    def test_with_empty_dict(self):
+        """Test with empty dict."""
+        assert _get_attack_type_name({}) == "Unknown"
 
 
 # =============================================================================

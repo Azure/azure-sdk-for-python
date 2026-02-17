@@ -12,6 +12,24 @@ from pyrit.models import AttackOutcome, AttackResult
 from pyrit.scenario import DatasetConfiguration
 
 
+def _get_attack_type_name(attack_identifier) -> str:
+    """Extract attack type name from attack_identifier regardless of form.
+
+    Handles both the current dict form (pyrit 0.11.0) and a future
+    Identifier-object form (anticipated when pyrit adds AttackIdentifier).
+
+    :param attack_identifier: The identifier from AttackResult, either dict or object
+    :return: The attack type name string
+    :rtype: str
+    """
+    if attack_identifier is None:
+        return "Unknown"
+    if isinstance(attack_identifier, dict):
+        return attack_identifier.get("__type__", "Unknown")
+    # Future: Identifier-style object with class_name attribute
+    return getattr(attack_identifier, "class_name", "Unknown")
+
+
 def _read_seed_content(seed) -> str:
     """Read seed content, handling both direct values and file paths.
 
@@ -220,8 +238,7 @@ class FoundryResultProcessor:
             # UNDETERMINED leaves attack_success unset
 
             # Add strategy information
-            attack_identifier = attack_result.attack_identifier or {}
-            raw_strategy = attack_identifier.get("__type__", "Unknown")
+            raw_strategy = _get_attack_type_name(attack_result.attack_identifier)
             # Clean PyRIT class name for display (e.g., "PromptSendingAttack" → "PromptSending")
             entry["attack_strategy"] = raw_strategy.replace("Attack", "").replace("Converter", "")
 

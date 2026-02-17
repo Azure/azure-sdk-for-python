@@ -12,6 +12,7 @@ from pyrit.prompt_target import PromptChatTarget
 from pyrit.scenario import DatasetConfiguration
 from pyrit.scenario.foundry import FoundryScenario, FoundryStrategy
 
+from ._foundry_result_processor import _get_attack_type_name
 from ._rai_scorer import RAIServiceScorer
 
 
@@ -208,7 +209,7 @@ class ScenarioOrchestrator:
         strategy_stats: Dict[str, Dict[str, int]] = {}
 
         for result in results:
-            strategy_name = (result.attack_identifier or {}).get("__type__", "Unknown")
+            strategy_name = _get_attack_type_name(result.attack_identifier)
 
             if strategy_name not in strategy_stats:
                 strategy_stats[strategy_name] = {"decided": 0, "successful": 0}
