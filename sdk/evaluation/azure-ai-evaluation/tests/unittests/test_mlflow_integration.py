@@ -3,12 +3,9 @@
 # ---------------------------------------------------------
 """Tests for MLflowIntegration — ensures update_red_team_run fires reliably."""
 
-import json
 import importlib
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
-from datetime import datetime
-
+from unittest.mock import MagicMock, patch
 
 # Import _mlflow_integration directly to avoid red_team/__init__.py triggering
 # a pyrit import (which may not be installed in all test environments).

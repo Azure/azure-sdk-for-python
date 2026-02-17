@@ -382,9 +382,9 @@ class MLflowIntegration:
                     self.logger.error(f"Failed to create evaluation result: {str(e)}")
 
                 # Step 2: Always update the run status, even if result upload failed
-                outputs = {}
+                outputs = None
                 if evaluation_result_id:
-                    outputs["evaluationResultId"] = evaluation_result_id
+                    outputs = {"evaluationResultId": evaluation_result_id}
                 try:
                     update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
                         name=eval_run.id,
