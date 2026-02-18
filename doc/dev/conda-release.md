@@ -9,9 +9,9 @@ Azure SDK for Python ships new releases to Conda on a **quarterly cadence** (Mar
 
 This section covers instructions for managing a quarterly conda release, which require a few manual steps.
 
-### Pre-requisites
-
-- Be apart of the AzureSdk group in Anaconda (contact Steve Dower)
+### Prerequisites
+- Create an account on https://anaconda.org/
+- Contact Steve Dower to join the AzureSDK group on https://anaconda.org/microsoft
 
 ### Automated PR Creation
 
@@ -25,7 +25,7 @@ You can also trigger it manually from [Azure DevOps](https://dev.azure.com/azure
 
 #### Dry Run
 
-The update pipeline has a **Dry Run** option. When enabled, it runs the update script and shows what would change, but skips opening the PR. This is useful for previewing changes before a real release.
+The update pipeline has a **Dry Run** option. When enabled, it runs the update script and shows what would change, but skips opening the PR.
 
 ### What the PR Contains
 

@@ -22,7 +22,7 @@ The script is the core of the update pipeline. When invoked (with an optional `-
 
 1. **Bumps `AZURESDK_CONDA_VERSION`** in `conda_env.yml` to the target release date (or auto-increments by 3 months).
 
-2. **Parses the package CSV** (via `conda_helper_functions.parse_csv()`) to get the latest GA versions and release dates for all Azure SDK packages.
+2. **Parses the [Python package CSV](https://github.com/Azure/azure-sdk/blob/main/_data/releases/latest/python-packages.csv)** to get the latest GA versions and release dates for all Azure SDK packages.
 
 3. **Categorizes packages** into:
    - **Outdated** — already in conda but with a newer GA version available.
@@ -74,7 +74,7 @@ See [conda-builds.md](conda-builds.md) for instructions on building conda packag
 
 ## Adding a New Package to Conda Manually
 
-If the automation doesn't handle a package correctly, you can add it manually:
+If the automation doesn't handle a new package correctly, the manual steps are:
 
 1. **Add a release toggle** parameter in `conda-sdk-client.yml`.
 2. **Add a `CondaArtifacts` entry** with `name`, `service`, `common_root`, `in_batch`, and `checkout` fields.
@@ -84,5 +84,6 @@ If the automation doesn't handle a package correctly, you can add it manually:
 
    ```toml
    [tool.azure-sdk-conda]
-   bundle = "azure-storage"  # The name of the conda bundle this package belongs to
+   in_bundle = true
+   bundle_name = "azure-storage"  # The name of the conda bundle this package belongs to
    ```
