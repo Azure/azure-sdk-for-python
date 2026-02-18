@@ -201,6 +201,12 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             days=getattr(generated, 'days', None),
         )
 
+    def __eq__(self, other: Any) -> bool:
+        """Check equality by comparing internal data."""
+        if isinstance(other, self.__class__) and hasattr(other, '_data'):
+            return self._data == other._data
+        return super().__eq__(other)
+
 
 class BlobAnalyticsLogging(GeneratedLogging):
     """Azure Analytics Logging settings.
@@ -239,6 +245,12 @@ class BlobAnalyticsLogging(GeneratedLogging):
             retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy'))  # pylint: disable=protected-access
         )
 
+    def __eq__(self, other: Any) -> bool:
+        """Check equality by comparing internal data."""
+        if isinstance(other, self.__class__) and hasattr(other, '_data'):
+            return self._data == other._data
+        return super().__eq__(other)
+
 
 class Metrics(GeneratedMetrics):
     """A summary of request statistics grouped by API in hour or minute aggregates
@@ -274,6 +286,12 @@ class Metrics(GeneratedMetrics):
             include_apis=getattr(generated, 'include_apis', None),
             retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy', None))  # pylint: disable=protected-access
         )
+
+    def __eq__(self, other: Any) -> bool:
+        """Check equality by comparing internal data."""
+        if isinstance(other, self.__class__) and hasattr(other, '_data'):
+            return self._data == other._data
+        return super().__eq__(other)
 
 
 class StaticWebsite(GeneratedStaticWebsite):
@@ -312,6 +330,12 @@ class StaticWebsite(GeneratedStaticWebsite):
             error_document404_path=getattr(generated, 'error_document404_path', None),
             default_index_document_path=getattr(generated, 'default_index_document_path', None)
         )
+
+    def __eq__(self, other: Any) -> bool:
+        """Check equality by comparing internal data."""
+        if isinstance(other, self.__class__) and hasattr(other, '_data'):
+            return self._data == other._data
+        return super().__eq__(other)
 
 
 class CorsRule(GeneratedCorsRule):
@@ -377,6 +401,12 @@ class CorsRule(GeneratedCorsRule):
             exposed_headers=[getattr(generated, 'exposed_headers')],
             max_age_in_seconds=getattr(generated, 'max_age_in_seconds'),
         )
+
+    def __eq__(self, other: Any) -> bool:
+        """Check equality by comparing internal data."""
+        if isinstance(other, self.__class__) and hasattr(other, '_data'):
+            return self._data == other._data
+        return super().__eq__(other)
 
 
 class ContainerProperties(DictMixin):
