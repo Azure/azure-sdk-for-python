@@ -250,6 +250,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
 def _download_blob_options(
     blob_name: str,
     container_name: str,
+    snapshot: Optional[str],
     version_id: Optional[str],
     offset: Optional[int],
     length: Optional[int],
@@ -313,6 +314,7 @@ def _download_blob_options(
         'config': config,
         'start_range': offset,
         'end_range': length,
+        'snapshot': snapshot,
         'version_id': version_id,
         'validate_content': validate_content,
         'encryption_options': {

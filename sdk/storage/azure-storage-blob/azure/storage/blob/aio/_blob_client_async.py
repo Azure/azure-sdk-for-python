@@ -792,6 +792,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
+            snapshot=self.snapshot,
             version_id=get_version_id(self.version_id, kwargs),
             offset=offset,
             length=length,
