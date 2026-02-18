@@ -35,7 +35,7 @@ if TYPE_CHECKING:
 
 
 class ResourceManagementClient:
-    """Provides operations for working with resources and resource groups.
+    """ResourceManagement Client.
 
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.resource.resources.operations.Operations

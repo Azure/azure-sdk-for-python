@@ -5,9 +5,9 @@
 # --------------------------------------------------------------------------
 
 import os
-import pytest
 import sys
 import unittest
+import pytest
 
 # Skip for Python v3.13 until https://github.com/psycopg/psycopg2/pull/1729 is resolved
 # Skip for Python v3.8 on windows due to https://github.com/psycopg/psycopg/issues/936

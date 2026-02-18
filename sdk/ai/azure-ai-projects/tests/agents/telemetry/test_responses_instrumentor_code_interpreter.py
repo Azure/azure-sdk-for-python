@@ -10,7 +10,12 @@ import os
 import pytest
 from io import BytesIO
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
-from azure.ai.projects.telemetry._utils import SPAN_NAME_INVOKE_AGENT
+from azure.ai.projects.telemetry._utils import (
+    OPERATION_NAME_INVOKE_AGENT,
+    SPAN_NAME_INVOKE_AGENT,
+    _set_use_message_events,
+    RESPONSES_PROVIDER,
+)
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -48,6 +53,7 @@ class TestResponsesInstrumentorCodeInterpreter(TestAiAgentsInstrumentorBase):
     def test_sync_code_interpreter_non_streaming_with_content_recording(self, **kwargs):
         """Test synchronous Code Interpreter agent with content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -118,8 +124,8 @@ TRANSPORTATION,Contoso air,1100000
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -235,6 +241,7 @@ TRANSPORTATION,Contoso air,1100000
     def test_sync_code_interpreter_non_streaming_without_content_recording(self, **kwargs):
         """Test synchronous Code Interpreter agent with content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -304,8 +311,8 @@ TRANSPORTATION,Contoso air,1100000
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -425,6 +432,7 @@ TRANSPORTATION,Contoso air,1100000
     def test_sync_code_interpreter_streaming_with_content_recording(self, **kwargs):
         """Test synchronous Code Interpreter agent with streaming and content recording enabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "True",
@@ -499,8 +507,8 @@ TRANSPORTATION,Contoso air,1100000
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),
@@ -615,6 +623,7 @@ TRANSPORTATION,Contoso air,1100000
     def test_sync_code_interpreter_streaming_without_content_recording(self, **kwargs):
         """Test synchronous Code Interpreter agent with streaming and content recording disabled."""
         self.cleanup()
+        _set_use_message_events(True)
         os.environ.update(
             {
                 CONTENT_TRACING_ENV_VARIABLE: "False",
@@ -689,8 +698,8 @@ TRANSPORTATION,Contoso air,1100000
 
                 expected_attributes = [
                     ("az.namespace", "Microsoft.CognitiveServices"),
-                    ("gen_ai.operation.name", "responses"),
-                    ("gen_ai.provider.name", "azure.openai"),
+                    ("gen_ai.operation.name", OPERATION_NAME_INVOKE_AGENT),
+                    ("gen_ai.provider.name", RESPONSES_PROVIDER),
                     ("server.address", ""),
                     ("gen_ai.conversation.id", conversation.id),
                     ("gen_ai.agent.name", agent.name),

@@ -105,6 +105,7 @@ python basic_voice_assistant_async.py --help
 ## Sample descriptions
 
 - **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
+- **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using the `AgentSessionConfig` TypedDict. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, and conversation logging.
 - **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
 
 ## Troubleshooting

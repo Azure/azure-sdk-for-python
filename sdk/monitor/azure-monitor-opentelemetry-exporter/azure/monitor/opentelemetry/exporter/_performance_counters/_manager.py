@@ -9,7 +9,7 @@ import psutil
 
 from opentelemetry import metrics
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
@@ -62,7 +62,7 @@ _LAST_EXCEPTION_RATE_TIME = datetime.now()
 _EXCEPTIONS_COUNT = 0
 
 
-#  pylint: disable=unused-argument
+#  pylint: disable=unused-argument, do-not-use-logging-exception, do-not-log-exceptions-if-not-debug
 def _get_process_cpu(options: CallbackOptions) -> Iterable[Observation]:
     """Get process CPU usage as a percentage.
 
@@ -630,13 +630,13 @@ class _PerformanceCountersManager(metaclass=Singleton):
         except Exception:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span.")  # pylint: disable=C4769
 
-    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
+    def _record_log_record(self, read_write_log_record: ReadWriteLogRecord) -> None:
         try:
             # pylint: disable=global-statement
             global _EXCEPTIONS_COUNT
-            if readable_log_record.log_record:
+            if read_write_log_record.log_record:
                 exc_type = None
-                log_record = readable_log_record.log_record
+                log_record = read_write_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(EXCEPTION_MESSAGE)

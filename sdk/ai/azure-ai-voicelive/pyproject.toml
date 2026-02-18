@@ -77,3 +77,6 @@ pytyped = ["py.typed"]
 [tool.pytest.ini_options]
 asyncio_default_fixture_loop_scope = "function"
 asyncio_mode = "auto"
+
+[tool.azure-sdk-conda]
+in_bundle = false

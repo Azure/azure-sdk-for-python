@@ -7,6 +7,7 @@ from unittest import mock
 from azure.monitor.opentelemetry.exporter._quickpulse._policy import _QuickpulseRedirectPolicy
 
 
+# pylint: disable=line-too-long
 class TestQuickpulseRedirectPolicy(unittest.TestCase):
     def test_get_redirect_location(self):
         policy = _QuickpulseRedirectPolicy()
@@ -43,7 +44,6 @@ class TestQuickpulseRedirectPolicy(unittest.TestCase):
         pipeline_resp_mock.http_response = http_resp_mock
         policy = _QuickpulseRedirectPolicy()
         self.assertIsNone(policy.get_redirect_location(pipeline_resp_mock))
-        redirect_location = policy.get_redirect_location(pipeline_resp_mock)
 
     def test_get_redirect_location_invalid_url(self):
         policy = _QuickpulseRedirectPolicy()

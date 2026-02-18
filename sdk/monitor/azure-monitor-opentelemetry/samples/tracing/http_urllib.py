@@ -7,8 +7,8 @@
 import logging
 from urllib import request
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 logger = logging.getLogger(__name__)
 
@@ -20,9 +20,9 @@ with tracer.start_as_current_span("Request parent span") as span:
     try:
         # Requests made using the urllib library will be automatically captured
         req = request.Request("https://www.example.org/", method="GET")
-        r = request.urlopen(req)
-        logger.warning("Request sent")
-    except Exception as ex:
+        with request.urlopen(req) as _:
+            logger.warning("Request sent")
+    except Exception as ex:  # pylint: disable=broad-exception-caught
         # If an exception occurs, this can be manually recorded on the parent span
         span.set_attribute("status", "exception")
         span.record_exception(ex)

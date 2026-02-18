@@ -7,10 +7,7 @@ from typing import Any, Dict, Optional, Union
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import (  # pylint:disable=no-legacy-azure-core-http-response-import
-    HttpRequest,
-    HttpResponse,
-)
+from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.pipeline import PipelineResponse
 from .pipeline import build_pipeline
 
@@ -22,7 +19,7 @@ class MsalResponse:
     """Wraps HttpResponse according to msal.oauth2cli.http.
 
     :param response: The response to wrap.
-    :type response: ~azure.core.pipeline.transport.HttpResponse
+    :type response: ~azure.core.rest.HttpResponse
     """
 
     def __init__(self, response: PipelineResponse) -> None:
@@ -84,19 +81,20 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         **kwargs: Any
     ) -> MsalResponse:
         # pylint:disable=unused-argument
-        request = HttpRequest("POST", url, headers=headers)
-        if params:
-            request.format_parameters(params)
+        request_headers = dict(headers) if headers else {}
+        content: Optional[bytes] = None
+        request_data: Optional[Dict[str, str]] = None
+
         if data:
             if isinstance(data, dict):
-                request.headers["Content-Type"] = "application/x-www-form-urlencoded"
-                request.set_formdata_body(data)
+                request_headers["Content-Type"] = "application/x-www-form-urlencoded"
+                request_data = data
             elif isinstance(data, str):
-                body_bytes = data.encode("utf-8")
-                request.set_bytes_body(body_bytes)
+                content = data.encode("utf-8")
             else:
                 raise ValueError('expected "data" to be text or a dict')
 
+        request = HttpRequest("POST", url, headers=request_headers, params=params, data=request_data, content=content)
         response = self._pipeline.run(request, stream=False, retry_on_methods=_POST)
         self._store_auth_error(response)
         return MsalResponse(response)
@@ -105,9 +103,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         self, url: str, params: Optional[Dict[str, str]] = None, headers: Optional[Dict[str, str]] = None, **kwargs: Any
     ) -> MsalResponse:
         # pylint:disable=unused-argument
-        request = HttpRequest("GET", url, headers=headers)
-        if params:
-            request.format_parameters(params)
+        request = HttpRequest("GET", url, headers=headers, params=params)
         response = self._pipeline.run(request, stream=False)
         self._store_auth_error(response)
         return MsalResponse(response)
@@ -118,7 +114,7 @@ class MsalClient:  # pylint:disable=client-accepts-api-version-keyword
         :param msal_result: The result of an MSAL request.
         :type msal_result: dict
         :return: The HTTP response associated with the error, if any.
-        :rtype: ~azure.core.pipeline.transport.HttpResponse or None
+        :rtype: ~azure.core.rest.HttpResponse or None
         """
         error_code, response = getattr(self._local, "error", (None, None))
         if response and error_code == msal_result.get("error"):

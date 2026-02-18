@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 import pytest
 import time
 from azure.appconfiguration.provider._models import SettingSelector
@@ -120,11 +119,11 @@ class TestSnapshotProviderIntegration(AppConfigTestCase):
     def test_load_provider_with_snapshot_not_found(self, appconfiguration_connection_string):
         """Test loading provider with a non-existent snapshot returns error."""
         # Try to load from a non-existent snapshot
-        with pytest.raises(ResourceNotFoundError):
-            self.create_client(
-                connection_string=appconfiguration_connection_string,
-                selects=[SettingSelector(snapshot_name="non-existent-snapshot")],
-            )
+        provider = self.create_client(
+            connection_string=appconfiguration_connection_string,
+            selects=[SettingSelector(snapshot_name="non-existent-snapshot")],
+        )
+        assert len(provider._dict) == 0, "Provider should have no settings when snapshot is not found"
 
     @app_config_decorator
     @recorded_by_proxy

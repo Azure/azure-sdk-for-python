@@ -3,14 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import functools
-import asyncio  # pylint: disable = do-not-import-asyncio
+import inspect
 from typing import Any, Callable, Optional, Dict
 
 try:
     # pylint: disable = no-name-in-module
     from opentelemetry import trace as opentelemetry_trace
 
-    tracer = opentelemetry_trace.get_tracer(__name__)  # type: ignore[attr-defined]
+    _tracer = opentelemetry_trace.get_tracer(__name__)  # type: ignore[attr-defined]
     _tracing_library_available = True
 except ModuleNotFoundError:
     _tracing_library_available = False
@@ -50,6 +50,7 @@ if _tracing_library_available:
                 :return: The result of the decorated asynchronous function.
                 :rtype: Any
                 """
+                tracer = opentelemetry_trace.get_tracer(__name__)  # type: ignore[attr-defined]
                 name = span_name if span_name else func.__name__
                 with tracer.start_as_current_span(name) as span:
                     try:
@@ -79,6 +80,7 @@ if _tracing_library_available:
                 :return: The result of the decorated synchronous function.
                 :rtype: Any
                 """
+                tracer = opentelemetry_trace.get_tracer(__name__)  # type: ignore[attr-defined]
                 name = span_name if span_name else func.__name__
                 with tracer.start_as_current_span(name) as span:
                     try:
@@ -99,7 +101,7 @@ if _tracing_library_available:
                         raise
 
             # Determine if the function is async
-            if asyncio.iscoroutinefunction(func):
+            if inspect.iscoroutinefunction(func):
                 return async_wrapper
             return sync_wrapper
 
@@ -134,15 +136,15 @@ def sanitize_parameters(func, *args, **kwargs) -> Dict[str, Any]:
     :return: A dictionary of sanitized parameters.
     :rtype: Dict[str, Any]
     """
-    import inspect
-
     params = inspect.signature(func).parameters
     sanitized_params = {}
 
     for i, (name, param) in enumerate(params.items()):
-        if param.default == inspect.Parameter.empty and i < len(args):
+        if i < len(args):
+            # Use positional argument if provided
             value = args[i]
         else:
+            # Use keyword argument if provided, otherwise fall back to default value
             value = kwargs.get(name, param.default)
 
         sanitized_value = sanitize_for_attributes(value)

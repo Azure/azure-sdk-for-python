@@ -8,7 +8,7 @@ from typing import Any, Optional, Dict
 
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessTokenInfo
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -60,9 +60,7 @@ def _get_request(scope: str, identity_config: Dict) -> HttpRequest:
         os.environ.get(EnvironmentVariables.AZURE_POD_IDENTITY_AUTHORITY_HOST, IMDS_AUTHORITY).strip("/")
         + IMDS_TOKEN_PATH
     )
-    request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
-    return request
+    return HttpRequest("GET", url, params=dict({"api-version": "2018-02-01", "resource": scope}, **identity_config))
 
 
 def _check_forbidden_response(ex: HttpResponseError) -> None:

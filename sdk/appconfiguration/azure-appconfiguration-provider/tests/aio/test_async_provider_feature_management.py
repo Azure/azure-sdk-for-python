@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import SettingSelector
-from azure.appconfiguration.provider.aio import load
-from azure.appconfiguration.aio import AzureAppConfigurationClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
 from testcase import has_feature_flag
 from asynctestcase import AppConfigTestCase, setup_configs
 from test_constants import FEATURE_MANAGEMENT_KEY
+from azure.appconfiguration.provider import SettingSelector
+from azure.appconfiguration.provider.aio import load
+from azure.appconfiguration.aio import AzureAppConfigurationClient
 
 
 class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):

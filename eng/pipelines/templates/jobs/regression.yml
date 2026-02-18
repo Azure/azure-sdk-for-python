@@ -71,6 +71,12 @@ jobs:
 
     # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
     steps:
+      # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+      # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+      - template: ../steps/auth-dev-feed.yml
+        parameters:
+          DevFeedName: ${{ parameters.DevFeedName }}
+
       - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
@@ -96,11 +102,6 @@ jobs:
       - template: ../steps/set-dev-build.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
-
-      - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-        - template: ../steps/auth-dev-feed.yml
-          parameters:
-            DevFeedName: ${{ parameters.DevFeedName }}
 
       - task: PythonScript@0
         displayName: 'Test Latest Released Dependents'

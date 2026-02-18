@@ -30,11 +30,11 @@ from azure.search.documents.knowledgebases import KnowledgeBaseRetrievalClient
 from azure.search.documents.knowledgebases.models import (
     KnowledgeBaseRetrievalRequest,
     KnowledgeRetrievalSemanticIntent,
+    KnowledgeRetrievalMinimalReasoningEffort,
 )
 from azure.search.documents.indexes.models import (
     KnowledgeBase,
     KnowledgeSourceReference,
-    KnowledgeRetrievalMinimalReasoningEffort,
     SearchIndexFieldReference,
     SearchIndexKnowledgeSource,
     SearchIndexKnowledgeSourceParameters,
@@ -54,9 +54,7 @@ def create_knowledge_source():
 
     knowledge_source = SearchIndexKnowledgeSource(
         name=knowledge_source_name,
-        search_index_parameters=SearchIndexKnowledgeSourceParameters(
-            search_index_name=index_name
-        ),
+        search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
     )
 
     index_client.create_or_update_knowledge_source(knowledge_source=knowledge_source)
@@ -149,15 +147,12 @@ def retrieve_knowledge_base():
     # [START retrieve_knowledge_base]
     retrieval_client = KnowledgeBaseRetrievalClient(
         service_endpoint,
-        knowledge_base_name=knowledge_base_name,
         credential=AzureKeyCredential(key),
     )
 
-    request = KnowledgeBaseRetrievalRequest(
-        intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")]
-    )
+    request = KnowledgeBaseRetrievalRequest(intents=[KnowledgeRetrievalSemanticIntent(search="hotels with free wifi")])
 
-    result = retrieval_client.retrieve(request)
+    result = retrieval_client.retrieve(knowledge_base_name=knowledge_base_name, retrieval_request=request)
     print("Results: knowledge base retrieval")
 
     response_parts = []

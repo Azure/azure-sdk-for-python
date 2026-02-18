@@ -1,12 +1,20 @@
 # Release History
 
-## 1.0.0b48 (Unreleased)
+## 1.0.0b49 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b48 (2026-02-05)
+
+### Bugs Fixed
+- Fix CPU usage calculation logic for live metrics
+  ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
 
 ### Other Changes
 - Fix Ingestion-Side Sampling Disk Persist Behavior

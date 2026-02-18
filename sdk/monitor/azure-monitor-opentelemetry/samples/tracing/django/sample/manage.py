@@ -17,7 +17,8 @@ def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "sample.settings")
 
     # Configure Azure monitor collection telemetry pipeline
-    # configure_azure_monitor should only be called once in either asgi.py, wsgi.py, or manage.py, depending on startup method.
+    # configure_azure_monitor should only be called once in either asgi.py, wsgi.py, or manage.py,
+    # depending on startup method.
     # If using manage.py, please remove configure_azure_monitor from asgi.py and wsgi.py
     configure_azure_monitor()
 
