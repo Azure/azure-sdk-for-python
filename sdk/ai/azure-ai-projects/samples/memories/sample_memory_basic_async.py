@@ -38,7 +38,6 @@ from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     EasyInputMessage,
-    FoundryFeaturesOptInKeys,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
@@ -59,9 +58,7 @@ async def main() -> None:
         # Delete memory store, if it already exists
         memory_store_name = "my_memory_store"
         try:
-            await project_client.beta.memory_stores.delete(
-                memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-            )
+            await project_client.beta.memory_stores.delete(memory_store_name)
             print(f"Memory store `{memory_store_name}` deleted")
         except ResourceNotFoundError:
             pass
@@ -78,7 +75,6 @@ async def main() -> None:
             name=memory_store_name,
             description="Example memory store for conversations",
             definition=definition,
-            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Created memory store: {memory_store.name} ({memory_store.id}): {memory_store.description}")
         if isinstance(memory_store.definition, MemoryStoreDefaultDefinition):
@@ -98,7 +94,6 @@ async def main() -> None:
             scope=scope,
             items=[user_message],  # Pass conversation items that you want to add to memory
             update_delay=0,  # Trigger update immediately without waiting for inactivity
-            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
 
         # Wait for the update operation to complete, but can also fire and forget
@@ -116,22 +111,17 @@ async def main() -> None:
             scope=scope,
             items=[query_message],
             options=MemorySearchOptions(max_memories=5),
-            foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
         )
         print(f"Found {len(search_response.memories)} memories")
         for memory in search_response.memories:
             print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
         # Delete memories for a specific scope
-        await project_client.beta.memory_stores.delete_scope(
-            name=memory_store.name, scope=scope, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
+        await project_client.beta.memory_stores.delete_scope(name=memory_store.name, scope=scope)
         print(f"Deleted memories for scope '{scope}'")
 
         # Delete memory store
-        await project_client.beta.memory_stores.delete(
-            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
+        await project_client.beta.memory_stores.delete(memory_store.name)
         print(f"Deleted memory store `{memory_store.name}`")
 
 

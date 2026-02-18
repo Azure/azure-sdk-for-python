@@ -12,7 +12,6 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport, is_live, is_live_and_not_recording
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
-    FoundryFeaturesOptInKeys,
     MemoryStoreDefaultDefinition,
     MemorySearchPreviewTool,
     PromptAgentDefinition,
@@ -86,9 +85,7 @@ class TestAgentMemorySearch(TestBase):
             # in live mode so we don't get logs of this call in test recordings.
             if is_live_and_not_recording():
                 try:
-                    project_client.beta.memory_stores.delete(
-                        memory_store_name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-                    )
+                    project_client.beta.memory_stores.delete(memory_store_name)
                     print(f"Memory store `{memory_store_name}` deleted")
                 except ResourceNotFoundError:
                     pass
@@ -104,7 +101,6 @@ class TestAgentMemorySearch(TestBase):
                     name=memory_store_name,
                     description="Test memory store for agent conversations",
                     definition=definition,
-                    foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW,
                 )
                 print(f"\nMemory store created: {memory_store.name} (id: {memory_store.id})")
                 assert memory_store.name == memory_store_name
@@ -214,9 +210,7 @@ class TestAgentMemorySearch(TestBase):
 
                 if memory_store:
                     try:
-                        project_client.beta.memory_stores.delete(
-                            memory_store.name, foundry_features=FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-                        )
+                        project_client.beta.memory_stores.delete(memory_store.name)
                         print("Memory store deleted")
                     except Exception as e:
                         print(f"Failed to delete memory store: {e}")
