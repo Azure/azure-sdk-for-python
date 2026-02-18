@@ -995,20 +995,20 @@ def _deserialize_with_callable(
                 return float(value.text) if value.text else None
             if deserializer is bool:
                 return value.text == "true" if value.text else None
-            if deserializer in _DESERIALIZE_MAPPING.values() or deserializer in _DESERIALIZE_MAPPING_WITHFORMAT.values():
-                return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value.text) if value.text else None
+            if deserializer and deserializer in _DESERIALIZE_MAPPING.values():
+                return deserializer(value.text) if value.text else None
+            if deserializer and deserializer in _DESERIALIZE_MAPPING_WITHFORMAT.values():
+                return deserializer(value.text) if value.text else None
         if deserializer is None:
             return value
         if deserializer in [int, float, bool]:
             return deserializer(value)
         if isinstance(deserializer, CaseInsensitiveEnumMeta):
-            if isinstance(value, ET.Element):
-                value = value.text if value.text else None
             try:
-                return deserializer(value)
+                return deserializer(value.text if isinstance(value, ET.Element) else value)
             except ValueError:
                 # for unknown value, return raw value
-                return value
+                return value.text if isinstance(value, ET.Element) else value
         if isinstance(deserializer, type) and issubclass(deserializer, Model):
             return deserializer._deserialize(value, [])
         return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value)
@@ -1205,9 +1205,7 @@ def _get_element(
     exclude_readonly: bool = False,
     parent_meta: typing.Optional[dict[str, typing.Any]] = None,
     wrapped_element: typing.Optional[ET.Element] = None,
-) -> typing.Union[ET.Element, list[ET.Element], None]:
-    if o is None:
-        return None
+) -> typing.Union[ET.Element, list[ET.Element]]:
     if _is_model(o):
         model_meta = getattr(o, "_xml", {})
 
