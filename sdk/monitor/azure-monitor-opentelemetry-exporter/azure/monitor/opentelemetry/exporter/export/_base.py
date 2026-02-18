@@ -120,7 +120,10 @@ class BaseExporter:
             self._credential = _get_authentication_credential(**kwargs)
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get("disable_offline_storage", False)
-        self._connection_string = parsed_connection_string._connection_string
+        self._connection_string = (
+            parsed_connection_string._connection_string or 
+            os.getenv("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        )
         self._endpoint = parsed_connection_string.endpoint
         self._region = parsed_connection_string.region
         self._instrumentation_key = parsed_connection_string.instrumentation_key
