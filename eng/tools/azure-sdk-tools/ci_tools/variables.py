@@ -99,7 +99,6 @@ DEFAULT_BUILD_ID = os.getenv("GITHUB_RUN_ID", os.getenv("BUILD.BUILDID", os.gete
 
 DEFAULT_ENVIRONMENT_VARIABLES = {
     "SPHINX_APIDOC_OPTIONS": "members,undoc-members,inherited-members",
-    "PROXY_URL": "http://localhost:5000",
     "VIRTUALENV_WHEEL": "0.45.1",
     "VIRTUALENV_PIP": "24.0",
     "VIRTUALENV_SETUPTOOLS": "75.3.2",
@@ -117,8 +116,7 @@ def set_environment_from_dictionary(settings: Dict[str, str]) -> None:
         settings (Dict[str, str]): A dictionary of environment variable names and their default values.
     """
     for key, value in settings.items():
-        if key not in os.environ:
-            os.environ.setdefault(key, value)
+        os.environ.setdefault(key, value)
 
 
 def set_envvar_defaults(settings: Optional[Dict[str, str]] = None) -> None:

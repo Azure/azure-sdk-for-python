@@ -23,7 +23,6 @@
 """
 
 import warnings
-from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
 
 from azure.core.credentials import TokenCredential
@@ -204,8 +203,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
-    :keyword dict[str, Any] availability_strategy_config:
-        The threshold-based availability strategy to use for this request.
+    :keyword dict[str, Any] availability_strategy:
+        The threshold-based availability strategy to use for this client's requests.
     :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
         Optional ThreadPoolExecutor for handling concurrent operations.
 
@@ -224,8 +223,6 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         credential: Union[TokenCredential, str, dict[str, Any]],
         consistency_level: Optional[str] = None,
-        availability_strategy_config: Optional[dict[str, Any]] = None,
-        availability_strategy_executor: Optional[ThreadPoolExecutor] = None,
         **kwargs
     ) -> None:
         """Instantiate a new CosmosClient.
@@ -238,8 +235,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
-            availability_strategy_config=availability_strategy_config,
-            availability_strategy_executor=availability_strategy_executor,
+            availability_strategy=kwargs.pop("availability_strategy", None),
+            availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
             **kwargs
         )
 
