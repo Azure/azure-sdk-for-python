@@ -16,6 +16,9 @@ DESCRIPTION:
     - Decoding and saving the generated image to a local file
     - Proper cleanup of created resources
 
+    For more information on Image Generations and what models are supported, see:
+    https://learn.microsoft.com/azure/ai-foundry/openai/how-to/responses?view=foundry&tabs=python-key#image-generation-preview
+
 USAGE:
     python sample_agent_image_generation_async.py
 
@@ -26,16 +29,15 @@ USAGE:
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
-       the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1-mini)
+    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
+       used by the agent for understanding and responding to prompts. This is NOT the image generation model.
+    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
        used by the ImageGenTool.
 
     NOTE:
-    - Image generation requires a separate "gpt-image-1-mini" deployment which is specified when constructing
+    - Image generation requires a separate (e.g. gpt-image-1) deployment which is specified when constructing
       the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
       calling `.responses.create`.
-    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1-mini".
     - The generated image will be saved as "microsoft.png" in the OS temporary directory.
 """
 
@@ -67,7 +69,7 @@ async def main():
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="Generate images based on user prompts",
-                tools=[ImageGenTool(model=image_generation_model, quality="low", size="1024x1024")],  # type: ignore
+                tools=[ImageGenTool(model=image_generation_model, quality="low", size="1024x1024")],
             ),
             description="Agent for image generation.",
         )
