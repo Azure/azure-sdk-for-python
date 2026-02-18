@@ -76,7 +76,7 @@ This is the overall status of your library and indicates whether you can release
 
 ### Tests - CI (required check):
 
-[Tests - CI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation-tox-test-environments) checks the status of the most recent (python - {service-directory})scheduled build of your library's recorded tests. This is the same CI that will run when triggering a release build. To learn more about tests in our repo, see our [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Possible statuses include:
+[Tests - CI](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation-checks) checks the status of the most recent (python - {service-directory})scheduled build of your library's recorded tests. This is the same CI that will run when triggering a release build. To learn more about tests in our repo, see our [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md). Possible statuses include:
 
 - $${\color{red}FAIL}$$ - The library is failing CI recorded tests. Check the build result and address the errors present. This will block the release of your library and should be fixed immediately.
 - $${\color{yellow}DISABLED}$$ - The library has its CI disabled due to non-compliance with required checks. Please take action to re-enable and fix all checks highlighted in yellow. Once all checks are fixed, you can remove the `ci_enabled=false` from your library's pyproject.toml file.

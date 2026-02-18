@@ -176,20 +176,18 @@ The versions of mypy and pyright that we run in CI are pinned to specific versio
 version of the type checker ships. All client libraries in the Python SDK repo are automatically opted in to running type checking. If you need to temporarily opt-out of type checking for your client library, see [How to opt out of type checking](#how-to-opt-out-of-type-checking).
 
 The easiest way to install and run the type checkers locally is
-with [tox](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox). This reproduces the exact type checking
-environment run in CI and brings in the third party stub packages necessary. To begin, first install `tox`:
-
-`pip install tox<5`
+with [azpysdk](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md). This reproduces the exact type checking
+environment run in CI and brings in the third party stub packages necessary. To begin, install `azure-sdk-tools` by running `pip install -r dev_requirements.txt` from your package directory.
 
 ### Run mypy
 
 mypy is currently pinned to version [1.9.0](https://pypi.org/project/mypy/1.9.0/).
 
-To run mypy on your library, run the tox mypy env at the package level:
+To run mypy on your library, run `azpysdk mypy` at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e mypy -c ../../../eng/tox/tox.ini --root .`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics> azpysdk mypy .`
 
-If you don't want to use `tox` you can also install and run mypy on its own:
+If you don't want to use `azpysdk` you can also install and run mypy on its own:
 
 `pip install mypy==1.9.0`
 
@@ -217,11 +215,11 @@ We pin the version of pyright to version [1.1.287](https://github.com/microsoft/
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
-To run pyright on your library, run the tox pyright env at the package level:
+To run pyright on your library, run `azpysdk pyright` at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e pyright -c ../../../eng/tox/tox.ini --root .`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics> azpysdk pyright .`
 
-If you don't want to use `tox` you can also install and run pyright on its own:
+If you don't want to use `azpysdk` you can also install and run pyright on its own:
 
 `pip install pyright==1.1.287`
 
@@ -249,11 +247,11 @@ The report can be used to view where type hints and docstrings are missing in a 
 verifytypes also reports a type completeness score which is the percentage of known types in the library. This score is used in the CI check to fail if the type completeness of the library worsens
 from the code in the PR vs. the code in main.
 
-To run verifytypes on your library, run the tox verifytypes env at the package level:
+To run verifytypes on your library, run `azpysdk verifytypes` at the package level:
 
-`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox run -e verifytypes -c ../../../eng/tox/tox.ini --root .`
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics> azpysdk verifytypes .`
 
-If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
+If you don't want to use `azpysdk` you can also install and run pyright/verifytypes on its own:
 
 `pip install pyright==1.1.287`
 

@@ -54,8 +54,8 @@ class NotSerializeableClass:
 
 
 # pylint: disable=import-error
-# pylint: disable=protected-access
-# pylint: disable=too-many-lines
+# pylint: disable=protected-access, too-many-public-methods
+# pylint: disable=too-many-lines, line-too-long
 class TestAzureLogExporter(unittest.TestCase):
     _exporter_class = AzureMonitorLogExporter
 

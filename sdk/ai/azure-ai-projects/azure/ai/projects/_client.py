@@ -22,6 +22,7 @@ from .operations import (
     ConnectionsOperations,
     DatasetsOperations,
     DeploymentsOperations,
+    EvaluationRulesOperations,
     IndexesOperations,
 )
 
@@ -29,13 +30,15 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class AIProjectClient:
+class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.operations.ConnectionsOperations
     :ivar datasets: DatasetsOperations operations
@@ -52,8 +55,9 @@ class AIProjectClient:
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is "v1". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
@@ -85,6 +89,9 @@ class AIProjectClient:
         self._serialize.client_side_validation = False
         self.beta = BetaOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agents = AgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.evaluation_rules = EvaluationRulesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)

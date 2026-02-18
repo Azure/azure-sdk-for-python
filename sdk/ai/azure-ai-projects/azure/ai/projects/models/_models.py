@@ -706,21 +706,78 @@ class Annotation(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ApiError(_Model):
+    """ApiError.
+
+    :ivar code: Required.
+    :vartype code: str
+    :ivar message: Required.
+    :vartype message: str
+    :ivar param:
+    :vartype param: str
+    :ivar type:
+    :vartype type: str
+    :ivar details:
+    :vartype details: list[~azure.ai.projects.models.ApiError]
+    :ivar additional_info:
+    :vartype additional_info: dict[str, any]
+    :ivar debug_info:
+    :vartype debug_info: dict[str, any]
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Required."""
+    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    details: Optional[list["_models.ApiError"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    additional_info: Optional[dict[str, Any]] = rest_field(
+        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+    debug_info: Optional[dict[str, Any]] = rest_field(
+        name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        param: Optional[str] = None,
+        type: Optional[str] = None,
+        details: Optional[list["_models.ApiError"]] = None,
+        additional_info: Optional[dict[str, Any]] = None,
+        debug_info: Optional[dict[str, Any]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ApiErrorResponse(_Model):
     """Error response for API failures.
 
     :ivar error: Required.
-    :vartype error: ~azure.ai.projects.models.Error
+    :vartype error: ~azure.ai.projects.models.ApiError
     """
 
-    error: "_models.Error" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: "_models.ApiError" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        error: "_models.Error",
+        error: "_models.ApiError",
     ) -> None: ...
 
     @overload
@@ -2592,9 +2649,9 @@ class ComparisonFilter(_Model):
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
     :ivar value: The value to compare against the attribute key; supports string, number, or
-     boolean types. Required. Is one of the following types: str, float, bool,
+     boolean types. Required. Is one of the following types: str, int, bool,
      ["_types.ComparisonFilterValueItems"]
-    :vartype value: str or float or bool or list[str or float]
+    :vartype value: str or int or bool or list[str or int]
     """
 
     type: Literal["eq", "ne", "gt", "gte", "lt", "lte"] = rest_field(
@@ -2614,11 +2671,11 @@ class ComparisonFilter(_Model):
         Literal[\"ne\"], Literal[\"gt\"], Literal[\"gte\"], Literal[\"lt\"], Literal[\"lte\"]"""
     key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key to compare against the value. Required."""
-    value: Union[str, float, bool, list["_types.ComparisonFilterValueItems"]] = rest_field(
+    value: Union[str, int, bool, list["_types.ComparisonFilterValueItems"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The value to compare against the attribute key; supports string, number, or boolean types.
-     Required. Is one of the following types: str, float, bool,
+     Required. Is one of the following types: str, int, bool,
      [\"_types.ComparisonFilterValueItems\"]"""
 
     @overload
@@ -2627,7 +2684,7 @@ class ComparisonFilter(_Model):
         *,
         type: Literal["eq", "ne", "gt", "gte", "lt", "lte"],
         key: str,
-        value: Union[str, float, bool, list["_types.ComparisonFilterValueItems"]],
+        value: Union[str, int, bool, list["_types.ComparisonFilterValueItems"]],
     ) -> None: ...
 
     @overload
@@ -2960,17 +3017,17 @@ class EvaluationRuleAction(_Model):
     """Evaluation action model.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ContinuousEvaluationRuleAction, HumanEvaluationRuleAction
+    ContinuousEvaluationRuleAction, HumanEvaluationPreviewRuleAction
 
     :ivar type: Type of the evaluation action. Required. Known values are: "continuousEvaluation"
-     and "humanEvaluation".
+     and "humanEvaluationPreview".
     :vartype type: str or ~azure.ai.projects.models.EvaluationRuleActionType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
     """Type of the evaluation action. Required. Known values are: \"continuousEvaluation\" and
-     \"humanEvaluation\"."""
+     \"humanEvaluationPreview\"."""
 
     @overload
     def __init__(
@@ -3981,63 +4038,6 @@ class EntraIDCredentials(BaseCredentials, discriminator="AAD"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = CredentialType.ENTRA_ID  # type: ignore
-
-
-class Error(_Model):
-    """Error.
-
-    :ivar code: Required.
-    :vartype code: str
-    :ivar message: Required.
-    :vartype message: str
-    :ivar param:
-    :vartype param: str
-    :ivar type:
-    :vartype type: str
-    :ivar details:
-    :vartype details: list[~azure.ai.projects.models.Error]
-    :ivar additional_info:
-    :vartype additional_info: dict[str, any]
-    :ivar debug_info:
-    :vartype debug_info: dict[str, any]
-    """
-
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
-    param: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    details: Optional[list["_models.Error"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    additional_info: Optional[dict[str, Any]] = rest_field(
-        name="additionalInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-    debug_info: Optional[dict[str, Any]] = rest_field(
-        name="debugInfo", visibility=["read", "create", "update", "delete", "query"]
-    )
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        param: Optional[str] = None,
-        type: Optional[str] = None,
-        details: Optional[list["_models.Error"]] = None,
-        additional_info: Optional[dict[str, Any]] = None,
-        debug_info: Optional[dict[str, Any]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class EvalResult(_Model):
@@ -5745,17 +5745,17 @@ class HourlyRecurrenceSchedule(RecurrenceSchedule, discriminator="Hourly"):
         self.type = RecurrenceType.HOURLY  # type: ignore
 
 
-class HumanEvaluationRuleAction(EvaluationRuleAction, discriminator="humanEvaluation"):
+class HumanEvaluationPreviewRuleAction(EvaluationRuleAction, discriminator="humanEvaluationPreview"):
     """Evaluation rule action for human evaluation.
 
-    :ivar type: Required. Human evaluation.
-    :vartype type: str or ~azure.ai.projects.models.HUMAN_EVALUATION
+    :ivar type: Required. Human evaluation preview.
+    :vartype type: str or ~azure.ai.projects.models.HUMAN_EVALUATION_PREVIEW
     :ivar template_id: Human evaluation template Id. Required.
     :vartype template_id: str
     """
 
-    type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Human evaluation."""
+    type: Literal[EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Human evaluation preview."""
     template_id: str = rest_field(name="templateId", visibility=["read", "create", "update", "delete", "query"])
     """Human evaluation template Id. Required."""
 
@@ -5775,29 +5775,29 @@ class HumanEvaluationRuleAction(EvaluationRuleAction, discriminator="humanEvalua
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = EvaluationRuleActionType.HUMAN_EVALUATION  # type: ignore
+        self.type = EvaluationRuleActionType.HUMAN_EVALUATION_PREVIEW  # type: ignore
 
 
 class HybridSearchOptions(_Model):
     """HybridSearchOptions.
 
     :ivar embedding_weight: The weight of the embedding in the reciprocal ranking fusion. Required.
-    :vartype embedding_weight: float
+    :vartype embedding_weight: int
     :ivar text_weight: The weight of the text in the reciprocal ranking fusion. Required.
-    :vartype text_weight: float
+    :vartype text_weight: int
     """
 
-    embedding_weight: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    embedding_weight: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The weight of the embedding in the reciprocal ranking fusion. Required."""
-    text_weight: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    text_weight: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The weight of the text in the reciprocal ranking fusion. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        embedding_weight: float,
-        text_weight: float,
+        embedding_weight: int,
+        text_weight: int,
     ) -> None: ...
 
     @overload
@@ -7932,7 +7932,7 @@ class LogProb(_Model):
     :ivar token: Required.
     :vartype token: str
     :ivar logprob: Required.
-    :vartype logprob: float
+    :vartype logprob: int
     :ivar bytes: Required.
     :vartype bytes: list[int]
     :ivar top_logprobs: Required.
@@ -7941,7 +7941,7 @@ class LogProb(_Model):
 
     token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    logprob: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    logprob: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     bytes: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
@@ -7953,7 +7953,7 @@ class LogProb(_Model):
         self,
         *,
         token: str,
-        logprob: float,
+        logprob: int,
         bytes: list[int],
         top_logprobs: list["_models.TopLogProb"],
     ) -> None: ...
@@ -8808,7 +8808,7 @@ class MemoryStoreUpdateResult(_Model):
     :ivar result: The result of memory store update operation when status is "completed".
     :vartype result: ~azure.ai.projects.models.MemoryStoreUpdateCompletedResult
     :ivar error: Error object that describes the error when status is "failed".
-    :vartype error: ~azure.ai.projects.models.Error
+    :vartype error: ~azure.ai.projects.models.ApiError
     """
 
     update_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8826,7 +8826,7 @@ class MemoryStoreUpdateResult(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The result of memory store update operation when status is \"completed\"."""
-    error: Optional["_models.Error"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    error: Optional["_models.ApiError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Error object that describes the error when status is \"failed\"."""
 
     @overload
@@ -8837,7 +8837,7 @@ class MemoryStoreUpdateResult(_Model):
         status: Union[str, "_models.MemoryStoreUpdateStatus"],
         superseded_by: Optional[str] = None,
         result: Optional["_models.MemoryStoreUpdateCompletedResult"] = None,
-        error: Optional["_models.Error"] = None,
+        error: Optional["_models.ApiError"] = None,
     ) -> None: ...
 
     @overload
@@ -9947,7 +9947,7 @@ class RankingOptions(_Model):
     :ivar score_threshold: The score threshold for the file search, a number between 0 and 1.
      Numbers closer to 1 will attempt to return only the most relevant results, but may return fewer
      results.
-    :vartype score_threshold: float
+    :vartype score_threshold: int
     :ivar hybrid_search: Weights that control how reciprocal rank fusion balances semantic
      embedding matches versus sparse keyword matches when hybrid search is enabled.
     :vartype hybrid_search: ~azure.ai.projects.models.HybridSearchOptions
@@ -9957,7 +9957,7 @@ class RankingOptions(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The ranker to use for the file search. Known values are: \"auto\" and \"default-2024-11-15\"."""
-    score_threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    score_threshold: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The score threshold for the file search, a number between 0 and 1. Numbers closer to 1 will
      attempt to return only the most relevant results, but may return fewer results."""
     hybrid_search: Optional["_models.HybridSearchOptions"] = rest_field(
@@ -9971,7 +9971,7 @@ class RankingOptions(_Model):
         self,
         *,
         ranker: Optional[Union[str, "_models.RankerVersionType"]] = None,
-        score_threshold: Optional[float] = None,
+        score_threshold: Optional[int] = None,
         hybrid_search: Optional["_models.HybridSearchOptions"] = None,
     ) -> None: ...
 
@@ -11454,14 +11454,14 @@ class TopLogProb(_Model):
     :ivar token: Required.
     :vartype token: str
     :ivar logprob: Required.
-    :vartype logprob: float
+    :vartype logprob: int
     :ivar bytes: Required.
     :vartype bytes: list[int]
     """
 
     token: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
-    logprob: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    logprob: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
     bytes: list[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
@@ -11471,7 +11471,7 @@ class TopLogProb(_Model):
         self,
         *,
         token: str,
-        logprob: float,
+        logprob: int,
         bytes: list[int],
     ) -> None: ...
 

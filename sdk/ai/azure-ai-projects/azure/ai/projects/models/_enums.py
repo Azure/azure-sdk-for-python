@@ -343,8 +343,8 @@ class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONTINUOUS_EVALUATION = "continuousEvaluation"
     """Continuous evaluation."""
-    HUMAN_EVALUATION = "humanEvaluation"
-    """Human evaluation."""
+    HUMAN_EVALUATION_PREVIEW = "humanEvaluationPreview"
+    """Human evaluation preview."""
 
 
 class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

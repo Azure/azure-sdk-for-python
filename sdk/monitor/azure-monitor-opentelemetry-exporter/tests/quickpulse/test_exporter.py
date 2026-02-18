@@ -23,7 +23,6 @@ from azure.monitor.opentelemetry.exporter._quickpulse._exporter import (
     _POST_INTERVAL_SECONDS,
     _QuickpulseExporter,
     _QuickpulseMetricReader,
-    _QuickpulseState,
     _Response,
     _UnsuccessfulQuickPulsePostError,
 )
@@ -93,7 +92,10 @@ class TestQuickpulse(unittest.TestCase):
             performance_collection_supported=True,
         )
         cls._exporter = _QuickpulseExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            connection_string=(
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ac;"
+                "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            )
         )
         cls._reader = _QuickpulseMetricReader(
             cls._exporter,
@@ -101,9 +103,12 @@ class TestQuickpulse(unittest.TestCase):
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient")
-    def test_init(self, client_mock):
+    def test_init(self, _client_mock):
         exporter = _QuickpulseExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            connection_string=(
+                "InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;"
+                "LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+            )
         )
         self.assertEqual(exporter._live_endpoint, "https://eastus.livediagnostics.monitor.azure.com/")
         self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
@@ -139,11 +144,6 @@ class TestQuickpulse(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._metric_to_quick_pulse_data_points")
     def test_export_exception(self, convert_mock):
-        post_response = _Response(
-            mock.Mock(),
-            None,
-            {},
-        )
         convert_mock.return_value = [self._data_point]
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._quickpulse._generated._client.QuickpulseClient.publish",
@@ -344,7 +344,7 @@ class TestQuickpulse(unittest.TestCase):
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter._QuickpulseMetricReader.collect")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.PeriodicTask")
-    def test_ticker_post_unsuccessful_backoff(self, task_mock, collect_mock):
+    def test_ticker_post_unsuccessful_backoff(self, task_mock, _collect_mock):
         _set_global_quickpulse_state(_QuickpulseState.POST_SHORT)
         task_inst_mock = mock.Mock()
         task_mock.return_value = task_inst_mock

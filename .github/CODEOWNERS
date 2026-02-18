@@ -25,6 +25,9 @@
 /sdk/core/azure-core-tracing-opencensus/                             @pvaneck
 /sdk/core/azure-core-tracing-opentelemetry/                          @pvaneck
 
+# Smoke Tests
+/common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
+
 ####################
 # Client Libraries
 ####################
@@ -83,7 +86,7 @@
 # PRLabel: %Batch
 /sdk/batch/                                                          @jingjlii @JJJessieWang @wanghoppe @dpwatrous @wiboris @cRui861
 
-# PRLabel: %CognitiveServices
+# PRLabel: %Cognitive - Mgmt
 /sdk/cognitiveservices/                                              @lmazuel
 
 # ServiceOwners: @amber-yujueWang @rhurey @xitzhang
@@ -142,8 +145,8 @@
 # PRLabel: %Confidential Ledger
 /sdk/confidentialledger/azure-confidentialledger/                    @PallabPaul @lynshi @amruthashree18
 
-# ServiceLabel: %Content Safety
-# PRLabel: %Content Safety
+# ServiceLabel: %Cognitive - Content Safety
+# PRLabel: %Cognitive - Content Safety
 /sdk/contentsafety/                                                  @mengaims
 
 # ServiceLabel: %DevCenter
@@ -154,8 +157,8 @@
 # PRLabel: %Defender EASM
 /sdk/easm/                                                           @nathanfalke
 
-# ServiceLabel: %FaceAPI
-# PRLabel: %FaceAPI
+# ServiceLabel: %Cognitive - Face
+# PRLabel: %Cognitive - Face
 /sdk/face/                                                           @zihyunting
 
 # ServiceLabel: %Cognitive - Health Insights
@@ -178,6 +181,9 @@
 # PRLabel: %Monitor
 /sdk/loganalytics/                                                   @pvaneck
 
+# PRLabel: %Monitor
+/sdk/monitor/                                                        @pvaneck
+
 # AzureSdkOwners: @pvaneck
 # ServiceLabel: %Monitor
 # PRLabel: %Monitor
@@ -188,9 +194,6 @@
 
 # PRLabel: %Monitor
 /sdk/monitor/azure-monitor-querymetrics/                             @Azure/azure-sdk-write-monitor-query-metrics
-
-# PRLabel: %Monitor
-/sdk/monitor/*                                                       @pvaneck
 
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
@@ -230,7 +233,13 @@
 # ServiceLabel: %Data Factory
 # PRLabel: %Data Factory
 /sdk/datafactory/                                                    @hvermis
+
+# ServiceLabel: %Data Lake
+# PRLabel: %Data Lake
 /sdk/datalake/                                                       @ro-joowan
+
+# ServiceLabel: %Data Migration
+# PRLabel: %Data Migration
 /sdk/datamigration/                                                  @vchske
 
 # PRLabel: %Device Provisioning
@@ -267,14 +276,10 @@
 
 # PRLabel: %Voice Live
 # ServiceLabel: %Voice Live %Service Attention
-/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang
-
+/sdk/ai/azure-ai-voicelive/                                          @rhurey @xitzhang @amber-yujueWang @pankopon @emilyjiji
 
 # PRLabel: %HDInsight
 /sdk/hdinsight/                                                      @idear1203
-
-# PRLabel: %Models repository
-/sdk/modelsrepository/                                               @cartertinney @digimaun
 
 # PRLabel: %Machine Learning Compute
 /sdk/machinelearning/                                                @shutchings
@@ -283,31 +288,13 @@
 # ServiceOwners: @azureml-github @Azure/azure-ml-sdk
 
 # PRLabel: %Machine Learning
-/sdk/ml/                                                             @paulshealy1 @achauhan-scc @kingernupur @jayesh-tanna
+/sdk/ml/                                                             @achauhan-scc @kingernupur @jayesh-tanna
 
-# PRLabel: %ML-Local Endpoints
-/sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @JustinFirsching
+# PRLabel: %Machine Learning
+/sdk/ml/azure-ai-ml/    @NonStatic2014 @arunsu @JustinFirsching @kingernupur @achauhan-scc @jayesh-tanna @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95 @vivram
 
-# PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @TonyJ1 @kingernupur @achauhan-scc @jayesh-tanna @paulshealy1
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @TonyJ1 @kingernupur @achauhan-scc @jayesh-tanna @paulshealy1
-/sdk/ml/training-experiences.tests.yml                               @TonyJ1 @kingernupur @achauhan-scc @jayesh-tanna @paulshealy1
-
-# PRLabel: %ML-AutoML
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/automl/                      @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/automl_node.py      @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-/sdk/ml/azure-ai-ml/azure/ai/ml/automl/                              @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/automl/                @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-/sdk/ml/azure-ai-ml/tests/automl_job/                                @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-/sdk/ml/azure-ai-ml/tests/test_configs/automl_job/                   @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-/sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @yuanzhuangyuanzhuang @novaturient95
-
-# PRLabel: %ML-ImportJob
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @vivram
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/import_job.py                   @vivram
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/pipeline_import_job.py       @vivram
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/import_func.py             @vivram
-/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/import_node.py             @vivram
+# ServiceLabel: %Machine Learning
+# ServiceOwners:  @achauhan-scc @kingernupur @jayesh-tanna
 
 # ServiceLabel: %Maps
 # PRLabel: %Maps
@@ -316,6 +303,9 @@
 # ServiceLabel: %Mixed Reality
 # PRLabel: %Mixed Reality
 /sdk/mixedreality/azure-mixedreality-authentication/                 @RamonArguelles
+
+# ServiceLabel: %Mixed Reality
+# PRLabel: %Mixed Reality
 /sdk/remoterendering/                                                @FlorianBorn71
 
 # ServiceLabel: %Online Experimentation
@@ -443,9 +433,6 @@
 # PRLabel: %Tables
 /sdk/tables/                                                         @YalinLi0312
 
-# PRLabel: %Media
-/sdk/media/                                                          @naiteeks @giakas
-
 # AzureSdkOwners: @YalinLi0312
 # ServiceLabel: %Container Registry
 # ServiceOwners: @toddysm @northtyphoon
@@ -463,9 +450,6 @@
 # PRLabel: %WebPubSub
 /sdk/webpubsub/                                                      @msyyc @iscai-msft
 
-# Smoke Tests
-/common/smoketest/                                                   @lmazuel @chlowell @annatisch @mccoyp @shurd @southpolesteve
-
 # ServiceLabel: %AAD %Service Attention
 # ServiceOwners:          @adamedx
 
@@ -474,27 +458,6 @@
 
 # ServiceLabel: %Alerts Management %Service Attention
 # ServiceOwners:          @liadtal @yairgil
-
-# ServiceLabel: %ARM %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Templates %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Tags %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Core %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Managed Applications %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - Service Catalog %Service Attention
-# ServiceOwners:          @armleads-azure
-
-# ServiceLabel: %ARM - RBAC %Service Attention
-# ServiceOwners:          @armleads-azure
 
 # ServiceLabel: %Advisor %Service Attention
 # ServiceOwners:          @mojayara @Prasanna-Padmanabhan
@@ -505,7 +468,7 @@
 # ServiceLabel: %API Management %Service Attention
 # ServiceOwners:          @miaojiang
 
-# ServiceLabel: %Application Insights %Service Attention
+# ServiceLabel: %Monitor - ApplicationInsights %Service Attention
 # ServiceOwners:          @azmonapplicationinsights
 
 # ServiceLabel: %App Services %Service Attention
@@ -640,9 +603,6 @@
 # ServiceLabel: %Devtestlab %Service Attention
 # ServiceOwners:          @Tanmayeekamath
 
-# ServiceLabel: %Device Provisioning Service %Service Attention
-# ServiceOwners:          @nberdy
-
 # ServiceLabel: %Functions %Service Attention
 # ServiceOwners:          @ahmedelnably @fabiocav
 
@@ -678,9 +638,6 @@
 
 # ServiceLabel: %Managed Identity %Service Attention
 # ServiceOwners:          @varunkch
-
-# ServiceLabel: %Managed Services %Service Attention
-# ServiceOwners:          @Lighthouse-Azure
 
 # ServiceLabel: %MariaDB %Service Attention
 # ServiceOwners:          @ambhatna @savjani
@@ -741,9 +698,6 @@
 
 # ServiceLabel: %Notification Hub %Service Attention
 # ServiceOwners:          @tjsomasundaram
-
-# ServiceLabel: %Operational Insights %Service Attention
-# ServiceOwners:          @AzmonLogA
 
 # ServiceLabel: %Policy %Service Attention
 # ServiceOwners:          @aperezcloud @kenieva
@@ -846,6 +800,27 @@
 ####################
 
 /**/*mgmt*/                                                          @ChenxiJiang333 @msyyc
+
+# ServiceLabel: %ARM %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Templates %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Tags %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Core %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Managed Applications %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - Service Catalog %Service Attention
+# ServiceOwners:          @armleads-azure
+
+# ServiceLabel: %ARM - RBAC %Service Attention
+# ServiceOwners:          @armleads-azure
 
 ###########
 # Eng Sys and other
