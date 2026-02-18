@@ -8,8 +8,6 @@
 
 ### Other Changes
 
-# Release History
-
 ## 1.32.0 (unreleased)
 
 ### Features Added
