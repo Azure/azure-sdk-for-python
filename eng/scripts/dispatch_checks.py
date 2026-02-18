@@ -83,6 +83,13 @@ def _inject_custom_reqs(req_file: str, injected_packages: str, package_dir: str)
     if not injected_list:
         return
 
+    # Entries prefixed with '!' are exclusion-only: they remove matching packages
+    # from dev_requirements but are not themselves installed.
+    excluded = [p[1:] for p in injected_list if p.startswith("!")]
+    installable = [p for p in injected_list if not p.startswith("!")]
+    # Build a combined list for filtering (both injected installs and exclusions)
+    all_filter_names = installable + excluded
+
     logger.info(f"Adding custom packages to requirements for {package_dir}")
     with open(req_file, "r") as handle:
         for line in handle:
@@ -95,13 +102,13 @@ def _inject_custom_reqs(req_file: str, injected_packages: str, package_dir: str)
             req_lines.append((line, parsed_req))
 
     if req_lines:
-        all_adjustments = injected_list + [
+        all_adjustments = installable + [
             line_tuple[0].strip()
             for line_tuple in req_lines
-            if line_tuple[0].strip() and not _compare_req_to_injected_reqs(line_tuple[1], injected_list)
+            if line_tuple[0].strip() and not _compare_req_to_injected_reqs(line_tuple[1], all_filter_names)
         ]
     else:
-        all_adjustments = injected_list
+        all_adjustments = installable
 
     logger.info(f"Generated Custom Reqs: {req_lines}")
 

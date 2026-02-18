@@ -17,12 +17,22 @@ from pathlib import Path
 
 # Azure AI Evaluation imports
 from azure.ai.evaluation._evaluate._eval_run import EvalRun
-from azure.ai.evaluation._evaluate._utils import _trace_destination_from_project_scope, _get_ai_studio_url
-from azure.ai.evaluation._evaluate._utils import extract_workspace_triad_from_trace_provider
+from azure.ai.evaluation._evaluate._utils import (
+    _trace_destination_from_project_scope,
+    _get_ai_studio_url,
+)
+from azure.ai.evaluation._evaluate._utils import (
+    extract_workspace_triad_from_trace_provider,
+)
 from azure.ai.evaluation._version import VERSION
 from azure.ai.evaluation._azure._clients import LiteMLClient
 from azure.ai.evaluation._constants import EvaluationRunProperties, DefaultOpenEncoding
-from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._exceptions import (
+    ErrorBlame,
+    ErrorCategory,
+    ErrorTarget,
+    EvaluationException,
+)
 from azure.ai.evaluation._common import RedTeamUpload, ResultType
 from azure.ai.evaluation._model_configurations import AzureAIProject
 
@@ -41,7 +51,14 @@ from ._utils.logging_utils import log_error
 class MLflowIntegration:
     """Handles MLflow integration for red team evaluations."""
 
-    def __init__(self, logger, azure_ai_project, generated_rai_client, one_dp_project, scan_output_dir=None):
+    def __init__(
+        self,
+        logger,
+        azure_ai_project,
+        generated_rai_client,
+        one_dp_project,
+        scan_output_dir=None,
+    ):
         """Initialize the MLflow integration.
 
         :param logger: Logger instance for logging

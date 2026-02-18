@@ -14,7 +14,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
 )
 from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import ReadableSpan
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
@@ -570,15 +570,15 @@ class TestPerformanceCountersManager(unittest.TestCase):
         mock_log_record = MagicMock()
         mock_log_record.attributes = {EXCEPTION_TYPE: "ValueError", EXCEPTION_MESSAGE: "Test exception"}
 
-        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
-        mock_readable_log_record.log_record = mock_log_record
+        mock_read_write_log_record = MagicMock(spec=ReadWriteLogRecord)
+        mock_read_write_log_record.log_record = mock_log_record
 
         # Import to access global counter
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
 
         initial_exceptions = manager_module._EXCEPTIONS_COUNT
 
-        manager._record_log_record(mock_readable_log_record)
+        manager._record_log_record(mock_read_write_log_record)
 
         # Check that exception was counted
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions + 1)
@@ -591,15 +591,15 @@ class TestPerformanceCountersManager(unittest.TestCase):
         mock_log_record = MagicMock()
         mock_log_record.attributes = {"normal": "attribute"}
 
-        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
-        mock_readable_log_record.log_record = mock_log_record
+        mock_read_write_log_record = MagicMock(spec=ReadWriteLogRecord)
+        mock_read_write_log_record.log_record = mock_log_record
 
         # Import to access global counter
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
 
         initial_exceptions = manager_module._EXCEPTIONS_COUNT
 
-        manager._record_log_record(mock_readable_log_record)
+        manager._record_log_record(mock_read_write_log_record)
 
         # Exception count should not change
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions)
