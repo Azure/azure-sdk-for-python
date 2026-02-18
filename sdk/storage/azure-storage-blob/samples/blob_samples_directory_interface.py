@@ -34,6 +34,30 @@ class DirectoryClient:
     service_client = BlobServiceClient.from_connection_string(connection_string)
     self.client = service_client.get_container_client(container_name)
 
+  def _safe_join(self, base_path, *paths):
+    '''
+    Safely join paths and validate that the result stays within base_path.
+    This prevents directory traversal attacks from malicious blob names.
+    '''
+    # Normalize the base path to an absolute path
+    base = os.path.abspath(base_path)
+
+    # Join and normalize the target path
+    target = os.path.abspath(os.path.join(base, *paths))
+
+    # Verify that the target path is within the base directory
+    # Use commonpath to check if target is a subdirectory of base
+    try:
+      common = os.path.commonpath([base, target])
+    except ValueError:
+      # Paths are on different drives (Windows)
+      raise ValueError(f"Path traversal attempt detected: {paths}")
+
+    if not common == base:
+      raise ValueError(f"Path traversal attempt detected: {paths}")
+
+    return target
+
   def upload(self, source, dest):
     '''
     Upload a file or directory to a path inside the container
@@ -84,7 +108,8 @@ class DirectoryClient:
 
       blobs = [source + blob for blob in blobs]
       for blob in blobs:
-        blob_dest = dest + os.path.relpath(blob, source)
+        relative_blob = os.path.relpath(blob, source)
+        blob_dest = self._safe_join(dest, relative_blob)
         self.download_file(blob, blob_dest)
     else:
       self.download_file(source, dest)
@@ -96,7 +121,12 @@ class DirectoryClient:
     # dest is a directory if ending with '/' or '.', otherwise it's a file
     if dest.endswith('.'):
       dest += '/'
-    blob_dest = dest + os.path.basename(source) if dest.endswith('/') else dest
+
+    if dest.endswith('/'):
+      safe_basename = os.path.basename(os.path.normpath(source))
+      blob_dest = self._safe_join(dest, safe_basename)
+    else:
+      blob_dest = dest
 
     print(f'Downloading {source} to {blob_dest}')
     os.makedirs(os.path.dirname(blob_dest), exist_ok=True)
