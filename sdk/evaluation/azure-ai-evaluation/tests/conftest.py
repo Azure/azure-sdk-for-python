@@ -232,7 +232,10 @@ def add_sanitizers(
 
         # Sanitize the response field in sync_evals requests to handle variable content
         # The response can include conversation_objective which varies per attack
-        add_body_key_sanitizer(json_path="$.data_source.source.content.item.response", value="sanitized_response")
+        # Use (?s).+ regex so multi-line response values are fully replaced (default .+ doesn't match newlines).
+        add_body_key_sanitizer(
+            json_path="$.data_source.source.content.item.response", value="sanitized_response", regex="(?s).+"
+        )
 
         # Sanitize the query field in sync_evals requests to handle dynamic adversarial prompts.
         # The query contains generated attack text that varies between live and playback.

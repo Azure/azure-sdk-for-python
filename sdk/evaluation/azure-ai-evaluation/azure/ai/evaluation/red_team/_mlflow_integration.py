@@ -366,6 +366,8 @@ class MLflowIntegration:
                                 self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
 
             if self._one_dp_project:
+                # Step 1: Upload evaluation results (blob upload + version create)
+                evaluation_result_id = None
                 try:
                     create_evaluation_result_response = (
                         self.generated_rai_client._evaluation_onedp_client.create_evaluation_result(
@@ -375,7 +377,15 @@ class MLflowIntegration:
                             result_type=ResultType.REDTEAM,
                         )
                     )
+                    evaluation_result_id = create_evaluation_result_response.id
+                except Exception as e:
+                    self.logger.error(f"Failed to create evaluation result: {str(e)}")
 
+                # Step 2: Always update the run status, even if result upload failed
+                outputs = None
+                if evaluation_result_id:
+                    outputs = {"evaluationResultId": evaluation_result_id}
+                try:
                     update_run_response = self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
                         name=eval_run.id,
                         red_team=RedTeamUpload(
@@ -383,15 +393,13 @@ class MLflowIntegration:
                             display_name=eval_run.display_name
                             or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                             status="Completed",
-                            outputs={
-                                "evaluationResultId": create_evaluation_result_response.id,
-                            },
+                            outputs=outputs,
                             properties=properties,
                         ),
                     )
                     self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
                 except Exception as e:
-                    self.logger.warning(f"Failed to upload red team results to AI Foundry: {str(e)}")
+                    self.logger.error(f"Failed to update red team run status: {str(e)}")
             else:
                 # Log the entire directory to MLFlow
                 try:
@@ -411,6 +419,31 @@ class MLflowIntegration:
 
         self.logger.info("Successfully logged results to AI Foundry")
         return None
+
+    def update_run_status(self, eval_run, status: str) -> None:
+        """Update the red team run status (e.g. to 'Failed' on scan errors).
+
+        Only applies to OneDP projects. Errors are logged but not raised.
+
+        :param eval_run: The run object returned by start_redteam_mlflow_run
+        :param status: The status to set (e.g. "Failed", "Completed")
+        :type status: str
+        """
+        if not self._one_dp_project:
+            return
+        try:
+            self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
+                name=eval_run.id,
+                red_team=RedTeamUpload(
+                    id=eval_run.id,
+                    display_name=getattr(eval_run, "display_name", None)
+                    or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    status=status,
+                ),
+            )
+            self.logger.info(f"Updated red team run status to '{status}'")
+        except Exception as e:
+            self.logger.error(f"Failed to update red team run status to '{status}': {str(e)}")
 
     def _build_instance_results_payload(
         self,
