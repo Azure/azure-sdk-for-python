@@ -33,7 +33,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         self,
         name: str,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str,
         content_type: str = "application/json",
         items: Optional[List[_models.InputItem]] = None,
@@ -45,9 +44,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         :param name: The name of the memory store to update. Required.
         :type name: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -78,7 +74,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         name: str,
         body: JSON,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncUpdateMemoriesLROPoller:
@@ -88,9 +83,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :type name: str
         :param body: Required.
         :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -107,7 +99,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         name: str,
         body: IO[bytes],
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> AsyncUpdateMemoriesLROPoller:
@@ -117,9 +108,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :type name: str
         :param body: Required.
         :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -141,7 +129,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
         items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
@@ -154,9 +141,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. MEMORY_STORES_V1_PREVIEW. Required.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.MEMORY_STORES_V1_PREVIEW
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
@@ -177,6 +161,10 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          ~azure.ai.projects.models.AsyncUpdateMemoriesLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
