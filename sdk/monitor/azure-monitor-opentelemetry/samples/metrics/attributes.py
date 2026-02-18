@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import metrics
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 # Configure Azure monitor collection telemetry pipeline
 configure_azure_monitor()

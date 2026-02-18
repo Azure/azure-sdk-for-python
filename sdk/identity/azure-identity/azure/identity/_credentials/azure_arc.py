@@ -7,7 +7,7 @@ import sys
 from typing import Dict
 
 from azure.core.exceptions import ClientAuthenticationError
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import HTTPPolicy
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 
@@ -27,9 +27,7 @@ def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
             "DefaultAzureCredential ensure the AZURE_CLIENT_ID environment variable is not set."
         )
 
-    request = HttpRequest("GET", url)
-    request.format_parameters(dict({"api-version": "2020-06-01", "resource": scope}, **identity_config))
-    return request
+    return HttpRequest("GET", url, params=dict({"api-version": "2020-06-01", "resource": scope}, **identity_config))
 
 
 def _get_secret_key(response: PipelineResponse) -> str:

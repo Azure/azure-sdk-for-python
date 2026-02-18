@@ -8,7 +8,6 @@ from unittest import mock
 from datetime import datetime
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from requests import ReadTimeout
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _MONITOR_DOMAIN_MAPPING,
@@ -26,7 +25,6 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
 )
 from azure.monitor.opentelemetry.exporter.export.metrics._exporter import AzureMonitorMetricExporter
-from azure.monitor.opentelemetry.exporter.export.trace._exporter import AzureMonitorTraceExporter
 from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_AAD_SCOPE,
     _REQ_DURATION_NAME,
@@ -35,9 +33,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_RETRY_NAME,
     _REQ_SUCCESS_NAME,
     _REQ_THROTTLE_NAME,
-    RetryCode,
-    _UNKNOWN,
-    _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated.models import (
@@ -76,12 +71,12 @@ def clean_folder(folder):
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
-# pylint: disable=W0212
-# pylint: disable=R0904
+# pylint: disable=W0212, R0915
+# pylint: disable=R0904, C0301
 class TestBaseExporter(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -1260,7 +1255,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_get_auth_policy_invalid_credential(self):
         class InvalidTestCredential:
-            def invalid_get_token():
+            def invalid_get_token(self):
                 return "TEST_TOKEN"
 
         self.assertRaises(
@@ -1269,7 +1264,7 @@ class TestBaseExporter(unittest.TestCase):
 
     def test_get_auth_policy_audience(self):
         class TestCredential:
-            def get_token():
+            def get_token(self):
                 return "TEST_TOKEN"
 
         credential = TestCredential()
@@ -1375,10 +1370,10 @@ def validate_telemetry_item(item1, item2):
 
 
 class MockResponse:
-    def __init__(self, status_code, text, headers={}, reason="test", content="{}"):
+    def __init__(self, status_code, text, headers=None, reason="test", content="{}"):
         self.status_code = status_code
         self.text = text
-        self.headers = headers
+        self.headers = headers or {}
         self.reason = reason
         self.content = content
         self.raw = MockRaw()

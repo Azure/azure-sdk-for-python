@@ -45,7 +45,7 @@ GEN_AI_TOOL_CALL_ID = "gen_ai.tool.call.id"
 GEN_AI_REQUEST_RESPONSE_FORMAT = "gen_ai.request.response_format"
 GEN_AI_USAGE_INPUT_TOKENS = "gen_ai.usage.input_tokens"
 GEN_AI_USAGE_OUTPUT_TOKENS = "gen_ai.usage.output_tokens"
-GEN_AI_SYSTEM_MESSAGE = "gen_ai.system.instructions"
+GEN_AI_SYSTEM_MESSAGE = "gen_ai.system_instructions"
 GEN_AI_EVENT_CONTENT = "gen_ai.event.content"
 GEN_AI_RUN_STEP_START_TIMESTAMP = "gen_ai.run_step.start.timestamp"
 GEN_AI_RUN_STEP_END_TIMESTAMP = "gen_ai.run_step.end.timestamp"
@@ -120,6 +120,33 @@ OPERATION_NAME_CHAT = "chat"
 # Can be set at runtime for testing purposes (internal use only)
 # Set to True for event-based, False for attribute-based (default)
 _use_message_events = False
+
+# Configuration: Controls whether function tool calls use simplified OTEL-compliant format
+# When True (default), function_call and function_call_output use a simpler structure:
+#   tool_call: {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+#   tool_call_response: {"type": "tool_call_response", "id": "...", "result": "..."}
+# When False, the full nested structure is used
+_use_simple_tool_format = True
+
+
+def _get_use_simple_tool_format() -> bool:
+    """Get the current tool format mode (simple vs nested). Internal use only.
+
+    :return: True if using simple OTEL-compliant format, False if using nested format
+    :rtype: bool
+    """
+    return _use_simple_tool_format
+
+
+def _set_use_simple_tool_format(use_simple: bool) -> None:
+    """
+    Set the tool format mode at runtime. Internal use only.
+
+    :param use_simple: True to use simple OTEL-compliant format, False for nested format
+    :type use_simple: bool
+    """
+    global _use_simple_tool_format  # pylint: disable=global-statement
+    _use_simple_tool_format = use_simple
 
 
 def _get_use_message_events() -> bool:

@@ -15,6 +15,7 @@ from azure.ai.projects.telemetry._utils import (
     SPAN_NAME_CHAT,
     SPAN_NAME_INVOKE_AGENT,
     _set_use_message_events,
+    _set_use_simple_tool_format,
     RESPONSES_PROVIDER,
 )
 from azure.core.settings import settings
@@ -583,6 +584,24 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_non_streaming_simple_format_events(self, **kwargs):
+        """Test synchronous function tool usage with content recording, non-streaming, simple OTEL format (event mode)."""
+        self._test_sync_function_tool_with_content_recording_non_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_non_streaming_simple_format_attributes(self, **kwargs):
+        """Test synchronous function tool usage with content recording, non-streaming, simple OTEL format (attribute mode)."""
+        self._test_sync_function_tool_with_content_recording_non_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
     @recorded_by_proxy(RecordedTransport.HTTPX)
     def test_sync_non_streaming_without_conversation_events(self, **kwargs):
         """Test synchronous non-streaming responses without conversation parameter (event mode)."""
@@ -943,7 +962,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(output_messages[0]["parts"][0]["content"]) > 0
             assert "finish_reason" in output_messages[0]
 
-    def _test_sync_function_tool_with_content_recording_non_streaming_impl(self, use_events, **kwargs):
+    def _test_sync_function_tool_with_content_recording_non_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
         """Implementation for testing synchronous function tool usage with content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
@@ -956,6 +977,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -1063,6 +1085,12 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check events or attributes for first span - user message and assistant tool call
         if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*", "name": "get_weather", "arguments": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]'
+
             expected_events_1 = [
                 {
                     "name": "gen_ai.input.messages",
@@ -1075,7 +1103,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
                     "name": "gen_ai.output.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                        "gen_ai.event.content": tool_call_content,
                     },
                 },
             ]
@@ -1098,10 +1126,18 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(output_messages) == 1
             assert output_messages[0]["role"] == "assistant"
             assert output_messages[0]["parts"][0]["type"] == "tool_call"
-            assert output_messages[0]["parts"][0]["content"]["type"] == "function_call"
-            assert "id" in output_messages[0]["parts"][0]["content"]
-            assert output_messages[0]["parts"][0]["content"]["function"]["name"] == "get_weather"
-            assert "arguments" in output_messages[0]["parts"][0]["content"]["function"]
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+                assert "id" in output_messages[0]["parts"][0]
+                assert output_messages[0]["parts"][0]["name"] == "get_weather"
+                assert "arguments" in output_messages[0]["parts"][0]
+            else:
+                # Nested format: {"type": "tool_call", "content": {"type": "function_call", ...}}
+                assert output_messages[0]["parts"][0]["content"]["type"] == "function_call"
+                assert "id" in output_messages[0]["parts"][0]["content"]
+                assert output_messages[0]["parts"][0]["content"]["function"]["name"] == "get_weather"
+                assert "arguments" in output_messages[0]["parts"][0]["content"]["function"]
 
         # Validate second span (tool output + final response)
         span2 = spans[1]
@@ -1130,12 +1166,18 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
 
         # Check events or attributes for second span - tool output and assistant response
         if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*", "result": {"temperature": "72°F", "condition": "sunny"}}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]'
+
             expected_events_2 = [
                 {
                     "name": "gen_ai.input.messages",
                     "attributes": {
                         "gen_ai.provider.name": RESPONSES_PROVIDER,
-                        "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                        "gen_ai.event.content": tool_output_content,
                     },
                 },
                 {
@@ -1149,8 +1191,26 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
             assert events_match == True
         else:
-            # Check span attributes - span2 only has output messages (continuation span)
+            # Check span attributes - span2 has both input and output messages
+            assert "gen_ai.input.messages" in span2.attributes  # type: ignore
             assert "gen_ai.output.messages" in span2.attributes  # type: ignore
+
+            # Verify input messages - tool output
+            input_messages = json.loads(span2.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "tool"
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: {"type": "tool_call_response", "id": "...", "result": ...}
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_response"
+                assert "id" in input_messages[0]["parts"][0]
+                assert "result" in input_messages[0]["parts"][0]
+            else:
+                # Nested format: {"type": "tool_call_output", "content": {"type": "function_call_output", ...}}
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_output"
+                assert input_messages[0]["parts"][0]["content"]["type"] == "function_call_output"
+                assert "id" in input_messages[0]["parts"][0]["content"]
+                assert "output" in input_messages[0]["parts"][0]["content"]
 
             # Verify output messages - assistant final response
             output_messages = json.loads(span2.attributes["gen_ai.output.messages"])  # type: ignore
@@ -1161,7 +1221,9 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             assert len(output_messages[0]["parts"][0]["content"]) > 0
             assert "finish_reason" in output_messages[0]
 
-    def _test_sync_function_tool_with_content_recording_streaming_impl(self, use_events, **kwargs):
+    def _test_sync_function_tool_with_content_recording_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
         """Implementation for testing synchronous function tool usage with content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
@@ -1174,6 +1236,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert True == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -1302,30 +1365,61 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         attributes_match = GenAiTraceVerifier().check_span_attributes(span1, expected_attributes_1)
         assert attributes_match == True
 
-        # Check events for first span - user message and assistant tool call
-        if not use_events:
-            # Only validate events mode (no attribute validation yet)
-            return
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+        # Check events or attributes for first span - user message and assistant tool call
+        if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*", "name": "get_weather", "arguments": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text", "content": "What\'s the weather in Seattle?"}]}]',
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*", "function": {"name": "get_weather", "arguments": "*"}}}]}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
+            assert events_match == True
+        else:
+            # Check span attributes
+            assert "gen_ai.input.messages" in span1.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span1.attributes  # type: ignore
+
+            # Verify input messages - user question
+            input_messages = json.loads(span1.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "user"
+            assert input_messages[0]["parts"][0]["type"] == "text"
+            assert input_messages[0]["parts"][0]["content"] == "What's the weather in Seattle?"
+
+            # Verify output messages - assistant tool call
+            output_messages = json.loads(span1.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert output_messages[0]["parts"][0]["type"] == "tool_call"
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}}
+                assert "id" in output_messages[0]["parts"][0]
+                assert output_messages[0]["parts"][0]["name"] == "get_weather"
+                assert "arguments" in output_messages[0]["parts"][0]
+            else:
+                # Nested format: {"type": "tool_call", "content": {"type": "function_call", ...}}
+                assert output_messages[0]["parts"][0]["content"]["type"] == "function_call"
+                assert "id" in output_messages[0]["parts"][0]["content"]
+                assert output_messages[0]["parts"][0]["content"]["function"]["name"] == "get_weather"
+                assert "arguments" in output_messages[0]["parts"][0]["content"]["function"]
 
         # Validate second span (tool output + final response)
         span2 = spans[1]
@@ -1353,29 +1447,71 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
         # Check events for second span - tool output and assistant response
-        if not use_events:
-            # Skip event validation in attribute mode
-            return
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+        if use_events:
+            if use_simple_tool_call_format:
+                # Simple OTEL format for tool output: tool_call_response
+                expected_events_2 = [
+                    {
+                        "name": "gen_ai.input.messages",
+                        "attributes": {
+                            "gen_ai.provider.name": RESPONSES_PROVIDER,
+                            "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*", "result": {"temperature": "72°F", "condition": "sunny"}}]}]',
+                        },
+                    },
+                    {
+                        "name": "gen_ai.output.messages",
+                        "attributes": {
+                            "gen_ai.provider.name": RESPONSES_PROVIDER,
+                            "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                        },
+                    },
+                ]
+            else:
+                # Nested format for tool output: tool_call_output with function_call_output
+                expected_events_2 = [
+                    {
+                        "name": "gen_ai.input.messages",
+                        "attributes": {
+                            "gen_ai.provider.name": RESPONSES_PROVIDER,
+                            "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*", "output": {"temperature": "72°F", "condition": "sunny"}}}]}]',
+                        },
+                    },
+                    {
+                        "name": "gen_ai.output.messages",
+                        "attributes": {
+                            "gen_ai.provider.name": RESPONSES_PROVIDER,
+                            "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text", "content": "*"}], "finish_reason": "*"}]',
+                        },
+                    },
+                ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+        else:
+            # Check span attributes for second span
+            assert "gen_ai.input.messages" in span2.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span2.attributes  # type: ignore
+
+            # Verify input messages - tool output
+            input_messages = json.loads(span2.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "tool"
+            if use_simple_tool_call_format:
+                # Simple OTEL format: tool_call_response
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_response"
+                assert "id" in input_messages[0]["parts"][0]
+                assert "result" in input_messages[0]["parts"][0]
+            else:
+                # Nested format: tool_call_output with function_call_output
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_output"
+                assert input_messages[0]["parts"][0]["content"]["type"] == "function_call_output"
+                assert "id" in input_messages[0]["parts"][0]["content"]
+                assert "output" in input_messages[0]["parts"][0]["content"]
+
+            # Verify output messages - assistant response
+            output_messages = json.loads(span2.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert output_messages[0]["parts"][0]["type"] == "text"
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -1391,7 +1527,27 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         """Test synchronous function tool usage with content recording enabled, streaming (attribute mode)."""
         self._test_sync_function_tool_with_content_recording_streaming_impl(False, **kwargs)
 
-    def _test_sync_function_tool_without_content_recording_non_streaming_impl(self, use_events, **kwargs):
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_streaming_simple_format_events(self, **kwargs):
+        """Test synchronous function tool usage with content recording, streaming, simple OTEL format (event mode)."""
+        self._test_sync_function_tool_with_content_recording_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_with_content_recording_streaming_simple_format_attributes(self, **kwargs):
+        """Test synchronous function tool usage with content recording, streaming, simple OTEL format (attribute mode)."""
+        self._test_sync_function_tool_with_content_recording_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    def _test_sync_function_tool_without_content_recording_non_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
         """Implementation for testing synchronous function tool usage without content recording (non-streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
@@ -1404,6 +1560,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -1509,27 +1666,49 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
         # Check events for first span - tool call ID included but no function details, role and finish_reason included
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
-                },
-            },
-        ]
         if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag (no content, only type and ID)
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
+                },
+            ]
             events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
             assert events_match == True
+        else:
+            # Check span attributes
+            assert "gen_ai.input.messages" in span1.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span1.attributes  # type: ignore
+
+            # Verify output messages - assistant tool call (no content, only type and ID)
+            output_messages = json.loads(span1.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert output_messages[0]["parts"][0]["type"] == "tool_call"
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: {"type": "tool_call", "id": "..."}
+                assert "id" in output_messages[0]["parts"][0]
+            else:
+                # Nested format: {"type": "tool_call", "content": {"type": "function_call", "id": "..."}}
+                assert output_messages[0]["parts"][0]["content"]["type"] == "function_call"
+                assert "id" in output_messages[0]["parts"][0]["content"]
 
         # Validate second span (tool output + final response) - no content
         span2 = spans[1]
@@ -1557,31 +1736,54 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
         # Check events for second span - role included but no content
-        if not use_events:
-            # Skip event validation in attribute mode
-            return
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
-                },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+        if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag (no content, only type and ID)
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*"}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]'
 
-    def _test_sync_function_tool_without_content_recording_streaming_impl(self, use_events, **kwargs):
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_output_content,
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                    },
+                },
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+        else:
+            # Check span attributes for second span
+            assert "gen_ai.input.messages" in span2.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span2.attributes  # type: ignore
+
+            # Verify input messages - tool output (no content, only type and ID)
+            input_messages = json.loads(span2.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "tool"
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: tool_call_response
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_response"
+                assert "id" in input_messages[0]["parts"][0]
+            else:
+                # Nested format: tool_call_output with function_call_output
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_output"
+                assert input_messages[0]["parts"][0]["content"]["type"] == "function_call_output"
+                assert "id" in input_messages[0]["parts"][0]["content"]
+
+    def _test_sync_function_tool_without_content_recording_streaming_impl(
+        self, use_events, use_simple_tool_call_format=False, **kwargs
+    ):
         """Implementation for testing synchronous function tool usage without content recording (streaming)."""
         from openai.types.responses.response_input_param import FunctionCallOutput
 
@@ -1594,6 +1796,7 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
             }
         )
         self.setup_telemetry()
+        _set_use_simple_tool_format(use_simple_tool_call_format)
         assert False == AIProjectInstrumentor().is_content_recording_enabled()
         assert True == AIProjectInstrumentor().is_instrumented()
 
@@ -1717,27 +1920,49 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
         # Check events for first span - tool call ID included but no function details, role and finish_reason included
-        expected_events_1 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "user",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
-                },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]',
-                },
-            },
-        ]
         if use_events:
+            # Tool call format depends on use_simple_tool_call_format flag (no content, only type and ID)
+            if use_simple_tool_call_format:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "id": "*"}]}]'
+            else:
+                tool_call_content = '[{"role": "assistant", "parts": [{"type": "tool_call", "content": {"type": "function_call", "id": "*"}}]}]'
+
+            expected_events_1 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "user", "parts": [{"type": "text"}]}]',
+                    },
+                },
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_call_content,
+                    },
+                },
+            ]
             events_match = GenAiTraceVerifier().check_span_events(span1, expected_events_1)
             assert events_match == True
+        else:
+            # Check span attributes
+            assert "gen_ai.input.messages" in span1.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span1.attributes  # type: ignore
+
+            # Verify output messages - assistant tool call (no content, only type and ID)
+            output_messages = json.loads(span1.attributes["gen_ai.output.messages"])  # type: ignore
+            assert len(output_messages) == 1
+            assert output_messages[0]["role"] == "assistant"
+            assert output_messages[0]["parts"][0]["type"] == "tool_call"
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: {"type": "tool_call", "id": "..."}
+                assert "id" in output_messages[0]["parts"][0]
+            else:
+                # Nested format: {"type": "tool_call", "content": {"type": "function_call", "id": "..."}}
+                assert output_messages[0]["parts"][0]["content"]["type"] == "function_call"
+                assert "id" in output_messages[0]["parts"][0]["content"]
 
         # Validate second span (tool output + final response) - no content
         span2 = spans[1]
@@ -1765,29 +1990,50 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
         assert attributes_match == True
 
         # Check events for second span - role included but no content
-        if not use_events:
-            # Skip event validation in attribute mode
-            return
-        expected_events_2 = [
-            {
-                "name": "gen_ai.input.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "tool",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]',
+        if use_events:
+            # Tool output format depends on use_simple_tool_call_format flag (no content, only type and ID)
+            if use_simple_tool_call_format:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_response", "id": "*"}]}]'
+            else:
+                tool_output_content = '[{"role": "tool", "parts": [{"type": "tool_call_output", "content": {"type": "function_call_output", "id": "*"}}]}]'
+
+            expected_events_2 = [
+                {
+                    "name": "gen_ai.input.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": tool_output_content,
+                    },
                 },
-            },
-            {
-                "name": "gen_ai.output.messages",
-                "attributes": {
-                    "gen_ai.provider.name": RESPONSES_PROVIDER,
-                    # "gen_ai.message.role": "assistant",  # Commented out - now in event content
-                    "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                {
+                    "name": "gen_ai.output.messages",
+                    "attributes": {
+                        "gen_ai.provider.name": RESPONSES_PROVIDER,
+                        "gen_ai.event.content": '[{"role": "assistant", "parts": [{"type": "text"}], "finish_reason": "*"}]',
+                    },
                 },
-            },
-        ]
-        events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
-        assert events_match == True
+            ]
+            events_match = GenAiTraceVerifier().check_span_events(span2, expected_events_2)
+            assert events_match == True
+        else:
+            # Check span attributes for second span
+            assert "gen_ai.input.messages" in span2.attributes  # type: ignore
+            assert "gen_ai.output.messages" in span2.attributes  # type: ignore
+
+            # Verify input messages - tool output (no content, only type and ID)
+            input_messages = json.loads(span2.attributes["gen_ai.input.messages"])  # type: ignore
+            assert len(input_messages) == 1
+            assert input_messages[0]["role"] == "tool"
+
+            if use_simple_tool_call_format:
+                # Simple OTEL format: tool_call_response
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_response"
+                assert "id" in input_messages[0]["parts"][0]
+            else:
+                # Nested format: tool_call_output with function_call_output
+                assert input_messages[0]["parts"][0]["type"] == "tool_call_output"
+                assert input_messages[0]["parts"][0]["content"]["type"] == "function_call_output"
+                assert "id" in input_messages[0]["parts"][0]["content"]
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -1806,6 +2052,24 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_non_streaming_simple_format_events(self, **kwargs):
+        """Test synchronous function tool usage without content recording, non-streaming, simple OTEL format (event mode)."""
+        self._test_sync_function_tool_without_content_recording_non_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_non_streaming_simple_format_attributes(self, **kwargs):
+        """Test synchronous function tool usage without content recording, non-streaming, simple OTEL format (attribute mode)."""
+        self._test_sync_function_tool_without_content_recording_non_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_sync_function_tool_without_content_recording_streaming_events(self, **kwargs):
         """Test synchronous function tool usage without content recording, streaming (event mode)."""
         self._test_sync_function_tool_without_content_recording_streaming_impl(True, **kwargs)
@@ -1816,6 +2080,24 @@ class TestResponsesInstrumentor(TestAiAgentsInstrumentorBase):
     def test_sync_function_tool_without_content_recording_streaming_attributes(self, **kwargs):
         """Test synchronous function tool usage without content recording, streaming (attribute mode)."""
         self._test_sync_function_tool_without_content_recording_streaming_impl(False, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_streaming_simple_format_events(self, **kwargs):
+        """Test synchronous function tool usage without content recording, streaming, simple OTEL format (event mode)."""
+        self._test_sync_function_tool_without_content_recording_streaming_impl(
+            True, use_simple_tool_call_format=True, **kwargs
+        )
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_sync_function_tool_without_content_recording_streaming_simple_format_attributes(self, **kwargs):
+        """Test synchronous function tool usage without content recording, streaming, simple OTEL format (attribute mode)."""
+        self._test_sync_function_tool_without_content_recording_streaming_impl(
+            False, use_simple_tool_call_format=True, **kwargs
+        )
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()

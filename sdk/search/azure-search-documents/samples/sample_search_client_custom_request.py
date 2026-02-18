@@ -35,9 +35,7 @@ def sample_send_request():
 
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction.
-    request = HttpRequest(
-        method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}"
-    )
+    request = HttpRequest(method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}")
     response = search_client.send_request(request)
     response.raise_for_status()
     response_body = response.json()

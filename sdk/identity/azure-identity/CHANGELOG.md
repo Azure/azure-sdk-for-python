@@ -1,14 +1,24 @@
 # Release History
 
-## 1.26.0b2 (Unreleased)
+## 1.26.0b3 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
-> These changes do not impact the API of stable versions such as 1.25.1.
+### Bugs Fixed
+
+### Other Changes
+
+## 1.26.0b2 (2026-02-11)
+
+### Breaking Changes
+
+> These changes do not impact the API of stable versions such as 1.25.2.
 > Only code written against beta version 1.26.0b1 is affected.
 - Renamed `use_token_proxy` keyword argument to `enable_azure_proxy` in `WorkloadIdentityCredential` to better reflect its purpose. ([#44147](https://github.com/Azure/azure-sdk-for-python/pull/44147))
+
+## 1.25.2 (2026-02-10)
 
 ### Bugs Fixed
 
@@ -18,6 +28,8 @@
 ### Other Changes
 
 - Bumped minimum dependency on `msal` to `>=1.31.0`.
+- Added debug logging of access token cache hits in several credentials to improve troubleshooting of token cache behavior. ([#44963](https://github.com/Azure/azure-sdk-for-python/pull/44963))
+- Replace instances of `azure.core.pipeline.transport.HttpRequest` with `azure.core.rest.HttpRequest`. ([#44993](https://github.com/Azure/azure-sdk-for-python/pull/44993))
 
 ## 1.26.0b1 (2025-11-07)
 

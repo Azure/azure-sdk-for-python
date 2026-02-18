@@ -3,6 +3,7 @@ from azure.ai.evaluation._evaluators._task_navigation_efficiency import (
     _TaskNavigationEfficiencyEvaluator,
     _TaskNavigationEfficiencyMatchingMode,
 )
+from azure.ai.evaluation._exceptions import EvaluationException
 
 
 @pytest.mark.unittest
@@ -129,10 +130,10 @@ class TestTaskNavigationEfficiencyEvaluator:
         """Test with invalid ground truth steps."""
         evaluator = _TaskNavigationEfficiencyEvaluator()
 
-        with pytest.raises(TypeError):
+        with pytest.raises(EvaluationException):
             evaluator(response=[], ground_truth="not_a_list")  # type: ignore
 
-        with pytest.raises(ValueError):
+        with pytest.raises(EvaluationException):
             evaluator(response=[], ground_truth=[])
 
     def test_tuple_format_with_parameters(self):

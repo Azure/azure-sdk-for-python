@@ -14834,7 +14834,7 @@ class ExpressRouteCircuit(Resource):
         "enable_direct_port_rate_limit": {"key": "properties.enableDirectPortRateLimit", "type": "bool"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -15321,7 +15321,7 @@ class ExpressRouteCircuitPeering(SubResource):
         "peered_connections": {"key": "properties.peeredConnections", "type": "[PeerExpressRouteCircuitConnection]"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -18528,8 +18528,8 @@ class FirewallPolicyIntrusionDetection(_serialization.Model):
      "Deny".
     :vartype mode: str or ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionStateType
     :ivar profile: IDPS profile name. When attached to a parent policy, the firewall's effective
-     profile is the profile name of the parent policy. Known values are: "Basic", "Standard",
-     "Advanced", and "Extended".
+     profile is the profile name of the parent policy. Known values are: "Off", "Emerging", "Core",
+     and "Extended".
     :vartype profile: str or ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionProfileType
     :ivar configuration: Intrusion detection configuration properties.
     :vartype configuration:
@@ -18556,8 +18556,8 @@ class FirewallPolicyIntrusionDetection(_serialization.Model):
          "Alert", and "Deny".
         :paramtype mode: str or ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionStateType
         :keyword profile: IDPS profile name. When attached to a parent policy, the firewall's effective
-         profile is the profile name of the parent policy. Known values are: "Basic", "Standard",
-         "Advanced", and "Extended".
+         profile is the profile name of the parent policy. Known values are: "Off", "Emerging", "Core",
+         and "Extended".
         :paramtype profile: str or
          ~azure.mgmt.network.models.FirewallPolicyIntrusionDetectionProfileType
         :keyword configuration: Intrusion detection configuration properties.
@@ -20212,6 +20212,68 @@ class GetOutboundRoutesParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.resource_uri = resource_uri
         self.connection_type = connection_type
+
+
+class GetServiceGatewayAddressLocationsResult(_serialization.Model):
+    """Response for get service gateway address locations.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of address locations of service gateway.
+    :vartype value: list[~azure.mgmt.network.models.ServiceGatewayAddressLocationResponse]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServiceGatewayAddressLocationResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, value: Optional[list["_models.ServiceGatewayAddressLocationResponse"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: A list of address locations of service gateway.
+        :paramtype value: list[~azure.mgmt.network.models.ServiceGatewayAddressLocationResponse]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
+
+
+class GetServiceGatewayServicesResult(_serialization.Model):
+    """Response for get service gateway services.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of services of service gateway.
+    :vartype value: list[~azure.mgmt.network.models.ServiceGatewayService]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServiceGatewayService]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.ServiceGatewayService"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: A list of services of service gateway.
+        :paramtype value: list[~azure.mgmt.network.models.ServiceGatewayService]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
 
 
 class GetVpnSitesConfigurationRequest(_serialization.Model):
@@ -24187,7 +24249,7 @@ class ManagedRuleOverride(_serialization.Model):
      are: "Disabled" and "Enabled".
     :vartype state: str or ~azure.mgmt.network.models.ManagedRuleEnabledState
     :ivar action: Describes the override action to be applied when rule matches. Known values are:
-     "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
+     "AnomalyScoring", "Allow", "Block", "Log", "JSChallenge", and "CAPTCHA".
     :vartype action: str or ~azure.mgmt.network.models.ActionType
     :ivar sensitivity: Describes the override sensitivity to be applied when rule matches. Known
      values are: "Low", "Medium", and "High".
@@ -24221,7 +24283,7 @@ class ManagedRuleOverride(_serialization.Model):
          values are: "Disabled" and "Enabled".
         :paramtype state: str or ~azure.mgmt.network.models.ManagedRuleEnabledState
         :keyword action: Describes the override action to be applied when rule matches. Known values
-         are: "AnomalyScoring", "Allow", "Block", "Log", and "JSChallenge".
+         are: "AnomalyScoring", "Allow", "Block", "Log", "JSChallenge", and "CAPTCHA".
         :paramtype action: str or ~azure.mgmt.network.models.ActionType
         :keyword sensitivity: Describes the override sensitivity to be applied when rule matches. Known
          values are: "Low", "Medium", and "High".
@@ -24764,6 +24826,8 @@ class NatGateway(Resource):
     :ivar source_virtual_network: A reference to the source virtual network using this nat gateway
      resource.
     :vartype source_virtual_network: ~azure.mgmt.network.models.SubResource
+    :ivar service_gateway: Reference to an existing service gateway.
+    :vartype service_gateway: ~azure.mgmt.network.models.SubResource
     :ivar resource_guid: The resource GUID property of the NAT gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the NAT gateway resource. Known values are:
@@ -24796,6 +24860,7 @@ class NatGateway(Resource):
         "public_ip_prefixes_v6": {"key": "properties.publicIpPrefixesV6", "type": "[SubResource]"},
         "subnets": {"key": "properties.subnets", "type": "[SubResource]"},
         "source_virtual_network": {"key": "properties.sourceVirtualNetwork", "type": "SubResource"},
+        "service_gateway": {"key": "properties.serviceGateway", "type": "SubResource"},
         "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
@@ -24814,6 +24879,7 @@ class NatGateway(Resource):
         public_ip_prefixes: Optional[list["_models.SubResource"]] = None,
         public_ip_prefixes_v6: Optional[list["_models.SubResource"]] = None,
         source_virtual_network: Optional["_models.SubResource"] = None,
+        service_gateway: Optional["_models.SubResource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -24845,6 +24911,8 @@ class NatGateway(Resource):
         :keyword source_virtual_network: A reference to the source virtual network using this nat
          gateway resource.
         :paramtype source_virtual_network: ~azure.mgmt.network.models.SubResource
+        :keyword service_gateway: Reference to an existing service gateway.
+        :paramtype service_gateway: ~azure.mgmt.network.models.SubResource
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.sku = sku
@@ -24857,6 +24925,7 @@ class NatGateway(Resource):
         self.public_ip_prefixes_v6 = public_ip_prefixes_v6
         self.subnets: Optional[list["_models.SubResource"]] = None
         self.source_virtual_network = source_virtual_network
+        self.service_gateway = service_gateway
         self.resource_guid: Optional[str] = None
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
@@ -31366,6 +31435,9 @@ class PolicySettings(_serialization.Model):
     :ivar js_challenge_cookie_expiration_in_mins: Web Application Firewall JavaScript Challenge
      Cookie Expiration time in minutes.
     :vartype js_challenge_cookie_expiration_in_mins: int
+    :ivar captcha_cookie_expiration_in_mins: Web Application Firewall CAPTCHA Cookie Expiration
+     time in minutes.
+    :vartype captcha_cookie_expiration_in_mins: int
     """
 
     _validation = {
@@ -31377,6 +31449,7 @@ class PolicySettings(_serialization.Model):
             "pattern": r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$",
         },
         "js_challenge_cookie_expiration_in_mins": {"maximum": 1440, "minimum": 5},
+        "captcha_cookie_expiration_in_mins": {"maximum": 1440, "minimum": 5},
     }
 
     _attribute_map = {
@@ -31392,6 +31465,7 @@ class PolicySettings(_serialization.Model):
         "custom_block_response_body": {"key": "customBlockResponseBody", "type": "str"},
         "log_scrubbing": {"key": "logScrubbing", "type": "PolicySettingsLogScrubbing"},
         "js_challenge_cookie_expiration_in_mins": {"key": "jsChallengeCookieExpirationInMins", "type": "int"},
+        "captcha_cookie_expiration_in_mins": {"key": "captchaCookieExpirationInMins", "type": "int"},
     }
 
     def __init__(
@@ -31409,6 +31483,7 @@ class PolicySettings(_serialization.Model):
         custom_block_response_body: Optional[str] = None,
         log_scrubbing: Optional["_models.PolicySettingsLogScrubbing"] = None,
         js_challenge_cookie_expiration_in_mins: Optional[int] = None,
+        captcha_cookie_expiration_in_mins: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -31440,6 +31515,9 @@ class PolicySettings(_serialization.Model):
         :keyword js_challenge_cookie_expiration_in_mins: Web Application Firewall JavaScript Challenge
          Cookie Expiration time in minutes.
         :paramtype js_challenge_cookie_expiration_in_mins: int
+        :keyword captcha_cookie_expiration_in_mins: Web Application Firewall CAPTCHA Cookie Expiration
+         time in minutes.
+        :paramtype captcha_cookie_expiration_in_mins: int
         """
         super().__init__(**kwargs)
         self.state = state
@@ -31454,6 +31532,7 @@ class PolicySettings(_serialization.Model):
         self.custom_block_response_body = custom_block_response_body
         self.log_scrubbing = log_scrubbing
         self.js_challenge_cookie_expiration_in_mins = js_challenge_cookie_expiration_in_mins
+        self.captcha_cookie_expiration_in_mins = captcha_cookie_expiration_in_mins
 
 
 class PolicySettingsLogScrubbing(_serialization.Model):
@@ -32988,7 +33067,7 @@ class PublicIPAddress(Resource):
         "delete_option": {"key": "properties.deleteOption", "type": "str"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -35012,6 +35091,49 @@ class RouteTableListResult(_serialization.Model):
         self.next_link = next_link
 
 
+class RouteTargetAddressPropertiesFormat(_serialization.Model):
+    """Properties of route target address.
+
+    :ivar subnet: The reference to the subnet resource.
+    :vartype subnet: ~azure.mgmt.network.models.Subnet
+    :ivar private_ip_address: The private IPv4 or IPv6 address of the service gateway route target
+     address.
+    :vartype private_ip_address: str
+    :ivar private_ip_allocation_method: The Private IP allocation method. Known values are:
+     "Static" and "Dynamic".
+    :vartype private_ip_allocation_method: str or ~azure.mgmt.network.models.IPAllocationMethod
+    """
+
+    _attribute_map = {
+        "subnet": {"key": "subnet", "type": "Subnet"},
+        "private_ip_address": {"key": "privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "privateIPAllocationMethod", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        subnet: Optional["_models.Subnet"] = None,
+        private_ip_address: Optional[str] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword subnet: The reference to the subnet resource.
+        :paramtype subnet: ~azure.mgmt.network.models.Subnet
+        :keyword private_ip_address: The private IPv4 or IPv6 address of the service gateway route
+         target address.
+        :paramtype private_ip_address: str
+        :keyword private_ip_allocation_method: The Private IP allocation method. Known values are:
+         "Static" and "Dynamic".
+        :paramtype private_ip_allocation_method: str or ~azure.mgmt.network.models.IPAllocationMethod
+        """
+        super().__init__(**kwargs)
+        self.subnet = subnet
+        self.private_ip_address = private_ip_address
+        self.private_ip_allocation_method = private_ip_allocation_method
+
+
 class RoutingConfiguration(_serialization.Model):
     """Routing Configuration indicating the associated and propagated route tables for this
     connection.
@@ -37003,6 +37125,472 @@ class ServiceEndpointPropertiesFormat(_serialization.Model):
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
 
 
+class ServiceGateway(TrackedResource):
+    """ServiceGateway resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. E.g.
+     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar sku: The service gateway SKU.
+    :vartype sku: ~azure.mgmt.network.models.ServiceGatewaySku
+    :ivar zones: A list of availability zones denoting the zone in which service gateway should be
+     deployed.
+
+     * The zone values must be provided as strings representing numeric identifiers like "1",
+       "2", "3" etc.
+    :vartype zones: list[str]
+    :ivar virtual_network: Reference to an existing virtual network.
+    :vartype virtual_network: ~azure.mgmt.network.models.VirtualNetwork
+    :ivar route_target_address: Route Target address of Service gateway.
+    :vartype route_target_address: ~azure.mgmt.network.models.RouteTargetAddressPropertiesFormat
+    :ivar route_target_address_v6: Route Target address V6 of Service gateway.
+    :vartype route_target_address_v6: ~azure.mgmt.network.models.RouteTargetAddressPropertiesFormat
+    :ivar resource_guid: The resource GUID property of the service gateway resource.
+    :vartype resource_guid: str
+    :ivar provisioning_state: The provisioning state of the service gateway resource. Known values
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "resource_guid": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SecurityPerimeterSystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "sku": {"key": "sku", "type": "ServiceGatewaySku"},
+        "zones": {"key": "zones", "type": "[str]"},
+        "virtual_network": {"key": "properties.virtualNetwork", "type": "VirtualNetwork"},
+        "route_target_address": {"key": "properties.routeTargetAddress", "type": "RouteTargetAddressPropertiesFormat"},
+        "route_target_address_v6": {
+            "key": "properties.routeTargetAddressV6",
+            "type": "RouteTargetAddressPropertiesFormat",
+        },
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        sku: Optional["_models.ServiceGatewaySku"] = None,
+        zones: Optional[list[str]] = None,
+        virtual_network: Optional["_models.VirtualNetwork"] = None,
+        route_target_address: Optional["_models.RouteTargetAddressPropertiesFormat"] = None,
+        route_target_address_v6: Optional["_models.RouteTargetAddressPropertiesFormat"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword sku: The service gateway SKU.
+        :paramtype sku: ~azure.mgmt.network.models.ServiceGatewaySku
+        :keyword zones: A list of availability zones denoting the zone in which service gateway should
+          be deployed.
+
+          * The zone values must be provided as strings representing numeric identifiers like
+            "1", "2", "3" etc.
+        :paramtype zones: list[str]
+        :keyword virtual_network: Reference to an existing virtual network.
+        :paramtype virtual_network: ~azure.mgmt.network.models.VirtualNetwork
+        :keyword route_target_address: Route Target address of Service gateway.
+        :paramtype route_target_address: ~azure.mgmt.network.models.RouteTargetAddressPropertiesFormat
+        :keyword route_target_address_v6: Route Target address V6 of Service gateway.
+        :paramtype route_target_address_v6:
+         ~azure.mgmt.network.models.RouteTargetAddressPropertiesFormat
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.etag: Optional[str] = None
+        self.sku = sku
+        self.zones = zones
+        self.virtual_network = virtual_network
+        self.route_target_address = route_target_address
+        self.route_target_address_v6 = route_target_address_v6
+        self.resource_guid: Optional[str] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+
+
+class ServiceGatewayAddress(_serialization.Model):
+    """Properties of the service gateway address.
+
+    :ivar address: Address to update.
+    :vartype address: str
+    :ivar services: Collection of services in address.
+    :vartype services: list[str]
+    """
+
+    _attribute_map = {
+        "address": {"key": "address", "type": "str"},
+        "services": {"key": "services", "type": "[str]"},
+    }
+
+    def __init__(self, *, address: Optional[str] = None, services: Optional[list[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword address: Address to update.
+        :paramtype address: str
+        :keyword services: Collection of services in address.
+        :paramtype services: list[str]
+        """
+        super().__init__(**kwargs)
+        self.address = address
+        self.services = services
+
+
+class ServiceGatewayAddressLocation(_serialization.Model):
+    """Properties of the service gateway address location.
+
+    :ivar address_location: Location to update.
+    :vartype address_location: str
+    :ivar address_update_action: Specifies the type of update operation to perform on addresses
+     within the address location of service gateway.
+
+     * FullUpdate: Replaces all existing address data with the new list provided in the
+       request. Any previously defined addresses not included will be removed.
+     * PartialUpdate: Updates only the specified addresses. Known values are: "FullUpdate" and
+       "PartialUpdate".
+    :vartype address_update_action: str or ~azure.mgmt.network.models.AddressUpdateAction
+    :ivar addresses: An array of addresses to create or update in locations.
+    :vartype addresses: list[~azure.mgmt.network.models.ServiceGatewayAddress]
+    """
+
+    _attribute_map = {
+        "address_location": {"key": "addressLocation", "type": "str"},
+        "address_update_action": {"key": "addressUpdateAction", "type": "str"},
+        "addresses": {"key": "addresses", "type": "[ServiceGatewayAddress]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        address_location: Optional[str] = None,
+        address_update_action: Optional[Union[str, "_models.AddressUpdateAction"]] = None,
+        addresses: Optional[list["_models.ServiceGatewayAddress"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword address_location: Location to update.
+        :paramtype address_location: str
+        :keyword address_update_action: Specifies the type of update operation to perform on addresses
+          within the address location of service gateway.
+
+          * FullUpdate: Replaces all existing address data with the new list provided in the
+            request. Any previously defined addresses not included will be removed.
+          * PartialUpdate: Updates only the specified addresses. Known values are: "FullUpdate"
+            and "PartialUpdate".
+        :paramtype address_update_action: str or ~azure.mgmt.network.models.AddressUpdateAction
+        :keyword addresses: An array of addresses to create or update in locations.
+        :paramtype addresses: list[~azure.mgmt.network.models.ServiceGatewayAddress]
+        """
+        super().__init__(**kwargs)
+        self.address_location = address_location
+        self.address_update_action = address_update_action
+        self.addresses = addresses
+
+
+class ServiceGatewayAddressLocationResponse(_serialization.Model):
+    """Properties of the service gateway address location.
+
+    :ivar address_location: Location to update.
+    :vartype address_location: str
+    :ivar addresses: An array of addresses to create or update in locations.
+    :vartype addresses: list[~azure.mgmt.network.models.ServiceGatewayAddress]
+    """
+
+    _attribute_map = {
+        "address_location": {"key": "addressLocation", "type": "str"},
+        "addresses": {"key": "addresses", "type": "[ServiceGatewayAddress]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        address_location: Optional[str] = None,
+        addresses: Optional[list["_models.ServiceGatewayAddress"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword address_location: Location to update.
+        :paramtype address_location: str
+        :keyword addresses: An array of addresses to create or update in locations.
+        :paramtype addresses: list[~azure.mgmt.network.models.ServiceGatewayAddress]
+        """
+        super().__init__(**kwargs)
+        self.address_location = address_location
+        self.addresses = addresses
+
+
+class ServiceGatewayListResult(_serialization.Model):
+    """Response for ListServiceGateways API service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of service gateway in a resource group.
+    :vartype value: list[~azure.mgmt.network.models.ServiceGateway]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ServiceGateway]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.ServiceGateway"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: A list of service gateway in a resource group.
+        :paramtype value: list[~azure.mgmt.network.models.ServiceGateway]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
+
+
+class ServiceGatewayService(_serialization.Model):
+    """Properties of the service gateway service.
+
+    :ivar name: Name of the service.
+    :vartype name: str
+    :ivar service_type: Name of the service. Known values are: "Inbound", "Outbound", and
+     "InboundOutbound".
+    :vartype service_type: str or ~azure.mgmt.network.models.ServiceType
+    :ivar is_default: Set to true to mark default service for inbound or outbound.
+    :vartype is_default: bool
+    :ivar load_balancer_backend_pools: An array of load balancer backend address pools.
+    :vartype load_balancer_backend_pools: list[~azure.mgmt.network.models.BackendAddressPool]
+    :ivar public_nat_gateway_id: Azure Resource Id of public natgateway.
+    :vartype public_nat_gateway_id: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "service_type": {"key": "properties.serviceType", "type": "str"},
+        "is_default": {"key": "properties.isDefault", "type": "bool"},
+        "load_balancer_backend_pools": {"key": "properties.loadBalancerBackendPools", "type": "[BackendAddressPool]"},
+        "public_nat_gateway_id": {"key": "properties.publicNatGatewayId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        service_type: Optional[Union[str, "_models.ServiceType"]] = None,
+        is_default: Optional[bool] = None,
+        load_balancer_backend_pools: Optional[list["_models.BackendAddressPool"]] = None,
+        public_nat_gateway_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of the service.
+        :paramtype name: str
+        :keyword service_type: Name of the service. Known values are: "Inbound", "Outbound", and
+         "InboundOutbound".
+        :paramtype service_type: str or ~azure.mgmt.network.models.ServiceType
+        :keyword is_default: Set to true to mark default service for inbound or outbound.
+        :paramtype is_default: bool
+        :keyword load_balancer_backend_pools: An array of load balancer backend address pools.
+        :paramtype load_balancer_backend_pools: list[~azure.mgmt.network.models.BackendAddressPool]
+        :keyword public_nat_gateway_id: Azure Resource Id of public natgateway.
+        :paramtype public_nat_gateway_id: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.service_type = service_type
+        self.is_default = is_default
+        self.load_balancer_backend_pools = load_balancer_backend_pools
+        self.public_nat_gateway_id = public_nat_gateway_id
+
+
+class ServiceGatewayServiceRequest(_serialization.Model):
+    """Properties of the service gateway services request.
+
+    :ivar is_delete: Set to true to mark the service for deletion.
+    :vartype is_delete: bool
+    :ivar service: Service of service gateway.
+    :vartype service: ~azure.mgmt.network.models.ServiceGatewayService
+    """
+
+    _attribute_map = {
+        "is_delete": {"key": "isDelete", "type": "bool"},
+        "service": {"key": "service", "type": "ServiceGatewayService"},
+    }
+
+    def __init__(
+        self,
+        *,
+        is_delete: Optional[bool] = None,
+        service: Optional["_models.ServiceGatewayService"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword is_delete: Set to true to mark the service for deletion.
+        :paramtype is_delete: bool
+        :keyword service: Service of service gateway.
+        :paramtype service: ~azure.mgmt.network.models.ServiceGatewayService
+        """
+        super().__init__(**kwargs)
+        self.is_delete = is_delete
+        self.service = service
+
+
+class ServiceGatewaySku(_serialization.Model):
+    """SKU of a service gateway.
+
+    :ivar name: Name of a service gateway SKU. "Standard"
+    :vartype name: str or ~azure.mgmt.network.models.ServiceGatewaySkuName
+    :ivar tier: Tier of a service gateway SKU. "Regional"
+    :vartype tier: str or ~azure.mgmt.network.models.ServiceGatewaySkuTier
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[Union[str, "_models.ServiceGatewaySkuName"]] = None,
+        tier: Optional[Union[str, "_models.ServiceGatewaySkuTier"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: Name of a service gateway SKU. "Standard"
+        :paramtype name: str or ~azure.mgmt.network.models.ServiceGatewaySkuName
+        :keyword tier: Tier of a service gateway SKU. "Regional"
+        :paramtype tier: str or ~azure.mgmt.network.models.ServiceGatewaySkuTier
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.tier = tier
+
+
+class ServiceGatewayUpdateAddressLocationsRequest(_serialization.Model):  # pylint: disable=name-too-long
+    """Properties of the service gateway update address locations request.
+
+    :ivar action: Specifies the type of update operation to perform on address locations within the
+     service gateway.
+
+     * FullUpdate: Replaces all existing address location data with the new list provided in
+       the request. Any previously defined locations not included will be removed.
+     * PartialUpdate: Updates only the specified address locations. Known values are:
+       "FullUpdate" and "PartialUpdate".
+    :vartype action: str or ~azure.mgmt.network.models.UpdateAction
+    :ivar address_locations: An array of address locations to create or update.
+    :vartype address_locations: list[~azure.mgmt.network.models.ServiceGatewayAddressLocation]
+    """
+
+    _attribute_map = {
+        "action": {"key": "action", "type": "str"},
+        "address_locations": {"key": "addressLocations", "type": "[ServiceGatewayAddressLocation]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        action: Optional[Union[str, "_models.UpdateAction"]] = None,
+        address_locations: Optional[list["_models.ServiceGatewayAddressLocation"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword action: Specifies the type of update operation to perform on address locations within
+          the service gateway.
+
+          * FullUpdate: Replaces all existing address location data with the new list provided
+            in the request. Any previously defined locations not included will be removed.
+          * PartialUpdate: Updates only the specified address locations. Known values are:
+            "FullUpdate" and "PartialUpdate".
+        :paramtype action: str or ~azure.mgmt.network.models.UpdateAction
+        :keyword address_locations: An array of address locations to create or update.
+        :paramtype address_locations: list[~azure.mgmt.network.models.ServiceGatewayAddressLocation]
+        """
+        super().__init__(**kwargs)
+        self.action = action
+        self.address_locations = address_locations
+
+
+class ServiceGatewayUpdateServicesRequest(_serialization.Model):
+    """Properties of the service gateway update services request.
+
+    :ivar action: Specifies the type of update operation to perform on services within the service
+     gateway.
+
+     * FullUpdate: Replaces all existing services with the new list provided in the request.
+       Any previously defined services not included will be removed.
+     * PartialUpdate: Updates only the specified services. Known values are: "FullUpdate" and
+       "PartialUpdate".
+    :vartype action: str or ~azure.mgmt.network.models.ServiceUpdateAction
+    :ivar service_requests: Collection of service updates.
+    :vartype service_requests: list[~azure.mgmt.network.models.ServiceGatewayServiceRequest]
+    """
+
+    _attribute_map = {
+        "action": {"key": "action", "type": "str"},
+        "service_requests": {"key": "serviceRequests", "type": "[ServiceGatewayServiceRequest]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        action: Optional[Union[str, "_models.ServiceUpdateAction"]] = None,
+        service_requests: Optional[list["_models.ServiceGatewayServiceRequest"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword action: Specifies the type of update operation to perform on services within the
+          service gateway.
+
+          * FullUpdate: Replaces all existing services with the new list provided in the
+            request. Any previously defined services not included will be removed.
+          * PartialUpdate: Updates only the specified services. Known values are: "FullUpdate"
+            and "PartialUpdate".
+        :paramtype action: str or ~azure.mgmt.network.models.ServiceUpdateAction
+        :keyword service_requests: Collection of service updates.
+        :paramtype service_requests: list[~azure.mgmt.network.models.ServiceGatewayServiceRequest]
+        """
+        super().__init__(**kwargs)
+        self.action = action
+        self.service_requests = service_requests
+
+
 class ServiceTagInformation(_serialization.Model):
     """The service tag information.
 
@@ -37861,6 +38449,8 @@ class Subnet(SubResource):
     :ivar ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
     :vartype ipam_pool_prefix_allocations:
      list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
+    :ivar service_gateway: Reference to an existing service gateway.
+    :vartype service_gateway: ~azure.mgmt.network.models.SubResource
     """
 
     _validation = {
@@ -37907,6 +38497,7 @@ class Subnet(SubResource):
             "key": "properties.ipamPoolPrefixAllocations",
             "type": "[IpamPoolPrefixAllocation]",
         },
+        "service_gateway": {"key": "properties.serviceGateway", "type": "SubResource"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -37934,6 +38525,7 @@ class Subnet(SubResource):
         sharing_scope: Optional[Union[str, "_models.SharingScope"]] = None,
         default_outbound_access: Optional[bool] = None,
         ipam_pool_prefix_allocations: Optional[list["_models.IpamPoolPrefixAllocation"]] = None,
+        service_gateway: Optional["_models.SubResource"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -37986,6 +38578,8 @@ class Subnet(SubResource):
         :keyword ipam_pool_prefix_allocations: A list of IPAM Pools for allocating IP address prefixes.
         :paramtype ipam_pool_prefix_allocations:
          list[~azure.mgmt.network.models.IpamPoolPrefixAllocation]
+        :keyword service_gateway: Reference to an existing service gateway.
+        :paramtype service_gateway: ~azure.mgmt.network.models.SubResource
         """
         super().__init__(id=id, **kwargs)
         self.name = name
@@ -38013,6 +38607,7 @@ class Subnet(SubResource):
         self.sharing_scope = sharing_scope
         self.default_outbound_access = default_outbound_access
         self.ipam_pool_prefix_allocations = ipam_pool_prefix_allocations
+        self.service_gateway = service_gateway
 
 
 class SubnetAssociation(_serialization.Model):
@@ -40261,6 +40856,206 @@ class VirtualNetwork(Resource):
         self.default_public_nat_gateway: Optional["_models.SubResource"] = None
 
 
+class VirtualNetworkAppliance(Resource):
+    """A virtual network appliance in a resource group.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar bandwidth_in_gbps: Bandwidth of the VirtualNetworkAppliance resource in Gbps.
+    :vartype bandwidth_in_gbps: str
+    :ivar ip_configurations: A list of IPConfigurations of the virtual network appliance.
+    :vartype ip_configurations:
+     list[~azure.mgmt.network.models.VirtualNetworkApplianceIpConfiguration]
+    :ivar provisioning_state: The provisioning state of the virtual network appliance resource.
+     Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: The resource GUID property of the virtual network appliance resource.
+    :vartype resource_guid: str
+    :ivar subnet: The reference to the subnet resource.
+    :vartype subnet: ~azure.mgmt.network.models.Subnet
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "ip_configurations": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_guid": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "bandwidth_in_gbps": {"key": "properties.bandwidthInGbps", "type": "str"},
+        "ip_configurations": {"key": "properties.ipConfigurations", "type": "[VirtualNetworkApplianceIpConfiguration]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_guid": {"key": "properties.resourceGuid", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "Subnet"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        bandwidth_in_gbps: Optional[str] = None,
+        subnet: Optional["_models.Subnet"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword bandwidth_in_gbps: Bandwidth of the VirtualNetworkAppliance resource in Gbps.
+        :paramtype bandwidth_in_gbps: str
+        :keyword subnet: The reference to the subnet resource.
+        :paramtype subnet: ~azure.mgmt.network.models.Subnet
+        """
+        super().__init__(id=id, location=location, tags=tags, **kwargs)
+        self.etag: Optional[str] = None
+        self.bandwidth_in_gbps = bandwidth_in_gbps
+        self.ip_configurations: Optional[list["_models.VirtualNetworkApplianceIpConfiguration"]] = None
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.resource_guid: Optional[str] = None
+        self.subnet = subnet
+
+
+class VirtualNetworkApplianceIpConfiguration(SubResource):
+    """The virtual network appliance ip configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: The name of virtual network appliance ip configuration.
+    :vartype name: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar private_ip_address: The private IP address of the IP configuration.
+    :vartype private_ip_address: str
+    :ivar private_ip_allocation_method: The private IP address allocation method. Known values are:
+     "Static" and "Dynamic".
+    :vartype private_ip_allocation_method: str or ~azure.mgmt.network.models.IPAllocationMethod
+    :ivar primary: Whether the ip configuration is primary or not.
+    :vartype primary: bool
+    :ivar provisioning_state: The provisioning state of the private link service IP configuration
+     resource. Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and
+     "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
+     Default is IPv4. Known values are: "IPv4" and "IPv6".
+    :vartype private_ip_address_version: str or ~azure.mgmt.network.models.IPVersion
+    """
+
+    _validation = {
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_ip_address": {"key": "properties.privateIPAddress", "type": "str"},
+        "private_ip_allocation_method": {"key": "properties.privateIPAllocationMethod", "type": "str"},
+        "primary": {"key": "properties.primary", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_ip_address_version": {"key": "properties.privateIPAddressVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        private_ip_address: Optional[str] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IPAllocationMethod"]] = None,
+        primary: Optional[bool] = None,
+        private_ip_address_version: Optional[Union[str, "_models.IPVersion"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        :keyword name: The name of virtual network appliance ip configuration.
+        :paramtype name: str
+        :keyword private_ip_address: The private IP address of the IP configuration.
+        :paramtype private_ip_address: str
+        :keyword private_ip_allocation_method: The private IP address allocation method. Known values
+         are: "Static" and "Dynamic".
+        :paramtype private_ip_allocation_method: str or ~azure.mgmt.network.models.IPAllocationMethod
+        :keyword primary: Whether the ip configuration is primary or not.
+        :paramtype primary: bool
+        :keyword private_ip_address_version: Whether the specific IP configuration is IPv4 or IPv6.
+         Default is IPv4. Known values are: "IPv4" and "IPv6".
+        :paramtype private_ip_address_version: str or ~azure.mgmt.network.models.IPVersion
+        """
+        super().__init__(id=id, **kwargs)
+        self.name = name
+        self.etag: Optional[str] = None
+        self.type: Optional[str] = None
+        self.private_ip_address = private_ip_address
+        self.private_ip_allocation_method = private_ip_allocation_method
+        self.primary = primary
+        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
+        self.private_ip_address_version = private_ip_address_version
+
+
+class VirtualNetworkApplianceListResult(_serialization.Model):
+    """Response for the ListVirtualNetworkAppliance API service call.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A list of virtual network appliances in a resource group.
+    :vartype value: list[~azure.mgmt.network.models.VirtualNetworkAppliance]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[VirtualNetworkAppliance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.VirtualNetworkAppliance"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: A list of virtual network appliances in a resource group.
+        :paramtype value: list[~azure.mgmt.network.models.VirtualNetworkAppliance]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link: Optional[str] = None
+
+
 class VirtualNetworkBgpCommunities(_serialization.Model):
     """Bgp Communities sent over ExpressRoute with each route corresponding to a prefix in this VNET.
 
@@ -42044,7 +42839,7 @@ class VirtualNetworkPeering(SubResource):
         "remote_subnet_names": {"key": "properties.remoteSubnetNames", "type": "[str]"},
     }
 
-    def __init__(  # pylint: disable=too-many-locals
+    def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
@@ -45184,8 +45979,8 @@ class WebApplicationFirewallCustomRule(_serialization.Model):
     :vartype match_conditions: list[~azure.mgmt.network.models.MatchCondition]
     :ivar group_by_user_session: List of user session identifier group by clauses.
     :vartype group_by_user_session: list[~azure.mgmt.network.models.GroupByUserSession]
-    :ivar action: Type of Actions. Required. Known values are: "Allow", "Block", "Log", and
-     "JSChallenge".
+    :ivar action: Type of Actions. Required. Known values are: "Allow", "Block", "Log",
+     "JSChallenge", and "CAPTCHA".
     :vartype action: str or ~azure.mgmt.network.models.WebApplicationFirewallAction
     """
 
@@ -45249,8 +46044,8 @@ class WebApplicationFirewallCustomRule(_serialization.Model):
         :paramtype match_conditions: list[~azure.mgmt.network.models.MatchCondition]
         :keyword group_by_user_session: List of user session identifier group by clauses.
         :paramtype group_by_user_session: list[~azure.mgmt.network.models.GroupByUserSession]
-        :keyword action: Type of Actions. Required. Known values are: "Allow", "Block", "Log", and
-         "JSChallenge".
+        :keyword action: Type of Actions. Required. Known values are: "Allow", "Block", "Log",
+         "JSChallenge", and "CAPTCHA".
         :paramtype action: str or ~azure.mgmt.network.models.WebApplicationFirewallAction
         """
         super().__init__(**kwargs)
