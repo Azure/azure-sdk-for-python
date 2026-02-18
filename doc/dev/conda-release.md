@@ -44,7 +44,7 @@ The auto-generated PR includes:
    - Submit the [Conda placeholder form](https://forms.office.com/Pages/ResponsePage.aspx?id=v4j5cvGGr0GRqy180BHbR180k2XpSUFBtXHTh8-jMUlUNlA1MFpZOVhZME1aNU1EU1Y3SjZRU0JNRC4u) to create a private dummy library on Conda for **each new data plane** package (group name AzureSdk). 
       - ⚠️**This must be done before uploading to Conda / approving the upload stage.** ⚠️
       - The form triggers a pipeline to push the placeholder library. Verify from the Anaconda portal that the placeholders have been added before proceeding.
-   - Create an AKA link for new release logs at [http://aka.ms/](http://aka.ms/).
+   - Create an AKA link for new release logs at [https://aka.ms/](https://aka.ms/).
 
 3. **Merge the PR** into `main`.
 

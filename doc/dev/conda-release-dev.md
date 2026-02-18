@@ -70,7 +70,7 @@ All conda packages in a release share the same version string: `YYYY.MM.DD` (e.g
 
 ## Building Locally
 
-See [conda-builds.md](conda-builds.md) for instructions on building conda packages locally using `sdk_build_conda`.
+See [`conda-builds.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-builds.md) for instructions on building conda packages locally using `sdk_build_conda`.
 
 ## Adding a New Package to Conda Manually
 
