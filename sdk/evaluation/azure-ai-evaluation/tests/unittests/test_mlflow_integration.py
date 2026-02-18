@@ -7,10 +7,14 @@ import importlib
 import pytest
 from unittest.mock import MagicMock, patch
 
-# Import _mlflow_integration directly to avoid red_team/__init__.py triggering
-# a pyrit import (which may not be installed in all test environments).
-_mlflow_mod = importlib.import_module("azure.ai.evaluation.red_team._mlflow_integration")
-MLflowIntegration = _mlflow_mod.MLflowIntegration
+# _mlflow_integration transitively imports red_team._utils which requires
+# redteam-extra dependencies (tenacity, httpx, tqdm).  Skip this entire
+# module when those are not installed.
+try:
+    _mlflow_mod = importlib.import_module("azure.ai.evaluation.red_team._mlflow_integration")
+    MLflowIntegration = _mlflow_mod.MLflowIntegration
+except ImportError:
+    pytest.skip("redteam extras not installed", allow_module_level=True)
 
 
 def _make_mlflow_integration(*, one_dp_project=True):
