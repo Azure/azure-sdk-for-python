@@ -21,7 +21,11 @@ class ProgressManager:
     """Centralized progress and status tracking for Red Team operations."""
 
     def __init__(
-        self, total_tasks: int = 0, logger=None, show_progress_bar: bool = True, progress_desc: str = "Processing"
+        self,
+        total_tasks: int = 0,
+        logger=None,
+        show_progress_bar: bool = True,
+        progress_desc: str = "Processing",
     ):
         """Initialize progress manager.
 
@@ -137,7 +141,11 @@ class ProgressManager:
             print(message)
 
     def log_task_completion(
-        self, task_name: str, duration: float, success: bool = True, details: Optional[str] = None
+        self,
+        task_name: str,
+        duration: float,
+        success: bool = True,
+        details: Optional[str] = None,
     ) -> None:
         """Log the completion of a task.
 
@@ -197,7 +205,7 @@ class ProgressManager:
             "completed_tasks": self.completed_tasks,
             "failed_tasks": self.failed_tasks,
             "timeout_tasks": self.timeout_tasks,
-            "success_rate": (self.completed_tasks / self.total_tasks) * 100 if self.total_tasks > 0 else 0,
+            "success_rate": ((self.completed_tasks / self.total_tasks) * 100 if self.total_tasks > 0 else 0),
             "total_time_seconds": total_time,
             "average_time_per_task": (
                 total_time / self.completed_tasks if total_time and self.completed_tasks > 0 else None
@@ -237,7 +245,10 @@ class ProgressManager:
 
 
 def create_progress_manager(
-    total_tasks: int = 0, logger=None, show_progress_bar: bool = True, progress_desc: str = "Processing"
+    total_tasks: int = 0,
+    logger=None,
+    show_progress_bar: bool = True,
+    progress_desc: str = "Processing",
 ) -> ProgressManager:
     """Create a ProgressManager instance.
 
@@ -248,5 +259,8 @@ def create_progress_manager(
     :return: Configured ProgressManager
     """
     return ProgressManager(
-        total_tasks=total_tasks, logger=logger, show_progress_bar=show_progress_bar, progress_desc=progress_desc
+        total_tasks=total_tasks,
+        logger=logger,
+        show_progress_bar=show_progress_bar,
+        progress_desc=progress_desc,
     )
