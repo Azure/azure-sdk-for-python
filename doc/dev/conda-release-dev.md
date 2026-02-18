@@ -60,7 +60,6 @@ Service teams are responsible for updating this metadata, and it is enforced in 
 See [`conda-builds.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-builds.md).
 
 **Release stage (`archetype-conda-release.yml`):**
-- Only runs on manual builds from the `internal` project.
 - Requires deployment approval (environment: `package-publish`).
 - Uploads all `.conda` files from the `conda/noarch` artifact to Anaconda using `anaconda-client`, under the `Microsoft` user.
 
