@@ -3019,15 +3019,15 @@ class EvaluationRuleAction(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     ContinuousEvaluationRuleAction, HumanEvaluationPreviewRuleAction
 
-    :ivar type: Type of the evaluation action. Required. Known values are: "continuousEvaluation",
-     "humanEvaluation", and "humanEvaluationPreview".
+    :ivar type: Type of the evaluation action. Required. Known values are: "continuousEvaluation"
+     and "humanEvaluationPreview".
     :vartype type: str or ~azure.ai.projects.models.EvaluationRuleActionType
     """
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Type of the evaluation action. Required. Known values are: \"continuousEvaluation\",
-     \"humanEvaluation\", and \"humanEvaluationPreview\"."""
+    """Type of the evaluation action. Required. Known values are: \"continuousEvaluation\" and
+     \"humanEvaluationPreview\"."""
 
     @overload
     def __init__(

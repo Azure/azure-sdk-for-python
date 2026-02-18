@@ -2278,7 +2278,7 @@ class EvaluationRulesOperations:
         """List all evaluation rules.
 
         :keyword action_type: Filter by the type of evaluation rule. Known values are:
-         "continuousEvaluation", "humanEvaluation", and "humanEvaluationPreview". Default value is None.
+         "continuousEvaluation" and "humanEvaluationPreview". Default value is None.
         :paramtype action_type: str or ~azure.ai.projects.models.EvaluationRuleActionType
         :keyword agent_name: Filter by the agent name. Default value is None.
         :paramtype agent_name: str
