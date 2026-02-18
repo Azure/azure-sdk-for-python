@@ -189,7 +189,7 @@
 # PRLabel: %Container Instances
 /sdk/containerinstance/    @samkreter @xizhamsft
 
-# AzureSdkOwners: @lmazuel
+# AzureSdkOwners: @kashifkhan 
 # ServiceLabel: %Container Registry
 # PRLabel: %Container Registry
 /sdk/containerregistry/    @kashifkhan
