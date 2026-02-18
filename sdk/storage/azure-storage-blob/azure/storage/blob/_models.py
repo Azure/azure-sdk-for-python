@@ -187,14 +187,22 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted. If enabled=True, the number of days must be specified.
     """
 
-    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
+    def __init__(self, *args, enabled: bool = False, days: Optional[int] = None, **kwargs) -> None:
+        if args and len(args) <= 2 and isinstance(args[0], bool):
+            # Support positional args: RetentionPolicy(enabled) or RetentionPolicy(enabled, days)
+            enabled = args[0]
+            days = args[1] if len(args) > 1 else days
+            args = ()
+        if args:
+            super().__init__(*args, **kwargs)
+            return
         if enabled and (days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
         super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
 
     @classmethod
     def _from_generated(cls, generated):
-        if not generated:
+        if generated is None:
             return cls()
         return cls(
             enabled=getattr(generated, 'enabled', None) or False,
@@ -224,7 +232,10 @@ class BlobAnalyticsLogging(GeneratedLogging):
         policy will be disabled by default.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, *args, **kwargs: Any) -> None:
+        if args:
+            super().__init__(*args)
+            return
         super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.delete = kwargs.get('delete', False)
@@ -235,7 +246,7 @@ class BlobAnalyticsLogging(GeneratedLogging):
 
     @classmethod
     def _from_generated(cls, generated):
-        if not generated:
+        if generated is None:
             return cls()
         return cls(
             version=getattr(generated, 'version'),
@@ -268,7 +279,10 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, *args, **kwargs: Any) -> None:
+        if args:
+            super().__init__(*args)
+            return
         super().__init__(**kwargs)
         self.version = kwargs.get('version', '1.0')
         self.enabled = kwargs.get('enabled', False)
@@ -278,7 +292,7 @@ class Metrics(GeneratedMetrics):
 
     @classmethod
     def _from_generated(cls, generated):
-        if not generated:
+        if generated is None:
             return cls()
         return cls(
             version=getattr(generated, 'version', None) or '1.0',
@@ -308,7 +322,10 @@ class StaticWebsite(GeneratedStaticWebsite):
         Absolute path of the default index page.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, *args, **kwargs: Any) -> None:
+        if args:
+            super().__init__(*args)
+            return
         super().__init__(**kwargs)
         self.enabled = kwargs.get('enabled', False)
         if self.enabled:
@@ -322,7 +339,7 @@ class StaticWebsite(GeneratedStaticWebsite):
 
     @classmethod
     def _from_generated(cls, generated):
-        if not generated:
+        if generated is None:
             return cls()
         return cls(
             enabled=getattr(generated, 'enabled'),
