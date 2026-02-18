@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 - Fix fallback logic when connection string is provided only via environment variable
-  ([#XXXXX](https://github.com/Azure/azure-sdk-for-python/pull/XXXXX))
+  ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
 
