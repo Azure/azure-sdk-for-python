@@ -179,7 +179,7 @@ class BaseSampleExecutor:
         sample_path: str,
         *,
         env_var_mapping: dict[str, str] = {},
-        allowed_llm_validation_failures: set[str] | None = None,
+        allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
@@ -481,7 +481,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         sample_path: str,
         *,
         env_var_mapping: dict[str, str] = {},
-        allowed_llm_validation_failures: set[str] | None = None,
+        allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         super().__init__(
@@ -587,7 +587,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         sample_path: str,
         *,
         env_var_mapping: dict[str, str] = {},
-        allowed_llm_validation_failures: set[str] | None = None,
+        allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         super().__init__(
