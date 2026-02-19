@@ -86,8 +86,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Initialize input validator
         self._validator = ToolDefinitionsValidator(
-            error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR,
-            optional_tool_definitions=False
+            error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR, optional_tool_definitions=False
         )
 
         super().__init__(
