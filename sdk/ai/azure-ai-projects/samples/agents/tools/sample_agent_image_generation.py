@@ -5,12 +5,12 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with image generation capabilities
-    using the ImageGenTool and synchronous Azure AI Projects client. The agent can generate
+    This sample demonstrates how to create an AI Agent with image generation capabilities
+    using the ImageGenTool and synchronous Azure AI Projects client. The Agent can generate
     images based on text prompts and save them to files.
 
     The sample shows:
-    - Creating an agent with ImageGenTool configured for image generation
+    - Creating an Agent with ImageGenTool configured for image generation
     - Making requests to generate images from text prompts
     - Extracting base64-encoded image data from the response
     - Decoding and saving the generated image to a local file
@@ -30,7 +30,7 @@ USAGE:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
-       used by the agent for understanding and responding to prompts. This is NOT the image generation model.
+       used by the Agent for understanding and responding to prompts. This is NOT the image generation model.
     3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
        used by the ImageGenTool.
 
@@ -38,7 +38,7 @@ USAGE:
     - Image generation requires a separate (e.g. gpt-image-1) deployment which is specified when constructing
       the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
       calling `.responses.create`.
-    - The generated image will be saved as "microsoft.png" in the OS temporary directory.
+    - The generated image will be saved as "happy-dogs.png" in the OS temporary directory.
 """
 
 import base64
@@ -81,7 +81,9 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="Generate an image of Microsoft logo.",
+        input="""Generate an image showing four Labrador Retriever dogs, with the Microsoft Logo in the 
+        background, such that each dog is placed sitting inside one of the four logo squares. Add the 
+        text 'Happy dogs!' at the bottom of the image.""",
         extra_headers={
             "x-ms-oai-image-generation-deployment": image_generation_model
         },  # this is required at the moment for image generation
@@ -97,7 +99,7 @@ with (
     image_data = [output.result for output in response.output if output.type == "image_generation_call"]
     if image_data and image_data[0]:
         print("Downloading generated image...")
-        filename = "microsoft.png"
+        filename = "happy-dogs.png"
         file_path = os.path.join(tempfile.gettempdir(), filename)
 
         with open(file_path, "wb") as f:
