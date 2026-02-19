@@ -506,7 +506,7 @@ function Update-python-GeneratedSdks([string]$PackageDirectoriesFile) {
       Write-Host "Generating project under directory 'sdk/$directory'" -ForegroundColor Yellow
       Write-Host "======================================================================`n"
 
-      Invoke-LoggedCommand "azpysdk generate ."
+      Invoke-LoggedCommand "azpysdk generate --isolate ."
     }
     catch {
       Write-Host "##[error]Error generating project under directory $directory"
