@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines,too-many-branches,too-many-locals,too-many-statements,file-needs-copyright-header
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -33,7 +33,12 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import PlanetaryComputerProClientConfiguration
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize
+from .._utils.model_base import (  # pylint: disable=unused-import
+    Model as _Model,
+    SdkJSONEncoder,
+    _deserialize,
+    _deserialize_xml,
+)
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
@@ -1622,7 +1627,7 @@ def build_data_get_bounds_request(collection_id: str, item_id: str, **kwargs: An
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_geo_json_request(
+def build_data_crop_geo_json_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     format: str,
@@ -1712,7 +1717,7 @@ def build_data_crop_geo_json_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long
+def build_data_crop_geo_json_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
     width: int,
@@ -1933,7 +1938,7 @@ def build_data_get_item_asset_details_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_part_request(
+def build_data_get_part_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     minx: float,
@@ -2031,7 +2036,7 @@ def build_data_get_part_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_part_with_dimensions_request(  # pylint: disable=name-too-long
+def build_data_get_part_with_dimensions_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
     minx: float,
@@ -2185,7 +2190,7 @@ def build_data_get_point_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_preview_request(
+def build_data_get_preview_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     *,
@@ -2273,7 +2278,7 @@ def build_data_get_preview_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_preview_with_format_request(  # pylint: disable=name-too-long
+def build_data_get_preview_with_format_request(  # pylint: disable=name-too-long,too-many-locals
     collection_id: str,
     item_id: str,
     format: str,
@@ -2481,7 +2486,7 @@ def build_data_list_statistics_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_json_request(
+def build_data_get_tile_json_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2570,7 +2575,7 @@ def build_data_get_tile_json_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_request(
+def build_data_get_tile_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -2664,7 +2669,7 @@ def build_data_get_tile_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_wmts_capabilities_request(
+def build_data_get_wmts_capabilities_request(  # pylint: disable=too-many-locals
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -3004,7 +3009,7 @@ def build_data_register_mosaics_search_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_mosaics_tile_json_request(
+def build_data_get_mosaics_tile_json_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -3112,7 +3117,7 @@ def build_data_get_mosaics_tile_json_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_mosaics_tile_request(
+def build_data_get_mosaics_tile_request(  # pylint: disable=too-many-locals,too-many-branches,too-many-statements
     search_id: str,
     tile_matrix_set_id: str,
     z: float,
@@ -3219,7 +3224,7 @@ def build_data_get_mosaics_tile_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long
+def build_data_get_mosaics_wmts_capabilities_request(  # pylint: disable=name-too-long,too-many-locals
     search_id: str,
     tile_matrix_set_id: str,
     *,
@@ -5009,8 +5014,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacCollection:
         """Create Collection Asset.
 
-        Create a new asset in the Collection metadata and write the associated
-        file to managed storage.
+        Create a new asset in the Collection metadata and write the associated file to managed storage.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -5025,8 +5029,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     def create_collection_asset(self, collection_id: str, body: JSON, **kwargs: Any) -> _models.StacCollection:
         """Create Collection Asset.
 
-        Create a new asset in the Collection metadata and write the associated
-        file to managed storage.
+        Create a new asset in the Collection metadata and write the associated file to managed storage.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -5043,8 +5046,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacCollection:
         """Create Collection Asset.
 
-        Create a new asset in the Collection metadata and write the associated
-        file to managed storage.
+        Create a new asset in the Collection metadata and write the associated file to managed storage.
 
         :param collection_id: STAC Collection ID. Required.
         :type collection_id: str
@@ -5070,13 +5072,12 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["file"]
         _data_fields: list[str] = ["data"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_stac_create_collection_asset_request(
             collection_id=collection_id,
             api_version=self._config.api_version,
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -5183,14 +5184,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _body = body.as_dict() if isinstance(body, _Model) else body
         _file_fields: list[str] = ["file"]
         _data_fields: list[str] = ["data"]
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_stac_replace_collection_asset_request(
             collection_id=collection_id,
             asset_id=asset_id,
             api_version=self._config.api_version,
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
@@ -8567,8 +8567,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
+        Updates a queryable given a queryable definition and corresponding collection id.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -8596,8 +8595,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
+        Updates a queryable given a queryable definition and corresponding collection id.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -8625,8 +8623,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
+        Updates a queryable given a queryable definition and corresponding collection id.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -8652,8 +8649,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.StacQueryable:
         """Update Collection Queryables.
 
-        Updates a queryable given a queryable definition and
-        corresponding collection id.
+        Updates a queryable given a queryable definition and corresponding collection id.
 
         :param collection_id: Unique identifier for the STAC collection. Required.
         :type collection_id: str
@@ -9173,7 +9169,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_asset_statistics(
+    def get_asset_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -9816,7 +9812,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_geo_json(
+    def crop_geo_json(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -10386,7 +10382,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def crop_geo_json_with_dimensions(
+    def crop_geo_json_with_dimensions(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -10878,7 +10874,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def get_geo_json_statistics(
+    def get_geo_json_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -11185,7 +11181,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_part(
+    def get_part(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -11395,7 +11391,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_part_with_dimensions(
+    def get_part_with_dimensions(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -11605,7 +11601,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_point(
+    def get_point(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -11720,7 +11716,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_preview(
+    def get_preview(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -11910,7 +11906,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_preview_with_format(
+    def get_preview_with_format(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -12306,7 +12302,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_statistics(
+    def list_statistics(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -12453,7 +12449,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_tile_json(
+    def get_tile_json(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -12646,7 +12642,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_tile(
+    def get_tile(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -12857,7 +12853,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_wmts_capabilities(
+    def get_wmts_capabilities(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         item_id: str,
@@ -13655,7 +13651,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         """
 
     @distributed_trace
-    def register_mosaics_search(
+    def register_mosaics_search(  # pylint: disable=too-many-locals
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -13780,7 +13776,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaics_tile_json(
+    def get_mosaics_tile_json(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -14004,7 +14000,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaics_tile(
+    def get_mosaics_tile(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -14237,7 +14233,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_mosaics_wmts_capabilities(
+    def get_mosaics_wmts_capabilities(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -14521,8 +14517,8 @@ class SharedAccessSignatureOperations:
 
         Generate a `SAS Token
         <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
-        for the given storage account and container. The storage account and container
-        must be associated with a Planetary Computer dataset indexed by the STAC API.
+        for the given storage account and container. The storage account and container must be
+        associated with a Planetary Computer dataset indexed by the STAC API.
 
         :param collection_id: Collection Id. Required.
         :type collection_id: str

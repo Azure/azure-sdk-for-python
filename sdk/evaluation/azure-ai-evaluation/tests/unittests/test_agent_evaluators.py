@@ -98,6 +98,7 @@ class TestEvaluate:
             result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         )
         assert (
-            ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
+            "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"].lower()
+            and ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
             in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
         )

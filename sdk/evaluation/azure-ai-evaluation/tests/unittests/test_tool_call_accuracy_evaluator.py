@@ -343,7 +343,7 @@ class TestToolCallAccuracyEvaluator:
         assert (
             result[f"{key}_reason"] == f"Not applicable: {ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE}"
         )
-        assert result[f"{key}_details"] == {}
+        assert result.get(f"{key}_details", {}) == {}
 
     def test_evaluate_tools_built_in_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
