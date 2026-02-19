@@ -498,7 +498,6 @@ class TestToolInputAccuracyEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
         assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
         assert (
