@@ -210,7 +210,13 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         )
 
     def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data."""
+        """Check equality by comparing internal data.
+
+        :param other: The other object to compare with.
+        :type other: Any
+        :return: True if equal, False otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__) and hasattr(other, '_data'):
             return self._data == other._data
         return super().__eq__(other)
@@ -257,7 +263,13 @@ class BlobAnalyticsLogging(GeneratedLogging):
         )
 
     def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data."""
+        """Check equality by comparing internal data.
+
+        :param other: The other object to compare with.
+        :type other: Any
+        :return: True if equal, False otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__) and hasattr(other, '_data'):
             return self._data == other._data
         return super().__eq__(other)
@@ -302,7 +314,13 @@ class Metrics(GeneratedMetrics):
         )
 
     def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data."""
+        """Check equality by comparing internal data.
+
+        :param other: The other object to compare with.
+        :type other: Any
+        :return: True if equal, False otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__) and hasattr(other, '_data'):
             return self._data == other._data
         return super().__eq__(other)
@@ -349,7 +367,13 @@ class StaticWebsite(GeneratedStaticWebsite):
         )
 
     def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data."""
+        """Check equality by comparing internal data.
+
+        :param other: The other object to compare with.
+        :type other: Any
+        :return: True if equal, False otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__) and hasattr(other, '_data'):
             return self._data == other._data
         return super().__eq__(other)
@@ -420,7 +444,13 @@ class CorsRule(GeneratedCorsRule):
         )
 
     def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data."""
+        """Check equality by comparing internal data.
+
+        :param other: The other object to compare with.
+        :type other: Any
+        :return: True if equal, False otherwise.
+        :rtype: bool
+        """
         if isinstance(other, self.__class__) and hasattr(other, '_data'):
             return self._data == other._data
         return super().__eq__(other)
@@ -1061,10 +1091,12 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        super().__init__(permission=permission, expiry=expiry, start=start)
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+        super().__init__(
+            permission=permission, expiry=expiry, start=start  # type: ignore[arg-type]
+        )
+        self.start = start  # type: ignore[assignment]
+        self.expiry = expiry  # type: ignore[assignment]
+        self.permission = permission  # type: ignore[assignment]
 
 
 class BlobSasPermissions(object):

@@ -267,6 +267,8 @@ def _download_blob_options(
         The name of the blob.
     :param str container_name:
         The name of the container.
+    :param Optional[str] snapshot:
+        The snapshot parameter is an opaque value that, when present, specifies the blob snapshot to retrieve.
     :param Optional[str] version_id:
         The version id parameter is a value that, when present, specifies the version of the blob to download.
     :param Optional[int] offset:
@@ -368,6 +370,7 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
     else:
         output_format = input_format if not input_parquet_format else None
     query_request = QueryRequest(
+        query_type="SQL",
         expression=query_expression,
         input_serialization=serialize_query_format(input_format),
         output_serialization=serialize_query_format(output_format)
@@ -514,8 +517,8 @@ def _create_page_blob_options(
     blob_tags_string = serialize_blob_tags_header(kwargs.pop('tags', None))
 
     options = {
+        'size': size,
         'content_length': 0,
-        'blob_content_length': size,
         'blob_sequence_number': sequence_number,
         'blob_http_headers': blob_headers,
         'timeout': kwargs.pop('timeout', None),
@@ -972,7 +975,7 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
         cpk_info = CpkInfo(encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash,
                             encryption_algorithm=cpk.algorithm)
     options = {
-        'blob_content_length': size,
+        'size': size,
         'timeout': kwargs.pop('timeout', None),
         'lease_access_conditions': access_conditions,
         'modified_access_conditions': mod_conditions,

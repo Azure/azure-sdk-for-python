@@ -207,7 +207,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             query_str=client_query_str,
             hostname=self._hosts[self._location_mode],
         )
-        self._client = AzureBlobStorage(client_url, base_url=client_url, version=get_api_version(kwargs), pipeline=self._pipeline)
+        self._client = AzureBlobStorage(
+            client_url, base_url=client_url,
+            version=get_api_version(kwargs), pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -1349,10 +1351,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        kwargs['immutability_policy_expiry'] = immutability_policy.expiry_time
-        kwargs['immutability_policy_mode'] = immutability_policy.policy_mode
         return cast(Dict[str, str], await self._client.blob.set_immutability_policy(
-            cls=return_response_headers,version_id=version_id, **kwargs))
+            immutability_policy_expiry=immutability_policy.expiry_time,
+            immutability_policy_mode=immutability_policy.policy_mode,
+            cls=return_response_headers, version_id=version_id, **kwargs))
 
     @distributed_trace_async
     async def delete_immutability_policy(self, **kwargs: Any) -> None:

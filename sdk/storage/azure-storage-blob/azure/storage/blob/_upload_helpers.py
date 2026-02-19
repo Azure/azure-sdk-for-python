@@ -34,10 +34,10 @@ from ._shared.uploads import (
 )
 
 if TYPE_CHECKING:
-    from ._generated.azure.storage.blobs._operations import (
-        _AppendBlobClientOperationsMixin as AppendBlobOperations,
-        _BlockBlobClientOperationsMixin as BlockBlobOperations,
-        _PageBlobClientOperationsMixin as PageBlobOperations
+    from ._generated.azure.storage.blobs.operations import (
+        AppendBlobOperations,
+        BlockBlobOperations,
+        PageBlobOperations,
     )
     from ._shared.models import StorageConfiguration
     BlobLeaseClient = TypeVar("BlobLeaseClient")
