@@ -37,8 +37,8 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.serialization import Deserializer, Serializer
 from ...models._enums import FoundryFeaturesOptInKeys
 from ...operations._operations import (
-    build_agents_create_from_manifest_request,
-    build_agents_create_request,
+    build_agents_create_agent_from_manifest_request,
+    build_agents_create_agent_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
@@ -47,8 +47,8 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
-    build_agents_update_from_manifest_request,
-    build_agents_update_request,
+    build_agents_update_agent_from_manifest_request,
+    build_agents_update_agent_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
     build_beta_evaluation_taxonomies_get_request,
@@ -220,7 +220,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create(
+    async def _create_agent(
         self,
         *,
         name: str,
@@ -236,46 +236,9 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates the agent.
-
-        :keyword name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :paramtype name: str
-        :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def create(
+    async def _create_agent(
         self,
         body: JSON,
         *,
@@ -288,29 +251,9 @@ class AgentsOperations:
         ] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates the agent.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def create(
+    async def _create_agent(
         self,
         body: IO[bytes],
         *,
@@ -323,29 +266,10 @@ class AgentsOperations:
         ] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates the agent.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
-    async def create(
+    async def _create_agent(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -425,7 +349,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_request(
+        _request = build_agents_create_agent_request(
             foundry_features=foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -469,7 +393,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update(
+    async def _update_agent(
         self,
         agent_name: str,
         *,
@@ -485,42 +409,9 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition. If
-        no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def update(
+    async def _update_agent(
         self,
         agent_name: str,
         body: JSON,
@@ -534,32 +425,9 @@ class AgentsOperations:
         ] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition. If
-        no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def update(
+    async def _update_agent(
         self,
         agent_name: str,
         body: IO[bytes],
@@ -573,32 +441,10 @@ class AgentsOperations:
         ] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition. If
-        no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. Is one of the following types:
-         Literal[FoundryFeaturesOptInKeys.CONTAINER_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.HOSTED_AGENTS_V1_PREVIEW],
-         Literal[FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW] Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.CONTAINER_AGENTS_V1_PREVIEW or
-         str or ~azure.ai.projects.models.HOSTED_AGENTS_V1_PREVIEW or str or
-         ~azure.ai.projects.models.WORKFLOW_AGENTS_V1_PREVIEW
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
-    async def update(
+    async def _update_agent(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -672,7 +518,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_request(
+        _request = build_agents_update_agent_request(
             agent_name=agent_name,
             foundry_features=foundry_features,
             content_type=content_type,
@@ -717,7 +563,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def create_from_manifest(
+    async def _create_agent_from_manifest(
         self,
         *,
         name: str,
@@ -727,72 +573,18 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates an agent from a manifest.
-
-        :keyword name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :paramtype name: str
-        :keyword manifest_id: The manifest ID to import the agent version from. Required.
-        :paramtype manifest_id: str
-        :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :paramtype parameter_values: dict[str, any]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def create_from_manifest(
+    async def _create_agent_from_manifest(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates an agent from a manifest.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def create_from_manifest(
+    async def _create_agent_from_manifest(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates an agent from a manifest.
-
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
-    async def create_from_manifest(
+    async def _create_agent_from_manifest(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -868,7 +660,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_create_from_manifest_request(
+        _request = build_agents_create_agent_from_manifest_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -911,7 +703,7 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def update_from_manifest(
+    async def _update_agent_from_manifest(
         self,
         agent_name: str,
         *,
@@ -921,74 +713,18 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition. If no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to update. Required.
-        :type agent_name: str
-        :keyword manifest_id: The manifest ID to import the agent version from. Required.
-        :paramtype manifest_id: str
-        :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :paramtype parameter_values: dict[str, any]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def update_from_manifest(
+    async def _update_agent_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition. If no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to update. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> _models.AgentDetails: ...
     @overload
-    async def update_from_manifest(
+    async def _update_agent_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition. If no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to update. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> _models.AgentDetails: ...
 
     @distributed_trace_async
-    async def update_from_manifest(
+    async def _update_agent_from_manifest(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1057,7 +793,7 @@ class AgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_agents_update_from_manifest_request(
+        _request = build_agents_update_agent_from_manifest_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1973,20 +1709,11 @@ class EvaluationRulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(
-        self,
-        id: str,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        **kwargs: Any
-    ) -> _models.EvaluationRule:
+    async def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
         """Get an evaluation rule.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2006,7 +1733,6 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_get_request(
             id=id,
-            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2043,20 +1769,11 @@ class EvaluationRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(
-        self,
-        id: str,
-        *,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
-        **kwargs: Any
-    ) -> None:
+    async def delete(self, id: str, **kwargs: Any) -> None:
         """Delete an evaluation rule.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2076,7 +1793,6 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_delete_request(
             id=id,
-            foundry_features=foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2272,7 +1988,6 @@ class EvaluationRulesOperations:
         action_type: Optional[Union[str, _models.EvaluationRuleActionType]] = None,
         agent_name: Optional[str] = None,
         enabled: Optional[bool] = None,
-        foundry_features: Optional[Literal[FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluationRule"]:
         """List all evaluation rules.
@@ -2284,9 +1999,6 @@ class EvaluationRulesOperations:
         :paramtype agent_name: str
         :keyword enabled: Filter by the enabled status. Default value is None.
         :paramtype enabled: bool
-        :keyword foundry_features: A feature flag opt-in required when using preview operations or
-         modifying persisted preview resources. EVALUATIONS_V1_PREVIEW. Default value is None.
-        :paramtype foundry_features: str or ~azure.ai.projects.models.EVALUATIONS_V1_PREVIEW
         :return: An iterator like instance of EvaluationRule
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationRule]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2311,7 +2023,6 @@ class EvaluationRulesOperations:
                     action_type=action_type,
                     agent_name=agent_name,
                     enabled=enabled,
-                    foundry_features=foundry_features,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
