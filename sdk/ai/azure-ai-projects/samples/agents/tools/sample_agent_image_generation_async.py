@@ -29,14 +29,14 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1-mini)
+    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1)
        used by the ImageGenTool.
 
     NOTE:
-    - Image generation requires a separate "gpt-image-1-mini" deployment which is specified when constructing
+    - Image generation requires a separate "gpt-image-1" deployment which is specified when constructing
       the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
       calling `.responses.create`.
-    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1-mini".
+    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1".
     - The generated image will be saved as "microsoft.png" in the OS temporary directory.
 """
 
