@@ -31,7 +31,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     WorkflowAgentDefinition,
-    ItemResourceType,
+    ItemResource,
 )
 
 load_dotenv()
@@ -157,7 +157,7 @@ trigger:
         print(f"Event {event.sequence_number} type '{event.type}'", end="")
         if (
             event.type == "response.output_item.added" or event.type == "response.output_item.done"
-        ) and event.item.type == ItemResourceType.WORKFLOW_ACTION:
+        ) and event.item is not None and event.item.type == "workflow_action":
             print(
                 f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
                 end="",
