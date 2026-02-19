@@ -71,17 +71,6 @@ class TestAgentCrud(TestBase):
         )
         self._validate_agent_version(agent2_version1)
 
-        # Create another version of the same Agent, by updating the existing one
-        # TODO: Uncomment the lines below, and the delete lines at the end, once the service is fixed (at the moment returns 500 InternalServiceError)
-        # agent2_version2: AgentVersionDetails = project_client.agents.update(
-        #     agent_name=second_agent_name,
-        #     definition=PromptAgentDefinition(
-        #         model=model,
-        #         instructions="Third set of instructions here",
-        #     ),
-        # )
-        # self._validate_agent_version(agent2_version2)
-
         # Get the first Agent
         retrieved_agent: AgentDetails = project_client.agents.get(agent_name=first_agent_name)
         self._validate_agent(
