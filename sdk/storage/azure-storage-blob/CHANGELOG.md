@@ -1,8 +1,13 @@
 # Release History
 
-## 12.30.0b1 (Unreleased)
+## 12.29.0 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.29.0b1
+
+### Bugs Fixed
+- Fixed an issue where `BlobClient`'s `download_blob` did not retry upon 
+`ServiceReponseError` and `ServiceResponseTimeoutError` exceptions
 
 ## 12.29.0b1 (2026-01-27)
 
