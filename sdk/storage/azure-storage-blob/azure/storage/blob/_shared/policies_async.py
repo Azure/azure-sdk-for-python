@@ -16,6 +16,7 @@ from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, Async
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .policies import encode_base64, is_retry, StorageContentValidation, StorageRetryPolicy
+from .validation import ChecksumAlgorithm
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -37,8 +38,12 @@ async def retry_hook(settings, **kwargs):
 
 
 async def is_checksum_retry(response):
-    # retry if invalid content md5
-    if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return False
+
+    # Legacy code - evaluate retry only on validate_content=True
+    if validate_content is True and response.http_response.headers.get("content-md5"):
         if hasattr(response.http_response, "load_body"):
             try:
                 await response.http_response.load_body()  # Load the body in memory and close the socket
