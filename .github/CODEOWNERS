@@ -45,6 +45,12 @@
 # PRLabel: %AgriFood
 /sdk/agrifood/azure-agrifood-farming/                                @bhargav-kansagara
 
+# ServiceOwners: @lusu-msft @JC-386
+# ServiceLabel: %Hosted Agents
+
+# PRLabel: %Hosted Agents
+/sdk/agentserver/                                                    @lusu-msft @JC-386
+
 # AzureSdkOwners: @xiangyan99
 # ServiceLabel: %Azure.Identity
 # PRLabel: %Azure.Identity

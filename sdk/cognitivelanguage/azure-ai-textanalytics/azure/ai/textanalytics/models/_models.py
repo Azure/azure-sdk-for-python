@@ -6659,7 +6659,7 @@ class TextActions(_Model):
     total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Count of total tasks. Required."""
     items_property: Optional[list["_models.AnalyzeTextLROResult"]] = rest_field(
-        name="items", visibility=["read", "create", "update", "delete", "query"]
+        name="items", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="items"
     )
     """Enumerable of Analyze text job results."""
 
