@@ -77,7 +77,7 @@ async def main():
                 "trainingType": "GlobalStandard"
             },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
             # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
-            # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
+            # Learn more - https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/explore/global-infrastructure/data-residency/
         )
         print(fine_tuning_job)
 

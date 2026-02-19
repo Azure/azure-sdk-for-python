@@ -17,7 +17,7 @@ DESCRIPTION:
     - Proper cleanup of created resources
 
     For more information on Image Generations and what models are supported, see:
-    https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/image-generation?pivots=python
+    https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/image-generation?pivots=python
 
 USAGE:
     python sample_agent_image_generation.py
