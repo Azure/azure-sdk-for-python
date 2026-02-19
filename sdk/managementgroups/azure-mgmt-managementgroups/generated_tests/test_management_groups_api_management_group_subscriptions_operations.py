@@ -20,7 +20,7 @@ class TestManagementGroupsAPIManagementGroupSubscriptionsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create(self, resource_group):
+    def test_management_group_subscriptions_create(self, resource_group):
         response = self.client.management_group_subscriptions.create(
             group_id="str",
             subscription_id="str",
@@ -32,7 +32,7 @@ class TestManagementGroupsAPIManagementGroupSubscriptionsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_management_group_subscriptions_delete(self, resource_group):
         response = self.client.management_group_subscriptions.delete(
             group_id="str",
             subscription_id="str",
@@ -44,7 +44,7 @@ class TestManagementGroupsAPIManagementGroupSubscriptionsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_subscription(self, resource_group):
+    def test_management_group_subscriptions_get_subscription(self, resource_group):
         response = self.client.management_group_subscriptions.get_subscription(
             group_id="str",
             subscription_id="str",
@@ -56,7 +56,7 @@ class TestManagementGroupsAPIManagementGroupSubscriptionsOperations(AzureMgmtRec
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_subscriptions_under_management_group(self, resource_group):
+    def test_management_group_subscriptions_get_subscriptions_under_management_group(self, resource_group):
         response = self.client.management_group_subscriptions.get_subscriptions_under_management_group(
             group_id="str",
             api_version="2021-04-01",

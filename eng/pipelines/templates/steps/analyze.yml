@@ -10,6 +10,12 @@ parameters:
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
+  # Authenticate to Azure Artifacts feed immediately to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: ../steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
+
   - template: /eng/pipelines/templates/steps/analyze_dependency.yml
     parameters:
       ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
@@ -19,11 +25,6 @@ steps:
       PackageName: "azure-template"
       ServiceDirectory: "template"
       TestPipeline: ${{ parameters.TestPipeline }}
-
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
-    - template: ../steps/auth-dev-feed.yml
-      parameters:
-        DevFeedName: ${{ parameters.DevFeedName }}
 
   - task: PythonScript@0
     displayName: 'Set Checks Environment Skips'
