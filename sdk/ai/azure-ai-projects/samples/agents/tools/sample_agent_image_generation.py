@@ -62,7 +62,7 @@ with (
     image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
 
     # [START tool_declaration]
-    tool = ImageGenTool(  # type: ignore[call-overload]
+    tool = ImageGenTool(
         model=image_generation_model,  # Model such as "gpt-image-1"
         quality="low",
         size="1024x1024",
