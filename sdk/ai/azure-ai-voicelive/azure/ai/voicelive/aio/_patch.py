@@ -41,13 +41,14 @@ from azure.core.pipeline import policies
 from ..models import ClientEvent, ServerEvent, RequestSession
 
 if sys.version_info >= (3, 11):
-    from typing import NotRequired  # noqa: F401
+    from typing import NotRequired, Required  # noqa: F401
 else:
-    from typing_extensions import NotRequired  # noqa: F401
+    from typing_extensions import NotRequired, Required  # noqa: F401
 
 __all__: list[str] = [
     "connect",
     "WebsocketConnectionOptions",
+    "AgentSessionConfig",
     "VoiceLiveConnection",
     "SessionResource",
     "ResponseResource",
@@ -85,6 +86,35 @@ def _json_default(o: Any) -> Any:
         # Strip private attributes
         return {k: v for k, v in vars(o).items() if not k.startswith("_")}
     raise TypeError(f"{type(o).__name__} is not JSON serializable")
+
+
+class AgentSessionConfig(TypedDict, total=False):
+    """
+    Configuration for agent session connection.
+
+    This TypedDict defines the parameters needed to connect to a Voice Live
+    session using an Azure AI Foundry agent.
+
+    :keyword agent_name: The name of the agent to use. Required.
+    :type agent_name: str
+    :keyword project_name: The name of the Foundry project containing the agent. Required.
+    :type project_name: str
+    :keyword agent_version: The version of the agent to use.
+    :type agent_version: str
+    :keyword conversation_id: The ID of an existing conversation to continue.
+    :type conversation_id: str
+    :keyword authentication_identity_client_id: The client ID for authentication identity.
+    :type authentication_identity_client_id: str
+    :keyword foundry_resource_override: An optional override for the Foundry resource.
+    :type foundry_resource_override: str
+    """
+
+    agent_name: Required[str]
+    project_name: Required[str]
+    agent_version: NotRequired[str]
+    conversation_id: NotRequired[str]
+    authentication_identity_client_id: NotRequired[str]
+    foundry_resource_override: NotRequired[str]
 
 
 class ConnectionError(AzureError):
@@ -627,7 +657,9 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     vendor_options: NotRequired[Mapping[str, Any]]
 
 
-class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnection"]):
+class _VoiceLiveConnectionManager(
+    AbstractAsyncContextManager["VoiceLiveConnection"]
+):  # pylint: disable=too-many-instance-attributes
     """Async manager for VoiceLive WebSocket connections."""
 
     def __init__(
@@ -637,6 +669,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         endpoint: str,
         api_version: str = "2025-10-01",
         model: Optional[str] = None,
+        agent_config: Optional[AgentSessionConfig] = None,
         extra_query: Mapping[str, Any],
         extra_headers: Mapping[str, Any],
         connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -648,6 +681,7 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         self.__credential_scopes = [raw_scopes] if isinstance(raw_scopes, str) else list(raw_scopes)
         self.__api_version = api_version
         self.__model = model
+        self.__agent_config = agent_config
 
         self.__connection: Optional["VoiceLiveConnection"] = None
         self.__extra_query = extra_query
@@ -790,6 +824,25 @@ class _VoiceLiveConnectionManager(AbstractAsyncContextManager["VoiceLiveConnecti
         params: dict[str, Any] = {"api-version": self.__api_version}
         if self.__model is not None:
             params["model"] = self.__model
+
+        # Add agent configuration parameters if provided
+        if self.__agent_config is not None:
+            # Required agent parameters
+            params["agent-name"] = self.__agent_config["agent_name"]
+            params["agent-project-name"] = self.__agent_config["project_name"]
+
+            # Optional agent parameters
+            if self.__agent_config.get("agent_version"):
+                params["agent-version"] = self.__agent_config.get("agent_version")
+            if self.__agent_config.get("conversation_id"):
+                params["conversation-id"] = self.__agent_config.get("conversation_id")
+            if self.__agent_config.get("authentication_identity_client_id"):
+                params["agent-authentication-identity-client-id"] = self.__agent_config.get(
+                    "authentication_identity_client_id"
+                )
+            if self.__agent_config.get("foundry_resource_override"):
+                params["foundry-resource-override"] = self.__agent_config.get("foundry_resource_override")
+
         params.update(dict(self.__extra_query))
 
         existing_params = parse_qs(parsed.query)
@@ -823,6 +876,7 @@ def connect(
     endpoint: str,
     api_version: str = "2025-10-01",
     model: Optional[str] = None,
+    agent_config: Optional[AgentSessionConfig] = None,
     query: Optional[Mapping[str, Any]] = None,
     headers: Optional[Mapping[str, Any]] = None,
     connection_options: Optional[WebsocketConnectionOptions] = None,
@@ -848,6 +902,10 @@ def connect(
      It may be omitted only when connecting through an **Agent** scenario,
      in which case the service will use the model associated with the Agent.
     :paramtype model: str
+    :keyword agent_config: Optional agent session configuration for connecting to an Azure AI
+     Foundry agent. When provided, the connection will be established with the specified agent
+     and the ``model`` parameter may be omitted.
+    :paramtype agent_config: ~azure.ai.voicelive.aio.AgentSessionConfig
     :keyword query: Optional query parameters to include in the WebSocket URL.
     :paramtype type query: Mapping[str, Any]
     :keyword headers: Optional HTTP headers to include in the WebSocket handshake.
@@ -865,6 +923,7 @@ def connect(
         endpoint=endpoint,
         api_version=api_version,
         model=model,
+        agent_config=agent_config,
         extra_query=query or {},
         extra_headers=headers or {},
         connection_options=connection_options or {},

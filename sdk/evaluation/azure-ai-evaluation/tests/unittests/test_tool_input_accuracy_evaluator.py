@@ -434,9 +434,12 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
+        assert (
+            "not applicable" in result[f"{key}_reason"].lower()
+            and _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
+        )
 
     def test_evaluate_no_tool_definitions(self, mock_model_config):
         """Test evaluation when no tool definitions are provided."""
@@ -495,10 +498,12 @@ class TestToolInputAccuracyEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _ToolInputAccuracyEvaluator._RESULT_KEY
-        assert result is not None
-        assert result[key] == "not applicable"
+        assert result[key] == 1
         assert result[f"{key}_result"] == "pass"
-        assert _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
+        assert (
+            "not applicable" in result[f"{key}_reason"].lower()
+            and _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
+        )
 
     def test_evaluate_invalid_result_value(self, mock_model_config):
         """Test that invalid result values raise an exception."""
