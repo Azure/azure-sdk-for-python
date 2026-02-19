@@ -12,10 +12,18 @@ import asyncio
 import re
 from typing import Dict, Optional, Any
 
-from tenacity import RetryCallState, retry, retry_if_exception_type, stop_after_attempt, wait_random_exponential
+from tenacity import (
+    RetryCallState,
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
-from pyrit.models import PromptRequestResponse, construct_response_from_request
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
+from pyrit.models import Message, construct_response_from_request
 from pyrit.prompt_target import PromptChatTarget
 from pyrit.exceptions import remove_markdown_json
 import ast
@@ -44,7 +52,7 @@ def _fallback_response(retry_state: RetryCallState):
         "last_response_summary": "",
         "rationale_behind_jailbreak": "This question continues the narrative while encouraging discussion of manipulation tactics. It's designed to elicit specific details about the character's methods and preferences.",
     }
-    request = retry_state.kwargs.get("prompt_request").request_pieces[0]
+    request = retry_state.kwargs.get("prompt_request").get_piece(0)
     response_entry = construct_response_from_request(
         request=request, response_text_pieces=[json.dumps(fallback_response)]
     )
@@ -97,7 +105,10 @@ class AzureRAIServiceTarget(PromptChatTarget):
         :return: The request body
         """
         # Create messages for the chat API
-        messages = [{"role": "system", "content": "{{ch_template_placeholder}}"}, {"role": "user", "content": prompt}]
+        messages = [
+            {"role": "system", "content": "{{ch_template_placeholder}}"},
+            {"role": "user", "content": prompt},
+        ]
 
         # Create the request body as a properly formatted SimulationDTO object
         body = {
@@ -189,7 +200,9 @@ class AzureRAIServiceTarget(PromptChatTarget):
             # If no operations path segment is found, try a more general approach with UUIDs
             # Find all UUIDs and use the one that is NOT the subscription ID
             uuids = re.findall(
-                r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", location_url, re.IGNORECASE
+                r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+                location_url,
+                re.IGNORECASE,
             )
             self.logger.debug(f"Found {len(uuids)} UUIDs in URL: {uuids}")
 
@@ -271,7 +284,11 @@ class AzureRAIServiceTarget(PromptChatTarget):
         self.logger.debug(f"Polling for operation result with ID: {operation_id}")
 
         # First, validate that the operation ID looks correct
-        if not re.match(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", operation_id, re.IGNORECASE):
+        if not re.match(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+            operation_id,
+            re.IGNORECASE,
+        ):
             self.logger.warning(f"Operation ID '{operation_id}' doesn't match expected UUID pattern")
 
         invalid_op_id_count = 0
@@ -466,9 +483,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         stop=stop_after_attempt(5),
         retry_error_callback=_fallback_response,
     )
-    async def send_prompt_async(
-        self, *, prompt_request: PromptRequestResponse, objective: str = ""
-    ) -> PromptRequestResponse:
+    async def send_prompt_async(self, *, prompt_request: Message, objective: str = "") -> Message:
         """Send a prompt to the Azure RAI service.
 
         :param prompt_request: The prompt request
@@ -477,7 +492,7 @@ class AzureRAIServiceTarget(PromptChatTarget):
         """
         self.logger.info("Starting send_prompt_async operation")
         self._validate_request(prompt_request=prompt_request)
-        request = prompt_request.request_pieces[0]
+        request = prompt_request.get_piece(0)
         prompt = request.converted_value
 
         try:
@@ -581,15 +596,15 @@ class AzureRAIServiceTarget(PromptChatTarget):
             self.logger.debug("Attempting to retry the operation")
             raise ValueError(f"Failed to send prompt to Azure RAI service: {str(e)}. ") from e
 
-    def _validate_request(self, *, prompt_request: PromptRequestResponse) -> None:
+    def _validate_request(self, *, prompt_request: Message) -> None:
         """Validate the request.
 
         :param prompt_request: The prompt request
         """
-        if len(prompt_request.request_pieces) != 1:
+        if len(prompt_request.message_pieces) != 1:
             raise ValueError("This target only supports a single prompt request piece.")
 
-        if prompt_request.request_pieces[0].converted_value_data_type != "text":
+        if prompt_request.get_piece(0).converted_value_data_type != "text":
             raise ValueError("This target only supports text prompt input.")
 
     def is_json_response_supported(self) -> bool:

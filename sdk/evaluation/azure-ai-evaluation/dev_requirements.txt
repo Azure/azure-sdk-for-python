@@ -12,4 +12,6 @@ aiohttp
 filelock
 promptflow-core>=1.17.1
 promptflow-devkit>=1.17.1
-../azure-ai-evaluation[redteam]
+# Note: redteam extra (pyrit) is installed separately via InjectedPackages in platform-matrix.json
+# to avoid pillow version conflicts with promptflow-devkit (pillow<11 vs >=12.1)
+../azure-ai-evaluation

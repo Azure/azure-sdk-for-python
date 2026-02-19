@@ -2695,19 +2695,25 @@ def _update_metric_value(
             logger.warning(f"Failed to parse _sample_output value as JSON: {e}")
     elif metric_key.endswith("_total_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["total_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["total_tokens"] = (
+            None if _is_none_or_nan(metric_value) else int(float(metric_value))
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "total_tokens"
     elif metric_key.endswith("_prompt_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["prompt_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["prompt_tokens"] = (
+            None if _is_none_or_nan(metric_value) else int(float(metric_value))
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "prompt_tokens"
     elif metric_key.endswith("_completion_tokens"):
         _ensure_usage_dict(metric_dict)
-        metric_dict["sample"]["usage"]["completion_tokens"] = None if _is_none_or_nan(metric_value) else metric_value
+        metric_dict["sample"]["usage"]["completion_tokens"] = (
+            None if _is_none_or_nan(metric_value) else int(float(metric_value))
+        )
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
