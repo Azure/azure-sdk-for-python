@@ -310,7 +310,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     self._result_key: self.threshold,
                     f"{self._result_key}_result": "pass",
                     f"{self._result_key}_threshold": self.threshold,
-                    f"{self._result_key}_reason": ex.message,
+                    f"{self._result_key}_reason": f"Not applicable: {ex.message}",
                     f"{self._result_key}_details": {},
                     f"{self._result_key}_prompt_tokens": 0,
                     f"{self._result_key}_completion_tokens": 0,
