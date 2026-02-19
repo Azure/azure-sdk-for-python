@@ -5,7 +5,11 @@ import os, logging
 from typing import Dict, List, Optional, Union, Any, Tuple
 
 from typing_extensions import overload, override
-from azure.ai.evaluation._legacy.prompty import AsyncPrompty
+
+if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
+    from promptflow.core._flow import AsyncPrompty
+else:
+    from azure.ai.evaluation._legacy.prompty import AsyncPrompty
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
@@ -114,10 +118,13 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator = ConversationValidator(
             error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
             requires_query=False,
+            check_for_unsupported_tools=True,
         )
 
         self._validator_with_query = ConversationValidator(
-            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR, requires_query=True
+            error_target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+            requires_query=True,
+            check_for_unsupported_tools=True,
         )
 
         super().__init__(
@@ -296,13 +303,14 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        if kwargs.get("query"):
+            self._validator_with_query.validate_eval_input(kwargs)
+        else:
+            self._validator.validate_eval_input(kwargs)
+
         # Convert inputs into list of evaluable inputs.
         try:
-            # Validate input before processing
-            if kwargs.get("context") or kwargs.get("conversation"):
-                self._validator.validate_eval_input(kwargs)
-            else:
-                self._validator_with_query.validate_eval_input(kwargs)
             return await super()._real_call(**kwargs)
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:

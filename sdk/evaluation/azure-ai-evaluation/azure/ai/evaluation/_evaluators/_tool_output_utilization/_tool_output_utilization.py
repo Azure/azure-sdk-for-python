@@ -85,7 +85,10 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR)
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR,
+            check_for_unsupported_tools=True,
+        )
 
         super().__init__(
             model_config=model_config,
@@ -214,7 +217,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", "")
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
             output_label = llm_output.get("label", None)
             if output_label is None:

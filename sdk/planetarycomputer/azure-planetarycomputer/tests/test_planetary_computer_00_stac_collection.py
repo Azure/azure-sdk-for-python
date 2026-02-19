@@ -470,6 +470,83 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
+    def test_10a_create_thumbnail_asset(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
+        """
+        Test creating a thumbnail collection asset.
+        This ensures the collection has a thumbnail for subsequent tests.
+        """
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_10a_create_thumbnail_asset")
+        test_logger.info("=" * 80)
+        test_logger.info(f"Input - endpoint: {planetarycomputer_endpoint}")
+        test_logger.info(f"Input - collection_id: {planetarycomputer_collection_id}")
+
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+
+        from io import BytesIO
+        import base64
+
+        # Delete the thumbnail asset if it already exists
+        try:
+            test_logger.info(
+                "Checking if asset 'thumbnail' already exists and deleting if found..."
+            )
+            client.stac.delete_collection_asset(
+                collection_id=planetarycomputer_collection_id, asset_id="thumbnail"
+            )
+            test_logger.info("Deleted existing 'thumbnail'")
+        except Exception as e:
+            if (
+                "404" in str(e)
+                or "Not Found" in str(e)
+                or "not found" in str(e).lower()
+            ):
+                test_logger.info(
+                    "Asset 'thumbnail' does not exist, proceeding with creation"
+                )
+            else:
+                test_logger.warning(f"Error checking/deleting asset: {e}")
+
+        asset_data = {
+            "key": "thumbnail",
+            "href": "https://example.com/thumbnail.png",
+            "type": "image/png",
+            "roles": ["thumbnail"],
+            "title": "Collection Thumbnail",
+        }
+
+        # Minimal valid 16x9 RGB PNG image
+        png_bytes = base64.b64decode(
+            "iVBORw0KGgoAAAANSUhEUgAAABAAAAAJCAIAAAC0SDtlAAAAEklEQVR4nGNg"
+            "aGAgDY1qGBQaAAlbSAENQjjgAAAAAElFTkSuQmCC"
+        )
+
+        file_content = BytesIO(png_bytes)
+        file_tuple = ("thumbnail.png", file_content)
+
+        test_logger.info(
+            f"Calling: create_collection_asset(collection_id='{planetarycomputer_collection_id}', body={{...}})"
+        )
+        response = client.stac.create_collection_asset(
+            collection_id=planetarycomputer_collection_id,
+            body={"data": asset_data, "file": file_tuple},
+        )
+
+        test_logger.info(f"Response: {response}")
+        assert response is not None
+
+        # Verify the thumbnail asset now exists on the collection
+        collection = client.stac.get_collection(
+            collection_id=planetarycomputer_collection_id
+        )
+        assert "thumbnail" in collection.assets, "Collection should now have a thumbnail asset"
+
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
     def test_11_get_collection_thumbnail(
         self, planetarycomputer_endpoint, planetarycomputer_collection_id
     ):
@@ -517,7 +594,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
         # Validate image data
         assert len(thumbnail_bytes) > 0, "Thumbnail bytes should not be empty"
         assert (
-            len(thumbnail_bytes) > 100
+            len(thumbnail_bytes) > 50
         ), f"Thumbnail should be substantial, got only {len(thumbnail_bytes)} bytes"
 
         # Check for common image format magic bytes
