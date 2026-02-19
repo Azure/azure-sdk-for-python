@@ -307,10 +307,18 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         except EvaluationException as ex:
             if ex.category == ErrorCategory.NOT_APPLICABLE:
                 return {
-                    self._result_key: self._NOT_APPLICABLE_RESULT,
+                    self._result_key: self.threshold,
                     f"{self._result_key}_result": "pass",
                     f"{self._result_key}_threshold": self.threshold,
-                    f"{self._result_key}_reason": ex.message,
+                    f"{self._result_key}_reason": f"Not applicable: Supported tools were not called. Supported tools for groundedness are {self._SUPPORTED_TOOLS}.",
+                    f"{self._result_key}_details": {},
+                    f"{self._result_key}_prompt_tokens": 0,
+                    f"{self._result_key}_completion_tokens": 0,
+                    f"{self._result_key}_total_tokens": 0,
+                    f"{self._result_key}_finish_reason": "",
+                    f"{self._result_key}_model": "",
+                    f"{self._result_key}_sample_input": "",
+                    f"{self._result_key}_sample_output": "",
                 }
             else:
                 raise ex
