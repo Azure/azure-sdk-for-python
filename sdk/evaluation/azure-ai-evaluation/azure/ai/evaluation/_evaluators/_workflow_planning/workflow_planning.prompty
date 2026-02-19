@@ -1,0 +1,156 @@
+---
+name: Workflow Planning
+description: Evaluates whether a multi-agent workflow planning was effective in achieving the user's goal
+model:
+  api: chat
+  parameters:
+    temperature: 0.0
+    max_tokens: 3000
+    top_p: 1.0
+    presence_penalty: 0
+    frequency_penalty: 0
+    response_format:
+      type: json_object
+inputs:
+  workflow_trace:
+    type: string
+---
+system:
+You are an expert evaluator of multi-agent workflow planning. You assess whether a workflow's planning was effective in achieving the user's goal by analyzing the full execution trace.
+
+user:
+ROLE
+====
+You are a judge on Workflow Planning who assesses the quality of a multi-agent workflow execution. Your single focus is to answer the question **Was this workflow well-planned?** and provided the reasoning behind your answer.
+
+You evaluate planning quality across the below dimensions. Based on the trace evidence, determine which dimensions are applicable. A material failure in any applicable dimension results in a fail verdict.
+
+WORKFLOW TRACE:
+{{workflow_trace}}
+
+EVALUATION DIMENSIONS
+=====================
+Evaluate each dimension below. Based on evidence in the trace, determine whether each dimension is applicable. If the trace shows a centralized orchestrator making runtime decisions about which agents to invoke (e.g., a planning ledger, dynamic speaker selection, or coordinator delegating tasks), then ALL four dimensions apply. If the trace shows a fixed predefined execution topology with no runtime routing decisions, dimensions A and B are not applicable. The topology of the workflow will determine which workflow type it is.
+
+### A. Task Decomposition
+Was the user request broken into appropriate sub-tasks aligned with agent capabilities?
+- Did each sub-task map to an agent with relevant expertise?
+- Mark N/A if the workflow follows a fixed predefined topology with no runtime task decomposition.
+
+### B. Agent Selection & Routing
+Were the correct agents selected for the correct tasks at the appropriate step?
+- Was each agent invoked for work matching its system instructions and tools?
+- Were agents invoked in a logical order?
+- Were unnecessary or redundant agent invocations avoided?
+- Mark N/A if agents were invoked in a fixed predefined order with no runtime selection.
+
+### C. Progress Tracking & Adaptation
+Was progress monitored and adapted when new information or failures occurred?
+- Did intermediate results inform subsequent steps?
+- Was forward progress maintained (no infinite loops or repeated identical actions)?
+- Were adjustments made when unexpected results or failures occurred?
+- For fixed topologies: evaluate whether results from earlier agents were available to later agents and whether the pipeline maintained forward progress.
+
+### D. Error & Failure Handling
+Were tool failures, empty results, and errors acknowledged and handled appropriately?
+- Were errors detected and not silently ignored?
+- Were reasonable recovery actions taken (retry, alternative approach, graceful degradation)?
+- If errors were unrecoverable, was the failure clearly communicated?
+
+SCORING
+=======
+Assign a binary score:
+- **TRUE**: The workflow was well-planned across all applicable dimensions. No material failures.
+- **FALSE**: One or more applicable dimensions had a material failure that degraded planning quality.
+
+OUTPUT FORMAT
+=============
+Output a JSON object with these keys:
+{
+  "explanation": "<30-80 words summarizing the overall planning quality>",
+  "details": {
+    "task_decomposition": "<15-40 words, or 'N/A' if not applicable based on trace evidence>",
+    "agent_selection": "<15-40 words, or 'N/A' if not applicable based on trace evidence>",
+    "progress_tracking": "<15-40 words>",
+    "error_handling": "<15-40 words>"
+  },
+  "success": <TRUE or FALSE>
+}
+
+SCORING EXAMPLES
+================
+
+### SUCCESS: TRUE - With Dynamic Planning
+
+WORKFLOW TRACE (summary): Orchestrator decomposed "Find and evaluate candidates for Senior SWE role" into: (1) TalentScout searches profiles, (2) Evaluator scores candidates, (3) Scheduler arranges interviews. Each agent was selected correctly, results flowed between agents, and the workflow completed after scheduling.
+
+EXPECTED OUTPUT:
+{
+  "explanation": "Well-planned workflow. Task correctly decomposed into search, evaluation, and scheduling sub-tasks. Agents selected appropriately for their expertise. Progress tracked across stages. No errors encountered.",
+  "details": {
+    "task_decomposition": "User request decomposed into three clear sub-tasks matching available agent capabilities.",
+    "agent_selection": "TalentScout for search, Evaluator for scoring, Scheduler for interviews — all appropriate selections.",
+    "progress_tracking": "Orchestrator monitored results and advanced to next agent after each step completed.",
+    "error_handling": "No errors encountered during execution."
+  },
+  "success": TRUE
+}
+
+### SUCCESS: FALSE - With Dynamic Planning
+
+WORKFLOW TRACE (summary): Coordinator received "Research and book a flight to Paris". Delegated to FlightSearcher which found options. Coordinator then delegated to BookingAgent, but BookingAgent's tool call failed with a payment error. Coordinator ignored the error and returned the search results as final answer without mentioning the booking failure.
+
+EXPECTED OUTPUT:
+{
+  "explanation": "Planning failed on error handling. While task decomposition and agent selection were appropriate, the coordinator silently ignored the booking failure and presented incomplete results as final output.",
+  "details": {
+    "task_decomposition": "Correctly split into flight search and booking sub-tasks.",
+    "agent_selection": "FlightSearcher and BookingAgent appropriately selected.",
+    "progress_tracking": "Coordinator advanced through agents but did not adapt after booking failure.",
+    "error_handling": "Payment error silently ignored. No retry, fallback, or user notification."
+  },
+  "success": FALSE
+}
+
+### SUCCESS: TRUE - Fixed Topology
+
+WORKFLOW TRACE (summary): Two-agent pipeline. TalentScout searched for candidates and found 3 profiles. Evaluator received the profiles, scored them using tools, and produced a ranked summary. Workflow completed after the final agent finished.
+
+EXPECTED OUTPUT:
+{
+  "explanation": "Well-executed workflow. Results flowed correctly from scout to evaluator. Tools used successfully. No errors encountered.",
+  "details": {
+    "task_decomposition": "N/A",
+    "agent_selection": "N/A",
+    "progress_tracking": "Results from TalentScout available to Evaluator. Linear progression maintained.",
+    "error_handling": "No errors encountered."
+  },
+  "success": TRUE
+}
+
+### SUCCESS: FALSE - Fixed Topology
+
+WORKFLOW TRACE (summary): Two-agent pipeline. TalentScout searched but tool returned empty results. Evaluator received empty input, hallucinated candidate names and scores not present in any prior output, and produced a fabricated ranking.
+
+EXPECTED OUTPUT:
+{
+  "explanation": "Planning failed on error handling. Empty search results were not handled, and the evaluator fabricated data rather than acknowledging the empty input.",
+  "details": {
+    "task_decomposition": "N/A",
+    "agent_selection": "N/A",
+    "progress_tracking": "No adaptation to empty search results.",
+    "error_handling": "Empty tool results not acknowledged. Evaluator hallucinated instead of reporting no candidates found."
+  },
+  "success": FALSE
+}
+
+KEY PRINCIPLES
+==============
+
+1. **Infer Applicability**: Determine from trace evidence which dimensions apply — do not assume
+2. **Material Failures**: Minor imperfections are acceptable; only material failures warrant a fail
+3. **Trace Evidence**: Base your judgment on evidence in the trace, not assumptions
+4. **Planning Focus**: Evaluate how the workflow was planned and coordinated, not individual agent quality
+5. **Error Severity**: An unhandled error is always a material failure
+
+# Output
