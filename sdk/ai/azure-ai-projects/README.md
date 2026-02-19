@@ -201,7 +201,34 @@ These tools work immediately without requiring external connections.
 
 Write and run Python code in a sandboxed environment, process files and work with diverse data formats. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter)
 
+Basic tool declaration (no input files):
+
 <!-- SNIPPET:sample_agent_code_interpreter.tool_declaration -->
+
+```python
+tool = CodeInterpreterTool()
+```
+
+<!-- END SNIPPET -->
+
+See the basic sample in file `\agents\tools\sample_agent_code_interpreter.py` in the [Samples][samples] folder.
+
+After calling `responses.create()`, you can extract the code behind the scene from
+the `code_interpreter_call` output item:
+
+<!-- SNIPPET:sample_agent_code_interpreter.code_output_extraction -->
+
+```python
+code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
+print(f"Code Interpreter code:")
+print(code)
+```
+
+<!-- END SNIPPET -->
+
+If you want to upload an input file and download generated output files, use the with-files sample:
+
+<!-- SNIPPET:sample_agent_code_interpreter_with_files.tool_declaration -->
 
 ```python
 # Load the CSV file to be processed
@@ -218,7 +245,7 @@ tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file
 
 *After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
 
-See the full sample in file `\agents\tools\sample_agent_code_interpreter.py` in the [Samples][samples] folder.
+See the with-files sample in file `\agents\tools\sample_agent_code_interpreter_with_files.py` in the [Samples][samples] folder.
 
 **File Search**
 
