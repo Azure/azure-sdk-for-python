@@ -2,12 +2,9 @@
 
 ## 1.15.1 (Unreleased)
 
-### Features Added
-
-- Red Team Agent Scenario Integration: integrated PyRIT's FoundryScenario for attack orchestration with Azure-specific scoring and result processing.
-
 ### Bugs Fixed
 
+- Red Team Agent Scenario Integration: integrated PyRIT's FoundryScenario for attack orchestration with Azure-specific scoring and result processing.
 - Fixed total tokens calculation errors in evaluation results.
 - Fixed red team SDK run status updates not firing consistently, preventing runs from being stuck as "Running" in the UI.
 
