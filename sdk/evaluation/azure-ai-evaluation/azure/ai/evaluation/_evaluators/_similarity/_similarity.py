@@ -139,6 +139,10 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     @override
     def _convert_kwargs_to_eval_input(self, **kwargs):
         """Convert keyword arguments to evaluation input, with validation."""
+        conversation = kwargs.get("conversation")
+        if conversation is not None:
+            return super()._convert_kwargs_to_eval_input(**kwargs)
+
         query = kwargs.get("query")
         response = kwargs.get("response")
         ground_truth = kwargs.get("ground_truth")
@@ -146,7 +150,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
         # Validate required fields are not None
         if query is None:
             raise EvaluationException(
-                message="SimilarityEvaluator: 'query' is a required input and cannot be None.",
+                message="Either 'conversation' or individual inputs must be provided. 'query' is missing.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.SIMILARITY_EVALUATOR,
@@ -154,7 +158,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
 
         if response is None:
             raise EvaluationException(
-                message="SimilarityEvaluator: 'response' is a required input and cannot be None.",
+                message="Either 'conversation' or individual inputs must be provided. 'response' is missing.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.SIMILARITY_EVALUATOR,
@@ -162,7 +166,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
 
         if ground_truth is None:
             raise EvaluationException(
-                message="SimilarityEvaluator: 'ground_truth' is a required input and cannot be None.",
+                message="Either 'conversation' or individual inputs must be provided. 'ground_truth' is missing.",
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.SIMILARITY_EVALUATOR,
