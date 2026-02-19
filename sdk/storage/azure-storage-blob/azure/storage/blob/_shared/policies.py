@@ -12,7 +12,7 @@ import re
 import uuid
 from io import SEEK_SET, UnsupportedOperation
 from time import time
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union
 from urllib.parse import (
     parse_qsl,
     urlencode,
@@ -34,6 +34,8 @@ from azure.core.pipeline.policies import (
 from .authentication import AzureSigningError, StorageHttpChallenge
 from .constants import DEFAULT_OAUTH_SCOPE
 from .models import LocationMode, StorageErrorCode
+from .streams import StructuredMessageEncodeStream, StructuredMessageProperties
+from .validation import calculate_crc64_bytes, ChecksumAlgorithm
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -44,9 +46,16 @@ if TYPE_CHECKING:
 
 
 _LOGGER = logging.getLogger(__name__)
+CONTENT_LENGTH_HEADER = "Content-Length"
+MD5_HEADER = "Content-MD5"
+CRC64_HEADER = "x-ms-content-crc64"
+SM_HEADER = "x-ms-structured-body"
+SM_HEADER_V1_CRC64 = "XSM/1.0; properties=crc64"
+SM_LENGTH_HEADER = "x-ms-structured-content-length"
+CV_TYPE_ERROR_MSG = "Data should be bytes or seekable IO[bytes] for content validation."
 
 
-def encode_base64(data):
+def encode_base64(data: Union[bytes, str]) -> str:
     if isinstance(data, str):
         data = data.encode("utf-8")
     encoded = base64.b64encode(data)
@@ -101,9 +110,13 @@ def is_retry(response, mode):  # pylint: disable=too-many-return-statements
     return False
 
 
-def is_checksum_retry(response):
-    # retry if invalid content md5
-    if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
+def is_checksum_retry(response) -> bool:
+    validate_content = response.context.get("validate_content", False)
+    if not validate_content:
+        return False
+
+    # Legacy code - evaluate retry only on validate_content=True
+    if validate_content is True and response.http_response.headers.get("content-md5"):
         computed_md5 = response.http_request.headers.get("content-md5", None) or encode_base64(
             StorageContentValidation.get_content_md5(response.http_response.body())
         )
@@ -340,17 +353,11 @@ class StorageContentValidation(SansIOHTTPPolicy):
 
     This will overwrite any headers already defined in the request.
     """
-
-    header_name = "Content-MD5"
-
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super(StorageContentValidation, self).__init__()
 
     @staticmethod
     def get_content_md5(data):
-        # Since HTTP does not differentiate between no content and empty content,
-        # we have to perform a None check.
-        data = data or b""
         md5 = hashlib.md5()  # nosec
         if isinstance(data, bytes):
             md5.update(data)
@@ -365,22 +372,48 @@ class StorageContentValidation(SansIOHTTPPolicy):
             try:
                 data.seek(pos, SEEK_SET)
             except (AttributeError, IOError) as exc:
-                raise ValueError("Data should be bytes or a seekable file-like object.") from exc
+                raise ValueError(CV_TYPE_ERROR_MSG) from exc
         else:
-            raise ValueError("Data should be bytes or a seekable file-like object.")
+            raise ValueError(CV_TYPE_ERROR_MSG)
 
         return md5.digest()
 
     def on_request(self, request: "PipelineRequest") -> None:
         validate_content = request.context.options.pop("validate_content", False)
-        if validate_content and request.http_request.method != "GET":
-            computed_md5 = encode_base64(StorageContentValidation.get_content_md5(request.http_request.data))
-            request.http_request.headers[self.header_name] = computed_md5
-            request.context["validate_content_md5"] = computed_md5
+        if not validate_content:
+            return
+
+        if request.http_request.method != "GET":
+            # Since HTTP does not differentiate between no content and empty content,
+            # we have to perform a None check.
+            data = request.http_request.data or b""
+            if validate_content is True or validate_content == ChecksumAlgorithm.MD5:
+                computed_md5 = encode_base64(StorageContentValidation.get_content_md5(data))
+                request.http_request.headers[MD5_HEADER] = computed_md5
+                request.context["validate_content_md5"] = computed_md5
+
+            elif validate_content == ChecksumAlgorithm.CRC64:
+                if isinstance(data, bytes):
+                    request.http_request.headers[CRC64_HEADER] = encode_base64(calculate_crc64_bytes(data))
+                elif hasattr(data, "read"):
+                    content_length = int(request.http_request.headers.get(CONTENT_LENGTH_HEADER))
+                    # Wrap data in structured message stream and adjust HTTP request
+                    sm_stream = StructuredMessageEncodeStream(data, content_length, StructuredMessageProperties.CRC64)
+                    request.http_request.data = sm_stream
+                    request.http_request.headers[CONTENT_LENGTH_HEADER] = str(len(sm_stream))
+                    request.http_request.headers[SM_LENGTH_HEADER] = str(content_length)
+                    request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
+                else:
+                    raise ValueError(CV_TYPE_ERROR_MSG)
+
         request.context["validate_content"] = validate_content
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
-        if response.context.get("validate_content", False) and response.http_response.headers.get("content-md5"):
+        validate_content = response.context.get("validate_content", False)
+        if not validate_content:
+            return
+
+        if (validate_content is True or validate_content == ChecksumAlgorithm.MD5) and response.http_response.headers.get("content-md5"):
             computed_md5 = request.context.get("validate_content_md5") or encode_base64(
                 StorageContentValidation.get_content_md5(response.http_response.body())
             )
