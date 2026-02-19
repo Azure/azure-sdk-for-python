@@ -5,12 +5,12 @@
 # --------------------------------------------------------------------------
 import unittest
 from unittest.mock import Mock, patch, AsyncMock
-from azure.appconfiguration import SecretReferenceConfigurationSetting
-from azure.appconfiguration.provider.aio._key_vault._async_secret_provider import SecretProvider
-from azure.keyvault.secrets.aio import SecretClient
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
 from asynctestcase import AppConfigTestCase
+from azure.appconfiguration import SecretReferenceConfigurationSetting
+from azure.keyvault.secrets.aio import SecretClient
+from azure.appconfiguration.provider.aio._key_vault._async_secret_provider import SecretProvider
 
 TEST_SECRET_ID = "https://myvault.vault.azure.net/secrets/my_secret"
 

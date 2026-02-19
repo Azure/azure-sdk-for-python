@@ -140,7 +140,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         if isinstance(deployment, PipelineComponentBatchDeployment):
             self._validate_component(deployment, orchestrators)  # type: ignore
         else:
-            upload_dependencies(deployment, orchestrators)
+            upload_dependencies(deployment, orchestrators, self._credentials)
         try:
             location = self._get_workspace_location()
             if kwargs.pop("package_model", False):

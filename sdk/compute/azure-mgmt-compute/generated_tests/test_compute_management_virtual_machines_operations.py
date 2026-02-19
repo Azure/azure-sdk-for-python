@@ -71,7 +71,11 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
             vm_name="str",
             parameters={
                 "location": "str",
-                "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                "additionalCapabilities": {
+                    "enableFips1403Encryption": bool,
+                    "hibernationEnabled": bool,
+                    "ultraSSDEnabled": bool,
+                },
                 "applicationProfile": {
                     "galleryApplications": [
                         {
@@ -543,7 +547,11 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vm_name="str",
             parameters={
-                "additionalCapabilities": {"hibernationEnabled": bool, "ultraSSDEnabled": bool},
+                "additionalCapabilities": {
+                    "enableFips1403Encryption": bool,
+                    "hibernationEnabled": bool,
+                    "ultraSSDEnabled": bool,
+                },
                 "applicationProfile": {
                     "galleryApplications": [
                         {

@@ -191,6 +191,24 @@ class FaultSimulationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     the stop operation fails."""
 
 
+class HealthFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum for filtering health events."""
+
+    DEFAULT = "Default"
+    """Default value. Matches any health state."""
+    NONE = "None"
+    """Filter that doesn't match any health state. Used to return no results on a given collection of
+    health entities."""
+    OK = "Ok"
+    """Filter for health state Ok."""
+    WARNING = "Warning"
+    """Filter for health state Warning."""
+    ERROR = "Error"
+    """Filter for health state Error."""
+    ALL = "All"
+    """Filter that matches input with any health state."""
+
+
 class IPAddressType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The IP address type."""
 
@@ -377,6 +395,13 @@ class PublicIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The IP configuration's public IP is IPv6."""
 
 
+class RestartKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of restart to perform."""
+
+    SIMULTANEOUS = "Simultaneous"
+    """Restart all listed replicas at the same time."""
+
+
 class RollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode used to monitor health during a rolling upgrade. The values are Monitored, and
     UnmonitoredAuto.
@@ -384,10 +409,42 @@ class RollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     MONITORED = "Monitored"
     """The upgrade will stop after completing each upgrade domain and automatically monitor health
-    before proceeding. The value is 0."""
+    before proceeding."""
     UNMONITORED_AUTO = "UnmonitoredAuto"
-    """The upgrade will proceed automatically without performing any health monitoring. The value is
-    1."""
+    """The upgrade will proceed automatically without performing any health monitoring."""
+
+
+class RuntimeFailureAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster level definition for the compensating action to perform when a Monitored upgrade
+    encounters monitoring policy or health policy violations.
+    """
+
+    ROLLBACK = "Rollback"
+    """Indicates that a rollback of the upgrade will be performed by Service Fabric if the upgrade
+    fails."""
+    MANUAL = "Manual"
+    """Indicates that a manual repair will need to be performed by the administrator if the upgrade
+    fails. Service Fabric will not proceed to the next upgrade domain automatically."""
+
+
+class RuntimeRollingUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster level definition for the mode used to monitor health during a rolling upgrade."""
+
+    UNMONITORED_AUTO = "UnmonitoredAuto"
+    """The upgrade will proceed automatically without performing any health monitoring."""
+    UNMONITORED_MANUAL = "UnmonitoredManual"
+    """The upgrade will stop after completing each upgrade domain, giving the opportunity to manually
+    monitor health before proceeding."""
+    MONITORED = "Monitored"
+    """The upgrade will stop after completing each upgrade domain and automatically monitor health
+    before proceeding."""
+
+
+class RuntimeUpgradeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster level definition for the kind of upgrade."""
+
+    ROLLING = "Rolling"
+    """The upgrade progresses one upgrade domain at a time."""
 
 
 class SecurityEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

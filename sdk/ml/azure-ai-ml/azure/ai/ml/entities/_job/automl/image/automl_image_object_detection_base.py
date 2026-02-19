@@ -64,7 +64,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         return self._training_parameters
 
     @training_parameters.setter
-    def training_parameters(self, value: Union[Dict, ImageModelSettingsObjectDetection]) -> None:
+    def training_parameters(self, value: Optional[Union[Dict, ImageModelSettingsObjectDetection]]) -> None:
         if value is None:
             self._training_parameters = None
         elif isinstance(value, ImageModelSettingsObjectDetection):

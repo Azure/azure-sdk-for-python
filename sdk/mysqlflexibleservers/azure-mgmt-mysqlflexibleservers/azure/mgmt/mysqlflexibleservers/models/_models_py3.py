@@ -1486,6 +1486,9 @@ class HighAvailability(_serialization.Model):
     :vartype state: str or ~azure.mgmt.mysqlflexibleservers.models.HighAvailabilityState
     :ivar standby_availability_zone: Availability zone of the standby server.
     :vartype standby_availability_zone: str
+    :ivar replication_mode: HA Replication mode for a server. Known values are: "BinaryLog" and
+     "RedoLog".
+    :vartype replication_mode: str or ~azure.mgmt.mysqlflexibleservers.models.ReplicationMode
     """
 
     _validation = {
@@ -1496,6 +1499,7 @@ class HighAvailability(_serialization.Model):
         "mode": {"key": "mode", "type": "str"},
         "state": {"key": "state", "type": "str"},
         "standby_availability_zone": {"key": "standbyAvailabilityZone", "type": "str"},
+        "replication_mode": {"key": "replicationMode", "type": "str"},
     }
 
     def __init__(
@@ -1503,6 +1507,7 @@ class HighAvailability(_serialization.Model):
         *,
         mode: Optional[Union[str, "_models.HighAvailabilityMode"]] = None,
         standby_availability_zone: Optional[str] = None,
+        replication_mode: Optional[Union[str, "_models.ReplicationMode"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1511,11 +1516,15 @@ class HighAvailability(_serialization.Model):
         :paramtype mode: str or ~azure.mgmt.mysqlflexibleservers.models.HighAvailabilityMode
         :keyword standby_availability_zone: Availability zone of the standby server.
         :paramtype standby_availability_zone: str
+        :keyword replication_mode: HA Replication mode for a server. Known values are: "BinaryLog" and
+         "RedoLog".
+        :paramtype replication_mode: str or ~azure.mgmt.mysqlflexibleservers.models.ReplicationMode
         """
         super().__init__(**kwargs)
         self.mode = mode
         self.state: Optional[Union[str, "_models.HighAvailabilityState"]] = None
         self.standby_availability_zone = standby_availability_zone
+        self.replication_mode = replication_mode
 
 
 class HighAvailabilityValidationEstimation(_serialization.Model):
@@ -2911,7 +2920,7 @@ class Server(TrackedResource):
      server creation).
     :vartype administrator_login_password: str
     :ivar version: Major version of MySQL. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL
-     5.7. Known values are: "5.7" and "8.0.21".
+     5.7. Known values are: "5.7", "8.0.21", and "8.4".
     :vartype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
     :ivar full_version: Major version and actual engine version.
     :vartype full_version: str
@@ -2960,6 +2969,9 @@ class Server(TrackedResource):
     :ivar import_source_properties: Source properties for import from storage.
     :vartype import_source_properties:
      ~azure.mgmt.mysqlflexibleservers.models.ImportSourceProperties
+    :ivar lower_case_table_names: The mysql parameter lower_case_table_names. Can only be specified
+     when the server is being created. Allowed values 1 or 2.
+    :vartype lower_case_table_names: int
     """
 
     _validation = {
@@ -3009,6 +3021,7 @@ class Server(TrackedResource):
         "maintenance_policy": {"key": "properties.maintenancePolicy", "type": "MaintenancePolicy"},
         "maintenance_window": {"key": "properties.maintenanceWindow", "type": "MaintenanceWindow"},
         "import_source_properties": {"key": "properties.importSourceProperties", "type": "ImportSourceProperties"},
+        "lower_case_table_names": {"key": "properties.lowerCaseTableNames", "type": "int"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -3035,6 +3048,7 @@ class Server(TrackedResource):
         maintenance_policy: Optional["_models.MaintenancePolicy"] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
         import_source_properties: Optional["_models.ImportSourceProperties"] = None,
+        lower_case_table_names: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3053,7 +3067,7 @@ class Server(TrackedResource):
          server creation).
         :paramtype administrator_login_password: str
         :keyword version: Major version of MySQL. 8.0.21 stands for MySQL 8.0, 5.7.44 stands for MySQL
-         5.7. Known values are: "5.7" and "8.0.21".
+         5.7. Known values are: "5.7", "8.0.21", and "8.4".
         :paramtype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
         :keyword availability_zone: availability Zone information of the server.
         :paramtype availability_zone: str
@@ -3090,6 +3104,9 @@ class Server(TrackedResource):
         :keyword import_source_properties: Source properties for import from storage.
         :paramtype import_source_properties:
          ~azure.mgmt.mysqlflexibleservers.models.ImportSourceProperties
+        :keyword lower_case_table_names: The mysql parameter lower_case_table_names. Can only be
+         specified when the server is being created. Allowed values 1 or 2.
+        :paramtype lower_case_table_names: int
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
@@ -3116,6 +3133,7 @@ class Server(TrackedResource):
         self.maintenance_policy = maintenance_policy
         self.maintenance_window = maintenance_window
         self.import_source_properties = import_source_properties
+        self.lower_case_table_names = lower_case_table_names
 
 
 class ServerBackup(ProxyResource):
@@ -3430,7 +3448,7 @@ class ServerForUpdate(_serialization.Model):
     :vartype tags: dict[str, str]
     :ivar administrator_login_password: The password of the administrator login.
     :vartype administrator_login_password: str
-    :ivar version: Server version. Known values are: "5.7" and "8.0.21".
+    :ivar version: Server version. Known values are: "5.7", "8.0.21", and "8.4".
     :vartype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
     :ivar storage: Storage related properties of a server.
     :vartype storage: ~azure.mgmt.mysqlflexibleservers.models.Storage
@@ -3494,7 +3512,7 @@ class ServerForUpdate(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword administrator_login_password: The password of the administrator login.
         :paramtype administrator_login_password: str
-        :keyword version: Server version. Known values are: "5.7" and "8.0.21".
+        :keyword version: Server version. Known values are: "5.7", "8.0.21", and "8.4".
         :paramtype version: str or ~azure.mgmt.mysqlflexibleservers.models.ServerVersion
         :keyword storage: Storage related properties of a server.
         :paramtype storage: ~azure.mgmt.mysqlflexibleservers.models.Storage

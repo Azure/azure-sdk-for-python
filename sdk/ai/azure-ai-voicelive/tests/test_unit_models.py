@@ -343,7 +343,9 @@ class TestMCPModels:
     def test_mcp_server_with_allowed_tools(self):
         """Test MCPServer with allowed tools restriction."""
         allowed = ["tool1", "tool2", "tool3"]
-        server = MCPServer(server_label="restricted-server", server_url="https://mcp.example.com", allowed_tools=allowed)
+        server = MCPServer(
+            server_label="restricted-server", server_url="https://mcp.example.com", allowed_tools=allowed
+        )
 
         assert server.allowed_tools == allowed
         assert len(server.allowed_tools) == 3
@@ -497,9 +499,7 @@ class TestMCPResponseItems:
 
     def test_response_mcp_approval_response_item_reject_with_reason(self):
         """Test ResponseMCPApprovalResponseItem with rejection and reason."""
-        item = ResponseMCPApprovalResponseItem(
-            approval_request_id="req-456", approve=False, reason="Security concerns"
-        )
+        item = ResponseMCPApprovalResponseItem(approval_request_id="req-456", approve=False, reason="Security concerns")
 
         assert item.approve is False
         assert item.reason == "Security concerns"
@@ -630,9 +630,7 @@ class TestMCPServerEvents:
 
     def test_server_event_response_mcp_call_arguments_done(self):
         """Test ServerEventResponseMcpCallArgumentsDone event."""
-        event = ServerEventResponseMcpCallArgumentsDone(
-            item_id="item-123", response_id="resp-456", output_index=0
-        )
+        event = ServerEventResponseMcpCallArgumentsDone(item_id="item-123", response_id="resp-456", output_index=0)
 
         assert event.type == ServerEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE
         assert event.item_id == "item-123"

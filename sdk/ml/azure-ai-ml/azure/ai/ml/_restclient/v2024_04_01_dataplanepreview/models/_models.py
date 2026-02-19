@@ -228,8 +228,8 @@ class DeploymentTemplate(msrest.serialization.Model):
     :vartype liveness_probe: ~azure.mgmt.machinelearningservices.models.ProbeSettings
     :ivar readiness_probe: Readiness probe settings.
     :vartype readiness_probe: ~azure.mgmt.machinelearningservices.models.ProbeSettings
-    :ivar allowed_instance_type: Required. List of allowed instance types for the deployment.
-    :vartype allowed_instance_type: list[str]
+    :ivar allowed_instance_types: Required. List of allowed instance types for the deployment.
+    :vartype allowed_instance_types: list[str]
     :ivar default_instance_type: Required. Default instance type for the deployment.
     :vartype default_instance_type: str
     :ivar instance_count: Required. Number of instances for the deployment.
@@ -245,7 +245,7 @@ class DeploymentTemplate(msrest.serialization.Model):
         'system_data': {'readonly': True},
         'deployment_template_type': {'required': True},
         'environment_id': {'required': True},
-        'allowed_instance_type': {'required': True},
+        'allowed_instance_types': {'required': True},
         'default_instance_type': {'required': True},
         'instance_count': {'required': True},
     }
@@ -265,7 +265,7 @@ class DeploymentTemplate(msrest.serialization.Model):
         'request_settings': {'key': 'requestSettings', 'type': 'OnlineRequestSettings'},
         'liveness_probe': {'key': 'livenessProbe', 'type': 'ProbeSettings'},
         'readiness_probe': {'key': 'readinessProbe', 'type': 'ProbeSettings'},
-        'allowed_instance_type': {'key': 'allowedInstanceType', 'type': '[str]'},
+        'allowed_instance_types': {'key': 'allowedInstanceTypes', 'type': '[str]'},
         'default_instance_type': {'key': 'defaultInstanceType', 'type': 'str'},
         'instance_count': {'key': 'instanceCount', 'type': 'int'},
         'scoring_path': {'key': 'scoringPath', 'type': 'str'},
@@ -304,8 +304,8 @@ class DeploymentTemplate(msrest.serialization.Model):
         :paramtype liveness_probe: ~azure.mgmt.machinelearningservices.models.ProbeSettings
         :keyword readiness_probe: Readiness probe settings.
         :paramtype readiness_probe: ~azure.mgmt.machinelearningservices.models.ProbeSettings
-        :keyword allowed_instance_type: Required. List of allowed instance types for the deployment.
-        :paramtype allowed_instance_type: list[str]
+        :keyword allowed_instance_types: Required. List of allowed instance types for the deployment.
+        :paramtype allowed_instance_types: list[str]
         :keyword default_instance_type: Required. Default instance type for the deployment.
         :paramtype default_instance_type: str
         :keyword instance_count: Required. Number of instances for the deployment.
@@ -330,7 +330,7 @@ class DeploymentTemplate(msrest.serialization.Model):
         self.request_settings = kwargs.get('request_settings', None)
         self.liveness_probe = kwargs.get('liveness_probe', None)
         self.readiness_probe = kwargs.get('readiness_probe', None)
-        self.allowed_instance_type = kwargs['allowed_instance_type']
+        self.allowed_instance_types = kwargs['allowed_instance_types']
         self.default_instance_type = kwargs['default_instance_type']
         self.instance_count = kwargs['instance_count']
         self.scoring_path = kwargs.get('scoring_path', None)

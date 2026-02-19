@@ -47,7 +47,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +77,7 @@ def build_get_request(location: str, gallery_unique_name: str, subscription_id: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -139,7 +139,7 @@ class SharedGalleriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.SharedGalleryList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -216,7 +216,7 @@ class SharedGalleriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-03"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-03-03"))
         cls: ClsType[_models.SharedGallery] = kwargs.pop("cls", None)
 
         _request = build_get_request(

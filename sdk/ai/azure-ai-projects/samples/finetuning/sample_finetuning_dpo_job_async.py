@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install azure-ai-projects>=2.0.0b1 azure-identity openai python-dotenv aiohttp
+    pip install azure-ai-projects>=2.0.0b1 python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -61,8 +61,10 @@ async def main():
             validation_file = await openai_client.files.create(file=f, purpose="fine-tune")
         print(f"Uploaded validation file with ID: {validation_file.id}")
 
-        # For OpenAI model DPO fine-tuning jobs, "Standard" is the default training type.
-        # To use global standard training, uncomment the extra_body parameter below.
+        print("Waits for the training and validation files to be processed...")
+        await openai_client.files.wait_for_processing(train_file.id)
+        await openai_client.files.wait_for_processing(validation_file.id)
+
         print("Creating DPO fine-tuning job")
         fine_tuning_job = await openai_client.fine_tuning.jobs.create(
             training_file=train_file.id,
@@ -78,7 +80,9 @@ async def main():
                     }
                 },
             },
-            # extra_body={"trainingType":"GlobalStandard"}
+            extra_body={
+                "trainingType": "Standard"
+            },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
         )
         print(fine_tuning_job)
 

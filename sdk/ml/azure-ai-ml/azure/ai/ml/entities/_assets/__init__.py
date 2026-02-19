@@ -13,5 +13,16 @@ from ._artifacts.model import Model
 from .environment import Environment
 from ._artifacts._package.model_package import ModelPackage
 from .workspace_asset_reference import WorkspaceAssetReference
+from .default_deployment_template import DefaultDeploymentTemplate
 
-__all__ = ["Artifact", "Model", "Code", "Data", "Index", "Environment", "WorkspaceAssetReference", "ModelPackage"]
+__all__ = [
+    "Artifact",
+    "Model",
+    "Code",
+    "Data",
+    "Index",
+    "Environment",
+    "WorkspaceAssetReference",
+    "ModelPackage",
+    "DefaultDeploymentTemplate",
+]

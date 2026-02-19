@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -346,6 +346,8 @@ class KeyInfo(_serialization.Model):
     :vartype start: str
     :ivar expiry: The date-time the key expires in ISO 8601 UTC time. Required.
     :vartype expiry: str
+    :ivar delegated_user_tid: The delegated user tenant id in Azure AD.
+    :vartype delegated_user_tid: str
     """
 
     _validation = {
@@ -355,18 +357,24 @@ class KeyInfo(_serialization.Model):
     _attribute_map = {
         "start": {"key": "Start", "type": "str"},
         "expiry": {"key": "Expiry", "type": "str"},
+        "delegated_user_tid": {"key": "DelegatedUserTid", "type": "str"},
     }
 
-    def __init__(self, *, expiry: str, start: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, expiry: str, start: Optional[str] = None, delegated_user_tid: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword start: The date-time the key is active in ISO 8601 UTC time.
         :paramtype start: str
         :keyword expiry: The date-time the key expires in ISO 8601 UTC time. Required.
         :paramtype expiry: str
+        :keyword delegated_user_tid: The delegated user tenant id in Azure AD.
+        :paramtype delegated_user_tid: str
         """
         super().__init__(**kwargs)
         self.start = start
         self.expiry = expiry
+        self.delegated_user_tid = delegated_user_tid
 
 
 class ListQueuesSegmentResponse(_serialization.Model):
@@ -417,7 +425,7 @@ class ListQueuesSegmentResponse(_serialization.Model):
         max_results: int,
         next_marker: str,
         marker: Optional[str] = None,
-        queue_items: Optional[List["_models.QueueItem"]] = None,
+        queue_items: Optional[list["_models.QueueItem"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -647,7 +655,7 @@ class QueueItem(_serialization.Model):
     }
     _xml_map = {"name": "Queue"}
 
-    def __init__(self, *, name: str, metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, name: str, metadata: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Queue. Required.
         :paramtype name: str
@@ -808,7 +816,7 @@ class StorageServiceProperties(_serialization.Model):
         logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[List["_models.CorsRule"]] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -867,6 +875,9 @@ class UserDelegationKey(_serialization.Model):
     :vartype signed_service: str
     :ivar signed_version: The service version that created the key. Required.
     :vartype signed_version: str
+    :ivar signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+     DelegatedUserTid is specified.
+    :vartype signed_delegated_user_tid: str
     :ivar value: The key as a base64 string. Required.
     :vartype value: str
     """
@@ -888,6 +899,7 @@ class UserDelegationKey(_serialization.Model):
         "signed_expiry": {"key": "SignedExpiry", "type": "iso-8601"},
         "signed_service": {"key": "SignedService", "type": "str"},
         "signed_version": {"key": "SignedVersion", "type": "str"},
+        "signed_delegated_user_tid": {"key": "SignedDelegatedUserTid", "type": "str"},
         "value": {"key": "Value", "type": "str"},
     }
 
@@ -901,6 +913,7 @@ class UserDelegationKey(_serialization.Model):
         signed_service: str,
         signed_version: str,
         value: str,
+        signed_delegated_user_tid: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -917,6 +930,9 @@ class UserDelegationKey(_serialization.Model):
         :paramtype signed_service: str
         :keyword signed_version: The service version that created the key. Required.
         :paramtype signed_version: str
+        :keyword signed_delegated_user_tid: The delegated user tenant id in Azure AD. Return if
+         DelegatedUserTid is specified.
+        :paramtype signed_delegated_user_tid: str
         :keyword value: The key as a base64 string. Required.
         :paramtype value: str
         """
@@ -927,4 +943,5 @@ class UserDelegationKey(_serialization.Model):
         self.signed_expiry = signed_expiry
         self.signed_service = signed_service
         self.signed_version = signed_version
+        self.signed_delegated_user_tid = signed_delegated_user_tid
         self.value = value

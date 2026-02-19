@@ -22,7 +22,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
     @recorded_by_proxy
     def test_managed_cluster_snapshots_list(self, resource_group):
         response = self.client.managed_cluster_snapshots.list(
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
     def test_managed_cluster_snapshots_list_by_resource_group(self, resource_group):
         response = self.client.managed_cluster_snapshots.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
         response = self.client.managed_cluster_snapshots.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
             resource_group_name=resource_group.name,
             resource_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestContainerServiceManagedClusterSnapshotsOperations(AzureMgmtRecordedTes
         response = self.client.managed_cluster_snapshots.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
 
         # please add some check logic here by yourself

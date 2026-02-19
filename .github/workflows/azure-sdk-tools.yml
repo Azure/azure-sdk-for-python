@@ -21,7 +21,7 @@ jobs:
 
       - name: Install azure-sdk-tools
         run: |
-          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install -e eng/tools/azure-sdk-tools[ghtools,conda]
           python -m pip freeze
         shell: bash
 
@@ -43,7 +43,7 @@ jobs:
 
       - name: Install azure-sdk-tools
         run: |
-          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install -e eng/tools/azure-sdk-tools[ghtools,conda]
           python -m pip install black==24.4.0
           python -m pip freeze
         shell: bash
@@ -70,7 +70,7 @@ jobs:
 
       - name: Install azure-sdk-tools on in global uv, discover azpysdk checks
         run: |
-          uv pip install --system eng/tools/azure-sdk-tools[build,ghtools,conda]
+          uv pip install --system eng/tools/azure-sdk-tools[ghtools,conda,systemperf]
 
           # Discover available azpysdk commands from the {command1,command2,...} line in help output
           CHECKS=$(azpysdk -h 2>&1 | \
@@ -92,20 +92,23 @@ jobs:
 
       - name: Run all discovered checks against azure-template using uv as package manager
         run: |
-          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
+          sdk_build azure-template -d $(pwd)/wheels --build_id 20250101.1
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
         env:
           TOX_PIP_IMPL: "uv"
 
       - name: Install azure-sdk-tools on global pip env
         run: |
-          python -m pip install -e eng/tools/azure-sdk-tools[build,ghtools,conda]
+          python -m pip install -e eng/tools/azure-sdk-tools[ghtools,conda]
         shell: bash
 
       - name: Run all discovered checks against azure-template using pip as package manager
         run: |
-          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" azure-template
+          python eng/scripts/dispatch_checks.py --checks "$AZPYSDK_CHECKS" --wheel_dir $(pwd)/wheels azure-template
         shell: bash
+        env:
+          TOX_PIP_IMPL: "pip"
 
   dev-setup-and-import:
     runs-on: ubuntu-latest

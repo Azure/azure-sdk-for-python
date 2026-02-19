@@ -26,6 +26,7 @@ USAGE:
     3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
     4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
 """
+
 import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
@@ -49,7 +50,8 @@ class DeleteImagesAsync(object):
                 # Keep the three most recent images, delete everything else
                 manifest_count = 0
                 async for manifest in client.list_manifest_properties(
-                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
+                    repository,
+                    order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING,
                 ):
                     manifest_count += 1
                     if manifest_count > 3:

@@ -10,6 +10,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from ..._common.utils import check_score_is_valid, reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
@@ -57,6 +58,8 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _MAX_INTENT_RESOLUTION_SCORE = 5
     _DEFAULT_INTENT_RESOLUTION_THRESHOLD = 3
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/intent_resolution"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -65,6 +68,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.INTENT_RESOLUTION_EVALUATOR)
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -126,6 +133,20 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         return super().__call__(*args, **kwargs)
 
     @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
+        return await super()._real_call(**kwargs)
+
+    @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do intent resolution evaluation.
 
@@ -183,14 +204,10 @@ class IntentResolutionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
             return response_dict
-        # If llm_output is not a dictionary, return NaN for the score. This should never happen
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning NaN for the score.")
-
-        binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        # If llm_output is not a dictionary, raise exception
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

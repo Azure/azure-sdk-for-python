@@ -19,9 +19,29 @@ This sample demonstrates a complete voice assistant implementation using the Azu
 
 ## Installation
 
-```bash
-pip install azure-ai-voicelive pyaudio python-dotenv
-```
+1. **Install the SDK**:
+   ```bash
+   pip install azure-ai-voicelive python-dotenv
+   ```
+
+2. **Install PyAudio** (required for audio capture/playback):
+
+   PyAudio requires PortAudio to be installed on your system:
+
+   - **Linux (Ubuntu/Debian)**:
+     ```bash
+     sudo apt-get install -y portaudio19-dev libasound2-dev
+     pip install pyaudio
+     ```
+   - **macOS**:
+     ```bash
+     brew install portaudio
+     pip install pyaudio
+     ```
+   - **Windows**:
+     ```bash
+     pip install pyaudio
+     ```
 
 ## Configuration
 

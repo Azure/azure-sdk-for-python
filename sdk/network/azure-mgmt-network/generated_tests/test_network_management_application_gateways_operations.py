@@ -25,7 +25,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_delete(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.get(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -294,6 +294,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -364,6 +365,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "ipVersionType": "IPv4",
                                                             "location": "str",
                                                             "manualPrivateLinkServiceConnections": [
                                                                 {
@@ -407,6 +409,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "type": "str",
                                                         },
                                                         "privateLinkService": {
+                                                            "accessMode": "str",
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
                                                             "destinationIPAddress": "str",
@@ -492,6 +495,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -681,6 +685,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -803,6 +808,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -875,6 +881,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "primary": bool,
                                                             "privateEndpoint": ...,
                                                             "privateLinkService": {
+                                                                "accessMode": "str",
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
                                                                 "destinationIPAddress": "str",
@@ -1104,6 +1111,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -1125,6 +1133,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                         "publicIpPrefixes": [{"id": "str"}],
                                         "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
+                                        "serviceGateway": {"id": "str"},
                                         "sku": {"name": "str"},
                                         "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
@@ -1224,6 +1233,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -1325,6 +1335,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -1393,6 +1404,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -1436,6 +1448,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "type": "str",
                                                 },
                                                 "privateLinkService": {
+                                                    "accessMode": "str",
                                                     "alias": "str",
                                                     "autoApproval": {"subscriptions": ["str"]},
                                                     "destinationIPAddress": "str",
@@ -1516,6 +1529,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -1579,6 +1593,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -1704,6 +1719,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -1829,6 +1845,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "type": "str",
                                                 }
                                             ],
+                                            "ipVersionType": "IPv4",
                                             "location": "str",
                                             "manualPrivateLinkServiceConnections": [
                                                 {
@@ -1948,6 +1965,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -2017,6 +2035,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -2097,6 +2116,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -2217,6 +2237,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -2371,6 +2392,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                             "service": "str",
                                         }
                                     ],
+                                    "serviceGateway": {"id": "str"},
                                     "sharingScope": "str",
                                     "type": "str",
                                 },
@@ -2541,6 +2563,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -2614,6 +2637,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -2657,6 +2681,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "type": "str",
                                                                     },
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -2728,6 +2753,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "ipVersionType": "IPv4",
                                                                                     "location": "str",
                                                                                     "manualPrivateLinkServiceConnections": [
                                                                                         {
@@ -2888,6 +2914,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -3018,6 +3045,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -3092,6 +3120,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "primary": bool,
                                                                         "privateEndpoint": ...,
                                                                         "privateLinkService": {
+                                                                            "accessMode": "str",
                                                                             "alias": "str",
                                                                             "autoApproval": {"subscriptions": ["str"]},
                                                                             "destinationIPAddress": "str",
@@ -3275,6 +3304,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -3296,6 +3326,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -3396,6 +3427,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -3501,6 +3533,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -3571,6 +3604,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -3614,6 +3648,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "type": "str",
                                                             },
                                                             "privateLinkService": {
+                                                                "accessMode": "str",
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
                                                                 "destinationIPAddress": "str",
@@ -3679,6 +3714,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "ipVersionType": "IPv4",
                                                                             "location": "str",
                                                                             "manualPrivateLinkServiceConnections": [
                                                                                 {
@@ -3837,6 +3873,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "type": "str",
                                                             }
                                                         ],
+                                                        "ipVersionType": "IPv4",
                                                         "location": "str",
                                                         "manualPrivateLinkServiceConnections": [
                                                             {
@@ -3959,6 +3996,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -4031,6 +4069,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "primary": bool,
                                                                 "privateEndpoint": ...,
                                                                 "privateLinkService": {
+                                                                    "accessMode": "str",
                                                                     "alias": "str",
                                                                     "autoApproval": {"subscriptions": ["str"]},
                                                                     "destinationIPAddress": "str",
@@ -4209,6 +4248,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -4274,6 +4314,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 ],
                 "backendSettingsCollection": [
                     {
+                        "enableL4ClientIpPreservation": bool,
                         "etag": "str",
                         "hostName": "str",
                         "id": "str",
@@ -4292,6 +4333,18 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 "defaultPredefinedSslPolicy": "str",
                 "enableFips": bool,
                 "enableHttp2": bool,
+                "entraJWTValidationConfigs": [
+                    {
+                        "audiences": ["str"],
+                        "clientId": "str",
+                        "etag": "str",
+                        "id": "str",
+                        "name": "str",
+                        "provisioningState": "str",
+                        "tenantId": "str",
+                        "unAuthorizedRequestAction": "str",
+                    }
+                ],
                 "etag": "str",
                 "firewallPolicy": {"id": "str"},
                 "forceFirewallPolicyAssociation": bool,
@@ -4421,6 +4474,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                     "type": "str",
                                 }
                             ],
+                            "ipVersionType": "IPv4",
                             "location": "str",
                             "manualPrivateLinkServiceConnections": [
                                 {
@@ -4710,6 +4764,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -4865,6 +4920,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -4886,6 +4942,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -4985,6 +5042,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -5090,6 +5148,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -5245,6 +5304,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -5415,6 +5475,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -5575,6 +5636,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                             "service": "str",
                                                                         }
                                                                     ],
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sharingScope": "str",
                                                                     "type": "str",
                                                                 },
@@ -5596,6 +5658,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -5699,6 +5762,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -5807,6 +5871,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -5965,6 +6030,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "service": "str",
                                                                 }
                                                             ],
+                                                            "serviceGateway": {"id": "str"},
                                                             "sharingScope": "str",
                                                             "type": "str",
                                                         },
@@ -6074,6 +6140,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -6217,6 +6284,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -6338,6 +6406,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             }
@@ -6349,6 +6418,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                     "primary": bool,
                                     "privateEndpoint": ...,
                                     "privateLinkService": {
+                                        "accessMode": "str",
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
                                         "destinationIPAddress": "str",
@@ -6448,6 +6518,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -6553,6 +6624,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -6708,6 +6780,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -6879,6 +6952,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -7037,6 +7111,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "service": "str",
                                                                 }
                                                             ],
+                                                            "serviceGateway": {"id": "str"},
                                                             "sharingScope": "str",
                                                             "type": "str",
                                                         },
@@ -7058,6 +7133,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -7158,6 +7234,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -7263,6 +7340,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -7418,6 +7496,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -7625,6 +7704,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -7783,6 +7863,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "service": "str",
                                                                     }
                                                                 ],
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sharingScope": "str",
                                                                 "type": "str",
                                                             },
@@ -7804,6 +7885,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -7904,6 +7986,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -8012,6 +8095,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -8167,6 +8251,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -8429,6 +8514,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -8587,6 +8673,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "service": "str",
                                                                     }
                                                                 ],
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sharingScope": "str",
                                                                 "type": "str",
                                                             },
@@ -8608,6 +8695,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -8707,6 +8795,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -8815,6 +8904,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -8970,6 +9060,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -9094,6 +9185,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                 "publicIpPrefixes": [{"id": "str"}],
                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
+                                                "serviceGateway": {"id": "str"},
                                                 "sku": {"name": "str"},
                                                 "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
@@ -9195,6 +9287,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                             "location": "str",
                                             "name": "str",
                                             "provisioningState": "str",
+                                            "recordTypes": "str",
                                             "retentionPolicy": {"days": 0, "enabled": False},
                                             "storageId": "str",
                                             "tags": {"str": "str"},
@@ -9377,6 +9470,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -9456,6 +9550,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -9512,6 +9607,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -9592,6 +9688,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -9709,6 +9806,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -9885,6 +9983,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -10068,6 +10167,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                                         "service": "str",
                                     }
                                 ],
+                                "serviceGateway": {"id": "str"},
                                 "sharingScope": "str",
                                 "type": "str",
                             },
@@ -10107,6 +10207,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 ],
                 "probes": [
                     {
+                        "enableProbeProxyProtocolHeader": bool,
                         "etag": "str",
                         "host": "str",
                         "id": "str",
@@ -10146,6 +10247,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                     {
                         "backendAddressPool": {"id": "str"},
                         "backendHttpSettings": {"id": "str"},
+                        "entraJWTValidationConfig": {"id": "str"},
                         "etag": "str",
                         "httpListener": {"id": "str"},
                         "id": "str",
@@ -10244,7 +10346,11 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 },
                 "sslProfiles": [
                     {
-                        "clientAuthConfiguration": {"verifyClientCertIssuerDN": bool, "verifyClientRevocation": "str"},
+                        "clientAuthConfiguration": {
+                            "verifyClientAuthMode": "str",
+                            "verifyClientCertIssuerDN": bool,
+                            "verifyClientRevocation": "str",
+                        },
                         "etag": "str",
                         "id": "str",
                         "name": "str",
@@ -10329,7 +10435,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 },
                 "zones": ["str"],
             },
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10342,7 +10448,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10353,7 +10459,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     def test_application_gateways_list(self, resource_group):
         response = self.client.application_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -10363,7 +10469,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_all(self, resource_group):
         response = self.client.application_gateways.list_all(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -10375,7 +10481,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_start(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10387,7 +10493,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_stop(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10399,7 +10505,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
         response = self.client.application_gateways.begin_backend_health(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10414,6 +10520,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
             probe_request={
                 "backendAddressPool": {"id": "str"},
                 "backendHttpSettings": {"id": "str"},
+                "enableProbeProxyProtocolHeader": bool,
                 "host": "str",
                 "match": {"body": "str", "statusCodes": ["str"]},
                 "path": "str",
@@ -10421,7 +10528,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
                 "protocol": "str",
                 "timeout": 0,
             },
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -10431,7 +10538,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_server_variables(self, resource_group):
         response = self.client.application_gateways.list_available_server_variables(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10441,7 +10548,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_request_headers(self, resource_group):
         response = self.client.application_gateways.list_available_request_headers(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10451,7 +10558,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_response_headers(self, resource_group):
         response = self.client.application_gateways.list_available_response_headers(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10461,7 +10568,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_waf_rule_sets(self, resource_group):
         response = self.client.application_gateways.list_available_waf_rule_sets(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10471,7 +10578,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_ssl_options(self, resource_group):
         response = self.client.application_gateways.list_available_ssl_options(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10481,7 +10588,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_application_gateways_list_available_ssl_predefined_policies(self, resource_group):
         response = self.client.application_gateways.list_available_ssl_predefined_policies(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -10492,7 +10599,7 @@ class TestNetworkManagementApplicationGatewaysOperations(AzureMgmtRecordedTestCa
     def test_application_gateways_get_ssl_predefined_policy(self, resource_group):
         response = self.client.application_gateways.get_ssl_predefined_policy(
             predefined_policy_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

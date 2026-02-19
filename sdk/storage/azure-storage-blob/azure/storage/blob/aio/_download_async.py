@@ -19,7 +19,7 @@ from typing import (
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
+from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -144,7 +144,7 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                 try:
                     chunk_data = await process_content(response, offset[0], offset[1], self.encryption_options)
                     retry_active = False
-                except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+                except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                     retry_total -= 1
                     if retry_total <= 0:
                         raise HttpResponseError(error, error=error) from error
@@ -292,6 +292,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     async def _get_encryption_data_request(self) -> None:
         # Save current request cls
         download_cls = self._request_options.pop('cls', None)
+
+        # Temporarily removing this for the get properties request
+        decompress = self._request_options.pop('decompress', None)
+
         # Adjust cls for get_properties
         self._request_options['cls'] = deserialize_blob_properties
 
@@ -303,6 +307,10 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
 
         # Restore cls for download
         self._request_options['cls'] = download_cls
+
+        # Decompression does not work with client-side encryption
+        if decompress is not None:
+            self._request_options['decompress'] = decompress
 
     async def _setup(self) -> None:
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
@@ -424,7 +432,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                         self._encryption_options
                     )
                 retry_active = False
-            except (IncompleteReadError, HttpResponseError, DecodeError) as error:
+            except (IncompleteReadError, HttpResponseError, DecodeError, ServiceResponseError) as error:
                 retry_total -= 1
                 if retry_total <= 0:
                     raise HttpResponseError(error, error=error) from error

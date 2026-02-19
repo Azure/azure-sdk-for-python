@@ -1,0 +1,36 @@
+parameters:
+  - name: NameForReservation
+    type: string
+  - name: VersionForReservation
+    type: string
+
+jobs:
+  - job: generate_namereserve_package
+    displayName: Generate Name Reservation Package Artifacts
+    pool:
+      name: azsdk-pool
+      image: windows-2022
+      os: windows
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.13'
+
+      - pwsh: |
+          python -m pip install -r eng/ci_tools.txt
+        displayName: Install Dependencies
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+
+          generate_namereserve_package `
+            --package_version "${{ parameters.VersionForReservation }}" `
+            --output_dir "$(Build.ArtifactStagingDirectory)" `
+            "${{ parameters.NameForReservation }}"
+        displayName: Generate Name Reservation Package
+
+      - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+        parameters:
+          ArtifactPath: '$(Build.ArtifactStagingDirectory)'
+          ArtifactName: 'NameReservePackage'

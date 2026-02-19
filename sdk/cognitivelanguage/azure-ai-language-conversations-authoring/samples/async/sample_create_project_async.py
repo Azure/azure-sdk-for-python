@@ -29,12 +29,13 @@ OPTIONAL ENV VARS:
 # [START conversation_authoring_create_project_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     CreateProjectOptions,
     ProjectKind,
 )
+
 
 async def sample_create_project_async():
     # settings
@@ -63,7 +64,9 @@ async def sample_create_project_async():
         print(f"Multilingual: {result.multilingual}")
         print(f"Description: {result.description}")
 
+
 # [END conversation_authoring_create_project_async]
+
 
 async def main():
     await sample_create_project_async()

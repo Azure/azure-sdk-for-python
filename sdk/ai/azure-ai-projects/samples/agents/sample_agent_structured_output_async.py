@@ -22,7 +22,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" openai azure-identity aiohttp python-dotenv pydantic
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp  pydantic
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -39,7 +39,7 @@ from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     PromptAgentDefinitionText,
-    ResponseTextFormatConfigurationJsonSchema,
+    TextResponseFormatJsonSchema,
 )
 from pydantic import BaseModel, Field
 
@@ -66,9 +66,7 @@ async def main() -> None:
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 text=PromptAgentDefinitionText(
-                    format=ResponseTextFormatConfigurationJsonSchema(
-                        name="CalendarEvent", schema=CalendarEvent.model_json_schema()
-                    )
+                    format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
                 ),
                 instructions="""
                     You are a helpful assistant that extracts calendar event information from the input user messages,

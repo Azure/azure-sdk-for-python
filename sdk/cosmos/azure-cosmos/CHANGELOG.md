@@ -1,15 +1,68 @@
 ## Release History
 
-### 4.14.2 (Unreleased)
+### 4.15.0 (2026-02-11)
+
+#### Features Added
+* GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
+
+#### Bugs Fixed
+* Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error. See [PR 44770](https://github.com/Azure/azure-sdk-for-python/pull/44770)
+* Fixed crash in sync and async clients when `force_refresh_on_startup` was set to `None`, which could surface as `AttributeError: 'NoneType' object has no attribute '_WritableLocations'` during region discovery when `database_account` was `None`. See [PR 44987](https://github.com/Azure/azure-sdk-for-python/pull/44987)
+* Fixed bug where unavailable regional endpoints were dropped from the routing list instead of being kept as fallback options. See [PR 45200](https://github.com/Azure/azure-sdk-for-python/pull/45200)
+
+#### Other Changes
+* Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
+* Renamed `availability_strategy_config` introduced in 4.15.0b1 to `availability_strategy` for both sync and async clients. See [PR 45086](https://github.com/Azure/azure-sdk-for-python/pull/45086).
+
+### 4.14.6 (2026-02-02)
+
+#### Bugs Fixed
+* Fixed async client crash (`AttributeError: 'NoneType' object has no attribute '_WritableLocations'`) during region discovery when `database_account` was `None`. See [PR 44939](https://github.com/Azure/azure-sdk-for-python/pull/44939)
+
+### 4.14.5 (2026-01-15)
+
+#### Bugs Fixed
+* Fixed bug where sdk was encountering a timeout issue caused by infinite recursion during the 410 (Gone) error.See [PR 44659](https://github.com/Azure/azure-sdk-for-python/pull/44649)
+
+### 4.14.4 (2026-01-12)
+
+#### Bugs Fixed
+* Fixed bug where sdk was not properly retrying requests in some edge cases after partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
+
+### 4.15.0b2 (2025-12-16)
+
+#### Bugs Fixed
+* Fixed bug where sdk was not properly retrying requests in some edge cases after partition splits.See [PR 44425](https://github.com/Azure/azure-sdk-for-python/pull/44425)
+
+### 4.14.3 (2025-12-08)
+
+#### Bugs Fixed
+* Fixed bug where client timeout/read_timeout values were not properly enforced. See [PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
+* Fixed bug when passing in None for some options in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
+
+### 4.15.0b1 (2025-11-26)
+
+#### Features Added
+* Added support for Per Partition Automatic Failover. To enable this feature, you must follow the guide [here](https://learn.microsoft.com/azure/cosmos-db/how-to-configure-per-partition-automatic-failover). See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
+* Added support for AvailabilityStrategy to help improve request latency and availability in multi-region deployments. See [PR 42584](https://github.com/Azure/azure-sdk-for-python/pull/42584)
+
+#### Bugs Fixed
+* Fixed bug where client timeout/read_timeout values were not properly enforced. See [PR 42652](https://github.com/Azure/azure-sdk-for-python/pull/42652).
+* Fixed bug when passing in None for some options in `query_items` would cause unexpected errors. See [PR 44098](https://github.com/Azure/azure-sdk-for-python/pull/44098)
+* Fixed bug where first metadata requests have duplicated custom `user_agent` in headers. See [PR 44189](https://github.com/Azure/azure-sdk-for-python/pull/44189)
+
+#### Other Changes
+* Added cross-regional retries for 503 (Service Unavailable) errors. See [PR 41588](https://github.com/Azure/azure-sdk-for-python/pull/41588).
+
+### 4.14.2 (2025-11-14)
 
 #### Features Added
 * Added merge support. See [PR 42924](https://github.com/Azure/azure-sdk-for-python/pull/42924).
 * Added support for priority-based throttling at the client level for sync and async clients. See [PR 43917](https://github.com/Azure/azure-sdk-for-python/pull/43917)
 
-#### Breaking Changes
-
 #### Bugs Fixed
 * Fixed bug where customer provided excluded region was not always being honored during certain transient failures. See [PR 43602](https://github.com/Azure/azure-sdk-for-python/pull/43602)
+* Fixed TypeError bug when `parameters=None` in `query_items`. See [PR 43681](https://github.com/Azure/azure-sdk-for-python/pull/43681)
 
 #### Other Changes
 * Further optimized health checks for sync and async clients. See [PR 43339](https://github.com/Azure/azure-sdk-for-python/pull/43339)
@@ -723,4 +776,3 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 ## 1.0.1
 
 - Supports proxy connection
-

@@ -82,12 +82,23 @@ jobs:
       value: ${{ parameters.InjectedPackages }}
 
     steps:
+    - ${{ if eq(lower(parameters.OSName), 'macos') }}:
+      - pwsh: |
+          $dotnetroot = "$HOME/.dotnet"
+          Write-Host $dotnetroot
+          Write-Host "##vso[task.setvariable variable=DOTNET_ROOT]$dotnetroot"
+        displayName: 'Set DOTNET_ROOT'
+
     - template: /eng/common/pipelines/templates/steps/sparse-checkout.yml
       parameters:
         ${{ if endsWith(variables['Build.Repository.Name'], '-pr') }}:
           TokenToUseForAuth: $(azuresdk-github-pat)
         Paths:
           - '**'
+
+    # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+    # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+    - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
 
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 

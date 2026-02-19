@@ -39,6 +39,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _APPLICATIONINSIGHTS_METRICS_TO_LOGANALYTICS_ENABLED,
     _APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN,
     _AUTOCOLLECTED_INSTRUMENT_NAMES,
+    _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS,
     _METRIC_ENVELOPE_NAME,
     _STATSBEAT_METRIC_NAME_MAPPINGS,
 )
@@ -56,7 +57,7 @@ from azure.monitor.opentelemetry.exporter.export._base import (
 )
 from azure.monitor.opentelemetry.exporter.export.trace import _utils as trace_utils
 from azure.monitor.opentelemetry.exporter._performance_counters._constants import (
-    _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS
+    _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS,
 )
 
 _logger = logging.getLogger(__name__)
@@ -167,6 +168,9 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         final_metric_name = name
         if self._is_sdkstats and name in _STATSBEAT_METRIC_NAME_MAPPINGS:
             final_metric_name = _STATSBEAT_METRIC_NAME_MAPPINGS[name]
+        # Apply customer sdkstats metric name mapping if this is a customer sdkstats exporter
+        if self._is_customer_sdkstats and name in _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS:
+            final_metric_name = _CUSTOMER_SDKSTATS_METRIC_NAME_MAPPINGS[name]
 
         envelope = _convert_point_to_envelope(point, final_metric_name, resource, scope)
         # Note that Performance Counters are not counted as "Autocollected standard metrics"
@@ -176,9 +180,8 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
             envelope.instrumentation_key = self._instrumentation_key
             # Only set SentToAMW on AKS Attach
             if _utils._is_on_aks() and _utils._is_attach_enabled() and not self._is_stats_exporter():
-                if (
-                    OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ
-                    and "otlp" in os.environ.get(OTEL_METRICS_EXPORTER, "")
+                if OTEL_EXPORTER_OTLP_METRICS_ENDPOINT in os.environ and "otlp" in os.environ.get(
+                    OTEL_METRICS_EXPORTER, ""
                 ):
                     envelope.data.base_data.properties["_MS.SentToAMW"] = "True"  # type: ignore
                 else:

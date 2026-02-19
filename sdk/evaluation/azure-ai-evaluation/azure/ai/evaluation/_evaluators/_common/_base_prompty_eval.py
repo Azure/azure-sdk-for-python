@@ -183,12 +183,12 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             }
 
         binary_result = self._get_binary_result(score)
-        return {
-            self._result_key: float(score),
-            f"gpt_{self._result_key}": float(score),
-            f"{self._result_key}_result": binary_result,
-            f"{self._result_key}_threshold": self._threshold,
-        }
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )
 
     @staticmethod
     def _get_built_in_tool_definition(tool_name: str):
@@ -287,8 +287,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     elif tool_name:
                         # This is a regular function tool from converter
                         tool_definition_exists = any(
-                            tool.get("name") == tool_name and tool.get("type", "function") == "function"
-                            for tool in tool_definitions_expanded
+                            tool.get("name") == tool_name for tool in tool_definitions_expanded
                         )
                         if not tool_definition_exists:
                             raise EvaluationException(

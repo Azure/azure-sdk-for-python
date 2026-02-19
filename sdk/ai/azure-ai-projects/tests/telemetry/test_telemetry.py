@@ -12,15 +12,14 @@ from devtools_testutils import recorded_by_proxy, is_live
 class TestTelemetry(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:
-    # cls & pytest tests\test_telemetry.py::TestTelemetry::test_telemetry -s
-    @pytest.mark.skip(reason="Temporary skip test until we have an AppInsights resource connected")
+    # cls & pytest tests\telemetry\test_telemetry.py::TestTelemetry::test_telemetry -s
     @servicePreparer()
     @recorded_by_proxy
     def test_telemetry(self, **kwargs):
 
         with self.create_client(**kwargs) as project_client:
 
-            print("[test_telemetry] Get the Application Insights connection string:")
+            print("\n[test_telemetry] Get the Application Insights connection string:")
             connection_string = project_client.telemetry.get_application_insights_connection_string()
             assert connection_string
             if is_live():

@@ -10,6 +10,7 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from ..._common.utils import reformat_conversation_history, reformat_agent_response, reformat_tool_definitions
 from azure.ai.evaluation._model_configurations import Message
 from azure.ai.evaluation._common._experimental import experimental
@@ -61,6 +62,8 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _RESULT_KEY = "task_completion"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/task_completion"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -68,6 +71,10 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     def __init__(self, model_config, *, credential=None, **kwargs):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
+
+        # Initialize input validator
+        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TASK_COMPLETION_EVALUATOR)
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -127,6 +134,20 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         return super().__call__(*args, **kwargs)
 
     @override
+    async def _real_call(self, **kwargs):
+        """The asynchronous call where real end-to-end evaluation logic is performed.
+
+        :keyword kwargs: The inputs to evaluate.
+        :type kwargs: Dict
+        :return: The evaluation result.
+        :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
+        """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
+        return await super()._real_call(**kwargs)
+
+    @override
     async def _do_eval(self, eval_input: Dict) -> Dict[str, Union[float, str]]:  # type: ignore[override]
         """Do Task Completion evaluation.
         :param eval_input: The input to the evaluator. Expected to contain whatever inputs are needed for the _flow method
@@ -153,10 +174,11 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         llm_output = prompty_output_dict.get("llm_output", {})
 
         if isinstance(llm_output, dict):
-            success = llm_output.get("success", 0)
-            if isinstance(success, str):
-                success = 1 if success.upper() == "TRUE" else 0
-
+            success_value = llm_output.get("success", False)
+            if isinstance(success_value, str):
+                success = 1 if success_value.lower() == "true" else 0
+            else:
+                success = 1 if success_value else 0
             success_result = "pass" if success == 1 else "fail"
             reason = llm_output.get("explanation", "")
             return {
@@ -172,6 +194,9 @@ class _TaskCompletionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
                 f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
             }
-        if logger:
-            logger.warning("LLM output is not a dictionary, returning 0 for the success.")
-        return {self._result_key: 0}
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

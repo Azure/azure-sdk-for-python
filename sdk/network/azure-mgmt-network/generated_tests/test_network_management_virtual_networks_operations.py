@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.get(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -90,6 +90,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                         "location": "str",
                         "name": "str",
                         "provisioningState": "str",
+                        "recordTypes": "str",
                         "retentionPolicy": {"days": 0, "enabled": False},
                         "storageId": "str",
                         "tags": {"str": "str"},
@@ -185,6 +186,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                         "publicIpPrefixes": [{"id": "str"}],
                                         "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
+                                        "serviceGateway": {"id": "str"},
                                         "sku": {"name": "str"},
                                         "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
@@ -284,6 +286,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
+                                    "recordTypes": "str",
                                     "retentionPolicy": {"days": 0, "enabled": False},
                                     "storageId": "str",
                                     "tags": {"str": "str"},
@@ -459,6 +462,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -538,6 +542,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -620,6 +625,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                 "type": "str",
                                             }
                                         ],
+                                        "ipVersionType": "IPv4",
                                         "location": "str",
                                         "manualPrivateLinkServiceConnections": [
                                             {
@@ -663,6 +669,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                         "type": "str",
                                     },
                                     "privateLinkService": {
+                                        "accessMode": "str",
                                         "alias": "str",
                                         "autoApproval": {"subscriptions": ["str"]},
                                         "destinationIPAddress": "str",
@@ -743,6 +750,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -804,6 +812,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -929,6 +938,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1101,6 +1111,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1224,6 +1235,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                         "type": "str",
                                     }
                                 ],
+                                "ipVersionType": "IPv4",
                                 "location": "str",
                                 "manualPrivateLinkServiceConnections": [
                                     {
@@ -1411,6 +1423,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -1490,6 +1503,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -1616,6 +1630,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -1685,6 +1700,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                         "primary": bool,
                                         "privateEndpoint": ...,
                                         "privateLinkService": {
+                                            "accessMode": "str",
                                             "alias": "str",
                                             "autoApproval": {"subscriptions": ["str"]},
                                             "destinationIPAddress": "str",
@@ -1765,6 +1781,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1882,6 +1899,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -2058,6 +2076,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -2210,6 +2229,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                                 "service": "str",
                             }
                         ],
+                        "serviceGateway": {"id": "str"},
                         "sharingScope": "str",
                         "type": "str",
                     }
@@ -2265,7 +2285,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2278,7 +2298,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2288,7 +2308,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_virtual_networks_list_all(self, resource_group):
         response = self.client.virtual_networks.list_all(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2299,7 +2319,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
     def test_virtual_networks_list(self, resource_group):
         response = self.client.virtual_networks.list(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2312,7 +2332,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             virtual_network_name="str",
             ip_address="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2324,7 +2344,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.list_usage(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2336,7 +2356,7 @@ class TestNetworkManagementVirtualNetworksOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_networks.begin_list_ddos_protection_status(
             resource_group_name=resource_group.name,
             virtual_network_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
         result = [r for r in response]
         # please add some check logic here by yourself

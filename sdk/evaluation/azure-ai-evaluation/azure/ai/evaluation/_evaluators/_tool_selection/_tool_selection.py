@@ -7,6 +7,7 @@ import math
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._validators import ToolCallsValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
     ErrorBlame,
     ErrorCategory,
@@ -71,6 +72,8 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool selection score must be 0 or 1."
 
+    _validator: ValidatorInterface
+
     id = "azureai://built-in/evaluators/tool_selection"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
 
@@ -79,6 +82,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
         self.threshold = threshold
+
+        # Initialize input validator
+        self._validator = ToolCallsValidator(error_target=ErrorTarget.TOOL_SELECTION_EVALUATOR)
+
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
@@ -175,11 +182,19 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float]]
         """
-        # Format conversation history for cleaner evaluation
-        if "query" in eval_input:
-            eval_input["query"] = reformat_conversation_history(
-                eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        if eval_input.get("query") is None:
+            raise EvaluationException(
+                message=("Query is a required input to the Tool Selection evaluator."),
+                internal_message=("Query is a required input to the Tool Selection evaluator."),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
             )
+
+        # Format conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
@@ -224,10 +239,10 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Tool selection evaluator returned invalid output.",
+                message="Evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_SELECTION_EVALUATOR,
+                target=ErrorTarget.EVALUATE,
             )
 
     async def _real_call(self, **kwargs):
@@ -238,6 +253,9 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        # Validate input before processing
+        self._validator.validate_eval_input(kwargs)
+
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):

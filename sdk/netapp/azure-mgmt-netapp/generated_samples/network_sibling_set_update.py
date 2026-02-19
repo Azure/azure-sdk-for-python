@@ -37,12 +37,12 @@ def main():
             "networkFeatures": "Standard",
             "networkSiblingSetId": "9760acf5-4638-11e7-9bdb-020073ca3333",
             "networkSiblingSetStateId": "12345_44420.8001578125",
-            "subnetId": "/subscriptions/9760acf5-4638-11e7-9bdb-020073ca7778/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testVnet/subnets/testSubnet",
+            "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRP/providers/Microsoft.Network/virtualNetworks/testVnet/subnets/testSubnet",
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/NetworkSiblingSet_Update.json
+# x-ms-original-file: 2025-09-01-preview/NetworkSiblingSet_Update.json
 if __name__ == "__main__":
     main()

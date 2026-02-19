@@ -20,12 +20,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use-preview model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
 """
 
@@ -33,7 +33,7 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AgentReference, PromptAgentDefinition, ComputerUsePreviewTool
+from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTool
 
 # Import shared helper functions
 from computer_use_util import (
@@ -70,7 +70,7 @@ with (
     agent = project_client.agents.create_version(
         agent_name="ComputerUseAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
             instructions="""
             You are a computer automation assistant. 
             
@@ -101,7 +101,7 @@ with (
                 ],
             }
         ],
-        extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
         truncation="auto",
     )
 
@@ -151,7 +151,7 @@ with (
                     },
                 }
             ],
-            extra_body={"agent": AgentReference(name=agent.name).as_dict()},
+            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 

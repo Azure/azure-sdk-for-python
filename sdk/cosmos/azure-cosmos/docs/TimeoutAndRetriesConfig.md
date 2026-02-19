@@ -4,7 +4,7 @@
 
 The timeout options for the client can be changed from the default configurations with the options below. 
 These options can be passed in at the client constructor or on a per-request basis. These are:
-- `Client Timeout`: can be changed by passing the `timeout` option. Changes the value of the per-request client timeout. If not present,
+- `Client Timeout`: can be changed by passing the `timeout` option. Changes the value of the per-operation client timeout (operations like cross-partition queries can make multiple requests for instance - it would be considered as one query operation). If not present,
 the 'Connection Timeout' connectivity timeouts below will be used. `connection_timeout` must be smaller than your `timeout` to be used.
 - `Connection Timeout`: can be changed through `connection_timeout` option. Changes the value on the client's http transport timeout when
 connecting to the socket. Default value is 5s. 

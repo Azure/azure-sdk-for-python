@@ -73,7 +73,7 @@ async def create_client_with_custom_user_agent():
     async with CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent=custom_user_agent
+        user_agent_suffix=custom_user_agent
     ) as client:
         print(f'Async client created with custom user agent: {custom_user_agent}')
         print('This will appear as: [default-user-agent] {}'.format(custom_user_agent))
@@ -103,7 +103,7 @@ async def create_client_with_detailed_user_agent():
     async with CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent=detailed_user_agent
+        user_agent_suffix=detailed_user_agent
     ) as client:
         print(f'Async client created with detailed user agent: {detailed_user_agent}')
         print('This helps identify specific instances in diagnostics and logs')
@@ -146,7 +146,7 @@ async def demonstrate_user_agent_in_operations():
     async with CosmosClient(
         HOST,
         {'masterKey': MASTER_KEY},
-        user_agent=custom_suffix
+        user_agent_suffix=custom_suffix
     ) as client:
         try:
             # Create database
@@ -199,7 +199,7 @@ async def demonstrate_concurrent_operations_with_user_agents():
         async with CosmosClient(
             HOST,
             {'masterKey': MASTER_KEY},
-            user_agent=user_agent_suffix
+            user_agent_suffix=user_agent_suffix
         ) as client:
             db = await client.create_database_if_not_exists(id=DATABASE_ID)
             print(f'{operation_name} completed with user agent: {user_agent_suffix}')

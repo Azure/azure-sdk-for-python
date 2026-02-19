@@ -1,1 +1,0 @@
-The package has been deprecated. For more info, please see https://azure.microsoft.com/updates?id=azure-hdinsight-on-aks-retirement

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -28,23 +29,29 @@ USAGE:
 
 import os
 import time
-import json
-import tempfile
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
 from azure.ai.projects.models._enums import OperationState
-from azure.ai.projects.models._models import EvaluationComparisonRequest, EvaluationRunClusterInsightsRequest, Insight
+from azure.ai.projects.models._models import EvaluationRunClusterInsightsRequest, Insight, InsightModelConfiguration
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
-from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
+from openai.types.evals.create_eval_jsonl_run_data_source_param import (
+    CreateEvalJSONLRunDataSourceParam,
+    SourceFileContent,
+    SourceFileContentContent,
+)
 from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+
+if not model_deployment_name:
+    raise ValueError("AZURE_AI_MODEL_DEPLOYMENT_NAME environment variable is not set")
 
 with (
     DefaultAzureCredential() as credential,
@@ -61,7 +68,7 @@ with (
         TestingCriterionLabelModel(
             type="label_model",
             name="sentiment_analysis",
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=model_deployment_name,
             input=[
                 {
                     "role": "developer",
@@ -80,36 +87,23 @@ with (
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
-    # Create and upload JSONL data as a dataset
-    eval_data = [
-        {"item": {"query": "I love programming!"}},
-        {"item": {"query": "I hate bugs."}},
-        {"item": {"query": "The weather is nice today."}},
-        {"item": {"query": "This is the worst movie ever."}},
-        {"item": {"query": "Python is an amazing language."}},
-    ]
-
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".jsonl", delete=False) as f:
-        for item in eval_data:
-            f.write(json.dumps(item) + "\n")
-        temp_file_path = f.name
-
-    dataset = project_client.datasets.upload_file(
-        name="sentiment-eval-data",
-        version=str(int(time.time())),
-        file_path=temp_file_path,
-    )
-    os.unlink(temp_file_path)
-    print(f"Dataset created (id: {dataset.id}, name: {dataset.name}, version: {dataset.version})")
-
-    if not dataset.id:
-        raise ValueError("Dataset ID is None")
-
-    # Create an eval run using the uploaded dataset
+    # Create an eval run using inline data
     eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
-        name="Eval Run",
-        data_source=CreateEvalJSONLRunDataSourceParam(source=SourceFileID(id=dataset.id, type="file_id"), type="jsonl"),
+        name="Eval Run with Inline Data",
+        data_source=CreateEvalJSONLRunDataSourceParam(
+            type="jsonl",
+            source=SourceFileContent(
+                type="file_content",
+                content=[
+                    SourceFileContentContent(item={"query": "I love programming!"}),
+                    SourceFileContentContent(item={"query": "I hate bugs."}),
+                    SourceFileContentContent(item={"query": "The weather is nice today."}),
+                    SourceFileContentContent(item={"query": "This is the worst movie ever."}),
+                    SourceFileContentContent(item={"query": "Python is an amazing language."}),
+                ],
+            ),
+        ),
     )
     print(f"Evaluation run created (id: {eval_run.id})")
 
@@ -127,13 +121,17 @@ with (
         clusterInsight = project_client.insights.generate(
             Insight(
                 display_name="Cluster analysis",
-                request=EvaluationRunClusterInsightsRequest(eval_id=eval_object.id, run_ids=[eval_run.id]),
+                request=EvaluationRunClusterInsightsRequest(
+                    eval_id=eval_object.id,
+                    run_ids=[eval_run.id],
+                    model_configuration=InsightModelConfiguration(model_deployment_name=model_deployment_name),
+                ),
             )
         )
         print(f"Started insight generation (id: {clusterInsight.id})")
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            print(f"Waiting for insight to be generated...")
+            print("Waiting for insight to be generated...")
             clusterInsight = project_client.insights.get(id=clusterInsight.id)
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)
@@ -141,12 +139,11 @@ with (
         if clusterInsight.state == OperationState.SUCCEEDED:
             print("\n✓ Cluster insights generated successfully!")
             pprint(clusterInsight)
+        else:
+            print("\n✗ Cluster insight generation failed.")
 
     else:
         print("\n✗ Evaluation run failed. Cannot generate cluster insights.")
-
-    project_client.datasets.delete(name=dataset.id, version=dataset.version)
-    print("Dataset deleted")
 
     openai_client.evals.delete(eval_id=eval_object.id)
     print("Evaluation deleted")

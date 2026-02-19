@@ -25,7 +25,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     async def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -35,7 +35,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
     @recorded_by_proxy_async
     async def test_web_application_firewall_policies_list_all(self, resource_group):
         response = self.client.web_application_firewall_policies.list_all(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
         response = await self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -314,6 +314,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -384,6 +385,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "ipVersionType": "IPv4",
                                                                     "location": "str",
                                                                     "manualPrivateLinkServiceConnections": [
                                                                         {
@@ -427,6 +429,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "type": "str",
                                                                 },
                                                                 "privateLinkService": {
+                                                                    "accessMode": "str",
                                                                     "alias": "str",
                                                                     "autoApproval": {"subscriptions": ["str"]},
                                                                     "destinationIPAddress": "str",
@@ -515,6 +518,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "ipVersionType": "IPv4",
                                                                                 "location": "str",
                                                                                 "manualPrivateLinkServiceConnections": [
                                                                                     {
@@ -706,6 +710,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "ipVersionType": "IPv4",
                                                             "location": "str",
                                                             "manualPrivateLinkServiceConnections": [
                                                                 {
@@ -828,6 +833,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -900,6 +906,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "primary": bool,
                                                                     "privateEndpoint": ...,
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -1138,6 +1145,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -1159,6 +1167,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                 "publicIpPrefixes": [{"id": "str"}],
                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
+                                                "serviceGateway": {"id": "str"},
                                                 "sku": {"name": "str"},
                                                 "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
@@ -1258,6 +1267,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -1363,6 +1373,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -1433,6 +1444,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "ipVersionType": "IPv4",
                                                             "location": "str",
                                                             "manualPrivateLinkServiceConnections": [
                                                                 {
@@ -1476,6 +1488,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "type": "str",
                                                         },
                                                         "privateLinkService": {
+                                                            "accessMode": "str",
                                                             "alias": "str",
                                                             "autoApproval": {"subscriptions": ["str"]},
                                                             "destinationIPAddress": "str",
@@ -1559,6 +1572,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -1625,6 +1639,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -1755,6 +1770,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -1880,6 +1896,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "ipVersionType": "IPv4",
                                                     "location": "str",
                                                     "manualPrivateLinkServiceConnections": [
                                                         {
@@ -2002,6 +2019,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -2074,6 +2092,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "primary": bool,
                                                             "privateEndpoint": ...,
                                                             "privateLinkService": {
+                                                                "accessMode": "str",
                                                                 "alias": "str",
                                                                 "autoApproval": {"subscriptions": ["str"]},
                                                                 "destinationIPAddress": "str",
@@ -2159,6 +2178,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -2287,6 +2307,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         {"id": "str"}
                                                                                     ],
                                                                                     "resourceGuid": "str",
+                                                                                    "serviceGateway": {"id": "str"},
                                                                                     "sku": {"name": "str"},
                                                                                     "sourceVirtualNetwork": {
                                                                                         "id": "str"
@@ -2443,6 +2464,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -2613,6 +2635,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -2695,6 +2718,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "ipVersionType": "IPv4",
                                                                                 "location": "str",
                                                                                 "manualPrivateLinkServiceConnections": [
                                                                                     {
@@ -2738,6 +2762,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "type": "str",
                                                                             },
                                                                             "privateLinkService": {
+                                                                                "accessMode": "str",
                                                                                 "alias": "str",
                                                                                 "autoApproval": {
                                                                                     "subscriptions": ["str"]
@@ -2817,6 +2842,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "ipVersionType": "IPv4",
                                                                                             "location": "str",
                                                                                             "manualPrivateLinkServiceConnections": [
                                                                                                 {
@@ -2982,6 +3008,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -3120,6 +3147,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                             "location": "str",
                                                                                             "name": "str",
                                                                                             "provisioningState": "str",
+                                                                                            "recordTypes": "str",
                                                                                             "retentionPolicy": {
                                                                                                 "days": 0,
                                                                                                 "enabled": False,
@@ -3202,6 +3230,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "primary": bool,
                                                                                 "privateEndpoint": ...,
                                                                                 "privateLinkService": {
+                                                                                    "accessMode": "str",
                                                                                     "alias": "str",
                                                                                     "autoApproval": {
                                                                                         "subscriptions": ["str"]
@@ -3389,6 +3418,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "service": "str",
                                                                     }
                                                                 ],
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sharingScope": "str",
                                                                 "type": "str",
                                                             },
@@ -3410,6 +3440,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -3510,6 +3541,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -3618,6 +3650,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -3691,6 +3724,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "ipVersionType": "IPv4",
                                                                         "location": "str",
                                                                         "manualPrivateLinkServiceConnections": [
                                                                             {
@@ -3734,6 +3768,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "type": "str",
                                                                     },
                                                                     "privateLinkService": {
+                                                                        "accessMode": "str",
                                                                         "alias": "str",
                                                                         "autoApproval": {"subscriptions": ["str"]},
                                                                         "destinationIPAddress": "str",
@@ -3805,6 +3840,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "ipVersionType": "IPv4",
                                                                                     "location": "str",
                                                                                     "manualPrivateLinkServiceConnections": [
                                                                                         {
@@ -3965,6 +4001,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "ipVersionType": "IPv4",
                                                                 "location": "str",
                                                                 "manualPrivateLinkServiceConnections": [
                                                                     {
@@ -4095,6 +4132,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -4169,6 +4207,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "primary": bool,
                                                                         "privateEndpoint": ...,
                                                                         "privateLinkService": {
+                                                                            "accessMode": "str",
                                                                             "alias": "str",
                                                                             "autoApproval": {"subscriptions": ["str"]},
                                                                             "destinationIPAddress": "str",
@@ -4352,6 +4391,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -4417,6 +4457,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                         ],
                         "backendSettingsCollection": [
                             {
+                                "enableL4ClientIpPreservation": bool,
                                 "etag": "str",
                                 "hostName": "str",
                                 "id": "str",
@@ -4435,6 +4476,18 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                         "defaultPredefinedSslPolicy": "str",
                         "enableFips": bool,
                         "enableHttp2": bool,
+                        "entraJWTValidationConfigs": [
+                            {
+                                "audiences": ["str"],
+                                "clientId": "str",
+                                "etag": "str",
+                                "id": "str",
+                                "name": "str",
+                                "provisioningState": "str",
+                                "tenantId": "str",
+                                "unAuthorizedRequestAction": "str",
+                            }
+                        ],
                         "etag": "str",
                         "firewallPolicy": {"id": "str"},
                         "forceFirewallPolicyAssociation": bool,
@@ -4571,6 +4624,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                             "type": "str",
                                         }
                                     ],
+                                    "ipVersionType": "IPv4",
                                     "location": "str",
                                     "manualPrivateLinkServiceConnections": [
                                         {
@@ -4867,6 +4921,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -5025,6 +5080,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "service": "str",
                                                                     }
                                                                 ],
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sharingScope": "str",
                                                                 "type": "str",
                                                             },
@@ -5046,6 +5102,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -5145,6 +5202,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -5253,6 +5311,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -5408,6 +5467,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -5587,6 +5647,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         "location": "str",
                                                                                         "name": "str",
                                                                                         "provisioningState": "str",
+                                                                                        "recordTypes": "str",
                                                                                         "retentionPolicy": {
                                                                                             "days": 0,
                                                                                             "enabled": False,
@@ -5753,6 +5814,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "service": "str",
                                                                                 }
                                                                             ],
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sharingScope": "str",
                                                                             "type": "str",
                                                                         },
@@ -5774,6 +5836,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -5885,6 +5948,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                         {"id": "str"}
                                                                                     ],
                                                                                     "resourceGuid": "str",
+                                                                                    "serviceGateway": {"id": "str"},
                                                                                     "sku": {"name": "str"},
                                                                                     "sourceVirtualNetwork": {
                                                                                         "id": "str"
@@ -5995,6 +6059,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -6155,6 +6220,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "service": "str",
                                                                         }
                                                                     ],
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sharingScope": "str",
                                                                     "type": "str",
                                                                 },
@@ -6264,6 +6330,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -6407,6 +6474,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -6528,6 +6596,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     }
@@ -6539,6 +6608,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                             "primary": bool,
                                             "privateEndpoint": ...,
                                             "privateLinkService": {
+                                                "accessMode": "str",
                                                 "alias": "str",
                                                 "autoApproval": {"subscriptions": ["str"]},
                                                 "destinationIPAddress": "str",
@@ -6641,6 +6711,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -6749,6 +6820,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -6907,6 +6979,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "service": "str",
                                                                 }
                                                             ],
+                                                            "serviceGateway": {"id": "str"},
                                                             "sharingScope": "str",
                                                             "type": "str",
                                                         },
@@ -7078,6 +7151,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "location": "str",
                                                                                 "name": "str",
                                                                                 "provisioningState": "str",
+                                                                                "recordTypes": "str",
                                                                                 "retentionPolicy": {
                                                                                     "days": 0,
                                                                                     "enabled": False,
@@ -7238,6 +7312,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "service": "str",
                                                                         }
                                                                     ],
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sharingScope": "str",
                                                                     "type": "str",
                                                                 },
@@ -7259,6 +7334,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -7362,6 +7438,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -7470,6 +7547,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "location": "str",
                                                                         "name": "str",
                                                                         "provisioningState": "str",
+                                                                        "recordTypes": "str",
                                                                         "retentionPolicy": {
                                                                             "days": 0,
                                                                             "enabled": False,
@@ -7628,6 +7706,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "service": "str",
                                                                 }
                                                             ],
+                                                            "serviceGateway": {"id": "str"},
                                                             "sharingScope": "str",
                                                             "type": "str",
                                                         },
@@ -7840,6 +7919,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -8002,6 +8082,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "service": "str",
                                                                             }
                                                                         ],
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sharingScope": "str",
                                                                         "type": "str",
                                                                     },
@@ -8023,6 +8104,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -8128,6 +8210,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -8236,6 +8319,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -8394,6 +8478,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "service": "str",
                                                                     }
                                                                 ],
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sharingScope": "str",
                                                                 "type": "str",
                                                             },
@@ -8665,6 +8750,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                     "location": "str",
                                                                                     "name": "str",
                                                                                     "provisioningState": "str",
+                                                                                    "recordTypes": "str",
                                                                                     "retentionPolicy": {
                                                                                         "days": 0,
                                                                                         "enabled": False,
@@ -8827,6 +8913,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "service": "str",
                                                                             }
                                                                         ],
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sharingScope": "str",
                                                                         "type": "str",
                                                                     },
@@ -8848,6 +8935,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -8952,6 +9040,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -9060,6 +9149,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "location": "str",
                                                                             "name": "str",
                                                                             "provisioningState": "str",
+                                                                            "recordTypes": "str",
                                                                             "retentionPolicy": {
                                                                                 "days": 0,
                                                                                 "enabled": False,
@@ -9218,6 +9308,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "service": "str",
                                                                     }
                                                                 ],
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sharingScope": "str",
                                                                 "type": "str",
                                                             },
@@ -9342,6 +9433,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -9447,6 +9539,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -9633,6 +9726,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                     "publicIpPrefixes": [{"id": "str"}],
                                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                                     "resourceGuid": "str",
+                                                                    "serviceGateway": {"id": "str"},
                                                                     "sku": {"name": "str"},
                                                                     "sourceVirtualNetwork": {"id": "str"},
                                                                     "subnets": [{"id": "str"}],
@@ -9717,6 +9811,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                                 "resourceGuid": "str",
+                                                                                "serviceGateway": {"id": "str"},
                                                                                 "sku": {"name": "str"},
                                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                                 "subnets": [{"id": "str"}],
@@ -9773,6 +9868,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                     "primary": bool,
                                                     "privateEndpoint": ...,
                                                     "privateLinkService": {
+                                                        "accessMode": "str",
                                                         "alias": "str",
                                                         "autoApproval": {"subscriptions": ["str"]},
                                                         "destinationIPAddress": "str",
@@ -9853,6 +9949,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                         "publicIpPrefixes": [{"id": "str"}],
                                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                                         "resourceGuid": "str",
+                                                                        "serviceGateway": {"id": "str"},
                                                                         "sku": {"name": "str"},
                                                                         "sourceVirtualNetwork": {"id": "str"},
                                                                         "subnets": [{"id": "str"}],
@@ -9973,6 +10070,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -10152,6 +10250,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                                             "publicIpPrefixes": [{"id": "str"}],
                                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                                             "resourceGuid": "str",
+                                                                            "serviceGateway": {"id": "str"},
                                                                             "sku": {"name": "str"},
                                                                             "sourceVirtualNetwork": {"id": "str"},
                                                                             "subnets": [{"id": "str"}],
@@ -10335,6 +10434,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                                                 "service": "str",
                                             }
                                         ],
+                                        "serviceGateway": {"id": "str"},
                                         "sharingScope": "str",
                                         "type": "str",
                                     },
@@ -10374,6 +10474,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                         ],
                         "probes": [
                             {
+                                "enableProbeProxyProtocolHeader": bool,
                                 "etag": "str",
                                 "host": "str",
                                 "id": "str",
@@ -10413,6 +10514,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                             {
                                 "backendAddressPool": {"id": "str"},
                                 "backendHttpSettings": {"id": "str"},
+                                "entraJWTValidationConfig": {"id": "str"},
                                 "etag": "str",
                                 "httpListener": {"id": "str"},
                                 "id": "str",
@@ -10512,6 +10614,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                         "sslProfiles": [
                             {
                                 "clientAuthConfiguration": {
+                                    "verifyClientAuthMode": "str",
                                     "verifyClientCertIssuerDN": bool,
                                     "verifyClientRevocation": "str",
                                 },
@@ -10674,6 +10777,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                 "name": "str",
                 "pathBasedRules": [{"id": "str"}],
                 "policySettings": {
+                    "captchaCookieExpirationInMins": 0,
                     "customBlockResponseBody": "str",
                     "customBlockResponseStatusCode": 0,
                     "fileUploadEnforcement": True,
@@ -10697,7 +10801,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -10710,7 +10814,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperationsAsync(AzureMg
             await self.client.web_application_firewall_policies.begin_delete(
                 resource_group_name=resource_group.name,
                 policy_name="str",
-                api_version="2024-10-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

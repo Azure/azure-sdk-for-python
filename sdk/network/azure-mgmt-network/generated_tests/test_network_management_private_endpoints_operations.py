@@ -25,7 +25,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
         response = self.client.private_endpoints.begin_delete(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
         response = self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -77,6 +77,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                         "type": "str",
                     }
                 ],
+                "ipVersionType": "IPv4",
                 "location": "str",
                 "manualPrivateLinkServiceConnections": [
                     {
@@ -356,6 +357,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -511,6 +513,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -532,6 +535,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                         "publicIpPrefixes": [{"id": "str"}],
                                         "publicIpPrefixesV6": [{"id": "str"}],
                                         "resourceGuid": "str",
+                                        "serviceGateway": {"id": "str"},
                                         "sku": {"name": "str"},
                                         "sourceVirtualNetwork": {"id": "str"},
                                         "subnets": [{"id": "str"}],
@@ -631,6 +635,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -732,6 +737,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "location": "str",
                                                 "name": "str",
                                                 "provisioningState": "str",
+                                                "recordTypes": "str",
                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                 "storageId": "str",
                                                 "tags": {"str": "str"},
@@ -887,6 +893,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                             "service": "str",
                                         }
                                     ],
+                                    "serviceGateway": {"id": "str"},
                                     "sharingScope": "str",
                                     "type": "str",
                                 },
@@ -1057,6 +1064,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                                     "location": "str",
                                                                     "name": "str",
                                                                     "provisioningState": "str",
+                                                                    "recordTypes": "str",
                                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                                     "storageId": "str",
                                                                     "tags": {"str": "str"},
@@ -1212,6 +1220,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                                 "service": "str",
                                                             }
                                                         ],
+                                                        "serviceGateway": {"id": "str"},
                                                         "sharingScope": "str",
                                                         "type": "str",
                                                     },
@@ -1233,6 +1242,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -1333,6 +1343,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                                 "publicIpPrefixes": [{"id": "str"}],
                                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                                 "resourceGuid": "str",
+                                                                "serviceGateway": {"id": "str"},
                                                                 "sku": {"name": "str"},
                                                                 "sourceVirtualNetwork": {"id": "str"},
                                                                 "subnets": [{"id": "str"}],
@@ -1438,6 +1449,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -1593,6 +1605,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -1700,6 +1713,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                     "location": "str",
                                     "name": "str",
                                     "provisioningState": "str",
+                                    "recordTypes": "str",
                                     "retentionPolicy": {"days": 0, "enabled": False},
                                     "storageId": "str",
                                     "tags": {"str": "str"},
@@ -1843,6 +1857,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -1960,6 +1975,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                             "service": "str",
                                         }
                                     ],
+                                    "serviceGateway": {"id": "str"},
                                     "sharingScope": "str",
                                     "type": "str",
                                 }
@@ -1971,6 +1987,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                         "primary": bool,
                         "privateEndpoint": ...,
                         "privateLinkService": {
+                            "accessMode": "str",
                             "alias": "str",
                             "autoApproval": {"subscriptions": ["str"]},
                             "destinationIPAddress": "str",
@@ -2070,6 +2087,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -2175,6 +2193,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -2330,6 +2349,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "service": "str",
                                             }
                                         ],
+                                        "serviceGateway": {"id": "str"},
                                         "sharingScope": "str",
                                         "type": "str",
                                     },
@@ -2495,6 +2515,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "location": "str",
                                                             "name": "str",
                                                             "provisioningState": "str",
+                                                            "recordTypes": "str",
                                                             "retentionPolicy": {"days": 0, "enabled": False},
                                                             "storageId": "str",
                                                             "tags": {"str": "str"},
@@ -2650,6 +2671,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "service": "str",
                                                     }
                                                 ],
+                                                "serviceGateway": {"id": "str"},
                                                 "sharingScope": "str",
                                                 "type": "str",
                                             },
@@ -2671,6 +2693,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                             "publicIpPrefixes": [{"id": "str"}],
                                             "publicIpPrefixesV6": [{"id": "str"}],
                                             "resourceGuid": "str",
+                                            "serviceGateway": {"id": "str"},
                                             "sku": {"name": "str"},
                                             "sourceVirtualNetwork": {"id": "str"},
                                             "subnets": [{"id": "str"}],
@@ -2771,6 +2794,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -2876,6 +2900,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "location": "str",
                                                     "name": "str",
                                                     "provisioningState": "str",
+                                                    "recordTypes": "str",
                                                     "retentionPolicy": {"days": 0, "enabled": False},
                                                     "storageId": "str",
                                                     "tags": {"str": "str"},
@@ -3031,6 +3056,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "service": "str",
                                             }
                                         ],
+                                        "serviceGateway": {"id": "str"},
                                         "sharingScope": "str",
                                         "type": "str",
                                     },
@@ -3235,6 +3261,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -3390,6 +3417,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -3411,6 +3439,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "publicIpPrefixes": [{"id": "str"}],
                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
+                                                "serviceGateway": {"id": "str"},
                                                 "sku": {"name": "str"},
                                                 "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
@@ -3511,6 +3540,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -3616,6 +3646,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -3771,6 +3802,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -4023,6 +4055,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                                 "location": "str",
                                                                 "name": "str",
                                                                 "provisioningState": "str",
+                                                                "recordTypes": "str",
                                                                 "retentionPolicy": {"days": 0, "enabled": False},
                                                                 "storageId": "str",
                                                                 "tags": {"str": "str"},
@@ -4178,6 +4211,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "service": "str",
                                                         }
                                                     ],
+                                                    "serviceGateway": {"id": "str"},
                                                     "sharingScope": "str",
                                                     "type": "str",
                                                 },
@@ -4199,6 +4233,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "publicIpPrefixes": [{"id": "str"}],
                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
+                                                "serviceGateway": {"id": "str"},
                                                 "sku": {"name": "str"},
                                                 "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
@@ -4298,6 +4333,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -4403,6 +4439,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "location": "str",
                                                         "name": "str",
                                                         "provisioningState": "str",
+                                                        "recordTypes": "str",
                                                         "retentionPolicy": {"days": 0, "enabled": False},
                                                         "storageId": "str",
                                                         "tags": {"str": "str"},
@@ -4558,6 +4595,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "service": "str",
                                                 }
                                             ],
+                                            "serviceGateway": {"id": "str"},
                                             "sharingScope": "str",
                                             "type": "str",
                                         },
@@ -4679,6 +4717,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                     "publicIpPrefixes": [{"id": "str"}],
                                     "publicIpPrefixesV6": [{"id": "str"}],
                                     "resourceGuid": "str",
+                                    "serviceGateway": {"id": "str"},
                                     "sku": {"name": "str"},
                                     "sourceVirtualNetwork": {"id": "str"},
                                     "subnets": [{"id": "str"}],
@@ -4778,6 +4817,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                 "location": "str",
                                 "name": "str",
                                 "provisioningState": "str",
+                                "recordTypes": "str",
                                 "retentionPolicy": {"days": 0, "enabled": False},
                                 "storageId": "str",
                                 "tags": {"str": "str"},
@@ -4953,6 +4993,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                 "publicIpPrefixes": [{"id": "str"}],
                                                 "publicIpPrefixesV6": [{"id": "str"}],
                                                 "resourceGuid": "str",
+                                                "serviceGateway": {"id": "str"},
                                                 "sku": {"name": "str"},
                                                 "sourceVirtualNetwork": {"id": "str"},
                                                 "subnets": [{"id": "str"}],
@@ -5032,6 +5073,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                             "publicIpPrefixes": [{"id": "str"}],
                                                             "publicIpPrefixesV6": [{"id": "str"}],
                                                             "resourceGuid": "str",
+                                                            "serviceGateway": {"id": "str"},
                                                             "sku": {"name": "str"},
                                                             "sourceVirtualNetwork": {"id": "str"},
                                                             "subnets": [{"id": "str"}],
@@ -5088,6 +5130,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                 "primary": bool,
                                 "privateEndpoint": ...,
                                 "privateLinkService": {
+                                    "accessMode": "str",
                                     "alias": "str",
                                     "autoApproval": {"subscriptions": ["str"]},
                                     "destinationIPAddress": "str",
@@ -5168,6 +5211,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                     "publicIpPrefixes": [{"id": "str"}],
                                                     "publicIpPrefixesV6": [{"id": "str"}],
                                                     "resourceGuid": "str",
+                                                    "serviceGateway": {"id": "str"},
                                                     "sku": {"name": "str"},
                                                     "sourceVirtualNetwork": {"id": "str"},
                                                     "subnets": [{"id": "str"}],
@@ -5285,6 +5329,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -5455,6 +5500,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                                                         "publicIpPrefixes": [{"id": "str"}],
                                                         "publicIpPrefixesV6": [{"id": "str"}],
                                                         "resourceGuid": "str",
+                                                        "serviceGateway": {"id": "str"},
                                                         "sku": {"name": "str"},
                                                         "sourceVirtualNetwork": {"id": "str"},
                                                         "subnets": [{"id": "str"}],
@@ -5638,13 +5684,14 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
                             "service": "str",
                         }
                     ],
+                    "serviceGateway": {"id": "str"},
                     "sharingScope": "str",
                     "type": "str",
                 },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5655,7 +5702,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
     def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -5665,7 +5712,7 @@ class TestNetworkManagementPrivateEndpointsOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_private_endpoints_list_by_subscription(self, resource_group):
         response = self.client.private_endpoints.list_by_subscription(
-            api_version="2024-10-01",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -24,7 +24,7 @@ class TestMySQLManagementReplicasOperations(AzureMgmtRecordedTestCase):
         response = self.client.replicas.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

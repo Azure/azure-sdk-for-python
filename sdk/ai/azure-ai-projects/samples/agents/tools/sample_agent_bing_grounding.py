@@ -7,11 +7,11 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Bing grounding capabilities
-    using the BingGroundingAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the BingGroundingTool and synchronous Azure AI Projects client. The agent can search
     the web for current information and provide grounded responses with URL citations.
 
     The sample shows:
-    - Creating an agent with BingGroundingAgentTool configured for web search
+    - Creating an agent with BingGroundingTool configured for web search
     - Making requests that require current information from the web
     - Extracting URL citations from the response annotations
     - Processing grounded responses with source citations
@@ -22,7 +22,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -38,7 +38,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingGroundingAgentTool,
+    BingGroundingTool,
     BingGroundingSearchToolParameters,
     BingGroundingSearchConfiguration,
 )
@@ -54,7 +54,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = BingGroundingAgentTool(
+    tool = BingGroundingTool(
         bing_grounding=BingGroundingSearchToolParameters(
             search_configurations=[
                 BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])

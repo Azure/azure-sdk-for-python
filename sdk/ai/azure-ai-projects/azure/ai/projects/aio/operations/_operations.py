@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,7 +35,6 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
     build_agents_create_from_manifest_request,
     build_agents_create_request,
@@ -47,6 +46,7 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
+    build_agents_stream_agent_container_logs_request,
     build_agents_update_from_manifest_request,
     build_agents_update_request,
     build_connections_get_request,
@@ -88,7 +88,6 @@ from ...operations._operations import (
     build_memory_stores_delete_request,
     build_memory_stores_delete_scope_request,
     build_memory_stores_get_request,
-    build_memory_stores_get_update_result_request,
     build_memory_stores_list_request,
     build_memory_stores_search_memories_request,
     build_memory_stores_update_memories_request,
@@ -130,18 +129,13 @@ class AgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def get(self, agent_name: str, **kwargs: Any) -> _models.AgentObject:
+    async def get(self, agent_name: str, **kwargs: Any) -> _models.AgentDetails:
         """Retrieves the agent.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -155,7 +149,7 @@ class AgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         _request = build_agents_get_request(
             agent_name=agent_name,
@@ -191,7 +185,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -208,7 +202,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :keyword name: The unique name that identifies the agent. Name can be used to
@@ -233,13 +227,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.AgentObject:
+    async def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Required.
@@ -247,15 +243,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Required.
@@ -263,17 +259,12 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -283,7 +274,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates the agent.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -307,8 +298,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -323,7 +314,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -374,7 +365,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -391,7 +382,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -412,15 +403,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -431,15 +422,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -450,17 +441,12 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update(
         self,
         agent_name: str,
@@ -470,7 +456,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent by adding a new version if there are any changes to the agent definition.
         If no changes, returns the existing agent version.
 
@@ -490,8 +476,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -506,7 +492,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if definition is _Unset:
@@ -556,7 +542,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -574,7 +560,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :keyword name: The unique name that identifies the agent. Name can be used to
@@ -601,15 +587,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_from_manifest(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :param body: Required.
@@ -617,15 +603,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_from_manifest(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :param body: Required.
@@ -633,17 +619,12 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_from_manifest(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -654,7 +635,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Creates an agent from a manifest.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -680,8 +661,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -696,7 +677,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -755,7 +736,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -773,7 +754,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -797,15 +778,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -817,15 +798,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -837,17 +818,12 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update_from_manifest(
         self,
         agent_name: str,
@@ -858,7 +834,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentObject:
+    ) -> _models.AgentDetails:
         """Updates the agent from a manifest by adding a new version if there are any changes to the agent
         definition.
         If no changes, returns the existing agent version.
@@ -881,8 +857,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentObject. The AgentObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentObject
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -897,7 +873,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if manifest_id is _Unset:
@@ -954,7 +930,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentObject, response.json())
+            deserialized = _deserialize(_models.AgentDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -962,11 +938,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, agent_name: str, **kwargs: Any) -> _models.DeleteAgentResponse:
         """Deletes an agent.
 
@@ -1031,20 +1002,15 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "kind", "limit", "order", "after", "before", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
         kind: Optional[Union[str, _models.AgentKind]] = None,
         limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentObject"]:
+    ) -> AsyncItemPaged["_models.AgentDetails"]:
         """Returns the list of all agents.
 
         :keyword kind: Filter agents by kind. If not provided, all agents are returned. Known values
@@ -1056,23 +1022,22 @@ class AgentsOperations:
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of AgentObject
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentObject]
+        :return: An iterator like instance of AgentDetails
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1102,7 +1067,7 @@ class AgentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentObject], deserialized.get("data", []))
+            list_of_elem = _deserialize(List[_models.AgentDetails], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -1138,7 +1103,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1163,15 +1128,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_version(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1186,15 +1151,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_version(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1209,17 +1174,12 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_version(
         self,
         agent_name: str,
@@ -1229,7 +1189,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1253,8 +1213,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1269,7 +1229,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if definition is _Unset:
@@ -1319,7 +1279,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentVersionObject, response.json())
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1337,7 +1297,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1364,15 +1324,15 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_version_from_manifest(
         self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1387,15 +1347,15 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create_version_from_manifest(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1410,17 +1370,12 @@ class AgentsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_version_from_manifest(
         self,
         agent_name: str,
@@ -1431,7 +1386,7 @@ class AgentsOperations:
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.AgentVersionObject:
+    ) -> _models.AgentVersionDetails:
         """Create a new agent version from a manifest.
 
         :param agent_name: The unique name that identifies the agent. Name can be used to
@@ -1457,8 +1412,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1473,7 +1428,7 @@ class AgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if manifest_id is _Unset:
@@ -1530,7 +1485,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentVersionObject, response.json())
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1538,20 +1493,15 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionObject:
+    async def get_version(self, agent_name: str, agent_version: str, **kwargs: Any) -> _models.AgentVersionDetails:
         """Retrieves a specific version of an agent.
 
         :param agent_name: The name of the agent to retrieve. Required.
         :type agent_name: str
         :param agent_version: The version of the agent to retrieve. Required.
         :type agent_version: str
-        :return: AgentVersionObject. The AgentVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionObject
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1565,7 +1515,7 @@ class AgentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AgentVersionObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
 
         _request = build_agents_get_version_request(
             agent_name=agent_name,
@@ -1602,7 +1552,7 @@ class AgentsOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.AgentVersionObject, response.json())
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1610,11 +1560,6 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "agent_name", "agent_version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete_version(
         self, agent_name: str, agent_version: str, **kwargs: Any
     ) -> _models.DeleteAgentVersionResponse:
@@ -1685,22 +1630,15 @@ class AgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "agent_name", "limit", "order", "after", "before", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_versions(
         self,
         agent_name: str,
         *,
         limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentVersionObject"]:
+    ) -> AsyncItemPaged["_models.AgentVersionDetails"]:
         """Returns the list of versions of an agent.
 
         :param agent_name: The name of the agent to retrieve versions for. Required.
@@ -1711,23 +1649,22 @@ class AgentsOperations:
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of AgentVersionObject
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentVersionObject]
+        :return: An iterator like instance of AgentVersionDetails
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentVersionDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AgentVersionObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.AgentVersionDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1757,7 +1694,7 @@ class AgentsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.AgentVersionObject], deserialized.get("data", []))
+            list_of_elem = _deserialize(List[_models.AgentVersionDetails], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -1782,6 +1719,106 @@ class AgentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def stream_agent_container_logs(
+        self,
+        agent_name: str,
+        agent_version: str,
+        *,
+        kind: Optional[Union[str, _models.ContainerLogKind]] = None,
+        replica_name: Optional[str] = None,
+        tail: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Container log entry streamed from the container as text chunks.
+        Each chunk is a UTF-8 string that may be either a plain text log line
+        or a JSON-formatted log entry, depending on the type of container log being streamed.
+        Clients should treat each chunk as opaque text and, if needed, attempt
+        to parse it as JSON based on their logging requirements.
+
+        For system logs, the format is JSON with the following structure:
+        {"TimeStamp":"2025-12-15T16:51:33Z","Type":"Normal","ContainerAppName":null,"RevisionName":null,"ReplicaName":null,"Msg":"Connecting
+        to the events
+        collector...","Reason":"StartingGettingEvents","EventSource":"ContainerAppController","Count":1}
+        {"TimeStamp":"2025-12-15T16:51:34Z","Type":"Normal","ContainerAppName":null,"RevisionName":null,"ReplicaName":null,"Msg":"Successfully
+        connected to events
+        server","Reason":"ConnectedToEventsServer","EventSource":"ContainerAppController","Count":1}
+
+        For console logs, the format is plain text as emitted by the container's stdout/stderr.
+        2025-12-15T08:43:48.72656  Connecting to the container 'agent-container'...
+        2025-12-15T08:43:48.75451  Successfully Connected to container: 'agent-container' [Revision:
+        'je90fe655aa742ef9a188b9fd14d6764--7tca06b', Replica:
+        'je90fe655aa742ef9a188b9fd14d6764--7tca06b-6898b9c89f-mpkjc']
+        2025-12-15T08:33:59.0671054Z stdout F INFO:     127.0.0.1:42588 - "GET /readiness HTTP/1.1" 200
+        OK
+        2025-12-15T08:34:29.0649033Z stdout F INFO:     127.0.0.1:60246 - "GET /readiness HTTP/1.1" 200
+        OK
+        2025-12-15T08:34:59.0644467Z stdout F INFO:     127.0.0.1:43994 - "GET /readiness HTTP/1.1" 200
+        OK.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param agent_version: The version of the agent. Required.
+        :type agent_version: str
+        :keyword kind: console returns container stdout/stderr, system returns container app event
+         stream. defaults to console. Known values are: "console" and "system". Default value is None.
+        :paramtype kind: str or ~azure.ai.projects.models.ContainerLogKind
+        :keyword replica_name: When omitted, the server chooses the first replica for console logs.
+         Required to target a specific replica. Default value is None.
+        :paramtype replica_name: str
+        :keyword tail: Number of trailing lines returned. Enforced to 1-300. Defaults to 20. Default
+         value is None.
+        :paramtype tail: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_stream_agent_container_logs_request(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            kind=kind,
+            replica_name=replica_name,
+            tail=tail,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class MemoryStoresOperations:
@@ -1811,7 +1848,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :keyword name: The name of the memory store. Required.
@@ -1826,15 +1863,15 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Required.
@@ -1842,15 +1879,15 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Required.
@@ -1858,17 +1895,12 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -1878,7 +1910,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Create a memory store.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -1892,8 +1924,8 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -1908,7 +1940,7 @@ class MemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             if name is _Unset:
@@ -1959,7 +1991,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreObject, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1975,7 +2007,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -1988,15 +2020,15 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -2006,15 +2038,15 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def update(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -2024,17 +2056,12 @@ class MemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update(
         self,
         name: str,
@@ -2043,7 +2070,7 @@ class MemoryStoresOperations:
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
         **kwargs: Any
-    ) -> _models.MemoryStoreObject:
+    ) -> _models.MemoryStoreDetails:
         """Update a memory store.
 
         :param name: The name of the memory store to update. Required.
@@ -2055,8 +2082,8 @@ class MemoryStoresOperations:
         :keyword metadata: Arbitrary key-value metadata to associate with the memory store. Default
          value is None.
         :paramtype metadata: dict[str, str]
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2071,7 +2098,7 @@ class MemoryStoresOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {"description": description, "metadata": metadata}
@@ -2119,7 +2146,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreObject, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2127,18 +2154,13 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreObject:
+    async def get(self, name: str, **kwargs: Any) -> _models.MemoryStoreDetails:
         """Retrieve a memory store.
 
         :param name: The name of the memory store to retrieve. Required.
         :type name: str
-        :return: MemoryStoreObject. The MemoryStoreObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreObject
+        :return: MemoryStoreDetails. The MemoryStoreDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -2152,7 +2174,7 @@ class MemoryStoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.MemoryStoreObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MemoryStoreDetails] = kwargs.pop("cls", None)
 
         _request = build_memory_stores_get_request(
             name=name,
@@ -2188,7 +2210,7 @@ class MemoryStoresOperations:
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.MemoryStoreObject, response.json())
+            deserialized = _deserialize(_models.MemoryStoreDetails, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -2196,19 +2218,14 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "limit", "order", "after", "before", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
         limit: Optional[int] = None,
-        order: Optional[Literal["asc", "desc"]] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.MemoryStoreObject"]:
+    ) -> AsyncItemPaged["_models.MemoryStoreDetails"]:
         """List all memory stores.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
@@ -2217,23 +2234,22 @@ class MemoryStoresOperations:
         :paramtype limit: int
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
-         for descending order. Is either a Literal["asc"] type or a Literal["desc"] type. Default value
-         is None.
-        :paramtype order: str or str
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
         :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
          place in the list.
          For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of MemoryStoreObject
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreObject]
+        :return: An iterator like instance of MemoryStoreDetails
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.MemoryStoreObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.MemoryStoreDetails]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2262,7 +2278,7 @@ class MemoryStoresOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.MemoryStoreObject], deserialized.get("data", []))
+            list_of_elem = _deserialize(List[_models.MemoryStoreDetails], deserialized.get("data", []))
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("last_id") or None, AsyncList(list_of_elem)
@@ -2289,11 +2305,6 @@ class MemoryStoresOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, name: str, **kwargs: Any) -> _models.DeleteMemoryStoreResult:
         """Delete a memory store.
 
@@ -2364,7 +2375,7 @@ class MemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
@@ -2380,7 +2391,7 @@ class MemoryStoresOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -2428,18 +2439,13 @@ class MemoryStoresOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def search_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
@@ -2454,7 +2460,7 @@ class MemoryStoresOperations:
          Required.
         :paramtype scope: str
         :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -2482,7 +2488,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -2538,18 +2544,13 @@ class MemoryStoresOperations:
 
         return deserialized  # type: ignore
 
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def _update_memories_initial(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -2572,7 +2573,7 @@ class MemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items_property": items,
+                "items": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
@@ -2628,98 +2629,34 @@ class MemoryStoresOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self,
         name: str,
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-         Required.
-        :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
-        :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
-         memory updates from where the last operation left off. Default value is None.
-        :paramtype previous_update_id: str
-        :keyword update_delay: Timeout period before processing the memory update in seconds.
-         If a new update request is received during this period, it will cancel the current request and
-         reset the timeout.
-         Set to 0 to immediately trigger the update without delay.
-         Defaults to 300 (5 minutes). Default value is None.
-        :paramtype update_delay: int
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
     @overload
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]:
-        """Update memory store with conversation memories.
-
-        :param name: The name of the memory store to update. Required.
-        :type name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns MemoryStoreUpdateCompletedResult. The
-         MemoryStoreUpdateCompletedResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncLROPoller[_models.MemoryStoreUpdateCompletedResult]: ...
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def begin_update_memories(
+    async def _begin_update_memories(
         self,
         name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -2734,7 +2671,7 @@ class MemoryStoresOperations:
          Required.
         :paramtype scope: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -2811,78 +2748,6 @@ class MemoryStoresOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "update_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
-    async def get_update_result(self, name: str, update_id: str, **kwargs: Any) -> _models.MemoryStoreUpdateResult:
-        """Get memory store update result.
-
-        :param name: The name of the memory store. Required.
-        :type name: str
-        :param update_id: The ID of the memory update operation. Required.
-        :type update_id: str
-        :return: MemoryStoreUpdateResult. The MemoryStoreUpdateResult is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.MemoryStoreUpdateResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.MemoryStoreUpdateResult] = kwargs.pop("cls", None)
-
-        _request = build_memory_stores_get_update_result_request(
-            name=name,
-            update_id=update_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes()
-        else:
-            deserialized = _deserialize(_models.MemoryStoreUpdateResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
     @overload
     async def delete_scope(
         self, name: str, *, scope: str, content_type: str = "application/json", **kwargs: Any
@@ -2942,11 +2807,6 @@ class MemoryStoresOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete_scope(
         self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, scope: str = _Unset, **kwargs: Any
     ) -> _models.MemoryStoreDeleteScopeResult:
@@ -4612,11 +4472,6 @@ class RedTeamsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
-    )
     async def get(self, name: str, **kwargs: Any) -> _models.RedTeam:
         """Get a redteam by name.
 
@@ -4682,11 +4537,6 @@ class RedTeamsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
-    )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RedTeam"]:
         """List a redteam by name.
 
@@ -4815,11 +4665,6 @@ class RedTeamsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-05-15-preview",
-        params_added_on={"2025-05-15-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-05-15-preview", "2025-11-15-preview"],
-    )
     async def create(self, red_team: Union[_models.RedTeam, JSON, IO[bytes]], **kwargs: Any) -> _models.RedTeam:
         """Creates a redteam run.
 
@@ -4908,11 +4753,6 @@ class EvaluationRulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, id: str, **kwargs: Any) -> _models.EvaluationRule:
         """Get an evaluation rule.
 
@@ -4978,11 +4818,6 @@ class EvaluationRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, id: str, **kwargs: Any) -> None:
         """Delete an evaluation rule.
 
@@ -5090,11 +4925,6 @@ class EvaluationRulesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_or_update(
         self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
@@ -5170,13 +5000,6 @@ class EvaluationRulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "action_type", "agent_name", "enabled", "client_request_id", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
@@ -5294,11 +5117,6 @@ class EvaluationTaxonomiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, name: str, **kwargs: Any) -> _models.EvaluationTaxonomy:
         """Get an evaluation run by name.
 
@@ -5364,13 +5182,6 @@ class EvaluationTaxonomiesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "input_name", "input_type", "client_request_id", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self, *, input_name: Optional[str] = None, input_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncItemPaged["_models.EvaluationTaxonomy"]:
@@ -5461,11 +5272,6 @@ class EvaluationTaxonomiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "client_request_id"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, name: str, **kwargs: Any) -> None:
         """Delete an evaluation taxonomy by name.
 
@@ -5573,11 +5379,6 @@ class EvaluationTaxonomiesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create(
         self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -5707,11 +5508,6 @@ class EvaluationTaxonomiesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update(
         self, name: str, body: Union[_models.EvaluationTaxonomy, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationTaxonomy:
@@ -5805,11 +5601,6 @@ class EvaluatorsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "type", "limit", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_versions(
         self,
         name: str,
@@ -5911,11 +5702,6 @@ class EvaluatorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "type", "limit", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_latest_versions(
         self,
         *,
@@ -6013,11 +5799,6 @@ class EvaluatorsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.EvaluatorVersion:
         """Get the specific version of the EvaluatorVersion. The service returns 404 Not Found error if
         the EvaluatorVersion does not exist.
@@ -6082,11 +5863,6 @@ class EvaluatorsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete the specific version of the EvaluatorVersion. The service returns 204 No Content if the
         EvaluatorVersion was deleted successfully or if the EvaluatorVersion does not exist.
@@ -6198,11 +5974,6 @@ class EvaluatorsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_version(
         self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluatorVersion:
@@ -6350,11 +6121,6 @@ class EvaluatorsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "version", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def update_version(
         self,
         name: str,
@@ -6506,19 +6272,6 @@ class InsightsOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": [
-                "api_version",
-                "repeatability_request_id",
-                "repeatability_first_sent",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def generate(self, insight: Union[_models.Insight, JSON, IO[bytes]], **kwargs: Any) -> _models.Insight:
         """Generate Insights.
 
@@ -6589,13 +6342,6 @@ class InsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": ["api_version", "id", "include_coordinates", "client_request_id", "accept"]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
         """Get a specific insight by Id.
 
@@ -6665,22 +6411,6 @@ class InsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={
-            "2025-11-15-preview": [
-                "api_version",
-                "type",
-                "eval_id",
-                "run_id",
-                "agent_name",
-                "include_coordinates",
-                "client_request_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(
         self,
         *,
@@ -6807,11 +6537,6 @@ class SchedulesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def delete(self, id: str, **kwargs: Any) -> None:
         """Delete a schedule.
 
@@ -6865,11 +6590,6 @@ class SchedulesOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get(self, id: str, **kwargs: Any) -> _models.Schedule:
         """Get a schedule by id.
 
@@ -6935,11 +6655,6 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Schedule"]:
         """List all schedules.
 
@@ -7076,11 +6791,6 @@ class SchedulesOperations:
         """
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def create_or_update(
         self, id: str, schedule: Union[_models.Schedule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.Schedule:
@@ -7156,11 +6866,6 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "schedule_id", "run_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     async def get_run(self, schedule_id: str, run_id: str, **kwargs: Any) -> _models.ScheduleRun:
         """Get a schedule run by id.
 
@@ -7224,11 +6929,6 @@ class SchedulesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "id", "client_request_id", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
-    )
     def list_runs(self, id: str, **kwargs: Any) -> AsyncItemPaged["_models.ScheduleRun"]:
         """List all schedule runs.
 

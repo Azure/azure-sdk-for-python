@@ -22,23 +22,25 @@
 """Create, read, and delete databases in the Azure Cosmos DB SQL API service.
 """
 
-from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal
 import warnings
+from typing import Any, Iterable, Mapping, Optional, Union, cast, Callable, overload, Literal, TYPE_CHECKING
 
-from azure.core.tracing.decorator import distributed_trace
-from azure.core.paging import ItemPaged
 from azure.core.credentials import TokenCredential
+from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
+from azure.core.tracing.decorator import distributed_trace
 
-from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._base import build_options, _set_throughput_options
-from .offer import ThroughputProperties
-from ._retry_utility import ConnectionRetryPolicy
 from ._constants import _Constants as Constants
+from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
+from ._cosmos_responses import CosmosDict
+from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
-from ._cosmos_responses import CosmosDict
+
+if TYPE_CHECKING:
+    from . import ThroughputProperties
 
 __all__ = ("CosmosClient",)
 
@@ -95,7 +97,9 @@ def _build_connection_policy(kwargs: dict[str, Any]) -> ConnectionPolicy:
     policy.EnableEndpointDiscovery = kwargs.pop('enable_endpoint_discovery', policy.EnableEndpointDiscovery)
     policy.PreferredLocations = kwargs.pop('preferred_locations', policy.PreferredLocations)
     # TODO: Consider storing callback method instead, such as 'Supplier' in JAVA SDK
-    policy.ExcludedLocations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
+    excluded_locations = kwargs.pop('excluded_locations', policy.ExcludedLocations)
+    if excluded_locations:
+        policy.ExcludedLocations = excluded_locations
     policy.UseMultipleWriteLocations = kwargs.pop('multiple_write_locations', policy.UseMultipleWriteLocations)
 
     # SSL config
@@ -199,6 +203,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads on write operations for items.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
+    :keyword dict[str, Any] availability_strategy:
+        The threshold-based availability strategy to use for this client's requests.
+    :keyword ~concurrent.futures.thread.ThreadPoolExecutor availability_strategy_executor:
+        Optional ThreadPoolExecutor for handling concurrent operations.
 
     .. admonition:: Example:
 
@@ -217,11 +225,19 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         consistency_level: Optional[str] = None,
         **kwargs
     ) -> None:
-        """Instantiate a new CosmosClient."""
+        """Instantiate a new CosmosClient.
+        """
+
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
         self.client_connection = CosmosClientConnection(
-            url, auth=auth, consistency_level=consistency_level, connection_policy=connection_policy, **kwargs
+            url_connection=url,
+            auth=auth,
+            consistency_level=consistency_level,
+            connection_policy=connection_policy,
+            availability_strategy=kwargs.pop("availability_strategy", None),
+            availability_strategy_executor=kwargs.pop("availability_strategy_executor", None),
+            **kwargs
         )
 
     def __repr__(self) -> str:
@@ -269,7 +285,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -307,7 +323,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -417,7 +433,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         self,
         id: str,
         *,
-        offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+        offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         initial_headers: Optional[dict[str, str]] = None,
         response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
@@ -451,7 +467,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             self,
             id: str,
             *,
-            offer_throughput: Optional[Union[int, ThroughputProperties]] = None,
+            offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
             initial_headers: Optional[dict[str, str]] = None,
             response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,

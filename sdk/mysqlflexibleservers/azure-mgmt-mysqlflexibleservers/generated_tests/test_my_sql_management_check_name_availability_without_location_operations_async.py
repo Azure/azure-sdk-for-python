@@ -24,7 +24,7 @@ class TestMySQLManagementCheckNameAvailabilityWithoutLocationOperationsAsync(Azu
     async def test_check_name_availability_without_location_execute(self, resource_group):
         response = await self.client.check_name_availability_without_location.execute(
             name_availability_request={"name": "str", "type": "str"},
-            api_version="2024-12-30",
+            api_version="2025-06-01-preview",
         )
 
         # please add some check logic here by yourself

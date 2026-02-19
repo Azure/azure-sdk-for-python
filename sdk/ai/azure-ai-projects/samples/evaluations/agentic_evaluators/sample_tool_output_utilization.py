@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to use the synchronous
-    `openai.evals.*` methods to create, get and list eval group and and eval runs
+    `openai.evals.*` methods to create, get and list evaluation and and eval runs
     for Tool Output Utilization evaluator using inline dataset content.
 
 USAGE:
@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -85,15 +85,15 @@ def main() -> None:
             }
         ]
 
-        print("Creating Eval Group")
+        print("Creating Evaluation")
         eval_object = client.evals.create(
             name="Test Tool Output Utilization Evaluator with inline data",
             data_source_config=data_source_config,
             testing_criteria=testing_criteria,  # type: ignore
         )
-        print(f"Eval Group created")
+        print(f"Evaluation created")
 
-        print("Get Eval Group by Id")
+        print("Get Evaluation by Id")
         eval_object_response = client.evals.retrieve(eval_object.id)
         print("Eval Run Response:")
         pprint(eval_object_response)

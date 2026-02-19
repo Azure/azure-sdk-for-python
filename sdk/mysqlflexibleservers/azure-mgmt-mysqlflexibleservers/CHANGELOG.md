@@ -1,5 +1,21 @@
 # Release History
 
+## 1.1.0b2 (2025-12-12)
+
+### Bugs Fixed
+
+  - Set default value of `lro_options` same as old version to keep compatibility for some LRO APIs
+
+## 1.1.0b1 (2025-11-19)
+
+### Features Added
+
+  - Model `HighAvailability` added property `replication_mode`
+  - Model `Server` added property `lower_case_table_names`
+  - Enum `ServerVersion` added member `EIGHT4`
+  - Added enum `ReplicationMode`
+  - Operation group  `LongRunningBackupOperations` added method `begin_delete`
+
 ## 1.0.0 (2025-11-07)
 
 ### Features Added

@@ -22,3 +22,5 @@ extend_skip_glob = [
 [tool.azure-sdk-build]
 whl_no_aio= false
 
+[tool.azure-sdk-conda]
+in_bundle = false

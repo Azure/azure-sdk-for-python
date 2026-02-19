@@ -493,7 +493,7 @@ class DataTransferExport(DataTransfer):
         return self._sink
 
     @sink.setter
-    def sink(self, value: Union[Dict, Database, FileSystem]) -> None:
+    def sink(self, value: Optional[Union[Dict, Database, FileSystem]]) -> None:
         self._sink = _build_source_sink(value)
 
     @classmethod

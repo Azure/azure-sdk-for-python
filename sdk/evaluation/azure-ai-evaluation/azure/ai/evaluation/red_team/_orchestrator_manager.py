@@ -16,11 +16,29 @@ from datetime import datetime
 from typing import Dict, List, Optional, Union, Callable
 from tqdm import tqdm
 
-# PyRIT imports
-from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import PromptSendingOrchestrator
-from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import RedTeamingOrchestrator
-from pyrit.orchestrator.multi_turn.crescendo_orchestrator import CrescendoOrchestrator
-from pyrit.orchestrator import Orchestrator
+# PyRIT imports - orchestrator module deprecated, use Foundry scenario instead
+# These imports are kept for backward compatibility but may not be available in newer PyRIT versions
+try:
+    from pyrit.orchestrator.single_turn.prompt_sending_orchestrator import (
+        PromptSendingOrchestrator,
+    )
+    from pyrit.orchestrator.multi_turn.red_teaming_orchestrator import (
+        RedTeamingOrchestrator,
+    )
+    from pyrit.orchestrator.multi_turn.crescendo_orchestrator import (
+        CrescendoOrchestrator,
+    )
+    from pyrit.orchestrator import Orchestrator
+
+    _ORCHESTRATOR_AVAILABLE = True
+except ImportError:
+    # Newer PyRIT versions use scenario-based approach instead of orchestrators
+    PromptSendingOrchestrator = None
+    RedTeamingOrchestrator = None
+    CrescendoOrchestrator = None
+    Orchestrator = None
+    _ORCHESTRATOR_AVAILABLE = False
+
 from pyrit.prompt_converter import PromptConverter
 from pyrit.prompt_target import PromptChatTarget
 
@@ -145,6 +163,7 @@ class OrchestratorManager:
         retry_config,
         scan_output_dir=None,
         red_team=None,
+        _use_legacy_endpoint=False,
     ):
         """Initialize the orchestrator manager.
 
@@ -156,6 +175,7 @@ class OrchestratorManager:
         :param retry_config: Retry configuration for network errors
         :param scan_output_dir: Directory for scan outputs
         :param red_team: Reference to RedTeam instance for accessing prompt mappings
+        :param _use_legacy_endpoint: Whether to use the legacy evaluation endpoint. Defaults to False.
         """
         self.logger = logger
         self.generated_rai_client = generated_rai_client
@@ -165,6 +185,7 @@ class OrchestratorManager:
         self.retry_config = retry_config
         self.scan_output_dir = scan_output_dir
         self.red_team = red_team
+        self._use_legacy_endpoint = _use_legacy_endpoint
 
     def _calculate_timeout(self, base_timeout: int, orchestrator_type: str) -> int:
         """Calculate appropriate timeout based on orchestrator type.
@@ -274,6 +295,11 @@ class OrchestratorManager:
 
         # Initialize orchestrator
         try:
+            if not _ORCHESTRATOR_AVAILABLE:
+                raise ImportError(
+                    "PyRIT orchestrator classes are not available. "
+                    "Please install a compatible version of pyrit with orchestrator support."
+                )
             orchestrator = PromptSendingOrchestrator(objective_target=chat_target, prompt_converters=converter_list)
 
             if not all_prompts:
@@ -337,7 +363,11 @@ class OrchestratorManager:
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
-                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                        self.retry_config,
+                        self.logger,
+                        strategy_name,
+                        risk_category_name,
+                        prompt_idx + 1,
                     )
                     async def send_prompt_with_retry():
                         memory_labels = {
@@ -525,6 +555,11 @@ class OrchestratorManager:
                 )
 
             try:
+                if not _ORCHESTRATOR_AVAILABLE:
+                    raise ImportError(
+                        "PyRIT orchestrator classes are not available. "
+                        "Please install a compatible version of pyrit with orchestrator support."
+                    )
                 azure_rai_service_scorer = AzureRAIServiceTrueFalseScorer(
                     client=self.generated_rai_client,
                     api_version=None,
@@ -558,7 +593,11 @@ class OrchestratorManager:
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
-                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                        self.retry_config,
+                        self.logger,
+                        strategy_name,
+                        risk_category_name,
+                        prompt_idx + 1,
                     )
                     async def send_prompt_with_retry():
                         memory_labels = {
@@ -735,12 +774,18 @@ class OrchestratorManager:
                 )
 
             try:
+                if not _ORCHESTRATOR_AVAILABLE:
+                    raise ImportError(
+                        "PyRIT orchestrator classes are not available. "
+                        "Please install a compatible version of pyrit with orchestrator support."
+                    )
                 red_llm_scoring_target = RAIServiceEvalChatTarget(
                     logger=self.logger,
                     credential=self.credential,
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
+                    _use_legacy_endpoint=self._use_legacy_endpoint,
                 )
 
                 azure_rai_service_target = AzureRAIServiceTarget(
@@ -771,12 +816,17 @@ class OrchestratorManager:
                     risk_category=risk_category,
                     azure_ai_project=self.azure_ai_project,
                     context=context_string,
+                    _use_legacy_endpoint=self._use_legacy_endpoint,
                 )
 
                 try:
                     # Create retry-enabled function using the reusable decorator
                     @network_retry_decorator(
-                        self.retry_config, self.logger, strategy_name, risk_category_name, prompt_idx + 1
+                        self.retry_config,
+                        self.logger,
+                        strategy_name,
+                        risk_category_name,
+                        prompt_idx + 1,
                     )
                     async def send_prompt_with_retry():
                         memory_labels = {

@@ -5734,7 +5734,7 @@
           "type": "string",
           "x-nullable": true
         },
-        "DefaultDeploymentTemplate": {
+        "defaultDeploymentTemplate": {
           "type": "object",
           "properties": {
             "assetId": {

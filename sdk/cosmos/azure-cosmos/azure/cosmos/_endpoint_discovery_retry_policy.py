@@ -23,16 +23,9 @@
 Azure Cosmos database service.
 """
 
-import logging
+# cspell:ignore PPAF
+
 from azure.cosmos.documents import _OperationType
-
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-log_formatter = logging.Formatter("%(levelname)s:%(message)s")
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(log_formatter)
-logger.addHandler(log_handler)
-
 
 class EndpointDiscoveryRetryPolicy(object):
     """The endpoint discovery retry policy class used for geo-replicated database accounts
@@ -43,8 +36,9 @@ class EndpointDiscoveryRetryPolicy(object):
     Max_retry_attempt_count = 120
     Retry_after_in_milliseconds = 1000
 
-    def __init__(self, connection_policy, global_endpoint_manager, *args):
+    def __init__(self, connection_policy, global_endpoint_manager, pk_range_wrapper, *args):
         self.global_endpoint_manager = global_endpoint_manager
+        self.pk_range_wrapper = pk_range_wrapper
         self._max_retry_attempt_count = EndpointDiscoveryRetryPolicy.Max_retry_attempt_count
         self.failover_retry_count = 0
         self.retry_after_in_milliseconds = EndpointDiscoveryRetryPolicy.Retry_after_in_milliseconds
@@ -70,6 +64,22 @@ class EndpointDiscoveryRetryPolicy(object):
 
         self.failover_retry_count += 1
 
+        # set the refresh_needed flag to ensure that endpoint list is
+        # refreshed with new writable and readable locations
+        self.global_endpoint_manager.refresh_needed = True
+
+        # If per partition automatic failover is applicable, we mark the current endpoint as unavailable
+        # and resolve the service endpoint for the partition range - otherwise, continue the default retry logic
+        if self.global_endpoint_manager.is_per_partition_automatic_failover_applicable(self.request):
+            partition_level_info = self.global_endpoint_manager.partition_range_to_failover_info[self.pk_range_wrapper]
+            location = self.global_endpoint_manager.location_cache.get_location_from_endpoint(
+                str(self.request.location_endpoint_to_route))
+            regional_endpoint = (self.global_endpoint_manager.location_cache.
+                                account_read_regional_routing_contexts_by_location.get(location))
+            partition_level_info.unavailable_regional_endpoints[location] = regional_endpoint
+            self.global_endpoint_manager.resolve_service_endpoint_for_partition(self.request, self.pk_range_wrapper)
+            return True
+
         if self.request.location_endpoint_to_route:
             context = self.__class__.__name__
             if _OperationType.IsReadOnlyOperation(self.request.operation_type):
@@ -82,16 +92,11 @@ class EndpointDiscoveryRetryPolicy(object):
                     self.request.location_endpoint_to_route,
                     True, context)
 
-        # set the refresh_needed flag to ensure that endpoint list is
-        # refreshed with new writable and readable locations
-        self.global_endpoint_manager.refresh_needed = True
-
         # clear previous location-based routing directive
         self.request.clear_route_to_location()
 
         # set location-based routing directive based on retry count
-        # simulating single master writes by ensuring usePreferredLocations
-        # is set to false
+        # simulating single master writes by ensuring usePreferredLocations is set to false
         # reasoning being that 403.3 is only expected for write region failover in single writer account
         # and we must rely on account locations as they are the source of truth
         self.request.route_to_location_with_preferred_location_flag(self.failover_retry_count, False)

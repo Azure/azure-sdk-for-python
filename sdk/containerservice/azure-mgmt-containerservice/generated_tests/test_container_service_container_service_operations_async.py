@@ -24,7 +24,7 @@ class TestContainerServiceContainerServiceOperationsAsync(AzureMgmtRecordedTestC
     async def test_container_service_list_node_image_versions(self, resource_group):
         response = self.client.container_service.list_node_image_versions(
             location="str",
-            api_version="2025-08-02-preview",
+            api_version="2025-10-02-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -1,6 +1,6 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../resources/azure-mgmt-resource
--e ../../core/azure-core
--e ../../identity/azure-identity
--e ../../core/azure-mgmt-core
+../../resources/azure-mgmt-resource
+../../core/azure-core
+../../identity/azure-identity
+../../core/azure-mgmt-core
 aiohttp

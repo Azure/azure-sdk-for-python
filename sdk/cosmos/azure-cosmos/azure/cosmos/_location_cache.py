@@ -24,13 +24,14 @@ DatabaseAccount with multiple writable and readable locations.
 """
 import collections
 import logging
+from typing import Optional
 from typing import Set, Mapping, OrderedDict
 from urllib.parse import urlparse
 
 from . import documents, _base as base
-from .http_constants import ResourceType
-from .documents import ConnectionPolicy
 from ._request_object import RequestObject
+from .documents import ConnectionPolicy
+from .http_constants import ResourceType
 
 # pylint: disable=protected-access
 
@@ -262,6 +263,16 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         # Else, return all regional endpoints
         return self.get_write_regional_routing_contexts()
 
+    def get_region_name(self, endpoint: str, is_write_operation: bool) -> Optional[str]:
+        if is_write_operation:
+            if endpoint in self.account_locations_by_write_endpoints:
+                return self.account_locations_by_write_endpoints[endpoint]
+        else:
+            if endpoint in self.account_locations_by_read_endpoints:
+                return self.account_locations_by_read_endpoints[endpoint]
+
+        return None
+
     def _resolve_endpoint_without_preferred_locations(self, request, is_write, location_index):
         """Resolves an endpoint when not using preferred locations or for single-write failover.
 
@@ -488,7 +499,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         )
 
     def get_preferred_regional_routing_contexts(
-        self, endpoints_by_location, orderedLocations, expected_available_operation, fallback_endpoint
+        self, endpoints_by_location, ordered_locations, expected_available_operation, fallback_endpoint
     ):
         regional_endpoints = []
         # if enableEndpointDiscovery is false, we always use the defaultEndpoint that
@@ -513,8 +524,11 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                             else:
                                 regional_endpoints.append(regional_endpoint)
 
-                # If all preferred locations are unavailable, honor the preferred list by trying them anyway.
-                if not regional_endpoints and unavailable_endpoints:
+                # Always append unavailable endpoints to the end of the list so they can be
+                # used as a last resort. This ensures that when all healthy endpoints are filtered
+                # out (e.g., by excluded_locations), the SDK can still fall back to unavailable
+                # regional endpoints rather than the global endpoint.
+                if unavailable_endpoints:
                     regional_endpoints.extend(unavailable_endpoints)
 
                 # If there are no preferred locations or none of the preferred locations are in the account,
@@ -522,7 +536,7 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
                 if not regional_endpoints:
                     regional_endpoints.append(fallback_endpoint)
             else:
-                for location in orderedLocations:
+                for location in ordered_locations:
                     if location and location in endpoints_by_location:
                         # location is empty during manual failover
                         regional_endpoint = endpoints_by_location[location]

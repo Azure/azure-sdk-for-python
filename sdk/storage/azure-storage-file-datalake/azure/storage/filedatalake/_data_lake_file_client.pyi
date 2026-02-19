@@ -136,7 +136,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace
     def upload_data(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         overwrite: Optional[bool] = False,
         *,
@@ -161,7 +161,7 @@ class DataLakeFileClient(PathClient):
     @distributed_trace
     def append_data(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         offset: int,
         length: Optional[int] = None,
         *,
