@@ -143,7 +143,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: Union[str, List[dict]]
         :keyword response: The response being evaluated, either a string or a list of messages (full agent response potentially including tool calls)
         :paramtype response: Union[str, List[dict]]
-        :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
+        :keyword tool_definitions: A list of messages containing the tool definitions the agent is aware of.
         :paramtype tool_definitions: Union[dict, List[dict]]
         :return: A dictionary with the tool output utilization evaluation results.
         :rtype: Dict[str, Union[str, float]]
