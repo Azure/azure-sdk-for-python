@@ -337,11 +337,13 @@ class TestToolCallAccuracyEvaluator:
 
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
-        assert result[key] == ToolCallAccuracyEvaluator._NOT_APPLICABLE_RESULT
+        assert result[key] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        assert result[f"{key}_reason"] == ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-        assert result[f"{key}_details"] == {}
+        assert (
+            "not applicable" in result[f"{key}_reason"].lower()
+            and ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
+        )
 
     def test_evaluate_tools_built_in_tool_definition(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)

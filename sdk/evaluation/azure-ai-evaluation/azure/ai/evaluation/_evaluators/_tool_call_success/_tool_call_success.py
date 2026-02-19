@@ -16,7 +16,6 @@ from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import ToolDefinitionsValidator, ValidatorInterface
 from azure.ai.evaluation._common._experimental import experimental
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -151,6 +150,12 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         if "response" not in eval_input:
             raise EvaluationException(
                 message="response is a required input to the Tool Call Success evaluator.",
@@ -167,6 +172,19 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.INVALID_VALUE,
                 target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
 
         eval_input["tool_calls"] = _reformat_tool_calls_results(eval_input["response"], logger)
 

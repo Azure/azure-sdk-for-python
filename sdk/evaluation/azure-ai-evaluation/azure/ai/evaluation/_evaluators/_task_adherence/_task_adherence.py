@@ -153,6 +153,12 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
         if "query" not in eval_input or "response" not in eval_input:
@@ -163,6 +169,19 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 category=ErrorCategory.MISSING_FIELD,
                 target=ErrorTarget.TASK_ADHERENCE_EVALUATOR,
             )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
 
         # Reformat conversation history and extract system message
         query_messages = reformat_conversation_history(eval_input["query"], logger, include_system_messages=True)
