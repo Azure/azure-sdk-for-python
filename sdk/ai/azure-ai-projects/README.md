@@ -3,7 +3,7 @@
 The AI Projects client library (in preview) is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your Microsoft Foundry Project. Use it to:
 
-* **Create and run Agents** using methods on methods on the `.agents` client property.
+* **Create and run Agents** using methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
   * Agent Memory Search
   * Agent-to-Agent (A2A)
@@ -319,7 +319,7 @@ Web Search tool uses Grounding with Bing, which has additional costs and terms: 
 
 ```python
 tool = WebSearchTool(
-    user_location=WebSearchApproximateLocation(type="approximate", country="GB", city="London", region="London")
+    user_location=WebSearchApproximateLocation(country="GB", city="London", region="London")
 )
 ```
 
