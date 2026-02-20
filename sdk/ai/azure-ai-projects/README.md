@@ -318,9 +318,7 @@ Web Search tool uses Grounding with Bing, which has additional costs and terms: 
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
 ```python
-tool = WebSearchTool(
-    user_location=WebSearchApproximateLocation(country="GB", city="London", region="London")
-)
+tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
 ```
 
 <!-- END SNIPPET -->
