@@ -57,6 +57,12 @@ class apistub(Check):
         p = subparsers.add_parser(
             "apistub", parents=parents, help="Run the apistub check to generate an API stub for a package"
         )
+        p.add_argument(
+            "--dest-dir",
+            dest="dest_dir",
+            default=None,
+            help="Destination directory for generated API stub token files.",
+        )
         p.set_defaults(func=self.run)
 
     def run(self, args: argparse.Namespace) -> int:
@@ -117,7 +123,16 @@ class apistub(Check):
             pkg_path = get_package_wheel_path(package_dir)
             pkg_path = os.path.abspath(pkg_path)
 
-            out_token_path = os.path.abspath(staging_directory)
+            dest_dir = getattr(args, "dest_dir", None)
+            if dest_dir:
+                prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
+                if prebuilt_dir:
+                    out_token_path = os.path.join(dest_dir, os.path.basename(os.path.dirname(pkg_path)))
+                else:
+                    out_token_path = os.path.join(dest_dir, os.path.basename(package_dir))
+            else:
+                out_token_path = os.path.abspath(staging_directory)
+
             cross_language_mapping_path = get_cross_language_mapping_path(package_dir)
 
             if cross_language_mapping_path:
