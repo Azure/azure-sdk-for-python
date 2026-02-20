@@ -242,11 +242,13 @@ def _extract_blob_modified_access_conditions(
         _set_if_not_none(
             kwargs, "if_unmodified_since", getattr(blob_modified_access_conditions, "if_unmodified_since", None)
         )
-        # Convert if_match/if_none_match to etag/match_condition
-        _convert_to_etag_match_condition(
-            getattr(blob_modified_access_conditions, "if_match", None),
-            getattr(blob_modified_access_conditions, "if_none_match", None),
-            kwargs,
+        # Pass if_match/if_none_match directly (these map to x-ms-blob-if-match/x-ms-blob-if-none-match
+        # headers, NOT the standard If-Match/If-None-Match headers used by etag/match_condition)
+        _set_if_not_none(
+            kwargs, "if_match", getattr(blob_modified_access_conditions, "if_match", None)
+        )
+        _set_if_not_none(
+            kwargs, "if_none_match", getattr(blob_modified_access_conditions, "if_none_match", None)
         )
 
 
