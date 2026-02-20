@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b13 (2026-02-20)
+
+### Other Changes
+
+- Upgraded langchain-azure-ai.
+
+
 ## 1.0.0b12 (2026-02-12)
 
 ### Bugs Fixed
