@@ -39,7 +39,6 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_ai_search.py",
                 "sample_agent_azure_function.py",
                 "sample_agent_computer_use.py",
                 "sample_agent_browser_automation.py",
