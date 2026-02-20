@@ -8,6 +8,7 @@
 Unit tests for STAC Collection operations.
 """
 
+from collections.abc import MutableMapping
 import logging
 import time
 import datetime
@@ -55,8 +56,8 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info("Calling: list_collections()")
-        response = client.stac.list_collections()
+        test_logger.info("Calling: get_collections()")
+        response = client.stac.get_collections()
 
         test_logger.info(f"Response type: {type(response)}")
 
@@ -376,13 +377,11 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(
-            f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}"
+            f"Response keys: {list(response.keys()) if isinstance(response, MutableMapping) else 'N/A'}"
         )
 
         # Validate response structure
-        assert isinstance(
-            response, dict
-        ), f"Response should be a dict, got {type(response)}"
+        assert isinstance(response, MutableMapping), f"Response should be a dict, got {type(response)}"
         assert "properties" in response, "Response should have 'properties' key"
 
         properties = response["properties"]
@@ -417,13 +416,11 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(
-            f"Response keys: {list(response.keys()) if isinstance(response, dict) else 'N/A'}"
+            f"Response keys: {list(response.keys()) if isinstance(response, MutableMapping) else 'N/A'}"
         )
 
         # Validate response structure
-        assert isinstance(
-            response, dict
-        ), f"Response should be a dict, got {type(response)}"
+        assert isinstance(response, MutableMapping), f"Response should be a dict, got {type(response)}"
         assert "properties" in response, "Response should have 'properties' key"
 
         properties = response["properties"]
@@ -1193,7 +1190,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Verify our queryable was created
         queryable_names = [
-            q.get("name") if isinstance(q, dict) else q.name for q in response
+            q.get("name") if isinstance(q, MutableMapping) else q.name for q in response
         ]
         assert (
             "test:property" in queryable_names

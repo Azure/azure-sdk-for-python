@@ -11803,9 +11803,6 @@ class WebSearchActionSearchSources(_Model):
 class WebSearchApproximateLocation(_Model):
     """Web search approximate location.
 
-    :ivar type: The type of location approximation. Always ``approximate``. Default value is
-     "approximate".
-    :vartype type: str
     :ivar country:
     :vartype country: str
     :ivar region:
@@ -11814,20 +11811,23 @@ class WebSearchApproximateLocation(_Model):
     :vartype city: str
     :ivar timezone:
     :vartype timezone: str
+    :ivar type: The type of location approximation. Always ``approximate``. Required. Default value
+     is "approximate".
+    :vartype type: str
     """
 
-    type: Optional[Literal["approximate"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of location approximation. Always ``approximate``. Default value is \"approximate\"."""
     country: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     city: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     timezone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    type: Literal["approximate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of location approximation. Always ``approximate``. Required. Default value is
+     \"approximate\"."""
 
     @overload
     def __init__(
         self,
         *,
-        type: Optional[Literal["approximate"]] = None,
         country: Optional[str] = None,
         region: Optional[str] = None,
         city: Optional[str] = None,
@@ -11843,6 +11843,7 @@ class WebSearchApproximateLocation(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+        self.type: Literal["approximate"] = "approximate"
 
 
 class WebSearchConfiguration(_Model):

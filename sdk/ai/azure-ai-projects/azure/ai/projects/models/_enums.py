@@ -256,14 +256,14 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ContainerMemoryLimit."""
 
-    ENUM_1_G = "1g"
-    """1_G."""
-    ENUM_4_G = "4g"
-    """4_G."""
-    ENUM_16_G = "16g"
-    """16_G."""
-    ENUM_64_G = "64g"
-    """64_G."""
+    MEMORY_1GB = "1g"
+    """MEMORY_1GB."""
+    MEMORY_4GB = "4g"
+    """MEMORY_4GB."""
+    MEMORY_16GB = "16g"
+    """MEMORY_16GB."""
+    MEMORY_64GB = "64g"
+    """MEMORY_64GB."""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

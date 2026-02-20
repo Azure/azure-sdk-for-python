@@ -69,6 +69,10 @@ class AssetMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AssetStatisticsResponse(_Model):
+    """Return dataset's statistics."""
+
+
 class BandStatistics(_Model):
     """Statistical information about a data band.
 
@@ -170,6 +174,14 @@ class BandStatistics(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class BandStatisticsMap(_Model):
+    """Map of band names to their statistics."""
+
+
+class ClassMapLegendResponse(_Model):
+    """ClassMap legend response model."""
 
 
 class DefaultLocation(_Model):
@@ -664,7 +676,7 @@ class IngestionSource(_Model):
     """
 
     __mapping__: dict[str, _Model] = {}
-    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    id: str = rest_field(visibility=["read", "update"])
     """Ingestion source id. Required."""
     created: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
     """Created time in UTC format."""
@@ -742,19 +754,19 @@ class LineString(Geometry, discriminator="LineString"):
     :ivar type: The type of the linestring. Required. Represents a LineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.LINE_STRING
     :ivar coordinates: The coordinates of the linestring. Required.
-    :vartype coordinates: list[float]
+    :vartype coordinates: list[list[float]]
     """
 
     type: Literal[GeometryType.LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the linestring. Required. Represents a LineString geometry."""
-    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the linestring. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: list[float],
+        coordinates: list[list[float]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -945,19 +957,19 @@ class MultiLineString(Geometry, discriminator="MultiLineString"):
     :ivar type: The type of the multilinestring. Required. Represents a MultiLineString geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_LINE_STRING
     :ivar coordinates: The coordinates of the multilinestring. Required.
-    :vartype coordinates: list[list[float]]
+    :vartype coordinates: list[list[list[float]]]
     """
 
     type: Literal[GeometryType.MULTI_LINE_STRING] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multilinestring. Required. Represents a MultiLineString geometry."""
-    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[list[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multilinestring. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: list[list[float]],
+        coordinates: list[list[list[float]]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -981,19 +993,19 @@ class MultiPoint(Geometry, discriminator="MultiPoint"):
     :ivar type: The type of the multipoint. Required. Represents a MultiPoint geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POINT
     :ivar coordinates: The coordinates of the multipoint. Required.
-    :vartype coordinates: list[float]
+    :vartype coordinates: list[list[float]]
     """
 
     type: Literal[GeometryType.MULTI_POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multipoint. Required. Represents a MultiPoint geometry."""
-    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[float]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multipoint. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: list[float],
+        coordinates: list[list[float]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -1015,12 +1027,12 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     :ivar bounding_box: Optional bounding box of the geometry.
     :vartype bounding_box: list[float]
     :ivar coordinates: The coordinates of the multipolygon. Required.
-    :vartype coordinates: list[list[list[float]]]
+    :vartype coordinates: list[list[list[list[float]]]]
     :ivar type: The type of the multipolygon. Required. Represents a MultiPolygon geometry.
     :vartype type: str or ~azure.planetarycomputer.models.MULTI_POLYGON
     """
 
-    coordinates: list[list[list[float]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[list[list[list[float]]]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the multipolygon. Required."""
     type: Literal[GeometryType.MULTI_POLYGON] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the multipolygon. Required. Represents a MultiPolygon geometry."""
@@ -1029,7 +1041,7 @@ class MultiPolygon(Geometry, discriminator="MultiPolygon"):
     def __init__(
         self,
         *,
-        coordinates: list[list[list[float]]],
+        coordinates: list[list[list[list[float]]]],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -1227,20 +1239,20 @@ class Point(Geometry, discriminator="Point"):
      Point geometry.
     :vartype type: str or ~azure.planetarycomputer.models.POINT
     :ivar coordinates: The coordinates of the point as [longitude, latitude]. Required.
-    :vartype coordinates: str
+    :vartype coordinates: list[float]
     """
 
     type: Literal[GeometryType.POINT] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The geometry type, always \"Point\" for Point geometries. Required. Represents a Point
      geometry."""
-    coordinates: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    coordinates: list[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The coordinates of the point as [longitude, latitude]. Required."""
 
     @overload
     def __init__(
         self,
         *,
-        coordinates: str,
+        coordinates: list[float],
         bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
@@ -1290,6 +1302,10 @@ class Polygon(Geometry, discriminator="Polygon"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = GeometryType.POLYGON  # type: ignore
+
+
+class QueryableDefinitionsResponse(_Model):
+    """Queryable definitions response."""
 
 
 class RenderOption(_Model):
@@ -1894,9 +1910,9 @@ class StacCollection(_Model):
     Represents a STAC collection.
 
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -1935,12 +1951,12 @@ class StacCollection(_Model):
     :vartype summaries: dict[str, any]
     """
 
-    created_on: Optional[str] = rest_field(
-        name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
+    created_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_created", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Created."""
-    updated_on: Optional[str] = rest_field(
-        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
+    updated_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(
@@ -1997,8 +2013,8 @@ class StacCollection(_Model):
         links: list["_models.StacLink"],
         license: str,
         extent: "_models.StacExtensionExtent",
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         stac_version: Optional[str] = None,
@@ -2231,9 +2247,9 @@ class StacItemOrStacItemCollection(_Model):
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.StacLink]
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2248,12 +2264,12 @@ class StacItemOrStacItemCollection(_Model):
     """Stac Version."""
     links: Optional[list["_models.StacLink"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Links to related resources and endpoints."""
-    created_on: Optional[str] = rest_field(
-        name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
+    created_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_created", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Created."""
-    updated_on: Optional[str] = rest_field(
-        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
+    updated_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(
@@ -2270,8 +2286,8 @@ class StacItemOrStacItemCollection(_Model):
         type: str,
         stac_version: Optional[str] = None,
         links: Optional[list["_models.StacLink"]] = None,
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
     ) -> None: ...
@@ -2295,9 +2311,9 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.StacLink]
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2317,7 +2333,7 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     :ivar assets: Assets. Required.
     :vartype assets: dict[str, ~azure.planetarycomputer.models.StacAsset]
     :ivar timestamp: MSFT Timestamp.
-    :vartype timestamp: str
+    :vartype timestamp: ~datetime.datetime
     :ivar e_tag: MSFT ETag.
     :vartype e_tag: str
     """
@@ -2336,7 +2352,9 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
     """Attributes associated with the feature. Required."""
     assets: dict[str, "_models.StacAsset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Assets. Required."""
-    timestamp: Optional[str] = rest_field(name="_msft:ts", visibility=["read", "create", "update", "delete", "query"])
+    timestamp: Optional[datetime.datetime] = rest_field(
+        name="_msft:ts", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
     """MSFT Timestamp."""
     e_tag: Optional[str] = rest_field(name="_msft:etag", visibility=["read", "create", "update", "delete", "query"])
     """MSFT ETag."""
@@ -2352,12 +2370,12 @@ class StacItem(StacItemOrStacItemCollection, discriminator="Feature"):
         assets: dict[str, "_models.StacAsset"],
         stac_version: Optional[str] = None,
         links: Optional[list["_models.StacLink"]] = None,
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         collection: Optional[str] = None,
-        timestamp: Optional[str] = None,
+        timestamp: Optional[datetime.datetime] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
 
@@ -2511,9 +2529,9 @@ class StacItemCollection(StacItemOrStacItemCollection, discriminator="FeatureCol
     :ivar links: Links to related resources and endpoints.
     :vartype links: list[~azure.planetarycomputer.models.StacLink]
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2548,8 +2566,8 @@ class StacItemCollection(StacItemOrStacItemCollection, discriminator="FeatureCol
         features: list["_models.StacItem"],
         stac_version: Optional[str] = None,
         links: Optional[list["_models.StacLink"]] = None,
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         bounding_box: Optional[list[float]] = None,
@@ -2789,9 +2807,9 @@ class StacLandingPage(_Model):
     Represents the STAC API landing page with links to available resources.
 
     :ivar created_on: MSFT Created.
-    :vartype created_on: str
+    :vartype created_on: ~datetime.datetime
     :ivar updated_on: MSFT Updated.
-    :vartype updated_on: str
+    :vartype updated_on: ~datetime.datetime
     :ivar short_description: MSFT Short Description.
     :vartype short_description: str
     :ivar stac_extensions: URLs to STAC extensions implemented by this STAC resource.
@@ -2812,12 +2830,12 @@ class StacLandingPage(_Model):
     :vartype type: str
     """
 
-    created_on: Optional[str] = rest_field(
-        name="msft:_created", visibility=["read", "create", "update", "delete", "query"]
+    created_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_created", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Created."""
-    updated_on: Optional[str] = rest_field(
-        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"]
+    updated_on: Optional[datetime.datetime] = rest_field(
+        name="msft:_updated", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """MSFT Updated."""
     short_description: Optional[str] = rest_field(
@@ -2849,8 +2867,8 @@ class StacLandingPage(_Model):
         description: str,
         conforms_to: list[str],
         links: list["_models.StacLink"],
-        created_on: Optional[str] = None,
-        updated_on: Optional[str] = None,
+        created_on: Optional[datetime.datetime] = None,
+        updated_on: Optional[datetime.datetime] = None,
         short_description: Optional[str] = None,
         stac_extensions: Optional[list[str]] = None,
         title: Optional[str] = None,
@@ -3171,10 +3189,6 @@ class StacSearchParameters(_Model):
 
      Overrides datetime validation from the base request model.
     :vartype conformance_class: dict[str, any]
-    :ivar sign: Whether to sign asset URLs in the response. Known values are: "true" and "false".
-    :vartype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
-    :ivar duration_in_minutes: URL signature duration in minutes.
-    :vartype duration_in_minutes: int
     :ivar query: STAC Query
 
      See the `STAC Query Extension <https://github.com/stac-api-extensions/query>`_.
@@ -3220,14 +3234,6 @@ class StacSearchParameters(_Model):
     """Conf
      
      Overrides datetime validation from the base request model."""
-    sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to sign asset URLs in the response. Known values are: \"true\" and \"false\"."""
-    duration_in_minutes: Optional[int] = rest_field(
-        name="duration", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """URL signature duration in minutes."""
     query: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """STAC Query
      
@@ -3271,8 +3277,6 @@ class StacSearchParameters(_Model):
         date_time: Optional[str] = None,
         limit: Optional[int] = None,
         conformance_class: Optional[dict[str, Any]] = None,
-        sign: Optional[Union[str, "_models.StacAssetUrlSigningMode"]] = None,
-        duration_in_minutes: Optional[int] = None,
         query: Optional[dict[str, Any]] = None,
         sort_by: Optional[list["_models.StacSortExtension"]] = None,
         fields: Optional[list["_models.SearchOptionsFields"]] = None,
@@ -3696,6 +3700,49 @@ class TileMatrixSetBoundingBox(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TilerAssetGeoJson(_Model):
+    """Represents GeoJSON with feature with an asset property.
+
+    :ivar id: Unique identifier for the feature. Required.
+    :vartype id: str
+    :ivar collection: ID of the STAC collection this item belongs to.
+    :vartype collection: str
+    :ivar bounding_box: Bounding box coordinates for the feature. Required.
+    :vartype bounding_box: list[float]
+    :ivar assets: Assets. Required.
+    :vartype assets: dict[str, ~azure.planetarycomputer.models.StacAsset]
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Unique identifier for the feature. Required."""
+    collection: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """ID of the STAC collection this item belongs to."""
+    bounding_box: list[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    """Bounding box coordinates for the feature. Required."""
+    assets: dict[str, "_models.StacAsset"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Assets. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        bounding_box: list[float],
+        assets: dict[str, "_models.StacAsset"],
+        collection: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TilerCoreModelsResponsesPoint(_Model):
     """Response model for point query operations providing values at a specific location.
 
@@ -3901,6 +3948,10 @@ class TilerInfoGeoJsonFeature(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TilerInfoMapResponse(_Model):
+    """Return dataset's basic info."""
 
 
 class TilerMosaicSearchRegistrationResponse(_Model):

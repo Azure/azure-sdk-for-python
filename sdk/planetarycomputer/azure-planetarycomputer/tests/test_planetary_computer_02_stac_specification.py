@@ -110,7 +110,7 @@ class TestPlanetaryComputerStacSpecification(PlanetaryComputerProClientTestBase)
         assert collection_id is not None
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
-        collections = client.stac.list_collections()
+        collections = client.stac.get_collections()
 
         # Validate collections response
         assert collections is not None, "Collections should not be None"

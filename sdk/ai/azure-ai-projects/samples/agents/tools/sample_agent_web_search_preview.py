@@ -4,6 +4,16 @@
 # ------------------------------------
 
 """
+WARNING:
+    Web Search uses Grounding with Bing, which has additional costs and terms.
+    Terms of use:
+        https://www.microsoft.com/bing/apis/grounding-legal-enterprise
+    Privacy statement:
+        https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409
+    Customer data will flow outside the Azure compliance boundary.
+    Learn more:
+        https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search
+
 DESCRIPTION:
     This sample demonstrates how to run Prompt Agent operations
     using the Web Search Preview Tool and a synchronous client.

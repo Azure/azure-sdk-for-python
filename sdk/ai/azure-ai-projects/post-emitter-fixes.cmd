@@ -13,10 +13,6 @@ git restore pyproject.toml
 REM Looks like this is no longer needed:
 REM git restore azure\ai\projects\_version.py
 
-REM Rename "A2_A_PREVIEW" to "A2A_PREVIEW". Since this value is an extension to OpenAI.ToolType enum, we can't use @className in client.tsp to do the rename.
-powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'A2_A_PREVIEW', 'A2A_PREVIEW' | Set-Content azure\ai\projects\models\_models.py"
-powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'A2_A_PREVIEW', 'A2A_PREVIEW' | Set-Content azure\ai\projects\models\_enums.py"
-
 REM Rename `"items_property": items`, to `"items": items` in search_memories and begin_update_memories methods. "items" is specified in TypeSpec, but Python emitter does not allow it.
 powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
 powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\operations\_operations.py"
