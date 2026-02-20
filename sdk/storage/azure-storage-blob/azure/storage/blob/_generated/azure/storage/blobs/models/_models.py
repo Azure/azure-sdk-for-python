@@ -1116,8 +1116,8 @@ class ContainerItem(_Model):
 
     :ivar name: The name of the container. Required.
     :vartype name: str
-    :ivar delete: Whether the container is deleted.
-    :vartype delete: bool
+    :ivar deleted: Whether the container is deleted.
+    :vartype deleted: bool
     :ivar version: The version of the container.
     :vartype version: str
     :ivar properties: The properties of the container. Required.
@@ -1131,7 +1131,7 @@ class ContainerItem(_Model):
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
     )
     """The name of the container. Required."""
-    delete: Optional[bool] = rest_field(
+    deleted: Optional[bool] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Deleted", "text": False, "unwrapped": False},
     )
@@ -1160,7 +1160,7 @@ class ContainerItem(_Model):
         *,
         name: str,
         properties: "_models.ContainerProperties",
-        delete: Optional[bool] = None,
+        deleted: Optional[bool] = None,
         version: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
     ) -> None: ...
@@ -1181,8 +1181,8 @@ class ContainerProperties(_Model):
 
     :ivar last_modified: The date-time the container was last modified in RFC1123 format. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar e_tag: The ETag of the container. Required.
-    :vartype e_tag: str
+    :ivar etag: The ETag of the container. Required.
+    :vartype etag: str
     :ivar lease_status: The lease status of the container. Known values are: "unlocked" and
      "locked".
     :vartype lease_status: str or ~azure.storage.blobs.models.LeaseStatus
@@ -1219,8 +1219,7 @@ class ContainerProperties(_Model):
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
     )
     """The date-time the container was last modified in RFC1123 format. Required."""
-    e_tag: str = rest_field(
-        name="eTag",
+    etag: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ETag", "text": False, "unwrapped": False},
     )
@@ -1301,7 +1300,7 @@ class ContainerProperties(_Model):
         self,
         *,
         last_modified: datetime.datetime,
-        e_tag: str,
+        etag: str,
         lease_status: Optional[Union[str, "_models.LeaseStatus"]] = None,
         lease_state: Optional[Union[str, "_models.LeaseState"]] = None,
         lease_duration: Optional[Union[str, "_models.LeaseDuration"]] = None,
