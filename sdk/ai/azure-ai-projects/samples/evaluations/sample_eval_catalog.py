@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -96,7 +96,7 @@ with (
             },
         ),
     )
-    prompt_evaluator = project_client.evaluators.create_version(
+    prompt_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_code_prompt_based",
         evaluator_version=evaluator_version,
     )
@@ -133,27 +133,28 @@ with (
             },
         ),
     )
-    code_evaluator = project_client.evaluators.create_version(
-        name="my_custom_evaluator_code_based", evaluator_version=evaluator_version
+    code_evaluator = project_client.beta.evaluators.create_version(
+        name="my_custom_evaluator_code_based",
+        evaluator_version=evaluator_version,
     )
     pprint(code_evaluator)
 
     print("Get code based evaluator version")
-    code_evaluator_latest = project_client.evaluators.get_version(
+    code_evaluator_latest = project_client.beta.evaluators.get_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
     )
     pprint(code_evaluator_latest)
 
     print("Get prompt based evaluator version")
-    prompt_evaluator_latest = project_client.evaluators.get_version(
+    prompt_evaluator_latest = project_client.beta.evaluators.get_version(
         name=prompt_evaluator.name,
         version=prompt_evaluator.version,
     )
     pprint(prompt_evaluator_latest)
 
     print("Updating code based evaluator version")
-    updated_evaluator = project_client.evaluators.update_version(
+    updated_evaluator = project_client.beta.evaluators.update_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
         evaluator_version={
@@ -165,24 +166,24 @@ with (
     pprint(updated_evaluator)
 
     print("Deleting code based evaluator version")
-    project_client.evaluators.delete_version(
+    project_client.beta.evaluators.delete_version(
         name=code_evaluator_latest.name,
         version=code_evaluator_latest.version,
     )
 
-    project_client.evaluators.delete_version(
+    project_client.beta.evaluators.delete_version(
         name=prompt_evaluator_latest.name,
         version=prompt_evaluator_latest.version,
     )
 
     print("Getting list of builtin evaluator versions")
-    evaluators = project_client.evaluators.list_latest_versions(type="builtin")
+    evaluators = project_client.beta.evaluators.list_latest_versions(type="builtin")
     print("List of builtin evaluator versions")
     for evaluator in evaluators:
         pprint(evaluator)
 
     print("Getting list of custom evaluator versions")
-    evaluators = project_client.evaluators.list_latest_versions(type="custom")
+    evaluators = project_client.beta.evaluators.list_latest_versions(type="custom")
     print("List of custom evaluator versions")
     for evaluator in evaluators:
         pprint(evaluator)

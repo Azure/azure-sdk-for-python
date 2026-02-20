@@ -21,14 +21,22 @@
   * Rename class `MemorySearchTool` to `MemorySearchPreviewTool`.
   * Rename class `MicrosoftFabricAgentTool` to `MicrosoftFabricPreviewTool`.
   * Rename class `SharepointAgentTool` to `SharepointPreviewTool`.
-* Rename class `ItemParam` to `InputItem`.
+* Other class renames:
+  * Rename class `ItemParam` to `InputItem`.
+  * Rename class `PromptAgentDefinitionText` to `PromptAgentDefinitionTextOptions`
+  * Rename class `EvaluationComparisonRequest` to `InsightRequest`
 * Tracing: workflow actions in conversation item listings are now emitted as "gen_ai.conversation.item" events (with role="workflow") instead of "gen_ai.workflow.action" events in the list_conversation_items span.
 * Tracing: response generation span names changed from "responses {model_name}" to "chat {model_name}" for model calls and from "responses {agent_name}" to "invoke_agent {agent_name}" for agent calls.
 * Tracing: response generation operation names changed from "responses" to "chat" for model calls and from "responses" to "invoke_agent" for agent calls.
 * Tracing: response generation uses gen_ai.input.messages and gen_ai.output.messages attributes directly under the span instead of events.
-* Tracing: agent creation uses gen_ai.system.instructions attribute directly under the span instead of an event.
+* Tracing: agent creation uses gen_ai.system_instructions attribute directly under the span instead of an event. Note that the attribute name is gen_ai.system_instructions not gen_ai.system.instructions.
 * Tracing: "gen_ai.provider.name" attribute value changed to "microsoft.foundry".
 * Tracing: the format of the function tool call related traces in input and output messages changed to {"type": "tool_call", "id": "...", "name": "...", "arguments": {...}} and {"type": "tool_call_response", "id": "...", "result": "..."}
+
+### Sample updates
+
+* Add and update samples for `AzureFunctionTool`, `WebSearchTool`, and `WebSearchPreviewTool`
+* All samples for agent tools call `responses.create` API with `agent_reference` instead of `agent`
 
 ## 2.0.0b3 (2026-01-06)
 

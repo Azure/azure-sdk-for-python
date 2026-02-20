@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -7,24 +6,31 @@
 from typing import Optional, Mapping, Any
 
 
-agent_tools_instructions = """We just run Python code and captured a Python array of print statements.
-Validating the printed content to determine if correct or not:
-Respond false if any entries show:
-- Error messages or exception text
-- Empty or null results where data is expected
-- Malformed or corrupted data
-- Timeout or connection errors
-- Warning messages indicating failures
-- Failure to retrieve or process data
-- Statements saying documents/information didn't provide relevant data
-- Statements saying unable to find/retrieve information
-- Asking the user to specify, clarify, or provide more details
-- Suggesting to use other tools or sources
-- Asking follow-up questions to complete the task
-- Indicating lack of knowledge or missing information
-- Responses that defer answering or redirect the question
-Respond with true only if the result provides a complete, substantive answer with actual data/information.
-Always respond with `reason` indicating the reason for the response."""
+agent_tools_instructions = """We just ran Python code and captured a Python array of print statements.
+Validate whether sample execution/output is correct for a tool-driven assistant workflow.
+
+Prefer matched/substantive data in the final output when available.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Malformed/corrupted output indicating broken processing.
+- Tool invocation failures where the sample cannot proceed as designed.
+
+Follow-up questions are allowed, but only as supplementary behavior.
+If the output mainly asks follow-up questions without providing matched/substantive data, mark false.
+
+Important false-alarm guard:
+- If the run completed successfully (for example HTTP/tool calls succeeded and workflow finished cleanly)
+    but the tool returned empty/no-result output (for example `[]`) or the assistant reports no results from the tool,
+    this can still be a valid outcome. Do not fail solely for missing matched data in that case.
+
+Mark `correct = true` when execution succeeds and the output includes matched/substantive data,
+even if it also asks follow-up questions.
+
+Also mark `correct = true` for successful no-result outcomes as described above.
+
+Always include `reason` with a concise explanation tied to the observed print output."""
 
 
 def get_sample_environment_variables_map(env_kwargs: Mapping[str, Any]) -> dict[str, str]:

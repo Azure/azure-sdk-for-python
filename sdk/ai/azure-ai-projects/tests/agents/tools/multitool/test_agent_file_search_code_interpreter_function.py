@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: File Search + Code Interpreter + Function Tool
 
@@ -26,6 +28,9 @@ from azure.ai.projects.models import (
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentFileSearchCodeInterpreterFunction(TestBase):
     """Tests for agents using File Search + Code Interpreter + Function Tool."""
 
@@ -115,7 +120,7 @@ Please analyze this data for the quarterly review.
         # Request that requires all three tools
         response = openai_client.responses.create(
             input="Find the sales report, use code to calculate the total and average of all monthly sales figures, then save the analysis results.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         self.validate_response(response)
         print("✓ Three-tool combination works!")
