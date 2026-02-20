@@ -44,8 +44,6 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_computer_use.py",
                 "sample_agent_browser_automation.py",
                 "sample_agent_openapi.py",
-                "sample_agent_image_generation.py",
-                "sample_agent_web_search.py",
             ],
         ),
     )

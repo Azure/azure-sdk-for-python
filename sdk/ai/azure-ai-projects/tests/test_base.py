@@ -58,6 +58,7 @@ servicePreparer = functools.partial(
     mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
     browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
     sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    bing_custom_search_instance_name="sanitized-bing-custom-search-instance",
     completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
