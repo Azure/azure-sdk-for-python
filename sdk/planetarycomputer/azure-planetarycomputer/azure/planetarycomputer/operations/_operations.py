@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping  # pylint: disable=import-error
 from io import IOBase
 import json
-from typing import Any, Callable, IO, Iterator, Optional, TYPE_CHECKING, TypeVar, Union, cast, overload
+from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -33,17 +33,11 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import PlanetaryComputerProClientConfiguration
-from .._utils.model_base import (  # pylint: disable=unused-import
-    Model as _Model,
-    SdkJSONEncoder,
-    _deserialize,
-    _deserialize_xml,
-)
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml  # pylint: disable=unused-import
+  # pylint: disable=unused-import
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
-if TYPE_CHECKING:
-    from .. import _types
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -833,7 +827,7 @@ def build_stac_get_collection_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_list_collections_request(
+def build_stac_get_collections_request(
     *,
     sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
     duration_in_minutes: Optional[int] = None,
@@ -1441,7 +1435,12 @@ def build_stac_get_collection_queryables_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_stac_search_request(**kwargs: Any) -> HttpRequest:
+def build_stac_search_request(
+    *,
+    sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+    duration_in_minutes: Optional[int] = None,
+    **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1454,6 +1453,10 @@ def build_stac_search_request(**kwargs: Any) -> HttpRequest:
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if sign is not None:
+        _params["sign"] = _SERIALIZER.query("sign", sign, "str")
+    if duration_in_minutes is not None:
+        _params["duration"] = _SERIALIZER.query("duration_in_minutes", duration_in_minutes, "int")
 
     # Construct headers
     if content_type is not None:
@@ -6316,7 +6319,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_collections(
+    def get_collections(
         self,
         *,
         sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
@@ -6349,7 +6352,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         cls: ClsType[_models.StacCatalogCollections] = kwargs.pop("cls", None)
 
-        _request = build_stac_list_collections_request(
+        _request = build_stac_get_collections_request(
             sign=sign,
             duration_in_minutes=duration_in_minutes,
             api_version=self._config.api_version,
@@ -8779,13 +8782,14 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_queryables(self, **kwargs: Any) -> dict[str, Any]:
+    def list_queryables(self, **kwargs: Any) -> _models.QueryableDefinitionsResponse:
         """Queryables.
 
         List all queryables in the GeoCatalog instance.
 
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :return: QueryableDefinitionsResponse. The QueryableDefinitionsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.QueryableDefinitionsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8799,7 +8803,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.QueryableDefinitionsResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_list_queryables_request(
             api_version=self._config.api_version,
@@ -8830,7 +8834,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(dict[str, Any], response.json())
+            deserialized = _deserialize(_models.QueryableDefinitionsResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8838,15 +8842,16 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_collection_queryables(self, collection_id: str, **kwargs: Any) -> dict[str, Any]:
+    def get_collection_queryables(self, collection_id: str, **kwargs: Any) -> _models.QueryableDefinitionsResponse:
         """Collection Queryables.
 
         List all queryables in a given collection.
 
         :param collection_id: Collection ID. Required.
         :type collection_id: str
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :return: QueryableDefinitionsResponse. The QueryableDefinitionsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.planetarycomputer.models.QueryableDefinitionsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -8860,7 +8865,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.QueryableDefinitionsResponse] = kwargs.pop("cls", None)
 
         _request = build_stac_get_collection_queryables_request(
             collection_id=collection_id,
@@ -8892,7 +8897,7 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(dict[str, Any], response.json())
+            deserialized = _deserialize(_models.QueryableDefinitionsResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -8901,7 +8906,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def search(
-        self, body: _models.StacSearchParameters, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: _models.StacSearchParameters,
+        *,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StacItemCollection:
         """Search.
 
@@ -8909,6 +8920,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param body: Request body. Required.
         :type body: ~azure.planetarycomputer.models.StacSearchParameters
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8919,7 +8935,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def search(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: JSON,
+        *,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StacItemCollection:
         """Search.
 
@@ -8927,6 +8949,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param body: Request body. Required.
         :type body: JSON
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8937,7 +8964,13 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def search(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        body: IO[bytes],
+        *,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.StacItemCollection:
         """Search.
 
@@ -8945,6 +8978,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
         :param body: Request body. Required.
         :type body: IO[bytes]
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8955,7 +8993,12 @@ class StacOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace
     def search(
-        self, body: Union[_models.StacSearchParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        body: Union[_models.StacSearchParameters, JSON, IO[bytes]],
+        *,
+        sign: Optional[Union[str, _models.StacAssetUrlSigningMode]] = None,
+        duration_in_minutes: Optional[int] = None,
+        **kwargs: Any
     ) -> _models.StacItemCollection:
         """Search.
 
@@ -8964,6 +9007,11 @@ class StacOperations:  # pylint: disable=too-many-public-methods
         :param body: Request body. Is one of the following types: StacSearchParameters, JSON, IO[bytes]
          Required.
         :type body: ~azure.planetarycomputer.models.StacSearchParameters or JSON or IO[bytes]
+        :keyword sign: Whether to sign asset URLs in the response. Known values are: "true" and
+         "false". Default value is None.
+        :paramtype sign: str or ~azure.planetarycomputer.models.StacAssetUrlSigningMode
+        :keyword duration_in_minutes: URL signature duration in minutes. Default value is None.
+        :paramtype duration_in_minutes: int
         :return: StacItemCollection. The StacItemCollection is compatible with MutableMapping
         :rtype: ~azure.planetarycomputer.models.StacItemCollection
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8990,6 +9038,8 @@ class StacOperations:  # pylint: disable=too-many-public-methods
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_stac_search_request(
+            sign=sign,
+            duration_in_minutes=duration_in_minutes,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -9188,7 +9238,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         histogram_bins: Optional[str] = None,
         histogram_range: Optional[str] = None,
         **kwargs: Any
-    ) -> dict[str, dict[str, _models.BandStatistics]]:
+    ) -> _models.AssetStatisticsResponse:
         """Asset Statistics.
 
         Per Asset statistics.
@@ -9247,8 +9297,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          <https://numpy.org/doc/stable/reference/generated/numpy.histogram.html>`_. Default value is
          None.
         :paramtype histogram_range: str
-        :return: dict mapping str to dict mapping str to BandStatistics
-        :rtype: dict[str, dict[str, ~azure.planetarycomputer.models.BandStatistics]]
+        :return: AssetStatisticsResponse. The AssetStatisticsResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.AssetStatisticsResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -9262,7 +9312,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[dict[str, dict[str, _models.BandStatistics]]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AssetStatisticsResponse] = kwargs.pop("cls", None)
 
         _request = build_data_get_asset_statistics_request(
             collection_id=collection_id,
@@ -9308,7 +9358,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(dict[str, dict[str, _models.BandStatistics]], response.json())
+            deserialized = _deserialize(_models.AssetStatisticsResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -11113,7 +11163,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_item_asset_details(
         self, collection_id: str, item_id: str, *, assets: Optional[List[str]] = None, **kwargs: Any
-    ) -> dict[str, _models.TilerInfo]:
+    ) -> _models.TilerInfoMapResponse:
         """Info.
 
         Return dataset's basic info.
@@ -11124,8 +11174,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :type item_id: str
         :keyword assets: Asset's names. Default value is None.
         :paramtype assets: list[str]
-        :return: dict mapping str to TilerInfo
-        :rtype: dict[str, ~azure.planetarycomputer.models.TilerInfo]
+        :return: TilerInfoMapResponse. The TilerInfoMapResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.TilerInfoMapResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -11139,7 +11189,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[dict[str, _models.TilerInfo]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.TilerInfoMapResponse] = kwargs.pop("cls", None)
 
         _request = build_data_get_item_asset_details_request(
             collection_id=collection_id,
@@ -11173,7 +11223,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(dict[str, _models.TilerInfo], response.json())
+            deserialized = _deserialize(_models.TilerInfoMapResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13046,7 +13096,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_class_map_legend(
         self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> dict[str, Any]:
+    ) -> _models.ClassMapLegendResponse:
         """Get ClassMap Legend.
 
         Generate values and color swatches mapping for a given classmap.
@@ -13057,8 +13107,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype trim_start: int
         :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
         :paramtype trim_end: int
-        :return: dict mapping str to any
-        :rtype: dict[str, any]
+        :return: ClassMapLegendResponse. The ClassMapLegendResponse is compatible with MutableMapping
+        :rtype: ~azure.planetarycomputer.models.ClassMapLegendResponse
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13072,7 +13122,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ClassMapLegendResponse] = kwargs.pop("cls", None)
 
         _request = build_data_get_class_map_legend_request(
             classmap_name=classmap_name,
@@ -13106,7 +13156,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(dict[str, Any], response.json())
+            deserialized = _deserialize(_models.ClassMapLegendResponse, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -13116,10 +13166,39 @@ class DataOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_interval_legend(
         self, classmap_name: str, *, trim_start: Optional[int] = None, trim_end: Optional[int] = None, **kwargs: Any
-    ) -> List[List["_types.IntervalLegendsElement"]]:
+    ) -> List[List[List[int]]]:
         """Get Interval Legend.
 
         Generate values and color swatches mapping for a given interval classmap.
+
+        Returns a color map for intervals, where each interval is defined by:
+
+        * A numeric range `[min, max]` representing the interval boundaries.
+        * An RGBA color `[red, green, blue, alpha]` associated with the interval.
+
+        The response is a 2D array of interval definitions, where each element is a pair:
+
+        * The first element is an array of two numbers `[min, max]` defining the interval.
+        * The second element is an array of four numbers `[red, green, blue, alpha]` defining the RGBA
+          color.
+
+        Example:
+
+        .. code-block:: json
+
+           [
+             [
+               [-2, 0], [0, 0, 0, 0]
+             ],
+             [
+               [1, 32], [255, 255, 178, 255]
+             ]
+           ]
+
+        This example defines two intervals:
+
+        * The interval `[-2, 0]` is mapped to the color `[0, 0, 0, 0]` (transparent black).
+        * The interval `[1, 32]` is mapped to the color `[255, 255, 178, 255]` (opaque yellow).
 
         :param classmap_name: classmap name. Required.
         :type classmap_name: str
@@ -13127,8 +13206,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype trim_start: int
         :keyword trim_end: Number of items to trim from the end of the cmap. Default value is None.
         :paramtype trim_end: int
-        :return: list of list of list of int or dict mapping str to str
-        :rtype: list[list[list[int] or dict[str, str]]]
+        :return: list of list of list of int
+        :rtype: list[list[list[int]]]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13142,7 +13221,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[List["_types.IntervalLegendsElement"]]] = kwargs.pop("cls", None)
+        cls: ClsType[List[List[List[int]]]] = kwargs.pop("cls", None)
 
         _request = build_data_get_interval_legend_request(
             classmap_name=classmap_name,
@@ -13179,7 +13258,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[List["_types.IntervalLegendsElement"]], response.json())
+            deserialized = _deserialize(List[List[List[int]]], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -13395,7 +13474,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         exit_when_full: Optional[bool] = None,
         skip_covered: Optional[bool] = None,
         **kwargs: Any
-    ) -> List[Any]:
+    ) -> List[_models.TilerAssetGeoJson]:
         """Assets For Tile Tilematrixsetid As Path.
 
         Return a list of assets which overlap a given tile.
@@ -13431,8 +13510,8 @@ class DataOperations:  # pylint: disable=too-many-public-methods
          (defaults
          to True in PgSTAC). Default value is None.
         :paramtype skip_covered: bool
-        :return: list of any
-        :rtype: list[any]
+        :return: list of TilerAssetGeoJson
+        :rtype: list[~azure.planetarycomputer.models.TilerAssetGeoJson]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13446,7 +13525,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[Any]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.TilerAssetGeoJson]] = kwargs.pop("cls", None)
 
         _request = build_data_get_mosaics_assets_for_tile_request(
             search_id=search_id,
@@ -13488,7 +13567,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(List[Any], response.json())
+            deserialized = _deserialize(List[_models.TilerAssetGeoJson], response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14446,7 +14525,7 @@ class SharedAccessSignatureOperations:
         """sign an HREF in the format of a URL and returns a SharedAccessSignatureSignedHrefResponse.
 
         Signs a HREF (a link URL) by appending a `SAS Token
-        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_.
+        <https://docs.microsoft.com//azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_.
         If the HREF is not a Azure Blob Storage HREF, then pass back the HREF unsigned.
 
         :keyword href: Href. Required.
@@ -14516,7 +14595,7 @@ class SharedAccessSignatureOperations:
         """generate a SAS Token for the given Azure Blob storage account and container.
 
         Generate a `SAS Token
-        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
+        <https://docs.microsoft.com//azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
         for the given storage account and container. The storage account and container must be
         associated with a Planetary Computer dataset indexed by the STAC API.
 
@@ -14587,7 +14666,7 @@ class SharedAccessSignatureOperations:
         """Revoke SAS token for the managed storage account of this GeoCatalog.
 
         Revoke a `SAS Token
-        <https://docs.microsoft.com/en-us/azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
+        <https://docs.microsoft.com//azure/storage/common/storage-sas-overview#how-a-shared-access-signature-works>`_
         for managed storage account of this GeoCatalog.
 
         :keyword duration_in_minutes: Duration. Default value is None.
