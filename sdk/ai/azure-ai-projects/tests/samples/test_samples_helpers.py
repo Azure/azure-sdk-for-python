@@ -20,15 +20,13 @@ Mark `correct = false` for:
 Follow-up questions are allowed, but only as supplementary behavior.
 If the output mainly asks follow-up questions without providing matched/substantive data, mark false.
 
-Important false-alarm guard:
-- If the run completed successfully (for example HTTP/tool calls succeeded and workflow finished cleanly)
-    but the tool returned empty/no-result output (for example `[]`) or the assistant reports no results from the tool,
-    this can still be a valid outcome. Do not fail solely for missing matched data in that case.
+Important distinction:
+- Empty tool payloads by themselves (for example `[]` or `""`) can be valid and should not automatically fail.
+- But if the assistant explicitly states tool failure/inability (for example "unable to retrieve ..."),
+    treat that as a failure signal and mark `correct = false`.
 
 Mark `correct = true` when execution succeeds and the output includes matched/substantive data,
 even if it also asks follow-up questions.
-
-Also mark `correct = true` for successful no-result outcomes as described above.
 
 Always include `reason` with a concise explanation tied to the observed print output."""
 

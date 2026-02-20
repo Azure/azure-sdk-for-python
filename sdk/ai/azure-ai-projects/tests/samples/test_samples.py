@@ -15,9 +15,6 @@ from sample_executor import (
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestSamples(AzureRecordedTestCase):
 
     # To run this test with a specific sample, use:
@@ -25,15 +22,16 @@ class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
     @additionalSampleTests(
         [
-            AdditionalSampleTestDetail(
-                test_id="sample_agent_azure_function",
-                sample_filename="sample_agent_azure_function.py",
-                env_vars={
-                    "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
-                    "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
-                    "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
-                },
-            ),
+            # TODO: Re-enable and record the following sample on Foundry endpoint that supports the new versioning schema before including it in the test run:
+            # AdditionalSampleTestDetail(
+            #     test_id="sample_agent_azure_function",
+            #     sample_filename="sample_agent_azure_function.py",
+            #     env_vars={
+            #         "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+            #         "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+            #         "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+            #     },
+            # ),
         ]
     )
     @pytest.mark.parametrize(
@@ -41,17 +39,12 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_bing_custom_search.py",
-                "sample_agent_bing_grounding.py",
-                "sample_agent_browser_automation.py",
-                "sample_agent_fabric.py",
-                "sample_agent_mcp_with_project_connection.py",
-                "sample_agent_openapi_with_project_connection.py",
-                "sample_agent_to_agent.py",
-                "sample_agent_web_search.py",
-                "sample_agent_web_search_preview.py",
-                "sample_agent_web_search_with_custom_search.py",
+                "sample_agent_ai_search.py",
                 "sample_agent_azure_function.py",
+                "sample_agent_computer_use.py",
+                "sample_agent_browser_automation.py",
+                "sample_agent_openapi.py",
+                "sample_agent_image_generation.py",
             ],
         ),
     )
