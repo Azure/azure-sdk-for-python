@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
+import pytest
+
 """
 Test agents using multiple tools within conversations.
 
@@ -22,6 +24,9 @@ from azure.ai.projects.models import (
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestMultiToolWithConversations(TestBase):
 
     @servicePreparer()
@@ -100,7 +105,7 @@ Total Revenue: $144,000
         response_1 = openai_client.responses.create(
             input="What was the total revenue in Q1 2024?",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response 1: {response_1.output_text[:150]}...")
@@ -111,7 +116,7 @@ Total Revenue: $144,000
         response_2 = openai_client.responses.create(
             input="Which product had the highest sales?",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Response 2: {response_2.output_text[:150]}...")
@@ -122,7 +127,7 @@ Total Revenue: $144,000
         response_3 = openai_client.responses.create(
             input="Save a summary report of these Q1 results",
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Handle function call
@@ -145,7 +150,7 @@ Total Revenue: $144,000
         response_3 = openai_client.responses.create(
             input=input_list,
             conversation=conversation.id,
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response 3: {response_3.output_text[:150]}...")
 

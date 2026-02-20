@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -27,12 +27,12 @@ import os
 import asyncio
 from dotenv import load_dotenv
 
+from azure.ai.projects.models._enums import FoundryFeaturesOptInKeys
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
     WorkflowAgentDefinition,
-    ItemResourceType,
 )
 
 load_dotenv()
@@ -140,6 +140,7 @@ trigger:
         workflow = await project_client.agents.create_version(
             agent_name="student-teacher-workflow-async",
             definition=WorkflowAgentDefinition(workflow=workflow_yaml),
+            foundry_features=FoundryFeaturesOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW,
         )
 
         print(f"Agent created (id: {workflow.id}, name: {workflow.name}, version: {workflow.version})")
@@ -149,17 +150,17 @@ trigger:
 
         stream = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent": {"name": workflow.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": workflow.name, "type": "agent_reference"}},
             input="1 + 1 = ?",
             stream=True,
-            metadata={"x-ms-debug-mode-enabled": "1"},
+            # Remove me? metadata={"x-ms-debug-mode-enabled": "1"},
         )
 
         async for event in stream:
             print(f"Event {event.sequence_number} type '{event.type}'", end="")
             if (
                 event.type == "response.output_item.added" or event.type == "response.output_item.done"
-            ) and event.item.type == ItemResourceType.WORKFLOW_ACTION:
+            ) and event.item.type == "workflow_action":
                 print(
                     f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
                     end="",

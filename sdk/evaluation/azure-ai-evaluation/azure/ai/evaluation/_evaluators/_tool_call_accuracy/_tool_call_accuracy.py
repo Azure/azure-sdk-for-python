@@ -100,7 +100,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
 
         # Initialize input validator
-        self._validator = ToolCallsValidator(error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR)
+        self._validator = ToolCallsValidator(
+            error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            check_for_unsupported_tools=True,
+        )
 
         super().__init__(
             model_config=model_config,
@@ -244,7 +247,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -304,7 +307,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
+            return self._not_applicable_result(eval_input.get("error_message"), self.threshold, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

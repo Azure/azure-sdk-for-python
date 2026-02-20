@@ -85,7 +85,9 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
 
         # Initialize input validator
-        self._validator = ToolDefinitionsValidator(error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR)
+        self._validator = ToolDefinitionsValidator(
+            error_target=ErrorTarget.TOOL_OUTPUT_UTILIZATION_EVALUATOR, optional_tool_definitions=False
+        )
 
         super().__init__(
             model_config=model_config,
@@ -140,7 +142,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :paramtype query: Union[str, List[dict]]
         :keyword response: The response being evaluated, either a string or a list of messages (full agent response potentially including tool calls)
         :paramtype response: Union[str, List[dict]]
-        :keyword tool_definitions: An optional list of messages containing the tool definitions the agent is aware of.
+        :keyword tool_definitions: A list of messages containing the tool definitions the agent is aware of.
         :paramtype tool_definitions: Union[dict, List[dict]]
         :return: A dictionary with the tool output utilization evaluation results.
         :rtype: Dict[str, Union[str, float]]
@@ -214,7 +216,7 @@ class _ToolOutputUtilizationEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input["response"] = reformat_agent_response(eval_input["response"], logger, include_tool_messages=True)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", "")
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
             output_label = llm_output.get("label", None)
             if output_label is None:

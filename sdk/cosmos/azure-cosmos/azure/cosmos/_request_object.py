@@ -114,21 +114,36 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_availability_strategy(
             self,
             options: Mapping[str, Any],
-            client_strategy_config: Optional[CrossRegionHedgingStrategy] = None) -> None:
+            client_strategy_config: Union[CrossRegionHedgingStrategy, None] = None) -> None:
         """Sets the availability strategy config for this request from options.
         If not in options, uses the client's default strategy.
+        If False is in options, client defaults are NOT used (explicitly disabled).
 
         :param options: The request options that may contain availabilityStrategy
         :type options: Mapping[str, Any]
         :param client_strategy_config: The client's default availability strategy config
-        :type client_strategy_config: ~azure.cosmos.CrossRegionHedgingStrategyConfig
+        :type client_strategy_config: Union[CrossRegionHedgingStrategy, None]
         :return: None
         """
         # setup availabilityStrategy
-        # First try to get from options
-        if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
-            self.availability_strategy = options[Constants.Kwargs.AVAILABILITY_STRATEGY]
-        # If not in options, use client default
+        # First try to get from options (method-level takes precedence)
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY in options and
+                options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
+            strategy = options[Constants.Kwargs.AVAILABILITY_STRATEGY]
+            if isinstance(strategy, bool):
+                if strategy:
+                    # If True, use client config if available, otherwise default values
+                    if client_strategy_config is not None:
+                        self.availability_strategy = client_strategy_config
+                    else:
+                        self.availability_strategy = CrossRegionHedgingStrategy()
+                # If False, user explicitly disabled - don't use any strategy
+                else:
+                    self.availability_strategy = None
+            else:
+                # CrossRegionHedgingStrategy object from request validation
+                self.availability_strategy = strategy
+        # If not in options or None within options, use client default
         elif client_strategy_config is not None:
             self.availability_strategy = client_strategy_config
 

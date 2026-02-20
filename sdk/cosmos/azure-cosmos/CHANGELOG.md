@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.15.0 (2026-02-11)
+### 4.15.0 (2026-02-19)
 
 #### Features Added
 * GA support of Per Partition Automatic Failover and AvailabilityStrategy features.
@@ -13,6 +13,7 @@
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
 * Renamed `availability_strategy_config` introduced in 4.15.0b1 to `availability_strategy` for both sync and async clients. See [PR 45086](https://github.com/Azure/azure-sdk-for-python/pull/45086).
+* Request-level `availability_strategy` needs to be set to `False` in order to disable availability strategy for that request, as opposed to setting it to `None`. See [PR 45141](https://github.com/Azure/azure-sdk-for-python/pull/45141).
 
 ### 4.14.6 (2026-02-02)
 

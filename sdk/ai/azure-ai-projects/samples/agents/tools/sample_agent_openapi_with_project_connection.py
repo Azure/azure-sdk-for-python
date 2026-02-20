@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv jsonref
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv jsonref
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -29,7 +29,7 @@ USAGE:
 import os
 import jsonref
 from dotenv import load_dotenv
-
+from typing import Any, cast
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -56,7 +56,7 @@ with (
 
     # [START tool_declaration]
     with open(tripadvisor_asset_file_path, "r") as f:
-        openapi_tripadvisor = jsonref.loads(f.read())
+        openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
     tool = OpenApiTool(
         openapi=OpenApiFunctionDefinition(
@@ -84,7 +84,7 @@ with (
 
     response = openai_client.responses.create(
         input="Recommend me 5 top hotels in paris, France",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.
     print(f"Response created: {response.output_text.encode().decode('ascii', errors='ignore')}")
