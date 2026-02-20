@@ -7,7 +7,7 @@ lazy-object-proxy==1.10.0
 mccabe==0.7.0
 pkginfo==1.12.1.2
 platformdirs==4.3.6
-pylint==3.3.6
+pylint==4.0.4
 azure-pylint-guidelines-checker==0.5.7
 six==1.17.0
 tomli==2.2.1
