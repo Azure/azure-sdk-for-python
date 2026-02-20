@@ -230,14 +230,14 @@ source .venv/bin/activate  # Linux/macOS
 
 ## Cross-References
 
-**Detailed Copilot Instructions**: See [`.github/copilot-instructions.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/copilot-instructions.md) for:
+**Detailed Copilot Instructions**: See [.github/copilot-instructions.md](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/copilot-instructions.md) for:
 - Complete TypeSpec SDK generation workflow
 - Detailed validation steps and commands
 - Pylint and MyPy fixing guidelines
 - SDK health status interpretation
 - SDK release procedures
 
-**Developer Documentation**: See [`doc/dev/`](https://github.com/Azure/azure-sdk-for-python/tree/main/doc/dev) for:
+**Developer Documentation**: See [doc/dev/](https://github.com/Azure/azure-sdk-for-python/tree/main/doc/dev) for:
 - [TypeSpec Generation Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/ai/typespec_generation.md)
 - [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
 - [Tox Usage](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
