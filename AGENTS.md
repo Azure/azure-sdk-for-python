@@ -311,4 +311,4 @@ To report issues with AI agent interactions or suggest improvements:
 
 **AGENTS.md Version**: 1.0.0  
 **Last Updated**: 2025-01-22  
-**Specification**: Follows [agents.md](https://agents.md) canonical structure
+**Specification**: Follows the AGENTS.md canonical structure
