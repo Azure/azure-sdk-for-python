@@ -49,8 +49,12 @@ NUM_CPUS = psutil.cpu_count()
 _IO_AVAILABLE = hasattr(_PROCESS, "io_counters")
 _IO_LAST_COUNT = 0
 if _IO_AVAILABLE:
-    _io_counters_initial = _PROCESS.io_counters()
-    _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
+    try:
+        _io_counters_initial = _PROCESS.io_counters()
+        _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
+    except (psutil.NoSuchProcess, psutil.AccessDenied, AttributeError, Exception) as e:
+        _IO_AVAILABLE = False
+        _IO_LAST_COUNT = 0
 _IO_LAST_TIME = datetime.now()
 # Processor Time %
 _LAST_CPU_TIMES = psutil.cpu_times()

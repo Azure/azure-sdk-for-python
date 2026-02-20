@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import collections
+import runpy
 import unittest
 from datetime import datetime
 from unittest import mock
@@ -61,6 +62,19 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         manager_module._EXCEPTIONS_COUNT = 0
         manager_module._LAST_REQUEST_RATE_TIME = datetime.now()
         manager_module._LAST_EXCEPTION_RATE_TIME = datetime.now()
+
+    def test_io_counters_access_denied_on_module_init(self):
+        """Test io_counters AccessDenied during module initialization fallback."""
+        import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
+
+        mock_process = MagicMock()
+        mock_process.io_counters.side_effect = psutil.AccessDenied(pid=1)
+
+        with mock.patch("psutil.Process", return_value=mock_process):
+            module_globals = runpy.run_path(manager_module.__file__)
+
+        self.assertFalse(module_globals["_IO_AVAILABLE"])
+        self.assertEqual(module_globals["_IO_LAST_COUNT"], 0)
 
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
     def test_get_process_cpu_success(self, mock_process):
