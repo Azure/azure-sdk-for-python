@@ -125,11 +125,7 @@ class apistub(Check):
 
             dest_dir = getattr(args, "dest_dir", None)
             if dest_dir:
-                prebuilt_dir = os.getenv("PREBUILT_WHEEL_DIR")
-                if prebuilt_dir:
-                    out_token_path = os.path.join(dest_dir, os.path.basename(os.path.dirname(pkg_path)))
-                else:
-                    out_token_path = os.path.join(dest_dir, os.path.basename(package_dir))
+                out_token_path = os.path.join(dest_dir, package_name)
                 os.makedirs(out_token_path, exist_ok=True)
             else:
                 out_token_path = os.path.abspath(staging_directory)
