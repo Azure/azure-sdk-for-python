@@ -312,6 +312,9 @@ See the full sample in file `\agents\tools\sample_agent_image_generation.py` in 
 
 Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option is in the documentation: https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases.
 
+Warning:
+Web Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/web-search).
+
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
 
 ```python
@@ -535,6 +538,8 @@ See the full sample in file `\agents\tools\sample_agent_ai_search.py` in the [Sa
 
 **Bing Grounding**
 
+Warning: Grounding with Bing Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/bing-tools).
+
 Ground agent responses with real-time web search results from Bing to provide up-to-date information:
 
 <!-- SNIPPET:sample_agent_bing_grounding.tool_declaration -->
@@ -554,6 +559,7 @@ tool = BingGroundingTool(
 See the full sample in file `\agents\tools\sample_agent_bing_grounding.py` in the [Samples][samples] folder.
 
 **Bing Custom Search**
+Warning: Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/web-search).
 
 Use custom-configured Bing search instances for domain-specific or filtered web search results:
 
