@@ -1,5 +1,15 @@
 # Release History
 
+## 1.15.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.15.1 (2026-02-19)
 
 ### Bugs Fixed
