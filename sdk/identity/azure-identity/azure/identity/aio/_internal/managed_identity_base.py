@@ -45,6 +45,7 @@ class AsyncManagedIdentityBase(AsyncContextManager, GetTokenMixin):
             await self._client.__aexit__(exc_type, exc_value, traceback)
 
     async def close(self) -> None:
+        self._cancel_background_refresh_tasks()
         await self.__aexit__()
 
     async def get_token(

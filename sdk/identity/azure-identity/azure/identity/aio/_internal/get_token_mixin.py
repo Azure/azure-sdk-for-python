@@ -3,20 +3,25 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import time
-from typing import Any, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from azure.core.credentials import AccessToken, AccessTokenInfo, TokenRequestOptions
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 from ..._internal import within_credential_chain
 
 _LOGGER = logging.getLogger(__name__)
+_BACKGROUND_REFRESH_MIN_VALIDITY_SECONDS = 600
+
+_BackgroundRefreshKey = Tuple[Tuple[str, ...], Optional[str], Optional[str], bool]
 
 
 class GetTokenMixin(abc.ABC):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._last_request_time = 0
+        self._background_refresh_tasks: Dict[_BackgroundRefreshKey, "asyncio.Task[None]"] = {}
 
         # https://github.com/python/mypy/issues/5887
         super(GetTokenMixin, self).__init__(*args, **kwargs)  # type: ignore
@@ -44,6 +49,50 @@ class GetTokenMixin(abc.ABC):
         :return: An access token with the desired scopes.
         :rtype: ~azure.core.credentials.AccessTokenInfo
         """
+
+    @staticmethod
+    def _uses_asyncio() -> bool:
+        try:
+            asyncio.get_running_loop()
+            return True
+        except RuntimeError:
+            return False
+
+    def _start_background_refresh(self, key: _BackgroundRefreshKey, *scopes: str, **kwargs: Any) -> None:
+        existing_task = self._background_refresh_tasks.get(key)
+        if existing_task is not None and not existing_task.done():
+            return
+
+        task = asyncio.create_task(self._background_refresh(*scopes, **kwargs))
+        self._background_refresh_tasks[key] = task
+
+        def _cleanup(done_task: "asyncio.Task[None]") -> None:
+            if self._background_refresh_tasks.get(key) is done_task:
+                self._background_refresh_tasks.pop(key, None)
+
+        task.add_done_callback(_cleanup)
+
+    async def _background_refresh(self, *scopes: str, **kwargs: Any) -> None:
+        try:
+            await self._request_token(*scopes, **kwargs)
+        except Exception as ex:  # pylint:disable=broad-except
+            _LOGGER.debug("Background token refresh failed: %s", ex, exc_info=_LOGGER.isEnabledFor(logging.DEBUG))
+
+    def _cancel_background_refresh_tasks(self) -> None:
+        """Cancel all pending background refresh tasks.
+
+        Credentials should call this from their ``close`` method to avoid tasks
+        running against a closed HTTP transport.
+        """
+        tasks = list(self._background_refresh_tasks.values())
+        self._background_refresh_tasks.clear()
+        for task in tasks:
+            task.cancel()
+
+    def __getstate__(self) -> Dict[str, Any]:
+        state = self.__dict__.copy()
+        state["_background_refresh_tasks"] = {}
+        return state
 
     def _should_refresh(self, token: AccessTokenInfo) -> bool:
         now = int(time.time())
@@ -132,19 +181,31 @@ class GetTokenMixin(abc.ABC):
             token = await self._acquire_token_silently(
                 *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
             )
+            now = int(time.time())
             if not token:
-                self._last_request_time = int(time.time())
+                self._last_request_time = now
                 token = await self._request_token(
                     *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
                 )
             elif self._should_refresh(token):
-                try:
-                    self._last_request_time = int(time.time())
-                    token = await self._request_token(
-                        *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                self._last_request_time = now
+                if self._uses_asyncio() and token.expires_on - now >= _BACKGROUND_REFRESH_MIN_VALIDITY_SECONDS:
+                    # Token has a certain remaining validity; refresh in the background and return the cached token.
+                    self._start_background_refresh(
+                        (scopes, claims, tenant_id, enable_cae),
+                        *scopes,
+                        claims=claims,
+                        tenant_id=tenant_id,
+                        enable_cae=enable_cae,
+                        **kwargs,
                     )
-                except Exception:  # pylint:disable=broad-except
-                    pass
+                else:
+                    try:
+                        token = await self._request_token(
+                            *scopes, claims=claims, tenant_id=tenant_id, enable_cae=enable_cae, **kwargs
+                        )
+                    except Exception:  # pylint:disable=broad-except
+                        pass
             _LOGGER.log(
                 logging.DEBUG if within_credential_chain.get() else logging.INFO,
                 "%s.%s succeeded",
