@@ -299,7 +299,7 @@ class BlobItem(_Model):
     blob_tags: Optional["_models.BlobTags"] = rest_field(
         name="blobTags",
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "BlobTags", "text": False, "unwrapped": False},
+        xml={"attribute": False, "name": "Tags", "text": False, "unwrapped": False},
     )
     """The tags of the blob."""
     object_replication_metadata: Optional["_models.ObjectReplicationMetadata"] = rest_field(
