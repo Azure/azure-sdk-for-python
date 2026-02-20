@@ -515,11 +515,15 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         return self._data.setdefault(key, default)
 
     def __eq__(self, other: typing.Any) -> bool:
-        try:
-            other_model = self.__class__(other)
-        except Exception:
-            return False
-        return self._data == other_model._data
+        """Compare objects by comparing all attributes.
+
+        :param object other: The object to compare
+        :returns: True if objects are equal
+        :rtype: bool
+        """
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        return False
 
     def __repr__(self) -> str:
         return str(self._data)
