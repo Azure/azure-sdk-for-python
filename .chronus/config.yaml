@@ -40,5 +40,13 @@ changelog: ["@chronus/github/changelog", { repo: "azure/azure-sdk-for-python" }]
 changedFiles:
   - "sdk/**"
   - "!**/*.md"
+  - "!**/*.json"
+  - "!**/*.txt"
+  - "!**/*.yml"
+  - "!**/*.yaml"
   - "!**/test_*.py"
   - "!**/*_test.py"
+  - "!**/tests/**"
+  - "!**/samples/**"
+  - "!**/stress/**"
+  - "!**/mypy.ini"
