@@ -55,7 +55,7 @@ with (
 ):
     # [START tool_declaration]
     tool = WebSearchTool(
-        user_location=WebSearchApproximateLocation(type="approximate", country="GB", city="London", region="London")
+        user_location=WebSearchApproximateLocation(country="GB", city="London", region="London")
     )
     # [END tool_declaration]
     # Create Agent with web search tool
