@@ -82,9 +82,7 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="""Generate an image showing four Labrador Retriever dogs, with the Microsoft Logo in the 
-        background, such that each dog is placed sitting inside one of the four logo squares. Add the 
-        text 'Happy dogs!' at the bottom of the image.""",
+        input="Generate an image of Microsoft logo.",
         extra_headers={
             "x-ms-oai-image-generation-deployment": image_generation_model
         },  # this is required at the moment for image generation
@@ -100,7 +98,7 @@ with (
     image_data = [output.result for output in response.output if output.type == "image_generation_call"]
     if image_data and image_data[0]:
         print("Downloading generated image...")
-        filename = "happy-dogs.png"
+        filename = "microsoft.png"
         file_path = os.path.join(tempfile.gettempdir(), filename)
 
         with open(file_path, "wb") as f:
