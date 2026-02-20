@@ -175,6 +175,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         return client
 
+
 class _BearerTokenRedactionFilter(logging.Filter):
     """Redact bearer tokens in azure.core log messages before they are emitted to console."""
 
@@ -190,6 +191,7 @@ class _BearerTokenRedactionFilter(logging.Filter):
             record.msg = redacted
             record.args = ()
         return True
+
 
 class OpenAILoggingTransport(httpx.HTTPTransport):
     """Custom HTTP transport that logs OpenAI API requests and responses to the console.
