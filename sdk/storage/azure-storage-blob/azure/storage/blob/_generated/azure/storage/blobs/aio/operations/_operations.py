@@ -2973,6 +2973,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
         response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
