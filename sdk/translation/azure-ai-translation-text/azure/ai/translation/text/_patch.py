@@ -98,7 +98,13 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                scope = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE).removesuffix("/.default").removesuffix("/") + DEFAULT_SCOPE
+                audience = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
+                if audience.endswith(DEFAULT_SCOPE):
+                    scope = audience
+                elif audience.endswith("/"):
+                    scope = audience[:-1] + DEFAULT_SCOPE
+                else:
+                    scope = audience + DEFAULT_SCOPE
                 kwargs["authentication_policy"] = TranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
@@ -113,7 +119,12 @@ def set_authentication_policy(credential, kwargs):
                     )
                 scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
                 if not is_cognitive_services_scope(scope):
-                    scope = scope.removesuffix("/.default").removesuffix("/") + DEFAULT_SCOPE
+                    if scope.endswith(DEFAULT_SCOPE):
+                        pass  # Already has /.default
+                    elif scope.endswith("/"):
+                        scope = scope[:-1] + DEFAULT_SCOPE
+                    else:
+                        scope = scope + DEFAULT_SCOPE
 
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, scope)
 
