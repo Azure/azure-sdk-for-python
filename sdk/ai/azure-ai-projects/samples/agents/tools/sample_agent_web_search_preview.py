@@ -13,7 +13,7 @@ WARNING:
     Customer data will flow outside the Azure compliance boundary.
     Learn more:
         https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search
-        
+
 DESCRIPTION:
     This sample demonstrates how to run Prompt Agent operations
     using the Web Search Preview Tool and a synchronous client.

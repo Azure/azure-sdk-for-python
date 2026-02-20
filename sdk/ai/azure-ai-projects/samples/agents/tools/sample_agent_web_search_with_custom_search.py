@@ -13,7 +13,7 @@ WARNING:
     Customer data will flow outside the Azure compliance boundary.
     Learn more:
         https://learn.microsoft.com/en-us/azure/ai-foundry/agents/how-to/tools/web-search?view=foundry
-        
+
 DESCRIPTION:
     Demonstrates Prompt Agent operations that use the Web Search Tool configured
     with a Bing Custom Search connection. The agent runs synchronously and

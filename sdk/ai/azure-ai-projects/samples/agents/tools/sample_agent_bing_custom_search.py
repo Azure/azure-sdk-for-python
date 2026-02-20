@@ -13,7 +13,7 @@ Grounding with Bing Custom Search tool uses Grounding with Bing, which has addit
     Customer data will flow outside the Azure compliance boundary.
     Learn more:
         https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/bing-tools
-        
+
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Bing Custom Search capabilities
     using the BingCustomSearchPreviewTool and synchronous Azure AI Projects client. The agent can search
