@@ -187,39 +187,31 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         be deleted. If enabled=True, the number of days must be specified.
     """
 
-    def __init__(self, *args, enabled: bool = False, days: Optional[int] = None, **kwargs) -> None:
-        if args and len(args) <= 2 and isinstance(args[0], bool):
-            # Support positional args: RetentionPolicy(enabled) or RetentionPolicy(enabled, days)
-            enabled = args[0]
-            days = args[1] if len(args) > 1 else days
-            args = ()
-        if args:
-            super().__init__(*args, **kwargs)
-            return
-        if enabled and (days is None):
-            raise ValueError("If policy is enabled, 'days' must be specified.")
+    def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        if self.enabled and (self.days is None):
+            raise ValueError("If policy is enabled, 'days' must be specified.")
+
+    @classmethod
+    def _deserialize(cls, data, exist_discriminators):
+        """Override to handle internal deserialization from the generated layer.
+
+        When the generated layer deserializes nested XML/dict data, it calls
+        cls._deserialize(data, []) which would normally call cls(data) — but our
+        __init__ expects (enabled, days) kwargs, not raw data. Route through the
+        generated parent to parse the raw data, then convert via _from_generated.
+        """
+        generated = GeneratedRetentionPolicy(data)
+        return cls._from_generated(generated)
 
     @classmethod
     def _from_generated(cls, generated):
-        if generated is None:
+        if not generated:
             return cls()
         return cls(
-            enabled=getattr(generated, 'enabled', None) or False,
-            days=getattr(generated, 'days', None),
+            enabled=generated.enabled,
+            days=generated.days,
         )
-
-    def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data.
-
-        :param other: The other object to compare with.
-        :type other: Any
-        :return: True if equal, False otherwise.
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__) and hasattr(other, '_data'):
-            return self._data == other._data
-        return super().__eq__(other)
 
 
 class BlobAnalyticsLogging(GeneratedLogging):
@@ -238,41 +230,26 @@ class BlobAnalyticsLogging(GeneratedLogging):
         policy will be disabled by default.
     """
 
-    def __init__(self, *args, **kwargs: Any) -> None:
-        if args:
-            super().__init__(*args)
-            return
-        super().__init__(**kwargs)
-        self.version = kwargs.get('version', '1.0')
-        self.delete = kwargs.get('delete', False)
-        self.read = kwargs.get('read', False)
-        self.write = kwargs.get('write', False)
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
-
+    def __init__(self, **kwargs: Any) -> None:
+        super(BlobAnalyticsLogging, self).__init__(
+            version=kwargs.get('version', '1.0'),
+            delete=kwargs.get('delete', False),
+            read=kwargs.get('read', False),
+            write=kwargs.get('write', False),
+            retention_policy=kwargs.get('retention_policy') or RetentionPolicy()
+        )
 
     @classmethod
     def _from_generated(cls, generated):
-        if generated is None:
+        if not generated:
             return cls()
         return cls(
-            version=getattr(generated, 'version'),
-            delete=getattr(generated, 'delete'),
-            read=getattr(generated, 'read'),
-            write=getattr(generated, 'write'),
-            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy'))  # pylint: disable=protected-access
+            version=generated.version,
+            delete=generated.delete,
+            read=generated.read,
+            write=generated.write,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
         )
-
-    def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data.
-
-        :param other: The other object to compare with.
-        :type other: Any
-        :return: True if equal, False otherwise.
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__) and hasattr(other, '_data'):
-            return self._data == other._data
-        return super().__eq__(other)
 
 
 class Metrics(GeneratedMetrics):
@@ -291,39 +268,24 @@ class Metrics(GeneratedMetrics):
         policy will be disabled by default.
     """
 
-    def __init__(self, *args, **kwargs: Any) -> None:
-        if args:
-            super().__init__(*args)
-            return
-        super().__init__(**kwargs)
-        self.version = kwargs.get('version', '1.0')
-        self.enabled = kwargs.get('enabled', False)
-        self.include_apis = kwargs.get('include_apis', None)
-        self.retention_policy = kwargs.get('retention_policy') or RetentionPolicy()
-
+    def __init__(self, **kwargs: Any) -> None:
+        super(Metrics, self).__init__(
+            version=kwargs.get('version', '1.0'),
+            enabled=kwargs.get('enabled', False),
+            include_apis=kwargs.get('include_apis'),
+            retention_policy=kwargs.get('retention_policy') or RetentionPolicy()
+        )
 
     @classmethod
     def _from_generated(cls, generated):
-        if generated is None:
+        if not generated:
             return cls()
         return cls(
-            version=getattr(generated, 'version', None) or '1.0',
-            enabled=getattr(generated, 'enabled') or False,
-            include_apis=getattr(generated, 'include_apis', None),
-            retention_policy=RetentionPolicy._from_generated(getattr(generated, 'retention_policy', None))  # pylint: disable=protected-access
+            version=generated.version,
+            enabled=generated.enabled,
+            include_apis=generated.include_apis,
+            retention_policy=RetentionPolicy._from_generated(generated.retention_policy)  # pylint: disable=protected-access
         )
-
-    def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data.
-
-        :param other: The other object to compare with.
-        :type other: Any
-        :return: True if equal, False otherwise.
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__) and hasattr(other, '_data'):
-            return self._data == other._data
-        return super().__eq__(other)
 
 
 class StaticWebsite(GeneratedStaticWebsite):
@@ -340,43 +302,32 @@ class StaticWebsite(GeneratedStaticWebsite):
         Absolute path of the default index page.
     """
 
-    def __init__(self, *args, **kwargs: Any) -> None:
-        if args:
-            super().__init__(*args)
-            return
-        super().__init__(**kwargs)
-        self.enabled = kwargs.get('enabled', False)
-        if self.enabled:
-            self.index_document = kwargs.get('index_document')
-            self.error_document404_path = kwargs.get('error_document404_path')
-            self.default_index_document_path = kwargs.get('default_index_document_path')
+    def __init__(self, **kwargs: Any) -> None:
+        enabled = kwargs.get('enabled', False)
+        if enabled:
+            index_document = kwargs.get('index_document')
+            error_document404_path = kwargs.get('error_document404_path')
+            default_index_document_path = kwargs.get('default_index_document_path')
         else:
-            self.index_document = None
-            self.error_document404_path = None
-            self.default_index_document_path = None
-
+            index_document = None
+            error_document404_path = None
+            default_index_document_path = None
+        super(StaticWebsite, self).__init__(
+            enabled=enabled,
+            index_document=index_document,
+            error_document404_path=error_document404_path,
+            default_index_document_path=default_index_document_path
+        )
     @classmethod
     def _from_generated(cls, generated):
-        if generated is None:
+        if not generated:
             return cls()
         return cls(
-            enabled=getattr(generated, 'enabled'),
-            index_document=getattr(generated, 'index_document', None),
-            error_document404_path=getattr(generated, 'error_document404_path', None),
-            default_index_document_path=getattr(generated, 'default_index_document_path', None)
+            enabled=generated.enabled,
+            index_document=generated.index_document,
+            error_document404_path=generated.error_document404_path,
+            default_index_document_path=generated.default_index_document_path
         )
-
-    def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data.
-
-        :param other: The other object to compare with.
-        :type other: Any
-        :return: True if equal, False otherwise.
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__) and hasattr(other, '_data'):
-            return self._data == other._data
-        return super().__eq__(other)
 
 
 class CorsRule(GeneratedCorsRule):
@@ -407,13 +358,28 @@ class CorsRule(GeneratedCorsRule):
         preflight response.
     """
 
+    allowed_origins: str
+    """The comma-delimited string representation of the list of origin domains that will be allowed via
+        CORS, or "*" to allow all domains."""
+    allowed_methods: str
+    """The comma-delimited string representation of the list HTTP methods that are allowed to be executed
+        by the origin."""
+    exposed_headers: str
+    """The comma-delimited string representation of the list of response headers to expose to CORS clients."""
+    allowed_headers: str
+    """The comma-delimited string representation of the list of headers allowed to be part of the cross-origin
+        request."""
+    max_age_in_seconds: int
+    """The number of seconds that the client/browser should cache a pre-flight response."""
+
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.allowed_origins = ','.join(allowed_origins)
-        self.allowed_methods = ','.join(allowed_methods)
-        self.allowed_headers = ','.join(kwargs.get('allowed_headers', []))
-        self.exposed_headers = ','.join(kwargs.get('exposed_headers', []))
-        self.max_age_in_seconds = kwargs.get('max_age_in_seconds', 0)
+        super(CorsRule, self).__init__(
+            allowed_origins=','.join(allowed_origins),
+            allowed_methods=','.join(allowed_methods),
+            allowed_headers=','.join(kwargs.get('allowed_headers', [])),
+            exposed_headers=','.join(kwargs.get('exposed_headers', [])),
+            max_age_in_seconds=kwargs.get('max_age_in_seconds', 0)
+        )
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -436,24 +402,12 @@ class CorsRule(GeneratedCorsRule):
     @classmethod
     def _from_generated(cls, generated):
         return cls(
-            [getattr(generated, 'allowed_origins')],
-            [getattr(generated, 'allowed_methods')],
-            allowed_headers=[getattr(generated, 'allowed_headers')],
-            exposed_headers=[getattr(generated, 'exposed_headers')],
-            max_age_in_seconds=getattr(generated, 'max_age_in_seconds'),
+            [generated.allowed_origins],
+            [generated.allowed_methods],
+            allowed_headers=[generated.allowed_headers],
+            exposed_headers=[generated.exposed_headers],
+            max_age_in_seconds=generated.max_age_in_seconds,
         )
-
-    def __eq__(self, other: Any) -> bool:
-        """Check equality by comparing internal data.
-
-        :param other: The other object to compare with.
-        :type other: Any
-        :return: True if equal, False otherwise.
-        :rtype: bool
-        """
-        if isinstance(other, self.__class__) and hasattr(other, '_data'):
-            return self._data == other._data
-        return super().__eq__(other)
 
 
 class ContainerProperties(DictMixin):
@@ -513,12 +467,12 @@ class ContainerProperties(DictMixin):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
-        props.etag = generated.properties.e_tag
+        props.etag = generated.properties.etag
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.immutable_storage_with_versioning_enabled = generated.properties.is_immutable_storage_with_versioning_enabled  # pylint: disable=line-too-long, name-too-long
-        props.deleted = generated.delete
+        props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
@@ -822,20 +776,14 @@ class BlobBlock(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        # The generated Block model declares name with format="base64", so the
-        # TypeSpec deserialization framework has already base64-decoded the XML
-        # text into raw bytes.  We just need to convert to str.
-        if isinstance(generated.name, bytes):
-            block_id = generated.name.decode('utf-8')
-        else:
-            try:
-                decoded_bytes = decode_base64_to_bytes(generated.name)
-                block_id = decoded_bytes.decode('utf-8')
-            # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
-            # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
-            # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
-            except UnicodeDecodeError:
-                block_id = generated.name
+        try:
+            decoded_bytes = decode_base64_to_bytes(generated.name)
+            block_id = decoded_bytes.decode('utf-8')
+        # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
+        # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
+        # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
+        except UnicodeDecodeError:
+            block_id = generated.name
         block = cls(block_id)
         block.size = generated.size
         return block
@@ -1086,17 +1034,22 @@ class AccessPolicy(GenAccessPolicy):
     :paramtype start: Optional[Union[str, datetime]]
     """
 
+    permission: Optional[Union[ContainerSasPermissions, str]]  # type: ignore [assignment]
+    """The permissions associated with the shared access signature. The user is restricted to
+        operations allowed by the permissions."""
+    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    """The time at which the shared access signature becomes invalid."""
+    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
+    """The time at which the shared access signature becomes valid."""
+
     def __init__(
         self, permission: Optional[Union["ContainerSasPermissions", str]] = None,
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
-        super().__init__(
-            permission=permission, expiry=expiry, start=start  # type: ignore[arg-type]
-        )
-        self.start = start  # type: ignore[assignment]
-        self.expiry = expiry  # type: ignore[assignment]
-        self.permission = permission  # type: ignore[assignment]
+        self.start = start
+        self.expiry = expiry
+        self.permission = permission
 
 
 class BlobSasPermissions(object):

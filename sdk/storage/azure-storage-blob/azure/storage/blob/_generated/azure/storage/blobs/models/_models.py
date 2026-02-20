@@ -1618,7 +1618,7 @@ class FilterBlobItem(_Model):
     """The properties of the blob. Required."""
     tags: Optional["_models.BlobTags"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "tags", "text": True, "unwrapped": False},
+        xml={"attribute": False, "name": "Tags", "text": False, "unwrapped": False},
     )
     """The metadata of the blob."""
     version_id: Optional[str] = rest_field(
