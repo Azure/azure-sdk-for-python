@@ -280,7 +280,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            return self._not_applicable_result(eval_input.get("error_message"), 1)
+            return self._not_applicable_result(eval_input.get("error_message"), 1, has_details=True)
 
         result = await self._do_eval(eval_input)
 

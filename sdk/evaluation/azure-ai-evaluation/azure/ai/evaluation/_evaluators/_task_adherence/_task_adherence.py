@@ -175,6 +175,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return self._not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
+                has_details=True,
             )
 
         # Preprocess messages if they are lists

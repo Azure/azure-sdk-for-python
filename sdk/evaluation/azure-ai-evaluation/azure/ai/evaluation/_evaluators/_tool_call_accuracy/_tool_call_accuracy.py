@@ -307,7 +307,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
+            return self._not_applicable_result(eval_input.get("error_message"), self.threshold, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

@@ -262,7 +262,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
             error_message = eval_input.get("error_message", "Unknown error")
-            return self._not_applicable_result(error_message, 1)
+            return self._not_applicable_result(error_message, 1, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result
