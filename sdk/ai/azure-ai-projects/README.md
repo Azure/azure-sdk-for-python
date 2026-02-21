@@ -130,6 +130,7 @@ with project_client.get_openai_client() as openai_client:
     )
     print(f"Response output: {response.output_text}")
 ```
+
 <!-- END SNIPPET -->
 
 See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
