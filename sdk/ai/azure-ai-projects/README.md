@@ -482,7 +482,7 @@ tool = AzureFunctionTool(
 
 See the full sample in file `\agents\tools\sample_agent_azure_function.py` and the Azure Function implementation in `\agents\tools\get_weather_func_app.py` in the [Samples][samples] folder.
 
-* **Memory Search Tool (Preview)**
+**Memory Search Tool (Preview)**
 
   The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
 
