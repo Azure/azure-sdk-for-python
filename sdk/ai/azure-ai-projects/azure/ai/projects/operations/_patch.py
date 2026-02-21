@@ -31,13 +31,11 @@ class BetaOperations(GeneratedBetaOperations):
         :class:`~azure.ai.projects.AIProjectClient`'s
         :attr:`beta` attribute.
     """
-    
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Replace with patched class that includes begin_update_memories
-        self.memory_stores = BetaMemoryStoresOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 __all__: List[str] = [
