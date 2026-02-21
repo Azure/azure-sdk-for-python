@@ -27,7 +27,7 @@ resources in your Microsoft Foundry Project. Use it to:
 * **Manage memory stores (preview)** for Agent conversations, using the `.beta.memory_stores` operations.
 * **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
-* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using the ".beta.red_teams" operations.
+* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using the `.beta.red_teams` operations.
 * **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
@@ -56,7 +56,7 @@ To report an issue with the client library, or request additional features, plea
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
 * A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. see [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry?view=foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry?view=foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
 
@@ -113,8 +113,6 @@ Your Microsoft Foundry project may have one or more AI models deployed. These co
 
 The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
-See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
-
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
@@ -134,11 +132,11 @@ with project_client.get_openai_client() as openai_client:
 ```
 <!-- END SNIPPET -->
 
-See the "responses" folder in the [package samples][samples] for example of Responses calls using OpenAI client.
+See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
 
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
+The `.agents` property on the `AIProjectClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
 
 The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
@@ -1269,7 +1267,7 @@ The client uses the standard [Python logging library](https://docs.python.org/3/
 
 #### Default console logging
 
-To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Authentication bearer tokens are automaticly redacted from the log. Your log may contain other sensitive information, so be sure to remove it before sharing with others.
+To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Authentication bearer tokens are automatically redacted from the log. Your log may contain other sensitive information, so be sure to remove it before sharing the log with others.
 
 #### Customizing your log
 
