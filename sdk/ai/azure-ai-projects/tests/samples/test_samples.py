@@ -62,7 +62,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_test=[],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
