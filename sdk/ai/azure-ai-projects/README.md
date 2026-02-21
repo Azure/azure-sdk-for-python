@@ -297,7 +297,7 @@ After calling `responses.create()`, you can download file using the returned res
 image_data = [output.result for output in response.output if output.type == "image_generation_call"]
 if image_data and image_data[0]:
     print("Downloading generated image...")
-    filename = "happy-dogs.png"
+    filename = "microsoft.png"
     file_path = os.path.join(tempfile.gettempdir(), filename)
 
     with open(file_path, "wb") as f:
@@ -686,7 +686,7 @@ Call external APIs defined by OpenAPI specifications using project connection au
 <!-- SNIPPET:sample_agent_openapi_with_project_connection.tool_declaration-->
 
 ```python
-with open(tripadvisor_asset_file_path, "r") as f:
+with open(tripadvisor_asset_file_path, "r", encoding="utf-8") as f:
     openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(
