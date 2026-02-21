@@ -4,7 +4,7 @@
 # ------------------------------------
 # pylint: disable=C4717, C4722, C4748
 
-from typing import Optional, Any, overload
+from typing import Optional, Any, cast, overload
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy, BearerTokenCredentialPolicy, AzureKeyCredentialPolicy
 from azure.core.credentials import TokenCredential, AzureKeyCredential
@@ -86,6 +86,15 @@ def is_cognitive_services_scope(audience: str) -> bool:
     return False
 
 
+def normalize_scope(audience: Optional[str]) -> str:
+    scope = audience or DEFAULT_ENTRA_ID_SCOPE
+    if scope.endswith(DEFAULT_SCOPE):
+        return scope
+    if scope.endswith("/"):
+        return scope[:-1] + DEFAULT_SCOPE
+    return scope + DEFAULT_SCOPE
+
+
 def set_authentication_policy(credential, kwargs):
     if isinstance(credential, AzureKeyCredential):
         if not kwargs.get("authentication_policy"):
@@ -98,13 +107,7 @@ def set_authentication_policy(credential, kwargs):
     elif hasattr(credential, "get_token"):
         if not kwargs.get("authentication_policy"):
             if kwargs.get("region") and kwargs.get("resource_id"):
-                audience = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
-                if audience.endswith(DEFAULT_SCOPE):
-                    scope = audience
-                elif audience.endswith("/"):
-                    scope = audience[:-1] + DEFAULT_SCOPE
-                else:
-                    scope = audience + DEFAULT_SCOPE
+                scope = normalize_scope(cast(Optional[str], kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)))
                 kwargs["authentication_policy"] = TranslatorEntraIdAuthenticationPolicy(
                     credential,
                     kwargs["resource_id"],
@@ -117,13 +120,9 @@ def set_authentication_policy(credential, kwargs):
                         """Both 'resource_id' and 'region' must be provided with a TokenCredential for
                          regional resource authentication."""
                     )
-                scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
+                scope = cast(Optional[str], kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)) or DEFAULT_ENTRA_ID_SCOPE
                 if not is_cognitive_services_scope(scope):
-                    if not scope.endswith(DEFAULT_SCOPE):
-                        if scope.endswith("/"):
-                            scope = scope[:-1] + DEFAULT_SCOPE
-                        else:
-                            scope = scope + DEFAULT_SCOPE
+                    scope = normalize_scope(scope)
 
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, scope)
 
