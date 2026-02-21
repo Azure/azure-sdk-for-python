@@ -23,11 +23,11 @@ resources in your Microsoft Foundry Project. Use it to:
   * OpenAPI
   * Web Search
   * Web Search (Preview)
-* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.beta.memory_stores` operations.
-* **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
+* **Manage memory stores (preview)** for Agent conversations, using the `.beta.memory_stores` operations.
+* **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using the `.evaluation_rules`,
 `.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
-* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".beta.red_teams" operations.
+* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using the ".beta.red_teams" operations.
 * **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
