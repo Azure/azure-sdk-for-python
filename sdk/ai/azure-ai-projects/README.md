@@ -5,28 +5,29 @@ resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
-  * Agent Memory Search
-  * Agent-to-Agent (A2A)
+  * Agent-to-Agent (A2A) (Preview)
   * Azure AI Search
   * Azure Functions
-  * Bing Custom Search
+  * Bing Custom Search (Preview)
   * Bing Grounding
-  * Browser Automation
+  * Browser Automation (Preview)
   * Code Interpreter
-  * Computer Use
+  * Computer Use (Preview)
   * File Search
   * Function Tool
   * Image Generation
-  * Microsoft Fabric
+  * Memory Search (Preview)
+  * Microsoft Fabric (Preview)
+  * Microsoft SharePoint (Preview)
   * Model Context Protocol (MCP)
   * OpenAPI
-  * SharePoint
-  * Web Search/Web Search Preview
-* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
-* **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
-`.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+  * Web Search
+  * Web Search (Preview)
+* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
+* **Manage memory stores (preview)** for Agent conversations, using the `.beta.memory_stores` operations.
+* **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+`.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
+* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using the `.beta.red_teams` operations.
 * **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
@@ -53,9 +54,9 @@ To report an issue with the client library, or request additional features, plea
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-* The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
+* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. see [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry?view=foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
 
@@ -110,9 +111,7 @@ async with (
 
 Your Microsoft Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client from the [openai](https://pypi.org/project/openai/) package, and execute an example multi-turn "Responses" calls.
 
-The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, As shown in the "Models + endpoints" tab, under the "Name" column.
-
-See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
+The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
 <!-- SNIPPET:sample_responses_basic.responses -->
 
@@ -134,11 +133,13 @@ with project_client.get_openai_client() as openai_client:
 
 <!-- END SNIPPET -->
 
+See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
+
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
+The `.agents` property on the `AIProjectClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
 
-The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
 See the "agents" folder in the [package samples][samples] for an extensive set of samples, including streaming, tool usage and memory store usage.
 
@@ -226,7 +227,7 @@ print(code)
 
 <!-- END SNIPPET -->
 
-If you want to upload an input file and download generated output files, use the with-files sample:
+If you want to upload an input file and download generated output files:
 
 <!-- SNIPPET:sample_agent_code_interpreter_with_files.tool_declaration -->
 
@@ -245,7 +246,7 @@ tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file
 
 *After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
 
-See the with-files sample in file `\agents\tools\sample_agent_code_interpreter_with_files.py` in the [Samples][samples] folder.
+See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py` in the [Samples][samples] folder.
 
 **File Search**
 
@@ -308,7 +309,7 @@ if image_data and image_data[0]:
 
 See the full sample in file `\agents\tools\sample_agent_image_generation.py` in the [Samples][samples] folder.
 
-**Web Search/Web Search Preview**
+**Web Search / Web Search (Preview)**
 
 Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option is in the documentation: https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases.
 
@@ -352,8 +353,7 @@ tool = WebSearchTool(
 
 See the full sample in file `\agents\tools\sample_agent_web_search_with_custom_search.py` in the [Samples][samples] folder.
 
-
-**Computer Use**
+**Computer Use (Preview)**
 
 Enable agents to interact directly with computer systems for task automation and system operations:
 
@@ -483,7 +483,7 @@ tool = AzureFunctionTool(
 
 See the full sample in file `\agents\tools\sample_agent_azure_function.py` and the Azure Function implementation in `\agents\tools\get_weather_func_app.py` in the [Samples][samples] folder.
 
-* **Memory Search Tool**
+**Memory Search Tool (Preview)**
 
   The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
 
@@ -556,7 +556,8 @@ tool = BingGroundingTool(
 
 See the full sample in file `\agents\tools\sample_agent_bing_grounding.py` in the [Samples][samples] folder.
 
-**Bing Custom Search**
+**Bing Custom Search (Preview)**
+
 Warning: Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
 
 Use custom-configured Bing search instances for domain-specific or filtered web search results:
@@ -580,7 +581,7 @@ tool = BingCustomSearchPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_bing_custom_search.py` in the [Samples][samples] folder.
 
-**Microsoft Fabric**
+**Microsoft Fabric (Preview)**
 
 Connect to and query Microsoft Fabric:
 
@@ -600,7 +601,7 @@ tool = MicrosoftFabricPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_fabric.py` in the [Samples][samples] folder.
 
-**SharePoint**
+**Microsoft SharePoint (Preview)**
 
 Access and search SharePoint documents, lists, and sites for enterprise knowledge integration:
 
@@ -620,7 +621,7 @@ tool = SharepointPreviewTool(
 
 See the full sample in file `\agents\tools\sample_agent_sharepoint.py` in the [Samples][samples] folder.
 
-**Browser Automation**
+**Browser Automation (Preview)**
 
 Automate browser interactions for web scraping, testing, and interaction with web applications:
 
@@ -660,7 +661,7 @@ tool = MCPTool(
 
 See the full sample in file `\agents\tools\sample_agent_mcp_with_project_connection.py` in the [Samples][samples] folder.
 
-**Agent-to-Agent (A2A)**
+**Agent-to-Agent (A2A) (Preview)**
 
 Enable multi-agent collaboration where agents can communicate and delegate tasks to other specialized agents:
 
@@ -1137,6 +1138,7 @@ If no value is provided for the `enable_baggage_propagation` parameter with the 
 **Why is baggage propagation separate?**
 
 The baggage header can contain arbitrary key-value pairs added anywhere in your application's trace context. Unlike trace IDs (which are randomly generated identifiers), baggage may contain:
+
 - User identifiers or session information
 - Authentication tokens or credentials
 - Business-specific data or metadata
@@ -1266,7 +1268,7 @@ The client uses the standard [Python logging library](https://docs.python.org/3/
 
 #### Default console logging
 
-To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Note that the log is not redacted and contains sensitive information such as your authentication token. Be sure to remove any sensitive information before sharing this log.
+To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Authentication bearer tokens are automatically redacted from the log. Your log may contain other sensitive information, so be sure to remove it before sharing the log with others.
 
 #### Customizing your log
 
