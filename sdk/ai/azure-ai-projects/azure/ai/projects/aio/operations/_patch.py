@@ -32,6 +32,19 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
+    evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
+    evaluators: BetaEvaluatorsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaEvaluatorsOperations` operations"""
+    insights: BetaInsightsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaInsightsOperations` operations"""
+    memory_stores: BetaMemoryStoresOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaMemoryStoresOperations` operations"""
+    red_teams: BetaRedTeamsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaRedTeamsOperations` operations"""
+    schedules: BetaSchedulesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
+
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Replace with patched class that includes begin_update_memories
