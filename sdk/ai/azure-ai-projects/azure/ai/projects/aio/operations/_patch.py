@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import Any, List
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
@@ -16,13 +16,13 @@ from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
-    BetaOperations as GenerateBetaOperations,
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
+    BetaOperations as GeneratedBetaOperations,
 )
 
 
-class BetaOperations(GenerateBetaOperations):
+class BetaOperations(GeneratedBetaOperations):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31,13 +31,13 @@ class BetaOperations(GenerateBetaOperations):
         :class:`~azure.ai.projects.aio.AIProjectClient`'s
         :attr:`beta` attribute.
     """
-
-    memory_stores: BetaMemoryStoresOperations  # type override for mypy
-
-    def __init__(self, *args, **kwargs) -> None:
+    
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Override memory_stores with the patched version that has begin_update_memories
-        self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that includes begin_update_memories
+        self.memory_stores = BetaMemoryStoresOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
 __all__: List[str] = [
