@@ -5,28 +5,30 @@ resources in your Microsoft Foundry Project. Use it to:
 
 * **Create and run Agents** using methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
-  * Agent Memory Search
-  * Agent-to-Agent (A2A)
+  * Agent Memory Search (Preview)
+  * Agent-to-Agent (A2A)(Preview)
   * Azure AI Search
   * Azure Functions
-  * Bing Custom Search
+  * Bing Custom Search (Preview)
   * Bing Grounding
-  * Browser Automation
+  * Browser Automation (Preview)
   * Code Interpreter
-  * Computer Use
+  * Computer Use (Previewe)
   * File Search
   * Function Tool
   * Image Generation
-  * Microsoft Fabric
+  * Microsoft Fabric (Preview)
   * Model Context Protocol (MCP)
   * OpenAPI
-  * SharePoint
-  * Web Search/Web Search Preview
+  * Microsoft SharePoint (Preview)
+  * Web Search
+  * Web Search (Preview)
+  
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
+* **Manage memory stores** for Agent conversations, using the `.beta.memory_stores` operations.
 * **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
-`.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+`.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
+* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".beta.red_teams" operations.
 * **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
