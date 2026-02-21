@@ -119,12 +119,11 @@ def set_authentication_policy(credential, kwargs):
                     )
                 scope: str = kwargs.pop("audience", DEFAULT_ENTRA_ID_SCOPE)
                 if not is_cognitive_services_scope(scope):
-                    if scope.endswith(DEFAULT_SCOPE):
-                        pass  # Already has /.default
-                    elif scope.endswith("/"):
-                        scope = scope[:-1] + DEFAULT_SCOPE
-                    else:
-                        scope = scope + DEFAULT_SCOPE
+                    if not scope.endswith(DEFAULT_SCOPE):
+                        if scope.endswith("/"):
+                            scope = scope[:-1] + DEFAULT_SCOPE
+                        else:
+                            scope = scope + DEFAULT_SCOPE
 
                 kwargs["authentication_policy"] = BearerTokenCredentialPolicy(credential, scope)
 
