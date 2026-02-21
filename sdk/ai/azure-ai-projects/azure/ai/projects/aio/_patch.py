@@ -15,6 +15,7 @@ from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
+from .._patch import _BearerTokenRedactionFilter
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
@@ -74,7 +75,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             # Enable detailed console logs across Azure libraries
             azure_logger = logging.getLogger("azure")
             azure_logger.setLevel(logging.DEBUG)
-            azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+            console_handler = logging.StreamHandler(stream=sys.stdout)
+            console_handler.addFilter(_BearerTokenRedactionFilter())
+            azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
             # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to

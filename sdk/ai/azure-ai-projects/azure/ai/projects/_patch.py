@@ -8,6 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import os
+import re
 import logging
 from typing import List, Any
 import httpx
@@ -74,7 +75,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             # Enable detailed console logs across Azure libraries
             azure_logger = logging.getLogger("azure")
             azure_logger.setLevel(logging.DEBUG)
-            azure_logger.addHandler(logging.StreamHandler(stream=sys.stdout))
+            console_handler = logging.StreamHandler(stream=sys.stdout)
+            console_handler.addFilter(_BearerTokenRedactionFilter())
+            azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
             # Make sure regular (redacted) detailed azure.core logs are not shown, as we are about to
@@ -171,6 +174,23 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         client = _create_openai_client(default_headers=default_headers, **kwargs)
 
         return client
+
+
+class _BearerTokenRedactionFilter(logging.Filter):
+    """Redact bearer tokens in azure.core log messages before they are emitted to console."""
+
+    _AUTH_HEADER_DICT_PATTERN = re.compile(
+        r"(?i)(['\"]authorization['\"]\s*:\s*['\"])bearer\s+[^'\"]+(['\"])",
+    )
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        rendered = record.getMessage()
+        redacted = self._AUTH_HEADER_DICT_PATTERN.sub(r"\1Bearer <REDACTED>\2", rendered)
+        if redacted != rendered:
+            # Replace the pre-formatted content so handlers emit sanitized output.
+            record.msg = redacted
+            record.args = ()
+        return True
 
 
 class OpenAILoggingTransport(httpx.HTTPTransport):
