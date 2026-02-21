@@ -55,7 +55,7 @@ with (
     )
 
     # [START tool_declaration]
-    with open(tripadvisor_asset_file_path, "r") as f:
+    with open(tripadvisor_asset_file_path, "r", encoding="utf-8") as f:
         openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
     tool = OpenApiTool(

@@ -43,7 +43,6 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_computer_use.py",
                 "sample_agent_browser_automation.py",
                 "sample_agent_openapi.py",
-                "sample_agent_openapi_with_project_connection.py",  # fail on comparision with
             ],
         ),
     )
