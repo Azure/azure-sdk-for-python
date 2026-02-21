@@ -26,30 +26,20 @@ logger = logging.getLogger(__name__)
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
     """AIProjectClient.
 
+    :ivar beta: BetaOperations operations
+    :vartype beta: azure.ai.projects.aio.operations.BetaOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
+    :ivar evaluation_rules: EvaluationRulesOperations operations
+    :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
     :ivar connections: ConnectionsOperations operations
     :vartype connections: azure.ai.projects.aio.operations.ConnectionsOperations
     :ivar datasets: DatasetsOperations operations
     :vartype datasets: azure.ai.projects.aio.operations.DatasetsOperations
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
-    :ivar evaluation_taxonomies: EvaluationTaxonomiesOperations operations
-    :vartype evaluation_taxonomies: azure.ai.projects.aio.operations.EvaluationTaxonomiesOperations
-    :ivar evaluation_rules: EvaluationRulesOperations operations
-    :vartype evaluation_rules: azure.ai.projects.aio.operations.EvaluationRulesOperations
-    :ivar evaluators: EvaluatorsOperations operations
-    :vartype evaluators: azure.ai.projects.aio.operations.EvaluatorsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
-    :ivar insights: InsightsOperations operations
-    :vartype insights: azure.ai.projects.aio.operations.InsightsOperations
-    :ivar memory_stores: MemoryStoresOperations operations
-    :vartype memory_stores: azure.ai.projects.aio.operations.MemoryStoresOperations
-    :ivar red_teams: RedTeamsOperations operations
-    :vartype red_teams: azure.ai.projects.aio.operations.RedTeamsOperations
-    :ivar schedules: SchedulesOperations operations
-    :vartype schedules: azure.ai.projects.aio.operations.SchedulesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -58,8 +48,9 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "v1". Note
-     that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is "v1". Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     """
 
