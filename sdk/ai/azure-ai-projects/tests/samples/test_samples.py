@@ -12,7 +12,7 @@ from sample_executor import (
     get_sample_paths,
     SamplePathPasser,
 )
-from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
+from test_samples_helpers import agent_tools_instructions, memories_instructions, get_sample_environment_variables_map
 
 
 class TestSamples(AzureRecordedTestCase):
@@ -43,6 +43,7 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_computer_use.py",
                 "sample_agent_browser_automation.py",
                 "sample_agent_openapi.py",
+                "sample_agent_openapi_with_project_connection.py",  # fail on comparision with
             ],
         ),
     )
@@ -54,6 +55,26 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "memories",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    def test_memory_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        executor.execute()
+        executor.validate_print_calls_by_llm(
+            instructions=memories_instructions,
             project_endpoint=kwargs["azure_ai_project_endpoint"],
             model=kwargs["azure_ai_model_deployment_name"],
         )
