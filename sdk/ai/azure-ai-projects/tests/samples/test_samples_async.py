@@ -15,9 +15,6 @@ from sample_executor import (
 from test_samples_helpers import agent_tools_instructions, get_sample_environment_variables_map
 
 
-@pytest.mark.skip(
-    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
-)
 class TestSamplesAsync(AzureRecordedTestCase):
     """Async test cases for samples."""
 
@@ -28,7 +25,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         "sample_path",
         get_async_sample_paths(
             "agents/tools",
-            samples_to_skip=[],
+            samples_to_skip=["sample_agent_computer_use_async.py"],
         ),
     )
     @SamplePathPasser()

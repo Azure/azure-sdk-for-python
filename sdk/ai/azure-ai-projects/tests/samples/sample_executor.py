@@ -574,8 +574,25 @@ class SyncSampleExecutor(BaseSampleExecutor):
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            response = openai_client.responses.create(**self._get_validation_request_params(instructions, model=model))
-            test_report = json.loads(response.output_text)
+            response = None
+            try:
+                response = openai_client.responses.create(
+                    **self._get_validation_request_params(instructions, model=model)
+                )
+                test_report = json.loads(response.output_text)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                response_output_text = None
+                try:
+                    response_output_text = response.output_text if response is not None else None
+                except Exception:  # pylint: disable=broad-exception-caught
+                    response_output_text = None
+
+                reason = f"LLM validation request/parsing failed: {type(e).__name__}: {str(e)}"
+                if response_output_text:
+                    reason += f". Raw output_text: {response_output_text}"
+
+                test_report = {"correct": False, "reason": reason}
+
             self._assert_validation_result(test_report)
 
 
@@ -675,10 +692,25 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            response = await openai_client.responses.create(
-                **self._get_validation_request_params(instructions, model=model)
-            )
-            test_report = json.loads(response.output_text)
+            response = None
+            try:
+                response = await openai_client.responses.create(
+                    **self._get_validation_request_params(instructions, model=model)
+                )
+                test_report = json.loads(response.output_text)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                response_output_text = None
+                try:
+                    response_output_text = response.output_text if response is not None else None
+                except Exception:  # pylint: disable=broad-exception-caught
+                    response_output_text = None
+
+                reason = f"LLM validation request/parsing failed: {type(e).__name__}: {str(e)}"
+                if response_output_text:
+                    reason += f". Raw output_text: {response_output_text}"
+
+                test_report = {"correct": False, "reason": reason}
+
             self._assert_validation_result(test_report)
 
 
