@@ -170,6 +170,9 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             ~azure.core.credentials.AzureSasCredential or
             ~azure.core.credentials.TokenCredential or
             str or Dict[str, str] or None
+        :keyword str api_version:
+            The Storage API version to use for requests. Default value is the most recent service version that is
+            compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
         :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
             authentication. Only has an effect when credential is of type TokenCredential. The value could be
             https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
@@ -192,6 +195,8 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     def get_user_delegation_key(
         self, key_start_time: "datetime",
         key_expiry_time: "datetime",
+        *,
+        delegated_user_tid: Optional[str] = None,
         **kwargs: Any
     ) -> UserDelegationKey:
         """
@@ -202,6 +207,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             A DateTime value. Indicates when the key becomes valid.
         :param ~datetime.datetime key_expiry_time:
             A DateTime value. Indicates when the key stops being valid.
+        :keyword str delegated_user_tid: The delegated user tenant id in Entra ID.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -223,6 +229,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         delegation_key = self._blob_service_client.get_user_delegation_key(
             key_start_time=key_start_time,
             key_expiry_time=key_expiry_time,
+            delegated_user_tid=delegated_user_tid,
             **kwargs
         )
         return UserDelegationKey._from_generated(delegation_key)  # pylint: disable=protected-access

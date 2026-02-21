@@ -3,8 +3,10 @@
 # ---------------------------------------------------------
 
 import inspect
+import logging
 from abc import ABC, abstractmethod
 import json
+import copy
 from typing import (
     Any,
     Callable,
@@ -44,6 +46,8 @@ import copy
 P = ParamSpec("P")
 T = TypeVar("T")
 T_EvalValue = TypeVar("T_EvalValue")
+
+logger = logging.getLogger(__name__)
 
 
 class DerivedEvalInput(TypedDict, total=False):
@@ -113,6 +117,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
     _NOT_APPLICABLE_RESULT = "not applicable"
     _PASS_RESULT = "pass"
     _FAIL_RESULT = "fail"
+    _type = "azure_ai_evaluator"
 
     # ~~~ METHODS THAT ALMOST ALWAYS NEED TO BE OVERRIDDEN BY CHILDREN~~~
 
@@ -477,6 +482,22 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         for metric, values in evaluation_per_turn.items():
             if all(isinstance(value, (int, float)) for value in values):
                 aggregated[metric] = self._conversation_aggregation_function(cast(List[Union[int, float]], values))
+            # Also promote certain non-numeric fields to top level for the last turn
+            # This maintains backwards compatibility where base label and reason fields appear at top level
+            elif (
+                metric
+                and not metric.endswith("_total_tokens")
+                and not metric.endswith("_prompt_tokens")
+                and not metric.endswith("_completion_tokens")
+                and not metric.endswith("_finish_reason")
+                and not metric.endswith("_sample_input")
+                and not metric.endswith("_sample_output")
+                and not metric.endswith("_model")
+                and not metric.endswith("_details")
+            ):
+                # Promote the last turn's value for non-numeric fields (like labels and reasons)
+                if values:
+                    aggregated[metric] = values[-1]
         # Slap the per-turn results back in.
         aggregated["evaluation_per_turn"] = evaluation_per_turn
         return aggregated
@@ -500,7 +521,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                 if message.get("role") == "assistant" and isinstance(message.get("content"), list):
                     for content_item in message.get("content"):
                         if isinstance(content_item, dict) and content_item.get("type") == "tool_call":
-                            tool_calls.append(content_item)
+                            tool_calls.append(copy.deepcopy(content_item))
 
                 # Extract tool results from tool messages
                 elif message.get("role") == "tool" and message.get("tool_call_id"):
@@ -591,7 +612,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
         try:
             eval_input_list = self._convert_kwargs_to_eval_input(**kwargs)
         except Exception as e:
-            print(f"Error converting kwargs to eval_input_list: {e}")
+            logger.error(f"Error converting kwargs to eval_input_list: {e}")
             raise e
         per_turn_results = []
         # Evaluate all inputs.
@@ -628,7 +649,7 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                             else:
                                 result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
-                print(f"Error calculating binary result: {e}")
+                logger.warning(f"Error calculating binary result: {e}")
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 

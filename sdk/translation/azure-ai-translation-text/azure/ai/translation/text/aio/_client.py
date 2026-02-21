@@ -8,17 +8,18 @@
 
 from copy import deepcopy
 from typing import Any, Awaitable
+from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .._serialization import Deserializer, Serializer
+from .._utils.serialization import Deserializer, Serializer
 from ._configuration import TextTranslationClientConfiguration
-from ._operations import TextTranslationClientOperationsMixin
+from ._operations import _TextTranslationClientOperationsMixin
 
 
-class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class TextTranslationClient(_TextTranslationClientOperationsMixin):
     """Text translation is a cloud-based REST API feature of the Translator service that uses neural
     machine translation technology to enable quick and accurate source-to-target text translation
     in real time across all supported languages.
@@ -37,16 +38,12 @@ class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: di
     Detect. Returns the source code language code and a boolean variable denoting whether the
     detected language is supported for text translation and transliteration.
 
-    Dictionary lookup. Returns equivalent words for the source term in the target language.
-
-    Dictionary example Returns grammatical structure and context examples for the source term and
-    target term pair.
-
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
-         https://api.cognitive.microsofttranslator.com). Required.
+         `https://api.cognitive.microsofttranslator.com
+     <https://api.cognitive.microsofttranslator.com>`_). Required.
     :type endpoint: str
-    :keyword api_version: Mandatory API version parameter. Default value is "3.0". Note that
-     overriding this default value may result in unsupported behavior.
+    :keyword api_version: Mandatory API version parameter. Default value is "2025-10-01-preview".
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -55,6 +52,7 @@ class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: di
     ) -> None:
         _endpoint = "{Endpoint}"
         self._config = TextTranslationClientConfiguration(endpoint=endpoint, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -109,7 +107,7 @@ class TextTranslationClient(TextTranslationClientOperationsMixin):  # pylint: di
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "TextTranslationClient":
+    async def __aenter__(self) -> Self:
         await self._client.__aenter__()
         return self
 

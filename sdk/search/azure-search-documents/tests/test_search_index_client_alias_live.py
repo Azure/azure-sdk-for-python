@@ -92,8 +92,8 @@ class TestSearchClientAlias(AzureRecordedTestCase):
 
     def _create_index(self, client, index_name):
         fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
         ]
         scoring_profile = ScoringProfile(name="MyProfile")
         scoring_profiles = []

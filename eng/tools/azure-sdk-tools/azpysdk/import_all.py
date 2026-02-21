@@ -50,9 +50,6 @@ class import_all(Check):
 
         targeted = self.get_targeted_directories(args)
 
-        # {[tox]pip_command} freeze
-        # python {repository_root}/eng/tox/import_all.py -t {tox_root}
-
         outcomes: List[int] = []
 
         for parsed in targeted:
@@ -79,8 +76,14 @@ class import_all(Check):
                 import_script_all = "from {0} import *".format(parsed.namespace)
                 commands = [executable, "-c", import_script_all]
 
-                outcomes.append(check_call(commands))
-                logger.info("Verified module dependency, no issues found")
+                outcomes.append(check_call(commands, cwd=staging_directory))
+
+                if outcomes[-1] == 0:
+                    logger.info("Verified module dependency, no issues found")
+                else:
+                    logger.error(
+                        f'Dependency issue found when invoking "{import_script_all}" against package {parsed.name}'
+                    )
             else:
                 logger.info("Package {} is excluded from dependency check".format(parsed.name))
 

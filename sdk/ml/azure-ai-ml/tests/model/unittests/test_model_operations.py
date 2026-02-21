@@ -556,3 +556,105 @@ path: ./model.pkl"""
         with pytest.raises(ValidationException) as cm:
             mock_model_operation.create_or_update(model)
         assert "please use EvaluatorOperations" in cm.value.args[0]
+
+    def test_get_with_workspace_with_version(self, mock_model_operation: ModelOperations) -> None:
+        """Test _get_with_workspace retrieves model with specific version from workspace."""
+        name = "test_model"
+        version = "1"
+        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
+        mock_model_operation._model_versions_operation.get.return_value = mock_model_version
+
+        result = mock_model_operation._get_with_workspace(name=name, version=version)
+
+        mock_model_operation._model_versions_operation.get.assert_called_once_with(
+            name=name,
+            version=version,
+            workspace_name=mock_model_operation._workspace_name,
+            **mock_model_operation._scope_kwargs,
+        )
+        assert result == mock_model_version
+        assert mock_model_operation._model_container_operation.get.call_count == 0
+
+    def test_get_with_workspace_without_version(self, mock_model_operation: ModelOperations) -> None:
+        """Test _get_with_workspace retrieves model container when no version specified."""
+        name = "test_model"
+        mock_model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
+        mock_model_operation._model_container_operation.get.return_value = mock_model_container
+
+        result = mock_model_operation._get_with_workspace(name=name, version=None)
+
+        mock_model_operation._model_container_operation.get.assert_called_once_with(
+            name=name,
+            workspace_name=mock_model_operation._workspace_name,
+            **mock_model_operation._scope_kwargs,
+        )
+        assert result == mock_model_container
+        assert mock_model_operation._model_versions_operation.get.call_count == 0
+
+    def test_get_with_registry_with_version(self, mock_model_operation_reg: ModelOperations) -> None:
+        """Test _get_with_registry retrieves model with specific version from registry."""
+        name = "test_model"
+        version = "1"
+        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
+        mock_model_operation_reg._model_versions_operation.get.return_value = mock_model_version
+
+        result = mock_model_operation_reg._get_with_registry(name=name, version=version)
+
+        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
+            name=name,
+            version=version,
+            registry_name=mock_model_operation_reg._registry_name,
+            **mock_model_operation_reg._scope_kwargs,
+        )
+        assert result == mock_model_version
+        assert mock_model_operation_reg._model_container_operation.get.call_count == 0
+
+    def test_get_with_registry_without_version(self, mock_model_operation_reg: ModelOperations) -> None:
+        """Test _get_with_registry retrieves model container when no version specified."""
+        name = "test_model"
+        mock_model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
+        mock_model_operation_reg._model_container_operation.get.return_value = mock_model_container
+
+        result = mock_model_operation_reg._get_with_registry(name=name, version=None)
+
+        mock_model_operation_reg._model_container_operation.get.assert_called_once_with(
+            name=name,
+            registry_name=mock_model_operation_reg._registry_name,
+            **mock_model_operation_reg._scope_kwargs,
+        )
+        assert result == mock_model_container
+        assert mock_model_operation_reg._model_versions_operation.get.call_count == 0
+
+    def test_get_delegates_to_workspace(self, mock_model_operation: ModelOperations) -> None:
+        """Test _get method delegates to _get_with_workspace when workspace is set."""
+        name = "test_model"
+        version = "1"
+        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
+        mock_model_operation._model_versions_operation.get.return_value = mock_model_version
+
+        result = mock_model_operation._get(name=name, version=version)
+
+        mock_model_operation._model_versions_operation.get.assert_called_once_with(
+            name=name,
+            version=version,
+            workspace_name=mock_model_operation._workspace_name,
+            **mock_model_operation._scope_kwargs,
+        )
+        assert result == mock_model_version
+
+    def test_get_delegates_to_registry(self, mock_model_operation_reg: ModelOperations) -> None:
+        """Test _get method delegates to _get_with_registry when registry is set."""
+        name = "test_model"
+        version = "1"
+        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
+        mock_model_operation_reg._model_versions_operation.get.return_value = mock_model_version
+
+        result = mock_model_operation_reg._get(name=name, version=version)
+
+        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
+            name=name,
+            version=version,
+            registry_name=mock_model_operation_reg._registry_name,
+            **mock_model_operation_reg._scope_kwargs,
+        )
+        assert result == mock_model_version

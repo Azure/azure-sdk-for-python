@@ -10,11 +10,13 @@ from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    SnapshotComposition,
 )
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from .._client_manager_base import (
@@ -25,6 +27,8 @@ from .._client_manager_base import (
 )
 from .._models import SettingSelector
 from .._constants import FEATURE_FLAG_PREFIX
+from .._snapshot_reference_parser import SnapshotReferenceParser
+from .._constants import SNAPSHOT_REF_CONTENT_TYPE
 from ._async_discovery import find_auto_failover_endpoints
 
 if TYPE_CHECKING:
@@ -46,7 +50,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         user_agent: str,
         retry_total: int,
         retry_backoff_max: int,
-        **kwargs
+        **kwargs,
     ) -> Self:
         """
         Creates a new instance of the _AsyncConfigurationClientWrapper class, using the provided credential to
@@ -68,7 +72,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -95,7 +99,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 user_agent=user_agent,
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
-                **kwargs
+                **kwargs,
             ),
         )
 
@@ -136,11 +140,22 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     async def load_configuration_settings(self, selects: List[SettingSelector], **kwargs) -> List[ConfigurationSetting]:
-        configuration_settings = []
+        configuration_settings: List[ConfigurationSetting] = []
         for select in selects:
-            configurations = self._client.list_configuration_settings(
-                key_filter=select.key_filter, label_filter=select.label_filter, tags_filter=select.tag_filters, **kwargs
-            )
+            configurations: AsyncItemPaged[ConfigurationSetting]
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                if not await self._validate_snapshot(select.snapshot_name):
+                    return []
+                configurations = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+            else:
+                # Use traditional filtering when not loading from a snapshot
+                configurations = self._client.list_configuration_settings(
+                    key_filter=select.key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
             async for config in configurations:
                 if not isinstance(config, FeatureFlagConfigurationSetting):
                     # Feature flags are ignored when loaded by Selects, as they are selected from
@@ -152,22 +167,28 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     async def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], **kwargs
     ) -> List[FeatureFlagConfigurationSetting]:
-        loaded_feature_flags = []
+        loaded_feature_flags: List[FeatureFlagConfigurationSetting] = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
-            feature_flags = self._client.list_configuration_settings(
-                key_filter=FEATURE_FLAG_PREFIX + select.key_filter,
-                label_filter=select.label_filter,
-                tags_filter=select.tag_filters,
-                **kwargs
+            feature_flags: AsyncItemPaged[ConfigurationSetting]
+            if select.snapshot_name is not None:
+                # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
+                if not await self._validate_snapshot(select.snapshot_name):
+                    return []
+                feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+            else:
+                # Handle None key_filter by converting to empty string
+                key_filter = select.key_filter if select.key_filter is not None else ""
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+            loaded_feature_flags.extend(
+                [ff async for ff in feature_flags if isinstance(ff, FeatureFlagConfigurationSetting)]
             )
-            async for feature_flag in feature_flags:
-                if not isinstance(feature_flag, FeatureFlagConfigurationSetting):
-                    # If the feature flag is not a FeatureFlagConfigurationSetting, it means it was selected by
-                    # mistake, so we should ignore it.
-                    continue
-                loaded_feature_flags.append(feature_flag)
 
         return loaded_feature_flags
 
@@ -185,16 +206,21 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: Union[Dict[Tuple[str, str], str], None]
         """
         updated_watched_settings = dict(watched_settings)
+        trigger_refresh = False
         for (key, label), etag in watched_settings.items():
             changed, updated_watched_setting = await self._check_configuration_setting(
                 key=key, label=label, etag=etag, headers=headers, **kwargs
             )
             if changed and updated_watched_setting is not None:
                 updated_watched_settings[(key, label)] = updated_watched_setting.etag
+                trigger_refresh = True
             elif changed:
                 # The key was deleted
                 updated_watched_settings[(key, label)] = None
-        return updated_watched_settings
+                trigger_refresh = True
+        if trigger_refresh:
+            return updated_watched_settings
+        return {}
 
     @distributed_trace
     async def try_check_feature_flags(
@@ -229,6 +255,30 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         return await self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
+    async def _validate_snapshot(self, snapshot_name: str) -> bool:
+        """Gets and validates a snapshot by name.
+
+        Returns True if the snapshot is found and has a valid composition type,
+        or False if the snapshot does not exist (404).
+
+        :param str snapshot_name: The name of the snapshot to retrieve
+        :return: True if the snapshot is valid, False if not found
+        :rtype: bool
+        :raises HttpResponseError: If the error is not a 404
+        :raises ValueError: If the snapshot composition type is not 'key'
+        """
+        snapshot = None
+        try:
+            snapshot = await self._client.get_snapshot(snapshot_name)
+        except HttpResponseError as e:
+            if e.status_code == 404:
+                self.LOGGER.warning("Snapshot '%s' not found when resolving snapshot.", snapshot_name)
+                return False
+            raise e
+        if snapshot.composition_type != SnapshotComposition.KEY:
+            raise ValueError(f"Composition type for '{snapshot_name}' must be 'key'.")
+        return True
+
     def is_active(self) -> bool:
         """
         Checks if the client is active and can be used.
@@ -251,6 +301,31 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
 
+    async def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> List[ConfigurationSetting]:
+        """
+        Resolve a snapshot reference configuration setting to the actual snapshot data.
+
+        :param ConfigurationSetting setting: The snapshot reference configuration setting
+        :return: A list of resolved configuration settings from the snapshot
+        :rtype: List[ConfigurationSetting]
+        :raises ValueError: When the setting is not a valid snapshot reference
+        """
+        if setting.content_type != SNAPSHOT_REF_CONTENT_TYPE:
+            raise ValueError("Setting is not a snapshot reference")
+
+        # Parse the snapshot reference
+        snapshot_name = SnapshotReferenceParser.parse(setting)
+        if not await self._validate_snapshot(snapshot_name):
+            return []
+
+        # Create a selector for the snapshot
+        snapshot_selector = SettingSelector(snapshot_name=snapshot_name)
+
+        # Use existing load_configuration_settings to load from snapshot
+        configurations = await self.load_configuration_settings([snapshot_selector], **kwargs)
+
+        return configurations
+
 
 class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disable=too-many-instance-attributes
     def __init__(
@@ -265,7 +340,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         min_backoff_sec,
         max_backoff_sec,
         load_balancing_enabled,
-        **kwargs
+        **kwargs,
     ):
         super(AsyncConfigurationClientManager, self).__init__(
             endpoint,
@@ -276,7 +351,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
             min_backoff_sec,
             max_backoff_sec,
             load_balancing_enabled,
-            **kwargs
+            **kwargs,
         )
         self._original_connection_string = connection_string
         self._credential = credential
@@ -373,7 +448,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
                 elif self._credential:
@@ -384,7 +459,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
                             self._user_agent,
                             self._retry_total,
                             self._retry_backoff_max,
-                            **self._args
+                            **self._args,
                         )
                     )
         self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL

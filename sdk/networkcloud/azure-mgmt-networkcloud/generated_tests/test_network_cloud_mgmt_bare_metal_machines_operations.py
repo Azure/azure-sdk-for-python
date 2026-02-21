@@ -22,7 +22,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_bare_metal_machines_list_by_subscription(self, resource_group):
         response = self.client.bare_metal_machines.list_by_subscription(
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
     def test_bare_metal_machines_list_by_resource_group(self, resource_group):
         response = self.client.bare_metal_machines.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.get(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -70,7 +70,21 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
                 "rackId": "str",
                 "rackSlot": 0,
                 "serialNumber": "str",
+                "actionStates": [
+                    {
+                        "actionType": "str",
+                        "correlationId": "str",
+                        "endTime": "str",
+                        "message": "str",
+                        "startTime": "str",
+                        "status": "str",
+                        "stepStates": [
+                            {"endTime": "str", "message": "str", "startTime": "str", "status": "str", "stepName": "str"}
+                        ],
+                    }
+                ],
                 "associatedResourceIds": ["str"],
+                "caCertificate": {"hash": "str", "value": "str"},
                 "clusterId": "str",
                 "cordonStatus": "str",
                 "detailedStatus": "str",
@@ -120,7 +134,12 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
                         "expirePeriodDays": 0,
                         "lastRotationTime": "2020-02-20 00:00:00",
                         "rotationPeriodDays": 0,
-                        "secretArchiveReference": {"keyVaultId": "str", "secretName": "str", "secretVersion": "str"},
+                        "secretArchiveReference": {
+                            "keyVaultId": "str",
+                            "keyVaultUri": "str",
+                            "secretName": "str",
+                            "secretVersion": "str",
+                        },
                         "secretType": "str",
                     }
                 ],
@@ -137,7 +156,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "virtualMachinesAssociatedIds": ["str"],
             },
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -149,7 +168,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_delete(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,7 +180,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_update(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -173,7 +192,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_cordon(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -185,7 +204,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_power_off(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -197,7 +216,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_reimage(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -209,7 +228,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_replace(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -221,7 +240,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_restart(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -234,7 +253,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
             bare_metal_machine_run_command_parameters={"limitTimeSeconds": 0, "script": "str", "arguments": ["str"]},
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -250,7 +269,23 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
                 "commands": [{"command": "str", "arguments": ["str"]}],
                 "limitTimeSeconds": 0,
             },
-            api_version="2025-02-01",
+            api_version="2025-09-01",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_bare_metal_machines_begin_run_data_extracts_restricted(self, resource_group):
+        response = self.client.bare_metal_machines.begin_run_data_extracts_restricted(
+            resource_group_name=resource_group.name,
+            bare_metal_machine_name="str",
+            bare_metal_machine_run_data_extracts_restricted_parameters={
+                "commands": [{"command": "str", "arguments": ["str"]}],
+                "limitTimeSeconds": 0,
+            },
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -266,7 +301,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
                 "commands": [{"command": "str", "arguments": ["str"]}],
                 "limitTimeSeconds": 0,
             },
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -278,7 +313,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_start(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -290,7 +325,7 @@ class TestNetworkCloudMgmtBareMetalMachinesOperations(AzureMgmtRecordedTestCase)
         response = self.client.bare_metal_machines.begin_uncordon(
             resource_group_name=resource_group.name,
             bare_metal_machine_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

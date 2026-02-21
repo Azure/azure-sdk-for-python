@@ -6,12 +6,11 @@
 # pylint: disable=docstring-keyword-should-match-keyword-only, too-many-lines, too-many-public-methods
 
 import functools
-import sys
 import time
 from datetime import datetime
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Callable, cast, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    Any, AnyStr, Callable, cast, Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from typing_extensions import Self
@@ -45,11 +44,6 @@ from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str,
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
-
-if sys.version_info >= (3, 8):
-    from typing import Literal
-else:
-    from typing_extensions import Literal
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -196,11 +190,15 @@ class ShareFileClient(StorageAccountHostsMixin):
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
         self.file_request_intent = token_intent
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
-                                        allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
-                                        file_request_intent=self.file_request_intent)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client = AzureFileStorage(
+            version=get_api_version(kwargs),
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot,
+            file_request_intent=self.file_request_intent
+        )
 
     def __enter__(self) -> Self:
         self._client.__enter__()
@@ -462,6 +460,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         timeout = kwargs.pop('timeout', None)
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
+        data = kwargs.pop('data', None)
         file_http_headers = None
         if content_settings:
             file_http_headers = FileHTTPHeaders(
@@ -485,6 +484,8 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission=file_permission,
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
+                optionalbody=data,
+                content_length=len(data) if data is not None else None,
                 lease_access_conditions=access_conditions,
                 headers=headers,
                 timeout=timeout,
@@ -495,7 +496,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, str, Iterable[AnyStr], IO[bytes]],
         length: Optional[int] = None,
         file_attributes: Optional[Union[str, "NTFSAttributes"]] = None,
         file_creation_time: Optional[Union[str, datetime]] = None,
@@ -508,9 +509,9 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :param data:
             Content of the file.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param int length:
-            Length of the file in bytes. Specify its maximum size, up to 1 TiB.
+            Length of the file in bytes.
         :param file_attributes:
             The file system attributes for files and directories.
             If not set, the default value would be "None" and the attributes will be set to "Archive".
@@ -882,6 +883,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
+        :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
+            decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Optional, TypeVar
+from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -29,7 +29,8 @@ from .._configuration import ContainerRegistryManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -39,7 +40,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +78,7 @@ class Operations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> ItemPaged["_models.OperationDefinition"]:
-        """Lists all of the available Azure Container Registry REST API operations.
+        """List the operations for the provider.
 
         :return: An iterator like instance of either OperationDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.containerregistry.models.OperationDefinition]
@@ -86,7 +87,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-11-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -131,7 +132,11 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
 

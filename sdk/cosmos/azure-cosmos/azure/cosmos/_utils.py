@@ -22,15 +22,18 @@
 """Internal Helper functions in the Azure Cosmos database service.
 """
 
-import platform
-import re
 import base64
 import json
+import platform
+import re
 import time
+import os
 from typing import Any, Optional, Tuple
-
+from ._constants import _Constants
 from ._version import VERSION
 
+# cspell:ignore ppcb
+# pylint: disable=protected-access
 
 def get_user_agent(suffix: Optional[str] = None) -> str:
     os_name = safe_user_agent_header(platform.platform())
@@ -137,7 +140,8 @@ def valid_key_value_exist(
         kwargs: dict[str, Any],
         key: str,
         invalid_value: Any = None) -> bool:
-    """Check if a valid key and value exists in kwargs. By default, it checks if the value is not None.
+    """Check if a valid key and value exists in kwargs. It always checks if the value is not None and it will remove
+    from the kwargs the None value.
 
     :param dict[str, Any] kwargs: The dictionary of keyword arguments.
     :param str key: The key to check.
@@ -145,4 +149,31 @@ def valid_key_value_exist(
     :return: True if the key exists and its value is not None, False otherwise.
     :rtype: bool
     """
+    if key in kwargs and kwargs[key] is None:
+        kwargs.pop(key)
+        return False
+
     return key in kwargs and kwargs[key] is not invalid_value
+
+
+def get_user_agent_features(global_endpoint_manager: Any) -> str:
+    """
+    Check the account and client configurations in order to add feature flags
+    to the user agent using bitmask logic and hex encoding (matching .NET/Java).
+    
+    :param Any global_endpoint_manager: The GlobalEndpointManager instance.
+    :return: A string representing the user agent feature flags.
+    :rtype: str
+    """
+    feature_flag = 0
+    # Bitwise OR for feature flags
+    if global_endpoint_manager._database_account_cache is not None:
+        if global_endpoint_manager._database_account_cache._EnablePerPartitionFailoverBehavior is True:
+            feature_flag |= _Constants.UserAgentFeatureFlags.PER_PARTITION_AUTOMATIC_FAILOVER
+    ppcb_check = os.environ.get(
+        _Constants.CIRCUIT_BREAKER_ENABLED_CONFIG,
+        _Constants.CIRCUIT_BREAKER_ENABLED_CONFIG_DEFAULT
+    ).lower()
+    if ppcb_check == "true" or feature_flag > 0:
+        feature_flag |= _Constants.UserAgentFeatureFlags.PER_PARTITION_CIRCUIT_BREAKER
+    return f"| F{feature_flag:X}" if feature_flag > 0 else ""

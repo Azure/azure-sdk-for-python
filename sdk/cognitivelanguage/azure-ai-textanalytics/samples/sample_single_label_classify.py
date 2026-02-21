@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_custom_single_label_classification.py
+FILE: sample_single_label_classify.py
 
 DESCRIPTION:
     This sample demonstrates how to run a **custom single-label classification** action over text.
 
 USAGE:
-    python sample_text_custom_single_label_classification.py
+    python sample_single_label_classify.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -42,7 +42,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_text_custom_single_label_classification():
+def sample_single_label_classify():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     project_name = os.environ.get("PROJECT_NAME", "<project-name>")
@@ -57,9 +57,7 @@ def sample_text_custom_single_label_classification():
         "Play music and add it to my playlist."
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
     action = CustomSingleLabelClassificationOperationAction(
         name="Custom Single-Label Classification",
@@ -110,10 +108,10 @@ def sample_text_custom_single_label_classification():
                 print(f"Kind: {op_result.kind}")
 
                 result = op_result.results
-                for doc in (result.documents or []):
+                for doc in result.documents or []:
                     print(f"\nDocument ID: {doc.id}")
                     # Single-label: typically one class, but iterate to be general
-                    for cls_item in (doc.class_property or []):
+                    for cls_item in doc.class_property or []:
                         print(f"  Predicted category: {cls_item.category}")
                         print(f"  Confidence score: {cls_item.confidence_score}")
             else:
@@ -123,14 +121,15 @@ def sample_text_custom_single_label_classification():
                         f"\n[Non-CSC action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-CSC action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-CSC action present] Error: {e}")
+
 
 # [END text_custom_single_label_classification]
 
 
 def main():
-    sample_text_custom_single_label_classification()
+    sample_single_label_classify()
 
 
 if __name__ == "__main__":

@@ -1,5 +1,23 @@
 # Release History
 
+## 10.1.0 (2025-11-17)
+
+### Features Added
+
+  - Added operation AppServicePlansOperations.get_server_farm_instance_details
+  - Added operation AppServicePlansOperations.get_server_farm_rdp_password
+  - Added operation AppServicePlansOperations.recycle_managed_instance_worker
+  - Model AppServicePlan has a new parameter identity
+  - Model AppServicePlan has a new parameter install_scripts
+  - Model AppServicePlan has a new parameter is_custom_mode
+  - Model AppServicePlan has a new parameter network
+  - Model AppServicePlan has a new parameter plan_default_identity
+  - Model AppServicePlan has a new parameter rdp_enabled
+  - Model AppServicePlan has a new parameter registry_adapters
+  - Model AppServicePlan has a new parameter storage_mounts
+  - Model AppServicePlanPatchResource has a new parameter identity
+  - Model SitePatchResource has a new parameter public_network_access
+
 ## 10.0.0 (2025-08-21)
 
 ### Breaking Changes

@@ -31,9 +31,9 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
         self.payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(account_name, account_key)
+        credential_policy = _format_shared_key_credential(account_name, account_key.secret)
         self.dsc = DataLakeServiceClient(url,
-                                         credential=account_key,
+                                         credential=account_key.secret,
                                          _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy])
 
         self.config = self.dsc._config

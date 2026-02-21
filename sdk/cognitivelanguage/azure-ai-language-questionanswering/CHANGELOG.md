@@ -1,14 +1,27 @@
 # Release History
 
-## 1.1.1 (Unreleased)
-
-### Features Added
+## 2.0.0b1 (2025-10-27)
 
 ### Breaking Changes
 
-### Bugs Fixed
+* Authoring functionality (project creation, knowledge source management, deployment operations) has been removed from this package and moved to a separate dedicated authoring package / namespace. All references to `AuthoringClient`, and related authoring operations have been eliminated from the runtime client distribution.
+* Dropped support for Python versions earlier than 3.9 (aligns with Azure SDK Python support policy going forward).
+* Model base class change: all public model types now inherit from `MutableMapping[str, Any]` (dict-like) instead of the previous `Model` base class. As a result they now support standard mutable mapping behavior (key iteration, item assignment, etc.) and any code depending on methods/properties inherited from the old base class should be reviewed/updated.
+* Removed client constructor keyword argument `default_language`. Per-call language control is now done explicitly via the `language` property on `AnswersFromTextOptions` (and related options models). The service default remains `"en"` if a language is not supplied. To change the effective language:
+  * Pass `language="<bcp-47-code>"` when constructing `AnswersFromTextOptions` (e.g. `"es"`, `"zh-Hans"`).
+  * Or create / select a project in the desired language in [Language Studio](https://language.azure.com) when authoring knowledge bases.
+
+  The previous implicit fallback (client-level `default_language`) has been removed to avoid hidden state and to encourage explicit specification or project-level configuration.
+* Removed support for passing metadata as `Dict[str,str]` to `MetadataFilter`. Tuple form `[("key","value"), ...]` and `List[MetadataRecord]` remain supported.
+
+### Features Added
+
+* Documentation improvements: expanded README with authentication guidance, AAD usage, async examples, and troubleshooting section.
 
 ### Other Changes
+
+* Internal refactoring and dependency grooming in preparation for the authoring/runtime split.
+* Changed samples and README examples to use explicit `AnswersOptions` / `AnswersFromTextOptions` objects as the first argument when calling `get_answers` and `get_answers_from_text`.
 
 ## 1.1.0 (2022-10-13)
 

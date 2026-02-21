@@ -21,11 +21,11 @@ class TestLogAnalyticsManagementDataExportsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_workspace(self, resource_group):
+    async def test_data_exports_list_by_workspace(self, resource_group):
         response = self.client.data_exports.list_by_workspace(
             resource_group_name=resource_group.name,
             workspace_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestLogAnalyticsManagementDataExportsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_data_exports_create_or_update(self, resource_group):
         response = await self.client.data_exports.create_or_update(
             resource_group_name=resource_group.name,
             workspace_name="str",
@@ -50,7 +50,7 @@ class TestLogAnalyticsManagementDataExportsOperationsAsync(AzureMgmtRecordedTest
                 "tableNames": ["str"],
                 "type": "str",
             },
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -58,12 +58,12 @@ class TestLogAnalyticsManagementDataExportsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_data_exports_get(self, resource_group):
         response = await self.client.data_exports.get(
             resource_group_name=resource_group.name,
             workspace_name="str",
             data_export_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -71,12 +71,12 @@ class TestLogAnalyticsManagementDataExportsOperationsAsync(AzureMgmtRecordedTest
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_data_exports_delete(self, resource_group):
         response = await self.client.data_exports.delete(
             resource_group_name=resource_group.name,
             workspace_name="str",
             data_export_name="str",
-            api_version="2020-08-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

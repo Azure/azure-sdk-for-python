@@ -153,6 +153,17 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
   $pipFreezeOutput | ForEach-Object { Write-Host $_ }
   Write-Host "`n"
 
+  # Workaround: py2docfx creates internal venvs and runs `pip install --upgrade setuptools`
+  # (unpinned). setuptools 81+ removed the --dry-run flag from setup.py, which py2docfx uses
+  # to extract package metadata. Constrain setuptools<81 via PIP_CONSTRAINT so it propagates
+  # into py2docfx's internal pip calls. This can be removed once py2docfx releases a stable
+  # version with the fix (see dev build 0.1.23.dev2415137).
+  $constraintFile = Join-Path ([System.IO.Path]::GetTempPath()) "pip-constraints.txt"
+  "setuptools<81" | Out-File -Encoding utf8 $constraintFile
+  $originalPipConstraint = $env:PIP_CONSTRAINT
+  $env:PIP_CONSTRAINT = $constraintFile
+  Write-Host "Set PIP_CONSTRAINT=$constraintFile (setuptools<81) to work around py2docfx/setuptools incompatibility"
+
   $tempDirs = @()
   $allSucceeded = $true
   try {
@@ -204,6 +215,15 @@ function Validate-Python-DocMsPackages($PackageInfo, $PackageInfos, $PackageSour
     foreach ($tempDir in $tempDirs)
     {
       Remove-Item -Force -Recurse $tempDir | Out-Null
+    }
+    # Workaround: Restore original PIP_CONSTRAINT
+    if ($originalPipConstraint) {
+      $env:PIP_CONSTRAINT = $originalPipConstraint
+    } else {
+      Remove-Item Env:\PIP_CONSTRAINT -ErrorAction SilentlyContinue
+    }
+    if (Test-Path $constraintFile) {
+      Remove-Item $constraintFile -ErrorAction SilentlyContinue
     }
   }
   return $allSucceeded

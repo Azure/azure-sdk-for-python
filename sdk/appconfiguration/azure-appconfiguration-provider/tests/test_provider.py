@@ -3,22 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from azure.appconfiguration.provider import (
-    SettingSelector,
-    AzureAppConfigurationKeyVaultOptions,
-    AzureAppConfigurationProvider,
-)
+import datetime
+from unittest.mock import MagicMock, patch
 from devtools_testutils import recorded_by_proxy
 from preparers import app_config_decorator
 from testcase import AppConfigTestCase, has_feature_flag
-import datetime
-from unittest.mock import patch
 from test_constants import FEATURE_MANAGEMENT_KEY
-from unittest.mock import MagicMock, patch
+from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     delay_failure,
-    update_correlation_context_header,
 )
+from azure.appconfiguration.provider._azureappconfigurationprovider import _buildprovider
 
 
 def sleep(seconds):
@@ -126,7 +121,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
     # method: delay_failure
     @patch("time.sleep", side_effect=sleep)
-    def test_delay_failure(self, mock_sleep, **kwargs):
+    def test_delay_failure(self, mock_sleep):
         start_time = datetime.datetime.now()
         delay_failure(start_time)
         assert mock_sleep.call_count == 1
@@ -147,7 +142,7 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             ]
 
             # Create the provider with the mocked client manager
-            provider = AzureAppConfigurationProvider(connection_string="mock_connection_string")
+            provider = _buildprovider("=mock_connection_string;;", None, None)
             provider._replica_client_manager = mock_client_manager
 
             # Call the method to process key-value pairs
@@ -157,21 +152,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
 
             # Assert the processed value is as expected
             assert processed_value == {"key": "value"}
-            assert provider._uses_ai_configuration == False
-            assert provider._uses_aicc_configuration == False
-            headers = update_correlation_context_header(
-                {},
-                "fake-request",
-                0,
-                False,
-                [],
-                False,
-                False,
-                False,
-                provider._uses_ai_configuration,
-                provider._uses_aicc_configuration,
-            )
-            assert headers["Correlation-Context"] == "RequestType=fake-request"
+            assert provider._tracing_context.uses_ai_configuration == False
+            assert provider._tracing_context.uses_aicc_configuration == False
 
             mock_client_manager.load_configuration_settings.return_value = [
                 {
@@ -188,21 +170,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             )
 
             assert processed_value == {"key": "value"}
-            assert provider._uses_ai_configuration == True
-            assert provider._uses_aicc_configuration == False
-            headers = update_correlation_context_header(
-                {},
-                "fake-request",
-                0,
-                False,
-                [],
-                False,
-                False,
-                False,
-                provider._uses_ai_configuration,
-                provider._uses_aicc_configuration,
-            )
-            assert headers["Correlation-Context"] == "RequestType=fake-request,Features=AI"
+            assert provider._tracing_context.uses_ai_configuration == True
+            assert provider._tracing_context.uses_aicc_configuration == False
 
             mock_client_manager.load_configuration_settings.return_value = [
                 {
@@ -219,21 +188,8 @@ class TestAppConfigurationProvider(AppConfigTestCase):
             )
 
             assert processed_value == {"key": "value"}
-            assert provider._uses_ai_configuration == True
-            assert provider._uses_aicc_configuration == True
-            headers = update_correlation_context_header(
-                {},
-                "fake-request",
-                0,
-                False,
-                [],
-                False,
-                False,
-                False,
-                provider._uses_ai_configuration,
-                provider._uses_aicc_configuration,
-            )
-            assert headers["Correlation-Context"] == "RequestType=fake-request,Features=AI+AICC"
+            assert provider._tracing_context.uses_ai_configuration == True
+            assert provider._tracing_context.uses_aicc_configuration == True
 
     @recorded_by_proxy
     @app_config_decorator

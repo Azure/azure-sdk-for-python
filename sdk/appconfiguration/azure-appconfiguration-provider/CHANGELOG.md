@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.1 (Unreleased)
+## 2.4.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,43 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.4.0 (2026-02-17)
+
+### Features Added
+
+- Added startup retry, if the initial load fails, the provider will retry until the startup timeout is reached. By default the retry period is 100s, and can be configured via the `startup_timeout` kwarg on the `load` method.
+- Adds support for adding `audience` to the kwargs for `load` allowing it to specify the audience for the request.
+- Added support for snapshot references. Configuration settings that reference a snapshot are automatically resolved and expanded during `load`.
+
+### Bugs Fixed
+
+- Fixes a bug where `feature_flag_selects` could be passed in as `None` which resulted in an exception on load, doing this now results in loading the default feature flags.
+- Fixes a bug where `feature_flag_selects` couldn't load snapshots.
+
+## 2.3.1 (2025-11-13)
+
+### Bugs Fixed
+
+* Fixed a bug where calling the refresh method would always trigger it.
+
+## 2.3.0 (2025-11-12)
+
+### Features Added
+
+* Added support for Azure App Configuration Snapshots, `SettingSelector` now has a `snapshot_name` parameter.
+* Added support for forced refresh of configurations when using Key Vault references. Adds `secret_refresh_interval` to the `AzureAppConfigurationProvider` `load` method. This allows the provider to refresh Key Vault secrets at a specified interval. Is set to 60 seconds by default, and can only be set if using Key Vault references.
+* Added support for async `on_refresh_success`.
+* Added support for Configuration Setting Mapping, new `configuration_mapper` parameter to the `load` method, allows for a callback to be added to modify configurations.
+
+### Bugs Fixed
+
+* Fixed a bug where feature flags were using the configuration refresh timer instead of the feature flag refresh timer.
+* When loading duplicate configurations only the priority configuration will be processed.
+
+### Other Changes
+
+* Updated Request Tracing
 
 ## 2.2.0 (2025-08-08)
 

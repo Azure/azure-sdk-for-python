@@ -1,5 +1,283 @@
 # Release History
 
+## 3.0.0b1 (2026-02-13)
+
+### Features Added
+
+  - Client `PostgreSQLManagementClient` added method `send_request`
+  - Model `AdvancedThreatProtectionSettingsModel` added property `properties`
+  - Model `BackupsLongTermRetentionOperation` added property `properties`
+  - Model `MigrationResourceForPatch` added property `properties`
+  - Enum `RecommendationTypeEnum` added member `VACUUM_TABLE`
+  - Enum `RecommendationTypeParameterEnum` added member `VACUUM_TABLE`
+  - Model `ServerForPatch` added property `properties`
+  - Model `VirtualEndpoint` added property `properties`
+  - Added model `AdministratorMicrosoftEntraPropertiesForAdd`
+  - Added model `AdvancedThreatProtectionSettingsProperties`
+  - Added model `BackupsLongTermRetentionResponseProperties`
+  - Added model `LogSpecification`
+  - Added model `LtrBackupOperationResponseProperties`
+  - Added model `MetricSpecification`
+  - Added model `MigrateNetworkStatus`
+  - Added model `MigrationPropertiesForPatch`
+  - Added enum `NetworkMigrationState`
+  - Added model `OperationProperties`
+  - Added enum `PostgreSqlFlexibleServerHighAvailabilityMode`
+  - Added model `ServerPropertiesForPatch`
+  - Added model `ServiceSpecification`
+  - Added model `VirtualEndpointResourceProperties`
+  - Operation group `ServersOperations` added method `begin_migrate_network_mode`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AdministratorMicrosoftEntraAdd` moved instance variable `principal_type`, `principal_name` and `tenant_id` under property `properties`
+  - Model `AdvancedThreatProtectionSettingsModel` moved instance variable `state` and `creation_time` under property `properties`
+  - Model `BackupsLongTermRetentionOperation` moved instance variable `datasource_size_in_bytes`, `data_transferred_in_bytes`, `backup_name`, `backup_metadata`, `status`, `start_time`, `end_time`, `percent_complete`, `error_code` and `error_message` under property `properties`
+  - Model `BackupsLongTermRetentionResponse` moved instance variable `datasource_size_in_bytes`, `data_transferred_in_bytes`, `backup_name`, `backup_metadata`, `status`, `start_time`, `end_time`, `percent_complete`, `error_code` and `error_message` under property `properties`
+  - Model `ConfigurationForUpdate` moved instance variable `value`, `description`, `default_value`, `data_type`, `allowed_values`, `source`, `is_dynamic_config`, `is_read_only`, `is_config_pending_restart`, `unit` and `documentation_link` under property `properties`
+  - Model `LtrPreBackupResponse` moved instance variable `number_of_containers` under property `properties`
+  - Model `MigrationResourceForPatch` moved instance variable `source_db_server_resource_id`, `source_db_server_fully_qualified_domain_name`, `target_db_server_fully_qualified_domain_name`, `secret_parameters`, `dbs_to_migrate`, `setup_logical_replication_on_source_db_if_needed`, `overwrite_dbs_in_target`, `migration_window_start_time_in_utc`, `migrate_roles`, `start_data_migration`, `trigger_cutover`, `dbs_to_trigger_cutover_on`, `cancel`, `dbs_to_cancel_migration_on` and `migration_mode` under property `properties`
+  - Model `ServerForPatch` moved instance variable `administrator_login`, `administrator_login_password`, `version`, `storage`, `backup`, `high_availability`, `maintenance_window`, `auth_config`, `data_encryption`, `availability_zone`, `create_mode`, `replication_role`, `replica`, `network` and `cluster` under property `properties`
+  - Model `VirtualEndpoint` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties`
+  - Model `VirtualEndpointResourceForPatch` moved instance variable `endpoint_type`, `members` and `virtual_endpoints` under property `properties`
+  - Method `MigrationsOperations.list_by_target_server` changed its parameter `migration_list_filter` from `positional_or_keyword` to `keyword_only`
+  - Method `TuningOptionsOperations.list_recommendations` changed its parameter `recommendation_type` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `MigrationDetailsLevel`/`AdministratorMicrosoftEntraList`/`AdvancedThreatProtectionSettingsList`/`BackupAutomaticAndOnDemandList`/`CapabilityList`/`CapturedLogList`/`ConfigurationList`/`DatabaseList`/`FirewallRuleList`/`LtrServerBackupOperationList`/`MigrationList`/`ObjectRecommendationList`/`OperationList`/`PrivateEndpointConnectionList`/`PrivateLinkResourceList`/`QuotaUsageList`/`ServerList`/`TuningOptionsList`/`VirtualEndpointsList` which actually were not used by SDK users
+
+## 2.0.0 (2025-11-17)
+
+### Features Added
+
+  - Model `PostgreSQLManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PostgreSQLManagementClient` added operation group `administrators_microsoft_entra`
+  - Client `PostgreSQLManagementClient` added operation group `advanced_threat_protection_settings`
+  - Client `PostgreSQLManagementClient` added operation group `backups_automatic_and_on_demand`
+  - Client `PostgreSQLManagementClient` added operation group `capabilities_by_location`
+  - Client `PostgreSQLManagementClient` added operation group `capabilities_by_server`
+  - Client `PostgreSQLManagementClient` added operation group `captured_logs`
+  - Client `PostgreSQLManagementClient` added operation group `backups_long_term_retention`
+  - Client `PostgreSQLManagementClient` added operation group `name_availability`
+  - Client `PostgreSQLManagementClient` added operation group `private_dns_zone_suffix`
+  - Client `PostgreSQLManagementClient` added operation group `quota_usages`
+  - Client `PostgreSQLManagementClient` added operation group `tuning_options`
+  - Enum `ConfigurationDataType` added member `SET`
+  - Enum `ConfigurationDataType` added member `STRING`
+  - Model `Server` added property `cluster`
+  - Model `ServerSkuCapability` added property `supported_features`
+  - Model `ServerSkuCapability` added property `security_profile`
+  - Enum `ServerState` added member `INACCESSIBLE`
+  - Enum `ServerState` added member `PROVISIONING`
+  - Enum `ServerState` added member `RESTARTING`
+  - Model `ServerVersionCapability` added property `supported_features`
+  - Enum `SourceType` added member `APSARA_DB_RDS`
+  - Enum `SourceType` added member `CRUNCHY_POSTGRE_SQL`
+  - Enum `SourceType` added member `DIGITAL_OCEAN_DROPLETS`
+  - Enum `SourceType` added member `DIGITAL_OCEAN_POSTGRE_SQL`
+  - Enum `SourceType` added member `EDB_ORACLE_SERVER`
+  - Enum `SourceType` added member `EDB_POSTGRE_SQL`
+  - Enum `SourceType` added member `HEROKU_POSTGRE_SQL`
+  - Enum `SourceType` added member `HUAWEI_COMPUTE`
+  - Enum `SourceType` added member `HUAWEI_RDS`
+  - Enum `SourceType` added member `POSTGRE_SQL_COSMOS_DB`
+  - Enum `SourceType` added member `POSTGRE_SQL_FLEXIBLE_SERVER`
+  - Enum `SourceType` added member `SUPABASE_POSTGRE_SQL`
+  - Enum `StorageType` added member `ULTRA_SSD_LRS`
+  - Added model `AdminCredentialsForPatch`
+  - Added model `AdministratorMicrosoftEntra`
+  - Added model `AdministratorMicrosoftEntraAdd`
+  - Added model `AdministratorMicrosoftEntraList`
+  - Added model `AdvancedThreatProtectionSettingsList`
+  - Added model `AdvancedThreatProtectionSettingsModel`
+  - Added model `AuthConfigForPatch`
+  - Added enum `AzureManagedDiskPerformanceTier`
+  - Added model `BackupAutomaticAndOnDemand`
+  - Added model `BackupAutomaticAndOnDemandList`
+  - Added model `BackupForPatch`
+  - Added enum `BackupType`
+  - Added model `BackupsLongTermRetentionOperation`
+  - Added model `BackupsLongTermRetentionRequest`
+  - Added model `BackupsLongTermRetentionResponse`
+  - Added enum `Cancel`
+  - Added model `Capability`
+  - Added model `CapabilityList`
+  - Added model `CapturedLog`
+  - Added model `CapturedLogList`
+  - Added model `Cluster`
+  - Added model `ConfigurationList`
+  - Added enum `CreateModeForPatch`
+  - Added enum `DataEncryptionType`
+  - Added model `DatabaseList`
+  - Added model `DatabaseMigrationState`
+  - Added enum `EncryptionKeyStatus`
+  - Added enum `FastProvisioningSupport`
+  - Added enum `FeatureStatus`
+  - Added model `FirewallRuleList`
+  - Added enum `GeographicallyRedundantBackup`
+  - Added enum `GeographicallyRedundantBackupSupport`
+  - Added model `HighAvailabilityForPatch`
+  - Added enum `HighAvailabilityState`
+  - Added model `ImpactRecord`
+  - Added enum `LocationRestricted`
+  - Added enum `LogicalReplicationOnSourceServer`
+  - Added model `MaintenanceWindowForPatch`
+  - Added enum `MicrosoftEntraAuth`
+  - Added enum `MigrateRolesAndPermissions`
+  - Added model `Migration`
+  - Added enum `MigrationDatabaseState`
+  - Added model `MigrationList`
+  - Added model `MigrationNameAvailability`
+  - Added model `MigrationSecretParametersForPatch`
+  - Added enum `MigrationSubstate`
+  - Added model `MigrationSubstateDetails`
+  - Added model `NameAvailabilityModel`
+  - Added model `NameProperty`
+  - Added model `ObjectRecommendation`
+  - Added model `ObjectRecommendationDetails`
+  - Added model `ObjectRecommendationList`
+  - Added model `ObjectRecommendationPropertiesAnalyzedWorkload`
+  - Added model `ObjectRecommendationPropertiesImplementationDetails`
+  - Added enum `OnlineStorageResizeSupport`
+  - Added model `OperationList`
+  - Added enum `OverwriteDatabasesOnTargetServer`
+  - Added enum `PasswordBasedAuth`
+  - Added enum `PostgresMajorVersion`
+  - Added model `PrivateEndpointConnectionList`
+  - Added model `PrivateLinkResourceList`
+  - Added model `QuotaUsage`
+  - Added model `QuotaUsageList`
+  - Added enum `ReadReplicaPromoteOption`
+  - Added enum `RecommendationTypeEnum`
+  - Added enum `RecommendationTypeParameterEnum`
+  - Added model `ServerEditionCapability`
+  - Added model `ServerForPatch`
+  - Added model `ServerList`
+  - Added model `SkuForPatch`
+  - Added enum `StartDataMigration`
+  - Added enum `StorageAutoGrowthSupport`
+  - Added model `SupportedFeature`
+  - Added enum `TriggerCutover`
+  - Added enum `TuningOptionParameterEnum`
+  - Added model `TuningOptions`
+  - Added model `TuningOptionsList`
+  - Added model `VirtualEndpoint`
+  - Added model `VirtualEndpointsList`
+  - Added model `VirtualNetworkSubnetUsageModel`
+  - Added enum `ZoneRedundantHighAvailabilityAndGeographicallyRedundantBackupSupport`
+  - Added enum `ZoneRedundantHighAvailabilitySupport`
+  - Operation group `MigrationsOperations` added method `cancel`
+  - Operation group `MigrationsOperations` added method `check_name_availability`
+  - Operation group `PrivateEndpointConnectionsOperations` added method `begin_delete`
+  - Operation group `PrivateEndpointConnectionsOperations` added method `begin_update`
+  - Operation group `ServersOperations` added method `begin_create_or_update`
+  - Operation group `ServersOperations` added method `list_by_subscription`
+  - Operation group `VirtualNetworkSubnetUsageOperations` added method `list`
+  - Added operation group `AdministratorsMicrosoftEntraOperations`
+  - Added operation group `AdvancedThreatProtectionSettingsOperations`
+  - Added operation group `BackupsAutomaticAndOnDemandOperations`
+  - Added operation group `BackupsLongTermRetentionOperations`
+  - Added operation group `CapabilitiesByLocationOperations`
+  - Added operation group `CapabilitiesByServerOperations`
+  - Added operation group `CapturedLogsOperations`
+  - Added operation group `NameAvailabilityOperations`
+  - Added operation group `PrivateDnsZoneSuffixOperations`
+  - Added operation group `QuotaUsagesOperations`
+  - Added operation group `TuningOptionsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.administrators`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.backups`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.location_based_capabilities`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.server_capabilities`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.check_name_availability`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.check_name_availability_with_location`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.flexible_server`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.ltr_backup_operations`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.get_private_dns_zone_suffix`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.private_endpoint_connection`
+  - Deleted or renamed client operation group `PostgreSQLManagementClient.log_files`
+  - Deleted or renamed client method `PostgreSQLManagementClient.check_migration_name_availability`
+  - Parameter `password_auth` of `AuthConfig.__init__` is now optional
+  - Parameter `geo_redundant_backup` of `Backup.__init__` is now optional
+  - Parameter `mode` of `HighAvailability.__init__` is now optional
+  - Deleted or renamed enum value `HighAvailabilityMode.DISABLED`
+  - Deleted or renamed model `ActiveDirectoryAdministrator`
+  - Deleted or renamed model `ActiveDirectoryAdministratorAdd`
+  - Deleted or renamed model `ActiveDirectoryAuthEnum`
+  - Deleted or renamed model `ArmServerKeyType`
+  - Deleted or renamed model `AzureManagedDiskPerformanceTiers`
+  - Deleted or renamed model `CancelEnum`
+  - Deleted or renamed model `CreateModeForUpdate`
+  - Deleted or renamed model `DbMigrationStatus`
+  - Deleted or renamed model `FastProvisioningSupportedEnum`
+  - Deleted or renamed model `FlexibleServerCapability`
+  - Deleted or renamed model `FlexibleServerEditionCapability`
+  - Deleted or renamed model `GeoBackupSupportedEnum`
+  - Deleted or renamed model `GeoRedundantBackupEnum`
+  - Deleted or renamed model `HaMode`
+  - Deleted or renamed model `KeyStatusEnum`
+  - Deleted or renamed model `LogFile`
+  - Deleted or renamed model `LogicalReplicationOnSourceDbEnum`
+  - Deleted or renamed model `LtrBackupRequest`
+  - Deleted or renamed model `LtrBackupResponse`
+  - Deleted or renamed model `LtrServerBackupOperation`
+  - Deleted or renamed model `MigrateRolesEnum`
+  - Deleted or renamed model `MigrationDbState`
+  - Deleted or renamed model `MigrationNameAvailabilityResource`
+  - Deleted or renamed model `MigrationResource`
+  - Deleted or renamed model `MigrationSubState`
+  - Deleted or renamed model `MigrationSubStateDetails`
+  - Deleted or renamed model `NameAvailability`
+  - Deleted or renamed model `OnlineResizeSupportedEnum`
+  - Deleted or renamed model `Origin`
+  - Deleted or renamed model `OverwriteDbsInTargetEnum`
+  - Deleted or renamed model `PasswordAuthEnum`
+  - Deleted or renamed model `ReplicationPromoteOption`
+  - Deleted or renamed model `RestrictedEnum`
+  - Deleted or renamed model `ServerBackup`
+  - Deleted or renamed model `ServerForUpdate`
+  - Deleted or renamed model `ServerHAState`
+  - Deleted or renamed model `ServerThreatProtectionSettingsModel`
+  - Deleted or renamed model `ServerVersion`
+  - Deleted or renamed model `StartDataMigrationEnum`
+  - Deleted or renamed model `StorageAutoGrowthSupportedEnum`
+  - Deleted or renamed model `TriggerCutoverEnum`
+  - Deleted or renamed model `VirtualEndpointResource`
+  - Deleted or renamed model `VirtualNetworkSubnetUsageResult`
+  - Deleted or renamed model `ZoneRedundantHaAndGeoBackupSupportedEnum`
+  - Deleted or renamed model `ZoneRedundantHaSupportedEnum`
+  - Method `MigrationsOperations.create` renamed its parameter `target_db_server_name` to `server_name`
+  - Method `MigrationsOperations.create` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
+  - Method `MigrationsOperations.get` renamed its parameter `target_db_server_name` to `server_name`
+  - Method `MigrationsOperations.get` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
+  - Method `MigrationsOperations.list_by_target_server` renamed its parameter `target_db_server_name` to `server_name`
+  - Method `MigrationsOperations.list_by_target_server` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
+  - Method `MigrationsOperations.update` renamed its parameter `target_db_server_name` to `server_name`
+  - Method `MigrationsOperations.update` deleted or renamed its parameter `subscription_id` of kind `positional_or_keyword`
+  - Deleted or renamed method `MigrationsOperations.delete`
+  - Deleted or renamed method `ServerThreatProtectionSettingsOperations.get`
+  - Deleted or renamed method `ServerThreatProtectionSettingsOperations.list_by_server`
+  - Deleted or renamed method `ServersOperations.begin_create`
+  - Deleted or renamed method `ServersOperations.list`
+  - Deleted or renamed method `VirtualNetworkSubnetUsageOperations.execute`
+  - Deleted or renamed operation group `AdministratorsOperations`
+  - Deleted or renamed operation group `BackupsOperations`
+  - Deleted or renamed operation group `CheckNameAvailabilityOperations`
+  - Deleted or renamed operation group `CheckNameAvailabilityWithLocationOperations`
+  - Deleted or renamed operation group `FlexibleServerOperations`
+  - Deleted or renamed operation group `GetPrivateDnsZoneSuffixOperations`
+  - Deleted or renamed operation group `LocationBasedCapabilitiesOperations`
+  - Deleted or renamed operation group `LogFilesOperations`
+  - Deleted or renamed operation group `LtrBackupOperationsOperations`
+  - Deleted or renamed operation group `PostgreSQLManagementClientOperationsMixin`
+  - Deleted or renamed operation group `PrivateEndpointConnectionOperations`
+  - Deleted or renamed operation group `ServerCapabilitiesOperations`
+
 ## 1.2.0b1 (2025-05-19)
 
 ### Features Added
@@ -54,8 +332,8 @@
   - Added model `TuningOptionsListResult`
   - Added model `TuningOptionsResource`
   - Added operation group `QuotaUsagesOperations`
-  - Added operation group `TuningConfigurationOperations`
   - Added operation group `TuningIndexOperations`
+  - Added operation group `TuningConfigurationOperations`
   - Added operation group `TuningOptionsOperations`
 
 ## 1.1.0 (2025-03-24)

@@ -25,7 +25,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.bmc_key_sets.list_by_cluster(
             resource_group_name=resource_group.name,
             cluster_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             cluster_name="str",
             bmc_key_set_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperationsAsync(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "userListStatus": [{"azureUserName": "str", "status": "str", "statusMessage": "str"}],
                 },
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -100,7 +100,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 bmc_key_set_name="str",
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,7 +115,7 @@ class TestNetworkCloudMgmtBmcKeySetsOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 bmc_key_set_name="str",
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

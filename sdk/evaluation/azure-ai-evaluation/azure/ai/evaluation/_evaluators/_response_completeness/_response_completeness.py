@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 
 import os
+import logging
 import math
 from typing import Dict, List, Union, Optional
 
@@ -14,38 +15,36 @@ from azure.ai.evaluation._common.utils import parse_quality_evaluator_reason_sco
 from azure.ai.evaluation._model_configurations import Conversation, Message
 from azure.ai.evaluation._common._experimental import experimental
 
+logger = logging.getLogger(__name__)
+
 
 @experimental
 class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
-    """
-    Evaluates the extent to which a given response contains all necessary and relevant information with respect to the
-     provided ground truth.
+    """Evaluates the extent to which a given response contains all necessary and relevant information with respect to the
+    provided ground truth.
+
     The completeness measure assesses how thoroughly an AI model's generated response aligns with the key information,
     claims, and statements established in the ground truth. This evaluation considers the presence, accuracy,
     and relevance of the content provided.
+
     The assessment spans multiple levels, ranging from fully incomplete to fully complete, ensuring a comprehensive
     evaluation of the response's content quality.
+
     Use this metric when you need to evaluate an AI model's ability to deliver comprehensive and accurate information,
     particularly in text generation tasks where conveying all essential details is crucial for clarity,
     context, and correctness.
+
     Completeness scores range from 1 to 5:
+
     1: Fully incomplete — Contains none of the necessary information.
     2: Barely complete — Contains only a small portion of the required information.
     3: Moderately complete — Covers about half of the required content.
     4: Mostly complete — Includes most of the necessary details with minimal omissions.
     5: Fully complete — Contains all key information without any omissions.
+
     :param model_config: Configuration for the Azure OpenAI model.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
-
-    .. admonition:: Example:
-
-        .. literalinclude:: ../samples/evaluation_samples_evaluate.py
-            :start-after: [START completeness_evaluator]
-            :end-before: [END completeness_evaluator]
-            :language: python
-            :dedent: 8
-            :caption: Initialize and call a CompletenessEvaluator with a response and groundtruth.
 
     .. admonition:: Example using Azure AI Project URL:
 
@@ -78,12 +77,14 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     ):
         current_dir = os.path.dirname(__file__)
         prompty_path = os.path.join(current_dir, self._PROMPTY_FILE)
-        self.threshold = threshold
+        self.threshold = threshold  # to be removed in favor of _threshold
         super().__init__(
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            threshold=threshold,
             credential=credential,
+            _higher_is_better=True,
             **kwargs,
         )
 
@@ -148,6 +149,12 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         # we override the _do_eval method as we want the output to be a dictionary,
         # which is a different schema than _base_prompty_eval.py
         if "ground_truth" not in eval_input or "response" not in eval_input:
@@ -160,20 +167,60 @@ class ResponseCompletenessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.COMPLETENESS_EVALUATOR,
             )
 
-        llm_output = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+        if isinstance(eval_input.get("ground_truth"), list):
+            eval_input["ground_truth"] = _preprocess_messages(eval_input["ground_truth"])
+
+        result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
+        llm_output = result.get("llm_output", result) if isinstance(result, dict) else result
 
         score = math.nan
-        if llm_output:
-            score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
+        llm_output_is_dict = isinstance(llm_output, dict)
+        if llm_output_is_dict or isinstance(llm_output, str):
+            reason = ""
+            if llm_output_is_dict:
+                score = float(llm_output.get("score", math.nan))
+                reason = llm_output.get("explanation", "")
+            else:
+                score, reason = parse_quality_evaluator_reason_score(llm_output, valid_score_range="[1-5]")
 
-            score_result = "pass" if score >= self.threshold else "fail"
+            binary_result = self._get_binary_result(score)
+
+            input_token_count = result.get("input_token_count", 0) if isinstance(result, dict) else 0
+            output_token_count = result.get("output_token_count", 0) if isinstance(result, dict) else 0
+            total_token_count = result.get("total_token_count", 0) if isinstance(result, dict) else 0
+            finish_reason = result.get("finish_reason", "") if isinstance(result, dict) else ""
+            model_id = result.get("model_id", "") if isinstance(result, dict) else ""
+            sample_input = result.get("sample_input", "") if isinstance(result, dict) else ""
+            sample_output = result.get("sample_output", "") if isinstance(result, dict) else ""
 
             # updating the result key and threshold to int based on the schema
             return {
                 f"{self._result_key}": int(score),
-                f"{self._result_key}_result": score_result,
-                f"{self._result_key}_threshold": int(self.threshold),
+                f"{self._result_key}_result": binary_result,
+                f"{self._result_key}_threshold": int(self._threshold),
                 f"{self._result_key}_reason": reason,
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
+                f"{self._result_key}_finish_reason": finish_reason,
+                f"{self._result_key}_model": model_id,
+                f"{self._result_key}_sample_input": sample_input,
+                f"{self._result_key}_sample_output": sample_output,
             }
 
-        return {self._result_key: math.nan}
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.EVALUATE,
+        )

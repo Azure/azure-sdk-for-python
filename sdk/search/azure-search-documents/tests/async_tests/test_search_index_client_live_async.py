@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -15,7 +17,11 @@ from azure.search.documents.indexes.aio import SearchIndexClient
 from azure.search.documents.indexes.models import (
     AnalyzeTextOptions,
     CorsOptions,
+    FreshnessScoringFunction,
+    FreshnessScoringParameters,
+    SearchField,
     SearchIndex,
+    ScoringFunctionAggregation,
     ScoringProfile,
     SimpleField,
     SearchFieldDataType,
@@ -44,8 +50,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     async def _test_get_service_statistics(self, client):
         result = await client.get_service_statistics()
-        assert isinstance(result, dict)
-        assert set(result.keys()) == {"counters", "limits"}
+        assert "counters" in set(result.keys())
+        assert "limits" in set(result.keys())
 
     async def _test_list_indexes_empty(self, client):
         result = client.list_indexes()
@@ -54,8 +60,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
 
     async def _test_create_index(self, client, index_name):
         fields = fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
         ]
 
         scoring_profile = ScoringProfile(name="MyProfile")
@@ -88,9 +94,9 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     async def _test_get_index_statistics(self, client, index_name):
         result = await client.get_index_statistics(index_name)
         keys = set(result.keys())
-        assert "document_count" in keys
-        assert "storage_size" in keys
-        assert "vector_index_size" in keys
+        assert "documentCount" in keys
+        assert "storageSize" in keys
+        assert "vectorIndexSize" in keys
 
     async def _test_delete_indexes_if_unchanged(self, client):
         # First create an index
@@ -122,8 +128,8 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
     async def _test_create_or_update_index(self, client):
         name = "hotels-cou"
         fields = fields = [
-            SimpleField(name="hotelId", type=SearchFieldDataType.String, key=True),
-            SimpleField(name="baseRate", type=SearchFieldDataType.Double),
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(name="baseRate", type=SearchFieldDataType.DOUBLE),
         ]
 
         cors_options = CorsOptions(allowed_origins=["*"], max_age_in_seconds=60)
@@ -188,3 +194,101 @@ class TestSearchIndexClientAsync(AzureRecordedTestCase):
         result = client.list_indexes()
         async for index in result:
             await client.delete_index(index.name)
+
+    @SearchEnvVarPreparer()
+    @recorded_by_proxy_async
+    async def test_purview_enabled_index(self, search_service_endpoint, search_service_name):
+        del search_service_name  # unused
+        endpoint = search_service_endpoint
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
+
+        index_name = self.get_resource_name("purview-index")
+        fields = [
+            SearchField(
+                name="id",
+                type=SearchFieldDataType.STRING,
+                key=True,
+                filterable=True,
+                sortable=True,
+            ),
+            SearchField(
+                name="sensitivityLabel",
+                type=SearchFieldDataType.STRING,
+                filterable=True,
+                sensitivity_label=True,
+            ),
+        ]
+        index = SearchIndex(name=index_name, fields=fields, purview_enabled=True)
+
+        async with client:
+            created = await client.create_index(index)
+            try:
+                assert created.purview_enabled is True
+                for field in created.fields:
+                    if field.name == "sensitivityLabel":
+                        assert field.sensitivity_label is True
+                        break
+                else:
+                    raise AssertionError("Expected sensitivityLabel field to be present")
+
+                fetched = await client.get_index(index_name)
+                assert fetched.purview_enabled is True
+                for field in fetched.fields:
+                    if field.name == "sensitivityLabel":
+                        assert field.sensitivity_label is True
+                        break
+                else:
+                    raise AssertionError("Expected sensitivityLabel field to be present")
+            finally:
+                try:
+                    await client.delete_index(index_name)
+                except HttpResponseError:
+                    pass
+
+    @SearchEnvVarPreparer()
+    @recorded_by_proxy_async
+    async def test_scoring_profile_product_aggregation(self, search_service_endpoint, search_service_name):
+        del search_service_name  # unused
+        endpoint = search_service_endpoint
+        client = SearchIndexClient(endpoint, get_credential(is_async=True), retry_backoff_factor=60)
+
+        index_name = self.get_resource_name("agg-product")
+        fields = [
+            SimpleField(name="hotelId", type=SearchFieldDataType.STRING, key=True),
+            SimpleField(
+                name="lastUpdated",
+                type=SearchFieldDataType.DATE_TIME_OFFSET,
+                filterable=True,
+            ),
+        ]
+        scoring_profile = ScoringProfile(
+            name="product-score",
+            function_aggregation=ScoringFunctionAggregation.PRODUCT,
+            functions=[
+                FreshnessScoringFunction(
+                    field_name="lastUpdated",
+                    boost=2.5,
+                    parameters=FreshnessScoringParameters(boosting_duration=timedelta(days=7)),
+                )
+            ],
+        )
+        index = SearchIndex(name=index_name, fields=fields, scoring_profiles=[scoring_profile])
+
+        async with client:
+            created = await client.create_index(index)
+            try:
+                assert created.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
+
+                fetched = await client.get_index(index_name)
+                assert fetched.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.PRODUCT
+
+                fetched.scoring_profiles[0].function_aggregation = ScoringFunctionAggregation.SUM
+                await client.create_or_update_index(index=fetched)
+
+                updated = await client.get_index(index_name)
+                assert updated.scoring_profiles[0].function_aggregation == ScoringFunctionAggregation.SUM
+            finally:
+                try:
+                    await client.delete_index(index_name)
+                except HttpResponseError:
+                    pass

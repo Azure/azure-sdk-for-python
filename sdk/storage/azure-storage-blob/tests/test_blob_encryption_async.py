@@ -48,7 +48,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         # the tests would take too long to execute
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
-            credential=key,
+            credential=key.secret,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
             max_page_size=4 * 1024,
@@ -84,7 +84,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
 
@@ -118,7 +118,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
 

@@ -46,6 +46,7 @@ class BleuScoreEvaluator(EvaluatorBase):
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
 
     .. admonition:: Example with Threshold:
+
         .. literalinclude:: ../samples/evaluation_samples_threshold.py
             :start-after: [START threshold_bleu_score_evaluator]
             :end-before: [END threshold_bleu_score_evaluator]

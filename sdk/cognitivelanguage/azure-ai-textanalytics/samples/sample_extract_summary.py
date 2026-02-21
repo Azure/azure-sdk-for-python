@@ -5,13 +5,13 @@
 # ------------------------------------
 
 """
-FILE: sample_text_extractive_summarization.py
+FILE: sample_extract_summary.py
 
 DESCRIPTION:
     This sample demonstrates how to run an **extractive summarization** action over text.
 
 USAGE:
-    python sample_text_extractive_summarization.py
+    python sample_extract_summary.py
 
 REQUIRED ENV VARS (for AAD / DefaultAzureCredential):
     AZURE_TEXT_ENDPOINT
@@ -38,7 +38,7 @@ from azure.ai.textanalytics.models import (
 )
 
 
-def sample_text_extractive_summarization():
+def sample_extract_summary():
     # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
@@ -84,13 +84,9 @@ def sample_text_extractive_summarization():
         "the quality of life in the communities.”"
     )
 
-    text_input = MultiLanguageTextInput(
-        multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")]
-    )
+    text_input = MultiLanguageTextInput(multi_language_inputs=[MultiLanguageInput(id="A", text=text_a, language="en")])
 
-    action = ExtractiveSummarizationOperationAction(
-        name="Extractive Summarization"
-    )
+    action = ExtractiveSummarizationOperationAction(name="Extractive Summarization")
 
     # Start long-running operation (sync)
     poller = client.begin_analyze_text_job(
@@ -133,9 +129,9 @@ def sample_text_extractive_summarization():
                 print(f"Kind: {op_result.kind}")
 
                 result = op_result.results
-                for doc in (result.documents or []):
+                for doc in result.documents or []:
                     print(f"\nDocument ID: {doc.id}")
-                    for sent in (doc.sentences or []):
+                    for sent in doc.sentences or []:
                         # Each sentence is part of the extractive summary
                         print(f"  Sentence: {sent.text}")
                         print(f"    Rank score: {sent.rank_score}")
@@ -148,14 +144,15 @@ def sample_text_extractive_summarization():
                         f"\n[Non-extractive action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-extractive action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-extractive action present] Error: {e}")
+
 
 # [END text_extractive_summarization]
 
 
 def main():
-    sample_text_extractive_summarization()
+    sample_extract_summary()
 
 
 if __name__ == "__main__":

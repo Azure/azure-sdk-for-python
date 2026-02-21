@@ -40,12 +40,11 @@ from azure.ai.textanalytics.models import (
     KeyPhraseLROTask,
     EntityRecognitionOperationResult,
     KeyPhraseExtractionOperationResult,
-    EntityTag,
 )
 
 
 async def sample_analyze_actions_async():
-     # get settings
+    # get settings
     endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
     credential = DefaultAzureCredential()
 
@@ -106,16 +105,9 @@ async def sample_analyze_actions_async():
                             print(f"    Type: {entity.type}")
                         if hasattr(entity, "subcategory") and entity.subcategory:
                             print(f"    Subcategory: {entity.subcategory}")
-                        if hasattr(entity, "tags") and entity.tags:
-                            print("    Tags:")
-                            for tag in entity.tags:
-                                if isinstance(tag, EntityTag):
-                                    print(f"        TagName: {tag.name}")
-                                    print(f"        TagConfidenceScore: {tag.confidence_score}")
-                        print(f"    Confidence score: {entity.confidence_score}")
                         print()
                 for err in action_result.results.errors:
-                    print(f'  Error in document: {err.id}!')
+                    print(f"  Error in document: {err.id}!")
                     print(f"  Document error: {err.error}")
 
             # --- Key Phrases ---
@@ -127,8 +119,9 @@ async def sample_analyze_actions_async():
                         print(f"    {kp}")
                     print()
                 for err in action_result.results.errors:
-                    print(f'  Error in document: {err.id}!')
+                    print(f"  Error in document: {err.id}!")
                     print(f"  Document error: {err.error}")
+
 
 # [END analyze_async]
 

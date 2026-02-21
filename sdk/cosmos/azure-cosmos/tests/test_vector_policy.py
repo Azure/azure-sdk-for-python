@@ -10,6 +10,47 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
+VectorPolicyTestData = {
+    "valid_vector_indexing_policy" : {
+        "indexing_policy": {
+            "vectorIndexes": [
+                {"path": "/vector1", "type": "flat"},
+                {"path": "/vector2", "type": "quantizedFlat", "quantizerType": "product", "quantizationByteSize": 8},
+                {"path": "/vector3", "type": "diskANN", "quantizerType": "product", "quantizationByteSize": 8,
+                 "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50},
+                {"path": "/vector4", "type": "diskANN", "quantizerType": "spherical", "indexingSearchListSize": 50},
+            ]
+        },
+        "vector_embedding_policy": {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 256,
+                    "distanceFunction": "euclidean"
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
+                },
+                {
+                    "path": "/vector3",
+                    "dataType": "uint8",
+                    "dimensions": 400,
+                    "distanceFunction": "cosine"
+                },
+                {
+                    "path": "/vector4",
+                    "dataType": "uint8",
+                    "dimensions": 400,
+                    "distanceFunction": "euclidean"
+                },
+            ]
+        }
+    }
+}
 
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicy(unittest.TestCase):
@@ -35,12 +76,47 @@ class TestVectorPolicy(unittest.TestCase):
     def tearDownClass(cls):
         test_config.TestConfig.try_delete_database_with_id(cls.client, cls.test_db.id)
 
+    def test_create_valid_vector_embedding_policy(self):
+        # Using valid data types
+        data_types = ["float32", "float16", "int8", "uint8"]
+        for data_type in data_types:
+            vector_embedding_policy = {
+                "vectorEmbeddings": [
+                    {
+                        "path": "/vector1",
+                        "dataType": data_type,
+                        "dimensions": 256,
+                        "distanceFunction": "euclidean"
+                    }]}
+            created_container = self.test_db.create_container(
+                id='vector_container_' + data_type,
+                partition_key=PartitionKey(path="/id"),
+                vector_embedding_policy=vector_embedding_policy)
+            properties = created_container.read()
+            assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
+            self.test_db.delete_container('vector_container_' + data_type)
+
+    @unittest.skip
+    def test_create_valid_vector_indexing_policy(self):
+        test_data = VectorPolicyTestData["valid_vector_indexing_policy"]
+        indexing_policy = test_data["indexing_policy"]
+        vector_embedding_policy = test_data["vector_embedding_policy"]
+
+        created_container = self.test_db.create_container(
+            id="container_" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            vector_embedding_policy=vector_embedding_policy,
+            indexing_policy=indexing_policy)
+        properties = created_container.read()
+        assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
+        self.test_db.delete_container(created_container.id)
+
     def test_create_vector_embedding_container(self):
         indexing_policy = {
             "vectorIndexes": [
                 {"path": "/vector1", "type": "flat"},
-                {"path": "/vector2", "type": "quantizedFlat", "quantizationByteSize": 8},
-                {"path": "/vector3", "type": "diskANN", "quantizationByteSize": 8, "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50}
+                {"path": "/vector2", "type": "quantizedFlat", "quantizerType": "product", "quantizationByteSize": 8},
+                {"path": "/vector3", "type": "diskANN", "quantizerType": "product", "quantizationByteSize": 8, "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50}
             ]
         }
         vector_embedding_policy = {
@@ -80,7 +156,7 @@ class TestVectorPolicy(unittest.TestCase):
         # Pass a vector indexing policy with hierarchical vectorIndexShardKey value
         indexing_policy = {
             "vectorIndexes": [
-                {"path": "/vector2", "type": "diskANN", 'quantizationByteSize': 64, 'indexingSearchListSize': 100, "vectorIndexShardKey": ["/country/city"]}]
+                {"path": "/vector2", "type": "diskANN", "quantizerType": "product", 'quantizationByteSize': 64, 'indexingSearchListSize': 100, "vectorIndexShardKey": ["/country/city"]}]
         }
         container_id = "vector_container" + str(uuid.uuid4())
         created_container = self.test_db.create_container(
@@ -128,6 +204,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "type": "diskANN",
+                    "quantizerType": "product",
                     "quantizationByteSize": 128,
                     "indexingSearchListSize": 100
                 }
@@ -158,6 +235,7 @@ class TestVectorPolicy(unittest.TestCase):
                 {
                     "path": "/vector1",
                     "type": "diskANN",
+                    "quantizerType": "product",
                     "quantizationByteSize": 128,
                     "indexingSearchListSize": 100
                 }]
@@ -386,17 +464,6 @@ class TestVectorPolicy(unittest.TestCase):
             assert e.status_code == 400
             assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
                     in e.http_error_message)
-        # don't provide vector indexing policy
-        try:
-            self.test_db.replace_container(
-                created_container,
-                PartitionKey(path="/id"),
-                vector_embedding_policy=vector_embedding_policy)
-            pytest.fail("Container replace should have failed for missing indexing policy.")
-        except exceptions.CosmosHttpResponseError as e:
-            assert e.status_code == 400
-            assert ("The Vector Indexing Policy cannot be changed in Collection Replace."
-                    in e.http_error_message)
         # using a new indexing policy
         new_indexing_policy = {
             "vectorIndexes": [
@@ -430,7 +497,7 @@ class TestVectorPolicy(unittest.TestCase):
             pytest.fail("Container replace should have failed for new embedding policy.")
         except exceptions.CosmosHttpResponseError as e:
             assert e.status_code == 400
-            assert ("The Vector Embedding Policy cannot be changed in Collection Replace"
+            assert ("Paths in existing embedding policy cannot be modified in Collection Replace"
                     in e.http_error_message)
         self.test_db.delete_container(container_id)
 

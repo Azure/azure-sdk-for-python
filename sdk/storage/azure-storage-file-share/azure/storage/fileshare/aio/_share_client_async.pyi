@@ -33,7 +33,11 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 
 class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # type: ignore[misc]
+    share_name: str
     snapshot: Optional[str]
+    allow_trailing_dot: Optional[bool]
+    allow_source_trailing_dot: Optional[bool]
+    file_request_intent: Optional[Literal["backup"]]
     def __init__(
         self,
         account_url: str,
@@ -116,6 +120,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         paid_bursting_iops: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
@@ -158,6 +163,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # t
         paid_bursting_iops: Optional[int] = None,
         provisioned_iops: Optional[int] = None,
         provisioned_bandwidth_mibps: Optional[int] = None,
+        enable_smb_directory_lease: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...

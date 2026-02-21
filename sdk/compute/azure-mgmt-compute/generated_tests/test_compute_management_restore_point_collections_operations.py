@@ -60,6 +60,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
             parameters={
                 "location": "str",
                 "id": "str",
+                "instantAccess": bool,
                 "name": "str",
                 "provisioningState": "str",
                 "restorePointCollectionId": "str",
@@ -82,6 +83,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                             "time": "2020-02-20 00:00:00",
                                         },
                                     },
+                                    "snapshotAccessState": "str",
                                 }
                             ],
                             "statuses": [
@@ -94,6 +96,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 }
                             ],
                         },
+                        "instantAccessDurationMinutes": 0,
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {
@@ -264,6 +267,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             parameters={
+                "instantAccess": bool,
                 "provisioningState": "str",
                 "restorePointCollectionId": "str",
                 "restorePoints": [
@@ -285,6 +289,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                             "time": "2020-02-20 00:00:00",
                                         },
                                     },
+                                    "snapshotAccessState": "str",
                                 }
                             ],
                             "statuses": [
@@ -297,6 +302,7 @@ class TestComputeManagementRestorePointCollectionsOperations(AzureMgmtRecordedTe
                                 }
                             ],
                         },
+                        "instantAccessDurationMinutes": 0,
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {

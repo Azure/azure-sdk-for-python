@@ -141,7 +141,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
             kwargs["api_version"] = api_version
         super().__init__(endpoint=endpoint, credential=credential, **kwargs)
 
-    @overload
+    @overload # type: ignore[override]
     def begin_analyze_text_job(
         self,
         *,
@@ -151,7 +151,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
@@ -178,7 +178,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @overload
-    def begin_analyze_text_job(
+    def begin_analyze_text_job( # type: ignore[override]
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -196,7 +196,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         """
 
     @overload
-    def begin_analyze_text_job(
+    def begin_analyze_text_job( # type: ignore[override]
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
@@ -223,11 +223,11 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
         display_name: Optional[str] = None,
         default_language: Optional[str] = None,
         cancel_after: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> AnalyzeTextLROPoller[ItemPaged["TextActions"]]:
         """Submit a collection of text documents for analysis. Specify one or more unique tasks to be
         executed as a long-running operation.
-        
+
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword text_input: Contains the input to be analyzed. Required.
@@ -313,7 +313,7 @@ class TextAnalysisClient(AnalysisTextClientGenerated):
                 continuation_token=cont_token,
             )
 
-        initial_kwargs = dict( # pylint:disable=use-dict-literal
+        initial_kwargs = dict(  # pylint:disable=use-dict-literal
             text_input=text_input,
             actions=actions,
             display_name=display_name,

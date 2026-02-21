@@ -10,13 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """AccessScope enums."""
-
-    JOB = "job"
-    """Grants access to perform all operations on the Job containing the Task."""
-
-
 class AllocationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AllocationState enums."""
 
@@ -41,56 +34,32 @@ class AutoUserScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Node in a Pool."""
 
 
-class BatchCertificateFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateFormat enums."""
+class BatchAccessScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchAccessScope enums."""
 
-    PFX = "pfx"
-    """The Certificate is a PFX (PKCS#12) formatted Certificate or Certificate chain."""
-    CER = "cer"
-    """The Certificate is a base64-encoded X.509 Certificate."""
+    JOB = "job"
+    """Grants access to perform all operations on the Job containing the Task."""
 
 
-class BatchCertificateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateState enums."""
+class BatchAllTasksCompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
 
-    ACTIVE = "active"
-    """The Certificate is available for use in Pools."""
-    DELETING = "deleting"
-    """The user has requested that the Certificate be deleted, but the delete operation has not yet
-    completed. You may not reference the Certificate when creating or updating Pools."""
-    DELETE_FAILED = "deletefailed"
-    """The user requested that the Certificate be deleted, but there are Pools that still have
-    references to the Certificate, or it is still installed on one or more Nodes. (The latter can
-    occur if the Certificate has been removed from the Pool, but the Compute Node has not yet
-    restarted. Compute Nodes refresh their Certificates only when they restart.) You may use the
-    cancel Certificate delete operation to cancel the delete, or the delete Certificate operation
-    to retry the delete."""
+    NO_ACTION = "noaction"
+    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
+    TERMINATE_JOB = "terminatejob"
+    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
-class BatchCertificateStoreLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateStoreLocation enums."""
+class BatchErrorSourceCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchErrorSourceCategory enums."""
 
-    CURRENT_USER = "currentuser"
-    """Certificates should be installed to the CurrentUser Certificate store."""
-    LOCAL_MACHINE = "localmachine"
-    """Certificates should be installed to the LocalMachine Certificate store."""
-
-
-class BatchCertificateVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchCertificateVisibility enums."""
-
-    START_TASK = "starttask"
-    """The Certificate should be visible to the user account under which the StartTask is run. Note
-    that if AutoUser Scope is Pool for both the StartTask and a Task, this certificate will be
-    visible to the Task as well."""
-    TASK = "task"
-    """The Certificate should be visible to the user accounts under which Job Tasks are run."""
-    REMOTE_USER = "remoteuser"
-    """The Certificate should be visible to the user accounts under which users remotely access the
-    Compute Node."""
+    USER_ERROR = "usererror"
+    """The error is due to a user issue, such as misconfiguration."""
+    SERVER_ERROR = "servererror"
+    """The error is due to an internal server issue."""
 
 
-class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class BatchJobActionKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchJobAction enums."""
 
     NONE = "none"
@@ -100,6 +69,16 @@ class BatchJobAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     of requeue."""
     TERMINATE = "terminate"
     """Terminate the Job. The terminationReason in the Job's executionInfo is set to "TaskFailed"."""
+
+
+class BatchJobDefaultOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchJobDefaultOrder enums."""
+
+    NONE = "none"
+    """Tasks should be scheduled uniformly from all equal-priority jobs for the pool."""
+    CREATION_TIME = "creationtime"
+    """If jobs have equal priority, tasks from jobs that were created earlier should be scheduled
+    first."""
 
 
 class BatchJobPreparationTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -170,20 +149,6 @@ class BatchJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     (for example, because the system is still terminating running Tasks)."""
 
 
-class BatchNodeCommunicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeCommunicationMode enums."""
-
-    DEFAULT = "default"
-    """The node communication mode is automatically set by the Batch service."""
-    CLASSIC = "classic"
-    """Nodes using the classic communication mode require inbound TCP communication on ports 29876 and
-    29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on
-    port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags."""
-    SIMPLIFIED = "simplified"
-    """Nodes using the simplified communication mode require outbound TCP communication on port 443 to
-    the "BatchNodeManagement.{region}" service tag. No open inbound ports are required."""
-
-
 class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BatchNodeDeallocateOption enums."""
 
@@ -198,9 +163,10 @@ class BatchNodeDeallocateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Deallocate the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Deallocate the Compute Node when all Task
-    retention periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Deallocate the Compute
+    Node when all Task retention periods have expired."""
 
 
 class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -216,9 +182,10 @@ class BatchNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Remove Compute
     Nodes when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Remove Compute Nodes when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Remove Compute Nodes
+    when all Task retention periods have expired."""
 
 
 class BatchNodeDisableSchedulingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -256,8 +223,8 @@ class BatchNodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     balancing."""
 
 
-class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """BatchNodeRebootOption enums."""
+class BatchNodeRebootKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BatchNodeRebootKind enums."""
 
     REQUEUE = "requeue"
     """Terminate running Task processes and requeue the Tasks. The Tasks will run again when a Compute
@@ -270,9 +237,10 @@ class BatchNodeRebootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Restart the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Restart the Compute Node when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Restart the Compute Node
+    when all Task retention periods have expired."""
 
 
 class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -289,9 +257,10 @@ class BatchNodeReimageOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow currently running Tasks to complete. Schedule no new Tasks while waiting. Reimage the
     Compute Node when all Tasks have completed."""
     RETAINED_DATA = "retaineddata"
-    """Allow currently running Tasks to complete, then wait for all Task data retention periods to
-    expire. Schedule no new Tasks while waiting. Reimage the Compute Node when all Task retention
-    periods have expired."""
+    """Deprecated, we encourage you to upload task data to Azure Storage in your task and use
+    ``TaskCompletion`` instead. Allow currently running Tasks to complete, then wait for all Task
+    data retention periods to expire. Schedule no new Tasks while waiting. Reimage the Compute Node
+    when all Task retention periods have expired."""
 
 
 class BatchNodeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -419,6 +388,15 @@ class BatchTaskExecutionResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILURE = "failure"
     """There was an error during processing of the Task. The failure may have occurred before the Task
     process was launched, while the Task process was executing, or after the Task process exited."""
+
+
+class BatchTaskFailureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TaskFailure enums."""
+
+    NO_ACTION = "noaction"
+    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
+    PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
+    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class BatchTaskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -558,13 +536,16 @@ class ElevationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The user is a user with elevated access and operates with full Administrator permissions."""
 
 
-class ErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ErrorCategory enums."""
+class HostEndpointSettingsModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HostEndpointSettingsModeTypes enums."""
 
-    USER_ERROR = "usererror"
-    """The error is due to a user issue, such as misconfiguration."""
-    SERVER_ERROR = "servererror"
-    """The error is due to an internal server issue."""
+    AUDIT = "Audit"
+    """In Audit mode, the system acts as if it is enforcing the access control policy, including
+    emitting access denial entries in the logs but it does not actually deny any requests to host
+    endpoints."""
+    ENFORCE = "Enforce"
+    """Enforce mode is the recommended mode of operation and system will enforce the access control
+    policy. This property cannot be used together with 'inVMAccessControlProfileReferenceId'."""
 
 
 class ImageVerificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -599,6 +580,15 @@ class IpAddressProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """No public IP Address will be created."""
 
 
+class IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The IP families used to specify IP versions available to the pool."""
+
+    IPV4 = "IPv4"
+    """IPv4 is available to the pool."""
+    IPV6 = "IPv6"
+    """IPv6 is available to the pool."""
+
+
 class LoginMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LoginMode enums."""
 
@@ -620,24 +610,6 @@ class NetworkSecurityGroupRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMet
     """Allow access."""
     DENY = "deny"
     """Deny access."""
-
-
-class OnAllBatchTasksComplete(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The action the Batch service should take when all Tasks in the Job are in the completed state."""
-
-    NO_ACTION = "noaction"
-    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
-    TERMINATE_JOB = "terminatejob"
-    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
-
-
-class OnBatchTaskFailure(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """OnTaskFailure enums."""
-
-    NO_ACTION = "noaction"
-    """Do nothing. The Job remains active unless terminated or disabled by some other means."""
-    PERFORM_EXIT_OPTIONS_JOB_ACTION = "performexitoptionsjobaction"
-    """Terminate the Job. The Job's terminationReason is set to 'AllTasksComplete'."""
 
 
 class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -673,10 +645,15 @@ class SchedulingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SecurityEncryptionTypes enums."""
 
+    DISK_WITH_VM_GUEST_STATE = "DiskWithVMGuestState"
+    """EncryptionType of the managed disk is set to DiskWithVMGuestState for encryption of the managed
+    disk along with VMGuestState blob. It is not supported in data disks."""
     NON_PERSISTED_TPM = "NonPersistedTPM"
-    """NonPersistedTPM"""
+    """EncryptionType of the managed disk is set to NonPersistedTPM for not persisting firmware state
+    in the VMGuestState blob."""
     VM_GUEST_STATE_ONLY = "VMGuestStateOnly"
-    """VMGuestStateOnly"""
+    """EncryptionType of the managed disk is set to VMGuestStateOnly for encryption of just the
+    VMGuestState blob."""
 
 
 class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -686,7 +663,7 @@ class SecurityTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TRUSTED_LAUNCH = "trustedLaunch"
     """Trusted launch protects against advanced and persistent attack techniques."""
-    CONFIDENTIAL_VM = "confidentialVM"
+    CONFIDENTIAL_VM = "confidentialvm"
     """Azure confidential computing offers confidential VMs are for tenants with high security and
     confidentiality requirements. These VMs provide a strong, hardware-enforced boundary to help
     meet your security needs. You can use confidential VMs for migrations without making changes to
@@ -719,7 +696,7 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UpgradeMode enums."""
 
     AUTOMATIC = "automatic"
-    """TAll virtual machines in the scale set are automatically updated at the same time."""
+    """All virtual machines in the scale set are automatically updated at the same time."""
     MANUAL = "manual"
     """You control the application of updates to virtual machines in the scale set. You do this by
     using the manualUpgrade action."""

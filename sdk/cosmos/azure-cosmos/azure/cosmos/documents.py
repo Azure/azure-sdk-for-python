@@ -79,6 +79,7 @@ class DatabaseAccount:  # pylint: disable=too-many-instance-attributes
         self._WritableLocations: list[dict[str, str]] = []
         self._ReadableLocations: list[dict[str, str]] = []
         self._EnableMultipleWritableLocations = False
+        self._EnablePerPartitionFailoverBehavior = False
 
     @property
     def WritableLocations(self) -> list[dict[str, str]]:
@@ -334,9 +335,9 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
     :vartype ConnectionRetryConfiguration:
         int or ~azure.cosmos.ConnectionRetryPolicy
     :ivar boolean ResponsePayloadOnWriteDisabled:
-        Indicates whether service should be instructed to skip sending response payloads
-    :ivar boolean RetryNonIdempotentWrites:
-        Indicates whether the client should retry non-idempotent write requests for items
+        Indicates whether service should be instructed to skip sending response payloads.
+    :ivar int RetryNonIdempotentWrites:
+        Indicates how many times the client should retry non-idempotent write requests for item operations.
     """
 
     __defaultRequestTimeout: int = 5  # seconds
@@ -367,25 +368,7 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         self.UseMultipleWriteLocations: bool = False
         self.ConnectionRetryConfiguration: Optional["ConnectionRetryPolicy"] = None
         self.ResponsePayloadOnWriteDisabled: bool = False
-        self.RetryNonIdempotentWrites: bool = False
-
-    def _override_dba_timeouts(
-            self,
-            connection_timeout: Optional[int] = None,
-            read_timeout: Optional[int] = None
-    ) -> None:
-        """Override the timeouts for database account operations.
-
-        :param int connection_timeout:
-            Connection timeout in seconds.
-        :param int read_timeout:
-            Read timeout in seconds.
-        """
-        if connection_timeout is not None:
-            self.DBAConnectionTimeout = connection_timeout
-        if read_timeout is not None:
-            self.DBAReadTimeout = read_timeout
-
+        self.RetryNonIdempotentWrites: int = 0
 
 class _OperationType:
     """Represents the type of the operation"""

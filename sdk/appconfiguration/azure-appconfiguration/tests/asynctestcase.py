@@ -4,17 +4,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from typing import List
+from testcase import AppConfigTestCase
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.exceptions import ResourceExistsError
-from testcase import AppConfigTestCase
-from typing import List
 
 
 class AsyncAppConfigTestCase(AppConfigTestCase):
-    def create_aad_client(self, appconfiguration_endpoint_string):
+    def create_aad_client(self, appconfiguration_endpoint_string, audience=None):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
-        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
+        return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
 
     def create_client(self, appconfiguration_connection_string):
         return AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string)
@@ -41,6 +41,15 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
 
     async def tear_down(self):
         if self.client is not None:
+            # Archive all ready snapshots
+            snapshots = self.client.list_snapshots(status=["ready"])
+            async for snapshot in snapshots:
+                try:
+                    await self.client.archive_snapshot(name=snapshot.name)
+                except Exception:
+                    pass
+
+            # Delete all configuration settings
             config_settings = self.client.list_configuration_settings()
             async for config_setting in config_settings:
                 await self.client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)

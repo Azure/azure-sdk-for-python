@@ -32,15 +32,13 @@ class ActiveRevisionsMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     .. raw:: html
 
-       <list><item>Single: Only one revision can be active at a time. Traffic weights cannot be
-    used. This is the default.</item><item>Multiple: Multiple revisions can be active, including
-    optional traffic weights and labels.</item><item>Labels: Only revisions with labels are active.
-    Traffic weights can be applied to labels.</item></list>.
+       <list><item>Multiple: multiple revisions can be active.</item><item>Single: Only one
+    revision can be active at a time. Revision weights can not be used in this mode. If no value if
+    provided, this is the default.</item></list>.
     """
 
     MULTIPLE = "Multiple"
     SINGLE = "Single"
-    LABELS = "Labels"
 
 
 class Affinity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -74,38 +72,6 @@ class BindingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "Auto"
 
 
-class BuilderProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Resource instance provisioning state."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-
-
-class BuildProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Resource instance provisioning state."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    CREATING = "Creating"
-    UPDATING = "Updating"
-    DELETING = "Deleting"
-
-
-class BuildStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the build once it has been provisioned."""
-
-    NOT_STARTED = "NotStarted"
-    IN_PROGRESS = "InProgress"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-
-
 class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of the certificate."""
 
@@ -117,30 +83,11 @@ class CertificateProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     DELETING = "Deleting"
 
 
-class CertificateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the certificate. Allowed values are ``ServerSSLCertificate`` and
-    ``ImagePullTrustedCA``.
-    """
-
-    SERVER_SSL_CERTIFICATE = "ServerSSLCertificate"
-    IMAGE_PULL_TRUSTED_CA = "ImagePullTrustedCA"
-
-
 class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason why the given name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
-
-
-class ConnectedEnvironmentDaprComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the Connected Environment Dapr Component."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    IN_PROGRESS = "InProgress"
-    DELETING = "Deleting"
 
 
 class ConnectedEnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -230,12 +177,14 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
-class DetectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the patch detection."""
+class DaprComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the Dapr Component."""
 
     SUCCEEDED = "Succeeded"
-    REGISTRY_LOGIN_FAILED = "RegistryLoginFailed"
     FAILED = "Failed"
+    CANCELED = "Canceled"
+    IN_PROGRESS = "InProgress"
+    DELETING = "Deleting"
 
 
 class DnsVerificationTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -244,22 +193,6 @@ class DnsVerificationTestResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PASSED = "Passed"
     FAILED = "Failed"
     SKIPPED = "Skipped"
-
-
-class DotNetComponentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the .NET Component."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    DELETING = "Deleting"
-    IN_PROGRESS = "InProgress"
-
-
-class DotNetComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of the .NET Component."""
-
-    ASPIRE_DASHBOARD = "AspireDashboard"
 
 
 class EnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -314,15 +247,6 @@ class IdentitySettingsLifeCycle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALL = "All"
 
 
-class ImageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the image. Set to CloudBuild to let the system manages the image, where user will
-    not be able to update image through image field. Set to ContainerImage for user provided image.
-    """
-
-    CLOUD_BUILD = "CloudBuild"
-    CONTAINER_IMAGE = "ContainerImage"
-
-
 class IngressClientCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Client certificate mode for mTLS authentication. Ignore indicates server drops client
     certificate on forwarding. Accept indicates server forwards client certificate but does not
@@ -332,13 +256,6 @@ class IngressClientCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     IGNORE = "ignore"
     ACCEPT = "accept"
     REQUIRE = "require"
-
-
-class IngressTargetPortHttpScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether an http app listens on http or https."""
-
-    HTTP = "http"
-    HTTPS = "https"
 
 
 class IngressTransportMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -366,8 +283,6 @@ class JavaComponentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SPRING_BOOT_ADMIN = "SpringBootAdmin"
     SPRING_CLOUD_EUREKA = "SpringCloudEureka"
     SPRING_CLOUD_CONFIG = "SpringCloudConfig"
-    SPRING_CLOUD_GATEWAY = "SpringCloudGateway"
-    NACOS = "Nacos"
 
 
 class JobExecutionRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -392,32 +307,13 @@ class JobProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETING = "Deleting"
 
 
-class JobRunningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current running state of the job."""
-
-    READY = "Ready"
-    PROGRESSING = "Progressing"
-    SUSPENDED = "Suspended"
-
-
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Metadata used to render different experiences for resources of the same type; e.g. WorkflowApp
-    is a kind of Microsoft.App/ContainerApps type. If supported, the resource provider must
-    validate and persist this value.
+    """Metadata to represent the container app kind, representing if a container app is workflowapp or
+    functionapp.
     """
 
     WORKFLOWAPP = "workflowapp"
-
-
-class Level(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The specified logger's log level."""
-
-    OFF = "off"
-    ERROR = "error"
-    INFO = "info"
-    DEBUG = "debug"
-    TRACE = "trace"
-    WARN = "warn"
+    FUNCTIONAPP = "functionapp"
 
 
 class LifecycleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -425,13 +321,6 @@ class LifecycleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     TIMED = "Timed"
     ON_CONTAINER_EXIT = "OnContainerExit"
-
-
-class LogicAppsProxyMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """LogicAppsProxyMethod."""
-
-    GET = "GET"
-    POST = "POST"
 
 
 class LogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -462,41 +351,6 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
-
-
-class PatchApplyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the patch once it has been provisioned."""
-
-    NOT_STARTED = "NotStarted"
-    REBASE_IN_PROGRESS = "RebaseInProgress"
-    CREATING_REVISION = "CreatingRevision"
-    SUCCEEDED = "Succeeded"
-    CANCELED = "Canceled"
-    REBASE_FAILED = "RebaseFailed"
-    REVISION_CREATION_FAILED = "RevisionCreationFailed"
-    IMAGE_PUSH_PULL_FAILED = "ImagePushPullFailed"
-    MANUALLY_SKIPPED = "ManuallySkipped"
-
-
-class PatchingMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Patching mode for the container app. Null or default in this field will be interpreted as
-    Automatic by RP. Automatic mode will automatically apply available patches. Manual mode will
-    require the user to manually apply patches. Disabled mode will stop patch detection and auto
-    patching.
-    """
-
-    AUTOMATIC = "Automatic"
-    MANUAL = "Manual"
-    DISABLED = "Disabled"
-
-
-class PatchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type for the patch."""
-
-    FRAMEWORK_SECURITY = "FrameworkSecurity"
-    OS_SECURITY = "OSSecurity"
-    FRAMEWORK_AND_OS_SECURITY = "FrameworkAndOSSecurity"
-    OTHER = "Other"
 
 
 class PoolManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -587,16 +441,6 @@ class SessionPoolProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     DELETING = "Deleting"
 
 
-class SessionProbeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Denotes the type of probe. Can be Liveness or Startup, Readiness probe is not supported in
-    sessions. Type must be unique for each probe within the context of a list of probes
-    (SessionProbes).
-    """
-
-    LIVENESS = "Liveness"
-    STARTUP = "Startup"
-
-
 class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Current provisioning State of the operation."""
 
@@ -606,14 +450,6 @@ class SourceControlOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
-class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the label history record."""
-
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    STARTING = "Starting"
-
-
 class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage type for the volume. If not provided, use EmptyDir."""
 
@@ -621,7 +457,6 @@ class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EMPTY_DIR = "EmptyDir"
     SECRET = "Secret"
     NFS_AZURE_FILE = "NfsAzureFile"
-    SMB = "Smb"
 
 
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -668,6 +503,14 @@ class WorkflowHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HEALTHY = "Healthy"
     UNHEALTHY = "Unhealthy"
     UNKNOWN = "Unknown"
+
+
+class WorkflowKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets the logic app hybrid workflow kind."""
+
+    STATEFUL = "Stateful"
+    STATELESS = "Stateless"
+    AGENTIC = "Agentic"
 
 
 class WorkflowState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

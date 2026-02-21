@@ -22,7 +22,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_container_apps_session_pools_list_by_subscription(self, resource_group):
         response = self.client.container_apps_session_pools.list_by_subscription(
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
     def test_container_apps_session_pools_list_by_resource_group(self, resource_group):
         response = self.client.container_apps_session_pools.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
         response = self.client.container_apps_session_pools.get(
             resource_group_name=resource_group.name,
             session_pool_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -68,25 +68,6 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
                             "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                             "image": "str",
                             "name": "str",
-                            "probes": [
-                                {
-                                    "failureThreshold": 0,
-                                    "httpGet": {
-                                        "port": 0,
-                                        "host": "str",
-                                        "httpHeaders": [{"name": "str", "value": "str"}],
-                                        "path": "str",
-                                        "scheme": "str",
-                                    },
-                                    "initialDelaySeconds": 0,
-                                    "periodSeconds": 0,
-                                    "successThreshold": 0,
-                                    "tcpSocket": {"port": 0, "host": "str"},
-                                    "terminationGracePeriodSeconds": 0,
-                                    "timeoutSeconds": 0,
-                                    "type": "str",
-                                }
-                            ],
                             "resources": {"cpu": 0.0, "memory": "str"},
                         }
                     ],
@@ -133,7 +114,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -154,25 +135,6 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
                             "env": [{"name": "str", "secretRef": "str", "value": "str"}],
                             "image": "str",
                             "name": "str",
-                            "probes": [
-                                {
-                                    "failureThreshold": 0,
-                                    "httpGet": {
-                                        "port": 0,
-                                        "host": "str",
-                                        "httpHeaders": [{"name": "str", "value": "str"}],
-                                        "path": "str",
-                                        "scheme": "str",
-                                    },
-                                    "initialDelaySeconds": 0,
-                                    "periodSeconds": 0,
-                                    "successThreshold": 0,
-                                    "tcpSocket": {"port": 0, "host": "str"},
-                                    "terminationGracePeriodSeconds": 0,
-                                    "timeoutSeconds": 0,
-                                    "type": "str",
-                                }
-                            ],
                             "resources": {"cpu": 0.0, "memory": "str"},
                         }
                     ],
@@ -202,7 +164,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
                 "sessionNetworkConfiguration": {"status": "str"},
                 "tags": {"str": "str"},
             },
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -214,7 +176,7 @@ class TestContainerAppsAPIContainerAppsSessionPoolsOperations(AzureMgmtRecordedT
         response = self.client.container_apps_session_pools.begin_delete(
             resource_group_name=resource_group.name,
             session_pool_name="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

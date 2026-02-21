@@ -23,7 +23,7 @@ class TestContainerAppsAPIUsagesOperations(AzureMgmtRecordedTestCase):
     def test_usages_list(self, resource_group):
         response = self.client.usages.list(
             location="str",
-            api_version="2025-02-02-preview",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

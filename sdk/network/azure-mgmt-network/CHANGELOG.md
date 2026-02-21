@@ -1,5 +1,94 @@
 # Release History
 
+## 30.2.0 (2026-02-11)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added operation group `service_gateways`
+  - Client `NetworkManagementClient` added operation group `virtual_network_appliances`
+  - Enum `ActionType` added member `CAPTCHA`
+  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `CORE`
+  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `EMERGING`
+  - Enum `FirewallPolicyIntrusionDetectionProfileType` added member `OFF`
+  - Model `NatGateway` added property `service_gateway`
+  - Model `PolicySettings` added property `captcha_cookie_expiration_in_mins`
+  - Model `Subnet` added property `service_gateway`
+  - Enum `WebApplicationFirewallAction` added member `CAPTCHA`
+  - Added enum `AddressUpdateAction`
+  - Added model `GetServiceGatewayAddressLocationsResult`
+  - Added model `GetServiceGatewayServicesResult`
+  - Added model `RouteTargetAddressPropertiesFormat`
+  - Added model `ServiceGateway`
+  - Added model `ServiceGatewayAddress`
+  - Added model `ServiceGatewayAddressLocation`
+  - Added model `ServiceGatewayAddressLocationResponse`
+  - Added model `ServiceGatewayListResult`
+  - Added model `ServiceGatewayService`
+  - Added model `ServiceGatewayServiceRequest`
+  - Added model `ServiceGatewaySku`
+  - Added enum `ServiceGatewaySkuName`
+  - Added enum `ServiceGatewaySkuTier`
+  - Added model `ServiceGatewayUpdateAddressLocationsRequest`
+  - Added model `ServiceGatewayUpdateServicesRequest`
+  - Added enum `ServiceType`
+  - Added enum `ServiceUpdateAction`
+  - Added enum `UpdateAction`
+  - Added model `VirtualNetworkAppliance`
+  - Added model `VirtualNetworkApplianceIpConfiguration`
+  - Added model `VirtualNetworkApplianceListResult`
+  - Added operation group `ServiceGatewaysOperations`
+  - Added operation group `VirtualNetworkAppliancesOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.ADVANCED`
+  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.BASIC`
+  - Deleted or renamed enum value `FirewallPolicyIntrusionDetectionProfileType.STANDARD`
+
+## 30.1.0 (2025-11-19)
+
+### Features Added
+
+  - Added operation PublicIPAddressesOperations.begin_disassociate_cloud_service_reserved_public_ip
+  - Added operation PublicIPAddressesOperations.begin_reserve_cloud_service_public_ip_address
+  - Model ApplicationGateway has a new parameter entra_jwt_validation_configs
+  - Model ApplicationGatewayBackendSettings has a new parameter enable_l4_client_ip_preservation
+  - Model ApplicationGatewayClientAuthConfiguration has a new parameter verify_client_auth_mode
+  - Model ApplicationGatewayOnDemandProbe has a new parameter enable_probe_proxy_protocol_header
+  - Model ApplicationGatewayProbe has a new parameter enable_probe_proxy_protocol_header
+  - Model ApplicationGatewayRequestRoutingRule has a new parameter entra_jwt_validation_config
+  - Model DdosCustomPolicy has a new parameter detection_rules
+  - Model DdosCustomPolicy has a new parameter front_end_ip_configuration
+  - Model FlowLog has a new parameter record_types
+  - Model FlowLogInformation has a new parameter record_types
+  - Model LoadBalancer has a new parameter scope
+  - Model NetworkManagerRoutingConfiguration has a new parameter route_table_usage_mode
+  - Model PrivateEndpoint has a new parameter ip_version_type
+  - Model PrivateLinkService has a new parameter access_mode
+  - Model VirtualNetworkGatewayConnection has a new parameter authentication_type
+  - Model VirtualNetworkGatewayConnection has a new parameter certificate_authentication
+
+## 30.0.0 (2025-10-24)
+
+### Features Added
+
+  - Added operation AzureFirewallsOperations.begin_packet_capture_operation
+  - Added operation VirtualNetworkGatewaysOperations.list_radius_secrets
+  - Added operation VpnServerConfigurationsOperations.list_radius_secrets
+  - Added operation group NetworkSecurityPerimeterServiceTagsOperations
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter dedicated_backend_connection
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter sni_name
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter validate_cert_chain_and_expiry
+  - Model ApplicationGatewayBackendHttpSettings has a new parameter validate_sni
+  - Model AzureFirewall has a new parameter extended_location
+  - Model FirewallPacketCaptureParameters has a new parameter operation
+  - Model NetworkVirtualAppliance has a new parameter nva_interface_configurations
+  - Model NetworkVirtualAppliance has a new parameter private_ip_address
+
+### Breaking Changes
+
+  - Removed operation group NetworkManagementClientOperationsMixin
+
 ## 29.0.0 (2025-05-22)
 
 ### Features Added

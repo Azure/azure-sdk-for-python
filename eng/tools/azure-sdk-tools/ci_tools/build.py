@@ -161,7 +161,7 @@ def build() -> None:
         target_dir,
         args.package_filter_string,
         filter_type="Build",
-        compatibility_filter=True,
+        compatibility_filter=False,
         include_inactive=args.inactive,
     )
 

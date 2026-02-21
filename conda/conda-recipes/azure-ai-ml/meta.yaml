@@ -16,7 +16,6 @@ requirements:
   host:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
     - azure-storage >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - colorama <=0.4.4
@@ -37,7 +36,6 @@ requirements:
   run:
     - azure-core >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - azure-identity >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
-    - msrest >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - aiohttp
     - azure-storage >={{ environ.get('AZURESDK_CONDA_VERSION', '0.0.0') }}
     - colorama <=0.4.4

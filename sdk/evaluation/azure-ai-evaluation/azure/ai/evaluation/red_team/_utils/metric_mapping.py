@@ -8,6 +8,9 @@ from azure.ai.evaluation._constants import EvaluationMetrics, _InternalEvaluatio
 from azure.ai.evaluation._common.constants import Tasks, _InternalAnnotationTasks
 
 # Mapping of risk categories to their corresponding evaluation metrics
+# Note: For HateUnfairness, the mapping defaults to HATE_FAIRNESS, but the Sync API
+# (used for all projects) requires HATE_UNFAIRNESS instead.
+# This is handled dynamically in _evaluation_processor.py.
 RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.Violence: EvaluationMetrics.VIOLENCE,
     RiskCategory.HateUnfairness: EvaluationMetrics.HATE_FAIRNESS,
@@ -15,9 +18,11 @@ RISK_CATEGORY_METRIC_MAP = {
     RiskCategory.SelfHarm: EvaluationMetrics.SELF_HARM,
     RiskCategory.ProtectedMaterial: EvaluationMetrics.PROTECTED_MATERIAL,
     RiskCategory.UngroundedAttributes: EvaluationMetrics.UNGROUNDED_ATTRIBUTES,
-    RiskCategory.IndirectAttack: EvaluationMetrics.XPIA,
     _InternalRiskCategory.ECI: _InternalEvaluationMetrics.ECI,
     RiskCategory.CodeVulnerability: EvaluationMetrics.CODE_VULNERABILITY,
+    RiskCategory.SensitiveDataLeakage: EvaluationMetrics.SENSITIVE_DATA_LEAKAGE,
+    RiskCategory.TaskAdherence: EvaluationMetrics.TASK_ADHERENCE,
+    RiskCategory.ProhibitedActions: EvaluationMetrics.PROHIBITED_ACTIONS,
 }
 
 RISK_CATEGORY_ANNOTATION_TASK_MAP = {
@@ -27,9 +32,11 @@ RISK_CATEGORY_ANNOTATION_TASK_MAP = {
     RiskCategory.SelfHarm: Tasks.CONTENT_HARM,
     RiskCategory.ProtectedMaterial: Tasks.PROTECTED_MATERIAL,
     RiskCategory.UngroundedAttributes: Tasks.UNGROUNDED_ATTRIBUTES,
-    RiskCategory.IndirectAttack: Tasks.XPIA,
     _InternalRiskCategory.ECI: _InternalAnnotationTasks.ECI,
     RiskCategory.CodeVulnerability: Tasks.CODE_VULNERABILITY,
+    RiskCategory.SensitiveDataLeakage: Tasks.SENSITIVE_DATA_LEAKAGE,
+    RiskCategory.TaskAdherence: Tasks.TASK_ADHERENCE,
+    RiskCategory.ProhibitedActions: Tasks.PROHIBITED_ACTIONS,
 }
 
 
@@ -63,8 +70,7 @@ def get_attack_objective_from_risk_category(risk_category: Union[RiskCategory]) 
     :return: The corresponding attack objective string
     :rtype: str
     """
-    return (
-        "isa"
-        if risk_category == RiskCategory.UngroundedAttributes
-        else "xpia" if risk_category == RiskCategory.IndirectAttack else risk_category.value
-    )
+    if risk_category == RiskCategory.UngroundedAttributes:
+        return "isa"
+    else:
+        return risk_category.value

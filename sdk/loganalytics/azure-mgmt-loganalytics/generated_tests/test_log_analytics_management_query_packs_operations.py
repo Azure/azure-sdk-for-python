@@ -20,9 +20,9 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_query_packs_list(self, resource_group):
         response = self.client.query_packs.list(
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_query_packs_list_by_resource_group(self, resource_group):
         response = self.client.query_packs.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update_without_name(self, resource_group):
+    def test_query_packs_create_or_update_without_name(self, resource_group):
         response = self.client.query_packs.create_or_update_without_name(
             resource_group_name=resource_group.name,
             log_analytics_query_pack_payload={
@@ -50,12 +50,20 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "provisioningState": "str",
                 "queryPackId": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "timeCreated": "2020-02-20 00:00:00",
                 "timeModified": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -63,11 +71,11 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_query_packs_delete(self, resource_group):
         response = self.client.query_packs.delete(
             resource_group_name=resource_group.name,
             query_pack_name="str",
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -75,11 +83,11 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_query_packs_get(self, resource_group):
         response = self.client.query_packs.get(
             resource_group_name=resource_group.name,
             query_pack_name="str",
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +95,7 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_query_packs_create_or_update(self, resource_group):
         response = self.client.query_packs.create_or_update(
             resource_group_name=resource_group.name,
             query_pack_name="str",
@@ -97,12 +105,20 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "provisioningState": "str",
                 "queryPackId": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "timeCreated": "2020-02-20 00:00:00",
                 "timeModified": "2020-02-20 00:00:00",
                 "type": "str",
             },
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -110,12 +126,12 @@ class TestLogAnalyticsManagementQueryPacksOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update_tags(self, resource_group):
+    def test_query_packs_update_tags(self, resource_group):
         response = self.client.query_packs.update_tags(
             resource_group_name=resource_group.name,
             query_pack_name="str",
             query_pack_tags={"tags": {"str": "str"}},
-            api_version="2019-09-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself

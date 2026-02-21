@@ -33,10 +33,10 @@ def main():
 
     client.container_apps.begin_delete(
         resource_group_name="rg",
-        container_app_name="testWorkerApp0",
+        container_app_name="testworkerapp0",
     ).result()
 
 
-# x-ms-original-file: specification/app/resource-manager/Microsoft.App/preview/2025-02-02-preview/examples/ContainerApps_Delete.json
+# x-ms-original-file: specification/app/resource-manager/Microsoft.App/ContainerApps/stable/2025-07-01/examples/ContainerApps_Delete.json
 if __name__ == "__main__":
     main()

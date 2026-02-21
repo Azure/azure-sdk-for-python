@@ -61,6 +61,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             parameters={
                 "location": "str",
                 "id": "str",
+                "instantAccess": bool,
                 "name": "str",
                 "provisioningState": "str",
                 "restorePointCollectionId": "str",
@@ -83,6 +84,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                             "time": "2020-02-20 00:00:00",
                                         },
                                     },
+                                    "snapshotAccessState": "str",
                                 }
                             ],
                             "statuses": [
@@ -95,6 +97,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                 }
                             ],
                         },
+                        "instantAccessDurationMinutes": 0,
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {
@@ -265,6 +268,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             restore_point_collection_name="str",
             parameters={
+                "instantAccess": bool,
                 "provisioningState": "str",
                 "restorePointCollectionId": "str",
                 "restorePoints": [
@@ -286,6 +290,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                             "time": "2020-02-20 00:00:00",
                                         },
                                     },
+                                    "snapshotAccessState": "str",
                                 }
                             ],
                             "statuses": [
@@ -298,6 +303,7 @@ class TestComputeManagementRestorePointCollectionsOperationsAsync(AzureMgmtRecor
                                 }
                             ],
                         },
+                        "instantAccessDurationMinutes": 0,
                         "name": "str",
                         "provisioningState": "str",
                         "sourceMetadata": {

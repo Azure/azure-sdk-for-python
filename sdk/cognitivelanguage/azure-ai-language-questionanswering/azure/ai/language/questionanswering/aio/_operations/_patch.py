@@ -1,7 +1,9 @@
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
+# pylint: disable=line-too-long,useless-suppression
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
 """Customize generated code here.
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
@@ -9,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, List, overload, Optional, Union
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ._operations import QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
+from ._operations import _QuestionAnsweringClientOperationsMixin as QuestionAnsweringClientOperationsMixinGenerated
 from ...models import (
     AnswersOptions,
     AnswersFromTextOptions,
@@ -23,15 +25,17 @@ from ...models import (
 from ..._operations._patch import _get_answers_from_text_prepare_options, _get_answers_prepare_options
 
 
-class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
+class _QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
     @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
+    # pylint: disable=arguments-renamed
     async def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
         """Answers the specified question using your knowledge base.
 
-        :param options: Positional only. POST body of the request. Provide either `options`, OR
-         individual keyword arguments. If both are provided, only the options object will be used.
+        :param options: Positional only. POST body of the request.
+         Provide either `options`, OR individual keyword arguments.
+         If both are provided, only the options object will be used.
         :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
@@ -95,7 +99,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         """
 
     # pylint ignore b/c with overloads we need to doc ALL the params in the impl for them to show up in docs
-    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword
+    # pylint: disable=docstring-keyword-should-match-keyword-only,docstring-missing-param,docstring-should-be-keyword,arguments-renamed
     @distributed_trace_async
     async def get_answers(self, *args, **kwargs) -> AnswersResult:  # type: ignore
         """Answers the specified question using your knowledge base.
@@ -182,6 +186,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
+    # pylint: disable=arguments-renamed
     @distributed_trace_async
     async def get_answers_from_text(self, *args, **kwargs) -> AnswersFromTextResult:  # type: ignore
         """Answers the specified question using the provided text in the body.
@@ -210,14 +215,16 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
                 :dedent: 4
                 :caption: Answers the specified question using the provided text.
         """
+        # Use only explicit user-provided language (if any); no hidden default attribute
+        _explicit_language = kwargs.pop("language", None)
         options, kwargs = _get_answers_from_text_prepare_options(
-            *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
+            *args, language=_explicit_language, **kwargs  # type: ignore
         )
         return await super().get_answers_from_text(options, **kwargs)  # type: ignore
 
 
 __all__: List[str] = [
-    "QuestionAnsweringClientOperationsMixin"
+    "_QuestionAnsweringClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 

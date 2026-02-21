@@ -23,7 +23,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_cloud_services_networks_list_by_subscription(self, resource_group):
         response = self.client.cloud_services_networks.list_by_subscription(
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
     async def test_cloud_services_networks_list_by_resource_group(self, resource_group):
         response = self.client.cloud_services_networks.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
         response = await self.client.cloud_services_networks.get(
             resource_group_name=resource_group.name,
             cloud_services_network_name="str",
-            api_version="2025-02-01",
+            api_version="2025-09-01",
         )
 
         # please add some check logic here by yourself
@@ -75,6 +75,14 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
                     "interfaceName": "str",
                     "name": "str",
                     "provisioningState": "str",
+                    "storageOptions": {"mode": "str", "sizeMiB": 0, "storageApplianceId": "str"},
+                    "storageStatus": {
+                        "mode": "str",
+                        "sizeMiB": 0,
+                        "status": "str",
+                        "statusMessage": "str",
+                        "volumeId": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -87,7 +95,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
                     "type": "str",
                     "virtualMachinesAssociatedIds": ["str"],
                 },
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,7 +109,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
             await self.client.cloud_services_networks.begin_delete(
                 resource_group_name=resource_group.name,
                 cloud_services_network_name="str",
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,7 +123,7 @@ class TestNetworkCloudMgmtCloudServicesNetworksOperationsAsync(AzureMgmtRecorded
             await self.client.cloud_services_networks.begin_update(
                 resource_group_name=resource_group.name,
                 cloud_services_network_name="str",
-                api_version="2025-02-01",
+                api_version="2025-09-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

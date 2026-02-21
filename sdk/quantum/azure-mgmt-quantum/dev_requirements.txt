@@ -1,2 +1,2 @@
 -e ../../../eng/tools/azure-sdk-tools
--e ../../resources/azure-mgmt-resource
+../../resources/azure-mgmt-resource

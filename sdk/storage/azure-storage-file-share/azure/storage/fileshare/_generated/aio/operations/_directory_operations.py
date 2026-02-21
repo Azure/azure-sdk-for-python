@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar, Union
+from typing import Any, Callable, Literal, Optional, TypeVar, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import (
@@ -39,7 +39,7 @@ from ...operations._directory_operations import (
 from .._configuration import AzureFileStorageConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
 class DirectoryOperations:
@@ -62,10 +62,10 @@ class DirectoryOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def create(
+    async def create(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
@@ -76,6 +76,7 @@ class DirectoryOperations:
         owner: Optional[str] = None,
         group: Optional[str] = None,
         file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
         **kwargs: Any
     ) -> None:
         """Creates a new directory under the specified share or parent directory.
@@ -126,6 +127,11 @@ class DirectoryOperations:
         :param file_mode: Optional, NFS only. The file mode of the file or directory. Default value is
          None.
         :type file_mode: str
+        :param file_property_semantics: SMB only, default value is New.  New will forcefully add the
+         ARCHIVE attribute flag and alter the permissions specified in x-ms-file-permission to inherit
+         missing permissions from the parent.  Restore will apply changes without further modification.
+         Known values are: "New" and "Restore". Default value is None.
+        :type file_property_semantics: str or ~azure.storage.fileshare.models.FilePropertySemantics
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -146,6 +152,7 @@ class DirectoryOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_permission=file_permission,
@@ -158,10 +165,10 @@ class DirectoryOperations:
             owner=owner,
             group=group,
             file_mode=file_mode,
+            file_property_semantics=file_property_semantics,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -176,7 +183,10 @@ class DirectoryOperations:
 
         if response.status_code not in [201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -249,12 +259,12 @@ class DirectoryOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -269,7 +279,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -337,11 +350,11 @@ class DirectoryOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -356,7 +369,10 @@ class DirectoryOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -368,7 +384,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def set_properties(
+    async def set_properties(  # pylint: disable=too-many-locals
         self,
         timeout: Optional[int] = None,
         file_permission: str = "inherit",
@@ -449,6 +465,7 @@ class DirectoryOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_permission=file_permission,
             file_permission_format=file_permission_format,
@@ -464,7 +481,6 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -479,7 +495,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -517,7 +536,7 @@ class DirectoryOperations:
 
     @distributed_trace_async
     async def set_metadata(
-        self, timeout: Optional[int] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self, timeout: Optional[int] = None, metadata: Optional[dict[str, str]] = None, **kwargs: Any
     ) -> None:
         """Updates user defined metadata for the specified directory.
 
@@ -550,13 +569,13 @@ class DirectoryOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -571,7 +590,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -594,7 +616,7 @@ class DirectoryOperations:
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
         timeout: Optional[int] = None,
-        include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
+        include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
         include_extended_info: Optional[bool] = None,
         **kwargs: Any
     ) -> _models.ListFilesAndDirectoriesSegmentResponse:
@@ -647,6 +669,7 @@ class DirectoryOperations:
 
         _request = build_list_files_and_directories_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             sharesnapshot=sharesnapshot,
             marker=marker,
@@ -658,7 +681,6 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -673,7 +695,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -741,6 +766,7 @@ class DirectoryOperations:
 
         _request = build_list_handles_request(
             url=self._config.url,
+            version=self._config.version,
             marker=marker,
             maxresults=maxresults,
             timeout=timeout,
@@ -749,7 +775,6 @@ class DirectoryOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -764,7 +789,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -832,6 +860,7 @@ class DirectoryOperations:
         _request = build_force_close_handles_request(
             url=self._config.url,
             handle_id=handle_id,
+            version=self._config.version,
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
@@ -839,7 +868,6 @@ class DirectoryOperations:
             allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -854,7 +882,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -873,7 +904,7 @@ class DirectoryOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace_async
-    async def rename(
+    async def rename(  # pylint: disable=too-many-locals
         self,
         rename_source: str,
         timeout: Optional[int] = None,
@@ -882,7 +913,7 @@ class DirectoryOperations:
         file_permission: str = "inherit",
         file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
         file_permission_key: Optional[str] = None,
-        metadata: Optional[Dict[str, str]] = None,
+        metadata: Optional[dict[str, str]] = None,
         source_lease_access_conditions: Optional[_models.SourceLeaseAccessConditions] = None,
         destination_lease_access_conditions: Optional[_models.DestinationLeaseAccessConditions] = None,
         copy_file_smb_info: Optional[_models.CopyFileSmbInfo] = None,
@@ -976,6 +1007,7 @@ class DirectoryOperations:
         _request = build_rename_request(
             url=self._config.url,
             rename_source=rename_source,
+            version=self._config.version,
             timeout=timeout,
             replace_if_exists=replace_if_exists,
             ignore_read_only=ignore_read_only,
@@ -994,7 +1026,6 @@ class DirectoryOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1009,7 +1040,10 @@ class DirectoryOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

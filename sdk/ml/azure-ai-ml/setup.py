@@ -7,7 +7,6 @@ import re
 from io import open
 from typing import Any, Match, cast
 
-import pkg_resources
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
@@ -46,13 +45,12 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
         "License :: OSI Approved :: MIT License",
     ],
     zip_safe=False,

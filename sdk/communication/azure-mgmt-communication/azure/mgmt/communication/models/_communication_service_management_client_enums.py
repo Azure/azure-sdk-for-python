@@ -124,6 +124,21 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MOVING = "Moving"
 
 
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allow, disallow, or let network security perimeter configuration control public network access
+    to the protected resource. Value is optional but if passed in, it must be 'Enabled', 'Disabled'
+    or 'SecuredByPerimeter'.
+    """
+
+    ENABLED = "Enabled"
+    """Allows public network access to the resource"""
+    DISABLED = "Disabled"
+    """Disallows public network access to the resource"""
+    SECURED_BY_PERIMETER = "SecuredByPerimeter"
+    """The network security perimeter configuration rules allow or disallow public network access to
+    the resource. Requires an associated network security perimeter."""
+
+
 class UserEngagementTracking(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes whether user engagement tracking is enabled or disabled."""
 

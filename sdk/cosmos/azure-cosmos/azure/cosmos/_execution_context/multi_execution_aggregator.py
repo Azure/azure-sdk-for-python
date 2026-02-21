@@ -195,7 +195,6 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
         )
 
     def _get_target_partition_key_range(self):
-
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()
         return self._routing_provider.get_overlapping_ranges(
             self._resource_link,

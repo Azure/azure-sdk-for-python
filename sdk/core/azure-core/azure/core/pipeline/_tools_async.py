@@ -67,7 +67,5 @@ async def handle_no_stream_rest_response(response: "RestAsyncHttpResponse") -> N
     """
     try:
         await response.read()
+    finally:
         await response.close()
-    except Exception as exc:
-        await response.close()
-        raise exc

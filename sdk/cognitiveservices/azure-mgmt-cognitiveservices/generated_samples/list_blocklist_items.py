@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-06-01/examples/ListBlocklistItems.json
+# x-ms-original-file: specification/cognitiveservices/resource-manager/Microsoft.CognitiveServices/stable/2025-09-01/examples/ListBlocklistItems.json
 if __name__ == "__main__":
     main()

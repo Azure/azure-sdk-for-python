@@ -31,6 +31,7 @@ from devtools_testutils import (
     add_body_key_sanitizer,
     set_default_session_settings,
     add_uri_regex_sanitizer,
+    test_proxy,
 )
 from azure.communication.email._shared.utils import parse_connection_str
 from azure.communication.email._api_versions import DEFAULT_VERSION
@@ -61,6 +62,7 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(
         key="Operation-Location", value="https://someEndpoint/emails/operations/someId?api-version=" + DEFAULT_VERSION
     )
+    add_header_regex_sanitizer(key="Accept-Encoding", value="gzip, deflate")
 
     add_uri_regex_sanitizer(
         regex="https://[^/]+/emails/operations/.*?api", value="https://someEndpoint/emails/operations/someId?api"

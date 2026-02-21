@@ -1,5 +1,25 @@
 # Release History
 
+## 37.2.0 (2026-01-27)
+
+### Features Added
+
+  - Added operation group GalleryScriptVersionsOperations
+  - Added operation group GalleryScriptsOperations
+  - Model GalleryApplicationVersionPublishingProfile has a new parameter storage_account_strategy
+  - Model GalleryArtifactPublishingProfileBase has a new parameter storage_account_strategy
+  - Model GalleryImageVersionPublishingProfile has a new parameter storage_account_strategy
+
+## 37.1.0 (2025-11-17)
+
+### Features Added
+
+  - Model AdditionalCapabilities has a new parameter enable_fips1403_encryption
+  - Model DiskRestorePointInstanceView has a new parameter snapshot_access_state
+  - Model RestorePoint has a new parameter instant_access_duration_minutes
+  - Model RestorePointCollection has a new parameter instant_access
+  - Model RestorePointCollectionUpdate has a new parameter instant_access
+
 ## 37.0.1 (2025-10-09)
 
 ### Bugs Fixed

@@ -31,7 +31,6 @@ NOTE:
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -40,7 +39,6 @@ from azure.ai.textanalytics.models import (
     KeyPhraseLROTask,
     EntityRecognitionOperationResult,
     KeyPhraseExtractionOperationResult,
-    EntityTag,
 )
 
 
@@ -59,9 +57,7 @@ def sample_analyze():
         " offers services for childcare in case you want that."
     )
 
-    text_b = (
-        "Sentences in different languages."
-    )
+    text_b = "Sentences in different languages."
 
     text_c = (
         "That was the best day of my life! We went on a 4 day trip where we stayed at Hotel Foo. They had"
@@ -110,16 +106,10 @@ def sample_analyze():
                         print(f"    Type: {entity.type}")
                     if hasattr(entity, "subcategory") and entity.subcategory:
                         print(f"    Subcategory: {entity.subcategory}")
-                    if hasattr(entity, "tags") and entity.tags:
-                        print("    Tags:")
-                        for tag in entity.tags:
-                            if isinstance(tag, EntityTag):
-                                print(f"        TagName: {tag.name}")
-                                print(f"        TagConfidenceScore: {tag.confidence_score}")
                     print(f"    Confidence score: {entity.confidence_score}")
                     print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
 
         # --- Key Phrases ---
@@ -131,8 +121,9 @@ def sample_analyze():
                     print(f"    {kp}")
                 print()
             for err in action_result.results.errors:
-                print(f'  Error in document: {err.id}!')
+                print(f"  Error in document: {err.id}!")
                 print(f"  Document error: {err.error}")
+
 
 # [END analyze]
 

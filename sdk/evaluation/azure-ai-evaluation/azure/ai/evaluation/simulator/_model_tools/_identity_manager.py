@@ -152,6 +152,7 @@ class ManagedIdentityAPITokenManager(APITokenManager):
         ):
             self.last_refresh_time = time.time()
             get_token_method = self.credential.get_token(self.token_scope.value)
+
             if inspect.isawaitable(get_token_method):
                 # If it's awaitable, await it
                 token_response: AccessToken = await get_token_method

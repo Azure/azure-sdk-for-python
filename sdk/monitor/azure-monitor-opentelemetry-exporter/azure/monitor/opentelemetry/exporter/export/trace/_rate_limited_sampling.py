@@ -24,11 +24,13 @@ from azure.monitor.opentelemetry.exporter.export.trace._utils import (
     parent_context_sampling,
 )
 
+
 class _State:
     def __init__(self, effective_window_count: float, effective_window_nanoseconds: float, last_nano_time: int):
         self.effective_window_count = effective_window_count
         self.effective_window_nanoseconds = effective_window_nanoseconds
         self.last_nano_time = last_nano_time
+
 
 class RateLimitedSamplingPercentage:
     def __init__(self, target_spans_per_second_limit: float, round_to_nearest: bool = True):
@@ -46,9 +48,7 @@ class RateLimitedSamplingPercentage:
     def _update_state(self, old_state: _State, current_nano_time: int) -> _State:
         if current_nano_time <= old_state.last_nano_time:
             return _State(
-                old_state.effective_window_count + 1,
-                old_state.effective_window_nanoseconds,
-                old_state.last_nano_time
+                old_state.effective_window_count + 1, old_state.effective_window_nanoseconds, old_state.last_nano_time
             )
         nano_time_delta = current_nano_time - old_state.last_nano_time
         decay_factor = math.exp(-nano_time_delta * self._inverse_adaptation_time_nanoseconds)
@@ -70,9 +70,8 @@ class RateLimitedSamplingPercentage:
             return 100.0
 
         sampling_probability = (
-            (current_state.effective_window_nanoseconds * self._target_spans_per_nanosecond_limit) /
-            current_state.effective_window_count
-        )
+            current_state.effective_window_nanoseconds * self._target_spans_per_nanosecond_limit
+        ) / current_state.effective_window_count
 
         sampling_percentage = 100 * min(sampling_probability, 1.0)
 
@@ -97,7 +96,6 @@ class RateLimitedSampler(Sampler):
         links: Optional[Sequence["Link"]] = None,
         trace_state: Optional["TraceState"] = None,
     ) -> "SamplingResult":
-
         if parent_context is not None:
             parent_result = parent_context_sampling(parent_context, attributes)
             if parent_result is not None:

@@ -8,21 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import (
-    Any,
-    AsyncIterable,
-    AsyncIterator,
-    Callable,
-    Dict,
-    IO,
-    List,
-    Literal,
-    Optional,
-    TypeVar,
-    Union,
-    cast,
-    overload,
-)
+from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TypeVar, Union, cast, overload
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -101,6 +87,7 @@ from ...operations._operations import (
     build_azure_firewalls_list_all_request,
     build_azure_firewalls_list_learned_prefixes_request,
     build_azure_firewalls_list_request,
+    build_azure_firewalls_packet_capture_operation_request,
     build_azure_firewalls_packet_capture_request,
     build_azure_firewalls_update_tags_request,
     build_bastion_hosts_create_or_update_request,
@@ -404,6 +391,7 @@ from ...operations._operations import (
     build_network_security_perimeter_profiles_delete_request,
     build_network_security_perimeter_profiles_get_request,
     build_network_security_perimeter_profiles_list_request,
+    build_network_security_perimeter_service_tags_list_request,
     build_network_security_perimeters_create_or_update_request,
     build_network_security_perimeters_delete_request,
     build_network_security_perimeters_get_request,
@@ -486,6 +474,7 @@ from ...operations._operations import (
     build_public_ip_addresses_create_or_update_request,
     build_public_ip_addresses_ddos_protection_status_request,
     build_public_ip_addresses_delete_request,
+    build_public_ip_addresses_disassociate_cloud_service_reserved_public_ip_request,
     build_public_ip_addresses_get_cloud_service_public_ip_address_request,
     build_public_ip_addresses_get_request,
     build_public_ip_addresses_get_virtual_machine_scale_set_public_ip_address_request,
@@ -495,6 +484,7 @@ from ...operations._operations import (
     build_public_ip_addresses_list_request,
     build_public_ip_addresses_list_virtual_machine_scale_set_public_ip_addresses_request,
     build_public_ip_addresses_list_virtual_machine_scale_set_vm_public_ip_addresses_request,
+    build_public_ip_addresses_reserve_cloud_service_public_ip_address_request,
     build_public_ip_addresses_update_tags_request,
     build_public_ip_prefixes_create_or_update_request,
     build_public_ip_prefixes_delete_request,
@@ -588,6 +578,16 @@ from ...operations._operations import (
     build_service_endpoint_policy_definitions_delete_request,
     build_service_endpoint_policy_definitions_get_request,
     build_service_endpoint_policy_definitions_list_by_resource_group_request,
+    build_service_gateways_create_or_update_request,
+    build_service_gateways_delete_request,
+    build_service_gateways_get_address_locations_request,
+    build_service_gateways_get_request,
+    build_service_gateways_get_services_request,
+    build_service_gateways_list_all_request,
+    build_service_gateways_list_request,
+    build_service_gateways_update_address_locations_request,
+    build_service_gateways_update_services_request,
+    build_service_gateways_update_tags_request,
     build_service_tag_information_list_request,
     build_service_tags_list_request,
     build_static_cidrs_create_request,
@@ -646,6 +646,12 @@ from ...operations._operations import (
     build_virtual_hubs_list_by_resource_group_request,
     build_virtual_hubs_list_request,
     build_virtual_hubs_update_tags_request,
+    build_virtual_network_appliances_create_or_update_request,
+    build_virtual_network_appliances_delete_request,
+    build_virtual_network_appliances_get_request,
+    build_virtual_network_appliances_list_all_request,
+    build_virtual_network_appliances_list_request,
+    build_virtual_network_appliances_update_tags_request,
     build_virtual_network_gateway_connections_create_or_update_request,
     build_virtual_network_gateway_connections_delete_request,
     build_virtual_network_gateway_connections_get_ike_sas_request,
@@ -683,6 +689,7 @@ from ...operations._operations import (
     build_virtual_network_gateways_invoke_execute_migration_request,
     build_virtual_network_gateways_invoke_prepare_migration_request,
     build_virtual_network_gateways_list_connections_request,
+    build_virtual_network_gateways_list_radius_secrets_request,
     build_virtual_network_gateways_list_request,
     build_virtual_network_gateways_reset_request,
     build_virtual_network_gateways_reset_vpn_client_shared_key_request,
@@ -755,6 +762,7 @@ from ...operations._operations import (
     build_vpn_server_configurations_delete_request,
     build_vpn_server_configurations_get_request,
     build_vpn_server_configurations_list_by_resource_group_request,
+    build_vpn_server_configurations_list_radius_secrets_request,
     build_vpn_server_configurations_list_request,
     build_vpn_server_configurations_update_tags_request,
     build_vpn_site_link_connections_get_request,
@@ -778,8 +786,9 @@ from ...operations._operations import (
 from .._configuration import NetworkManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 JSON = MutableMapping[str, Any]
+List = list
 
 
 class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
@@ -815,7 +824,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_delete_request(
@@ -868,7 +877,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -932,7 +941,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_get_request(
@@ -981,7 +990,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1110,7 +1119,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1241,7 +1250,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGateway] = kwargs.pop("cls", None)
 
@@ -1285,7 +1294,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.ApplicationGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationGateway"]:
         """Lists all application gateways in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -1297,7 +1306,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1351,7 +1360,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.ApplicationGateway"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationGateway"]:
         """Gets all the application gateways in a subscription.
 
         :return: An iterator like instance of either ApplicationGateway or the result of cls(response)
@@ -1361,7 +1370,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1427,7 +1436,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_start_request(
@@ -1480,7 +1489,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1533,7 +1542,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_stop_request(
@@ -1586,7 +1595,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1639,7 +1648,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_backend_health_request(
@@ -1698,7 +1707,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayBackendHealth] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1762,7 +1771,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1909,7 +1918,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGatewayBackendHealthOnDemand] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1975,7 +1984,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_list_available_server_variables_request(
@@ -1995,7 +2004,10 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[str]", pipeline_response.http_response)
@@ -2024,7 +2036,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_list_available_request_headers_request(
@@ -2044,7 +2056,10 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[str]", pipeline_response.http_response)
@@ -2073,7 +2088,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[List[str]] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_list_available_response_headers_request(
@@ -2093,7 +2108,10 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("[str]", pipeline_response.http_response)
@@ -2122,7 +2140,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayAvailableWafRuleSetsResult] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_list_available_waf_rule_sets_request(
@@ -2172,7 +2190,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayAvailableSslOptions] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_list_available_ssl_options_request(
@@ -2204,7 +2222,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_available_ssl_predefined_policies(
         self, **kwargs: Any
-    ) -> AsyncIterable["_models.ApplicationGatewaySslPredefinedPolicy"]:
+    ) -> AsyncItemPaged["_models.ApplicationGatewaySslPredefinedPolicy"]:
         """Lists all SSL predefined policies for configuring Ssl policy.
 
         :return: An iterator like instance of either ApplicationGatewaySslPredefinedPolicy or the
@@ -2216,7 +2234,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayAvailableSslPredefinedPolicies] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2291,7 +2309,7 @@ class ApplicationGatewaysOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewaySslPredefinedPolicy] = kwargs.pop("cls", None)
 
         _request = build_application_gateways_get_ssl_predefined_policy_request(
@@ -2344,7 +2362,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:  # pylint: disable=name-
     @distributed_trace
     def list(
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ApplicationGatewayPrivateLinkResource"]:
+    ) -> AsyncItemPaged["_models.ApplicationGatewayPrivateLinkResource"]:
         """Lists all private link resources on an application gateway.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -2360,7 +2378,7 @@ class ApplicationGatewayPrivateLinkResourcesOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayPrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2448,7 +2466,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_application_gateway_private_endpoint_connections_delete_request(
@@ -2505,7 +2523,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -2564,7 +2582,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -2711,7 +2729,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationGatewayPrivateEndpointConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -2789,7 +2807,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayPrivateEndpointConnection] = kwargs.pop("cls", None)
 
         _request = build_application_gateway_private_endpoint_connections_get_request(
@@ -2824,7 +2842,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
     @distributed_trace
     def list(
         self, resource_group_name: str, application_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ApplicationGatewayPrivateEndpointConnection"]:
+    ) -> AsyncItemPaged["_models.ApplicationGatewayPrivateEndpointConnection"]:
         """Lists all private endpoint connections on an application gateway.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -2840,7 +2858,7 @@ class ApplicationGatewayPrivateEndpointConnectionsOperations:  # pylint: disable
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayPrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2935,7 +2953,7 @@ class ApplicationGatewayWafDynamicManifestsDefaultOperations:  # pylint: disable
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayWafDynamicManifestResult] = kwargs.pop("cls", None)
 
         _request = build_application_gateway_waf_dynamic_manifests_default_get_request(
@@ -2986,7 +3004,7 @@ class ApplicationGatewayWafDynamicManifestsOperations:  # pylint: disable=name-t
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, location: str, **kwargs: Any) -> AsyncIterable["_models.ApplicationGatewayWafDynamicManifestResult"]:
+    def get(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationGatewayWafDynamicManifestResult"]:
         """Gets the regional application gateway waf manifest.
 
         :param location: The region where the nrp are located at. Required.
@@ -3000,7 +3018,7 @@ class ApplicationGatewayWafDynamicManifestsOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationGatewayWafDynamicManifestResultList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3087,7 +3105,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_application_security_groups_delete_request(
@@ -3140,7 +3158,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3204,7 +3222,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
 
         _request = build_application_security_groups_get_request(
@@ -3253,7 +3271,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -3382,7 +3400,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -3513,7 +3531,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ApplicationSecurityGroup] = kwargs.pop("cls", None)
 
@@ -3557,7 +3575,7 @@ class ApplicationSecurityGroupsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.ApplicationSecurityGroup"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationSecurityGroup"]:
         """Gets all application security groups in a subscription.
 
         :return: An iterator like instance of either ApplicationSecurityGroup or the result of
@@ -3569,7 +3587,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3622,7 +3640,7 @@ class ApplicationSecurityGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.ApplicationSecurityGroup"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ApplicationSecurityGroup"]:
         """Gets all the application security groups in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -3636,7 +3654,7 @@ class ApplicationSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ApplicationSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3710,7 +3728,7 @@ class AvailableDelegationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.AvailableDelegation"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailableDelegation"]:
         """Gets all of the available subnet delegations for this subscription in this region.
 
         :param location: The location of the subnet. Required.
@@ -3722,7 +3740,7 @@ class AvailableDelegationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AvailableDelegationsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3798,7 +3816,7 @@ class AvailableResourceGroupDelegationsOperations:  # pylint: disable=name-too-l
     @distributed_trace
     def list(
         self, location: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvailableDelegation"]:
+    ) -> AsyncItemPaged["_models.AvailableDelegation"]:
         """Gets all of the available subnet delegations for this resource group in this region.
 
         :param location: The location of the domain name. Required.
@@ -3812,7 +3830,7 @@ class AvailableResourceGroupDelegationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AvailableDelegationsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3887,7 +3905,7 @@ class AvailableServiceAliasesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.AvailableServiceAlias"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailableServiceAlias"]:
         """Gets all available service aliases for this subscription in this region.
 
         :param location: The location. Required.
@@ -3901,7 +3919,7 @@ class AvailableServiceAliasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AvailableServiceAliasesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -3957,7 +3975,7 @@ class AvailableServiceAliasesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, location: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvailableServiceAlias"]:
+    ) -> AsyncItemPaged["_models.AvailableServiceAlias"]:
         """Gets all available service aliases for this resource group in this region.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -3973,7 +3991,7 @@ class AvailableServiceAliasesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AvailableServiceAliasesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4061,7 +4079,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_azure_firewalls_delete_request(
@@ -4114,7 +4132,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -4176,7 +4194,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
 
         _request = build_azure_firewalls_get_request(
@@ -4225,7 +4243,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -4354,7 +4372,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -4419,7 +4437,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -4546,7 +4564,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureFirewall] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -4594,7 +4612,7 @@ class AzureFirewallsOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.AzureFirewall"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.AzureFirewall"]:
         """Lists all Azure Firewalls in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -4606,7 +4624,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AzureFirewallListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4660,7 +4678,7 @@ class AzureFirewallsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.AzureFirewall"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.AzureFirewall"]:
         """Gets all the Azure Firewalls in a subscription.
 
         :return: An iterator like instance of either AzureFirewall or the result of cls(response)
@@ -4670,7 +4688,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AzureFirewallListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -4736,7 +4754,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_azure_firewalls_list_learned_prefixes_request(
@@ -4790,7 +4808,7 @@ class AzureFirewallsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IPPrefixesList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -4851,7 +4869,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -4978,7 +4996,7 @@ class AzureFirewallsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -5020,6 +5038,204 @@ class AzureFirewallsOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    async def _packet_capture_operation_initial(
+        self,
+        resource_group_name: str,
+        azure_firewall_name: str,
+        parameters: Union[_models.FirewallPacketCaptureParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "FirewallPacketCaptureParameters")
+
+        _request = build_azure_firewalls_packet_capture_operation_request(
+            resource_group_name=resource_group_name,
+            azure_firewall_name=azure_firewall_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_packet_capture_operation(
+        self,
+        resource_group_name: str,
+        azure_firewall_name: str,
+        parameters: _models.FirewallPacketCaptureParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AzureFirewallPacketCaptureResponse]:
+        """Runs a packet capture operation on AzureFirewall.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param azure_firewall_name: The name of the azure firewall. Required.
+        :type azure_firewall_name: str
+        :param parameters: Parameters supplied to run packet capture on azure firewall. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPacketCaptureParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either AzureFirewallPacketCaptureResponse
+         or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureFirewallPacketCaptureResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_packet_capture_operation(
+        self,
+        resource_group_name: str,
+        azure_firewall_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AzureFirewallPacketCaptureResponse]:
+        """Runs a packet capture operation on AzureFirewall.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param azure_firewall_name: The name of the azure firewall. Required.
+        :type azure_firewall_name: str
+        :param parameters: Parameters supplied to run packet capture on azure firewall. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either AzureFirewallPacketCaptureResponse
+         or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureFirewallPacketCaptureResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_packet_capture_operation(
+        self,
+        resource_group_name: str,
+        azure_firewall_name: str,
+        parameters: Union[_models.FirewallPacketCaptureParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AzureFirewallPacketCaptureResponse]:
+        """Runs a packet capture operation on AzureFirewall.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param azure_firewall_name: The name of the azure firewall. Required.
+        :type azure_firewall_name: str
+        :param parameters: Parameters supplied to run packet capture on azure firewall. Is either a
+         FirewallPacketCaptureParameters type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.FirewallPacketCaptureParameters or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either AzureFirewallPacketCaptureResponse
+         or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.AzureFirewallPacketCaptureResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AzureFirewallPacketCaptureResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._packet_capture_operation_initial(
+                resource_group_name=resource_group_name,
+                azure_firewall_name=azure_firewall_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("AzureFirewallPacketCaptureResponse", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AzureFirewallPacketCaptureResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AzureFirewallPacketCaptureResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
 
 class AzureFirewallFqdnTagsOperations:
     """
@@ -5041,7 +5257,7 @@ class AzureFirewallFqdnTagsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.AzureFirewallFqdnTag"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.AzureFirewallFqdnTag"]:
         """Gets all the Azure Firewall FQDN Tags in a subscription.
 
         :return: An iterator like instance of either AzureFirewallFqdnTag or the result of
@@ -5053,7 +5269,7 @@ class AzureFirewallFqdnTagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AzureFirewallFqdnTagListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5149,7 +5365,7 @@ class WebCategoriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AzureWebCategory] = kwargs.pop("cls", None)
 
         _request = build_web_categories_get_request(
@@ -5181,7 +5397,7 @@ class WebCategoriesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.AzureWebCategory"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.AzureWebCategory"]:
         """Gets all the Azure Web Categories in a subscription.
 
         :return: An iterator like instance of either AzureWebCategory or the result of cls(response)
@@ -5191,7 +5407,7 @@ class WebCategoriesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AzureWebCategoryListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5277,7 +5493,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_bastion_hosts_delete_request(
@@ -5330,7 +5546,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -5392,7 +5608,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
 
         _request = build_bastion_hosts_get_request(
@@ -5441,7 +5657,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -5570,7 +5786,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -5635,7 +5851,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -5762,7 +5978,7 @@ class BastionHostsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionHost] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -5810,7 +6026,7 @@ class BastionHostsOperations:
         )
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.BastionHost"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.BastionHost"]:
         """Lists all Bastion Hosts in a subscription.
 
         :return: An iterator like instance of either BastionHost or the result of cls(response)
@@ -5820,7 +6036,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BastionHostListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5873,7 +6089,7 @@ class BastionHostsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.BastionHost"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.BastionHost"]:
         """Lists all Bastion Hosts in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -5885,7 +6101,7 @@ class BastionHostsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BastionHostListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -5939,7 +6155,9 @@ class BastionHostsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient, NetworkManagementClientConfiguration]):
+class _NetworkManagementClientOperationsMixin(
+    ClientMixinABC[AsyncPipelineClient[HttpRequest, AsyncHttpResponse], NetworkManagementClientConfiguration]
+):
 
     async def _put_bastion_shareable_link_initial(
         self,
@@ -5959,7 +6177,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -6016,7 +6234,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6045,7 +6263,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6072,7 +6290,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         bastion_host_name: str,
         bsl_request: Union[_models.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6092,7 +6310,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionShareableLinkListResult] = kwargs.pop("cls", None)
 
@@ -6190,13 +6408,13 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]].from_continuation_token(
+            return AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[AsyncIterable["_models.BastionShareableLink"]](
+        return AsyncLROPoller[AsyncItemPaged["_models.BastionShareableLink"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -6218,7 +6436,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -6344,7 +6562,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -6404,7 +6622,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -6534,7 +6752,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -6585,7 +6803,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLink"]:
+    ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6614,7 +6832,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLink"]:
+    ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6641,7 +6859,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         bastion_host_name: str,
         bsl_request: Union[_models.BastionShareableLinkListRequest, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionShareableLink"]:
+    ) -> AsyncItemPaged["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6660,7 +6878,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionShareableLinkListResult] = kwargs.pop("cls", None)
 
@@ -6739,7 +6957,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_management_get_active_sessions_request(
@@ -6778,7 +6996,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
     @distributed_trace_async
     async def begin_get_active_sessions(
         self, resource_group_name: str, bastion_host_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSession"]]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6795,7 +7013,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BastionActiveSessionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -6880,13 +7098,13 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]].from_continuation_token(
+            return AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSession"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[AsyncIterable["_models.BastionActiveSession"]](
+        return AsyncLROPoller[AsyncItemPaged["_models.BastionActiveSession"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -6899,7 +7117,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionState"]:
+    ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6925,7 +7143,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionState"]:
+    ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6949,7 +7167,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         bastion_host_name: str,
         session_ids: Union[_models.SessionIds, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncIterable["_models.BastionSessionState"]:
+    ) -> AsyncItemPaged["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -6966,7 +7184,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BastionSessionDeleteResult] = kwargs.pop("cls", None)
 
@@ -7057,7 +7275,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DnsNameAvailabilityResult] = kwargs.pop("cls", None)
 
         _request = build_network_management_check_dns_name_availability_request(
@@ -7109,7 +7327,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteProviderPort] = kwargs.pop("cls", None)
 
         _request = build_network_management_express_route_provider_port_request(
@@ -7236,7 +7454,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ActiveConnectivityConfigurationsListResult] = kwargs.pop("cls", None)
 
@@ -7377,7 +7595,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ActiveSecurityAdminRulesListResult] = kwargs.pop("cls", None)
 
@@ -7521,7 +7739,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerEffectiveConnectivityConfigurationListResult] = kwargs.pop("cls", None)
 
@@ -7664,7 +7882,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerEffectiveSecurityAdminRulesListResult] = kwargs.pop("cls", None)
 
@@ -7736,7 +7954,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualWanSecurityProviders] = kwargs.pop("cls", None)
 
         _request = build_network_management_supported_security_providers_request(
@@ -7785,7 +8003,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -7920,7 +8138,7 @@ class NetworkManagementClientOperationsMixin(ClientMixinABC[AsyncPipelineClient,
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnProfileResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -7989,7 +8207,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_cloud_service_role_instance_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, cloud_service_name: str, role_instance_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets information about all network interfaces in a role instance in a cloud service.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -8005,7 +8223,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8063,7 +8281,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_cloud_service_network_interfaces(
         self, resource_group_name: str, cloud_service_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a cloud service.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -8077,7 +8295,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8169,7 +8387,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
         _request = build_network_interfaces_get_cloud_service_network_interface_request(
@@ -8217,7 +8435,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_interfaces_delete_request(
@@ -8270,7 +8488,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -8336,7 +8554,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
         _request = build_network_interfaces_get_request(
@@ -8386,7 +8604,7 @@ class NetworkInterfacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -8515,7 +8733,7 @@ class NetworkInterfacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -8646,7 +8864,7 @@ class NetworkInterfacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterface] = kwargs.pop("cls", None)
 
@@ -8690,7 +8908,7 @@ class NetworkInterfacesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkInterface"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a subscription.
 
         :return: An iterator like instance of either NetworkInterface or the result of cls(response)
@@ -8700,7 +8918,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8753,7 +8971,7 @@ class NetworkInterfacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkInterface"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -8765,7 +8983,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8832,7 +9050,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_interfaces_get_effective_route_table_request(
@@ -8886,7 +9104,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.EffectiveRouteListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -8943,7 +9161,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_interfaces_list_effective_network_security_groups_request(
@@ -8998,7 +9216,7 @@ class NetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.EffectiveNetworkSecurityGroupListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9044,7 +9262,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_virtual_machine_scale_set_vm_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, virtualmachine_index: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets information about all network interfaces in a virtual machine in a virtual machine scale
         set.
 
@@ -9119,7 +9337,7 @@ class NetworkInterfacesOperations:
     @distributed_trace
     def list_virtual_machine_scale_set_network_interfaces(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets all network interfaces in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9269,7 +9487,7 @@ class NetworkInterfacesOperations:
         *,
         expand: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterfaceIPConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkInterfaceIPConfiguration"]:
         """Get the specified network interface ip configuration in a virtual machine scale set.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9447,7 +9665,7 @@ class PublicIPAddressesOperations:
     @distributed_trace
     def list_cloud_service_public_ip_addresses(
         self, resource_group_name: str, cloud_service_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses on a cloud service level.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -9461,7 +9679,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -9524,7 +9742,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses in a role instance IP configuration in a cloud
         service.
 
@@ -9545,7 +9763,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -9646,7 +9864,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
         _request = build_public_ip_addresses_get_cloud_service_public_ip_address_request(
@@ -9696,7 +9914,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_public_ip_addresses_delete_request(
@@ -9753,7 +9971,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -9819,7 +10037,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
         _request = build_public_ip_addresses_get_request(
@@ -9869,7 +10087,7 @@ class PublicIPAddressesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -9998,7 +10216,7 @@ class PublicIPAddressesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -10129,7 +10347,7 @@ class PublicIPAddressesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
 
@@ -10173,7 +10391,7 @@ class PublicIPAddressesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.PublicIPAddress"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets all the public IP addresses in a subscription.
 
         :return: An iterator like instance of either PublicIPAddress or the result of cls(response)
@@ -10183,7 +10401,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -10236,7 +10454,7 @@ class PublicIPAddressesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PublicIPAddress"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets all public IP addresses in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -10248,7 +10466,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPAddressListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -10315,7 +10533,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_public_ip_addresses_ddos_protection_status_request(
@@ -10374,7 +10592,7 @@ class PublicIPAddressesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIpDdosProtectionStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -10417,10 +10635,420 @@ class PublicIPAddressesOperations:
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    async def _reserve_cloud_service_public_ip_address_initial(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: Union[_models.ReserveCloudServicePublicIpAddressRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "ReserveCloudServicePublicIpAddressRequest")
+
+        _request = build_public_ip_addresses_reserve_cloud_service_public_ip_address_request(
+            resource_group_name=resource_group_name,
+            public_ip_address_name=public_ip_address_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_reserve_cloud_service_public_ip_address(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: _models.ReserveCloudServicePublicIpAddressRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PublicIPAddress]:
+        """Reserves the specified Cloud Service Public IP by switching its allocation method to Static. If
+        rollback is requested, reverts the allocation method to Dynamic.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param public_ip_address_name: The name of the public IP address. Required.
+        :type public_ip_address_name: str
+        :param parameters: Parameter that define which Public IP Address should be associated in place
+         of given Public IP Address. Required.
+        :type parameters: ~azure.mgmt.network.models.ReserveCloudServicePublicIpAddressRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_reserve_cloud_service_public_ip_address(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PublicIPAddress]:
+        """Reserves the specified Cloud Service Public IP by switching its allocation method to Static. If
+        rollback is requested, reverts the allocation method to Dynamic.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param public_ip_address_name: The name of the public IP address. Required.
+        :type public_ip_address_name: str
+        :param parameters: Parameter that define which Public IP Address should be associated in place
+         of given Public IP Address. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_reserve_cloud_service_public_ip_address(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: Union[_models.ReserveCloudServicePublicIpAddressRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PublicIPAddress]:
+        """Reserves the specified Cloud Service Public IP by switching its allocation method to Static. If
+        rollback is requested, reverts the allocation method to Dynamic.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param public_ip_address_name: The name of the public IP address. Required.
+        :type public_ip_address_name: str
+        :param parameters: Parameter that define which Public IP Address should be associated in place
+         of given Public IP Address. Is either a ReserveCloudServicePublicIpAddressRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ReserveCloudServicePublicIpAddressRequest or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._reserve_cloud_service_public_ip_address_initial(
+                resource_group_name=resource_group_name,
+                public_ip_address_name=public_ip_address_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("PublicIPAddress", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PublicIPAddress].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PublicIPAddress](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _disassociate_cloud_service_reserved_public_ip_initial(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: Union[_models.DisassociateCloudServicePublicIpRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "DisassociateCloudServicePublicIpRequest")
+
+        _request = build_public_ip_addresses_disassociate_cloud_service_reserved_public_ip_request(
+            resource_group_name=resource_group_name,
+            public_ip_address_name=public_ip_address_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_disassociate_cloud_service_reserved_public_ip(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: _models.DisassociateCloudServicePublicIpRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PublicIPAddress]:
+        """Disassociates the Cloud Service reserved Public IP and associates the specified Standalone
+        Public IP to the same Cloud Service frontend.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param public_ip_address_name: The name of the public IP address. Required.
+        :type public_ip_address_name: str
+        :param parameters: Parameter that define which Public IP Address should be associated in place
+         of given Public IP Address. Required.
+        :type parameters: ~azure.mgmt.network.models.DisassociateCloudServicePublicIpRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_disassociate_cloud_service_reserved_public_ip(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PublicIPAddress]:
+        """Disassociates the Cloud Service reserved Public IP and associates the specified Standalone
+        Public IP to the same Cloud Service frontend.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param public_ip_address_name: The name of the public IP address. Required.
+        :type public_ip_address_name: str
+        :param parameters: Parameter that define which Public IP Address should be associated in place
+         of given Public IP Address. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_disassociate_cloud_service_reserved_public_ip(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        public_ip_address_name: str,
+        parameters: Union[_models.DisassociateCloudServicePublicIpRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PublicIPAddress]:
+        """Disassociates the Cloud Service reserved Public IP and associates the specified Standalone
+        Public IP to the same Cloud Service frontend.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param public_ip_address_name: The name of the public IP address. Required.
+        :type public_ip_address_name: str
+        :param parameters: Parameter that define which Public IP Address should be associated in place
+         of given Public IP Address. Is either a DisassociateCloudServicePublicIpRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.DisassociateCloudServicePublicIpRequest or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either PublicIPAddress or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.PublicIPAddress]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PublicIPAddress] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._disassociate_cloud_service_reserved_public_ip_initial(
+                resource_group_name=resource_group_name,
+                public_ip_address_name=public_ip_address_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("PublicIPAddress", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PublicIPAddress].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PublicIPAddress](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
     @distributed_trace
     def list_virtual_machine_scale_set_public_ip_addresses(  # pylint: disable=name-too-long
         self, resource_group_name: str, virtual_machine_scale_set_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses on a virtual machine scale set level.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -10497,7 +11125,7 @@ class PublicIPAddressesOperations:
         network_interface_name: str,
         ip_configuration_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.PublicIPAddress"]:
+    ) -> AsyncItemPaged["_models.PublicIPAddress"]:
         """Gets information about all public IP addresses in a virtual machine IP configuration in a
         virtual machine scale set.
 
@@ -10700,7 +11328,7 @@ class VipSwapOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         singleton_resource: Literal["swap"] = kwargs.pop("singleton_resource", "swap")
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SwapResource] = kwargs.pop("cls", None)
 
         _request = build_vip_swap_get_request(
@@ -10747,7 +11375,7 @@ class VipSwapOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         singleton_resource: Literal["swap"] = kwargs.pop("singleton_resource", "swap")
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -10871,7 +11499,7 @@ class VipSwapOperations:
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         singleton_resource: Literal["swap"] = kwargs.pop("singleton_resource", "swap")
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -10936,7 +11564,7 @@ class VipSwapOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SwapResourceListResult] = kwargs.pop("cls", None)
 
         _request = build_vip_swap_list_request(
@@ -11001,7 +11629,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_custom_ip_prefixes_delete_request(
@@ -11054,7 +11682,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -11120,7 +11748,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
 
         _request = build_custom_ip_prefixes_get_request(
@@ -11170,7 +11798,7 @@ class CustomIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -11299,7 +11927,7 @@ class CustomIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -11429,7 +12057,7 @@ class CustomIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.CustomIpPrefix] = kwargs.pop("cls", None)
 
@@ -11473,7 +12101,7 @@ class CustomIPPrefixesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.CustomIpPrefix"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.CustomIpPrefix"]:
         """Gets all the custom IP prefixes in a subscription.
 
         :return: An iterator like instance of either CustomIpPrefix or the result of cls(response)
@@ -11483,7 +12111,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.CustomIpPrefixListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -11536,7 +12164,7 @@ class CustomIPPrefixesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.CustomIpPrefix"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.CustomIpPrefix"]:
         """Gets all custom IP prefixes in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -11548,7 +12176,7 @@ class CustomIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.CustomIpPrefixListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -11635,7 +12263,7 @@ class DdosCustomPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_ddos_custom_policies_delete_request(
@@ -11692,7 +12320,7 @@ class DdosCustomPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -11756,7 +12384,7 @@ class DdosCustomPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
 
         _request = build_ddos_custom_policies_get_request(
@@ -11805,7 +12433,7 @@ class DdosCustomPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -11932,7 +12560,7 @@ class DdosCustomPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -12063,7 +12691,7 @@ class DdosCustomPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosCustomPolicy] = kwargs.pop("cls", None)
 
@@ -12140,7 +12768,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_ddos_protection_plans_delete_request(
@@ -12197,7 +12825,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -12261,7 +12889,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
 
         _request = build_ddos_protection_plans_get_request(
@@ -12310,7 +12938,7 @@ class DdosProtectionPlansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -12437,7 +13065,7 @@ class DdosProtectionPlansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -12570,7 +13198,7 @@ class DdosProtectionPlansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DdosProtectionPlan] = kwargs.pop("cls", None)
 
@@ -12614,7 +13242,7 @@ class DdosProtectionPlansOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.DdosProtectionPlan"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.DdosProtectionPlan"]:
         """Gets all DDoS protection plans in a subscription.
 
         :return: An iterator like instance of either DdosProtectionPlan or the result of cls(response)
@@ -12624,7 +13252,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DdosProtectionPlanListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -12679,7 +13307,7 @@ class DdosProtectionPlansOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.DdosProtectionPlan"]:
+    ) -> AsyncItemPaged["_models.DdosProtectionPlan"]:
         """Gets all the DDoS protection plans in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -12691,7 +13319,7 @@ class DdosProtectionPlansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DdosProtectionPlanListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -12782,7 +13410,7 @@ class DscpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -12911,7 +13539,7 @@ class DscpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DscpConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -12971,7 +13599,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_dscp_configuration_delete_request(
@@ -13024,7 +13652,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -13088,7 +13716,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DscpConfiguration] = kwargs.pop("cls", None)
 
         _request = build_dscp_configuration_get_request(
@@ -13120,7 +13748,7 @@ class DscpConfigurationOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.DscpConfiguration"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.DscpConfiguration"]:
         """Gets a DSCP Configuration.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -13132,7 +13760,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DscpConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13186,7 +13814,7 @@ class DscpConfigurationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.DscpConfiguration"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.DscpConfiguration"]:
         """Gets all dscp configurations in a subscription.
 
         :return: An iterator like instance of either DscpConfiguration or the result of cls(response)
@@ -13196,7 +13824,7 @@ class DscpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.DscpConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13269,7 +13897,7 @@ class AvailableEndpointServicesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.EndpointServiceResult"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.EndpointServiceResult"]:
         """List what values of endpoint services are available for use.
 
         :param location: The location to check available endpoint services. Required.
@@ -13283,7 +13911,7 @@ class AvailableEndpointServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.EndpointServicesListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13370,7 +13998,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuit_authorizations_delete_request(
@@ -13426,7 +14054,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -13493,7 +14121,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitAuthorization] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuit_authorizations_get_request(
@@ -13544,7 +14172,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -13688,7 +14316,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitAuthorization] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -13739,7 +14367,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCircuitAuthorization"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCircuitAuthorization"]:
         """Gets all authorizations in an express route circuit.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -13755,7 +14383,7 @@ class ExpressRouteCircuitAuthorizationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AuthorizationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -13843,7 +14471,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuit_peerings_delete_request(
@@ -13899,7 +14527,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -13966,7 +14594,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitPeering] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuit_peerings_get_request(
@@ -14017,7 +14645,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -14159,7 +14787,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -14210,7 +14838,7 @@ class ExpressRouteCircuitPeeringsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCircuitPeering"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCircuitPeering"]:
         """Gets all peerings in a specified express route circuit.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -14226,7 +14854,7 @@ class ExpressRouteCircuitPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitPeeringListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14314,7 +14942,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuit_connections_delete_request(
@@ -14374,7 +15002,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -14444,7 +15072,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitConnection] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuit_connections_get_request(
@@ -14497,7 +15125,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -14652,7 +15280,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuitConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -14704,7 +15332,7 @@ class ExpressRouteCircuitConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, peering_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCircuitConnection"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCircuitConnection"]:
         """Gets all global reach connections associated with a private peering in an express route
         circuit.
 
@@ -14723,7 +15351,7 @@ class ExpressRouteCircuitConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14828,7 +15456,7 @@ class PeerExpressRouteCircuitConnectionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PeerExpressRouteCircuitConnection] = kwargs.pop("cls", None)
 
         _request = build_peer_express_route_circuit_connections_get_request(
@@ -14864,7 +15492,7 @@ class PeerExpressRouteCircuitConnectionsOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list(
         self, resource_group_name: str, circuit_name: str, peering_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PeerExpressRouteCircuitConnection"]:
+    ) -> AsyncItemPaged["_models.PeerExpressRouteCircuitConnection"]:
         """Gets all global reach peer connections associated with a private peering in an express route
         circuit.
 
@@ -14883,7 +15511,7 @@ class PeerExpressRouteCircuitConnectionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PeerExpressRouteCircuitConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -14970,7 +15598,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_delete_request(
@@ -15021,7 +15649,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -15083,7 +15711,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_get_request(
@@ -15132,7 +15760,7 @@ class ExpressRouteCircuitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -15261,7 +15889,7 @@ class ExpressRouteCircuitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -15392,7 +16020,7 @@ class ExpressRouteCircuitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCircuit] = kwargs.pop("cls", None)
 
@@ -15449,7 +16077,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_list_arp_table_request(
@@ -15511,7 +16139,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitsArpTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -15570,7 +16198,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_list_routes_table_request(
@@ -15632,7 +16260,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -15693,7 +16321,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_list_routes_table_summary_request(
@@ -15755,7 +16383,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableSummaryListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -15827,7 +16455,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitStats] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_get_stats_request(
@@ -15885,7 +16513,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitStats] = kwargs.pop("cls", None)
 
         _request = build_express_route_circuits_get_peering_stats_request(
@@ -15918,7 +16546,7 @@ class ExpressRouteCircuitsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.ExpressRouteCircuit"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRouteCircuit"]:
         """Gets all the express route circuits in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -15930,7 +16558,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -15984,7 +16612,7 @@ class ExpressRouteCircuitsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRouteCircuit"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRouteCircuit"]:
         """Gets all the express route circuits in a subscription.
 
         :return: An iterator like instance of either ExpressRouteCircuit or the result of cls(response)
@@ -15994,7 +16622,7 @@ class ExpressRouteCircuitsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16067,7 +16695,7 @@ class ExpressRouteServiceProvidersOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRouteServiceProvider"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRouteServiceProvider"]:
         """Gets all the available express route service providers.
 
         :return: An iterator like instance of either ExpressRouteServiceProvider or the result of
@@ -16079,7 +16707,7 @@ class ExpressRouteServiceProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteServiceProviderListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16154,7 +16782,7 @@ class ExpressRouteCrossConnectionsOperations:
     @distributed_trace
     def list(
         self, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCrossConnection"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCrossConnection"]:
         """Retrieves all the ExpressRouteCrossConnections in a subscription.
 
         :keyword filter: The filter to apply on the operation. For example, you can use $filter=name eq
@@ -16169,7 +16797,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16225,7 +16853,7 @@ class ExpressRouteCrossConnectionsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCrossConnection"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCrossConnection"]:
         """Retrieves all the ExpressRouteCrossConnections in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -16239,7 +16867,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -16319,7 +16947,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
 
         _request = build_express_route_cross_connections_get_request(
@@ -16368,7 +16996,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -16500,7 +17128,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -16633,7 +17261,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnection] = kwargs.pop("cls", None)
 
@@ -16690,7 +17318,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_cross_connections_list_arp_table_request(
@@ -16752,7 +17380,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitsArpTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16811,7 +17439,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_cross_connections_list_routes_table_summary_request(
@@ -16873,7 +17501,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionsRoutesTableSummaryListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -16936,7 +17564,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_cross_connections_list_routes_table_request(
@@ -16998,7 +17626,7 @@ class ExpressRouteCrossConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCircuitsRoutesTableListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -17068,7 +17696,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
     @distributed_trace
     def list(
         self, resource_group_name: str, cross_connection_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteCrossConnectionPeering"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteCrossConnectionPeering"]:
         """Gets all peerings in a specified ExpressRouteCrossConnection.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -17084,7 +17712,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeeringList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17152,7 +17780,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_cross_connection_peerings_delete_request(
@@ -17208,7 +17836,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -17275,7 +17903,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeering] = kwargs.pop("cls", None)
 
         _request = build_express_route_cross_connection_peerings_get_request(
@@ -17326,7 +17954,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -17470,7 +18098,7 @@ class ExpressRouteCrossConnectionPeeringsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteCrossConnectionPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -17539,7 +18167,7 @@ class ExpressRoutePortsLocationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRoutePortsLocation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRoutePortsLocation"]:
         """Retrieves all ExpressRoutePort peering locations. Does not return available bandwidths for each
         location. Available bandwidths can only be obtained when retrieving a specific peering
         location.
@@ -17553,7 +18181,7 @@ class ExpressRoutePortsLocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePortsLocationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17627,7 +18255,7 @@ class ExpressRoutePortsLocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePortsLocation] = kwargs.pop("cls", None)
 
         _request = build_express_route_ports_locations_get_request(
@@ -17691,7 +18319,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_ports_delete_request(
@@ -17751,7 +18379,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -17816,7 +18444,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
 
         _request = build_express_route_ports_get_request(
@@ -17865,7 +18493,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -17992,7 +18620,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -18123,7 +18751,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePort] = kwargs.pop("cls", None)
 
@@ -18169,7 +18797,7 @@ class ExpressRoutePortsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRoutePort"]:
+    ) -> AsyncItemPaged["_models.ExpressRoutePort"]:
         """List all the ExpressRoutePort resources in the specified resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -18181,7 +18809,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePortListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18235,7 +18863,7 @@ class ExpressRoutePortsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ExpressRoutePort"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ExpressRoutePort"]:
         """List all the ExpressRoutePort resources in the specified subscription.
 
         :return: An iterator like instance of either ExpressRoutePort or the result of cls(response)
@@ -18245,7 +18873,7 @@ class ExpressRoutePortsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePortListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18381,7 +19009,7 @@ class ExpressRoutePortsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.GenerateExpressRoutePortsLOAResult] = kwargs.pop("cls", None)
 
@@ -18471,7 +19099,7 @@ class ExpressRouteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteLink] = kwargs.pop("cls", None)
 
         _request = build_express_route_links_get_request(
@@ -18506,7 +19134,7 @@ class ExpressRouteLinksOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, express_route_port_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRouteLink"]:
+    ) -> AsyncItemPaged["_models.ExpressRouteLink"]:
         """Retrieve the ExpressRouteLink sub-resources of the specified ExpressRoutePort resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -18520,7 +19148,7 @@ class ExpressRouteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteLinkListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -18608,7 +19236,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_port_authorizations_delete_request(
@@ -18671,7 +19299,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -18739,7 +19367,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePortAuthorization] = kwargs.pop("cls", None)
 
         _request = build_express_route_port_authorizations_get_request(
@@ -18790,7 +19418,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -18934,7 +19562,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRoutePortAuthorization] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -18985,7 +19613,7 @@ class ExpressRoutePortAuthorizationsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, express_route_port_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ExpressRoutePortAuthorization"]:
+    ) -> AsyncItemPaged["_models.ExpressRoutePortAuthorization"]:
         """Gets all authorizations in an express route port.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -19001,7 +19629,7 @@ class ExpressRoutePortAuthorizationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRoutePortAuthorizationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -19097,7 +19725,7 @@ class ExpressRouteProviderPortsLocationOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteProviderPortListResult] = kwargs.pop("cls", None)
 
         _request = build_express_route_provider_ports_location_list_request(
@@ -19161,7 +19789,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_firewall_policies_delete_request(
@@ -19214,7 +19842,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -19280,7 +19908,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
 
         _request = build_firewall_policies_get_request(
@@ -19330,7 +19958,7 @@ class FirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -19459,7 +20087,7 @@ class FirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -19590,7 +20218,7 @@ class FirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicy] = kwargs.pop("cls", None)
 
@@ -19634,7 +20262,7 @@ class FirewallPoliciesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.FirewallPolicy"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.FirewallPolicy"]:
         """Lists all Firewall Policies in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -19646,7 +20274,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -19700,7 +20328,7 @@ class FirewallPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.FirewallPolicy"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.FirewallPolicy"]:
         """Gets all the Firewall Policies in a subscription.
 
         :return: An iterator like instance of either FirewallPolicy or the result of cls(response)
@@ -19710,7 +20338,7 @@ class FirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -19796,7 +20424,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_rule_collection_groups_delete_request(
@@ -19852,7 +20480,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -19919,7 +20547,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroup] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_rule_collection_groups_get_request(
@@ -19970,7 +20598,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -20113,7 +20741,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -20164,7 +20792,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list(
         self, resource_group_name: str, firewall_policy_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FirewallPolicyRuleCollectionGroup"]:
+    ) -> AsyncItemPaged["_models.FirewallPolicyRuleCollectionGroup"]:
         """Lists all FirewallPolicyRuleCollectionGroups in a FirewallPolicy resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -20180,7 +20808,7 @@ class FirewallPolicyRuleCollectionGroupsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -20340,7 +20968,7 @@ class FirewallPolicyIdpsSignaturesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.QueryResults] = kwargs.pop("cls", None)
 
@@ -20487,7 +21115,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SignaturesOverrides] = kwargs.pop("cls", None)
 
@@ -20614,7 +21242,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SignaturesOverrides] = kwargs.pop("cls", None)
 
@@ -20682,7 +21310,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SignaturesOverrides] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_idps_signatures_overrides_get_request(
@@ -20739,7 +21367,7 @@ class FirewallPolicyIdpsSignaturesOverridesOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SignaturesOverridesList] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_idps_signatures_overrides_list_request(
@@ -20874,7 +21502,7 @@ class FirewallPolicyIdpsSignaturesFilterValuesOperations:  # pylint: disable=nam
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SignatureOverridesFilterValuesResponse] = kwargs.pop("cls", None)
 
@@ -21023,7 +21651,7 @@ class FirewallPolicyDraftsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicyDraft] = kwargs.pop("cls", None)
 
@@ -21089,7 +21717,7 @@ class FirewallPolicyDraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_drafts_delete_request(
@@ -21141,7 +21769,7 @@ class FirewallPolicyDraftsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicyDraft] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_drafts_get_request(
@@ -21206,7 +21834,7 @@ class FirewallPolicyDeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_deployments_deploy_request(
@@ -21265,7 +21893,7 @@ class FirewallPolicyDeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -21352,7 +21980,7 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_rule_collection_group_drafts_delete_request(
@@ -21477,7 +22105,7 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroupDraft] = kwargs.pop("cls", None)
 
@@ -21548,7 +22176,7 @@ class FirewallPolicyRuleCollectionGroupDraftsOperations:  # pylint: disable=name
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FirewallPolicyRuleCollectionGroupDraft] = kwargs.pop("cls", None)
 
         _request = build_firewall_policy_rule_collection_group_drafts_get_request(
@@ -21612,7 +22240,7 @@ class IpamPoolsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.IpamPool"]:
+    ) -> AsyncItemPaged["_models.IpamPool"]:
         """Gets list of Pool resources at Network Manager level.
 
         Gets list of Pool resources at Network Manager level.
@@ -21638,7 +22266,7 @@ class IpamPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpamPoolList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -21691,7 +22319,10 @@ class IpamPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -21719,7 +22350,7 @@ class IpamPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -21760,7 +22391,10 @@ class IpamPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -21883,7 +22517,7 @@ class IpamPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpamPool] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -22044,11 +22678,12 @@ class IpamPoolsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.IpamPool] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -22083,7 +22718,10 @@ class IpamPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("IpamPool", pipeline_response.http_response)
@@ -22122,7 +22760,7 @@ class IpamPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpamPool] = kwargs.pop("cls", None)
 
         _request = build_ipam_pools_get_request(
@@ -22145,7 +22783,10 @@ class IpamPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("IpamPool", pipeline_response.http_response)
@@ -22175,7 +22816,7 @@ class IpamPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_ipam_pools_delete_request(
@@ -22204,7 +22845,10 @@ class IpamPoolsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -22248,7 +22892,7 @@ class IpamPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -22318,7 +22962,7 @@ class IpamPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PoolUsage] = kwargs.pop("cls", None)
 
         _request = build_ipam_pools_get_pool_usage_request(
@@ -22341,7 +22985,10 @@ class IpamPoolsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PoolUsage", pipeline_response.http_response)
@@ -22354,7 +23001,7 @@ class IpamPoolsOperations:
     @distributed_trace
     def list_associated_resources(
         self, resource_group_name: str, network_manager_name: str, pool_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PoolAssociation"]:
+    ) -> AsyncItemPaged["_models.PoolAssociation"]:
         """List Associated Resource in the Pool.
 
         List Associated Resource in the Pool.
@@ -22372,7 +23019,7 @@ class IpamPoolsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PoolAssociationList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22421,7 +23068,10 @@ class IpamPoolsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -22461,7 +23111,7 @@ class StaticCidrsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.StaticCidr"]:
+    ) -> AsyncItemPaged["_models.StaticCidr"]:
         """Gets list of Static CIDR resources at Network Manager level.
 
         Gets list of Static CIDR resources at Network Manager level.
@@ -22489,7 +23139,7 @@ class StaticCidrsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.StaticCidrList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -22543,7 +23193,10 @@ class StaticCidrsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -22658,11 +23311,12 @@ class StaticCidrsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.StaticCidr] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -22697,7 +23351,10 @@ class StaticCidrsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StaticCidr", pipeline_response.http_response)
@@ -22738,7 +23395,7 @@ class StaticCidrsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.StaticCidr] = kwargs.pop("cls", None)
 
         _request = build_static_cidrs_get_request(
@@ -22762,7 +23419,10 @@ class StaticCidrsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("StaticCidr", pipeline_response.http_response)
@@ -22786,7 +23446,7 @@ class StaticCidrsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_static_cidrs_delete_request(
@@ -22815,7 +23475,10 @@ class StaticCidrsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -22852,7 +23515,7 @@ class StaticCidrsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -22927,7 +23590,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_ip_allocations_delete_request(
@@ -22984,7 +23647,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -23050,7 +23713,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
 
         _request = build_ip_allocations_get_request(
@@ -23100,7 +23763,7 @@ class IpAllocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -23229,7 +23892,7 @@ class IpAllocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -23360,7 +24023,7 @@ class IpAllocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpAllocation] = kwargs.pop("cls", None)
 
@@ -23404,7 +24067,7 @@ class IpAllocationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.IpAllocation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.IpAllocation"]:
         """Gets all IpAllocations in a subscription.
 
         :return: An iterator like instance of either IpAllocation or the result of cls(response)
@@ -23414,7 +24077,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpAllocationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -23467,7 +24130,7 @@ class IpAllocationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.IpAllocation"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.IpAllocation"]:
         """Gets all IpAllocations in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -23479,7 +24142,7 @@ class IpAllocationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpAllocationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -23580,7 +24243,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
 
         _request = build_ip_groups_get_request(
@@ -23603,7 +24266,10 @@ class IpGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("IpGroup", pipeline_response.http_response)
@@ -23631,7 +24297,7 @@ class IpGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -23670,7 +24336,10 @@ class IpGroupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -23759,7 +24428,7 @@ class IpGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -23890,7 +24559,7 @@ class IpGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.IpGroup] = kwargs.pop("cls", None)
 
@@ -23924,7 +24593,10 @@ class IpGroupsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("IpGroup", pipeline_response.http_response)
@@ -23948,7 +24620,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_ip_groups_delete_request(
@@ -23975,7 +24647,10 @@ class IpGroupsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -24000,7 +24675,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -24040,7 +24715,7 @@ class IpGroupsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.IpGroup"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.IpGroup"]:
         """Gets all IpGroups in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -24052,7 +24727,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -24099,7 +24774,10 @@ class IpGroupsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -24107,7 +24785,7 @@ class IpGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.IpGroup"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.IpGroup"]:
         """Gets all IpGroups in a subscription.
 
         :return: An iterator like instance of either IpGroup or the result of cls(response)
@@ -24117,7 +24795,7 @@ class IpGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IpGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -24163,7 +24841,10 @@ class IpGroupsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -24204,7 +24885,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_load_balancers_delete_request(
@@ -24257,7 +24938,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -24323,7 +25004,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
 
         _request = build_load_balancers_get_request(
@@ -24373,7 +25054,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -24502,7 +25183,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -24633,7 +25314,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LoadBalancer] = kwargs.pop("cls", None)
 
@@ -24677,7 +25358,7 @@ class LoadBalancersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.LoadBalancer"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.LoadBalancer"]:
         """Gets all the load balancers in a subscription.
 
         :return: An iterator like instance of either LoadBalancer or the result of cls(response)
@@ -24687,7 +25368,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -24740,7 +25421,7 @@ class LoadBalancersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.LoadBalancer"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.LoadBalancer"]:
         """Gets all the load balancers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -24752,7 +25433,7 @@ class LoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -24819,7 +25500,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -24925,7 +25606,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -24985,7 +25666,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -25125,7 +25806,7 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackendAddressInboundNatRulePortMappings] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -25258,11 +25939,12 @@ class LoadBalancersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[_models.MigratedPools] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -25327,7 +26009,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.BackendAddressPool"]:
+    ) -> AsyncItemPaged["_models.BackendAddressPool"]:
         """Gets all the load balancer backed address pools.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -25341,7 +26023,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerBackendAddressPoolListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -25422,7 +26104,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BackendAddressPool] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_backend_address_pools_get_request(
@@ -25473,7 +26155,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -25612,7 +26294,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BackendAddressPool] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -25674,7 +26356,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_backend_address_pools_delete_request(
@@ -25730,7 +26412,7 @@ class LoadBalancerBackendAddressPoolsOperations:  # pylint: disable=name-too-lon
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -25793,7 +26475,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:  # pylint: disable=name-to
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FrontendIPConfiguration"]:
+    ) -> AsyncItemPaged["_models.FrontendIPConfiguration"]:
         """Gets all the load balancer frontend IP configurations.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -25809,7 +26491,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerFrontendIPConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -25890,7 +26572,7 @@ class LoadBalancerFrontendIPConfigurationsOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FrontendIPConfiguration] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_frontend_ip_configurations_get_request(
@@ -25945,7 +26627,7 @@ class InboundNatRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.InboundNatRule"]:
+    ) -> AsyncItemPaged["_models.InboundNatRule"]:
         """Gets all the inbound NAT rules in a load balancer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -25959,7 +26641,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.InboundNatRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -26027,7 +26709,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_inbound_nat_rules_delete_request(
@@ -26083,7 +26765,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -26158,7 +26840,7 @@ class InboundNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.InboundNatRule] = kwargs.pop("cls", None)
 
         _request = build_inbound_nat_rules_get_request(
@@ -26210,7 +26892,7 @@ class InboundNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -26349,7 +27031,7 @@ class InboundNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InboundNatRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -26420,7 +27102,7 @@ class LoadBalancerLoadBalancingRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.LoadBalancingRule"]:
+    ) -> AsyncItemPaged["_models.LoadBalancingRule"]:
         """Gets all the load balancing rules in a load balancer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26434,7 +27116,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerLoadBalancingRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -26515,7 +27197,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancingRule] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_load_balancing_rules_get_request(
@@ -26561,7 +27243,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_load_balancing_rules_health_request(
@@ -26623,7 +27305,7 @@ class LoadBalancerLoadBalancingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerHealthPerRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -26690,7 +27372,7 @@ class LoadBalancerOutboundRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.OutboundRule"]:
+    ) -> AsyncItemPaged["_models.OutboundRule"]:
         """Gets all the outbound rules in a load balancer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26704,7 +27386,7 @@ class LoadBalancerOutboundRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerOutboundRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -26785,7 +27467,7 @@ class LoadBalancerOutboundRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.OutboundRule] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_outbound_rules_get_request(
@@ -26840,7 +27522,7 @@ class LoadBalancerNetworkInterfacesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, load_balancer_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterface"]:
+    ) -> AsyncItemPaged["_models.NetworkInterface"]:
         """Gets associated load balancer network interfaces.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26854,7 +27536,7 @@ class LoadBalancerNetworkInterfacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -26929,7 +27611,7 @@ class LoadBalancerProbesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, load_balancer_name: str, **kwargs: Any) -> AsyncIterable["_models.Probe"]:
+    def list(self, resource_group_name: str, load_balancer_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Probe"]:
         """Gets all the load balancer probes.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -26943,7 +27625,7 @@ class LoadBalancerProbesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LoadBalancerProbeListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27024,7 +27706,7 @@ class LoadBalancerProbesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.Probe] = kwargs.pop("cls", None)
 
         _request = build_load_balancer_probes_get_request(
@@ -27090,7 +27772,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_nat_gateways_delete_request(
@@ -27143,7 +27825,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -27209,7 +27891,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NatGateway] = kwargs.pop("cls", None)
 
         _request = build_nat_gateways_get_request(
@@ -27259,7 +27941,7 @@ class NatGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -27386,7 +28068,7 @@ class NatGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NatGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -27517,7 +28199,7 @@ class NatGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NatGateway] = kwargs.pop("cls", None)
 
@@ -27561,7 +28243,7 @@ class NatGatewaysOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NatGateway"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NatGateway"]:
         """Gets all the Nat Gateways in a subscription.
 
         :return: An iterator like instance of either NatGateway or the result of cls(response)
@@ -27571,7 +28253,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NatGatewayListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27624,7 +28306,7 @@ class NatGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NatGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NatGateway"]:
         """Gets all nat gateways in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -27636,7 +28318,7 @@ class NatGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NatGatewayListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27712,7 +28394,7 @@ class NetworkInterfaceIPConfigurationsOperations:  # pylint: disable=name-too-lo
     @distributed_trace
     def list(
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterfaceIPConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkInterfaceIPConfiguration"]:
         """Get all ip configurations in a network interface.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -27728,7 +28410,7 @@ class NetworkInterfaceIPConfigurationsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceIPConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27809,7 +28491,7 @@ class NetworkInterfaceIPConfigurationsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceIPConfiguration] = kwargs.pop("cls", None)
 
         _request = build_network_interface_ip_configurations_get_request(
@@ -27864,7 +28546,7 @@ class NetworkInterfaceLoadBalancersOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.LoadBalancer"]:
+    ) -> AsyncItemPaged["_models.LoadBalancer"]:
         """List all load balancers in a network interface.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -27878,7 +28560,7 @@ class NetworkInterfaceLoadBalancersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceLoadBalancerListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -27966,7 +28648,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_interface_tap_configurations_delete_request(
@@ -28022,7 +28704,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -28089,7 +28771,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceTapConfiguration] = kwargs.pop("cls", None)
 
         _request = build_network_interface_tap_configurations_get_request(
@@ -28140,7 +28822,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -28284,7 +28966,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkInterfaceTapConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -28335,7 +29017,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
     @distributed_trace
     def list(
         self, resource_group_name: str, network_interface_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkInterfaceTapConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkInterfaceTapConfiguration"]:
         """Get all Tap configurations in a network interface.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -28351,7 +29033,7 @@ class NetworkInterfaceTapConfigurationsOperations:  # pylint: disable=name-too-l
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkInterfaceTapConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -28448,7 +29130,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManager] = kwargs.pop("cls", None)
 
         _request = build_network_managers_get_request(
@@ -28563,7 +29245,7 @@ class NetworkManagersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManager] = kwargs.pop("cls", None)
 
@@ -28620,7 +29302,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_managers_delete_request(
@@ -28682,7 +29364,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -28806,7 +29488,7 @@ class NetworkManagersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManager] = kwargs.pop("cls", None)
 
@@ -28852,7 +29534,7 @@ class NetworkManagersOperations:
     @distributed_trace
     def list_by_subscription(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManager"]:
+    ) -> AsyncItemPaged["_models.NetworkManager"]:
         """List all network managers in a subscription.
 
         :keyword top: An optional query parameter which specifies the maximum number of records to be
@@ -28870,7 +29552,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -28927,7 +29609,7 @@ class NetworkManagersOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManager"]:
+    ) -> AsyncItemPaged["_models.NetworkManager"]:
         """List network managers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -28947,7 +29629,7 @@ class NetworkManagersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -29040,7 +29722,7 @@ class NetworkManagerCommitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -29171,7 +29853,7 @@ class NetworkManagerCommitsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerCommit] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -29337,7 +30019,7 @@ class NetworkManagerDeploymentStatusOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerDeploymentStatusListResult] = kwargs.pop("cls", None)
 
@@ -29476,7 +30158,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
@@ -29539,7 +30221,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
         _request = build_subscription_network_manager_connections_get_request(
@@ -29590,7 +30272,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_subscription_network_manager_connections_delete_request(
@@ -29619,7 +30301,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
     @distributed_trace
     def list(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManagerConnection"]:
+    ) -> AsyncItemPaged["_models.NetworkManagerConnection"]:
         """List all network manager connections created by this subscription.
 
         :keyword top: An optional query parameter which specifies the maximum number of records to be
@@ -29639,7 +30321,7 @@ class SubscriptionNetworkManagerConnectionsOperations:  # pylint: disable=name-t
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -29800,7 +30482,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
@@ -29868,7 +30550,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerConnection] = kwargs.pop("cls", None)
 
         _request = build_management_group_network_manager_connections_get_request(
@@ -29922,7 +30604,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_management_group_network_manager_connections_delete_request(
@@ -29951,7 +30633,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
     @distributed_trace
     def list(
         self, management_group_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManagerConnection"]:
+    ) -> AsyncItemPaged["_models.NetworkManagerConnection"]:
         """List all network manager connections created by this management group.
 
         :param management_group_id: The management group Id which uniquely identify the Microsoft Azure
@@ -29974,7 +30656,7 @@ class ManagementGroupNetworkManagerConnectionsOperations:  # pylint: disable=nam
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30077,7 +30759,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectivityConfiguration] = kwargs.pop("cls", None)
 
         _request = build_connectivity_configurations_get_request(
@@ -30209,7 +30891,7 @@ class ConnectivityConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectivityConfiguration] = kwargs.pop("cls", None)
 
@@ -30273,7 +30955,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_connectivity_configurations_delete_request(
@@ -30346,7 +31028,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -30396,7 +31078,7 @@ class ConnectivityConfigurationsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectivityConfiguration"]:
+    ) -> AsyncItemPaged["_models.ConnectivityConfiguration"]:
         """Lists all the network manager connectivity configuration in a specified network manager.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -30420,7 +31102,7 @@ class ConnectivityConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectivityConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30523,7 +31205,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkGroup] = kwargs.pop("cls", None)
 
         _request = build_network_groups_get_request(
@@ -30666,7 +31348,7 @@ class NetworkGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkGroup] = kwargs.pop("cls", None)
 
@@ -30734,7 +31416,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_groups_delete_request(
@@ -30805,7 +31487,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -30855,7 +31537,7 @@ class NetworkGroupsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkGroup"]:
+    ) -> AsyncItemPaged["_models.NetworkGroup"]:
         """Lists the specified network group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -30877,7 +31559,7 @@ class NetworkGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -30987,7 +31669,7 @@ class StaticMembersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.StaticMember] = kwargs.pop("cls", None)
 
         _request = build_static_members_get_request(
@@ -31122,7 +31804,7 @@ class StaticMembersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.StaticMember] = kwargs.pop("cls", None)
 
@@ -31201,7 +31883,7 @@ class StaticMembersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_static_members_delete_request(
@@ -31240,7 +31922,7 @@ class StaticMembersOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.StaticMember"]:
+    ) -> AsyncItemPaged["_models.StaticMember"]:
         """Lists the specified static member.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -31264,7 +31946,7 @@ class StaticMembersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.StaticMemberListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -31350,7 +32032,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkManagerRoutingConfiguration"]:
+    ) -> AsyncItemPaged["_models.NetworkManagerRoutingConfiguration"]:
         """Lists all the network manager routing configurations in a network manager, in a paginated
         format.
 
@@ -31376,7 +32058,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerRoutingConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -31460,7 +32142,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkManagerRoutingConfiguration] = kwargs.pop("cls", None)
 
         _request = build_network_manager_routing_configurations_get_request(
@@ -31589,7 +32271,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkManagerRoutingConfiguration] = kwargs.pop("cls", None)
 
@@ -31653,7 +32335,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_manager_routing_configurations_delete_request(
@@ -31725,7 +32407,7 @@ class NetworkManagerRoutingConfigurationsOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -31796,7 +32478,7 @@ class RoutingRuleCollectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RoutingRuleCollection"]:
+    ) -> AsyncItemPaged["_models.RoutingRuleCollection"]:
         """Lists all the rule collections in a routing configuration, in a paginated format.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -31823,7 +32505,7 @@ class RoutingRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RoutingRuleCollectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -31916,7 +32598,7 @@ class RoutingRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RoutingRuleCollection] = kwargs.pop("cls", None)
 
         _request = build_routing_rule_collections_get_request(
@@ -32057,7 +32739,7 @@ class RoutingRuleCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RoutingRuleCollection] = kwargs.pop("cls", None)
 
@@ -32123,7 +32805,7 @@ class RoutingRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_routing_rule_collections_delete_request(
@@ -32200,7 +32882,7 @@ class RoutingRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -32273,7 +32955,7 @@ class RoutingRulesOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.RoutingRule"]:
+    ) -> AsyncItemPaged["_models.RoutingRule"]:
         """List all network manager routing configuration routing rules.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -32301,7 +32983,7 @@ class RoutingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RoutingRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -32398,7 +33080,7 @@ class RoutingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RoutingRule] = kwargs.pop("cls", None)
 
         _request = build_routing_rules_get_request(
@@ -32549,7 +33231,7 @@ class RoutingRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RoutingRule] = kwargs.pop("cls", None)
 
@@ -32617,7 +33299,7 @@ class RoutingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_routing_rules_delete_request(
@@ -32698,7 +33380,7 @@ class RoutingRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -32854,7 +33536,7 @@ class ScopeConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ScopeConnection] = kwargs.pop("cls", None)
 
@@ -32925,7 +33607,7 @@ class ScopeConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ScopeConnection] = kwargs.pop("cls", None)
 
         _request = build_scope_connections_get_request(
@@ -32984,7 +33666,7 @@ class ScopeConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_scope_connections_delete_request(
@@ -33021,7 +33703,7 @@ class ScopeConnectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ScopeConnection"]:
+    ) -> AsyncItemPaged["_models.ScopeConnection"]:
         """List all scope connections created by this network manager.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -33043,7 +33725,7 @@ class ScopeConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ScopeConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33128,7 +33810,7 @@ class SecurityAdminConfigurationsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityAdminConfiguration"]:
+    ) -> AsyncItemPaged["_models.SecurityAdminConfiguration"]:
         """Lists all the network manager security admin configurations in a network manager, in a
         paginated format.
 
@@ -33153,7 +33835,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityAdminConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33203,7 +33885,10 @@ class SecurityAdminConfigurationsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -33237,7 +33922,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityAdminConfiguration] = kwargs.pop("cls", None)
 
         _request = build_security_admin_configurations_get_request(
@@ -33260,7 +33945,10 @@ class SecurityAdminConfigurationsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SecurityAdminConfiguration", pipeline_response.http_response)
@@ -33366,7 +34054,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityAdminConfiguration] = kwargs.pop("cls", None)
 
@@ -33401,7 +34089,10 @@ class SecurityAdminConfigurationsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("SecurityAdminConfiguration", pipeline_response.http_response)
@@ -33431,7 +34122,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_security_admin_configurations_delete_request(
@@ -33460,7 +34151,10 @@ class SecurityAdminConfigurationsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -33503,7 +34197,7 @@ class SecurityAdminConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -33574,7 +34268,7 @@ class AdminRuleCollectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.AdminRuleCollection"]:
+    ) -> AsyncItemPaged["_models.AdminRuleCollection"]:
         """Lists all the rule collections in a security admin configuration, in a paginated format.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -33598,7 +34292,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AdminRuleCollectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -33649,7 +34343,10 @@ class AdminRuleCollectionsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -33691,7 +34388,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AdminRuleCollection] = kwargs.pop("cls", None)
 
         _request = build_admin_rule_collections_get_request(
@@ -33715,7 +34412,10 @@ class AdminRuleCollectionsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AdminRuleCollection", pipeline_response.http_response)
@@ -33830,7 +34530,7 @@ class AdminRuleCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AdminRuleCollection] = kwargs.pop("cls", None)
 
@@ -33866,7 +34566,10 @@ class AdminRuleCollectionsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("AdminRuleCollection", pipeline_response.http_response)
@@ -33897,7 +34600,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_admin_rule_collections_delete_request(
@@ -33927,7 +34630,10 @@ class AdminRuleCollectionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -33974,7 +34680,7 @@ class AdminRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34047,7 +34753,7 @@ class AdminRulesOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.BaseAdminRule"]:
+    ) -> AsyncItemPaged["_models.BaseAdminRule"]:
         """List all network manager security configuration admin rules.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -34074,7 +34780,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AdminRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34126,7 +34832,10 @@ class AdminRulesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -34171,7 +34880,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BaseAdminRule] = kwargs.pop("cls", None)
 
         _request = build_admin_rules_get_request(
@@ -34196,7 +34905,10 @@ class AdminRulesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BaseAdminRule", pipeline_response.http_response)
@@ -34320,7 +35032,7 @@ class AdminRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BaseAdminRule] = kwargs.pop("cls", None)
 
@@ -34357,7 +35069,10 @@ class AdminRulesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("BaseAdminRule", pipeline_response.http_response)
@@ -34389,7 +35104,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_admin_rules_delete_request(
@@ -34420,7 +35135,10 @@ class AdminRulesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -34470,7 +35188,7 @@ class AdminRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34542,7 +35260,7 @@ class SecurityUserConfigurationsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityUserConfiguration"]:
+    ) -> AsyncItemPaged["_models.SecurityUserConfiguration"]:
         """Lists all the network manager security user configurations in a network manager, in a paginated
         format.
 
@@ -34568,7 +35286,7 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityUserConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -34652,7 +35370,7 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityUserConfiguration] = kwargs.pop("cls", None)
 
         _request = build_security_user_configurations_get_request(
@@ -34783,7 +35501,7 @@ class SecurityUserConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityUserConfiguration] = kwargs.pop("cls", None)
 
@@ -34847,7 +35565,7 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_security_user_configurations_delete_request(
@@ -34919,7 +35637,7 @@ class SecurityUserConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -34990,7 +35708,7 @@ class SecurityUserRuleCollectionsOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityUserRuleCollection"]:
+    ) -> AsyncItemPaged["_models.SecurityUserRuleCollection"]:
         """Lists all the security user rule collections in a security configuration, in a paginated
         format.
 
@@ -35018,7 +35736,7 @@ class SecurityUserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityUserRuleCollectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -35111,7 +35829,7 @@ class SecurityUserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityUserRuleCollection] = kwargs.pop("cls", None)
 
         _request = build_security_user_rule_collections_get_request(
@@ -35255,7 +35973,7 @@ class SecurityUserRuleCollectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityUserRuleCollection] = kwargs.pop("cls", None)
 
@@ -35321,7 +36039,7 @@ class SecurityUserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_security_user_rule_collections_delete_request(
@@ -35398,7 +36116,7 @@ class SecurityUserRuleCollectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -35471,7 +36189,7 @@ class SecurityUserRulesOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityUserRule"]:
+    ) -> AsyncItemPaged["_models.SecurityUserRule"]:
         """Lists all Security User Rules in a rule collection.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -35499,7 +36217,7 @@ class SecurityUserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityUserRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -35596,7 +36314,7 @@ class SecurityUserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityUserRule] = kwargs.pop("cls", None)
 
         _request = build_security_user_rules_get_request(
@@ -35747,7 +36465,7 @@ class SecurityUserRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityUserRule] = kwargs.pop("cls", None)
 
@@ -35815,7 +36533,7 @@ class SecurityUserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_security_user_rules_delete_request(
@@ -35896,7 +36614,7 @@ class SecurityUserRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -35973,7 +36691,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_profiles_delete_request(
@@ -36026,7 +36744,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -36092,7 +36810,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkProfile] = kwargs.pop("cls", None)
 
         _request = build_network_profiles_get_request(
@@ -36210,7 +36928,7 @@ class NetworkProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkProfile] = kwargs.pop("cls", None)
 
@@ -36337,7 +37055,7 @@ class NetworkProfilesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkProfile] = kwargs.pop("cls", None)
 
@@ -36381,7 +37099,7 @@ class NetworkProfilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkProfile"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkProfile"]:
         """Gets all the network profiles in a subscription.
 
         :return: An iterator like instance of either NetworkProfile or the result of cls(response)
@@ -36391,7 +37109,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkProfileListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36444,7 +37162,7 @@ class NetworkProfilesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkProfile"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkProfile"]:
         """Gets all network profiles in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -36456,7 +37174,7 @@ class NetworkProfilesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkProfileListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -36543,7 +37261,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_security_groups_delete_request(
@@ -36596,7 +37314,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -36662,7 +37380,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
 
         _request = build_network_security_groups_get_request(
@@ -36712,7 +37430,7 @@ class NetworkSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -36841,7 +37559,7 @@ class NetworkSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -36972,7 +37690,7 @@ class NetworkSecurityGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityGroup] = kwargs.pop("cls", None)
 
@@ -37016,7 +37734,7 @@ class NetworkSecurityGroupsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkSecurityGroup"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkSecurityGroup"]:
         """Gets all network security groups in a subscription.
 
         :return: An iterator like instance of either NetworkSecurityGroup or the result of
@@ -37028,7 +37746,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37081,7 +37799,7 @@ class NetworkSecurityGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkSecurityGroup"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkSecurityGroup"]:
         """Gets all network security groups in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -37095,7 +37813,7 @@ class NetworkSecurityGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkSecurityGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37182,7 +37900,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_security_rules_delete_request(
@@ -37238,7 +37956,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -37305,7 +38023,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
 
         _request = build_security_rules_get_request(
@@ -37356,7 +38074,7 @@ class SecurityRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -37495,7 +38213,7 @@ class SecurityRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -37546,7 +38264,7 @@ class SecurityRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_security_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityRule"]:
+    ) -> AsyncItemPaged["_models.SecurityRule"]:
         """Gets all security rules in a network security group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -37560,7 +38278,7 @@ class SecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37637,7 +38355,7 @@ class DefaultSecurityRulesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_security_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityRule"]:
+    ) -> AsyncItemPaged["_models.SecurityRule"]:
         """Gets all default security rules in a network security group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -37651,7 +38369,7 @@ class DefaultSecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -37732,7 +38450,7 @@ class DefaultSecurityRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityRule] = kwargs.pop("cls", None)
 
         _request = build_default_security_rules_get_request(
@@ -37809,7 +38527,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkSecurityPerimeter] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeters_get_request(
@@ -37926,7 +38644,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityPerimeter] = kwargs.pop("cls", None)
 
@@ -37988,7 +38706,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeters_delete_request(
@@ -38056,7 +38774,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -38181,7 +38899,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkSecurityPerimeter] = kwargs.pop("cls", None)
 
@@ -38227,7 +38945,7 @@ class NetworkSecurityPerimetersOperations:
     @distributed_trace
     def list_by_subscription(
         self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkSecurityPerimeter"]:
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeter"]:
         """List all network security perimeters in a subscription.
 
         :keyword top: An optional query parameter which specifies the maximum number of records to be
@@ -38247,7 +38965,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkSecurityPerimeterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -38304,7 +39022,7 @@ class NetworkSecurityPerimetersOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkSecurityPerimeter"]:
+    ) -> AsyncItemPaged["_models.NetworkSecurityPerimeter"]:
         """List network security perimeters in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -38326,7 +39044,7 @@ class NetworkSecurityPerimetersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkSecurityPerimeterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -38428,7 +39146,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspProfile] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_profiles_get_request(
@@ -38555,7 +39273,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NspProfile] = kwargs.pop("cls", None)
 
@@ -38626,7 +39344,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_profiles_delete_request(
@@ -38663,7 +39381,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspProfile"]:
+    ) -> AsyncItemPaged["_models.NspProfile"]:
         """Lists the NSP profiles in the specified network security perimeter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -38685,7 +39403,7 @@ class NetworkSecurityPerimeterProfilesOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspProfileListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -38795,7 +39513,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspAccessRule] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_access_rules_get_request(
@@ -38932,7 +39650,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NspAccessRule] = kwargs.pop("cls", None)
 
@@ -39011,7 +39729,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_access_rules_delete_request(
@@ -39050,7 +39768,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspAccessRule"]:
+    ) -> AsyncItemPaged["_models.NspAccessRule"]:
         """Lists the NSP access rules in the specified NSP profile.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -39074,7 +39792,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspAccessRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39168,7 +39886,7 @@ class NetworkSecurityPerimeterAccessRulesOperations:  # pylint: disable=name-too
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
@@ -39253,7 +39971,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspAssociation] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_associations_get_request(
@@ -39304,7 +40022,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -39449,7 +40167,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NspAssociation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -39511,7 +40229,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_associations_delete_request(
@@ -39573,7 +40291,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -39623,7 +40341,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspAssociation"]:
+    ) -> AsyncItemPaged["_models.NspAssociation"]:
         """Lists the NSP resource associations.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -39645,7 +40363,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspAssociationsListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39735,7 +40453,7 @@ class NetworkSecurityPerimeterAssociationsOperations:  # pylint: disable=name-to
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
@@ -39793,7 +40511,7 @@ class NetworkSecurityPerimeterAssociableResourceTypesOperations:  # pylint: disa
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.PerimeterAssociableResource"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.PerimeterAssociableResource"]:
         """Gets the list of resources that are onboarded with NSP. These resources can be associated with
         a network security perimeter.
 
@@ -39808,7 +40526,7 @@ class NetworkSecurityPerimeterAssociableResourceTypesOperations:  # pylint: disa
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PerimeterAssociableResourcesListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -39908,7 +40626,7 @@ class NetworkSecurityPerimeterLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspLink] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_links_get_request(
@@ -40033,7 +40751,7 @@ class NetworkSecurityPerimeterLinksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NspLink] = kwargs.pop("cls", None)
 
@@ -40091,7 +40809,7 @@ class NetworkSecurityPerimeterLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_links_delete_request(
@@ -40151,7 +40869,7 @@ class NetworkSecurityPerimeterLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40200,7 +40918,7 @@ class NetworkSecurityPerimeterLinksOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspLink"]:
+    ) -> AsyncItemPaged["_models.NspLink"]:
         """Lists the NSP Link resources in the specified network security perimeter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -40222,7 +40940,7 @@ class NetworkSecurityPerimeterLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspLinkListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -40325,7 +41043,7 @@ class NetworkSecurityPerimeterLinkReferencesOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspLinkReference] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_link_references_get_request(
@@ -40371,7 +41089,7 @@ class NetworkSecurityPerimeterLinkReferencesOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_link_references_delete_request(
@@ -40431,7 +41149,7 @@ class NetworkSecurityPerimeterLinkReferencesOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -40480,7 +41198,7 @@ class NetworkSecurityPerimeterLinkReferencesOperations:  # pylint: disable=name-
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.NspLinkReference"]:
+    ) -> AsyncItemPaged["_models.NspLinkReference"]:
         """Lists the NSP LinkReference resources in the specified network security perimeter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -40502,7 +41220,7 @@ class NetworkSecurityPerimeterLinkReferencesOperations:  # pylint: disable=name-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspLinkReferenceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -40610,7 +41328,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspLoggingConfiguration] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_logging_configurations_get_request(
@@ -40740,7 +41458,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NspLoggingConfiguration] = kwargs.pop("cls", None)
 
@@ -40816,7 +41534,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_logging_configurations_delete_request(
@@ -40847,7 +41565,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
     @distributed_trace
     def list(
         self, resource_group_name: str, network_security_perimeter_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NspLoggingConfiguration"]:
+    ) -> AsyncItemPaged["_models.NspLoggingConfiguration"]:
         """Lists the NSP logging configuration.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -40863,7 +41581,7 @@ class NetworkSecurityPerimeterLoggingConfigurationsOperations:  # pylint: disabl
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NspLoggingConfigurationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -40960,7 +41678,7 @@ class NetworkSecurityPerimeterOperationStatusesOperations:  # pylint: disable=na
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
 
         _request = build_network_security_perimeter_operation_statuses_get_request(
@@ -40990,6 +41708,95 @@ class NetworkSecurityPerimeterOperationStatusesOperations:  # pylint: disable=na
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class NetworkSecurityPerimeterServiceTagsOperations:  # pylint: disable=name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
+        :attr:`network_security_perimeter_service_tags` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.NspServiceTagsResource"]:
+        """Gets the list of service tags supported by NSP. These service tags can be used to create access
+        rules in NSP.
+
+        :param location: The location of network security perimeter. Required.
+        :type location: str
+        :return: An iterator like instance of either NspServiceTagsResource or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.NspServiceTagsResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.NspServiceTagsListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_network_security_perimeter_service_tags_list_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("NspServiceTagsListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class ReachabilityAnalysisIntentsOperations:
@@ -41024,7 +41831,7 @@ class ReachabilityAnalysisIntentsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ReachabilityAnalysisIntent"]:
+    ) -> AsyncItemPaged["_models.ReachabilityAnalysisIntent"]:
         """Gets list of Reachability Analysis Intents .
 
         Gets list of Reachability Analysis Intents .
@@ -41054,7 +41861,7 @@ class ReachabilityAnalysisIntentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ReachabilityAnalysisIntentListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -41108,7 +41915,10 @@ class ReachabilityAnalysisIntentsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -41151,7 +41961,7 @@ class ReachabilityAnalysisIntentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ReachabilityAnalysisIntent] = kwargs.pop("cls", None)
 
         _request = build_reachability_analysis_intents_get_request(
@@ -41175,7 +41985,10 @@ class ReachabilityAnalysisIntentsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ReachabilityAnalysisIntent", pipeline_response.http_response)
@@ -41293,7 +42106,7 @@ class ReachabilityAnalysisIntentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ReachabilityAnalysisIntent] = kwargs.pop("cls", None)
 
@@ -41329,7 +42142,10 @@ class ReachabilityAnalysisIntentsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ReachabilityAnalysisIntent", pipeline_response.http_response)
@@ -41375,7 +42191,7 @@ class ReachabilityAnalysisIntentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_reachability_analysis_intents_delete_request(
@@ -41399,7 +42215,10 @@ class ReachabilityAnalysisIntentsOperations:
 
         if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if cls:
@@ -41438,7 +42257,7 @@ class ReachabilityAnalysisRunsOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ReachabilityAnalysisRun"]:
+    ) -> AsyncItemPaged["_models.ReachabilityAnalysisRun"]:
         """Gets list of Reachability Analysis Runs.
 
         Gets list of Reachability Analysis Runs.
@@ -41468,7 +42287,7 @@ class ReachabilityAnalysisRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ReachabilityAnalysisRunListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -41522,7 +42341,10 @@ class ReachabilityAnalysisRunsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -41565,7 +42387,7 @@ class ReachabilityAnalysisRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ReachabilityAnalysisRun] = kwargs.pop("cls", None)
 
         _request = build_reachability_analysis_runs_get_request(
@@ -41589,7 +42411,10 @@ class ReachabilityAnalysisRunsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ReachabilityAnalysisRun", pipeline_response.http_response)
@@ -41707,7 +42532,7 @@ class ReachabilityAnalysisRunsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ReachabilityAnalysisRun] = kwargs.pop("cls", None)
 
@@ -41743,7 +42568,10 @@ class ReachabilityAnalysisRunsOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ReachabilityAnalysisRun", pipeline_response.http_response)
@@ -41772,7 +42600,7 @@ class ReachabilityAnalysisRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_reachability_analysis_runs_delete_request(
@@ -41801,7 +42629,10 @@ class ReachabilityAnalysisRunsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -41843,7 +42674,7 @@ class ReachabilityAnalysisRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -41916,7 +42747,7 @@ class VerifierWorkspacesOperations:
         sort_key: Optional[str] = None,
         sort_value: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.VerifierWorkspace"]:
+    ) -> AsyncItemPaged["_models.VerifierWorkspace"]:
         """Gets list of Verifier Workspaces.
 
         Gets list of Verifier Workspaces.
@@ -41942,7 +42773,7 @@ class VerifierWorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VerifierWorkspaceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -41995,7 +42826,10 @@ class VerifierWorkspacesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.CommonErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -42031,7 +42865,7 @@ class VerifierWorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VerifierWorkspace] = kwargs.pop("cls", None)
 
         _request = build_verifier_workspaces_get_request(
@@ -42054,7 +42888,10 @@ class VerifierWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VerifierWorkspace", pipeline_response.http_response)
@@ -42176,7 +43013,7 @@ class VerifierWorkspacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VerifierWorkspace] = kwargs.pop("cls", None)
 
@@ -42212,7 +43049,10 @@ class VerifierWorkspacesOperations:
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VerifierWorkspace", pipeline_response.http_response)
@@ -42334,11 +43174,12 @@ class VerifierWorkspacesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.VerifierWorkspace] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if body else None
         _json = None
         _content = None
         if isinstance(body, (IOBase, bytes)):
@@ -42373,7 +43214,10 @@ class VerifierWorkspacesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VerifierWorkspace", pipeline_response.http_response)
@@ -42403,7 +43247,7 @@ class VerifierWorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_verifier_workspaces_delete_request(
@@ -42432,7 +43276,10 @@ class VerifierWorkspacesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CommonErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.CommonErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -42476,7 +43323,7 @@ class VerifierWorkspacesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -42551,7 +43398,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_virtual_appliances_delete_request(
@@ -42608,7 +43455,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -42679,7 +43526,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
 
         _request = build_network_virtual_appliances_get_request(
@@ -42798,7 +43645,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
 
@@ -42859,7 +43706,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -42992,7 +43839,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualAppliance] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -43059,11 +43906,12 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if network_virtual_appliance_instance_ids else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if network_virtual_appliance_instance_ids else None
         _json = None
         _content = None
         if isinstance(network_virtual_appliance_instance_ids, (IOBase, bytes)):
@@ -43205,8 +44053,9 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if network_virtual_appliance_instance_ids else None
         cls: ClsType[_models.NetworkVirtualApplianceInstanceIds] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43271,11 +44120,12 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if network_virtual_appliance_instance_ids else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if network_virtual_appliance_instance_ids else None
         _json = None
         _content = None
         if isinstance(network_virtual_appliance_instance_ids, (IOBase, bytes)):
@@ -43417,8 +44267,9 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if network_virtual_appliance_instance_ids else None
         cls: ClsType[_models.NetworkVirtualApplianceInstanceIds] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43481,7 +44332,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -43621,7 +44472,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualApplianceInstanceId] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -43670,7 +44521,7 @@ class NetworkVirtualAppliancesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkVirtualAppliance"]:
+    ) -> AsyncItemPaged["_models.NetworkVirtualAppliance"]:
         """Lists all Network Virtual Appliances in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -43684,7 +44535,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43738,7 +44589,7 @@ class NetworkVirtualAppliancesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.NetworkVirtualAppliance"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkVirtualAppliance"]:
         """Gets all Network Virtual Appliances in a subscription.
 
         :return: An iterator like instance of either NetworkVirtualAppliance or the result of
@@ -43750,7 +44601,7 @@ class NetworkVirtualAppliancesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -43836,7 +44687,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_appliance_sites_delete_request(
@@ -43892,7 +44743,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -43959,7 +44810,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualApplianceSite] = kwargs.pop("cls", None)
 
         _request = build_virtual_appliance_sites_get_request(
@@ -44010,7 +44861,7 @@ class VirtualApplianceSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -44149,7 +45000,7 @@ class VirtualApplianceSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualApplianceSite] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -44200,7 +45051,7 @@ class VirtualApplianceSitesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_virtual_appliance_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualApplianceSite"]:
+    ) -> AsyncItemPaged["_models.VirtualApplianceSite"]:
         """Lists all Network Virtual Appliance Sites in a Network Virtual Appliance resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -44216,7 +45067,7 @@ class VirtualApplianceSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceSiteListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -44291,7 +45142,7 @@ class VirtualApplianceSkusOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.NetworkVirtualApplianceSku"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkVirtualApplianceSku"]:
         """List all SKUs available for a virtual appliance.
 
         :return: An iterator like instance of either NetworkVirtualApplianceSku or the result of
@@ -44303,7 +45154,7 @@ class VirtualApplianceSkusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceSkuListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -44376,7 +45227,7 @@ class VirtualApplianceSkusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceSku] = kwargs.pop("cls", None)
 
         _request = build_virtual_appliance_skus_get_request(
@@ -44445,7 +45296,7 @@ class InboundSecurityRuleOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -44585,7 +45436,7 @@ class InboundSecurityRuleOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.InboundSecurityRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -44660,7 +45511,7 @@ class InboundSecurityRuleOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.InboundSecurityRule] = kwargs.pop("cls", None)
 
         _request = build_inbound_security_rule_get_request(
@@ -44796,7 +45647,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkWatcher] = kwargs.pop("cls", None)
 
@@ -44830,7 +45681,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NetworkWatcher", pipeline_response.http_response)
@@ -44863,7 +45717,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkWatcher] = kwargs.pop("cls", None)
 
         _request = build_network_watchers_get_request(
@@ -44885,7 +45739,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NetworkWatcher", pipeline_response.http_response)
@@ -44909,7 +45766,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_watchers_delete_request(
@@ -44936,7 +45793,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -44963,7 +45823,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -45086,7 +45946,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkWatcher] = kwargs.pop("cls", None)
 
@@ -45120,7 +45980,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NetworkWatcher", pipeline_response.http_response)
@@ -45131,7 +45994,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.NetworkWatcher"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.NetworkWatcher"]:
         """Gets all network watchers by resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -45143,7 +46006,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkWatcherListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -45190,7 +46053,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -45198,7 +46064,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.NetworkWatcher"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.NetworkWatcher"]:
         """Gets all network watchers by subscription.
 
         :return: An iterator like instance of either NetworkWatcher or the result of cls(response)
@@ -45208,7 +46074,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkWatcherListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -45254,7 +46120,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -45345,7 +46214,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Topology] = kwargs.pop("cls", None)
 
@@ -45379,7 +46248,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("Topology", pipeline_response.http_response)
@@ -45407,7 +46279,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -45446,7 +46318,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -45535,7 +46410,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VerificationIPFlowResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -45599,7 +46474,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -45638,7 +46513,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -45727,7 +46605,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NextHopResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -45791,7 +46669,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -45830,7 +46708,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -45919,7 +46800,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityGroupViewResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -45983,7 +46864,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46022,7 +46903,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -46111,7 +46995,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TroubleshootingResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -46175,7 +47059,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46214,7 +47098,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -46305,7 +47192,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.TroubleshootingResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -46369,7 +47256,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46408,7 +47295,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -46497,7 +47387,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLogInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -46561,7 +47451,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46600,7 +47490,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -46691,7 +47584,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLogInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -46755,7 +47648,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46794,7 +47687,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -46888,7 +47784,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectivityInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -46952,7 +47848,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -46991,7 +47887,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -47086,7 +47985,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AzureReachabilityReport] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -47150,7 +48049,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -47189,7 +48088,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -47281,7 +48183,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AvailableProvidersList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -47345,7 +48247,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -47384,7 +48286,10 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -47489,7 +48394,7 @@ class NetworkWatchersOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkConfigurationDiagnosticResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -47574,7 +48479,7 @@ class PacketCapturesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -47614,7 +48519,10 @@ class PacketCapturesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -47712,7 +48620,7 @@ class PacketCapturesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PacketCaptureResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -47787,7 +48695,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PacketCaptureResult] = kwargs.pop("cls", None)
 
         _request = build_packet_captures_get_request(
@@ -47810,7 +48718,10 @@ class PacketCapturesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PacketCaptureResult", pipeline_response.http_response)
@@ -47834,7 +48745,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_packet_captures_delete_request(
@@ -47862,7 +48773,10 @@ class PacketCapturesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -47891,7 +48805,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -47945,7 +48859,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_packet_captures_stop_request(
@@ -47973,7 +48887,10 @@ class PacketCapturesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -48002,7 +48919,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -48056,7 +48973,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_packet_captures_get_status_request(
@@ -48084,7 +49001,10 @@ class PacketCapturesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -48115,7 +49035,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PacketCaptureQueryStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -48162,7 +49082,7 @@ class PacketCapturesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_watcher_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PacketCaptureResult"]:
+    ) -> AsyncItemPaged["_models.PacketCaptureResult"]:
         """Lists all packet capture sessions within the specified resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -48176,7 +49096,7 @@ class PacketCapturesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PacketCaptureListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48224,7 +49144,10 @@ class PacketCapturesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -48272,7 +49195,7 @@ class ConnectionMonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -48313,7 +49236,10 @@ class ConnectionMonitorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -48429,7 +49355,7 @@ class ConnectionMonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -48506,7 +49432,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
 
         _request = build_connection_monitors_get_request(
@@ -48529,7 +49455,10 @@ class ConnectionMonitorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ConnectionMonitorResult", pipeline_response.http_response)
@@ -48553,7 +49482,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_connection_monitors_delete_request(
@@ -48581,7 +49510,10 @@ class ConnectionMonitorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -48611,7 +49543,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -48744,7 +49676,7 @@ class ConnectionMonitorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionMonitorResult] = kwargs.pop("cls", None)
 
@@ -48779,7 +49711,10 @@ class ConnectionMonitorsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("ConnectionMonitorResult", pipeline_response.http_response)
@@ -48803,7 +49738,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_connection_monitors_stop_request(
@@ -48831,7 +49766,10 @@ class ConnectionMonitorsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -48861,7 +49799,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -48904,7 +49842,7 @@ class ConnectionMonitorsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_watcher_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectionMonitorResult"]:
+    ) -> AsyncItemPaged["_models.ConnectionMonitorResult"]:
         """Lists all connection monitors for the specified Network Watcher.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -48921,7 +49859,7 @@ class ConnectionMonitorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectionMonitorListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -48969,7 +49907,10 @@ class ConnectionMonitorsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -49015,7 +49956,7 @@ class FlowLogsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -49055,7 +49996,10 @@ class FlowLogsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -49153,7 +50097,7 @@ class FlowLogsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -49294,7 +50238,7 @@ class FlowLogsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
 
@@ -49329,7 +50273,10 @@ class FlowLogsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FlowLog", pipeline_response.http_response)
@@ -49366,7 +50313,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FlowLog] = kwargs.pop("cls", None)
 
         _request = build_flow_logs_get_request(
@@ -49389,7 +50336,10 @@ class FlowLogsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("FlowLog", pipeline_response.http_response)
@@ -49413,7 +50363,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_flow_logs_delete_request(
@@ -49441,7 +50391,10 @@ class FlowLogsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -49470,7 +50423,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49513,7 +50466,7 @@ class FlowLogsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, network_watcher_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.FlowLog"]:
+    ) -> AsyncItemPaged["_models.FlowLog"]:
         """Lists all flow log resources for the specified Network Watcher.
 
         :param resource_group_name: The name of the resource group containing Network Watcher.
@@ -49528,7 +50481,7 @@ class FlowLogsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.FlowLogListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -49576,7 +50529,10 @@ class FlowLogsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -49604,7 +50560,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """Lists all of the available Network Rest API operations.
 
         :return: An iterator like instance of either Operation or the result of cls(response)
@@ -49614,7 +50570,7 @@ class Operations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.OperationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -49699,7 +50655,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_private_endpoints_delete_request(
@@ -49726,7 +50682,10 @@ class PrivateEndpointsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -49753,7 +50712,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -49819,7 +50778,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateEndpoint] = kwargs.pop("cls", None)
 
         _request = build_private_endpoints_get_request(
@@ -49842,7 +50801,10 @@ class PrivateEndpointsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateEndpoint", pipeline_response.http_response)
@@ -49870,7 +50832,7 @@ class PrivateEndpointsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -49909,7 +50871,10 @@ class PrivateEndpointsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -50000,7 +50965,7 @@ class PrivateEndpointsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateEndpoint] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -50048,7 +51013,7 @@ class PrivateEndpointsOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PrivateEndpoint"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PrivateEndpoint"]:
         """Gets all private endpoints in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -50060,7 +51025,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateEndpointListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -50107,7 +51072,10 @@ class PrivateEndpointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -50115,7 +51083,7 @@ class PrivateEndpointsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.PrivateEndpoint"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.PrivateEndpoint"]:
         """Gets all private endpoints in a subscription.
 
         :return: An iterator like instance of either PrivateEndpoint or the result of cls(response)
@@ -50125,7 +51093,7 @@ class PrivateEndpointsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateEndpointListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -50171,7 +51139,10 @@ class PrivateEndpointsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -50199,7 +51170,7 @@ class AvailablePrivateEndpointTypesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.AvailablePrivateEndpointType"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.AvailablePrivateEndpointType"]:
         """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
         in this region.
 
@@ -50214,7 +51185,7 @@ class AvailablePrivateEndpointTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AvailablePrivateEndpointTypesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -50270,7 +51241,7 @@ class AvailablePrivateEndpointTypesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, location: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AvailablePrivateEndpointType"]:
+    ) -> AsyncItemPaged["_models.AvailablePrivateEndpointType"]:
         """Returns all of the resource types that can be linked to a Private Endpoint in this subscription
         in this region.
 
@@ -50287,7 +51258,7 @@ class AvailablePrivateEndpointTypesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AvailablePrivateEndpointTypesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -50375,7 +51346,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_private_dns_zone_groups_delete_request(
@@ -50431,7 +51402,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -50498,7 +51469,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateDnsZoneGroup] = kwargs.pop("cls", None)
 
         _request = build_private_dns_zone_groups_get_request(
@@ -50549,7 +51520,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -50688,7 +51659,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateDnsZoneGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -50739,7 +51710,7 @@ class PrivateDnsZoneGroupsOperations:
     @distributed_trace
     def list(
         self, private_endpoint_name: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateDnsZoneGroup"]:
+    ) -> AsyncItemPaged["_models.PrivateDnsZoneGroup"]:
         """Gets all private dns zone groups in a private endpoint.
 
         :param private_endpoint_name: The name of the private endpoint. Required.
@@ -50753,7 +51724,7 @@ class PrivateDnsZoneGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateDnsZoneGroupListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -50801,7 +51772,10 @@ class PrivateDnsZoneGroupsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -50840,7 +51814,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_private_link_services_delete_request(
@@ -50867,7 +51841,10 @@ class PrivateLinkServicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -50892,7 +51869,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -50958,7 +51935,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateLinkService] = kwargs.pop("cls", None)
 
         _request = build_private_link_services_get_request(
@@ -50981,7 +51958,10 @@ class PrivateLinkServicesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateLinkService", pipeline_response.http_response)
@@ -51009,7 +51989,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -51048,7 +52028,10 @@ class PrivateLinkServicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -51139,7 +52122,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkService] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -51187,7 +52170,7 @@ class PrivateLinkServicesOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PrivateLinkService"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PrivateLinkService"]:
         """Gets all private link services in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -51199,7 +52182,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateLinkServiceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -51246,7 +52229,10 @@ class PrivateLinkServicesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -51254,7 +52240,7 @@ class PrivateLinkServicesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.PrivateLinkService"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.PrivateLinkService"]:
         """Gets all private link service in a subscription.
 
         :return: An iterator like instance of either PrivateLinkService or the result of cls(response)
@@ -51264,7 +52250,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateLinkServiceListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -51310,7 +52296,10 @@ class PrivateLinkServicesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -51353,7 +52342,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
         _request = build_private_link_services_get_private_endpoint_connection_request(
@@ -51377,7 +52366,10 @@ class PrivateLinkServicesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response.http_response)
@@ -51482,7 +52474,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
 
@@ -51517,7 +52509,10 @@ class PrivateLinkServicesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("PrivateEndpointConnection", pipeline_response.http_response)
@@ -51541,7 +52536,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_private_link_services_delete_private_endpoint_connection_request(
@@ -51569,7 +52564,10 @@ class PrivateLinkServicesOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -51598,7 +52596,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -51641,7 +52639,7 @@ class PrivateLinkServicesOperations:
     @distributed_trace
     def list_private_endpoint_connections(
         self, resource_group_name: str, service_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.PrivateEndpointConnection"]:
+    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
         """Gets all private end point connections for a specific private link service.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -51657,7 +52655,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PrivateEndpointConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -51705,7 +52703,10 @@ class PrivateLinkServicesOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -51729,7 +52730,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -51845,7 +52846,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkServiceVisibility] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -51908,7 +52909,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -52042,7 +53043,7 @@ class PrivateLinkServicesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PrivateLinkServiceVisibility] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -52091,7 +53092,7 @@ class PrivateLinkServicesOperations:
     @distributed_trace
     def list_auto_approved_private_link_services(
         self, location: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AutoApprovedPrivateLinkService"]:
+    ) -> AsyncItemPaged["_models.AutoApprovedPrivateLinkService"]:
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
 
@@ -52106,7 +53107,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AutoApprovedPrivateLinkServicesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -52162,7 +53163,7 @@ class PrivateLinkServicesOperations:
     @distributed_trace
     def list_auto_approved_private_link_services_by_resource_group(  # pylint: disable=name-too-long
         self, location: str, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.AutoApprovedPrivateLinkService"]:
+    ) -> AsyncItemPaged["_models.AutoApprovedPrivateLinkService"]:
         """Returns all of the private link service ids that can be linked to a Private Endpoint with auto
         approved in this subscription in this region.
 
@@ -52179,7 +53180,7 @@ class PrivateLinkServicesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.AutoApprovedPrivateLinkServicesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -52269,7 +53270,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_public_ip_prefixes_delete_request(
@@ -52322,7 +53323,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -52388,7 +53389,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
 
         _request = build_public_ip_prefixes_get_request(
@@ -52438,7 +53439,7 @@ class PublicIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -52567,7 +53568,7 @@ class PublicIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -52697,7 +53698,7 @@ class PublicIPPrefixesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.PublicIPPrefix] = kwargs.pop("cls", None)
 
@@ -52741,7 +53742,7 @@ class PublicIPPrefixesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.PublicIPPrefix"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPPrefix"]:
         """Gets all the public IP prefixes in a subscription.
 
         :return: An iterator like instance of either PublicIPPrefix or the result of cls(response)
@@ -52751,7 +53752,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPPrefixListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -52804,7 +53805,7 @@ class PublicIPPrefixesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.PublicIPPrefix"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PublicIPPrefix"]:
         """Gets all public IP prefixes in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -52816,7 +53817,7 @@ class PublicIPPrefixesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.PublicIPPrefixListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -52903,7 +53904,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_route_filters_delete_request(
@@ -52963,7 +53964,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -53030,7 +54031,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
 
         _request = build_route_filters_get_request(
@@ -53080,7 +54081,7 @@ class RouteFiltersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -53209,7 +54210,7 @@ class RouteFiltersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -53340,7 +54341,7 @@ class RouteFiltersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilter] = kwargs.pop("cls", None)
 
@@ -53384,7 +54385,7 @@ class RouteFiltersOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.RouteFilter"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.RouteFilter"]:
         """Gets all route filters in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -53396,7 +54397,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteFilterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -53450,7 +54451,7 @@ class RouteFiltersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.RouteFilter"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.RouteFilter"]:
         """Gets all route filters in a subscription.
 
         :return: An iterator like instance of either RouteFilter or the result of cls(response)
@@ -53460,7 +54461,7 @@ class RouteFiltersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteFilterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -53546,7 +54547,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_route_filter_rules_delete_request(
@@ -53609,7 +54610,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -53677,7 +54678,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteFilterRule] = kwargs.pop("cls", None)
 
         _request = build_route_filter_rules_get_request(
@@ -53728,7 +54729,7 @@ class RouteFilterRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -53867,7 +54868,7 @@ class RouteFilterRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteFilterRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -53918,7 +54919,7 @@ class RouteFilterRulesOperations:
     @distributed_trace
     def list_by_route_filter(
         self, resource_group_name: str, route_filter_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RouteFilterRule"]:
+    ) -> AsyncItemPaged["_models.RouteFilterRule"]:
         """Gets all RouteFilterRules in a route filter.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -53932,7 +54933,7 @@ class RouteFilterRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteFilterRuleListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -54020,7 +55021,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_route_tables_delete_request(
@@ -54073,7 +55074,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -54139,7 +55140,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
 
         _request = build_route_tables_get_request(
@@ -54189,7 +55190,7 @@ class RouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -54316,7 +55317,7 @@ class RouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -54447,7 +55448,7 @@ class RouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteTable] = kwargs.pop("cls", None)
 
@@ -54491,7 +55492,7 @@ class RouteTablesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.RouteTable"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.RouteTable"]:
         """Gets all route tables in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -54503,7 +55504,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteTableListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -54557,7 +55558,7 @@ class RouteTablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.RouteTable"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.RouteTable"]:
         """Gets all route tables in a subscription.
 
         :return: An iterator like instance of either RouteTable or the result of cls(response)
@@ -54567,7 +55568,7 @@ class RouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteTableListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -54653,7 +55654,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_routes_delete_request(
@@ -54709,7 +55710,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -54776,7 +55777,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.Route] = kwargs.pop("cls", None)
 
         _request = build_routes_get_request(
@@ -54827,7 +55828,7 @@ class RoutesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -54961,7 +55962,7 @@ class RoutesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Route] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -55010,7 +56011,7 @@ class RoutesOperations:
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, route_table_name: str, **kwargs: Any) -> AsyncIterable["_models.Route"]:
+    def list(self, resource_group_name: str, route_table_name: str, **kwargs: Any) -> AsyncItemPaged["_models.Route"]:
         """Gets all routes in a route table.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -55024,7 +56025,7 @@ class RoutesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -55112,7 +56113,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_security_partner_providers_delete_request(
@@ -55165,7 +56166,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -55229,7 +56230,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
 
         _request = build_security_partner_providers_get_request(
@@ -55278,7 +56279,7 @@ class SecurityPartnerProvidersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -55407,7 +56408,7 @@ class SecurityPartnerProvidersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -55538,7 +56539,7 @@ class SecurityPartnerProvidersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityPartnerProvider] = kwargs.pop("cls", None)
 
@@ -55584,7 +56585,7 @@ class SecurityPartnerProvidersOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityPartnerProvider"]:
+    ) -> AsyncItemPaged["_models.SecurityPartnerProvider"]:
         """Lists all Security Partner Providers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -55598,7 +56599,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityPartnerProviderListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -55652,7 +56653,7 @@ class SecurityPartnerProvidersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.SecurityPartnerProvider"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.SecurityPartnerProvider"]:
         """Gets all the Security Partner Providers in a subscription.
 
         :return: An iterator like instance of either SecurityPartnerProvider or the result of
@@ -55664,7 +56665,7 @@ class SecurityPartnerProvidersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SecurityPartnerProviderListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -55737,7 +56738,7 @@ class BgpServiceCommunitiesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.BgpServiceCommunity"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.BgpServiceCommunity"]:
         """Gets all the available bgp service communities.
 
         :return: An iterator like instance of either BgpServiceCommunity or the result of cls(response)
@@ -55747,7 +56748,7 @@ class BgpServiceCommunitiesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BgpServiceCommunityListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -55833,7 +56834,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_service_endpoint_policies_delete_request(
@@ -55886,7 +56887,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -55957,7 +56958,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
 
         _request = build_service_endpoint_policies_get_request(
@@ -56007,7 +57008,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -56136,7 +57137,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -56267,7 +57268,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicy] = kwargs.pop("cls", None)
 
@@ -56311,7 +57312,7 @@ class ServiceEndpointPoliciesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.ServiceEndpointPolicy"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ServiceEndpointPolicy"]:
         """Gets all the service endpoint policies in a subscription.
 
         :return: An iterator like instance of either ServiceEndpointPolicy or the result of
@@ -56323,7 +57324,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceEndpointPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -56378,7 +57379,7 @@ class ServiceEndpointPoliciesOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ServiceEndpointPolicy"]:
+    ) -> AsyncItemPaged["_models.ServiceEndpointPolicy"]:
         """Gets all service endpoint Policies in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -56392,7 +57393,7 @@ class ServiceEndpointPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceEndpointPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -56483,7 +57484,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_service_endpoint_policy_definitions_delete_request(
@@ -56544,7 +57545,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -56616,7 +57617,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceEndpointPolicyDefinition] = kwargs.pop("cls", None)
 
         _request = build_service_endpoint_policy_definitions_get_request(
@@ -56667,7 +57668,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -56818,7 +57819,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ServiceEndpointPolicyDefinition] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -56869,7 +57870,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, service_endpoint_policy_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.ServiceEndpointPolicyDefinition"]:
+    ) -> AsyncItemPaged["_models.ServiceEndpointPolicyDefinition"]:
         """Gets all service endpoint policy definitions in a service end point policy.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -56885,7 +57886,7 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceEndpointPolicyDefinitionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -56917,6 +57918,1233 @@ class ServiceEndpointPolicyDefinitionsOperations:  # pylint: disable=name-too-lo
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("ServiceEndpointPolicyDefinitionListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class ServiceGatewaysOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
+        :attr:`service_gateways` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    async def _delete_initial(
+        self, resource_group_name: str, service_gateway_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_service_gateways_delete_request(
+            resource_group_name=resource_group_name,
+            service_gateway_name=service_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, service_gateway_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the specified service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                service_gateway_name=service_gateway_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, resource_group_name: str, service_gateway_name: str, **kwargs: Any) -> _models.ServiceGateway:
+        """Gets the specified service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :return: ServiceGateway or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.ServiceGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.ServiceGateway] = kwargs.pop("cls", None)
+
+        _request = build_service_gateways_get_request(
+            resource_group_name=resource_group_name,
+            service_gateway_name=service_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("ServiceGateway", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.ServiceGateway, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "ServiceGateway")
+
+        _request = build_service_gateways_create_or_update_request(
+            resource_group_name=resource_group_name,
+            service_gateway_name=service_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: _models.ServiceGateway,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServiceGateway]:
+        """Creates or updates a service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or update service gateway operation.
+         Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGateway
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either ServiceGateway or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServiceGateway]:
+        """Creates or updates a service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or update service gateway operation.
+         Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either ServiceGateway or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.ServiceGateway, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ServiceGateway]:
+        """Creates or updates a service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or update service gateway operation. Is
+         either a ServiceGateway type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGateway or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either ServiceGateway or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.ServiceGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServiceGateway] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                service_gateway_name=service_gateway_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("ServiceGateway", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ServiceGateway].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ServiceGateway](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update_tags(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: _models.TagsObject,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ServiceGateway:
+        """Updates a service gateway tags.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to update service gateway tags. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ServiceGateway or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.ServiceGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_tags(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ServiceGateway:
+        """Updates a service gateway tags.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to update service gateway tags. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ServiceGateway or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.ServiceGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_tags(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.TagsObject, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.ServiceGateway:
+        """Updates a service gateway tags.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to update service gateway tags. Is either a TagsObject
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO[bytes]
+        :return: ServiceGateway or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.ServiceGateway
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ServiceGateway] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "TagsObject")
+
+        _request = build_service_gateways_update_tags_request(
+            resource_group_name=resource_group_name,
+            service_gateway_name=service_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("ServiceGateway", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.ServiceGateway"]:
+        """Gets all the service gateways in a subscription.
+
+        :return: An iterator like instance of either ServiceGateway or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.ServiceGatewayListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_service_gateways_list_all_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ServiceGatewayListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ServiceGateway"]:
+        """Gets all the service gateways in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of either ServiceGateway or the result of cls(response)
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceGateway]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.ServiceGatewayListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_service_gateways_list_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("ServiceGatewayListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    async def _update_address_locations_initial(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.ServiceGatewayUpdateAddressLocationsRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "ServiceGatewayUpdateAddressLocationsRequest")
+
+        _request = build_service_gateways_update_address_locations_request(
+            resource_group_name=resource_group_name,
+            service_gateway_name=service_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update_address_locations(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: _models.ServiceGatewayUpdateAddressLocationsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates or updates address locations within the service gateway.
+
+        The request supports both full and partial update modes at two levels: location and address.
+
+        Full update replaces all existing data.
+
+        Partial update modifies only the specified entries:
+
+        For location-level partial updates, if no address is provided, the existing address will be
+        deleted.
+
+        For address-level partial updates, if no services are provided, the existing services will be
+        considered for deletion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or updates address locations in service
+         gateway operation. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateAddressLocationsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update_address_locations(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates or updates address locations within the service gateway.
+
+        The request supports both full and partial update modes at two levels: location and address.
+
+        Full update replaces all existing data.
+
+        Partial update modifies only the specified entries:
+
+        For location-level partial updates, if no address is provided, the existing address will be
+        deleted.
+
+        For address-level partial updates, if no services are provided, the existing services will be
+        considered for deletion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or updates address locations in service
+         gateway operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update_address_locations(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.ServiceGatewayUpdateAddressLocationsRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates or updates address locations within the service gateway.
+
+        The request supports both full and partial update modes at two levels: location and address.
+
+        Full update replaces all existing data.
+
+        Partial update modifies only the specified entries:
+
+        For location-level partial updates, if no address is provided, the existing address will be
+        deleted.
+
+        For address-level partial updates, if no services are provided, the existing services will be
+        considered for deletion.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or updates address locations in service
+         gateway operation. Is either a ServiceGatewayUpdateAddressLocationsRequest type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateAddressLocationsRequest or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_address_locations_initial(
+                resource_group_name=resource_group_name,
+                service_gateway_name=service_gateway_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    async def _update_services_initial(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.ServiceGatewayUpdateServicesRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "ServiceGatewayUpdateServicesRequest")
+
+        _request = build_service_gateways_update_services_request(
+            resource_group_name=resource_group_name,
+            service_gateway_name=service_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update_services(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: _models.ServiceGatewayUpdateServicesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates, updates, or deletes services within the service gateway.
+        The request supports both full and partial update modes at the service level.
+
+        Full update replaces all existing services with the new list provided in the request.
+        Partial update modifies only the specified services.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or updates services in service gateway
+         operation. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateServicesRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update_services(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates, updates, or deletes services within the service gateway.
+        The request supports both full and partial update modes at the service level.
+
+        Full update replaces all existing services with the new list provided in the request.
+        Partial update modifies only the specified services.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or updates services in service gateway
+         operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update_services(
+        self,
+        resource_group_name: str,
+        service_gateway_name: str,
+        parameters: Union[_models.ServiceGatewayUpdateServicesRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Creates, updates, or deletes services within the service gateway.
+        The request supports both full and partial update modes at the service level.
+
+        Full update replaces all existing services with the new list provided in the request.
+        Partial update modifies only the specified services.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :param parameters: Parameters supplied to the create or updates services in service gateway
+         operation. Is either a ServiceGatewayUpdateServicesRequest type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.ServiceGatewayUpdateServicesRequest or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_services_initial(
+                resource_group_name=resource_group_name,
+                service_gateway_name=service_gateway_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def get_address_locations(
+        self, resource_group_name: str, service_gateway_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ServiceGatewayAddressLocationResponse"]:
+        """Get address locations in service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :return: An iterator like instance of either ServiceGatewayAddressLocationResponse or the
+         result of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceGatewayAddressLocationResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.GetServiceGatewayAddressLocationsResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_service_gateways_get_address_locations_request(
+                    resource_group_name=resource_group_name,
+                    service_gateway_name=service_gateway_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("GetServiceGatewayAddressLocationsResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get_services(
+        self, resource_group_name: str, service_gateway_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ServiceGatewayService"]:
+        """Get Services in service gateway.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param service_gateway_name: The name of the service gateway. Required.
+        :type service_gateway_name: str
+        :return: An iterator like instance of either ServiceGatewayService or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.ServiceGatewayService]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.GetServiceGatewayServicesResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_service_gateways_get_services_request(
+                    resource_group_name=resource_group_name,
+                    service_gateway_name=service_gateway_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("GetServiceGatewayServicesResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -56982,7 +59210,7 @@ class ServiceTagsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceTagsListResult] = kwargs.pop("cls", None)
 
         _request = build_service_tags_list_request(
@@ -57040,7 +59268,7 @@ class ServiceTagInformationOperations:
         no_address_prefixes: Optional[bool] = None,
         tag_name: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ServiceTagInformation"]:
+    ) -> AsyncItemPaged["_models.ServiceTagInformation"]:
         """Gets a list of service tag information resources with pagination.
 
         :param location: The location that will be used as a reference for cloud (not as a filter based
@@ -57061,7 +59289,7 @@ class ServiceTagInformationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceTagInformationListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -57137,7 +59365,7 @@ class UsagesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, location: str, **kwargs: Any) -> AsyncIterable["_models.Usage"]:
+    def list(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.Usage"]:
         """List network usages for a subscription.
 
         :param location: The location where resource usage is queried. Required.
@@ -57149,7 +59377,7 @@ class UsagesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.UsagesListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -57236,7 +59464,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_networks_delete_request(
@@ -57289,7 +59517,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -57355,7 +59583,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
 
         _request = build_virtual_networks_get_request(
@@ -57405,7 +59633,7 @@ class VirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -57534,7 +59762,7 @@ class VirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -57665,7 +59893,7 @@ class VirtualNetworksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetwork] = kwargs.pop("cls", None)
 
@@ -57709,7 +59937,7 @@ class VirtualNetworksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.VirtualNetwork"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetwork"]:
         """Gets all virtual networks in a subscription.
 
         :return: An iterator like instance of either VirtualNetwork or the result of cls(response)
@@ -57719,7 +59947,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -57772,7 +60000,7 @@ class VirtualNetworksOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualNetwork"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetwork"]:
         """Gets all virtual networks in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -57784,7 +60012,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -57864,7 +60092,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.IPAddressAvailabilityResult] = kwargs.pop("cls", None)
 
         _request = build_virtual_networks_check_ip_address_availability_request(
@@ -57899,7 +60127,7 @@ class VirtualNetworksOperations:
     @distributed_trace
     def list_usage(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkUsage"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkUsage"]:
         """Lists usage stats.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -57913,7 +60141,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkListUsageResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -57987,7 +60215,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_networks_list_ddos_protection_status_request(
@@ -58034,7 +60262,7 @@ class VirtualNetworksOperations:
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncLROPoller[AsyncIterable["_models.PublicIpDdosProtectionStatusResult"]]:
+    ) -> AsyncLROPoller[AsyncItemPaged["_models.PublicIpDdosProtectionStatusResult"]]:
         """Gets the Ddos Protection Status of all IP Addresses under the Virtual Network.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -58055,7 +60283,7 @@ class VirtualNetworksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkDdosProtectionStatusResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -58146,13 +60374,13 @@ class VirtualNetworksOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[AsyncIterable["_models.PublicIpDdosProtectionStatusResult"]].from_continuation_token(
+            return AsyncLROPoller[AsyncItemPaged["_models.PublicIpDdosProtectionStatusResult"]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[AsyncIterable["_models.PublicIpDdosProtectionStatusResult"]](
+        return AsyncLROPoller[AsyncItemPaged["_models.PublicIpDdosProtectionStatusResult"]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -58190,7 +60418,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_subnets_delete_request(
@@ -58246,7 +60474,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -58321,7 +60549,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.Subnet] = kwargs.pop("cls", None)
 
         _request = build_subnets_get_request(
@@ -58373,7 +60601,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -58512,7 +60740,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Subnet] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58579,7 +60807,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -58718,7 +60946,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58780,7 +61008,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -58921,7 +61149,7 @@ class SubnetsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -58967,7 +61195,7 @@ class SubnetsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Subnet"]:
+    ) -> AsyncItemPaged["_models.Subnet"]:
         """Gets all subnets in a virtual network.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -58981,7 +61209,7 @@ class SubnetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.SubnetListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -59082,7 +61310,7 @@ class ResourceNavigationLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ResourceNavigationLinksListResult] = kwargs.pop("cls", None)
 
         _request = build_resource_navigation_links_list_request(
@@ -59161,7 +61389,7 @@ class ServiceAssociationLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ServiceAssociationLinksListResult] = kwargs.pop("cls", None)
 
         _request = build_service_association_links_list_request(
@@ -59227,7 +61455,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_peerings_delete_request(
@@ -59283,7 +61511,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -59350,7 +61578,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkPeering] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_peerings_get_request(
@@ -59403,7 +61631,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -59558,7 +61786,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -59610,7 +61838,7 @@ class VirtualNetworkPeeringsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_network_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkPeering"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkPeering"]:
         """Gets all virtual network peerings in a virtual network.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -59626,7 +61854,7 @@ class VirtualNetworkPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkPeeringListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -59658,6 +61886,646 @@ class VirtualNetworkPeeringsOperations:
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize("VirtualNetworkPeeringListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class VirtualNetworkAppliancesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.network.aio.NetworkManagementClient`'s
+        :attr:`virtual_network_appliances` attribute.
+    """
+
+    models = _models
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    async def _delete_initial(
+        self, resource_group_name: str, virtual_network_appliance_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_virtual_network_appliances_delete_request(
+            resource_group_name=resource_group_name,
+            virtual_network_appliance_name=virtual_network_appliance_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, virtual_network_appliance_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the specified virtual network appliance.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                virtual_network_appliance_name=virtual_network_appliance_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, virtual_network_appliance_name: str, **kwargs: Any
+    ) -> _models.VirtualNetworkAppliance:
+        """Gets information about the specified virtual network appliance.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :return: VirtualNetworkAppliance or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkAppliance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.VirtualNetworkAppliance] = kwargs.pop("cls", None)
+
+        _request = build_virtual_network_appliances_get_request(
+            resource_group_name=resource_group_name,
+            virtual_network_appliance_name=virtual_network_appliance_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("VirtualNetworkAppliance", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: Union[_models.VirtualNetworkAppliance, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "VirtualNetworkAppliance")
+
+        _request = build_virtual_network_appliances_create_or_update_request(
+            resource_group_name=resource_group_name,
+            virtual_network_appliance_name=virtual_network_appliance_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: _models.VirtualNetworkAppliance,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VirtualNetworkAppliance]:
+        """Creates or updates a virtual network appliance.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :param parameters: Parameters supplied to the create or update virtual network appliance
+         operation. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkAppliance
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either VirtualNetworkAppliance or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkAppliance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VirtualNetworkAppliance]:
+        """Creates or updates a virtual network appliance.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :param parameters: Parameters supplied to the create or update virtual network appliance
+         operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns either VirtualNetworkAppliance or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkAppliance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: Union[_models.VirtualNetworkAppliance, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.VirtualNetworkAppliance]:
+        """Creates or updates a virtual network appliance.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :param parameters: Parameters supplied to the create or update virtual network appliance
+         operation. Is either a VirtualNetworkAppliance type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.VirtualNetworkAppliance or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns either VirtualNetworkAppliance or the
+         result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.network.models.VirtualNetworkAppliance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VirtualNetworkAppliance] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                virtual_network_appliance_name=virtual_network_appliance_name,
+                parameters=parameters,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            deserialized = self._deserialize("VirtualNetworkAppliance", pipeline_response.http_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.VirtualNetworkAppliance].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.VirtualNetworkAppliance](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @overload
+    async def update_tags(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: _models.TagsObject,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.VirtualNetworkAppliance:
+        """Updates a virtual network appliance tags.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :param parameters: Parameters supplied to update virtual network appliance tags. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VirtualNetworkAppliance or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkAppliance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_tags(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.VirtualNetworkAppliance:
+        """Updates a virtual network appliance tags.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :param parameters: Parameters supplied to update virtual network appliance tags. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: VirtualNetworkAppliance or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkAppliance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_tags(
+        self,
+        resource_group_name: str,
+        virtual_network_appliance_name: str,
+        parameters: Union[_models.TagsObject, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.VirtualNetworkAppliance:
+        """Updates a virtual network appliance tags.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :param virtual_network_appliance_name: The name of the virtual network appliance. Required.
+        :type virtual_network_appliance_name: str
+        :param parameters: Parameters supplied to update virtual network appliance tags. Is either a
+         TagsObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.network.models.TagsObject or IO[bytes]
+        :return: VirtualNetworkAppliance or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.VirtualNetworkAppliance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.VirtualNetworkAppliance] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "TagsObject")
+
+        _request = build_virtual_network_appliances_update_tags_request(
+            resource_group_name=resource_group_name,
+            virtual_network_appliance_name=virtual_network_appliance_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("VirtualNetworkAppliance", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetworkAppliance"]:
+        """Gets all virtual network appliances in a subscription.
+
+        :return: An iterator like instance of either VirtualNetworkAppliance or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkAppliance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.VirtualNetworkApplianceListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_virtual_network_appliances_list_all_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("VirtualNetworkApplianceListResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetworkAppliance"]:
+        """Gets all virtual network appliances in a resource group.
+
+        :param resource_group_name: The name of the resource group. Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of either VirtualNetworkAppliance or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.network.models.VirtualNetworkAppliance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.VirtualNetworkApplianceListResult] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_virtual_network_appliances_list_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
+
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("VirtualNetworkApplianceListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -59718,7 +62586,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -59847,7 +62715,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -59919,7 +62787,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_request(
@@ -59964,7 +62832,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_delete_request(
@@ -60017,7 +62885,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -60074,7 +62942,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -60201,7 +63069,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -60249,7 +63117,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         )
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualNetworkGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetworkGateway"]:
         """Gets all virtual network gateways by resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -60263,7 +63131,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGatewayListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -60319,7 +63187,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
     @distributed_trace
     def list_connections(
         self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkGatewayConnectionListEntity"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkGatewayConnectionListEntity"]:
         """Gets all the connections in a virtual network gateway.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -60335,7 +63203,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGatewayListConnectionsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -60408,7 +63276,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_reset_request(
@@ -60471,7 +63339,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -60529,7 +63397,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_reset_vpn_client_shared_key_request(
@@ -60583,7 +63451,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -60640,7 +63508,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -60769,7 +63637,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -60831,7 +63699,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -60960,7 +63828,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -61018,7 +63886,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_vpn_profile_package_url_request(
@@ -61072,7 +63940,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61127,7 +63995,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_bgp_peer_status_request(
@@ -61184,7 +64052,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BgpPeerStatusListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61253,7 +64121,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_supported_vpn_devices_request(
@@ -61284,6 +64152,64 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
 
         return deserialized  # type: ignore
 
+    @distributed_trace_async
+    async def list_radius_secrets(
+        self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
+    ) -> _models.RadiusAuthServerListResult:
+        """List all Radius servers with respective radius secrets from virtual network gateway
+        VpnClientConfiguration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param virtual_network_gateway_name: The name of the virtual network gateway. Required.
+        :type virtual_network_gateway_name: str
+        :return: RadiusAuthServerListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.RadiusAuthServerListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.RadiusAuthServerListResult] = kwargs.pop("cls", None)
+
+        _request = build_virtual_network_gateways_list_radius_secrets_request(
+            resource_group_name=resource_group_name,
+            virtual_network_gateway_name=virtual_network_gateway_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RadiusAuthServerListResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     async def _get_learned_routes_initial(
         self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -61298,7 +64224,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_learned_routes_request(
@@ -61353,7 +64279,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.GatewayRouteListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61410,7 +64336,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_advertised_routes_request(
@@ -61468,7 +64394,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.GatewayRouteListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61531,7 +64457,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_resiliency_information_request(
@@ -61600,7 +64526,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.GatewayResiliencyInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61663,7 +64589,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_routes_information_request(
@@ -61732,7 +64658,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.GatewayRouteSetsInformation] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -61794,7 +64720,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -61927,7 +64853,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnClientIPsecParameters] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -61987,7 +64913,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_vpnclient_ipsec_parameters_request(
@@ -62043,7 +64969,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnClientIPsecParameters] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -62173,7 +65099,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
 
@@ -62234,11 +65160,12 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -62276,7 +65203,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -62365,8 +65295,9 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -62427,7 +65358,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -62466,7 +65397,10 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -62555,7 +65489,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -62619,7 +65553,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_failover_all_test_details_request(
@@ -62691,7 +65625,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[List[_models.ExpressRouteFailoverTestDetails]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -62756,7 +65690,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_failover_single_test_details_request(
@@ -62828,7 +65762,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[List[_models.ExpressRouteFailoverSingleTestDetails]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -62887,7 +65821,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_start_express_route_site_failover_simulation_request(
@@ -62947,7 +65881,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -63007,7 +65941,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -63139,7 +66073,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -63197,7 +66131,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_get_vpnclient_connection_health_request(
@@ -63253,7 +66187,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnClientConnectionHealthDetailListResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -63316,7 +66250,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -63440,7 +66374,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -63500,7 +66434,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -63631,7 +66565,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -63687,7 +66621,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_invoke_execute_migration_request(
@@ -63743,7 +66677,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -63796,7 +66730,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_invoke_commit_migration_request(
@@ -63852,7 +66786,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -63905,7 +66839,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateways_invoke_abort_migration_request(
@@ -63961,7 +66895,7 @@ class VirtualNetworkGatewaysOperations:  # pylint: disable=too-many-public-metho
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -64038,7 +66972,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -64174,7 +67108,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -64247,7 +67181,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_connections_get_request(
@@ -64292,7 +67226,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_connections_delete_request(
@@ -64346,7 +67280,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -64403,7 +67337,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -64538,7 +67472,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -64603,7 +67537,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -64742,7 +67676,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionSharedKey] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -64816,7 +67750,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectionSharedKey] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_connections_get_shared_key_request(
@@ -64848,7 +67782,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualNetworkGatewayConnection"]:
+    def list(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.VirtualNetworkGatewayConnection"]:
         """The List VirtualNetworkGatewayConnections operation retrieves all the virtual network gateways
         connections created.
 
@@ -64863,7 +67799,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGatewayConnectionListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -64934,7 +67870,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -65073,7 +68009,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionResetSharedKey] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -65137,11 +68073,12 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -65179,7 +68116,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -65271,8 +68211,9 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -65333,7 +68274,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -65372,7 +68313,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -65464,7 +68408,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -65522,7 +68466,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_connections_get_ike_sas_request(
@@ -65549,7 +68493,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -65578,7 +68525,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -65633,7 +68580,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_connections_reset_connection_request(
@@ -65660,7 +68607,10 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -65688,7 +68638,7 @@ class VirtualNetworkGatewayConnectionsOperations:  # pylint: disable=too-many-pu
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -65765,7 +68715,7 @@ class LocalNetworkGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -65894,7 +68844,7 @@ class LocalNetworkGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -65966,7 +68916,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
 
         _request = build_local_network_gateways_get_request(
@@ -66011,7 +68961,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_local_network_gateways_delete_request(
@@ -66064,7 +69014,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -66187,7 +69137,7 @@ class LocalNetworkGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LocalNetworkGateway] = kwargs.pop("cls", None)
 
@@ -66231,7 +69181,7 @@ class LocalNetworkGatewaysOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.LocalNetworkGateway"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.LocalNetworkGateway"]:
         """Gets all the local network gateways in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -66243,7 +69193,7 @@ class LocalNetworkGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.LocalNetworkGatewayListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -66343,7 +69293,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkGatewayNatRule] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_nat_rules_get_request(
@@ -66394,7 +69344,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -66537,7 +69487,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkGatewayNatRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -66599,7 +69549,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_gateway_nat_rules_delete_request(
@@ -66655,7 +69605,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -66698,7 +69648,7 @@ class VirtualNetworkGatewayNatRulesOperations:
     @distributed_trace
     def list_by_virtual_network_gateway(
         self, resource_group_name: str, virtual_network_gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkGatewayNatRule"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkGatewayNatRule"]:
         """Retrieves all nat rules for a particular virtual network gateway.
 
         :param resource_group_name: The resource group name of the virtual network gateway. Required.
@@ -66714,7 +69664,7 @@ class VirtualNetworkGatewayNatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualNetworkGatewayNatRulesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -66800,7 +69750,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_taps_delete_request(
@@ -66851,7 +69801,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -66913,7 +69863,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
 
         _request = build_virtual_network_taps_get_request(
@@ -66962,7 +69912,7 @@ class VirtualNetworkTapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -67091,7 +70041,7 @@ class VirtualNetworkTapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -67222,7 +70172,7 @@ class VirtualNetworkTapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualNetworkTap] = kwargs.pop("cls", None)
 
@@ -67266,7 +70216,7 @@ class VirtualNetworkTapsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.VirtualNetworkTap"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualNetworkTap"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
         :return: An iterator like instance of either VirtualNetworkTap or the result of cls(response)
@@ -67276,7 +70226,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkTapListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -67331,7 +70281,7 @@ class VirtualNetworkTapsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualNetworkTap"]:
+    ) -> AsyncItemPaged["_models.VirtualNetworkTap"]:
         """Gets all the VirtualNetworkTaps in a subscription.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -67343,7 +70293,7 @@ class VirtualNetworkTapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualNetworkTapListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -67430,7 +70380,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_routers_delete_request(
@@ -67457,7 +70407,10 @@ class VirtualRoutersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -67484,7 +70437,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -67550,7 +70503,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualRouter] = kwargs.pop("cls", None)
 
         _request = build_virtual_routers_get_request(
@@ -67573,7 +70526,10 @@ class VirtualRoutersOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VirtualRouter", pipeline_response.http_response)
@@ -67601,7 +70557,7 @@ class VirtualRoutersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -67640,7 +70596,10 @@ class VirtualRoutersOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -67729,7 +70688,7 @@ class VirtualRoutersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualRouter] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -67777,7 +70736,9 @@ class VirtualRoutersOperations:
         )
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualRouter"]:
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.VirtualRouter"]:
         """Lists all Virtual Routers in a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -67789,7 +70750,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualRouterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -67836,7 +70797,10 @@ class VirtualRoutersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -67844,7 +70808,7 @@ class VirtualRoutersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VirtualRouter"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualRouter"]:
         """Gets all the Virtual Routers in a subscription.
 
         :return: An iterator like instance of either VirtualRouter or the result of cls(response)
@@ -67854,7 +70818,7 @@ class VirtualRoutersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualRouterListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -67900,7 +70864,10 @@ class VirtualRoutersOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -67941,7 +70908,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_router_peerings_delete_request(
@@ -67969,7 +70936,10 @@ class VirtualRouterPeeringsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -67998,7 +70968,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -68065,7 +71035,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualRouterPeering] = kwargs.pop("cls", None)
 
         _request = build_virtual_router_peerings_get_request(
@@ -68088,7 +71058,10 @@ class VirtualRouterPeeringsOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VirtualRouterPeering", pipeline_response.http_response)
@@ -68117,7 +71090,7 @@ class VirtualRouterPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -68157,7 +71130,10 @@ class VirtualRouterPeeringsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -68257,7 +71233,7 @@ class VirtualRouterPeeringsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualRouterPeering] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -68308,7 +71284,7 @@ class VirtualRouterPeeringsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_router_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualRouterPeering"]:
+    ) -> AsyncItemPaged["_models.VirtualRouterPeering"]:
         """Lists all Virtual Router Peerings in a Virtual Router resource.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -68324,7 +71300,7 @@ class VirtualRouterPeeringsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualRouterPeeringListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -68372,7 +71348,10 @@ class VirtualRouterPeeringsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.Error,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -68422,7 +71401,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
 
         _request = build_virtual_wans_get_request(
@@ -68471,7 +71450,7 @@ class VirtualWansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -68598,7 +71577,7 @@ class VirtualWansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -68729,7 +71708,7 @@ class VirtualWansOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualWAN] = kwargs.pop("cls", None)
 
@@ -68786,7 +71765,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_wans_delete_request(
@@ -68839,7 +71818,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -68879,7 +71858,7 @@ class VirtualWansOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualWAN"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualWAN"]:
         """Lists all the VirtualWANs in a resource group.
 
         :param resource_group_name: The resource group name of the VirtualWan. Required.
@@ -68891,7 +71870,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualWANsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -68945,7 +71924,7 @@ class VirtualWansOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VirtualWAN"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualWAN"]:
         """Lists all the VirtualWANs in a subscription.
 
         :return: An iterator like instance of either VirtualWAN or the result of cls(response)
@@ -68955,7 +71934,7 @@ class VirtualWansOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualWANsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -69050,7 +72029,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
 
         _request = build_vpn_sites_get_request(
@@ -69099,7 +72078,7 @@ class VpnSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -69226,7 +72205,7 @@ class VpnSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -69357,7 +72336,7 @@ class VpnSitesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnSite] = kwargs.pop("cls", None)
 
@@ -69414,7 +72393,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_sites_delete_request(
@@ -69465,7 +72444,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -69505,7 +72484,7 @@ class VpnSitesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VpnSite"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VpnSite"]:
         """Lists all the vpnSites in a resource group.
 
         :param resource_group_name: The resource group name of the VpnSite. Required.
@@ -69517,7 +72496,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnSitesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -69571,7 +72550,7 @@ class VpnSitesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VpnSite"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VpnSite"]:
         """Lists all the VpnSites in a subscription.
 
         :return: An iterator like instance of either VpnSite or the result of cls(response)
@@ -69581,7 +72560,7 @@ class VpnSitesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnSitesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -69680,7 +72659,7 @@ class VpnSiteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnSiteLink] = kwargs.pop("cls", None)
 
         _request = build_vpn_site_links_get_request(
@@ -69715,7 +72694,7 @@ class VpnSiteLinksOperations:
     @distributed_trace
     def list_by_vpn_site(
         self, resource_group_name: str, vpn_site_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnSiteLink"]:
+    ) -> AsyncItemPaged["_models.VpnSiteLink"]:
         """Lists all the vpnSiteLinks in a resource group for a vpn site.
 
         :param resource_group_name: The resource group name of the VpnSite. Required.
@@ -69729,7 +72708,7 @@ class VpnSiteLinksOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnSiteLinksResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -69821,7 +72800,7 @@ class VpnSitesConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -69948,7 +72927,7 @@ class VpnSitesConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -70036,7 +73015,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
 
         _request = build_vpn_server_configurations_get_request(
@@ -70085,7 +73064,7 @@ class VpnServerConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -70221,7 +73200,7 @@ class VpnServerConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -70357,7 +73336,7 @@ class VpnServerConfigurationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfiguration] = kwargs.pop("cls", None)
 
@@ -70414,7 +73393,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_server_configurations_delete_request(
@@ -70468,7 +73447,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -70510,7 +73489,7 @@ class VpnServerConfigurationsOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnServerConfiguration"]:
+    ) -> AsyncItemPaged["_models.VpnServerConfiguration"]:
         """Lists all the vpnServerConfigurations in a resource group.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration. Required.
@@ -70524,7 +73503,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnServerConfigurationsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -70578,7 +73557,7 @@ class VpnServerConfigurationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VpnServerConfiguration"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VpnServerConfiguration"]:
         """Lists all the VpnServerConfigurations in a subscription.
 
         :return: An iterator like instance of either VpnServerConfiguration or the result of
@@ -70590,7 +73569,7 @@ class VpnServerConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnServerConfigurationsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -70642,6 +73621,63 @@ class VpnServerConfigurationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @distributed_trace_async
+    async def list_radius_secrets(
+        self, resource_group_name: str, vpn_server_configuration_name: str, **kwargs: Any
+    ) -> _models.RadiusAuthServerListResult:
+        """List all Radius servers with respective radius secrets from VpnServerConfiguration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param vpn_server_configuration_name: The name of the VpnServerConfiguration. Required.
+        :type vpn_server_configuration_name: str
+        :return: RadiusAuthServerListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.network.models.RadiusAuthServerListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[_models.RadiusAuthServerListResult] = kwargs.pop("cls", None)
+
+        _request = build_vpn_server_configurations_list_radius_secrets_request(
+            resource_group_name=resource_group_name,
+            vpn_server_configuration_name=vpn_server_configuration_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("RadiusAuthServerListResult", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
 
 class ConfigurationPolicyGroupsOperations:
     """
@@ -70681,7 +73717,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -70828,7 +73864,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnServerConfigurationPolicyGroup] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -70894,7 +73930,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_configuration_policy_groups_delete_request(
@@ -70954,7 +73990,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -71026,7 +74062,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnServerConfigurationPolicyGroup] = kwargs.pop("cls", None)
 
         _request = build_configuration_policy_groups_get_request(
@@ -71061,7 +74097,7 @@ class ConfigurationPolicyGroupsOperations:
     @distributed_trace
     def list_by_vpn_server_configuration(
         self, resource_group_name: str, vpn_server_configuration_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnServerConfigurationPolicyGroup"]:
+    ) -> AsyncItemPaged["_models.VpnServerConfigurationPolicyGroup"]:
         """Lists all the configurationPolicyGroups in a resource group for a vpnServerConfiguration.
 
         :param resource_group_name: The resource group name of the VpnServerConfiguration. Required.
@@ -71077,7 +74113,7 @@ class ConfigurationPolicyGroupsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnServerConfigurationPolicyGroupsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -71174,7 +74210,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
 
         _request = build_virtual_hubs_get_request(
@@ -71223,7 +74259,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -71350,7 +74386,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -71481,7 +74517,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHub] = kwargs.pop("cls", None)
 
@@ -71538,7 +74574,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_hubs_delete_request(
@@ -71591,7 +74627,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -71631,7 +74667,7 @@ class VirtualHubsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VirtualHub"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VirtualHub"]:
         """Lists all the VirtualHubs in a resource group.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -71643,7 +74679,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualHubsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -71697,7 +74733,7 @@ class VirtualHubsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VirtualHub"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VirtualHub"]:
         """Lists all the VirtualHubs in a subscription.
 
         :return: An iterator like instance of either VirtualHub or the result of cls(response)
@@ -71707,7 +74743,7 @@ class VirtualHubsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualHubsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -71777,11 +74813,12 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if effective_routes_parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if effective_routes_parameters else None
         _json = None
         _content = None
         if isinstance(effective_routes_parameters, (IOBase, bytes)):
@@ -71914,8 +74951,9 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if effective_routes_parameters else None
         cls: ClsType[_models.VirtualHubEffectiveRouteList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -71978,7 +75016,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -72111,7 +75149,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EffectiveRouteMapRouteList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -72175,7 +75213,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -72309,7 +75347,7 @@ class VirtualHubsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EffectiveRouteMapRouteList] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -72402,7 +75440,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RouteMap] = kwargs.pop("cls", None)
 
         _request = build_route_maps_get_request(
@@ -72453,7 +75491,7 @@ class RouteMapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -72590,7 +75628,7 @@ class RouteMapsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RouteMap] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -72652,7 +75690,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_route_maps_delete_request(
@@ -72708,7 +75746,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -72749,7 +75787,9 @@ class RouteMapsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any) -> AsyncIterable["_models.RouteMap"]:
+    def list(
+        self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.RouteMap"]:
         """Retrieves the details of all RouteMaps.
 
         :param resource_group_name: The resource group name of the RouteMap's resource group'.
@@ -72764,7 +75804,7 @@ class RouteMapsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListRouteMapsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -72857,7 +75897,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -73005,7 +76045,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubVirtualNetworkConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -73067,7 +76107,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_hub_virtual_network_connections_delete_request(
@@ -73123,7 +76163,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -73190,7 +76230,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.HubVirtualNetworkConnection] = kwargs.pop("cls", None)
 
         _request = build_hub_virtual_network_connections_get_request(
@@ -73225,7 +76265,7 @@ class HubVirtualNetworkConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.HubVirtualNetworkConnection"]:
+    ) -> AsyncItemPaged["_models.HubVirtualNetworkConnection"]:
         """Retrieves the details of all HubVirtualNetworkConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -73241,7 +76281,7 @@ class HubVirtualNetworkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListHubVirtualNetworkConnectionsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -73338,7 +76378,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
 
         _request = build_vpn_gateways_get_request(
@@ -73387,7 +76427,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -73516,7 +76556,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -73581,7 +76621,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -73710,7 +76750,7 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -73769,7 +76809,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_gateways_delete_request(
@@ -73820,7 +76860,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -73873,7 +76913,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_gateways_reset_request(
@@ -73931,7 +76971,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -73993,11 +77033,12 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -74124,8 +77165,9 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -74186,11 +77228,12 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -74316,8 +77359,9 @@ class VpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -74361,7 +77405,7 @@ class VpnGatewaysOperations:
         return AsyncLROPoller[str](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.VpnGateway"]:
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.VpnGateway"]:
         """Lists all the VpnGateways in a resource group.
 
         :param resource_group_name: The resource group name of the VpnGateway. Required.
@@ -74373,7 +77417,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -74427,7 +77471,7 @@ class VpnGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.VpnGateway"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.VpnGateway"]:
         """Lists all the VpnGateways in a subscription.
 
         :return: An iterator like instance of either VpnGateway or the result of cls(response)
@@ -74437,7 +77481,7 @@ class VpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -74528,7 +77572,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_link_connections_reset_connection_request(
@@ -74557,7 +77601,10 @@ class VpnLinkConnectionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -74593,7 +77640,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -74642,7 +77689,7 @@ class VpnLinkConnectionsOperations:
         connection_name: str,
         link_connection_name: str,
         **kwargs: Any
-    ) -> AsyncIterable["_models.ConnectionSharedKeyResult"]:
+    ) -> AsyncItemPaged["_models.ConnectionSharedKeyResult"]:
         """Lists all shared keys of VpnLink connection specified.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -74662,7 +77709,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectionSharedKeyResultList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -74752,7 +77799,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectionSharedKeyResult] = kwargs.pop("cls", None)
 
         _request = build_vpn_link_connections_get_default_shared_key_request(
@@ -74805,7 +77852,7 @@ class VpnLinkConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -74965,7 +78012,7 @@ class VpnLinkConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConnectionSharedKeyResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -75048,7 +78095,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ConnectionSharedKeyResult] = kwargs.pop("cls", None)
 
         _request = build_vpn_link_connections_list_default_shared_key_request(
@@ -75100,7 +78147,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_link_connections_get_ike_sas_request(
@@ -75129,7 +78176,10 @@ class VpnLinkConnectionsOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -75165,7 +78215,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75211,7 +78261,7 @@ class VpnLinkConnectionsOperations:
     @distributed_trace
     def list_by_vpn_connection(
         self, resource_group_name: str, gateway_name: str, connection_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnSiteLinkConnection"]:
+    ) -> AsyncItemPaged["_models.VpnSiteLinkConnection"]:
         """Retrieves all vpn site link connections for a particular virtual wan vpn gateway vpn
         connection.
 
@@ -75230,7 +78280,7 @@ class VpnLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnSiteLinkConnectionsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -75332,7 +78382,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnConnection] = kwargs.pop("cls", None)
 
         _request = build_vpn_connections_get_request(
@@ -75383,7 +78433,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -75525,7 +78575,7 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -75587,7 +78637,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_connections_delete_request(
@@ -75643,7 +78693,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75702,11 +78752,12 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -75843,8 +78894,9 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -75907,11 +78959,12 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/json"
+        content_type = content_type or "application/json" if parameters else None
         _json = None
         _content = None
         if isinstance(parameters, (IOBase, bytes)):
@@ -76048,8 +79101,9 @@ class VpnConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if parameters else None
         cls: ClsType[str] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -76096,7 +79150,7 @@ class VpnConnectionsOperations:
     @distributed_trace
     def list_by_vpn_gateway(
         self, resource_group_name: str, gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnConnection"]:
+    ) -> AsyncItemPaged["_models.VpnConnection"]:
         """Retrieves all vpn connections for a particular virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway. Required.
@@ -76110,7 +79164,7 @@ class VpnConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnConnectionsResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -76218,7 +79272,7 @@ class VpnSiteLinkConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnSiteLinkConnection] = kwargs.pop("cls", None)
 
         _request = build_vpn_site_link_connections_get_request(
@@ -76298,7 +79352,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnGatewayNatRule] = kwargs.pop("cls", None)
 
         _request = build_nat_rules_get_request(
@@ -76349,7 +79403,7 @@ class NatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -76489,7 +79543,7 @@ class NatRulesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnGatewayNatRule] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -76551,7 +79605,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_nat_rules_delete_request(
@@ -76607,7 +79661,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -76650,7 +79704,7 @@ class NatRulesOperations:
     @distributed_trace
     def list_by_vpn_gateway(
         self, resource_group_name: str, gateway_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VpnGatewayNatRule"]:
+    ) -> AsyncItemPaged["_models.VpnGatewayNatRule"]:
         """Retrieves all nat rules for a particular virtual wan vpn gateway.
 
         :param resource_group_name: The resource group name of the VpnGateway. Required.
@@ -76664,7 +79718,7 @@ class NatRulesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVpnGatewayNatRulesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -76761,7 +79815,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
 
         _request = build_p2_svpn_gateways_get_request(
@@ -76810,7 +79864,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -76939,7 +79993,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -77004,7 +80058,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -77133,7 +80187,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -77192,7 +80246,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_p2_svpn_gateways_delete_request(
@@ -77243,7 +80297,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -77283,7 +80337,9 @@ class P2SVpnGatewaysOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.P2SVpnGateway"]:
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.P2SVpnGateway"]:
         """Lists all the P2SVpnGateways in a resource group.
 
         :param resource_group_name: The resource group name of the P2SVpnGateway. Required.
@@ -77295,7 +80351,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListP2SVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -77349,7 +80405,7 @@ class P2SVpnGatewaysOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.P2SVpnGateway"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.P2SVpnGateway"]:
         """Lists all the P2SVpnGateways in a subscription.
 
         :return: An iterator like instance of either P2SVpnGateway or the result of cls(response)
@@ -77359,7 +80415,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListP2SVpnGatewaysResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -77423,7 +80479,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_p2_svpn_gateways_reset_request(
@@ -77477,7 +80533,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -77538,7 +80594,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -77667,7 +80723,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VpnProfileResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -77727,7 +80783,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_p2_svpn_gateways_get_p2_s_vpn_connection_health_request(
@@ -77782,7 +80838,7 @@ class P2SVpnGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.P2SVpnGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -77843,7 +80899,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -77975,7 +81031,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.P2SVpnConnectionHealth] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -78039,7 +81095,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -78166,7 +81222,7 @@ class P2SVpnGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -78242,7 +81298,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:  # pylint: disa
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_vpn_server_configurations_associated_with_virtual_wan_list_request(
@@ -78298,7 +81354,7 @@ class VpnServerConfigurationsAssociatedWithVirtualWanOperations:  # pylint: disa
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VpnServerConfigurationsResponse] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -78388,7 +81444,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.VirtualHubRouteTableV2] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_route_table_v2_s_get_request(
@@ -78411,7 +81467,10 @@ class VirtualHubRouteTableV2SOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("VirtualHubRouteTableV2", pipeline_response.http_response)
@@ -78440,7 +81499,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -78480,7 +81539,10 @@ class VirtualHubRouteTableV2SOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -78584,7 +81646,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.VirtualHubRouteTableV2] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -78646,7 +81708,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_route_table_v2_s_delete_request(
@@ -78674,7 +81736,10 @@ class VirtualHubRouteTableV2SOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.Error, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.Error,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
@@ -78703,7 +81768,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -78746,7 +81811,7 @@ class VirtualHubRouteTableV2SOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.VirtualHubRouteTableV2"]:
+    ) -> AsyncItemPaged["_models.VirtualHubRouteTableV2"]:
         """Retrieves the details of all VirtualHubRouteTableV2s.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -78762,7 +81827,7 @@ class VirtualHubRouteTableV2SOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualHubRouteTableV2SResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -78855,7 +81920,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteGatewayList] = kwargs.pop("cls", None)
 
         _request = build_express_route_gateways_list_by_subscription_request(
@@ -78905,7 +81970,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteGatewayList] = kwargs.pop("cls", None)
 
         _request = build_express_route_gateways_list_by_resource_group_request(
@@ -78953,7 +82018,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -79083,7 +82148,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -79148,7 +82213,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -79277,7 +82342,7 @@ class ExpressRouteGatewaysOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -79349,7 +82414,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteGateway] = kwargs.pop("cls", None)
 
         _request = build_express_route_gateways_get_request(
@@ -79394,7 +82459,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_gateways_delete_request(
@@ -79448,7 +82513,7 @@ class ExpressRouteGatewaysOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -79526,7 +82591,7 @@ class ExpressRouteConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -79668,7 +82733,7 @@ class ExpressRouteConnectionsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ExpressRouteConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -79743,7 +82808,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteConnection] = kwargs.pop("cls", None)
 
         _request = build_express_route_connections_get_request(
@@ -79789,7 +82854,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_express_route_connections_delete_request(
@@ -79845,7 +82910,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -79910,7 +82975,7 @@ class ExpressRouteConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ExpressRouteConnectionList] = kwargs.pop("cls", None)
 
         _request = build_express_route_connections_list_request(
@@ -79980,7 +83045,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -80130,7 +83195,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NetworkVirtualApplianceConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -80205,7 +83270,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceConnection] = kwargs.pop("cls", None)
 
         _request = build_network_virtual_appliance_connections_get_request(
@@ -80251,7 +83316,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_network_virtual_appliance_connections_delete_request(
@@ -80311,7 +83376,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -80354,7 +83419,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
     @distributed_trace
     def list(
         self, resource_group_name: str, network_virtual_appliance_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.NetworkVirtualApplianceConnection"]:
+    ) -> AsyncItemPaged["_models.NetworkVirtualApplianceConnection"]:
         """Lists NetworkVirtualApplianceConnections under the NVA.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -80370,7 +83435,7 @@ class NetworkVirtualApplianceConnectionsOperations:  # pylint: disable=name-too-
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.NetworkVirtualApplianceConnectionList] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -80471,7 +83536,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.BgpConnection] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_bgp_connection_get_request(
@@ -80522,7 +83587,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -80662,7 +83727,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.BgpConnection] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -80724,7 +83789,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_bgp_connection_delete_request(
@@ -80780,7 +83845,7 @@ class VirtualHubBgpConnectionOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -80843,7 +83908,7 @@ class VirtualHubBgpConnectionsOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.BgpConnection"]:
+    ) -> AsyncItemPaged["_models.BgpConnection"]:
         """Retrieves the details of all VirtualHubBgpConnections.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -80857,7 +83922,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualHubBgpConnectionResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -80925,7 +83990,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_bgp_connections_list_learned_routes_request(
@@ -80965,7 +84030,7 @@ class VirtualHubBgpConnectionsOperations:
     @distributed_trace_async
     async def begin_list_learned_routes(
         self, resource_group_name: str, hub_name: str, connection_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[Dict[str, List[_models.PeerRoute]]]:
+    ) -> AsyncLROPoller[dict[str, List[_models.PeerRoute]]]:
         """Retrieves a list of routes the virtual hub bgp connection has learned.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -80983,8 +84048,8 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
-        cls: ClsType[Dict[str, List[_models.PeerRoute]]] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[dict[str, List[_models.PeerRoute]]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -81017,13 +84082,13 @@ class VirtualHubBgpConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[Dict[str, List[_models.PeerRoute]]].from_continuation_token(
+            return AsyncLROPoller[dict[str, List[_models.PeerRoute]]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[Dict[str, List[_models.PeerRoute]]](
+        return AsyncLROPoller[dict[str, List[_models.PeerRoute]]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -81041,7 +84106,7 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_bgp_connections_list_advertised_routes_request(
@@ -81081,7 +84146,7 @@ class VirtualHubBgpConnectionsOperations:
     @distributed_trace_async
     async def begin_list_advertised_routes(
         self, resource_group_name: str, hub_name: str, connection_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[Dict[str, List[_models.PeerRoute]]]:
+    ) -> AsyncLROPoller[dict[str, List[_models.PeerRoute]]]:
         """Retrieves a list of routes the virtual hub bgp connection is advertising to the specified peer.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -81099,8 +84164,8 @@ class VirtualHubBgpConnectionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
-        cls: ClsType[Dict[str, List[_models.PeerRoute]]] = kwargs.pop("cls", None)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+        cls: ClsType[dict[str, List[_models.PeerRoute]]] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -81133,13 +84198,13 @@ class VirtualHubBgpConnectionsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[Dict[str, List[_models.PeerRoute]]].from_continuation_token(
+            return AsyncLROPoller[dict[str, List[_models.PeerRoute]]].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[Dict[str, List[_models.PeerRoute]]](
+        return AsyncLROPoller[dict[str, List[_models.PeerRoute]]](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -81190,7 +84255,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.HubIpConfiguration] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_ip_configuration_get_request(
@@ -81241,7 +84306,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -81381,7 +84446,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubIpConfiguration] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -81443,7 +84508,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_virtual_hub_ip_configuration_delete_request(
@@ -81499,7 +84564,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -81542,7 +84607,7 @@ class VirtualHubIpConfigurationOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.HubIpConfiguration"]:
+    ) -> AsyncItemPaged["_models.HubIpConfiguration"]:
         """Retrieves the details of all VirtualHubIpConfigurations.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -81556,7 +84621,7 @@ class VirtualHubIpConfigurationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListVirtualHubIpConfigurationResults] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -81649,7 +84714,7 @@ class HubRouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -81786,7 +84851,7 @@ class HubRouteTablesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.HubRouteTable] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -81861,7 +84926,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.HubRouteTable] = kwargs.pop("cls", None)
 
         _request = build_hub_route_tables_get_request(
@@ -81907,7 +84972,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_hub_route_tables_delete_request(
@@ -81963,7 +85028,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -82006,7 +85071,7 @@ class HubRouteTablesOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.HubRouteTable"]:
+    ) -> AsyncItemPaged["_models.HubRouteTable"]:
         """Retrieves the details of all RouteTables.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -82020,7 +85085,7 @@ class HubRouteTablesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListHubRouteTablesResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -82113,7 +85178,7 @@ class RoutingIntentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -82255,7 +85320,7 @@ class RoutingIntentOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RoutingIntent] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -82330,7 +85395,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.RoutingIntent] = kwargs.pop("cls", None)
 
         _request = build_routing_intent_get_request(
@@ -82376,7 +85441,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_routing_intent_delete_request(
@@ -82432,7 +85497,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -82475,7 +85540,7 @@ class RoutingIntentOperations:
     @distributed_trace
     def list(
         self, resource_group_name: str, virtual_hub_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.RoutingIntent"]:
+    ) -> AsyncItemPaged["_models.RoutingIntent"]:
         """Retrieves the details of all RoutingIntent child resources of the VirtualHub.
 
         :param resource_group_name: The resource group name of the VirtualHub. Required.
@@ -82489,7 +85554,7 @@ class RoutingIntentOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.ListRoutingIntentResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -82564,7 +85629,7 @@ class WebApplicationFirewallPoliciesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncIterable["_models.WebApplicationFirewallPolicy"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.WebApplicationFirewallPolicy"]:
         """Lists all of the protection policies within a resource group.
 
         :param resource_group_name: The name of the resource group. Required.
@@ -82578,7 +85643,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.WebApplicationFirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -82632,7 +85697,7 @@ class WebApplicationFirewallPoliciesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_all(self, **kwargs: Any) -> AsyncIterable["_models.WebApplicationFirewallPolicy"]:
+    def list_all(self, **kwargs: Any) -> AsyncItemPaged["_models.WebApplicationFirewallPolicy"]:
         """Gets all the WAF policies in a subscription.
 
         :return: An iterator like instance of either WebApplicationFirewallPolicy or the result of
@@ -82644,7 +85709,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.WebApplicationFirewallPolicyListResult] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -82721,7 +85786,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[_models.WebApplicationFirewallPolicy] = kwargs.pop("cls", None)
 
         _request = build_web_application_firewall_policies_get_request(
@@ -82836,7 +85901,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.WebApplicationFirewallPolicy] = kwargs.pop("cls", None)
 
@@ -82891,7 +85956,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_web_application_firewall_policies_delete_request(
@@ -82942,7 +86007,7 @@ class WebApplicationFirewallPoliciesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-07-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

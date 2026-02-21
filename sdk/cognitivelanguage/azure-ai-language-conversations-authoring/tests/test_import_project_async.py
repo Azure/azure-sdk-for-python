@@ -40,7 +40,7 @@ class TestConversationsImportCaseAsync(TestConversations):
     async def test_import_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
         async with client:
-            project_name = "PythonImportProject0828"
+            project_name = "PythonImportProject1113"
             project_client = client.get_project_client(project_name)
 
             # ----- Build assets using objects -----

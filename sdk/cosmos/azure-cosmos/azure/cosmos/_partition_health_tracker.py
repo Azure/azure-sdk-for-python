@@ -44,6 +44,8 @@ UNAVAILABLE_INTERVAL = "unavailableInterval"
 LAST_UNAVAILABILITY_CHECK_TIME_STAMP = "lastUnavailabilityCheckTimeStamp"
 HEALTH_STATUS = "healthStatus"
 
+#cspell:ignore PPAF
+
 class _PartitionHealthInfo(object):
     """
     This internal class keeps the health and statistics for a partition.
@@ -299,3 +301,28 @@ class _PartitionHealthTracker(object):
         for locations in self.pk_range_wrapper_to_health_info.values():
             for health_info in locations.values():
                 health_info.reset_failure_rate_health_stats()
+
+class _PPAFPartitionThresholdsTracker(object):
+    """
+    This internal class implements the logic for tracking consecutive failure thresholds for a partition
+    in the context for per-partition automatic failover. This tracker is only used in the context of 408, 5xx and
+    ServiceResponseError errors as a defensive measure to avoid failing over too early without confirmation
+    from the service.
+    """
+
+    def __init__(self) -> None:
+        self.pk_range_wrapper_to_failure_count: dict[PartitionKeyRangeWrapper, int] = {}
+        self._failure_lock = threading.Lock()
+
+    def add_failure(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+        with self._failure_lock:
+            if pk_range_wrapper not in self.pk_range_wrapper_to_failure_count:
+                self.pk_range_wrapper_to_failure_count[pk_range_wrapper] = 0
+            self.pk_range_wrapper_to_failure_count[pk_range_wrapper] += 1
+
+    def clear_pk_failures(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> None:
+        if pk_range_wrapper in self.pk_range_wrapper_to_failure_count:
+            del self.pk_range_wrapper_to_failure_count[pk_range_wrapper]
+
+    def get_pk_failures(self, pk_range_wrapper: PartitionKeyRangeWrapper) -> int:
+        return self.pk_range_wrapper_to_failure_count.get(pk_range_wrapper, 0)

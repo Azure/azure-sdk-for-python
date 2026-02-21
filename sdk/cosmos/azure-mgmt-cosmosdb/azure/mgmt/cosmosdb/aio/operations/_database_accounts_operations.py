@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -57,7 +57,8 @@ from ...operations._database_accounts_operations import (
 from .._configuration import CosmosDBManagementClientConfiguration
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
@@ -844,7 +845,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.DatabaseAccountGetResults"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.DatabaseAccountGetResults"]:
         """Lists all the Azure Cosmos DB database accounts available under the subscription.
 
         :return: An iterator like instance of either DatabaseAccountGetResults or the result of
@@ -922,7 +923,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.DatabaseAccountGetResults"]:
+    ) -> AsyncItemPaged["_models.DatabaseAccountGetResults"]:
         """Lists all the Azure Cosmos DB database accounts available under the given resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1172,7 +1173,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1368,7 +1372,10 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1866,7 +1873,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_metrics(
         self, resource_group_name: str, account_name: str, filter: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Metric"]:
+    ) -> AsyncItemPaged["_models.Metric"]:
         """Retrieves the metrics determined by the given filter for the given database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1954,7 +1961,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_usages(
         self, resource_group_name: str, account_name: str, filter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.Usage"]:
+    ) -> AsyncItemPaged["_models.Usage"]:
         """Retrieves the usages (most recent data) for the given database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2042,7 +2049,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_metric_definitions(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.MetricDefinition"]:
+    ) -> AsyncItemPaged["_models.MetricDefinition"]:
         """Retrieves metric definitions for the given database account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.

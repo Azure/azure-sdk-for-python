@@ -16,6 +16,7 @@ from typing import Dict, List, Tuple, Any, Optional, Union
 
 # this assumes the presence of "packaging"
 from packaging.requirements import Requirement
+from packaging.version import Version, InvalidVersion
 from setuptools import Extension
 
 from ci_tools.variables import str_to_bool
@@ -192,6 +193,17 @@ def _add_optional_fields(pkg_info, metadata: Dict[str, Any]) -> None:
                 metadata[field] = value
 
 
+def get_dirs_to_skip(subdirs: List[str]) -> List[str]:
+    """
+    Given a list of subdirectories, return those that are not part of the package source and should be skipped.
+
+    :param List[str] subdirs: List of subdirectory names
+    :rtype: List[str]
+    :return: Filtered list of subdirectory names to skip
+    """
+    return [x for x in subdirs if (x.startswith(("_", ".")) or x == "build" or x in EXCLUDE or x.endswith(".egg-info"))]
+
+
 def discover_namespace(package_root_path: str) -> Optional[str]:
     """
     Discover the true namespace of a package by walking through its directory structure
@@ -207,11 +219,7 @@ def discover_namespace(package_root_path: str) -> Optional[str]:
     namespace = None
 
     for root, subdirs, files in os.walk(package_root_path):
-        # Ignore any modules with name starts with "_"
-        # For e.g. _generated, _shared etc
-        # Ignore build, which is created when installing a package from source.
-        # Ignore tests, which may have an __init__.py but is not part of the package.
-        dirs_to_skip = [x for x in subdirs if x.startswith(("_", ".", "test", "build")) or x in EXCLUDE]
+        dirs_to_skip = get_dirs_to_skip(subdirs)
         for d in dirs_to_skip:
             logging.debug("Dirs to skip: {}".format(dirs_to_skip))
             subdirs.remove(d)
@@ -344,6 +352,9 @@ class ParsedSetup:
     def get_build_config(self) -> Optional[Dict[str, Any]]:
         return get_build_config(self.folder)
 
+    def get_conda_config(self) -> Optional[Dict[str, Any]]:
+        return get_conda_config(self.folder)
+
     def get_config_setting(self, setting: str, default: Any = True) -> Any:
         return get_config_setting(self.folder, setting, default)
 
@@ -376,7 +387,7 @@ class ParsedSetup:
 
 def update_build_config(package_path: str, new_build_config: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Attempts to update a pyproject.toml's [tools.azure-sdk-tools] section with a new check configuration.
+    Attempts to update a pyproject.toml's [tool.azure-sdk-tools] section with a new check configuration.
 
     This function can only append or override existing check values. It cannot delete them.
     """
@@ -443,6 +454,27 @@ def get_build_config(package_path: str) -> Optional[Dict[str, Any]]:
                     tool_configs = toml_dict["tool"]
                     if "azure-sdk-build" in tool_configs:
                         return tool_configs["azure-sdk-build"]
+        except:
+            return {}
+
+
+def get_conda_config(package_path: str) -> Optional[Dict[str, Any]]:
+    """
+    Attempts to retrieve all values within [tool.azure-sdk-conda] section of a pyproject.toml.
+    """
+    if os.path.isfile(package_path):
+        package_path = os.path.dirname(package_path)
+
+    toml_file = os.path.join(package_path, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        try:
+            with open(toml_file, "rb") as f:
+                toml_dict = toml.load(f)
+                if "tool" in toml_dict:
+                    tool_configs = toml_dict["tool"]
+                    if "azure-sdk-conda" in tool_configs:
+                        return tool_configs["azure-sdk-conda"]
         except:
             return {}
 
@@ -695,7 +727,8 @@ def get_version_py(setup_path: str) -> Optional[str]:
 
     # Find path to _version.py recursively
     for root, dirs, files in os.walk(file_path):
-        dirs[:] = [d for d in dirs if d not in EXCLUDE and not d.endswith(".egg-info") and not d.startswith(".")]
+        dirs_to_skip = get_dirs_to_skip(dirs)
+        dirs[:] = [d for d in dirs if d not in dirs_to_skip]
 
         if VERSION_PY in files:
             return os.path.join(root, VERSION_PY)

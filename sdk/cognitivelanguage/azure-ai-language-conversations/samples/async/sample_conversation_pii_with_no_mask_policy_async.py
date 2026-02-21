@@ -42,21 +42,14 @@ from azure.ai.language.conversations.models import (
     PiiOperationAction,
     ConversationPiiActionContent,
     NoMaskPolicyType,
-    AnalyzeConversationOperationResult,
     ConversationPiiOperationResult,
-    ConversationalPiiResult,
-    ConversationPiiItemResult,
-    NamedEntity,
-    ConversationError,
 )
 
 
-async def sample_conversation_pii_with_no_mask_policy_async():
+async def sample_conv_pii_no_mask_policy_async():
     # settings
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     credential = DefaultAzureCredential()
-
-    detected_entities = []
 
     async with ConversationAnalysisClient(endpoint, credential=credential) as client:
         # build input
@@ -67,10 +60,16 @@ async def sample_conversation_pii_with_no_mask_policy_async():
                     language="en",
                     conversation_items=[
                         TextConversationItem(
-                            id="1", participant_id="Agent_1", role=ParticipantRole.AGENT, text="Can you provide your name?"
+                            id="1",
+                            participant_id="Agent_1",
+                            role=ParticipantRole.AGENT,
+                            text="Can you provide your name?",
                         ),
                         TextConversationItem(
-                            id="2", participant_id="Customer_1", role=ParticipantRole.CUSTOMER, text="Hi, my name is John Doe."
+                            id="2",
+                            participant_id="Customer_1",
+                            role=ParticipantRole.CUSTOMER,
+                            text="Hi, my name is John Doe.",
                         ),
                         TextConversationItem(
                             id="3",
@@ -118,22 +117,14 @@ async def sample_conversation_pii_with_no_mask_policy_async():
                         for item in conversation.conversation_items or []:
                             # NoMaskPolicyType returns original text (no redaction)
                             returned_text = (item.redacted_content.text or "").strip()
-                            if not returned_text:
-                                continue
+                            print(f"Returned text: '{returned_text}'")
 
-                            if item.entities:
-                                for entity in item.entities:
-                                    ent_text = entity.text or ""
-                                    detected_entities.append(ent_text)
-                                    if ent_text not in returned_text:
-                                        print(
-                                            f"WARNING: Expected entity '{ent_text}' in returned text but not found."
-                                        )
+
 # [END conversation_pii_with_no_mask_policy_async]
 
 
 async def main():
-    await sample_conversation_pii_with_no_mask_policy_async()
+    await sample_conv_pii_no_mask_policy_async()
 
 
 if __name__ == "__main__":

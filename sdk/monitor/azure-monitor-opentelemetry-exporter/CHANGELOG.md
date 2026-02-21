@@ -1,5 +1,93 @@
 # Release History
 
+## 1.0.0b49 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b48 (2026-02-05)
+
+### Bugs Fixed
+- Fix CPU usage calculation logic for live metrics
+  ([#45005](https://github.com/Azure/azure-sdk-for-python/pull/45005))
+
+### Other Changes
+- Fix Ingestion-Side Sampling Disk Persist Behavior
+  ([#44980](https://github.com/Azure/azure-sdk-for-python/pull/44980))
+
+## 1.0.0b47 (2026-02-03)
+
+### Features Added
+- Rename metric names for customer sdk stats and set it on by default
+  ([#44849](https://github.com/Azure/azure-sdk-for-python/pull/44849))
+- Add auto detection for application ID from connection string if not set 
+  ([#44644](https://github.com/Azure/azure-sdk-for-python/pull/44644))
+- Add support for user id and authId
+  ([#44662](https://github.com/Azure/azure-sdk-for-python/pull/44662))
+
+### Bugs Fixed
+- Add custom metric mapping for customer sdkstats metric names to preserve casing
+  ([#44855](https://github.com/Azure/azure-sdk-for-python/pull/44855))
+- Fix customer SDK stats metrics to display drop code and retry code enum values without the prefix
+  ([#44852](https://github.com/Azure/azure-sdk-for-python/pull/44852))
+
+### Other Changes
+- Feature tracking for when customer sdkstats is disabled by the user
+  ([#44888](https://github.com/Azure/azure-sdk-for-python/pull/44888))
+- Update maximum size of custom properties
+  ([#44684](https://github.com/Azure/azure-sdk-for-python/pull/44684))
+- Declare support for Python 3.13 and 3.14
+  ([#44550](https://github.com/Azure/azure-sdk-for-python/pull/44550))
+
+## 1.0.0b46 (2025-12-04)
+
+### Breaking Changes
+- Fix to accommodate breaking log changes from Otel
+  ([#43626](https://github.com/Azure/azure-sdk-for-python/pull/43626))
+- Pin OpenTelemetry versions to guard against upstream logging breaking changes
+  ([#44220](https://github.com/Azure/azure-sdk-for-python/pull/44220))
+
+### Bugs Fixed
+- Fixes LogDeprecated warnings - `LogDeprecatedInitWarning: LogRecord init with trace_id, span_id, and/or trace_flags is deprecated since 1.35.0. Use context instead`
+  ([#44090](https://github.com/Azure/azure-sdk-for-python/pull/44090))
+- Fixes issue #43442: SyntaxWarning: 'return' in a 'finally' block in azure-monitor-opentelemetry-exporter with Python 3.14
+  ([#44053](https://github.com/Azure/azure-sdk-for-python/pull/44053))
+
+### Other Changes
+- Commented OneSettings configuration manager temporarily to avoid user impact during feature testing.
+  ([#44179](https://github.com/Azure/azure-sdk-for-python/pull/44179))
+
+## 1.0.0b45 (2025-11-14)
+
+### Features Added
+- Added new log record processor to support Trace Based Sampling
+  ([#43811](https://github.com/Azure/azure-sdk-for-python/pull/43811))
+- Added Operation Name Propagation for Dependencies and Logs
+  ([#43588](https://github.com/Azure/azure-sdk-for-python/pull/43588))
+- Added local storage support for multiple users on the same Linux system
+  ([#43483](https://github.com/Azure/azure-sdk-for-python/pull/43483))
+
+### Bugs Fixed
+- Modified logic for message body on Microsoft.ApplicationInsights.MessageData to include default message for messages with empty body and export logs
+  ([#43091](https://github.com/Azure/azure-sdk-for-python/pull/43091))
+
+### Other Changes
+- Unpinned fixedint dependency
+  ([#43475](https://github.com/Azure/azure-sdk-for-python/pull/43475))
+- Remove fixedint dependency
+  ([#43659](https://github.com/Azure/azure-sdk-for-python/pull/43659))
+
+## 1.0.0b44 (2025-10-14)
+
+### Bugs Fixed
+- Fixed issue where AAD authentication for Live Metrics failed for users in sovereign cloud environments
+  ([#43392](https://github.com/Azure/azure-sdk-for-python/pull/43392))
+
 ## 1.0.0b43 (2025-10-08)
 
 ### Features Added

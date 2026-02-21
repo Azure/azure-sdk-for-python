@@ -13,7 +13,7 @@ from azure.ai.evaluation import (
 
 
 async def quality_response_async_mock(*args, **kwargs):
-    return (
+    llm_output = (
         "<S0>Let's think step by step: The response 'Honolulu' is a single word. "
         "It does not form a complete sentence, lacks grammatical structure, and does not "
         "convey any clear idea or message. It is not possible to assess vocabulary range, "
@@ -23,10 +23,11 @@ async def quality_response_async_mock(*args, **kwargs):
         " fluency. It is largely incomprehensible and does not meet the criteria for higher fluency "
         "levels.</S1><S2>1</S2>"
     )
+    return {"llm_output": llm_output}
 
 
 async def quality_no_response_async_mock():
-    return "1"
+    return {"llm_output": "1"}
 
 
 @pytest.mark.usefixtures("mock_model_config")
@@ -45,10 +46,10 @@ class TestBuiltInEvaluators:
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
         fluency_eval._flow = MagicMock(return_value=quality_response_async_mock())
 
-        score = fluency_eval(response={"bar": "2"})
+        with pytest.raises(EvaluationException) as exc_info:
+            fluency_eval(response={"bar": "2"})
 
-        assert score is not None
-        assert score["fluency"] == score["gpt_fluency"] == 1
+        assert "Response must be a string or a list of messages" in str(exc_info.value)
 
     def test_fluency_evaluator_empty_string(self, mock_model_config):
         fluency_eval = FluencyEvaluator(model_config=mock_model_config)
@@ -57,9 +58,7 @@ class TestBuiltInEvaluators:
         with pytest.raises(EvaluationException) as exc_info:
             fluency_eval(response=None)
 
-        assert (
-            "FluencyEvaluator: Either 'conversation' or individual inputs must be provided." in exc_info.value.args[0]
-        )
+        assert "Response is a required input" in str(exc_info.value)
 
     def test_similarity_evaluator_keys(self, mock_model_config):
         similarity_eval = SimilarityEvaluator(model_config=mock_model_config)
@@ -72,9 +71,21 @@ class TestBuiltInEvaluators:
         )
         assert result["similarity"] == result["gpt_similarity"] == 1
         # Updated assertion to expect 4 keys instead of 2
-        assert len(result) == 4
+        assert len(result) == 11
         # Verify all expected keys are present
-        assert set(result.keys()) == {"similarity", "gpt_similarity", "similarity_result", "similarity_threshold"}
+        assert set(result.keys()) == {
+            "similarity",
+            "gpt_similarity",
+            "similarity_result",
+            "similarity_threshold",
+            "similarity_prompt_tokens",
+            "similarity_completion_tokens",
+            "similarity_total_tokens",
+            "similarity_finish_reason",
+            "similarity_model",
+            "similarity_sample_input",
+            "similarity_sample_output",
+        }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):
         retrieval_eval = RetrievalEvaluator(model_config=mock_model_config)
@@ -153,20 +164,18 @@ class TestBuiltInEvaluators:
                     "content": [
                         {
                             "type": "tool_result",
-                            "tool_result": [
-                                {
-                                    "file_id": "assistant-6QeBNfMsJpL3AHnE3T6dwY",
-                                    "file_name": "product_info_1.md",
-                                    "score": 0.03333333507180214,
-                                    "attributes": {},
-                                    "content": [
-                                        {
-                                            "type": "text",
-                                            "text": "# Information about product item_number: 1\n\n## Brand\nContoso Galaxy Innovations\n\n## Category\nSmart Eyewear\n",
-                                        }
-                                    ],
-                                }
-                            ],
+                            "tool_result": {
+                                "file_id": "assistant-6QeBNfMsJpL3AHnE3T6dwY",
+                                "file_name": "product_info_1.md",
+                                "score": 0.03333333507180214,
+                                "attributes": {},
+                                "content": [
+                                    {
+                                        "type": "text",
+                                        "text": "# Information about product item_number: 1\n\n## Brand\nContoso Galaxy Innovations\n\n## Category\nSmart Eyewear\n",
+                                    }
+                                ],
+                            },
                         }
                     ],
                 },
@@ -226,7 +235,4 @@ class TestBuiltInEvaluators:
                 # Missing response
             )
 
-        assert (
-            "Either 'conversation' or individual inputs must be provided. For Agent groundedness 'query' and 'response' are required."
-            in exc_info.value.args[0]
-        )
+        assert "Response is a required input" in str(exc_info.value)

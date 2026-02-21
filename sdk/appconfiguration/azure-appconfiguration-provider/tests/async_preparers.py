@@ -15,6 +15,9 @@ def app_config_decorator_async(func, **kwargs):
         appconfiguration_keyvault_secret_url = kwargs.pop("appconfiguration_keyvault_secret_url")
         kwargs["appconfiguration_keyvault_secret_url"] = appconfiguration_keyvault_secret_url
 
+        appconfiguration_keyvault_secret_url2 = kwargs.pop("appconfiguration_keyvault_secret_url2")
+        kwargs["appconfiguration_keyvault_secret_url2"] = appconfiguration_keyvault_secret_url2
+
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)
 
@@ -31,6 +34,9 @@ def app_config_aad_decorator_async(func, **kwargs):
 
         appconfiguration_keyvault_secret_url = kwargs.pop("appconfiguration_keyvault_secret_url")
         kwargs["appconfiguration_keyvault_secret_url"] = appconfiguration_keyvault_secret_url
+
+        appconfiguration_keyvault_secret_url2 = kwargs.pop("appconfiguration_keyvault_secret_url2")
+        kwargs["appconfiguration_keyvault_secret_url2"] = appconfiguration_keyvault_secret_url2
 
         trimmed_kwargs = {k: v for k, v in kwargs.items()}
         trim_kwargs_from_test_function(func, trimmed_kwargs)

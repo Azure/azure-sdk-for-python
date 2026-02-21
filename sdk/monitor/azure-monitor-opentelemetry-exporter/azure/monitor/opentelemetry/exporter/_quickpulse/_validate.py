@@ -26,8 +26,9 @@ def _validate_derived_metric_info(metric_info: DerivedMetricInfo) -> bool:
         for filter in filter_group.filters:
             # Validate field names to telemetry type
             # Validate predicate and comparands
-            if not _validate_filter_field_name(filter.field_name, metric_info.telemetry_type) or not \
-                _validate_filter_predicate_and_comparand(filter):
+            if not _validate_filter_field_name(
+                filter.field_name, metric_info.telemetry_type
+            ) or not _validate_filter_predicate_and_comparand(filter):
                 return False
     return True
 
@@ -39,14 +40,15 @@ def _validate_document_filter_group_info(doc_filter_group: DocumentFilterConjunc
     for filter in doc_filter_group.filters.filters:
         # Validate field names to telemetry type
         # Validate predicate and comparands
-        if not _validate_filter_field_name(filter.field_name, doc_filter_group.telemetry_type) or not \
-            _validate_filter_predicate_and_comparand(filter):
+        if not _validate_filter_field_name(
+            filter.field_name, doc_filter_group.telemetry_type
+        ) or not _validate_filter_predicate_and_comparand(filter):
             return False
     return True
 
 
 def _validate_telemetry_type(telemetry_type: str) -> bool:
-     # Validate telemetry type
+    # Validate telemetry type
     try:
         telemetry_type = TelemetryType(telemetry_type)
     except Exception:  # pylint: disable=broad-except

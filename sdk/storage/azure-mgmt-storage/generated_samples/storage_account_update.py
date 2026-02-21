@@ -47,6 +47,7 @@ def main():
                         "file": {"enabled": True, "keyType": "Account"},
                     },
                 },
+                "geoPriorityReplicationStatus": {"isBlobEnabled": True},
                 "isLocalUserEnabled": True,
                 "isSftpEnabled": True,
                 "keyPolicy": {"keyExpirationPeriodInDays": 20},
@@ -72,6 +73,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2025-01-01/examples/StorageAccountUpdate.json
+# x-ms-original-file: specification/storage/resource-manager/Microsoft.Storage/stable/2025-06-01/examples/StorageAccountUpdate.json
 if __name__ == "__main__":
     main()

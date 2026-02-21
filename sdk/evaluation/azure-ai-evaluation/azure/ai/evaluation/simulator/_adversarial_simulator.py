@@ -14,7 +14,7 @@ from tqdm import tqdm
 
 from azure.ai.evaluation._common._experimental import experimental
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
-from azure.ai.evaluation._common.onedp._client import AIProjectClient
+from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import get_async_http_client
 from azure.ai.evaluation._model_configurations import AzureAIProject

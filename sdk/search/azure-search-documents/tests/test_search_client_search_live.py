@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import math
+
 from azure.search.documents import SearchClient
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, get_credential
 
@@ -24,6 +26,7 @@ class TestSearchClient(AzureRecordedTestCase):
         self._test_get_search_coverage(client)
         self._test_get_search_facets_none(client)
         self._test_get_search_facets_result(client)
+        self._test_get_search_facet_metrics(client)
         self._test_autocomplete(client)
         self._test_suggest(client)
 
@@ -122,13 +125,53 @@ class TestSearchClient(AzureRecordedTestCase):
             ]
         }
 
+    def _test_get_search_facet_metrics(self, client):
+        facets = [
+            "rooms/baseRate,metric:sum",
+            "rooms/baseRate,metric:avg",
+            "rooms/baseRate,metric:min",
+            "rooms/baseRate,metric:max,default:0",
+            "rooms/sleepsCount,metric:cardinality,precisionThreshold:10",
+        ]
+        results = client.search(search_text="*", facets=facets)
+
+        facet_payload = results.get_facets()
+        assert facet_payload is not None
+
+        base_rate_metrics = facet_payload.get("rooms/baseRate", [])
+        assert len(base_rate_metrics) == 4
+
+        observed_metrics = {}
+        for bucket in base_rate_metrics:
+            for metric in ("sum", "avg", "min", "max"):
+                value = bucket.get(metric)
+                if value is not None:
+                    observed_metrics[metric] = value
+
+        expected_metrics = {
+            "sum": 27.91,
+            "avg": 6.9775,
+            "min": 2.44,
+            "max": 9.69,
+        }
+        for metric, expected in expected_metrics.items():
+            assert metric in observed_metrics
+            assert math.isclose(observed_metrics[metric], expected, rel_tol=0.0, abs_tol=0.001)
+
+        sleeps_metrics = facet_payload.get("rooms/sleepsCount", [])
+        assert len(sleeps_metrics) == 1
+        assert sleeps_metrics[0].get("cardinality") == 1
+
     def _test_autocomplete(self, client):
         results = client.autocomplete(search_text="mot", suggester_name="sg")
-        assert results == [{"text": "motel", "query_plus_text": "motel"}]
+        assert any(d.text == "motel" for d in results)
+        assert any(d.query_plus_text == "motel" for d in results)
 
     def _test_suggest(self, client):
         results = client.suggest(search_text="mot", suggester_name="sg")
-        assert results == [
-            {"hotelId": "2", "text": "Cheapest hotel in town. Infact, a motel."},
-            {"hotelId": "9", "text": "Secret Point Motel"},
-        ]
+        result = results[0]
+        assert result["hotelId"] == "2"
+        assert result.text == "Cheapest hotel in town. Infact, a motel."
+        result = results[1]
+        assert result["hotelId"] == "9"
+        assert result.text == "Secret Point Motel"

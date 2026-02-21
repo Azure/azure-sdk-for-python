@@ -10,7 +10,7 @@ from aiohttp.client_exceptions import (ClientConnectionError, ClientConnectionRe
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 
 import test_config
-from azure.cosmos import DatabaseAccount, _location_cache
+from azure.cosmos import DatabaseAccount
 from azure.cosmos._location_cache import RegionalRoutingContext
 from azure.cosmos._request_object import RequestObject
 from azure.cosmos.aio import CosmosClient, _retry_utility_async, _global_endpoint_manager_async
@@ -226,7 +226,7 @@ class TestServiceRetryPoliciesAsync(unittest.IsolatedAsyncioTestCase):
                 # Reset the function to reset the counter
                 mf = self.MockExecuteServiceResponseException(AttributeError, None)
                 _retry_utility_async.ExecuteFunctionAsync = mf
-                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=True)
+                await container.create_item({"id": str(uuid.uuid4()), "pk": str(uuid.uuid4())}, retry_write=2)
                 pytest.fail("Exception was not raised.")
             except ServiceResponseError:
                 assert mf.counter == 2

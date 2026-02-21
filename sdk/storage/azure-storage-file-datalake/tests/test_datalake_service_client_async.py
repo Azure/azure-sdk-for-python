@@ -6,6 +6,7 @@
 
 import pytest
 import sys
+from typing import NamedTuple
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
@@ -15,12 +16,15 @@ from azure.storage.filedatalake import (
     CorsRule,
     Metrics,
     RetentionPolicy,
-    StaticWebsite)
+    StaticWebsite
+)
+from azure.storage.filedatalake._shared.parser import DEVSTORE_ACCOUNT_KEY, DEVSTORE_ACCOUNT_NAME
 from azure.storage.filedatalake.aio import (
     DataLakeDirectoryClient,
     DataLakeFileClient,
     DataLakeServiceClient,
-    FileSystemClient)
+    FileSystemClient
+)
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -37,7 +41,7 @@ TEST_FILE_SYSTEM_PREFIX = 'filesystem'
 class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     def _setup(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
-        self.dsc = DataLakeServiceClient(url, credential=account_key, logging_enable=True)
+        self.dsc = DataLakeServiceClient(url, credential=account_key.secret, logging_enable=True)
         self.config = self.dsc._config
 
     # --Helpers-----------------------------------------------------------------
@@ -113,6 +117,14 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     def _assert_retention_equal(self, ret1, ret2):
         assert ret1.enabled == ret2.enabled
         assert ret1.days == ret2.days
+
+    def _assert_devstore_conn_str(self, service):
+        assert service is not None
+        assert service.scheme == "http"
+        assert service.account_name == DEVSTORE_ACCOUNT_NAME
+        assert service.credential.account_name == DEVSTORE_ACCOUNT_NAME
+        assert service.credential.account_key == DEVSTORE_ACCOUNT_KEY
+        assert f"127.0.0.1:10000/{DEVSTORE_ACCOUNT_NAME}" in service.url
 
     # --Test cases per service ---------------------------------------
     @DataLakePreparer()
@@ -400,12 +412,28 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
         assert not client.secondary_hostname
 
     @DataLakePreparer()
+    def test_connectionstring_use_development_storage(self):
+        test_conn_str = "UseDevelopmentStorage=true;"
+
+        dsc = DataLakeServiceClient.from_connection_string(test_conn_str)
+        self._assert_devstore_conn_str(dsc)
+
+        fsc = FileSystemClient.from_connection_string(test_conn_str, "fsname")
+        self._assert_devstore_conn_str(fsc)
+
+        dfc = DataLakeFileClient.from_connection_string(test_conn_str, "fsname", "fpath")
+        self._assert_devstore_conn_str(dfc)
+
+        ddc = DataLakeDirectoryClient.from_connection_string(test_conn_str, "fsname", "dname")
+        self._assert_devstore_conn_str(ddc)
+
+    @DataLakePreparer()
     @recorded_by_proxy_async
     async def test_azure_named_key_credential_access(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
 
-        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key)
+        named_key = AzureNamedKeyCredential(datalake_storage_account_name, datalake_storage_account_key.secret)
         dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "blob"), named_key)
 
         # Act
@@ -418,7 +446,8 @@ class TestDatalakeServiceAsync(AsyncStorageRecordedTestCase):
     @DataLakePreparer()
     async def test_datalake_clients_properly_close(self, **kwargs):
         account_name = "adlsstorage"
-        account_key = "adlskey"
+        # secret attribute necessary for credential parameter because of hidden environment variables from loader
+        account_key = NamedTuple("StorageAccountKey", [("secret", str)])("adlskey")
 
         self._setup(account_name, account_key)
         file_system_client = self.dsc.get_file_system_client(file_system='testfs')

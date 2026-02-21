@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, List, Literal, Optional, TypeVar
+from typing import Any, Callable, Literal, Optional, TypeVar
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (
@@ -28,14 +28,20 @@ from .._configuration import AzureQueueStorageConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
 def build_set_properties_request(
-    url: str, *, content: Any, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str,
+    *,
+    content: Any,
+    version: str,
+    timeout: Optional[int] = None,
+    request_id_parameter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -43,7 +49,6 @@ def build_set_properties_request(
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -72,14 +77,13 @@ def build_set_properties_request(
 
 
 def build_get_properties_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -106,14 +110,13 @@ def build_get_properties_request(
 
 
 def build_get_statistics_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -139,13 +142,56 @@ def build_get_statistics_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_get_user_delegation_key_request(
+    url: str,
+    *,
+    content: Any,
+    version: str,
+    timeout: Optional[int] = None,
+    request_id_parameter: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "{url}")
+    path_format_arguments = {
+        "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["restype"] = _SERIALIZER.query("restype", restype, "str")
+    _params["comp"] = _SERIALIZER.query("comp", comp, "str")
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if request_id_parameter is not None:
+        _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
 def build_list_queues_segment_request(
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
-    include: Optional[List[Literal["metadata"]]] = None,
+    include: Optional[list[Literal["metadata"]]] = None,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -154,7 +200,6 @@ def build_list_queues_segment_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2018-03-28"] = kwargs.pop("version", _headers.pop("x-ms-version", "2018-03-28"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -251,12 +296,12 @@ class ServiceOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -272,7 +317,10 @@ class ServiceOperations:
 
         if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -318,11 +366,11 @@ class ServiceOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -337,7 +385,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -388,11 +439,11 @@ class ServiceOperations:
 
         _request = build_get_statistics_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -407,7 +458,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
@@ -423,12 +477,99 @@ class ServiceOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
+    def get_user_delegation_key(
+        self,
+        key_info: _models.KeyInfo,
+        timeout: Optional[int] = None,
+        request_id_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.UserDelegationKey:
+        """Retrieves a user delegation key for the Queue service. This is only a valid operation when
+        using bearer token authentication.
+
+        :param key_info: Key information. Required.
+        :type key_info: ~azure.storage.queue.models.KeyInfo
+        :param timeout: The The timeout parameter is expressed in seconds. For more information, see <a
+         href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-queue-service-operations>Setting
+         Timeouts for Queue Service Operations.</a>. Default value is None.
+        :type timeout: int
+        :param request_id_parameter: Provides a client-generated, opaque value with a 1 KB character
+         limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
+         value is None.
+        :type request_id_parameter: str
+        :return: UserDelegationKey or the result of cls(response)
+        :rtype: ~azure.storage.queue.models.UserDelegationKey
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+        comp: Literal["userdelegationkey"] = kwargs.pop("comp", _params.pop("comp", "userdelegationkey"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.UserDelegationKey] = kwargs.pop("cls", None)
+
+        _content = self._serialize.body(key_info, "KeyInfo", is_xml=True)
+
+        _request = build_get_user_delegation_key_request(
+            url=self._config.url,
+            version=self._config.version,
+            timeout=timeout,
+            request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        deserialized = self._deserialize("UserDelegationKey", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
     def list_queues_segment(
         self,
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
-        include: Optional[List[Literal["metadata"]]] = None,
+        include: Optional[list[Literal["metadata"]]] = None,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         **kwargs: Any
@@ -483,6 +624,7 @@ class ServiceOperations:
 
         _request = build_list_queues_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -490,7 +632,6 @@ class ServiceOperations:
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -505,7 +646,10 @@ class ServiceOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.StorageError, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.StorageError,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}

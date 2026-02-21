@@ -2,15 +2,14 @@
 import functools
 import pytest
 
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.language.conversations.authoring.aio import ConversationAuthoringClient
 from azure.ai.language.conversations.authoring.models import (
     CreateProjectOptions,
     ProjectDetails,
     ProjectKind,
 )
-from devtools_testutils.aio import recorded_by_proxy_async
-
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -35,7 +34,7 @@ class TestConversationsCaseAsync(TestConversations):
     @pytest.mark.asyncio
     async def test_create_project_async(self, authoring_endpoint, authoring_key):
         client = await self.create_client(authoring_endpoint, authoring_key)
-        project_name = "MyPythonProject0820Async"
+        project_name = "MyPythonProject1110Async"
 
         # Create the project body
         body = CreateProjectOptions(
