@@ -42,7 +42,8 @@ model = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    # Creates an agent and conversation for prerequisite yields (agent_name, conversation_id).
+    # Creates prerequisite resources and yields (agent_name, conversation_id).
+    # Then automatically deletes the created agent version when this context manager exits.
     create_and_retrieve_agent_and_conversation(project_client=project_client, model=model) as (
         agent_name,
         conversation_id,
