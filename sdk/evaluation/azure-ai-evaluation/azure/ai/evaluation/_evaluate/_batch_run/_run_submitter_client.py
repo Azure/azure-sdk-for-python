@@ -153,12 +153,20 @@ class RunSubmitterClient:
         total_lines = run.result.total_lines if run.result else 0
         failed_lines = run.result.failed_lines if run.result else 0
 
+        # Collect per-line error messages for failed lines
+        per_line_errors: Dict[int, str] = {}
+        if run.result and run.result.details:
+            for detail in run.result.details:
+                if detail.error and detail.error.exception:
+                    per_line_errors[detail.index] = str(detail.error.exception)
+
         return {
             "status": run.status.value,
             "duration": str(run.duration),
             "completed_lines": total_lines - failed_lines,
             "failed_lines": failed_lines,
             "log_path": None,
+            "per_line_errors": per_line_errors,
             "error_message": (
                 f"({run.result.error.blame.value}) {run.result.error.message}"
                 if run.result and run.result.error and run.result.error.blame
