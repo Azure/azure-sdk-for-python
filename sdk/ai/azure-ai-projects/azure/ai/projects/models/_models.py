@@ -3943,7 +3943,7 @@ class EasyInputMessage(InputItem, discriminator="message"):
     """The role of the message input. One of ``user``, ``assistant``, ``system``, or ``developer``.
      Required. Is one of the following types: Literal[\"user\"], Literal[\"assistant\"],
      Literal[\"system\"], Literal[\"developer\"]"""
-    content: Union[str, list["_models.InputContent"]] = rest_field(
+    content: Union["str", list["_models.InputContent"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Text, image, or audio input to the model, used to generate a response. Can also contain
@@ -3962,7 +3962,7 @@ class EasyInputMessage(InputItem, discriminator="message"):
         self,
         *,
         role: Literal["user", "assistant", "system", "developer"],
-        content: Union[str, list["_models.InputContent"]],
+        content: Union["str", list["_models.InputContent"]],
         status: Optional[Literal["in_progress", "completed", "incomplete"]] = None,
     ) -> None: ...
 
