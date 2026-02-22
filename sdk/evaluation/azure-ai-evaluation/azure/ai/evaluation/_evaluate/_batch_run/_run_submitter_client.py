@@ -24,7 +24,6 @@ from ..._constants import Prefixes, PF_BATCH_TIMEOUT_SEC
 
 from .._utils import get_int_env_var as get_int
 
-
 LOGGER = logging.getLogger("run")
 MISSING_VALUE: Final[int] = sys.maxsize
 
