@@ -7,25 +7,26 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, List, overload, IO, cast
+from typing import Union, Optional, Any, List, overload, IO, cast, Literal
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import NoPolling
 from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from ..models import (
+    FoundryFeaturesOptInKeys,
     MemoryStoreOperationUsage,
-    MemoryStoreOperationUsageInputTokensDetails,
-    MemoryStoreOperationUsageOutputTokensDetails,
+    ResponseUsageInputTokensDetails,
+    ResponseUsageOutputTokensDetails,
     MemoryStoreUpdateCompletedResult,
     UpdateMemoriesLROPoller,
     UpdateMemoriesLROPollingMethod,
 )
-from ._operations import JSON, _Unset, ClsType, MemoryStoresOperations as GenerateMemoryStoresOperations
+from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
 from .._utils.model_base import _deserialize
 
 
-class MemoryStoresOperations(GenerateMemoryStoresOperations):
+class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
     @overload
     def begin_update_memories(
@@ -34,7 +35,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -50,7 +51,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
          Default value is "application/json".
         :paramtype content_type: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -69,7 +70,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @overload
     def begin_update_memories(
-        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> UpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -89,7 +95,12 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @overload
     def begin_update_memories(
-        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> UpdateMemoriesLROPoller:
         """Update memory store with conversation memories.
 
@@ -109,9 +120,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2025-11-15-preview",
-        params_added_on={"2025-11-15-preview": ["api_version", "name", "content_type", "accept"]},
-        api_versions_list=["2025-11-15-preview"],
+        method_added_on="v1",
+        params_added_on={"v1": ["api_version", "name", "content_type", "accept"]},
+        api_versions_list=["v1"],
     )
     def begin_update_memories(
         self,
@@ -119,7 +130,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.ItemParam]] = None,
+        items: Optional[List[_models.InputItem]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -134,7 +145,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
          Required.
         :paramtype scope: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.ItemParam]
+        :paramtype items: list[~azure.ai.projects.models.InputItem]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -150,6 +161,10 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
          ~azure.ai.projects.models.UpdateMemoriesLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
+            FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
+        )
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -160,6 +175,7 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._update_memories_initial(
+                foundry_features=foundry_features,
                 name=name,
                 body=body,
                 scope=scope,
@@ -193,9 +209,9 @@ class MemoryStoresOperations(GenerateMemoryStoresOperations):
                 usage = MemoryStoreOperationUsage(
                     embedding_tokens=0,
                     input_tokens=0,
-                    input_tokens_details=MemoryStoreOperationUsageInputTokensDetails(cached_tokens=0),
+                    input_tokens_details=ResponseUsageInputTokensDetails(cached_tokens=0),
                     output_tokens=0,
-                    output_tokens_details=MemoryStoreOperationUsageOutputTokensDetails(reasoning_tokens=0),
+                    output_tokens_details=ResponseUsageOutputTokensDetails(reasoning_tokens=0),
                     total_tokens=0,
                 )
                 deserialized = MemoryStoreUpdateCompletedResult(memory_operations=[], usage=usage)

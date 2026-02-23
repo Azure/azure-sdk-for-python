@@ -26,7 +26,10 @@ from tenacity import retry
 # Azure AI Evaluation imports
 from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._common.rai_service import evaluate_with_rai_service_sync
-from azure.ai.evaluation._common.utils import get_default_threshold_for_evaluator, is_onedp_project
+from azure.ai.evaluation._common.utils import (
+    get_default_threshold_for_evaluator,
+    is_onedp_project,
+)
 from azure.ai.evaluation._evaluate._utils import _write_output
 
 # Local imports
@@ -112,7 +115,7 @@ class EvaluationProcessor:
         # Extract all assistant messages for evaluation
         assistant_messages = [msg["content"] for msg in messages if msg.get("role") == "assistant"]
 
-        context = [msg["context"] for msg in messages if msg.get("role") == "user"]
+        context = [msg["context"] for msg in messages if msg.get("role") == "user" and "context" in msg]
         tool_calls = [
             msg.get("tool_calls", []) for msg in messages if msg.get("role") == "assistant" and msg.get("tool_calls")
         ]
@@ -228,7 +231,9 @@ class EvaluationProcessor:
                         severity_label = eval_result.get("label")
                         if severity_label is None:
                             # Calculate severity from score
-                            from azure.ai.evaluation._common.utils import get_harm_severity_level
+                            from azure.ai.evaluation._common.utils import (
+                                get_harm_severity_level,
+                            )
 
                             severity_label = get_harm_severity_level(score)
 
@@ -288,7 +293,8 @@ class EvaluationProcessor:
                         score = evaluate_output.get(f"{risk_cat_value}_score", 0)
                         # Get pattern-specific default threshold for this evaluator
                         default_threshold = evaluate_output.get(
-                            f"{risk_cat_value}_threshold", get_default_threshold_for_evaluator(risk_cat_value)
+                            f"{risk_cat_value}_threshold",
+                            get_default_threshold_for_evaluator(risk_cat_value),
                         )
 
                         # Content safety evaluators use "lower is better" scoring by default

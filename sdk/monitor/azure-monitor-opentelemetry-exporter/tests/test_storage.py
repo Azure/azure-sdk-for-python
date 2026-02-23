@@ -3,7 +3,6 @@
 
 import os
 import shutil
-import tempfile
 import unittest
 from unittest import mock
 
@@ -39,11 +38,11 @@ def clean_folder(folder):
                     os.unlink(file_path)
                 elif os.path.isdir(file_path):
                     shutil.rmtree(file_path)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 print("Failed to delete %s. Reason: %s" % (file_path, e))
 
 
-# pylint: disable=no-self-use
+# pylint: disable=unused-variable
 class TestLocalFileBlob(unittest.TestCase):
     @classmethod
     def setup_class(cls):
@@ -186,7 +185,7 @@ class TestLocalFileBlob(unittest.TestCase):
 
         # Test successful case
         result_success = blob.put(test_input)
-        self.assertTrue(isinstance(result_success, StorageExportResult) or isinstance(result_success, str))
+        self.assertTrue(isinstance(result_success, (StorageExportResult, str)))
 
         # Test error case
         blob2 = LocalFileBlob(os.path.join(TEST_FOLDER, "consistency_blob2"))
@@ -222,7 +221,7 @@ class TestLocalFileBlob(unittest.TestCase):
         self.assertEqual(blob.lease(0.01), None)
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, too-many-public-methods
 class TestLocalFileStorage(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
@@ -577,7 +576,6 @@ class TestLocalFileStorage(unittest.TestCase):
         test_input = (1, 2, 3)
 
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
-            get_local_storage_setup_state_exception,
             get_local_storage_setup_state_readonly,
             set_local_storage_setup_state_exception,
         )
@@ -840,7 +838,7 @@ class TestLocalFileStorage(unittest.TestCase):
                 time.sleep(0.01)  # Small delay to encourage race conditions
                 value = get_local_storage_setup_state_readonly()
                 results.append(value)
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-exception-caught
                 errors.append(str(e))
 
         # Create multiple threads
@@ -933,7 +931,6 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_check_and_set_folder_permissions_unix_multiuser_scenario(self):
         from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
-            get_local_storage_setup_state_exception,
             set_local_storage_setup_state_exception,
         )
 
@@ -967,7 +964,7 @@ class TestLocalFileStorage(unittest.TestCase):
 
                         self.assertEqual(
                             {(storage_abs_path, "0o700")},
-                            {(call_path, mode) for call_path, mode in chmod_calls},
+                            set(chmod_calls),
                             f"Unexpected chmod calls: {chmod_calls}",
                         )
 

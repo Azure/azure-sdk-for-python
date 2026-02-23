@@ -26,7 +26,7 @@ import threading
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Optional, Mapping, Any, Union
 
-from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._constants import _Constants as Constants
 from .documents import _OperationType
 from .http_constants import ResourceType
@@ -46,7 +46,7 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
         self.endpoint_override = endpoint_override
         self.should_clear_session_token_on_session_read_failure: bool = False  # pylint: disable=name-too-long
         self.headers = headers
-        self.availability_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None
+        self.availability_strategy: Optional[CrossRegionHedgingStrategy] = None
         self.availability_strategy_executor: Optional[ThreadPoolExecutor] = None
         self.availability_strategy_max_concurrency: Optional[int] = None
         self.use_preferred_locations: Optional[bool] = None
@@ -111,26 +111,41 @@ class RequestObject(object): # pylint: disable=too-many-instance-attributes
     def set_excluded_locations_from_circuit_breaker(self, excluded_locations: list[str]) -> None: # pylint: disable=name-too-long
         self.excluded_locations_circuit_breaker = excluded_locations
 
-    def set_availability_strategy_config(
+    def set_availability_strategy(
             self,
             options: Mapping[str, Any],
-            client_strategy_config: Optional[CrossRegionHedgingStrategyConfig] = None) -> None:
+            client_strategy_config: Union[CrossRegionHedgingStrategy, None] = None) -> None:
         """Sets the availability strategy config for this request from options.
         If not in options, uses the client's default strategy.
+        If False is in options, client defaults are NOT used (explicitly disabled).
 
         :param options: The request options that may contain availabilityStrategy
         :type options: Mapping[str, Any]
         :param client_strategy_config: The client's default availability strategy config
-        :type client_strategy_config: ~azure.cosmos.CrossRegionHedgingStrategyConfig
+        :type client_strategy_config: Union[CrossRegionHedgingStrategy, None]
         :return: None
         """
         # setup availabilityStrategy
-        # First try to get from options
-        if Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG in options:
-            self.availability_strategy_config = options[Constants.Kwargs.AVAILABILITY_STRATEGY_CONFIG]
-        # If not in options, use client default
+        # First try to get from options (method-level takes precedence)
+        if (Constants.Kwargs.AVAILABILITY_STRATEGY in options and
+                options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
+            strategy = options[Constants.Kwargs.AVAILABILITY_STRATEGY]
+            if isinstance(strategy, bool):
+                if strategy:
+                    # If True, use client config if available, otherwise default values
+                    if client_strategy_config is not None:
+                        self.availability_strategy = client_strategy_config
+                    else:
+                        self.availability_strategy = CrossRegionHedgingStrategy()
+                # If False, user explicitly disabled - don't use any strategy
+                else:
+                    self.availability_strategy = None
+            else:
+                # CrossRegionHedgingStrategy object from request validation
+                self.availability_strategy = strategy
+        # If not in options or None within options, use client default
         elif client_strategy_config is not None:
-            self.availability_strategy_config = client_strategy_config
+            self.availability_strategy = client_strategy_config
 
     def should_cancel_request(self) -> bool:
         """Check if this request should be cancelled due to parallel request completion.

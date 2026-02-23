@@ -10,6 +10,47 @@ import azure.cosmos.exceptions as exceptions
 import test_config
 from azure.cosmos import CosmosClient, PartitionKey
 
+VectorPolicyTestData = {
+    "valid_vector_indexing_policy" : {
+        "indexing_policy": {
+            "vectorIndexes": [
+                {"path": "/vector1", "type": "flat"},
+                {"path": "/vector2", "type": "quantizedFlat", "quantizerType": "product", "quantizationByteSize": 8},
+                {"path": "/vector3", "type": "diskANN", "quantizerType": "product", "quantizationByteSize": 8,
+                 "vectorIndexShardKey": ["/city"], "indexingSearchListSize": 50},
+                {"path": "/vector4", "type": "diskANN", "quantizerType": "spherical", "indexingSearchListSize": 50},
+            ]
+        },
+        "vector_embedding_policy": {
+            "vectorEmbeddings": [
+                {
+                    "path": "/vector1",
+                    "dataType": "float32",
+                    "dimensions": 256,
+                    "distanceFunction": "euclidean"
+                },
+                {
+                    "path": "/vector2",
+                    "dataType": "int8",
+                    "dimensions": 200,
+                    "distanceFunction": "dotproduct"
+                },
+                {
+                    "path": "/vector3",
+                    "dataType": "uint8",
+                    "dimensions": 400,
+                    "distanceFunction": "cosine"
+                },
+                {
+                    "path": "/vector4",
+                    "dataType": "uint8",
+                    "dimensions": 400,
+                    "distanceFunction": "euclidean"
+                },
+            ]
+        }
+    }
+}
 
 @pytest.mark.cosmosSearchQuery
 class TestVectorPolicy(unittest.TestCase):
@@ -54,6 +95,21 @@ class TestVectorPolicy(unittest.TestCase):
             properties = created_container.read()
             assert properties["vectorEmbeddingPolicy"]["vectorEmbeddings"][0]["dataType"] == data_type
             self.test_db.delete_container('vector_container_' + data_type)
+
+    @unittest.skip
+    def test_create_valid_vector_indexing_policy(self):
+        test_data = VectorPolicyTestData["valid_vector_indexing_policy"]
+        indexing_policy = test_data["indexing_policy"]
+        vector_embedding_policy = test_data["vector_embedding_policy"]
+
+        created_container = self.test_db.create_container(
+            id="container_" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/id"),
+            vector_embedding_policy=vector_embedding_policy,
+            indexing_policy=indexing_policy)
+        properties = created_container.read()
+        assert properties['indexingPolicy']['vectorIndexes'] == indexing_policy['vectorIndexes']
+        self.test_db.delete_container(created_container.id)
 
     def test_create_vector_embedding_container(self):
         indexing_policy = {

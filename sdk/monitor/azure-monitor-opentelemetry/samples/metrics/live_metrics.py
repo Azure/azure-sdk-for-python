@@ -1,17 +1,21 @@
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
+# Licensed under the MIT License. See License in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 """
-This example shows how configure live metrics to be enabled. It sets up a minimal example of sending dependency,
+This example sets up a minimal example of sending dependency through live metrics,
 trace and exception telemetry to demonstrate the capabilities and collection set of live metrics.
+Live metrics is enabled by default, it can be disabled by setting `enable_live_metrics` to `False`
 """
 import logging
-import requests  # type: ignore[import-untyped]
 import time
+import requests  # type: ignore[import-untyped] # pylint: disable=networking-import-outside-azure-core-transport
 
-from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
-
 from opentelemetry.sdk.resources import Resource
+from azure.monitor.opentelemetry import configure_azure_monitor
 
 configure_azure_monitor(
     resource=Resource.create(
@@ -21,7 +25,7 @@ configure_azure_monitor(
         }
     ),
     logger_name=__name__,
-    enable_live_metrics=True,  # Enable live metrics configuration
+    # enable_live_metrics=False,  # To disable live metrics configuration
 )
 
 tracer = trace.get_tracer(__name__)

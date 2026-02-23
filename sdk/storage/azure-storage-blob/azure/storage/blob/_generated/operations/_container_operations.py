@@ -40,6 +40,7 @@ _SERIALIZER.client_side_validation = False
 def build_create_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -52,7 +53,6 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -92,6 +92,7 @@ def build_create_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -101,7 +102,6 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -131,6 +131,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -142,7 +143,6 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -176,6 +176,7 @@ def build_delete_request(
 def build_set_metadata_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     metadata: Optional[dict[str, str]] = None,
@@ -188,7 +189,6 @@ def build_set_metadata_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -223,6 +223,7 @@ def build_set_metadata_request(
 def build_get_access_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -233,7 +234,6 @@ def build_get_access_policy_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -264,6 +264,7 @@ def build_get_access_policy_request(
 def build_set_access_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -279,7 +280,6 @@ def build_set_access_policy_request(
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -318,6 +318,7 @@ def build_set_access_policy_request(
 def build_restore_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     deleted_container_name: Optional[str] = None,
@@ -329,7 +330,6 @@ def build_restore_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -367,6 +367,7 @@ def build_rename_request(
     url: str,
     *,
     source_container_name: str,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     source_lease_id: Optional[str] = None,
@@ -377,7 +378,6 @@ def build_rename_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -411,6 +411,7 @@ def build_submit_batch_request(
     *,
     content_length: int,
     content: IO[bytes],
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -421,7 +422,6 @@ def build_submit_batch_request(
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
     multipart_content_type: Optional[str] = kwargs.pop("multipart_content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -453,6 +453,7 @@ def build_submit_batch_request(
 def build_filter_blobs_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     where: Optional[str] = None,
@@ -466,7 +467,6 @@ def build_filter_blobs_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -503,6 +503,7 @@ def build_filter_blobs_request(
 def build_acquire_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
@@ -517,7 +518,6 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -556,6 +556,7 @@ def build_release_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -568,7 +569,6 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -604,6 +604,7 @@ def build_renew_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -616,7 +617,6 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -651,6 +651,7 @@ def build_renew_lease_request(
 def build_break_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     break_period: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -664,7 +665,6 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -702,6 +702,7 @@ def build_change_lease_request(
     *,
     lease_id: str,
     proposed_lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -714,7 +715,6 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -750,6 +750,7 @@ def build_change_lease_request(
 def build_list_blob_flat_segment_request(
     url: str,
     *,
+    version: str,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
@@ -764,7 +765,6 @@ def build_list_blob_flat_segment_request(
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -804,6 +804,7 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
     url: str,
     *,
     delimiter: str,
+    version: str,
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
@@ -818,7 +819,6 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
     restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -856,14 +856,13 @@ def build_list_blob_hierarchy_segment_request(  # pylint: disable=name-too-long
 
 
 def build_get_account_info_request(
-    url: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
+    url: str, *, version: str, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -969,6 +968,7 @@ class ContainerOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             access=access,
@@ -976,7 +976,6 @@ class ContainerOperations:
             default_encryption_scope=_default_encryption_scope,
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1056,11 +1055,11 @@ class ContainerOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1168,13 +1167,13 @@ class ContainerOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1267,6 +1266,7 @@ class ContainerOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             metadata=metadata,
@@ -1274,7 +1274,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1355,12 +1354,12 @@ class ContainerOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1472,6 +1471,7 @@ class ContainerOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             access=access,
@@ -1481,7 +1481,6 @@ class ContainerOperations:
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1563,13 +1562,13 @@ class ContainerOperations:
 
         _request = build_restore_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1649,12 +1648,12 @@ class ContainerOperations:
         _request = build_rename_request(
             url=self._config.url,
             source_container_name=source_container_name,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             source_lease_id=source_lease_id,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1737,12 +1736,12 @@ class ContainerOperations:
         _request = build_submit_batch_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
             multipart_content_type=multipart_content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1845,6 +1844,7 @@ class ContainerOperations:
 
         _request = build_filter_blobs_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             where=where,
@@ -1853,7 +1853,6 @@ class ContainerOperations:
             include=include,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1949,6 +1948,7 @@ class ContainerOperations:
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1958,7 +1958,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2047,6 +2046,7 @@ class ContainerOperations:
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2054,7 +2054,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2142,6 +2141,7 @@ class ContainerOperations:
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2149,7 +2149,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2243,6 +2242,7 @@ class ContainerOperations:
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
@@ -2251,7 +2251,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2346,6 +2345,7 @@ class ContainerOperations:
             url=self._config.url,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
+            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -2353,7 +2353,6 @@ class ContainerOperations:
             comp=comp,
             restype=restype,
             action=action,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2456,6 +2455,7 @@ class ContainerOperations:
 
         _request = build_list_blob_flat_segment_request(
             url=self._config.url,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -2465,7 +2465,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2577,6 +2576,7 @@ class ContainerOperations:
         _request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
             delimiter=delimiter,
+            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
@@ -2586,7 +2586,6 @@ class ContainerOperations:
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2659,11 +2658,11 @@ class ContainerOperations:
 
         _request = build_get_account_info_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

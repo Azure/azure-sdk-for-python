@@ -4,7 +4,7 @@ import os
 from typing import Optional, List, Tuple, Union, Any
 
 # mypy: disable-error-code="import-untyped"
-from requests import ReadTimeout, Timeout
+from requests import ReadTimeout, Timeout  # pylint: disable=networking-import-outside-azure-core-transport
 from azure.core.exceptions import ServiceRequestTimeoutError
 from azure.monitor.opentelemetry.exporter._constants import (
     _REQUEST,
@@ -16,7 +16,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEPENDENCY,
     _APPLICATIONINSIGHTS_SDKSTATS_EXPORT_INTERVAL,
     _DEFAULT_STATS_SHORT_EXPORT_INTERVAL,
-    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
+    _APPLICATIONINSIGHTS_SDKSTATS_DISABLED,
     _exception_categories,
 )
 from azure.monitor.opentelemetry.exporter._utils import _get_telemetry_type
@@ -48,7 +48,8 @@ def is_customer_sdkstats_enabled() -> bool:
     :return: True if enabled, False otherwise
     :rtype: bool
     """
-    return os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, "").lower() == "true"
+    disabled = os.environ.get(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED)
+    return disabled is None or disabled.lower() != "true"
 
 
 def categorize_status_code(status_code: int) -> str:

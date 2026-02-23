@@ -14,25 +14,79 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 
     PROMPT = "prompt"
+    """PROMPT."""
     HOSTED = "hosted"
+    """HOSTED."""
     CONTAINER_APP = "container_app"
+    """CONTAINER_APP."""
     WORKFLOW = "workflow"
+    """WORKFLOW."""
+
+
+class AgentObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentObjectType."""
+
+    AGENT = "agent"
+    """AGENT."""
+    AGENT_VERSION = "agent.version"
+    """AGENT_VERSION."""
+    AGENT_DELETED = "agent.deleted"
+    """AGENT_DELETED."""
+    AGENT_VERSION_DELETED = "agent.version.deleted"
+    """AGENT_VERSION_DELETED."""
+    AGENT_CONTAINER = "agent.container"
+    """AGENT_CONTAINER."""
 
 
 class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentProtocol."""
 
     ACTIVITY_PROTOCOL = "activity_protocol"
+    """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
+    """RESPONSES."""
 
 
 class AnnotationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AnnotationType."""
 
     FILE_CITATION = "file_citation"
+    """FILE_CITATION."""
     URL_CITATION = "url_citation"
-    FILE_PATH = "file_path"
+    """URL_CITATION."""
     CONTAINER_FILE_CITATION = "container_file_citation"
+    """CONTAINER_FILE_CITATION."""
+    FILE_PATH = "file_path"
+    """FILE_PATH."""
+
+
+class ApplyPatchCallOutputStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Apply patch call output status."""
+
+    COMPLETED = "completed"
+    """COMPLETED."""
+    FAILED = "failed"
+    """FAILED."""
+
+
+class ApplyPatchCallStatusParam(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Apply patch call status."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+
+
+class ApplyPatchOperationParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ApplyPatchOperationParamType."""
+
+    CREATE_FILE = "create_file"
+    """CREATE_FILE."""
+    DELETE_FILE = "delete_file"
+    """DELETE_FILE."""
+    UPDATE_FILE = "update_file"
+    """UPDATE_FILE."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -68,7 +122,7 @@ class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JAILBREAK = "jailbreak"
     """Injects specially crafted prompts to bypass AI safeguards, known as User Injected Prompt
     Attacks (UPIA)."""
-    ANSII_ATTACK = "ansii_attack"
+    ANSI_ATTACK = "ansi_attack"
     """Utilizes ANSI escape sequences to manipulate text appearance and behavior."""
     CHARACTER_SWAP = "character_swap"
     """Swaps characters within text to create variations or obfuscate the original content."""
@@ -110,84 +164,132 @@ class AzureAISearchQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Available query types for Azure AI Search tool."""
 
     SIMPLE = "simple"
-    """Query type ``simple``"""
+    """Query type ``simple``."""
     SEMANTIC = "semantic"
-    """Query type ``semantic``"""
+    """Query type ``semantic``."""
     VECTOR = "vector"
-    """Query type ``vector``"""
+    """Query type ``vector``."""
     VECTOR_SIMPLE_HYBRID = "vector_simple_hybrid"
-    """Query type ``vector_simple_hybrid``"""
+    """Query type ``vector_simple_hybrid``."""
     VECTOR_SEMANTIC_HYBRID = "vector_semantic_hybrid"
-    """Query type ``vector_semantic_hybrid``"""
+    """Query type ``vector_semantic_hybrid``."""
 
 
-class CodeInterpreterOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of CodeInterpreterOutputType."""
+class ClickButtonType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ClickButtonType."""
 
-    LOGS = "logs"
-    IMAGE = "image"
+    LEFT = "left"
+    """LEFT."""
+    RIGHT = "right"
+    """RIGHT."""
+    WHEEL = "wheel"
+    """WHEEL."""
+    BACK = "back"
+    """BACK."""
+    FORWARD = "forward"
+    """FORWARD."""
 
 
 class ComputerActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ComputerActionType."""
 
-    SCREENSHOT = "screenshot"
     CLICK = "click"
+    """CLICK."""
     DOUBLE_CLICK = "double_click"
-    SCROLL = "scroll"
-    TYPE = "type"
-    WAIT = "wait"
-    KEYPRESS = "keypress"
+    """DOUBLE_CLICK."""
     DRAG = "drag"
+    """DRAG."""
+    KEYPRESS = "keypress"
+    """KEYPRESS."""
     MOVE = "move"
+    """MOVE."""
+    SCREENSHOT = "screenshot"
+    """SCREENSHOT."""
+    SCROLL = "scroll"
+    """SCROLL."""
+    TYPE = "type"
+    """TYPE."""
+    WAIT = "wait"
+    """WAIT."""
 
 
-class ComputerToolCallOutputItemOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A computer screenshot image used with the computer use tool."""
+class ComputerEnvironment(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ComputerEnvironment."""
 
-    SCREENSHOT = "computer_screenshot"
+    WINDOWS = "windows"
+    """WINDOWS."""
+    MAC = "mac"
+    """MAC."""
+    LINUX = "linux"
+    """LINUX."""
+    UBUNTU = "ubuntu"
+    """UBUNTU."""
+    BROWSER = "browser"
+    """BROWSER."""
 
 
 class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Type (or category) of the connection."""
 
     AZURE_OPEN_AI = "AzureOpenAI"
-    """Azure OpenAI Service"""
+    """Azure OpenAI Service."""
     AZURE_BLOB_STORAGE = "AzureBlob"
-    """Azure Blob Storage, with specified container"""
+    """Azure Blob Storage, with specified container."""
     AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
-    """Azure Blob Storage, with container not specified (used by Agents)"""
+    """Azure Blob Storage, with container not specified (used by Agents)."""
     AZURE_AI_SEARCH = "CognitiveSearch"
-    """Azure AI Search"""
+    """Azure AI Search."""
     COSMOS_DB = "CosmosDB"
-    """CosmosDB"""
+    """CosmosDB."""
     API_KEY = "ApiKey"
-    """Generic connection that uses API Key authentication"""
+    """Generic connection that uses API Key authentication."""
     APPLICATION_CONFIGURATION = "AppConfig"
-    """Application Configuration"""
+    """Application Configuration."""
     APPLICATION_INSIGHTS = "AppInsights"
-    """Application Insights"""
+    """Application Insights."""
     CUSTOM = "CustomKeys"
-    """Custom Keys"""
-    REMOTE_TOOL = "RemoteTool"
-    """Remote tool"""
+    """Custom Keys."""
+    REMOTE_TOOL = "RemoteTool_Preview"
+    """Remote tool."""
+
+
+class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerMemoryLimit."""
+
+    MEMORY_1GB = "1g"
+    """MEMORY_1GB."""
+    MEMORY_4GB = "4g"
+    """MEMORY_4GB."""
+    MEMORY_16GB = "16g"
+    """MEMORY_16GB."""
+    MEMORY_64GB = "64g"
+    """MEMORY_64GB."""
 
 
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The credential type used by the connection."""
 
     API_KEY = "ApiKey"
-    """API Key credential"""
+    """API Key credential."""
     ENTRA_ID = "AAD"
-    """Entra ID credential (formerly known as AAD)"""
+    """Entra ID credential (formerly known as AAD)."""
     SAS = "SAS"
-    """Shared Access Signature (SAS) credential"""
+    """Shared Access Signature (SAS) credential."""
     CUSTOM = "CustomKeys"
-    """Custom credential"""
+    """Custom credential."""
     NONE = "None"
-    """No credential"""
-    AGENTIC_IDENTITY = "AgenticIdentityToken"
-    """Agentic identity credential"""
+    """No credential."""
+    AGENTIC_IDENTITY_PREVIEW = "AgenticIdentityToken_Preview"
+    """Agentic identity credential."""
+
+
+class CustomToolParamFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of CustomToolParamFormatType."""
+
+    TEXT = "text"
+    """TEXT."""
+    GRAMMAR = "grammar"
+    """GRAMMAR."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -222,7 +324,18 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of DeploymentType."""
 
     MODEL_DEPLOYMENT = "ModelDeployment"
-    """Model deployment"""
+    """Model deployment."""
+
+
+class DetailEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of DetailEnum."""
+
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+    AUTO = "auto"
+    """AUTO."""
 
 
 class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -230,8 +343,8 @@ class EvaluationRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     CONTINUOUS_EVALUATION = "continuousEvaluation"
     """Continuous evaluation."""
-    HUMAN_EVALUATION = "humanEvaluation"
-    """Human evaluation."""
+    HUMAN_EVALUATION_PREVIEW = "humanEvaluationPreview"
+    """Human evaluation preview."""
 
 
 class EvaluationRuleEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -247,7 +360,7 @@ class EvaluationTaxonomyInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of the evaluation taxonomy input."""
 
     AGENT = "agent"
-    """Agent"""
+    """Agent."""
     POLICY = "policy"
     """Policy."""
 
@@ -256,26 +369,26 @@ class EvaluatorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The category of the evaluator."""
 
     QUALITY = "quality"
-    """Quality"""
+    """Quality."""
     SAFETY = "safety"
-    """Risk & Safety"""
+    """Risk & Safety."""
     AGENTS = "agents"
-    """Agents"""
+    """Agents."""
 
 
 class EvaluatorDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of evaluator definition."""
 
     PROMPT = "prompt"
-    """Prompt-based definition"""
+    """Prompt-based definition."""
     CODE = "code"
-    """Code-based definition"""
+    """Code-based definition."""
     PROMPT_AND_CODE = "prompt_and_code"
-    """Prompt & Code Based definition"""
+    """Prompt & Code Based definition."""
     SERVICE = "service"
-    """Service-based evaluator"""
+    """Service-based evaluator."""
     OPENAI_GRADERS = "openai_graders"
-    """OpenAI graders"""
+    """OpenAI graders."""
 
 
 class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -284,11 +397,11 @@ class EvaluatorMetricDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     INCREASE = "increase"
-    """It indicates a higher value is better for this metric"""
+    """It indicates a higher value is better for this metric."""
     DECREASE = "decrease"
-    """It indicates a lower value is better for this metric"""
+    """It indicates a lower value is better for this metric."""
     NEUTRAL = "neutral"
-    """It indicates no preference for this metric direction"""
+    """It indicates no preference for this metric direction."""
 
 
 class EvaluatorMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -299,27 +412,188 @@ class EvaluatorMetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CONTINUOUS = "continuous"
     """Continuous metric representing values in a continuous range."""
     BOOLEAN = "boolean"
-    """Boolean metric representing true/false values"""
+    """Boolean metric representing true/false values."""
 
 
 class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the evaluator."""
 
     BUILT_IN = "builtin"
-    """Built-in evaluator (Microsoft provided)"""
+    """Built-in evaluator (Microsoft provided)."""
     CUSTOM = "custom"
-    """Custom evaluator"""
+    """Custom evaluator."""
+
+
+class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FoundryFeaturesOptInKeys."""
+
+    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
+    """CONTAINER_AGENTS_V1_PREVIEW."""
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
+    """EVALUATIONS_V1_PREVIEW."""
+    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+    """SCHEDULES_V1_PREVIEW."""
+    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+    """RED_TEAMS_V1_PREVIEW."""
+    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
+    """INSIGHTS_V1_PREVIEW."""
+    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+    """MEMORY_STORES_V1_PREVIEW."""
+
+
+class FunctionAndCustomToolCallOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionAndCustomToolCallOutputType."""
+
+    INPUT_TEXT = "input_text"
+    """INPUT_TEXT."""
+    INPUT_IMAGE = "input_image"
+    """INPUT_IMAGE."""
+    INPUT_FILE = "input_file"
+    """INPUT_FILE."""
+
+
+class FunctionCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionCallItemStatus."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+
+
+class FunctionShellCallItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Shell call status."""
+
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+
+
+class FunctionShellCallOutputOutcomeParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellCallOutputOutcomeParamType."""
+
+    TIMEOUT = "timeout"
+    """TIMEOUT."""
+    EXIT = "exit"
+    """EXIT."""
+
+
+class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of GrammarSyntax1."""
+
+    LARK = "lark"
+    """LARK."""
+    REGEX = "regex"
+    """REGEX."""
+
+
+class ImageDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageDetail."""
+
+    LOW = "low"
+    """LOW."""
+    HIGH = "high"
+    """HIGH."""
+    AUTO = "auto"
+    """AUTO."""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of IndexType."""
 
     AZURE_SEARCH = "AzureSearch"
-    """Azure search"""
+    """Azure search."""
     COSMOS_DB = "CosmosDBNoSqlVectorStore"
-    """CosmosDB"""
+    """CosmosDB."""
     MANAGED_AZURE_SEARCH = "ManagedAzureSearch"
-    """Managed Azure Search"""
+    """Managed Azure Search."""
+
+
+class InputContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputContentType."""
+
+    INPUT_TEXT = "input_text"
+    """INPUT_TEXT."""
+    INPUT_IMAGE = "input_image"
+    """INPUT_IMAGE."""
+    INPUT_FILE = "input_file"
+    """INPUT_FILE."""
+
+
+class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Control how much effort the model will exert to match the style and features, especially facial
+    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
+    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    """
+
+    HIGH = "high"
+    """HIGH."""
+    LOW = "low"
+    """LOW."""
+
+
+class InputItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of InputItemType."""
+
+    MESSAGE = "message"
+    """MESSAGE."""
+    OUTPUT_MESSAGE = "output_message"
+    """OUTPUT_MESSAGE."""
+    FILE_SEARCH_CALL = "file_search_call"
+    """FILE_SEARCH_CALL."""
+    COMPUTER_CALL = "computer_call"
+    """COMPUTER_CALL."""
+    COMPUTER_CALL_OUTPUT = "computer_call_output"
+    """COMPUTER_CALL_OUTPUT."""
+    WEB_SEARCH_CALL = "web_search_call"
+    """WEB_SEARCH_CALL."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    REASONING = "reasoning"
+    """REASONING."""
+    COMPACTION = "compaction"
+    """COMPACTION."""
+    IMAGE_GENERATION_CALL = "image_generation_call"
+    """IMAGE_GENERATION_CALL."""
+    CODE_INTERPRETER_CALL = "code_interpreter_call"
+    """CODE_INTERPRETER_CALL."""
+    LOCAL_SHELL_CALL = "local_shell_call"
+    """LOCAL_SHELL_CALL."""
+    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
+    """LOCAL_SHELL_CALL_OUTPUT."""
+    SHELL_CALL = "shell_call"
+    """SHELL_CALL."""
+    SHELL_CALL_OUTPUT = "shell_call_output"
+    """SHELL_CALL_OUTPUT."""
+    APPLY_PATCH_CALL = "apply_patch_call"
+    """APPLY_PATCH_CALL."""
+    APPLY_PATCH_CALL_OUTPUT = "apply_patch_call_output"
+    """APPLY_PATCH_CALL_OUTPUT."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """MCP_APPROVAL_RESPONSE."""
+    MCP_CALL = "mcp_call"
+    """MCP_CALL."""
+    CUSTOM_TOOL_CALL_OUTPUT = "custom_tool_call_output"
+    """CUSTOM_TOOL_CALL_OUTPUT."""
+    CUSTOM_TOOL_CALL = "custom_tool_call"
+    """CUSTOM_TOOL_CALL."""
+    ITEM_REFERENCE = "item_reference"
+    """ITEM_REFERENCE."""
 
 
 class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -333,48 +607,19 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
-class ItemContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Multi-modal input and output contents."""
+class MCPToolCallStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MCPToolCallStatus."""
 
-    INPUT_TEXT = "input_text"
-    INPUT_AUDIO = "input_audio"
-    INPUT_IMAGE = "input_image"
-    INPUT_FILE = "input_file"
-    OUTPUT_TEXT = "output_text"
-    OUTPUT_AUDIO = "output_audio"
-    REFUSAL = "refusal"
-
-
-class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ItemType."""
-
-    MESSAGE = "message"
-    FILE_SEARCH_CALL = "file_search_call"
-    FUNCTION_CALL = "function_call"
-    FUNCTION_CALL_OUTPUT = "function_call_output"
-    COMPUTER_CALL = "computer_call"
-    COMPUTER_CALL_OUTPUT = "computer_call_output"
-    WEB_SEARCH_CALL = "web_search_call"
-    REASONING = "reasoning"
-    ITEM_REFERENCE = "item_reference"
-    IMAGE_GENERATION_CALL = "image_generation_call"
-    CODE_INTERPRETER_CALL = "code_interpreter_call"
-    LOCAL_SHELL_CALL = "local_shell_call"
-    LOCAL_SHELL_CALL_OUTPUT = "local_shell_call_output"
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    MCP_CALL = "mcp_call"
-    STRUCTURED_OUTPUTS = "structured_outputs"
-    WORKFLOW_ACTION = "workflow_action"
-    MEMORY_SEARCH_CALL = "memory_search_call"
-    OAUTH_CONSENT_REQUEST = "oauth_consent_request"
-
-
-class LocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of LocationType."""
-
-    APPROXIMATE = "approximate"
+    IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
+    COMPLETED = "completed"
+    """COMPLETED."""
+    INCOMPLETE = "incomplete"
+    """INCOMPLETE."""
+    CALLING = "calling"
+    """CALLING."""
+    FAILED = "failed"
+    """FAILED."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -404,14 +649,30 @@ class MemoryStoreKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default memory store implementation."""
 
 
+class MemoryStoreObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of MemoryStoreObjectType."""
+
+    MEMORY_STORE = "memory_store"
+    """MEMORY_STORE."""
+    MEMORY_STORE_DELETED = "memory_store.deleted"
+    """MEMORY_STORE_DELETED."""
+    MEMORY_STORE_SCOPE_DELETED = "memory_store.scope.deleted"
+    """MEMORY_STORE_SCOPE_DELETED."""
+
+
 class MemoryStoreUpdateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Status of a memory store update operation."""
 
     QUEUED = "queued"
+    """QUEUED."""
     IN_PROGRESS = "in_progress"
+    """IN_PROGRESS."""
     COMPLETED = "completed"
+    """COMPLETED."""
     FAILED = "failed"
+    """FAILED."""
     SUPERSEDED = "superseded"
+    """SUPERSEDED."""
 
 
 class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -423,8 +684,11 @@ class OpenApiAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ANONYMOUS = "anonymous"
+    """ANONYMOUS."""
     PROJECT_CONNECTION = "project_connection"
+    """PROJECT_CONNECTION."""
     MANAGED_IDENTITY = "managed_identity"
+    """MANAGED_IDENTITY."""
 
 
 class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -442,6 +706,24 @@ class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The operation has been canceled by the user."""
 
 
+class OutputMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of OutputMessageContentType."""
+
+    OUTPUT_TEXT = "output_text"
+    """OUTPUT_TEXT."""
+    REFUSAL = "refusal"
+    """REFUSAL."""
+
+
+class PageOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of PageOrder."""
+
+    ASC = "asc"
+    """ASC."""
+    DESC = "desc"
+    """DESC."""
+
+
 class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of pending upload."""
 
@@ -451,34 +733,13 @@ class PendingUploadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Blob Reference is the only supported type."""
 
 
-class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Constrains effort on reasoning for reasoning models.
+class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RankerVersionType."""
 
-    Currently supported values are none, minimal, low, medium, and high.
-
-    Reducing reasoning effort can result in faster responses and fewer tokens used on reasoning in
-    a response.
-
-    gpt-5.1 defaults to none, which does not perform reasoning. The supported reasoning values for
-    gpt-5.1 are none, low, medium, and high. Tool calls are supported for all reasoning values in
-    gpt-5.1.
-
-    All models before gpt-5.1 default to medium reasoning effort, and do not support none.
-
-    The gpt-5-pro model defaults to (and only supports) high reasoning effort.
-    """
-
-    NONE = "none"
-    MINIMAL = "minimal"
-    LOW = "low"
-    MEDIUM = "medium"
-    HIGH = "high"
-
-
-class ReasoningItemSummaryPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ReasoningItemSummaryPartType."""
-
-    SUMMARY_TEXT = "summary_text"
+    AUTO = "auto"
+    """AUTO."""
+    DEFAULT2024_11_15 = "default-2024-11-15"
+    """DEFAULT2024_11_15."""
 
 
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -492,117 +753,6 @@ class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Weekly recurrence pattern."""
     MONTHLY = "Monthly"
     """Monthly recurrence pattern."""
-
-
-class ResponseErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The error code for the response."""
-
-    SERVER_ERROR = "server_error"
-    RATE_LIMIT_EXCEEDED = "rate_limit_exceeded"
-    INVALID_PROMPT = "invalid_prompt"
-    VECTOR_STORE_TIMEOUT = "vector_store_timeout"
-    INVALID_IMAGE = "invalid_image"
-    INVALID_IMAGE_FORMAT = "invalid_image_format"
-    INVALID_BASE64_IMAGE = "invalid_base64_image"
-    INVALID_IMAGE_URL = "invalid_image_url"
-    IMAGE_TOO_LARGE = "image_too_large"
-    IMAGE_TOO_SMALL = "image_too_small"
-    IMAGE_PARSE_ERROR = "image_parse_error"
-    IMAGE_CONTENT_POLICY_VIOLATION = "image_content_policy_violation"
-    INVALID_IMAGE_MODE = "invalid_image_mode"
-    IMAGE_FILE_TOO_LARGE = "image_file_too_large"
-    UNSUPPORTED_IMAGE_MEDIA_TYPE = "unsupported_image_media_type"
-    EMPTY_IMAGE_FILE = "empty_image_file"
-    FAILED_TO_DOWNLOAD_IMAGE = "failed_to_download_image"
-    IMAGE_FILE_NOT_FOUND = "image_file_not_found"
-
-
-class ResponsesMessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The collection of valid roles for responses message items."""
-
-    SYSTEM = "system"
-    DEVELOPER = "developer"
-    USER = "user"
-    ASSISTANT = "assistant"
-
-
-class ResponseStreamEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ResponseStreamEventType."""
-
-    RESPONSE_AUDIO_DELTA = "response.audio.delta"
-    RESPONSE_AUDIO_DONE = "response.audio.done"
-    RESPONSE_AUDIO_TRANSCRIPT_DELTA = "response.audio_transcript.delta"
-    RESPONSE_AUDIO_TRANSCRIPT_DONE = "response.audio_transcript.done"
-    RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA = "response.code_interpreter_call_code.delta"
-    RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE = "response.code_interpreter_call_code.done"
-    RESPONSE_CODE_INTERPRETER_CALL_COMPLETED = "response.code_interpreter_call.completed"
-    RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS = "response.code_interpreter_call.in_progress"
-    RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING = "response.code_interpreter_call.interpreting"
-    RESPONSE_COMPLETED = "response.completed"
-    RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
-    RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
-    RESPONSE_CREATED = "response.created"
-    ERROR = "error"
-    RESPONSE_FILE_SEARCH_CALL_COMPLETED = "response.file_search_call.completed"
-    RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS = "response.file_search_call.in_progress"
-    RESPONSE_FILE_SEARCH_CALL_SEARCHING = "response.file_search_call.searching"
-    RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
-    RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
-    RESPONSE_IN_PROGRESS = "response.in_progress"
-    RESPONSE_FAILED = "response.failed"
-    RESPONSE_INCOMPLETE = "response.incomplete"
-    RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
-    RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
-    RESPONSE_REFUSAL_DELTA = "response.refusal.delta"
-    RESPONSE_REFUSAL_DONE = "response.refusal.done"
-    RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED = "response.output_text.annotation.added"
-    RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
-    RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
-    RESPONSE_REASONING_SUMMARY_PART_ADDED = "response.reasoning_summary_part.added"
-    RESPONSE_REASONING_SUMMARY_PART_DONE = "response.reasoning_summary_part.done"
-    RESPONSE_REASONING_SUMMARY_TEXT_DELTA = "response.reasoning_summary_text.delta"
-    RESPONSE_REASONING_SUMMARY_TEXT_DONE = "response.reasoning_summary_text.done"
-    RESPONSE_WEB_SEARCH_CALL_COMPLETED = "response.web_search_call.completed"
-    RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS = "response.web_search_call.in_progress"
-    RESPONSE_WEB_SEARCH_CALL_SEARCHING = "response.web_search_call.searching"
-    RESPONSE_IMAGE_GENERATION_CALL_COMPLETED = "response.image_generation_call.completed"
-    RESPONSE_IMAGE_GENERATION_CALL_GENERATING = "response.image_generation_call.generating"
-    RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS = "response.image_generation_call.in_progress"
-    RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE = "response.image_generation_call.partial_image"
-    RESPONSE_MCP_CALL_ARGUMENTS_DELTA = "response.mcp_call.arguments_delta"
-    RESPONSE_MCP_CALL_ARGUMENTS_DONE = "response.mcp_call.arguments_done"
-    RESPONSE_MCP_CALL_COMPLETED = "response.mcp_call.completed"
-    RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
-    RESPONSE_MCP_CALL_IN_PROGRESS = "response.mcp_call.in_progress"
-    RESPONSE_MCP_LIST_TOOLS_COMPLETED = "response.mcp_list_tools.completed"
-    RESPONSE_MCP_LIST_TOOLS_FAILED = "response.mcp_list_tools.failed"
-    RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS = "response.mcp_list_tools.in_progress"
-    RESPONSE_QUEUED = "response.queued"
-    RESPONSE_REASONING_DELTA = "response.reasoning.delta"
-    RESPONSE_REASONING_DONE = "response.reasoning.done"
-    RESPONSE_REASONING_SUMMARY_DELTA = "response.reasoning_summary.delta"
-    RESPONSE_REASONING_SUMMARY_DONE = "response.reasoning_summary.done"
-
-
-class ResponseTextFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """An object specifying the format that the model must output.
-
-    Configuring ``{ "type": "json_schema" }`` enables Structured Outputs,
-    which ensures the model will match your supplied JSON schema. Learn more in the
-    `Structured Outputs guide <https://platform.openai.com/docs/guides/structured-outputs>`_.
-
-    The default format is ``{ "type": "text" }`` with no additional options.
-
-    **Not recommended for gpt-4o and newer models:**
-
-    Setting to ``{ "type": "json_object" }`` enables the older JSON mode, which
-    ensures the message the model generates is valid JSON. Using ``json_schema``
-    is preferred for models that support it.
-    """
-
-    TEXT = "text"
-    JSON_SCHEMA = "json_schema"
-    JSON_OBJECT = "json_object"
 
 
 class RiskCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -661,84 +811,106 @@ class ScheduleTaskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Insight task."""
 
 
-class ServiceTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the processing type used for serving the request.
+class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of SearchContextSize."""
 
-    * If set to 'auto', then the request will be processed with the service tier
-      configured in the Project settings. Unless otherwise configured, the Project will use
-      'default'.
-    * If set to 'default', then the request will be processed with the standard
-      pricing and performance for the selected model.
-    * If set to '[flex](https://platform.openai.com/docs/guides/flex-processing)'
-      or 'priority', then the request will be processed with the corresponding service
-      tier. [Contact sales](https://openai.com/contact-sales) to learn more about Priority
-      processing.
-    * When not set, the default behavior is 'auto'.
-
-    When the ``service_tier`` parameter is set, the response body will include the ``service_tier``
-    value based on the processing mode actually used to serve the request. This response value
-    may be different from the value set in the parameter.
-    """
-
-    AUTO = "auto"
-    DEFAULT = "default"
-    FLEX = "flex"
-    SCALE = "scale"
-    PRIORITY = "priority"
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
 
 
-class ToolChoiceObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates that the model should use a built-in tool to generate a response.
-    `Learn more about built-in tools <https://platform.openai.com/docs/guides/tools>`_.
-    """
+class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of TextResponseFormatConfigurationType."""
 
-    FILE_SEARCH = "file_search"
+    TEXT = "text"
+    """TEXT."""
+    JSON_SCHEMA = "json_schema"
+    """JSON_SCHEMA."""
+    JSON_OBJECT = "json_object"
+    """JSON_OBJECT."""
+
+
+class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolChoiceParamType."""
+
+    ALLOWED_TOOLS = "allowed_tools"
+    """ALLOWED_TOOLS."""
     FUNCTION = "function"
-    COMPUTER = "computer_use_preview"
-    WEB_SEARCH = "web_search_preview"
-    IMAGE_GENERATION = "image_generation"
-    CODE_INTERPRETER = "code_interpreter"
+    """FUNCTION."""
     MCP = "mcp"
-
-
-class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Controls which (if any) tool is called by the model.
-
-    ``none`` means the model will not call any tool and instead generates a message.
-
-    ``auto`` means the model can pick between generating a message or calling one or
-    more tools.
-
-    ``required`` means the model must call one or more tools.
-    """
-
-    NONE = "none"
-    AUTO = "auto"
-    REQUIRED = "required"
+    """MCP."""
+    CUSTOM = "custom"
+    """CUSTOM."""
+    APPLY_PATCH = "apply_patch"
+    """APPLY_PATCH."""
+    SHELL = "shell"
+    """SHELL."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """WEB_SEARCH_PREVIEW."""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """COMPUTER_USE_PREVIEW."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
+    IMAGE_GENERATION = "image_generation"
+    """IMAGE_GENERATION."""
+    CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
 
 
 class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A tool that can be used to generate a response."""
+    """Type of ToolType."""
 
-    FILE_SEARCH = "file_search"
     FUNCTION = "function"
+    """FUNCTION."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
     COMPUTER_USE_PREVIEW = "computer_use_preview"
-    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """COMPUTER_USE_PREVIEW."""
+    WEB_SEARCH = "web_search"
+    """WEB_SEARCH."""
     MCP = "mcp"
+    """MCP."""
     CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
     IMAGE_GENERATION = "image_generation"
+    """IMAGE_GENERATION."""
     LOCAL_SHELL = "local_shell"
-    BING_GROUNDING = "bing_grounding"
-    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
-    FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
-    SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
-    AZURE_AI_SEARCH = "azure_ai_search"
-    OPENAPI = "openapi"
-    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
-    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    """LOCAL_SHELL."""
+    SHELL = "shell"
+    """SHELL."""
+    CUSTOM = "custom"
+    """CUSTOM."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """WEB_SEARCH_PREVIEW."""
+    APPLY_PATCH = "apply_patch"
+    """APPLY_PATCH."""
     A2A_PREVIEW = "a2a_preview"
+    """A2A_PREVIEW."""
+    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
+    """BING_CUSTOM_SEARCH_PREVIEW."""
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    """BROWSER_AUTOMATION_PREVIEW."""
+    FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
+    """FABRIC_DATAAGENT_PREVIEW."""
+    SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
+    """SHAREPOINT_GROUNDING_PREVIEW."""
+    MEMORY_SEARCH_PREVIEW = "memory_search_preview"
+    """MEMORY_SEARCH_PREVIEW."""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
-    MEMORY_SEARCH = "memory_search"
+    """AZURE_FUNCTION."""
+    BING_GROUNDING = "bing_grounding"
+    """BING_GROUNDING."""
+    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    """CAPTURE_STRUCTURED_OUTPUTS."""
+    OPENAPI = "openapi"
+    """OPENAPI."""
 
 
 class TreatmentEffectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -765,11 +937,3 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
-
-
-class WebSearchActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of WebSearchActionType."""
-
-    SEARCH = "search"
-    OPEN_PAGE = "open_page"
-    FIND = "find"

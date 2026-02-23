@@ -5,13 +5,23 @@
 # ------------------------------------
 
 """
+WARNING:
+Grounding with Bing Search tool uses Grounding with Bing, which has additional costs and terms.
+    Terms of use:
+        https://www.microsoft.com/bing/apis/grounding-legal-enterprise
+    Privacy statement:
+        https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409
+    Customer data will flow outside the Azure compliance boundary.
+    Learn more:
+        https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/bing-tools
+
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Bing grounding capabilities
-    using the BingGroundingAgentTool and synchronous Azure AI Projects client. The agent can search
+    using the BingGroundingTool and synchronous Azure AI Projects client. The agent can search
     the web for current information and provide grounded responses with URL citations.
 
     The sample shows:
-    - Creating an agent with BingGroundingAgentTool configured for web search
+    - Creating an agent with BingGroundingTool configured for web search
     - Making requests that require current information from the web
     - Extracting URL citations from the response annotations
     - Processing grounded responses with source citations
@@ -22,7 +32,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -38,7 +48,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingGroundingAgentTool,
+    BingGroundingTool,
     BingGroundingSearchToolParameters,
     BingGroundingSearchConfiguration,
 )
@@ -54,7 +64,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = BingGroundingAgentTool(
+    tool = BingGroundingTool(
         bing_grounding=BingGroundingSearchToolParameters(
             search_configurations=[
                 BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
@@ -78,7 +88,7 @@ with (
         stream=True,
         tool_choice="required",
         input="What is today's date and whether in Seattle?",
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

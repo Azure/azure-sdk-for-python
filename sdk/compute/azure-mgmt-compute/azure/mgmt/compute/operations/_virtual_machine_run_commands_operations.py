@@ -47,7 +47,7 @@ def build_list_request(location: str, subscription_id: str, **kwargs: Any) -> Ht
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
-    accept = _headers.pop("Accept", "application/json, text/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(
@@ -74,7 +74,7 @@ def build_get_request(location: str, command_id: str, subscription_id: str, **kw
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-04-01"))
-    accept = _headers.pop("Accept", "application/json, text/json")
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop(

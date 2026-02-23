@@ -19,12 +19,8 @@ class SearchDocumentsTest(PerfStressTest):
         service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
         index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
         key = os.getenv("AZURE_SEARCH_API_KEY")
-        self.service_client = SyncClient(
-            service_endpoint, index_name, AzureKeyCredential(api_key)
-        )
-        self.async_service_client = AsyncClient(
-            service_endpoint, index_name, AzureKeyCredential(api_key)
-        )
+        self.service_client = SyncClient(service_endpoint, index_name, AzureKeyCredential(api_key))
+        self.async_service_client = AsyncClient(service_endpoint, index_name, AzureKeyCredential(api_key))
 
     @staticmethod
     def add_arguments(parser):
@@ -48,19 +44,13 @@ class SearchDocumentsTest(PerfStressTest):
         if self.args.num_documents == -1:
             results = len(self.service_client.search(search_text="luxury"))
         else:
-            results = len(
-                self.service_client.search(
-                    search_text="luxury", top=self.args.num_documents
-                )
-            )
+            results = len(self.service_client.search(search_text="luxury", top=self.args.num_documents))
 
     async def run_async(self):
         if self.args.num_documents == -1:
             results = await self.async_service_client.search(search_text="luxury")
         else:
-            results = await self.async_service_client.search(
-                search_text="luxury", top=self.args.num_documents
-            )
+            results = await self.async_service_client.search(search_text="luxury", top=self.args.num_documents)
         count = 0
         async for result in results:
             count += count
