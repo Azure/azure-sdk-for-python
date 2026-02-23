@@ -203,6 +203,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
         finally:
             # Clean up
+            exporter.shutdown()
             AIProjectInstrumentor().uninstrument()
             trace._TRACER_PROVIDER = None
             os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)

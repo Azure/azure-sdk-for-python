@@ -249,7 +249,7 @@ class AIProjectInstrumentor:
         # Check experimental feature gate
         experimental_enabled = os.environ.get("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "false")
         if experimental_enabled.lower() != "true":
-            logger.info(
+            logger.warning(
                 "GenAI tracing is not enabled. Set environment variable "
                 "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable this experimental feature."
             )
@@ -294,12 +294,8 @@ class _AIAgentsInstrumentorPreview:
     This class allows enabling or disabling tracing for AI Agents
     and provides functionality to check whether instrumentation is active.
 
-    .. warning::
-        GenAI tracing is an experimental preview feature. To use this feature, you must set the
-        environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive)
-        before calling the ``instrument()`` method. The API surface may change in future releases.
-        Additionally, the trace structure and data, including spans, span and attribute names,
-        and attribute value structure may also change.
+    .. note::
+        This is a private implementation class. Use the public AIProjectInstrumentor class instead.
     """
 
     def _str_to_bool(self, s):
@@ -316,13 +312,8 @@ class _AIAgentsInstrumentorPreview:
         """
         Enable trace instrumentation for AI Agents.
 
-        .. warning::
-            GenAI tracing is an experimental preview feature. To use this feature, you must set the
-            environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive).
-            If this environment variable is not set or set to any value other than "true",
-            instrumentation will not be enabled and this method will return immediately without effect.
-            The API surface may change in future releases. Additionally, the trace structure and data,
-            including spans, span and attribute names, and attribute value structure may also change.
+        .. note::
+            This is a private implementation method. Use AIProjectInstrumentor.instrument() instead.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -350,15 +341,6 @@ class _AIAgentsInstrumentorPreview:
         :type enable_baggage_propagation: bool, optional
 
         """
-        # Check experimental feature gate
-        experimental_enabled = os.environ.get("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "false")
-        if experimental_enabled.lower() != "true":
-            logger.debug(
-                "GenAI tracing is not enabled. Set environment variable "
-                "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable this experimental feature."
-            )
-            return
-
         if enable_content_recording is None:
 
             var_value = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT")

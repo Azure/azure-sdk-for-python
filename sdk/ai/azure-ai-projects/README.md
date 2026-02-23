@@ -1047,7 +1047,7 @@ print(fine_tuning_job)
 AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true
 ```
 
-This environment variable must be set before calling `AIProjectInstrumentor().instrument()` or `_AIAgentsInstrumentorPreview().instrument()`. If the environment variable is not set or is set to any value other than `true` (case-insensitive), tracing instrumentation will not be enabled and a warning will be logged.
+This environment variable must be set before calling `AIProjectInstrumentor().instrument()`. If the environment variable is not set or is set to any value other than `true` (case-insensitive), tracing instrumentation will not be enabled and a warning will be logged.
 
 Only enable this feature after reviewing your requirements and understanding that the tracing behavior may change in future versions.
 
