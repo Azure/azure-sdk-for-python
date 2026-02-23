@@ -44,7 +44,7 @@ class import_all(Check):
         p.add_argument(
             "--mark_arg",
             dest="mark_arg",
-            help='Optional pytest marker expression passed as -m "<expr>" (e.g. "cosmosEmulator"). Accepted but ignored by import_all.',
+            help='Optional pytest marker expression (as used with "pytest -m", e.g. "cosmosEmulator"); accepted for CLI compatibility but has no effect for import_all.',
         )
         # Add any additional arguments specific to WhlCheck here (do not re-add common args)
 
