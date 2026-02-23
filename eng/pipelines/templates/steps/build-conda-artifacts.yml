@@ -38,7 +38,7 @@ steps:
       ArtifactPath: '$(Build.SourcesDirectory)/conda/assembled'
       ArtifactName: '${{ parameters.ArtifactPrefix }}distributions'
 
-  - ${{if eq(variables['System.TeamProject'], 'internal') }}:
+  - ${{if and(eq(variables['System.TeamProject'], 'internal'), ne(variables['Build.Reason'], 'PullRequest')) }}:
     - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
       displayName: 'Upload Conda SBOM'
       condition: succeededOrFailed()
