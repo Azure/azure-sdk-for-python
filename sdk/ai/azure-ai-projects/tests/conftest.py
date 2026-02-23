@@ -186,17 +186,6 @@ def add_sanitizers(test_proxy, sanitized_values):
         regex=r"print contents array = .*",
     )
 
-    # Normalize non-deterministic generator object pointer strings that can appear in
-    # serialized memory update request payloads (for example under items[*].content).
-    # The hexadecimal address varies by process/runtime and breaks strict playback body matching.
-    # Example: replace
-    # from "content": "<generator object _deserialize_sequence.<locals>.<genexpr> at 0x00000116E6358A90>"
-    # with   "content": "<generator object _deserialize_sequence.<locals>.<genexpr> at 0xSANITIZED>"
-    add_body_regex_sanitizer(
-        regex=r"<generator object _deserialize_sequence\.<locals>\.<genexpr> at 0x[0-9a-fA-F]+>",
-        value="<generator object _deserialize_sequence.<locals>.<genexpr> at 0xSANITIZED>",
-    )
-
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.
     # Here is an example of all the `x-stainless` headers from a Responses call:
     #   x-stainless-arch: other:amd64
