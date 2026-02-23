@@ -937,14 +937,13 @@ class Block(_Model):
     """Represents a single block in a block blob. It describes the block's ID and size.
 
     :ivar name: The base64 encoded block ID. Required.
-    :vartype name: bytes
+    :vartype name: str
     :ivar size: The block size in bytes. Required.
     :vartype size: int
     """
 
-    name: bytes = rest_field(
+    name: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        format="base64",
         xml={"attribute": False, "name": "Name", "text": False, "unwrapped": False},
     )
     """The base64 encoded block ID. Required."""
@@ -960,7 +959,7 @@ class Block(_Model):
     def __init__(
         self,
         *,
-        name: bytes,
+        name: str,
         size: int,
     ) -> None: ...
 
