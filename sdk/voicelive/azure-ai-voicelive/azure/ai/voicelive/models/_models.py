@@ -2722,22 +2722,34 @@ class OutputTokenDetails(_Model):
 
 
 class RequestAudioContentPart(ContentPart, discriminator="input_audio"):
-    """An audio content part for a request.
+    """An audio content part for a request. This is supported only by realtime models (e.g.,
+    gpt-realtime). For text-based models, use ``input_text`` instead.
 
     :ivar type: Required. INPUT_AUDIO.
     :vartype type: str or ~azure.ai.voicelive.models.INPUT_AUDIO
-    :ivar transcript:
+    :ivar audio: Base64-encoded audio bytes, these will be parsed as the format specified in the
+     session input audio type configuration. This defaults to PCM 16-bit 24kHz mono if not
+     specified. Required.
+    :vartype audio: str
+    :ivar transcript: Optional transcript of the audio content. This is not sent to the model, but
+     will be attached to the message item for reference.
     :vartype transcript: str
     """
 
     type: Literal[ContentPartType.INPUT_AUDIO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. INPUT_AUDIO."""
+    audio: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded audio bytes, these will be parsed as the format specified in the session input
+     audio type configuration. This defaults to PCM 16-bit 24kHz mono if not specified. Required."""
     transcript: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional transcript of the audio content. This is not sent to the model, but will be attached
+     to the message item for reference."""
 
     @overload
     def __init__(
         self,
         *,
+        audio: str,
         transcript: Optional[str] = None,
     ) -> None: ...
 

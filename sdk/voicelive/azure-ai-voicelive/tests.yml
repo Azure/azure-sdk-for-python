@@ -3,9 +3,9 @@ extends:
     parameters:
       BuildTargetingString: 'azure-ai-voicelive'
       JobName: chat
-      ServiceDirectory: ai
+      ServiceDirectory: voicelive
       TestResourceDirectories:
-      - ai/azure-ai-voicelive
+      - voicelive/azure-ai-voicelive
       EnvVars:
         AZURE_TEST_RUN_LIVE: 'true'
         AZURE_TEST_USE_CLI_AUTH: 'true'
