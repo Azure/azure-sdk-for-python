@@ -776,19 +776,14 @@ class BlobBlock(DictMixin):
 
     @classmethod
     def _from_generated(cls, generated):
-        if isinstance(generated.name, bytes):
-            # The generated model already base64-decoded the name, just decode UTF-8.
-            block_id = generated.name.decode('utf-8')
-        else:
-            try:
-                decoded_bytes = decode_base64_to_bytes(generated.name)
-                block_id = decoded_bytes.decode('utf-8')
-            # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64
-            # encoded while service expected block id is base64 encoded, so when we get block_id if we cannot
-            # base64 decode, it means we didn't base64 encode it when stage the block, we want to use the
-            # returned block_id directly.
-            except UnicodeDecodeError:
-                block_id = generated.name
+        try:
+            decoded_bytes = decode_base64_to_bytes(generated.name)
+            block_id = decoded_bytes.decode('utf-8')
+        # this is to fix a bug. When large blocks are uploaded through upload_blob the block id isn't base64 encoded
+        # while service expected block id is base64 encoded, so when we get block_id if we cannot base64 decode, it
+        # means we didn't base64 encode it when stage the block, we want to use the returned block_id directly.
+        except UnicodeDecodeError:
+            block_id = generated.name
         block = cls(block_id)
         block.size = generated.size
         return block
@@ -1052,6 +1047,11 @@ class AccessPolicy(GenAccessPolicy):
         expiry: Optional[Union[str, "datetime"]] = None,
         start: Optional[Union[str, "datetime"]] = None
     ) -> None:
+        kwargs = {}
+        kwargs['permission'] = permission
+        kwargs['expiry'] = expiry
+        kwargs['start'] = start
+        super(AccessPolicy, self).__init__(**kwargs)
         self.start = start
         self.expiry = expiry
         self.permission = permission

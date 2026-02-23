@@ -1309,7 +1309,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         return cast(Dict[str, str], self._client.blob.set_immutability_policy(
             immutability_policy_expiry=immutability_policy.expiry_time,
             immutability_policy_mode=immutability_policy.policy_mode,
-            cls=return_response_headers, version_id=version_id, **kwargs))
+            cls=return_response_headers, version_id=version_id, snapshot=self.snapshot, **kwargs))
 
     @distributed_trace
     def delete_immutability_policy(self, **kwargs: Any) -> None:
@@ -1332,7 +1332,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        self._client.blob.delete_immutability_policy(version_id=version_id, **kwargs)
+        self._client.blob.delete_immutability_policy(version_id=version_id, snapshot=self.snapshot, **kwargs)
 
     @distributed_trace
     def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
@@ -1358,7 +1358,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
         version_id = get_version_id(self.version_id, kwargs)
         return cast(Dict[str, Union[str, datetime, bool]], self._client.blob.set_legal_hold(
-            legal_hold=legal_hold, version_id=version_id, cls=return_response_headers, **kwargs))
+            legal_hold=legal_hold, version_id=version_id, snapshot=self.snapshot, cls=return_response_headers, **kwargs))
 
     @distributed_trace
     def create_page_blob(
@@ -2345,6 +2345,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             self._client.blob.set_tier(
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop('timeout', None),
+                snapshot=self.snapshot,
                 lease_access_conditions=access_conditions,
                 modified_access_conditions=mod_conditions,
                 **kwargs)
