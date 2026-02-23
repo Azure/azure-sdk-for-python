@@ -57,6 +57,7 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         manager_module._IO_AVAILABLE = True
         manager_module._IO_LAST_COUNT = 0
         manager_module._IO_LAST_TIME = datetime.now()
+        manager_module._IO_INITIALIZED = False
         manager_module._REQUESTS_COUNT = 0
         manager_module._EXCEPTIONS_COUNT = 0
         manager_module._LAST_REQUEST_RATE_TIME = datetime.now()
@@ -167,6 +168,7 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         # Import and modify global variables
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
 
+        manager_module._IO_INITIALIZED = True
         manager_module._IO_LAST_COUNT = 3000  # Previous total
         manager_module._IO_LAST_TIME = start_time
 
@@ -193,6 +195,7 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
 
         manager_module._IO_AVAILABLE = 0  # Previous total
+        manager_module._IO_INITIALIZED = True
         manager_module._IO_LAST_COUNT = 0  # Previous total
         manager_module._IO_LAST_TIME = start_time
 
@@ -200,6 +203,37 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
 
         self.assertEqual(len(result), 1)
         self.assertAlmostEqual(result[0].value, 0.0)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    def test_get_process_io_access_denied_disables_io(self, mock_process):
+        """Test process I/O retrieval disables I/O counters when access is denied."""
+        mock_process.io_counters.side_effect = psutil.AccessDenied(1)
+
+        import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
+
+        manager_module._IO_AVAILABLE = True
+        manager_module._IO_INITIALIZED = False
+
+        result = list(_get_process_io(None))
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].value, 0)
+        self.assertFalse(manager_module._IO_AVAILABLE)
+        mock_process.io_counters.assert_called_once_with()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
+    def test_get_process_io_disabled_does_not_call_io_counters(self, mock_process):
+        """Test process I/O retrieval does not call io_counters when unavailable."""
+        import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
+
+        manager_module._IO_AVAILABLE = False
+        manager_module._IO_INITIALIZED = True
+
+        result = list(_get_process_io(None))
+
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].value, 0)
+        mock_process.io_counters.assert_not_called()
 
     @mock.patch("psutil.cpu_times")
     def test_get_processor_time_success(self, mock_cpu_times):

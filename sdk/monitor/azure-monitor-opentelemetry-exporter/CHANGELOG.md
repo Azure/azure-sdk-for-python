@@ -7,7 +7,7 @@
 ### Breaking Changes
 
 ### Bugs Fixed
-
+- Fix a bug with crashing on import if psutil gets accessDenied. 
 ### Other Changes
 
 ## 1.0.0b48 (2026-02-05)

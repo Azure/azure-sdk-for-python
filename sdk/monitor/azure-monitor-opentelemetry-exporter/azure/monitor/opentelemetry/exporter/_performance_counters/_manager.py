@@ -48,10 +48,8 @@ NUM_CPUS = psutil.cpu_count()
 # _PROCESS.io_counters() is not available on Mac OS and some Linux distros.
 _IO_AVAILABLE = hasattr(_PROCESS, "io_counters")
 _IO_LAST_COUNT = 0
-if _IO_AVAILABLE:
-    _io_counters_initial = _PROCESS.io_counters()
-    _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
 _IO_LAST_TIME = datetime.now()
+_IO_INITIALIZED = False
 # Processor Time %
 _LAST_CPU_TIMES = psutil.cpu_times()
 # Request Rate
@@ -168,25 +166,55 @@ def _get_process_io(options: CallbackOptions) -> Iterable[Observation]:
     :rtype: ~typing.Iterable[~opentelemetry.metrics.Observation]
     """
     try:
-        if not _IO_AVAILABLE:
-            yield Observation(0, {})
-            return
         # pylint: disable=global-statement
         global _IO_LAST_COUNT
         # pylint: disable=global-statement
         global _IO_LAST_TIME
-        # RSS is non-swapped physical memory a process has used
-        io_counters = _PROCESS.io_counters()
-        rw_count = io_counters.read_bytes + io_counters.write_bytes
+        # pylint: disable=global-statement
+        global _IO_INITIALIZED
+        # pylint: disable=global-statement
+        global _IO_AVAILABLE
+
+        # Lazily initialize counters to avoid import-time failures in restricted environments.
+        if not _IO_INITIALIZED:
+            _IO_INITIALIZED = True
+            if _IO_AVAILABLE:
+                io_counters_func = getattr(_PROCESS, "io_counters", None)
+                if not callable(io_counters_func):
+                    _IO_AVAILABLE = False
+                    yield Observation(0, {})
+                    return
+                io_counters_initial = io_counters_func()
+                _IO_LAST_COUNT = int(getattr(io_counters_initial, "read_bytes", 0)) + int(
+                    getattr(io_counters_initial, "write_bytes", 0)
+                )
+                _IO_LAST_TIME = datetime.now()
+
+        if not _IO_AVAILABLE:
+            yield Observation(0, {})
+            return
+
+        io_counters_func = getattr(_PROCESS, "io_counters", None)
+        if not callable(io_counters_func):
+            _IO_AVAILABLE = False
+            yield Observation(0, {})
+            return
+
+        io_counters = io_counters_func()
+        rw_count = int(getattr(io_counters, "read_bytes", 0)) + int(getattr(io_counters, "write_bytes", 0))
         rw_diff = rw_count - _IO_LAST_COUNT
         _IO_LAST_COUNT = rw_count
         current_time = datetime.now()
         elapsed_time_s = (current_time - _IO_LAST_TIME).total_seconds()
         _IO_LAST_TIME = current_time
+        if elapsed_time_s <= 0:
+            yield Observation(0, {})
+            return
         io_rate = rw_diff / elapsed_time_s
         yield Observation(io_rate, {})
     except (psutil.NoSuchProcess, psutil.AccessDenied, Exception) as e:  # pylint: disable=broad-except
-        _logger.exception("Error getting process I/O rate: %s", e)
+        _IO_AVAILABLE = False
+        _logger.debug("Disabling process I/O counter due to inaccessible io_counters: %s", e)
         yield Observation(0, {})
 
 
