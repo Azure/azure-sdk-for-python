@@ -69,12 +69,20 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
 
         mock_process = MagicMock()
         mock_process.io_counters.side_effect = psutil.AccessDenied(pid=1)
+        mock_logger = MagicMock()
 
-        with mock.patch("psutil.Process", return_value=mock_process):
+        with mock.patch("psutil.Process", return_value=mock_process), mock.patch(
+            "logging.getLogger", return_value=mock_logger
+        ):
             module_globals = runpy.run_path(manager_module.__file__)
 
         self.assertFalse(module_globals["_IO_AVAILABLE"])
         self.assertEqual(module_globals["_IO_LAST_COUNT"], 0)
+        mock_logger.exception.assert_called_once_with(
+            "Performance counter %s is unavailable due to an error while " "initializing process I/O counters: %s",
+            "azuremonitor.performancecounter.processiobytessec",
+            mock_process.io_counters.side_effect
+        )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
     def test_get_process_cpu_success(self, mock_process):
