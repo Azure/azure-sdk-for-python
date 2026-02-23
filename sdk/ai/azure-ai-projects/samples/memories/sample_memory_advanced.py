@@ -38,11 +38,11 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
+from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 
@@ -84,8 +84,8 @@ with (
     scope = "user_123"
 
     # Extract memories from messages and add them to the memory store
-    user_message = EasyInputMessage(
-        role="user", content="I prefer dark roast coffee and usually drink it in the morning"
+    user_message = dict(
+        EasyInputMessageParam(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
     )
     update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
@@ -96,7 +96,7 @@ with (
     print(f"Scheduled memory update operation (Update ID: {update_poller.update_id}, Status: {update_poller.status()})")
 
     # Extend the previous update with another update and more messages
-    new_message = EasyInputMessage(role="user", content="I also like cappuccinos in the afternoon")
+    new_message = dict(EasyInputMessageParam(role="user", content="I also like cappuccinos in the afternoon"))
     new_update_poller = project_client.beta.memory_stores.begin_update_memories(
         name=memory_store.name,
         scope=scope,
@@ -123,7 +123,7 @@ with (
         )
 
     # Retrieve memories from the memory store
-    query_message = EasyInputMessage(role="user", content="What are my morning coffee preferences?")
+    query_message = dict(EasyInputMessageParam(role="user", content="What are my morning coffee preferences?"))
     search_response = project_client.beta.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,
@@ -135,10 +135,12 @@ with (
         print(f"  - Memory ID: {memory.memory_item.memory_id}, Content: {memory.memory_item.content}")
 
     # Perform another search using the previous search as context
-    agent_message = EasyInputMessage(
-        role="assistant", content="You previously indicated a preference for dark roast coffee in the morning."
+    agent_message = dict(
+        EasyInputMessageParam(
+            role="assistant", content="You previously indicated a preference for dark roast coffee in the morning."
+        )
     )
-    followup_query = EasyInputMessage(role="user", content="What about afternoon?")
+    followup_query = dict(EasyInputMessageParam(role="user", content="What about afternoon?"))
     followup_search_response = project_client.beta.memory_stores.search_memories(
         name=memory_store.name,
         scope=scope,

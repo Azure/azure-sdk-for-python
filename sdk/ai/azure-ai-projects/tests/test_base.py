@@ -25,7 +25,6 @@ from azure.ai.projects.models import (
     Index,
     IndexType,
     InputContentType,
-    InputItemType,
     ModelDeployment,
 )
 from openai.types.responses import Response

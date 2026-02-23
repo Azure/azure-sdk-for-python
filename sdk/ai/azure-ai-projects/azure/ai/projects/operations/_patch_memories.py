@@ -35,7 +35,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -51,7 +51,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          Default value is "application/json".
         :paramtype content_type: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :paramtype items: list[dict[str, Any]]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -130,7 +130,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -145,7 +145,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          Required.
         :paramtype scope: str
         :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :paramtype items: list[dict[str, Any]]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str

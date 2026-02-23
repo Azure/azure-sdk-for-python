@@ -38,11 +38,11 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    EasyInputMessage,
     MemoryStoreDefaultDefinition,
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
+from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 
@@ -87,8 +87,8 @@ async def main() -> None:
         scope = "user_123"
 
         # Add a memory to the memory store
-        user_message = EasyInputMessage(
-            role="user", content="I prefer dark roast coffee and usually drink it in the morning"
+        user_message = dict(
+            EasyInputMessageParam(role="user", content="I prefer dark roast coffee and usually drink it in the morning")
         )
         update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
@@ -106,7 +106,7 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = EasyInputMessage(role="user", content="What are my coffee preferences?")
+        query_message = dict(EasyInputMessageParam(role="user", content="What are my coffee preferences?"))
         search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
