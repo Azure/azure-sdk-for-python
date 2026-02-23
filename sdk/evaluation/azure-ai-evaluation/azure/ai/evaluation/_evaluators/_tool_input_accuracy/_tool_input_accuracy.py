@@ -90,7 +90,9 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Initialize input validator
         self._validator = ToolDefinitionsValidator(
-            error_target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR, optional_tool_definitions=False
+            error_target=ErrorTarget.TOOL_INPUT_ACCURACY_EVALUATOR,
+            optional_tool_definitions=False,
+            check_for_unsupported_tools=True,
         )
 
         super().__init__(
@@ -199,7 +201,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             result = llm_output.get("result", None)
@@ -260,7 +262,7 @@ class _ToolInputAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
             error_message = eval_input.get("error_message", "Unknown error")
-            return self._not_applicable_result(error_message, 1)
+            return self._not_applicable_result(error_message, 1, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

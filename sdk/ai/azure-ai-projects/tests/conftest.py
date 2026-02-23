@@ -12,11 +12,15 @@ mimetypes.add_type("text/csv", ".csv")
 mimetypes.add_type("text/markdown", ".md")
 
 import os
+import re
 import pytest
 from dotenv import find_dotenv, load_dotenv
 from devtools_testutils import (
     remove_batch_sanitizers,
     add_general_regex_sanitizer,
+    add_header_regex_sanitizer,
+    add_body_regex_sanitizer,
+    add_body_string_sanitizer,
     add_body_key_sanitizer,
     add_remove_header_sanitizer,
 )
@@ -128,6 +132,40 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Pattern 2: "Eval Run for <agent_name> -<timestamp>" (agent name already sanitized)
     add_general_regex_sanitizer(regex=r"sanitized-agent-name -\d{10}", value="sanitized-agent-name -SANITIZED-TS")
 
+    # Sanitize image-generation deployment name from live env when present.
+    # This value is commonly emitted in request headers (for example
+    # `x-ms-oai-image-generation-deployment`) and may come from either
+    # upper/lowercase environment variable naming paths.
+    image_generation_models = {
+        value
+        for value in (
+            os.environ.get("IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"),
+            os.environ.get("image_generation_model_deployment_name"),
+        )
+        if value
+    }
+    for image_generation_model in image_generation_models:
+        add_general_regex_sanitizer(regex=re.escape(image_generation_model), value="sanitized-gpt-image")
+        add_header_regex_sanitizer(
+            key="x-ms-oai-image-generation-deployment",
+            regex=re.escape(image_generation_model),
+            value="sanitized-gpt-image",
+        )
+        add_body_string_sanitizer(target=image_generation_model, value="sanitized-gpt-image")
+
+    # Deterministic fallback sanitization for image generation deployment/model values.
+    # These do not depend on environment variables and ensure recordings are redacted even
+    # when runtime values come from unexpected sources.
+    add_header_regex_sanitizer(
+        key="x-ms-oai-image-generation-deployment",
+        regex=r".+",
+        value="sanitized-gpt-image",
+    )
+    add_body_regex_sanitizer(
+        regex=r'"model"\s*:\s*"gpt-image[^"]*"',
+        value='"model": "sanitized-gpt-image"',
+    )
+
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 
@@ -146,6 +184,17 @@ def add_sanitizers(test_proxy, sanitized_values):
         json_path="$.input",
         value="sanitized-print-output",
         regex=r"print contents array = .*",
+    )
+
+    # Normalize non-deterministic generator object pointer strings that can appear in
+    # serialized memory update request payloads (for example under items[*].content).
+    # The hexadecimal address varies by process/runtime and breaks strict playback body matching.
+    # Example: replace
+    # from "content": "<generator object _deserialize_sequence.<locals>.<genexpr> at 0x00000116E6358A90>"
+    # with   "content": "<generator object _deserialize_sequence.<locals>.<genexpr> at 0xSANITIZED>"
+    add_body_regex_sanitizer(
+        regex=r"<generator object _deserialize_sequence\.<locals>\.<genexpr> at 0x[0-9a-fA-F]+>",
+        value="<generator object _deserialize_sequence.<locals>.<genexpr> at 0xSANITIZED>",
     )
 
     # Remove Stainless headers from OpenAI client requests, since they include platform and OS specific info, which we can't have in recorded requests.

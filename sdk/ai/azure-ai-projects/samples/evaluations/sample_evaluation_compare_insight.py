@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -31,8 +31,11 @@ import os
 import time
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.ai.projects.models._enums import OperationState
-from azure.ai.projects.models._models import EvaluationComparisonRequest, Insight
+from azure.ai.projects.models import (
+    OperationState,
+    EvaluationComparisonInsightRequest,
+    Insight,
+)
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
@@ -131,18 +134,18 @@ with (
         print("\n✓ Both evaluation runs completed successfully!")
 
         # Generate comparison insights
-        compareInsight = project_client.insights.generate(
-            Insight(
+        compareInsight = project_client.beta.insights.generate(
+            insight=Insight(
                 display_name="Comparison of Evaluation Runs",
-                request=EvaluationComparisonRequest(
+                request=EvaluationComparisonInsightRequest(
                     eval_id=eval_object.id, baseline_run_id=eval_run_1.id, treatment_run_ids=[eval_run_2.id]
                 ),
-            )
+            ),
         )
         print(f"Started insight generation (id: {compareInsight.id})")
 
         while compareInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            compareInsight = project_client.insights.get(id=compareInsight.id)
+            compareInsight = project_client.beta.insights.get(id=compareInsight.id)
             print(f"Waiting for insight to be generated...current status: {compareInsight.state}")
             time.sleep(5)
 

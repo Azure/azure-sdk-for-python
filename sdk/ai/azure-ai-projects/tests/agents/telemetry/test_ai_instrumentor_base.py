@@ -31,6 +31,9 @@ class MessageCreationMode(IntEnum):
     )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAiAgentsInstrumentorBase(TestBase):
     """The utility methods, used by AI Instrumentor test."""
 

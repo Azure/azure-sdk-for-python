@@ -399,7 +399,7 @@
 
 # ServiceLabel: %Service Attention %Voice Live
 # PRLabel: %Voice Live
-/sdk/ai/azure-ai-voicelive/    @amber-yujueWang @emilyjiji @pankopon @rhurey @xitzhang
+/sdk/voicelive/    @amber-yujueWang @emilyjiji @pankopon @rhurey @xitzhang
 
 # ServiceLabel: %AAD %Service Attention
 # ServiceOwners: @adamedx
