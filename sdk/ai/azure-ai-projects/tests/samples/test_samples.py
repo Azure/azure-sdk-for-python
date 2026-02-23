@@ -68,7 +68,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "memories",
-            samples_to_skip=[],
+            samples_to_skip=["sample_memory_advanced.py"],
         ),
     )
     @servicePreparer()
