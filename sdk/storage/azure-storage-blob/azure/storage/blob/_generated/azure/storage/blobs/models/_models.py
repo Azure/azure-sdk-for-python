@@ -1221,7 +1221,7 @@ class ContainerProperties(_Model):
     """The date-time the container was last modified in RFC1123 format. Required."""
     etag: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "name": "ETag", "text": False, "unwrapped": False},
+        xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
     )
     """The ETag of the container. Required."""
     lease_status: Optional[Union[str, "_models.LeaseStatus"]] = rest_field(
