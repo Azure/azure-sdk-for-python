@@ -52,12 +52,12 @@ if _IO_AVAILABLE:
     try:
         _io_counters_initial = _PROCESS.io_counters()
         _IO_LAST_COUNT = _io_counters_initial.read_bytes + _io_counters_initial.write_bytes
-    except (
+    except (  # pylint: disable=broad-exception-caught
         psutil.NoSuchProcess,
         psutil.AccessDenied,
         AttributeError,
         Exception,
-    ):  # pylint: disable=broad-exception-caught
+    ):
         _IO_AVAILABLE = False
         _IO_LAST_COUNT = 0
 _IO_LAST_TIME = datetime.now()
