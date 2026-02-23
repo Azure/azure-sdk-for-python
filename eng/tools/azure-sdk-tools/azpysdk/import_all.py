@@ -41,6 +41,11 @@ class import_all(Check):
         parents = parent_parsers or []
         p = subparsers.add_parser("import_all", parents=parents, help="Run the import_all check")
         p.set_defaults(func=self.run)
+        p.add_argument(
+            "--mark_arg",
+            dest="mark_arg",
+            help='Optional pytest marker expression passed as -m "<expr>" (e.g. "cosmosEmulator"). Accepted but ignored by import_all.',
+        )
         # Add any additional arguments specific to WhlCheck here (do not re-add common args)
 
     # todo: figure out venv abstraction mechanism via override
