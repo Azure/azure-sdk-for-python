@@ -4,7 +4,7 @@
 
 ### Features Added
 
-- Add Browser SDK loader SDK Stats feature bit
+- Add Browser SDK loader SDK Stats feature bit ([#42904](https://github.com/Azure/azure-sdk-for-python/pull/44162))
 
 ### Breaking Changes
 
