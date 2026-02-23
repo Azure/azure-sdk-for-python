@@ -42,15 +42,13 @@ async def main() -> None:
         project_client.get_openai_client() as openai_client,
     ):
 
-        tool = CodeInterpreterTool()
-
         # Create agent with code interpreter tool
         agent = await project_client.agents.create_version(
             agent_name="MyAgent",
             definition=PromptAgentDefinition(
                 model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
                 instructions="You are a helpful assistant.",
-                tools=[tool],
+                tools=[CodeInterpreterTool()],
             ),
             description="Code interpreter agent for data analysis and visualization.",
         )

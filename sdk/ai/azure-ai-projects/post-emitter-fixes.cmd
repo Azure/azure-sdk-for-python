@@ -17,6 +17,9 @@ REM Rename `"items_property": items`, to `"items": items` in search_memories and
 powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
 powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\operations\_operations.py"
 
+REM Fix content type annotation: replace `content: Union[str, list[...]]` with `content: Union["str", list[...]]`. Otherwise serialization fails.
+powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'content: Union\[str, list\[\"_models\.InputContent\"\]\]', 'content: Union[\"str\", list[\"_models.InputContent\"]]' | Set-Content azure\ai\projects\models\_models.py"
+
 REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. Everything should be aligned including JSON example, like this:
 REM """A list of tool definitions that the model should be allowed to call. For the Responses API, the
 REM  list of tool definitions might look like:

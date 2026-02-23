@@ -55,7 +55,7 @@ with (
     )
 
     # [START tool_declaration]
-    with open(tripadvisor_asset_file_path, "r") as f:
+    with open(tripadvisor_asset_file_path, "r", encoding="utf-8") as f:
         openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
     tool = OpenApiTool(
@@ -83,7 +83,7 @@ with (
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
     response = openai_client.responses.create(
-        input="Recommend me 5 top hotels in paris, France",
+        input="Recommend me 5 top hotels in the United States",
         extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     # The response to the question may contain non ASCII letters. To avoid error, encode and re decode them.

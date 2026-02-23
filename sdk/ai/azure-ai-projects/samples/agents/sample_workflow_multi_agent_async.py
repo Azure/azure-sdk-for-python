@@ -110,6 +110,10 @@ trigger:
       output:
         messages: Local.LatestMessage
 
+    - kind: SendActivity
+      id: send_teacher_reply
+      activity: "{{Last(Local.LatestMessage).Text}}"        
+        
     - kind: SetVariable
       id: set_variable_turncount
       variable: Local.TurnCount
@@ -165,6 +169,8 @@ trigger:
                     f": item action ID '{event.item.action_id}' is '{event.item.status}' (previous action ID: '{event.item.previous_action_id}')",
                     end="",
                 )
+            elif event.type == "response.completed":
+                print(f"\nFinal response output: {event.response.output_text}", flush=True)
             print("", flush=True)
 
         await openai_client.conversations.delete(conversation_id=conversation.id)

@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
+from typing import Any, List
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
@@ -16,13 +16,13 @@ from ._operations import (
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
-    BetaOperations as GenerateBetaOperations,
     BetaRedTeamsOperations,
     BetaSchedulesOperations,
+    BetaOperations as GeneratedBetaOperations,
 )
 
 
-class BetaOperations(GenerateBetaOperations):
+class BetaOperations(GeneratedBetaOperations):
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32,11 +32,22 @@ class BetaOperations(GenerateBetaOperations):
         :attr:`beta` attribute.
     """
 
-    memory_stores: BetaMemoryStoresOperations  # type override for mypy
+    evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
+    evaluators: BetaEvaluatorsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaEvaluatorsOperations` operations"""
+    insights: BetaInsightsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaInsightsOperations` operations"""
+    memory_stores: BetaMemoryStoresOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaMemoryStoresOperations` operations"""
+    red_teams: BetaRedTeamsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaRedTeamsOperations` operations"""
+    schedules: BetaSchedulesOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaSchedulesOperations` operations"""
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Override memory_stores with the patched version that has begin_update_memories
+        # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
