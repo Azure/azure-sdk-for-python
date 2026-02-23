@@ -59,9 +59,9 @@ if _IO_AVAILABLE:
         Exception,
     ) as e:
         _logger.exception(
-            "Performance counter %s is unavailable due to an error while " "initializing process I/O counters: %s",
+            "Performance counter %s is unavailable due to an error while initializing process I/O counters: %s",
             _PROCESS_IO_RATE[0],
-            e
+            e,
         )
         _IO_AVAILABLE = False
         _IO_LAST_COUNT = 0

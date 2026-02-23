@@ -81,7 +81,7 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         mock_logger.exception.assert_called_once_with(
             "Performance counter %s is unavailable due to an error while " "initializing process I/O counters: %s",
             "azuremonitor.performancecounter.processiobytessec",
-            mock_process.io_counters.side_effect
+            mock_process.io_counters.side_effect,
         )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
