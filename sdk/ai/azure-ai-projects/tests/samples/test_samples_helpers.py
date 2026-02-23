@@ -47,13 +47,41 @@ Mark `correct = false` for:
 
 Important distinction:
 - Empty memory results by themselves (for example no matches for a query) can be valid and should not automatically fail.
-- Payload snippets like "<generator object ...>" in logged request bodies can appear as SDK/logging serialization artifacts;
-    do not treat this text alone as a failure signal if memory API calls succeed.
 - Completed updates with 0 memory operations can still be valid for this test and should not automatically fail.
 - But explicit inability/failure to access or process memory should be marked `correct = false`.
 
 Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
 memory behavior, even if no memory matches are found.
+
+Always include `reason` with a concise explanation tied to the observed print output."""
+
+agents_instructions = """We just ran Python code and captured a Python array of print statements.
+Validate whether sample execution/output is correct.
+
+For agents scenarios, successful output typically shows one or more of:
+- Agent/run/thread creation or execution progress.
+- Assistant response content, streamed events, or structured output.
+- Retrieval/context-aware response behavior when the sample asks for it.
+
+Check input/output correspondence:
+- If the printed output contains a user prompt/request/question, the final assistant output should
+    clearly address that input and stay on-topic.
+- If the sample expects structured output, the printed result should match that structure.
+- Minor wording differences are acceptable as long as the response is relevant and logically consistent.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Malformed/corrupted output indicating broken processing.
+- Agent run/tool/retrieval failures where the sample cannot proceed as designed.
+
+Important distinction:
+- Intermediate/partial prints during streaming can be valid and should not automatically fail.
+- Empty or brief intermediate payloads by themselves can be valid if the run still completes successfully.
+- But explicit inability/failure to execute the intended agent workflow should be marked `correct = false`.
+
+Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
+agent behavior, including reasonable correspondence between input prompt(s) and final output.
 
 Always include `reason` with a concise explanation tied to the observed print output."""
 
