@@ -157,12 +157,12 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     def test_experimental_genai_tracing_gate(self, env_value: Optional[str], should_instrument: bool):
         """
         Test that the experimental GenAI tracing gate works correctly.
-        
+
         This test verifies that:
         - When AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING is not set, instrumentation is disabled
         - When set to "false" (case-insensitive), instrumentation is disabled
         - When set to "true" (case-insensitive), instrumentation is enabled
-        
+
         Args:
             env_value: Value for AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING environment variable.
                       Can be None (unset), "true", "True", "TRUE", "false", "False", "FALSE".
@@ -171,36 +171,36 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         # Clean up any previous state
         AIProjectInstrumentor().uninstrument()
         os.environ.pop("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", None)
-        
+
         # Set the environment variable
         if env_value is not None:
             os.environ["AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"] = env_value
-        
+
         try:
             # Setup telemetry infrastructure
             from opentelemetry import trace
             from opentelemetry.sdk.trace import TracerProvider
             from opentelemetry.sdk.trace.export import SimpleSpanProcessor
             from memory_trace_exporter import MemoryTraceExporter
-            
+
             tracer_provider = TracerProvider()
             trace._TRACER_PROVIDER = tracer_provider
             exporter = MemoryTraceExporter()
             span_processor = SimpleSpanProcessor(exporter)
             tracer_provider.add_span_processor(span_processor)
-            
+
             # Attempt to instrument
             AIProjectInstrumentor().instrument()
-            
+
             # Check if instrumentation actually happened
             is_instrumented = AIProjectInstrumentor().is_instrumented()
-            
+
             # Verify the result matches expectation
             assert is_instrumented == should_instrument, (
                 f"Expected instrumentation={should_instrument} when env={'<not set>' if env_value is None else env_value}, "
                 f"but got instrumentation={is_instrumented}"
             )
-            
+
         finally:
             # Clean up
             AIProjectInstrumentor().uninstrument()
