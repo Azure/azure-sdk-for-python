@@ -403,19 +403,22 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
     def _not_applicable_result(
         self, error_message: str, threshold: Union[int, float], has_details: bool = False
-    ) -> Dict[str, Union[str, float, Dict]]:
+    ) -> Dict[str, Union[str, int, float, Dict]]:
         """Return a result indicating that the evaluation is not applicable.
+
+        When evaluation cannot be performed (e.g., no tool calls, missing definitions),
+        this returns the threshold value as the score with a "pass" result.
 
         :param error_message: The error message explaining why evaluation is not applicable.
         :type error_message: str
-        :param threshold: The threshold value for the evaluator.
+        :param threshold: The threshold value for the evaluator, used as the score.
         :type threshold: Union[int, float]
         :param has_details: Whether to include an empty details field in the result.
         :type has_details: bool
         :return: A dictionary containing the result of the evaluation.
         :rtype: Dict[str, Union[str, float, Dict]]
         """
-        # If no tool calls were made or tool call type is not supported, return not applicable result
+        # If no tool calls were made or tool call type is not supported, return threshold as score with pass result
         result = {
             self._result_key: threshold,
             f"{self._result_key}_result": "pass",

@@ -78,6 +78,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator = ToolDefinitionsValidator(
             error_target=ErrorTarget.TOOL_CALL_SUCCESS_EVALUATOR,
             requires_query=False,
+            check_for_unsupported_tools=True,
         )
 
         super().__init__(
@@ -198,7 +199,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             eval_input["tool_definitions"] = _reformat_tool_definitions(filtered_tool_definitions, logger)
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", "")
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             success = llm_output.get("success", False)
