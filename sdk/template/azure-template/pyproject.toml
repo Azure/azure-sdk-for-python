@@ -1,14 +1,20 @@
 [build-system]
-requires = ["setuptools>=77.0.3", "wheel"]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "azure-template"
 authors = [
-    {name = "Microsoft Corporation", email = "azuresdkengsysadmins@microsoft.com"},
+    { name = "Microsoft Corporation", email = "azuresdkengsysadmins@microsoft.com" },
 ]
 description = "Microsoft Azure Template Package Client Library for Python"
-keywords = ["azure", "azure sdk"]
+keywords = [
+    "azure",
+    "azure sdk",
+]
 requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
@@ -25,21 +31,36 @@ classifiers = [
 dependencies = [
     "azure-core<2.0.0,>=1.23.0",
 ]
-dynamic = ["version", "readme"]
+dynamic = [
+    "version",
+    "readme",
+]
 
 [project.urls]
 "Bug Reports" = "https://github.com/Azure/azure-sdk-for-python/issues"
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
-[tool.setuptools.dynamic]
-version = {attr = "azure.template._version.VERSION"}
-readme = {file = ["README.md"], content-type = "text/markdown"}
+[tool.setuptools.dynamic.version]
+attr = "azure.template._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
 
 [tool.setuptools.packages.find]
-exclude = ["tests*", "samples*", "azure", "build*"]
+exclude = [
+    "tests*",
+    "samples*",
+    "azure",
+    "build*",
+]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+pytyped = [
+    "py.typed",
+]
 
 [tool.azure-sdk-build]
 mypy = true
@@ -50,3 +71,6 @@ pylint = true
 black = true
 generate = false
 apistub = false
+
+[packaging]
+auto_update = false

@@ -9,14 +9,17 @@ verifysdist = false
 verifywhl = false
 sdist = false
 breaking = false
-# these can be any number of suppressions. note that * present means that ALL warnings will be suppressed for this package
-suppressed_skip_warnings = ["*"]
-
-[build-system]
-requires = ["setuptools", "wheel", "cibuildwheel"]
+suppressed_skip_warnings = [
+    "*",
+]
 
 [tool.cibuildwheel]
-build = ["cp39*", "pp39*", "pp310*", "pp311*"]
+build = [
+    "cp39*",
+    "pp39*",
+    "pp310*",
+    "pp311*",
+]
 test-requires = "pytest"
 test-command = "pytest {project}/tests"
 test-skip = "*-macosx_arm64"
@@ -30,3 +33,13 @@ archs = "x86_64 arm64"
 
 [tool.cibuildwheel.windows]
 archs = "AMD64"
+
+[build-system]
+requires = [
+    "setuptools",
+    "wheel",
+    "cibuildwheel",
+]
+
+[packaging]
+auto_update = false

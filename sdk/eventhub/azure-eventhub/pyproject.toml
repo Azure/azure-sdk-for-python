@@ -1,14 +1,20 @@
 [build-system]
-requires = ["setuptools>=77.0.3", "wheel"]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "azure-eventhub"
 authors = [
-    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 description = "Microsoft Azure Event Hubs Client Library for Python"
-keywords = ["azure", "azure sdk"]
+keywords = [
+    "azure",
+    "azure sdk",
+]
 requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
@@ -26,20 +32,36 @@ dependencies = [
     "azure-core>=1.27.0",
     "typing-extensions>=4.0.1",
 ]
-dynamic = ["version", "readme"]
+dynamic = [
+    "version",
+    "readme",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
 
-[tool.setuptools.dynamic]
-version = {attr = "azure.eventhub._version.VERSION"}
-readme = {file = ["README.md"], content-type = "text/markdown"}
+[tool.setuptools.dynamic.version]
+attr = "azure.eventhub._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
 
 [tool.setuptools.packages.find]
-exclude = ["samples*", "tests*", "doc*", "stress*", "azure"]
+exclude = [
+    "samples*",
+    "tests*",
+    "doc*",
+    "stress*",
+    "azure",
+]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+pytyped = [
+    "py.typed",
+]
 
 [tool.azure-sdk-build]
 pyright = false
@@ -50,3 +72,6 @@ pylint = true
 [tool.azure-sdk-conda]
 in_bundle = true
 bundle_name = "azure-eventhub"
+
+[packaging]
+auto_update = false

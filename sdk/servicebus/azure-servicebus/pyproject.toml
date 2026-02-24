@@ -1,14 +1,20 @@
 [build-system]
-requires = ["setuptools>=77.0.3", "wheel"]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "azure-servicebus"
 authors = [
-    {name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com"},
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 description = "Microsoft Azure Service Bus Client Library for Python"
-keywords = ["azure", "azure sdk"]
+keywords = [
+    "azure",
+    "azure sdk",
+]
 requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
@@ -27,20 +33,37 @@ dependencies = [
     "isodate>=0.6.0",
     "typing-extensions>=4.6.0",
 ]
-dynamic = ["version", "readme"]
+dynamic = [
+    "version",
+    "readme",
+]
 
 [project.urls]
 Repository = "https://github.com/Azure/azure-sdk-for-python.git"
 
-[tool.setuptools.dynamic]
-version = {attr = "azure.servicebus._version.VERSION"}
-readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+[tool.setuptools.dynamic.version]
+attr = "azure.servicebus._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
 
 [tool.setuptools.packages.find]
-exclude = ["samples*", "tests*", "doc*", "stress*", "azure"]
+exclude = [
+    "samples*",
+    "tests*",
+    "doc*",
+    "stress*",
+    "azure",
+]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+pytyped = [
+    "py.typed",
+]
 
 [tool.azure-sdk-build]
 pyright = false
@@ -51,3 +74,6 @@ black = false
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[packaging]
+auto_update = false

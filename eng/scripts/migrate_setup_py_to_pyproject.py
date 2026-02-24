@@ -145,7 +145,15 @@ def _extract_find_packages_exclude(setup_py_path: str) -> Optional[List[str]]:
             continue
         for kw in node.keywords:
             if kw.arg == "exclude" and isinstance(kw.value, ast.List):
-                return [elt.value for elt in kw.value.elts if isinstance(elt, ast.Constant)]
+                items = [elt.value for elt in kw.value.elts if isinstance(elt, ast.Constant)]
+                # Deduplicate while preserving order
+                seen: set = set()
+                deduped = []
+                for item in items:
+                    if item not in seen:
+                        seen.add(item)
+                        deduped.append(item)
+                return deduped
     return None
 
 
