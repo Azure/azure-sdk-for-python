@@ -1,4 +1,4 @@
-﻿# The MIT License (MIT)
+# The MIT License (MIT)
 # Copyright (c) 2014 Microsoft Corporation
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -35,6 +35,7 @@ from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
 from ._cosmos_responses import CosmosDict
+from ._cosmos_span_attributes import cosmos_span_attributes
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
@@ -359,6 +360,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace
+    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
