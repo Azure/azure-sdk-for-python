@@ -307,9 +307,16 @@ class sphinx(Check):
             if in_ci() or args.in_ci:
                 move_output_and_compress(site_folder, package_dir, package_name)
                 if in_analyze_weekly():
-                    from gh_tools.vnext_issue_creator import close_vnext_issue
-
-                    close_vnext_issue(package_name, "sphinx")
+                    try:
+                        check_call(
+                            [
+                                executable,
+                                "-c",
+                                f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'sphinx')",
+                            ]
+                        )
+                    except CalledProcessError as e:
+                        logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
 
         return max(results) if results else 0
 
@@ -340,9 +347,16 @@ class sphinx(Check):
         except CalledProcessError as e:
             logger.error("sphinx-build failed for path {} exited with error {}".format(target_dir, e.returncode))
             if in_analyze_weekly():
-                from gh_tools.vnext_issue_creator import create_vnext_issue
-
-                create_vnext_issue(package_dir, "sphinx")
+                try:
+                    check_call(
+                        [
+                            executable,
+                            "-c",
+                            f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'sphinx')",
+                        ]
+                    )
+                except CalledProcessError as issue_error:
+                    logger.warning(f"Failed to create vnext issue: {issue_error}")
             return 1
         return 0
 

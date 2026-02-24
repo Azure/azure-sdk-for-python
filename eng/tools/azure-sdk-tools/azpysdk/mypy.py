@@ -128,11 +128,27 @@ class mypy(Check):
                         results.append(sample_error.returncode)
 
             if args.next and in_ci() and not is_typing_ignored(package_name):
-                from gh_tools.vnext_issue_creator import create_vnext_issue, close_vnext_issue
-
                 if src_code_error or sample_code_error:
-                    create_vnext_issue(package_dir, "mypy")
+                    try:
+                        check_call(
+                            [
+                                executable,
+                                "-c",
+                                f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'mypy')",
+                            ]
+                        )
+                    except CalledProcessError as e:
+                        logger.warning(f"Failed to create vnext issue for {package_name}: {e}")
                 else:
-                    close_vnext_issue(package_name, "mypy")
+                    try:
+                        check_call(
+                            [
+                                executable,
+                                "-c",
+                                f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'mypy')",
+                            ]
+                        )
+                    except CalledProcessError as e:
+                        logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
 
         return max(results) if results else 0

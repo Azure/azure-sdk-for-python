@@ -16,6 +16,7 @@ from ci_tools.scenario.generation import create_package_and_install
 from ci_tools.logging import logger
 
 PYRIGHT_VERSION = "1.1.405"
+PYGITHUB_VERSION = "1.59.0"
 REPO_ROOT = discover_repo_root()
 
 
@@ -83,8 +84,8 @@ class pyright(Check):
 
             try:
                 if args.next:
-                    # use latest version of pyright
-                    install_into_venv(executable, ["pyright"], package_dir)
+                    # use latest version of pyright; PyGithub is needed for vnext issue management
+                    install_into_venv(executable, ["pyright", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
                 else:
                     install_into_venv(executable, [f"pyright=={PYRIGHT_VERSION}"], package_dir)
             except CalledProcessError as e:
@@ -147,16 +148,30 @@ class pyright(Check):
                     and is_check_enabled(args.target_package, "pyright")
                     and not is_typing_ignored(package_name)
                 ):
-                    from gh_tools.vnext_issue_creator import create_vnext_issue
-
-                    create_vnext_issue(package_dir, "pyright")
+                    try:
+                        check_call(
+                            [
+                                executable,
+                                "-c",
+                                f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'pyright')",
+                            ]
+                        )
+                    except CalledProcessError as e:
+                        logger.warning(f"Failed to create vnext issue for {package_name}: {e}")
 
                 print("See https://aka.ms/python/typing-guide for information.\n\n")
                 results.append(1)
 
             if args.next and in_ci() and not is_typing_ignored(package_name):
-                from gh_tools.vnext_issue_creator import close_vnext_issue
-
-                close_vnext_issue(package_name, "pyright")
+                try:
+                    check_call(
+                        [
+                            executable,
+                            "-c",
+                            f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'pyright')",
+                        ]
+                    )
+                except CalledProcessError as e:
+                    logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
 
         return max(results) if results else 0
