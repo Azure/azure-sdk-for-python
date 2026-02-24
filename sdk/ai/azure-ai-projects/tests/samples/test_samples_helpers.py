@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -82,6 +83,32 @@ Important distinction:
 
 Mark `correct = true` when execution succeeds and the output is consistent with the sample's intended
 agent behavior, including reasonable correspondence between input prompt(s) and final output.
+
+Always include `reason` with a concise explanation tied to the observed print output."""
+
+
+resource_management_instructions = """We just ran Python code and captured a Python array of print statements.
+Validate whether sample execution/output is correct for resource-management samples (for example
+connections, files, and deployments).
+
+Successful output typically shows one or more of:
+- Create/get/list/update/delete operations completing as expected.
+- Returned resource objects/IDs/names/versions or other meaningful operation results.
+- Consistent progress from setup to cleanup where applicable.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Malformed/corrupted output indicating broken processing.
+- Operation failures where the sample cannot proceed as designed.
+
+Important distinction:
+- Empty list results by themselves can be valid and should not automatically fail.
+- Cleanup/delete operations that report not found may still be acceptable if the sample otherwise succeeds.
+- But explicit inability/failure for required core operations should be marked `correct = false`.
+
+Mark `correct = true` when execution succeeds and output is consistent with the sample's intended
+resource-management behavior.
 
 Always include `reason` with a concise explanation tied to the observed print output."""
 

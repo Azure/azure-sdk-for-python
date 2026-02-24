@@ -24,8 +24,6 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    InputContentType,
-    InputItemType,
     ModelDeployment,
 )
 from openai.types.responses import Response
@@ -561,7 +559,7 @@ class TestBase(AzureRecordedTestCase):
         expected_type: Optional[str] = None,
         expected_id: Optional[str] = None,
         expected_role: Optional[str] = None,
-        expected_content_type: Optional[InputContentType] = None,
+        expected_content_type: Optional[str] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item
