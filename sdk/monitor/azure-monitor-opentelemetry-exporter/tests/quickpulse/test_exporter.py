@@ -102,7 +102,7 @@ class TestQuickpulse(unittest.TestCase):
             cls._data_point,
         )
 
-    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._generated.livemetrics._client.LiveMetricsClient")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._exporter.LiveMetricsClient")
     def test_init(self, client_mock):
         exporter = _QuickpulseExporter(
             connection_string=(
@@ -112,7 +112,10 @@ class TestQuickpulse(unittest.TestCase):
         )
         self.assertEqual(exporter._live_endpoint, "https://eastus.livediagnostics.monitor.azure.com/")
         self.assertEqual(exporter._instrumentation_key, "4321abcd-5678-4efa-8abc-1234567890ab")
-        self.assertTrue(isinstance(exporter._client, LiveMetricsClient))
+        self.assertIs(exporter._client, client_mock.return_value)
+        client_mock.assert_called_once()
+        call_kwargs = client_mock.call_args
+        self.assertEqual(call_kwargs.kwargs["endpoint"], "https://eastus.livediagnostics.monitor.azure.com/")
 
     def test_export_missing_data_point(self):
         result = self._exporter.export(OTMetricsData(resource_metrics=[]))
