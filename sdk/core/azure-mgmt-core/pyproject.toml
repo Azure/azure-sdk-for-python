@@ -4,3 +4,7 @@ verifytypes = true
 pyright = false
 breaking = false
 black = true
+
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-core"

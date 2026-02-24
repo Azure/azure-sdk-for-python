@@ -3,15 +3,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
-from azure.core.exceptions import ClientAuthenticationError
-from azure.appconfiguration._audience_error_handling_policy import (
-    AudienceErrorHandlingPolicy,
-    INCORRECT_AUDIENCE_ERROR_MESSAGE,
-)
 from asynctestcase import AsyncAppConfigTestCase
 from async_preparers import app_config_aad_decorator_async
 from devtools_testutils.aio import recorded_by_proxy_async
+from azure.appconfiguration._audience_error_handling_policy import (
+    AudienceErrorHandlingPolicy,
+)
 
 # cspell:disable-next-line
 CORRECT_AUDIENCE = "https://azconfig.io"

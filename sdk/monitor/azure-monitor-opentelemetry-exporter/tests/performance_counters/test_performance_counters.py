@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 import collections
-import psutil
+import runpy
 import unittest
 from datetime import datetime
 from unittest import mock
 from unittest.mock import MagicMock
+import psutil
 
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
@@ -14,7 +15,7 @@ from opentelemetry.semconv.attributes.exception_attributes import (
 )
 from opentelemetry.trace import SpanKind
 from opentelemetry.sdk.trace import ReadableSpan
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 
@@ -44,6 +45,7 @@ from azure.monitor.opentelemetry.exporter._performance_counters._manager import 
 from azure.monitor.opentelemetry.exporter._utils import Singleton
 
 
+# pylint: disable=unused-variable
 class TestPerformanceCounterFunctions(unittest.TestCase):
     """Test individual performance counter callback functions."""
 
@@ -60,6 +62,27 @@ class TestPerformanceCounterFunctions(unittest.TestCase):
         manager_module._EXCEPTIONS_COUNT = 0
         manager_module._LAST_REQUEST_RATE_TIME = datetime.now()
         manager_module._LAST_EXCEPTION_RATE_TIME = datetime.now()
+
+    def test_io_counters_access_denied_on_module_init(self):
+        """Test io_counters AccessDenied during module initialization fallback."""
+        import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
+
+        mock_process = MagicMock()
+        mock_process.io_counters.side_effect = psutil.AccessDenied(pid=1)
+        mock_logger = MagicMock()
+
+        with mock.patch("psutil.Process", return_value=mock_process), mock.patch(
+            "logging.getLogger", return_value=mock_logger
+        ):
+            module_globals = runpy.run_path(manager_module.__file__)
+
+        self.assertFalse(module_globals["_IO_AVAILABLE"])
+        self.assertEqual(module_globals["_IO_LAST_COUNT"], 0)
+        mock_logger.exception.assert_called_once_with(
+            "Performance counter %s is unavailable due to an error while " "initializing process I/O counters: %s",
+            "azuremonitor.performancecounter.processiobytessec",
+            mock_process.io_counters.side_effect,
+        )
 
     @mock.patch("azure.monitor.opentelemetry.exporter._performance_counters._manager._PROCESS")
     def test_get_process_cpu_success(self, mock_process):
@@ -569,15 +592,15 @@ class TestPerformanceCountersManager(unittest.TestCase):
         mock_log_record = MagicMock()
         mock_log_record.attributes = {EXCEPTION_TYPE: "ValueError", EXCEPTION_MESSAGE: "Test exception"}
 
-        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
-        mock_readable_log_record.log_record = mock_log_record
+        mock_read_write_log_record = MagicMock(spec=ReadWriteLogRecord)
+        mock_read_write_log_record.log_record = mock_log_record
 
         # Import to access global counter
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
 
         initial_exceptions = manager_module._EXCEPTIONS_COUNT
 
-        manager._record_log_record(mock_readable_log_record)
+        manager._record_log_record(mock_read_write_log_record)
 
         # Check that exception was counted
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions + 1)
@@ -590,15 +613,15 @@ class TestPerformanceCountersManager(unittest.TestCase):
         mock_log_record = MagicMock()
         mock_log_record.attributes = {"normal": "attribute"}
 
-        mock_readable_log_record = MagicMock(spec=ReadableLogRecord)
-        mock_readable_log_record.log_record = mock_log_record
+        mock_read_write_log_record = MagicMock(spec=ReadWriteLogRecord)
+        mock_read_write_log_record.log_record = mock_log_record
 
         # Import to access global counter
         import azure.monitor.opentelemetry.exporter._performance_counters._manager as manager_module
 
         initial_exceptions = manager_module._EXCEPTIONS_COUNT
 
-        manager._record_log_record(mock_readable_log_record)
+        manager._record_log_record(mock_read_write_log_record)
 
         # Exception count should not change
         self.assertEqual(manager_module._EXCEPTIONS_COUNT, initial_exceptions)

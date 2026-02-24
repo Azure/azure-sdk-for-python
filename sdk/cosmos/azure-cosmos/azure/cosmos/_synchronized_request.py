@@ -30,7 +30,7 @@ from urllib.parse import urlparse
 from azure.core.exceptions import DecodeError  # type: ignore
 
 from . import exceptions, http_constants, _retry_utility
-from ._availability_strategy_config import CrossRegionHedgingStrategyConfig
+from ._availability_strategy_config import CrossRegionHedgingStrategy
 from ._availability_strategy_handler import execute_with_hedging
 from ._constants import _Constants
 from ._request_object import RequestObject
@@ -86,6 +86,8 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     """
     # pylint: disable=protected-access, too-many-branches
     kwargs.pop(_Constants.OperationStartTime, None)
+    # Pop internal flags that should not be passed to the HTTP layer
+    kwargs.pop("_internal_pk_range_fetch", None)
     connection_timeout = connection_policy.RequestTimeout
     connection_timeout = kwargs.pop("connection_timeout", connection_timeout)
     read_timeout = connection_policy.ReadTimeout
@@ -207,7 +209,7 @@ def _is_availability_strategy_applicable(request_params: RequestObject) -> bool:
     :returns: True if availability strategy should be applied, False otherwise
     :rtype: bool
     """
-    return (request_params.availability_strategy_config is not None and
+    return (request_params.availability_strategy is not None and
             not request_params.is_hedging_request and
             request_params.resource_type == http_constants.ResourceType.Document and
             (not _OperationType.IsWriteOperation(request_params.operation_type) or
@@ -259,10 +261,10 @@ def SynchronizedRequest(
     elif request.data is None:
         request.headers[http_constants.HttpHeaders.ContentLength] = 0
 
-    if request_params.availability_strategy_config is None:
+    if request_params.availability_strategy is None:
         # if ppaf is enabled, then hedging is enabled by default
         if global_endpoint_manager.is_per_partition_automatic_failover_enabled():
-            request_params.availability_strategy_config = CrossRegionHedgingStrategyConfig()
+            request_params.availability_strategy = CrossRegionHedgingStrategy()
 
     # Handle hedging if availability strategy is applicable
     if _is_availability_strategy_applicable(request_params):

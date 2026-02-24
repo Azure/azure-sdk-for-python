@@ -183,7 +183,7 @@ class _QuickpulseExporter(MetricExporter):
                             try:
                                 _update_filter_configuration(etag, config)
                             except Exception:  # pylint: disable=broad-except
-                                _logger.exception(
+                                _logger.exception(  # pylint: disable=do-not-use-logging-exception
                                     "Exception occurred while updating filter config."
                                 )  # pylint: disable=C4769
                                 result = MetricExportResult.FAILURE
@@ -302,7 +302,7 @@ class _QuickpulseMetricReader(MetricReader):
                             # Reset etag to default if not subscribed
                             _set_quickpulse_etag("")
                     except Exception:  # pylint: disable=broad-except
-                        _logger.exception(
+                        _logger.exception(  # pylint: disable=do-not-use-logging-exception
                             "Exception occurred while reading live metrics ping response."
                         )  # pylint: disable=C4769
                         _set_quickpulse_etag("")

@@ -33,7 +33,11 @@ from ._red_team_result import (
 from ._attack_objective_generator import RiskCategory
 from ._utils.constants import ATTACK_STRATEGY_COMPLEXITY_MAP
 from .._common.utils import get_default_threshold_for_evaluator, get_harm_severity_level
-from ._utils.formatting_utils import list_mean_nan_safe, is_none_or_nan, get_attack_success
+from ._utils.formatting_utils import (
+    list_mean_nan_safe,
+    is_none_or_nan,
+    get_attack_success,
+)
 
 
 class ResultProcessor:
@@ -187,7 +191,10 @@ class ResultProcessor:
                         rows = []
                         eval_row_lookup = {}
                 else:
-                    self.logger.debug(f"No evaluation results available for {strategy_name}/{risk_category}")
+                    self.logger.debug(
+                        f"Using scorer results from data file for {strategy_name}/{risk_category} "
+                        f"(no separate evaluation pass)"
+                    )
 
                 # Process data file to extract conversations
                 if data_file and os.path.exists(data_file):
@@ -225,9 +232,13 @@ class ResultProcessor:
                                                                 properties = result_item.get("properties", {})
                                                                 if isinstance(properties, dict):
                                                                     score_properties = properties.get(
-                                                                        "scoreProperties", {}
+                                                                        "scoreProperties",
+                                                                        {},
                                                                     )
-                                                                    if isinstance(score_properties, dict):
+                                                                    if isinstance(
+                                                                        score_properties,
+                                                                        dict,
+                                                                    ):
                                                                         safe_value = score_properties.get("safe")
                                                                         # safe="false" means attack was successful
                                                                         if safe_value is not None:
@@ -272,6 +283,19 @@ class ResultProcessor:
                                                                 else None
                                                             ),
                                                         }
+                                        elif "attack_success" in conv_data:
+                                            # Foundry path: RAIServiceScorer already evaluated during
+                                            # attack execution. Use scorer results from the JSONL.
+                                            attack_success = conv_data["attack_success"]
+                                            score_data = conv_data.get("score", {})
+                                            if score_data and isinstance(score_data, dict):
+                                                score_metadata = score_data.get("metadata", {})
+                                                raw_score = score_metadata.get("raw_score")
+                                                if raw_score is not None:
+                                                    risk_assessment[risk_category] = {
+                                                        "severity_label": get_harm_severity_level(raw_score),
+                                                        "reason": score_data.get("rationale", ""),
+                                                    }
 
                                         # Add to tracking arrays for statistical analysis
                                         converters.append(strategy_name)
@@ -571,11 +595,20 @@ class ResultProcessor:
                             sample_payload["usage"] = usage_dict
                             break
 
-        # Exclude risk_sub_type and _eval_run_output_item from metadata
+        # Exclude internal/scorer fields from metadata
         metadata = {
             key: value
             for key, value in raw_conversation.items()
-            if key not in {"conversation", "risk_sub_type", "_eval_run_output_item"} and not self._is_missing(value)
+            if key
+            not in {
+                "conversation",
+                "risk_sub_type",
+                "_eval_run_output_item",
+                "attack_success",
+                "attack_strategy",
+                "score",
+            }
+            and not self._is_missing(value)
         }
         if metadata:
             sample_payload["metadata"] = metadata
@@ -767,11 +800,11 @@ class ResultProcessor:
 
             result_entry: Dict[str, Any] = {
                 "object": "eval.run.output_item.result",
-                "type": "azure_ai_evaluator" if isinstance(eval_row, dict) else "azure_ai_red_team",
+                "type": ("azure_ai_evaluator" if isinstance(eval_row, dict) else "azure_ai_red_team"),
                 "name": risk_value,
                 "metric": risk_value,
                 "passed": passed,
-                "label": "pass" if passed is True else ("fail" if passed is False else None),
+                "label": ("pass" if passed is True else ("fail" if passed is False else None)),
                 "score": score,
                 "threshold": threshold,
                 "reason": reason,
@@ -1387,7 +1420,7 @@ class ResultProcessor:
 
     @staticmethod
     def _compute_per_testing_criteria(output_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Build aggregated pass/fail counts per testing criteria (risk category and attack strategy).
+        """Build aggregated pass/fail counts per testing criteria (risk category only).
 
         Uses ASR semantics:
         - passed: attack was unsuccessful (system defended)
@@ -1396,8 +1429,6 @@ class ResultProcessor:
 
         # Track by risk category (testing_criteria)
         criteria: Dict[str, Dict[str, int]] = {}
-        # Track by attack strategy
-        strategy_criteria: Dict[str, Dict[str, int]] = {}
 
         for item in output_items:
             for result in item.get("results", []):
@@ -1419,20 +1450,7 @@ class ResultProcessor:
                 else:
                     bucket["failed"] += 1
 
-                # Track by attack strategy from properties
-                properties = result.get("properties", {})
-                if isinstance(properties, dict):
-                    attack_technique = properties.get("attack_technique")
-                    if attack_technique:
-                        strategy_bucket = strategy_criteria.setdefault(
-                            str(attack_technique), {"passed": 0, "failed": 0}
-                        )
-                        if passed_value:
-                            strategy_bucket["passed"] += 1
-                        else:
-                            strategy_bucket["failed"] += 1
-
-        # Build results list with risk categories
+        # Build results list with risk categories only (not attack strategies)
         results = [
             {
                 "testing_criteria": criteria_name,
@@ -1441,17 +1459,6 @@ class ResultProcessor:
             }
             for criteria_name, counts in sorted(criteria.items())
         ]
-
-        # Add attack strategy summaries
-        for strategy_name, counts in sorted(strategy_criteria.items()):
-            results.append(
-                {
-                    "testing_criteria": strategy_name,
-                    "attack_strategy": strategy_name,
-                    "passed": counts["passed"],
-                    "failed": counts["failed"],
-                }
-            )
 
         return results
 
@@ -1662,7 +1669,9 @@ class ResultProcessor:
                             for message in sample_input:
                                 if isinstance(message, dict) and message.get("role") == "user":
                                     message["content"] = self._get_redacted_input_message(
-                                        risk_category, attack_technique, risk_sub_type
+                                        risk_category,
+                                        attack_technique,
+                                        risk_sub_type,
                                     )
 
         return redacted_results

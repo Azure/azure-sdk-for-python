@@ -1,3 +1,22 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - conda/conda-recipes/**
+      - conda/conda-releaselogs/**
+      - eng/pipelines/templates/stages/conda-sdk-client.yml
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - conda/conda-recipes/**
+      - conda/conda-releaselogs/**
+      - eng/pipelines/templates/stages/conda-sdk-client.yml
+
 parameters:
   - name: release_msal
     displayName: 'msal'
@@ -906,4 +925,7 @@ extends:
                         - package: azure-mgmt-workloadssapvirtualinstance
                           version: 1.0.0
 
-
+      - template: /eng/pipelines/templates/stages/archetype-conda-release.yml@self
+        parameters:
+          DependsOn: Build_Universal_Dependencies
+          ArtifactName: conda

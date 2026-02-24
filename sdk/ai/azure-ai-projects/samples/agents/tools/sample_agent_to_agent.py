@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,7 +7,7 @@
 """
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Agent-to-Agent (A2A) capabilities
-    using the A2ATool and synchronous Azure AI Projects client. The agent can communicate
+    using the A2APreviewTool and synchronous Azure AI Projects client. The agent can communicate
     with other agents and provide responses based on inter-agent interactions using the
     A2A protocol (https://a2a-protocol.org/latest/).
 
@@ -15,7 +16,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -35,7 +36,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    A2ATool,
+    A2APreviewTool,
 )
 
 load_dotenv()
@@ -49,7 +50,7 @@ with (
 ):
 
     # [START tool_declaration]
-    tool = A2ATool(
+    tool = A2APreviewTool(
         project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
     )
     # If the connection is missing target, we need to set the A2A endpoint URL.
@@ -67,13 +68,15 @@ with (
     )
     print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
 
-    user_input = input("Enter your question (e.g., 'What can the secondary agent do?'): \n")
+    user_input = os.environ.get("A2A_USER_INPUT") or input(
+        "Enter your question (e.g., 'What can the secondary agent do?'): \n"
+    )
 
     stream_response = openai_client.responses.create(
         stream=True,
         tool_choice="required",
         input=user_input,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:
