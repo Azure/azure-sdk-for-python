@@ -179,8 +179,12 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response payloads for write operations on items by default unless specified differently per operation.
     :keyword int throughput_bucket: The desired throughput bucket for the client
     :keyword str user_agent_suffix: Allows user agent suffix to be specified when creating client
-    :keyword dict[str, Any] availability_strategy_config:
-            The threshold-based availability strategy config to use for this request.
+    :keyword Union[bool, dict[str, Any]] availability_strategy:
+        Enables an availability strategy by using cross-region request hedging.
+        Can be True (use default values: threshold_ms=500, threshold_steps_ms=100),
+        False (disable hedging), or a dict with keys ``threshold_ms`` and ``threshold_steps_ms``.
+        Default value is False (hedging disabled).
+    :paramtype availability_strategy: Union[bool, dict[str, Any]]
     :keyword int availability_strategy_max_concurrency: The max concurrency for parallel requests.
 
     .. admonition:: Example:
@@ -200,7 +204,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             credential: Union[str, dict[str, str], AsyncTokenCredential],
             *,
             consistency_level: Optional[str] = None,
-            availability_strategy_config: Optional[dict[str, Any]] = None,
+            availability_strategy: Union[bool, dict[str, Any]] = False,
             availability_strategy_max_concurrency: Optional[int] = None,
             **kwargs: Any
     ) -> None:
@@ -212,7 +216,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             auth=auth,
             consistency_level=consistency_level,
             connection_policy=connection_policy,
-            availability_strategy_config=availability_strategy_config,
+            availability_strategy=availability_strategy,
             availability_strategy_max_concurrency=availability_strategy_max_concurrency,
             **kwargs
         )

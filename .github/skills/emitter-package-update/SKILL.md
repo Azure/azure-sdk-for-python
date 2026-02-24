@@ -63,6 +63,8 @@ Apply the version update:
 npx npm-check-updates --packageFile eng/emitter-package.json -u
 ```
 
+Align `@azure-tools/openai-typespec` with the version pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Check the spec repo's version and update `eng/emitter-package.json` accordingly (e.g., set `"@azure-tools/openai-typespec": "1.8.0"` to match).
+
 Regenerate the lock file:
 
 ```bash

@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -32,8 +32,12 @@ import time
 from typing import Union
 from pprint import pprint
 from dotenv import load_dotenv
-from azure.ai.projects.models._enums import OperationState
-from azure.ai.projects.models._models import EvaluationRunClusterInsightsRequest, Insight, InsightModelConfiguration
+from azure.ai.projects.models import (
+    OperationState,
+    EvaluationRunClusterInsightRequest,
+    Insight,
+    InsightModelConfiguration,
+)
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionLabelModel
@@ -118,21 +122,21 @@ with (
         print("\n✓ Evaluation run completed successfully!")
         print(f"Evaluation run result counts: {eval_run.result_counts}")
 
-        clusterInsight = project_client.insights.generate(
-            Insight(
+        clusterInsight = project_client.beta.insights.generate(
+            insight=Insight(
                 display_name="Cluster analysis",
-                request=EvaluationRunClusterInsightsRequest(
+                request=EvaluationRunClusterInsightRequest(
                     eval_id=eval_object.id,
                     run_ids=[eval_run.id],
                     model_configuration=InsightModelConfiguration(model_deployment_name=model_deployment_name),
                 ),
-            )
+            ),
         )
         print(f"Started insight generation (id: {clusterInsight.id})")
 
         while clusterInsight.state not in [OperationState.SUCCEEDED, OperationState.FAILED]:
-            print("Waiting for insight to be generated...")
-            clusterInsight = project_client.insights.get(id=clusterInsight.id)
+            print(f"Waiting for insight to be generated...")
+            clusterInsight = project_client.beta.insights.get(id=clusterInsight.id)
             print(f"Insight status: {clusterInsight.state}")
             time.sleep(5)
 

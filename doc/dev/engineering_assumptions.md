@@ -13,7 +13,7 @@ universal=1
 Build CI for `azure-sdk-for-python` essentially builds and tests packages in one of two methodologies.
 
 ### Individual Packages
-1. Leverage `tox` to create wheel, install, and execute tests against newly installed wheel
+1. Leverage `azpysdk` to create wheel, install, and execute tests against newly installed wheel
 2. Tests each package in isolation (outside of dev_requirements.txt dependencies + necessary `pylint` and `mypy`)
 
 ### Global Method

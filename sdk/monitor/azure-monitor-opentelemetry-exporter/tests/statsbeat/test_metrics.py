@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import sys
 import json
 import os
 import platform
-import requests
-import sys
 import unittest
 from unittest import mock
+import requests
 
 from opentelemetry.sdk.metrics import Meter, MeterProvider, ObservableGauge
 
@@ -56,7 +56,7 @@ _StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTE
 _StatsbeatMetrics_INSTRUMENTATION_ATTRIBUTES = dict(_StatsbeatMetrics._INSTRUMENTATION_ATTRIBUTES)
 
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access, unused-argument, line-too-long, too-many-public-methods
 class TestStatsbeatMetrics(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

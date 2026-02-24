@@ -200,7 +200,9 @@ class BaseExporter:
 
                 collect_statsbeat_metrics(self)
             except Exception as e:  # pylint: disable=broad-except
-                logger.warning("Failed to initialize statsbeat metrics: %s", e)
+                logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+                    "Failed to initialize statsbeat metrics: %s", e
+                )
 
         # customer sdkstats initialization
         if self._should_collect_customer_sdkstats():
@@ -448,14 +450,14 @@ class BaseExporter:
 
                 if self._should_collect_stats():
                     exc_type = request_error.exc_type
-                    if exc_type is None or exc_type is type(None):
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
-                logger.exception(
+                logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
                     "Envelopes could not be exported and are not retryable: %s.", ex
-                )  # pylint: disable=C4769
+                )
 
                 # Track dropped items in customer sdkstats for general exceptions
                 if self._should_collect_customer_sdkstats():
@@ -637,13 +639,13 @@ def _get_authentication_credential(**kwargs: Any) -> Optional[ManagedIdentityCre
                 credential = ManagedIdentityCredential()
                 return credential
     except ValueError as exc:
-        logger.error(
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "APPLICATIONINSIGHTS_AUTHENTICATION_STRING, %s, has invalid format: %s", auth_string, exc
-        )  # pylint: disable=do-not-log-exceptions-if-not-debug
+        )
     except Exception as e:
-        logger.error(
+        logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug
             "Failed to get authentication credential and enable AAD: %s", e
-        )  # pylint: disable=do-not-log-exceptions-if-not-debug
+        )
     return None
 
 

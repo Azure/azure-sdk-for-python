@@ -13,10 +13,7 @@ from datetime import datetime
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 from urllib.parse import urlparse
-from azure.ai.projects.models._models import (
-    Tool,
-    ItemResource,
-)
+from azure.ai.projects.models._models import Tool
 from azure.core import CaseInsensitiveEnumMeta  # type: ignore
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -34,6 +31,7 @@ from ._utils import (
     GEN_AI_OUTPUT_MESSAGES,
     GEN_AI_PROVIDER_NAME,
     GEN_AI_SYSTEM_MESSAGE,
+    GEN_AI_SYSTEM_INSTRUCTION_EVENT,
     GEN_AI_THREAD_ID,
     GEN_AI_THREAD_RUN_ID,
     GEN_AI_USAGE_INPUT_TOKENS,
@@ -180,8 +178,14 @@ class AIProjectInstrumentor:
     """
     A class for managing the trace instrumentation of the AIProjectClient.
 
-    This class allows enabling or disabling tracing for AI Projects.
+    This class allows enabling or disabling tracing for AI Projects
     and provides functionality to check whether instrumentation is active.
+
+    .. warning::
+        GenAI tracing is an experimental preview feature. To use this feature, you must set the
+        environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive)
+        before calling the ``instrument()`` method. Spans, attributes, and events may be modified
+        in future versions.
 
     """
 
@@ -204,6 +208,13 @@ class AIProjectInstrumentor:
     ) -> None:
         """
         Enable trace instrumentation for AIProjectClient.
+
+        .. warning::
+            GenAI tracing is an experimental preview feature. To use this feature, you must set the
+            environment variable ``AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`` (case insensitive).
+            If this environment variable is not set or set to any value other than "true",
+            instrumentation will not be enabled and this method will return immediately without effect.
+            Spans, attributes, and events may be modified in future versions.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -235,6 +246,15 @@ class AIProjectInstrumentor:
         :type enable_baggage_propagation: bool, optional
 
         """
+        # Check experimental feature gate
+        experimental_enabled = os.environ.get("AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING", "false")
+        if experimental_enabled.lower() != "true":
+            logger.warning(
+                "GenAI tracing is not enabled. Set environment variable "
+                "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true to enable this experimental feature."
+            )
+            return
+
         self._impl.instrument(enable_content_recording, enable_trace_context_propagation, enable_baggage_propagation)
         self._responses_impl.instrument(enable_content_recording)
 
@@ -271,8 +291,11 @@ class _AIAgentsInstrumentorPreview:
     """
     A class for managing the trace instrumentation of AI Agents.
 
-    This class allows enabling or disabling tracing for AI Agents.
+    This class allows enabling or disabling tracing for AI Agents
     and provides functionality to check whether instrumentation is active.
+
+    .. note::
+        This is a private implementation class. Use the public AIProjectInstrumentor class instead.
     """
 
     def _str_to_bool(self, s):
@@ -288,6 +311,9 @@ class _AIAgentsInstrumentorPreview:
     ):
         """
         Enable trace instrumentation for AI Agents.
+
+        .. note::
+            This is a private implementation method. Use AIProjectInstrumentor.instrument() instead.
 
         :param enable_content_recording: Whether content recording is enabled as part
           of the traces or not. Content in this context refers to chat message content
@@ -633,9 +659,10 @@ class _AIAgentsInstrumentorPreview:
             return
 
         content_array: List[Dict[str, Any]] = []
-        if _trace_agents_content:
-            # Add instructions if provided
-            if instructions:
+
+        # Add instructions if provided
+        if instructions:
+            if _trace_agents_content:
                 # Combine instructions if both exist
                 if additional_instructions:
                     combined_text = f"{instructions} {additional_instructions}"
@@ -644,9 +671,13 @@ class _AIAgentsInstrumentorPreview:
 
                 # Use optimized format with consistent "content" field
                 content_array.append({"type": "text", "content": combined_text})
+            else:
+                # Content recording disabled, but indicate that text instructions exist
+                content_array.append({"type": "text"})
 
-            # Add response schema if provided
-            if response_schema is not None:
+        # Add response schema if provided
+        if response_schema is not None:
+            if _trace_agents_content:
                 # Convert schema to JSON string if it's a dict/object
                 if isinstance(response_schema, dict):
                     schema_str = json.dumps(response_schema, ensure_ascii=False)
@@ -663,6 +694,9 @@ class _AIAgentsInstrumentorPreview:
                     schema_str = str(response_schema)
 
                 content_array.append({"type": "response_schema", "content": schema_str})
+            else:
+                # Content recording disabled, but indicate that response schema exists
+                content_array.append({"type": "response_schema"})
 
         use_events = _get_use_message_events()
 
@@ -671,14 +705,11 @@ class _AIAgentsInstrumentorPreview:
             attributes = self._create_event_attributes(agent_id=agent_id, thread_id=thread_id)
             # Store as JSON array directly without outer wrapper
             attributes[GEN_AI_EVENT_CONTENT] = json.dumps(content_array, ensure_ascii=False)
-            span.span_instance.add_event(name=GEN_AI_SYSTEM_MESSAGE, attributes=attributes)
+            span.span_instance.add_event(name=GEN_AI_SYSTEM_INSTRUCTION_EVENT, attributes=attributes)
         else:
             # Use attributes for instructions tracing
-            # System instructions use the same attribute name as the event
-            message_json = json.dumps(
-                [{"role": "system", "parts": content_array}] if content_array else [{"role": "system"}],
-                ensure_ascii=False,
-            )
+            # System instructions format: array of content objects without role/parts wrapper
+            message_json = json.dumps(content_array, ensure_ascii=False)
             if span and span.span_instance.is_recording:
                 span.add_attribute(GEN_AI_SYSTEM_MESSAGE, message_json)
 
@@ -709,7 +740,7 @@ class _AIAgentsInstrumentorPreview:
         description: Optional[str] = None,
         instructions: Optional[str] = None,
         _tools: Optional[List[Tool]] = None,
-        _tool_resources: Optional[ItemResource] = None,
+        _tool_resources: Optional[Any] = None,  # TODO: Used to be: _tool_resources: Optional[ItemResource] = None,
         # _toolset: Optional["ToolSet"] = None,
         temperature: Optional[float] = None,
         top_p: Optional[float] = None,
@@ -919,7 +950,7 @@ class _AIAgentsInstrumentorPreview:
         if text:
             # Handle different types of text objects
             if hasattr(text, "format"):
-                # Azure AI Agents PromptAgentDefinitionText model object
+                # Azure AI Agents PromptAgentDefinitionTextOptions model object
                 format_info = getattr(text, "format", None)
                 if format_info:
                     if hasattr(format_info, "type"):

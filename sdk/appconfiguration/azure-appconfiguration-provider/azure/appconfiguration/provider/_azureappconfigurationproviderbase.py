@@ -8,6 +8,7 @@ import hashlib
 import json
 import time
 import datetime
+import random
 from threading import Lock
 import logging
 from typing import (
@@ -41,6 +42,11 @@ from ._constants import (
     APP_CONFIG_AICC_MIME_PROFILE,
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    DEFAULT_STARTUP_TIMEOUT,
+    MAX_STARTUP_BACKOFF_DURATION,
+    MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION,
+    JITTER_RATIO,
+    STARTUP_BACKOFF_INTERVALS,
 )
 from ._refresh_timer import _RefreshTimer
 from ._request_tracing_context import _RequestTracingContext
@@ -122,12 +128,18 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
         or kwargs.get("uses_key_vault", False)
     )
 
+    # Get startup timeout
+    startup_timeout = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
+    if startup_timeout < 0:
+        raise ValueError("Startup timeout must be greater than or equal to 0 seconds.")
+
     return {
         "endpoint": endpoint,
         "credential": credential,
         "connection_string": connection_string,
         "uses_key_vault": uses_key_vault,
         "start_time": start_time,
+        "startup_timeout": startup_timeout,
         "kwargs": kwargs,
     }
 
@@ -167,6 +179,7 @@ def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, s
 
 def sdk_allowed_kwargs(kwargs):
     allowed_kwargs = [
+        "audience",
         "headers",
         "request_id",
         "user_agent",
@@ -196,6 +209,71 @@ def sdk_allowed_kwargs(kwargs):
         "connection_data_block_size",
     ]
     return {k: v for k, v in kwargs.items() if k in allowed_kwargs}
+
+
+def _jitter(duration: float, ratio: float = JITTER_RATIO) -> float:
+    """
+    Apply jitter to a duration value.
+
+    :param duration: The base duration in seconds.
+    :type duration: float
+    :param ratio: The jitter ratio (0 to 1). Default is 0.25 (25% jitter means +/- 25% variation).
+    :type ratio: float
+    :return: The jittered duration in seconds.
+    :rtype: float
+    """
+    if ratio < 0 or ratio > 1:
+        raise ValueError("Jitter ratio must be between 0 and 1.")
+    if ratio == 0:
+        return duration
+    jitter = ratio * (random.random() * 2 - 1)
+    return duration * (1 + jitter)
+
+
+def _get_startup_backoff(elapsed_seconds: float, attempts: int) -> Tuple[float, bool]:
+    """
+    Get a backoff duration based on elapsed startup time.
+
+    :param elapsed_seconds: The time elapsed since startup began, in seconds.
+    :type elapsed_seconds: float
+    :param attempts: The number of retry attempts made (1-based).
+    :type attempts: int
+    :return: A tuple where the first element is the backoff duration in seconds,
+             and the second element indicates if the fixed backoff window has been exceeded.
+    :rtype: Tuple[float, bool]
+    """
+    for threshold, backoff in STARTUP_BACKOFF_INTERVALS:
+        if elapsed_seconds < threshold:
+            return backoff, False
+    return _calculate_backoff_duration(attempts), True
+
+
+def _calculate_backoff_duration(attempts: int) -> float:
+    """
+    Calculate the jittered exponential backoff duration.
+
+    :param attempts: The number of retry attempts made (1-based).
+    :type attempts: int
+    :return: The calculated backoff duration with jitter applied.
+    :rtype: float
+    """
+    attempts += 1
+    if attempts < 1:
+        raise ValueError("Number of attempts must be at least 1.")
+
+    if attempts == 1:
+        return MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION
+
+    # Calculate exponential backoff: min * 2^(attempts-1)
+    # Cap the shift amount to prevent overflow
+    safe_shift = min(attempts - 1, 63)
+    calculated = MIN_STARTUP_EXPONENTIAL_BACKOFF_DURATION * (1 << safe_shift)
+
+    # Cap at max duration
+    if calculated > MAX_STARTUP_BACKOFF_DURATION or calculated <= 0:  # Check for overflow
+        calculated = MAX_STARTUP_BACKOFF_DURATION
+
+    return _jitter(calculated, JITTER_RATIO)
 
 
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
@@ -493,10 +571,14 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         return processed_settings
 
     def _process_feature_flag(self, feature_flag: FeatureFlagConfigurationSetting) -> Dict[str, Any]:
-        feature_flag_value = json.loads(feature_flag.value)
-        self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
-        self._tracing_context.update_feature_filter_telemetry(feature_flag)
-        return feature_flag_value
+        try:
+            feature_flag_value = json.loads(feature_flag.value)
+            self._update_ff_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
+            self._tracing_context.update_feature_filter_telemetry(feature_flag)
+            return feature_flag_value
+        except json.JSONDecodeError:
+            # Feature flag value is not a valid JSON
+            return {}
 
     def _update_watched_settings(
         self, configuration_settings: List[ConfigurationSetting]
@@ -560,17 +642,15 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             is_failover_request=is_failover_request,
         )
 
-    def _deduplicate_settings(
-        self, configuration_settings: List[ConfigurationSetting]
-    ) -> Dict[str, ConfigurationSetting]:
+    def _deduplicate_settings(self, configuration_settings: List[ConfigurationSetting]) -> List[ConfigurationSetting]:
         """
         Deduplicates configuration settings by key.
 
         :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
-        :return: A dictionary mapping keys to their unique configuration settings
-        :rtype: Dict[str, ConfigurationSetting]
+        :return: A list of unique configuration settings
+        :rtype: List[ConfigurationSetting]
         """
         unique_settings: Dict[str, ConfigurationSetting] = {}
         for settings in configuration_settings:
             unique_settings[settings.key] = settings
-        return unique_settings
+        return list(unique_settings.values())

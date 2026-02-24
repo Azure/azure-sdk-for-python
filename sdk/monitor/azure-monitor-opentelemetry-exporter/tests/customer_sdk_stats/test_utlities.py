@@ -6,8 +6,8 @@ import unittest
 from unittest import mock
 from datetime import datetime
 
-from azure.core.exceptions import ServiceRequestTimeoutError, HttpResponseError
 from requests.exceptions import ConnectionError, ReadTimeout, Timeout
+from azure.core.exceptions import ServiceRequestTimeoutError, HttpResponseError
 
 from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
@@ -41,6 +41,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
 )
 
 
+# pylint: disable=too-many-public-methods
 class TestCustomerSdkStatsUtils(unittest.TestCase):
     """Test suite for customer SDK stats utility functions."""
 

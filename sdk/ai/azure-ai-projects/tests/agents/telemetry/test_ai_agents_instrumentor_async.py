@@ -9,7 +9,7 @@ import pytest
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
 from gen_ai_trace_verifier import GenAiTraceVerifier
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionText
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
 from azure.ai.projects.models import (
     Reasoning,
     FunctionTool,
@@ -58,6 +58,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
     """Tests for AI agents instrumentor."""
 
@@ -108,16 +111,13 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             from azure.ai.projects.telemetry._utils import GEN_AI_SYSTEM_MESSAGE
             import json
 
+            # The system message should be a JSON array of content objects
+
             expected_system_message = json.dumps(
                 [
                     {
-                        "role": "system",
-                        "parts": [
-                            {
-                                "type": "text",
-                                "content": "You are a helpful AI assistant. Always be polite and provide accurate information.",
-                            }
-                        ],
+                        "type": "text",
+                        "content": "You are a helpful AI assistant. Always be polite and provide accurate information.",
                     }
                 ],
                 ensure_ascii=False,
@@ -153,12 +153,9 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
             # Verify structure
             assert isinstance(system_message, list)
             assert len(system_message) == 1
-            assert system_message[0]["role"] == "system"
-            assert "parts" in system_message[0]
-            assert len(system_message[0]["parts"]) == 1
-            assert system_message[0]["parts"][0]["type"] == "text"
+            assert system_message[0]["type"] == "text"
             assert (
-                system_message[0]["parts"][0]["content"]
+                system_message[0]["content"]
                 == "You are a helpful AI assistant. Always be polite and provide accurate information."
             )
 
@@ -182,6 +179,8 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         :param use_events: If True, use events for messages. If False, use attributes.
         :type use_events: bool
         """
+        import json
+
         self.cleanup()
         _set_use_message_events(use_events)
         os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "False"})
@@ -221,9 +220,10 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
         # When using attributes, add empty system message attribute
         if not use_events:
             from azure.ai.projects.telemetry._utils import GEN_AI_SYSTEM_MESSAGE
-            import json
 
-            expected_system_message = json.dumps([{"role": "system"}], ensure_ascii=False)
+            # The system message should have type indicator without content when content recording is disabled
+
+            expected_system_message = json.dumps([{"type": "text"}], ensure_ascii=False)
             expected_attributes.append((GEN_AI_SYSTEM_MESSAGE, expected_system_message))
 
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
@@ -235,7 +235,7 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
                     "name": GEN_AI_SYSTEM_INSTRUCTION_EVENT,
                     "attributes": {
                         GEN_AI_PROVIDER_NAME: AGENTS_PROVIDER,
-                        GEN_AI_EVENT_CONTENT: "[]",
+                        GEN_AI_EVENT_CONTENT: json.dumps([{"type": "text"}]),
                     },
                 }
             ]
@@ -251,12 +251,11 @@ class TestAiAgentsInstrumentor(TestAiAgentsInstrumentorBase):
 
             system_message_json = span.attributes[GEN_AI_SYSTEM_MESSAGE]
             system_message = json.loads(system_message_json)
-            # Should have empty content (just role, no parts)
+            # Should have type indicator when content recording is disabled
             assert isinstance(system_message, list)
             assert len(system_message) == 1
-            assert system_message[0]["role"] == "system"
-            # No parts field when content recording is disabled
-            assert "parts" not in system_message[0]
+            assert system_message[0]["type"] == "text"
+            assert "content" not in system_message[0]
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
@@ -424,7 +423,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 instructions="You are a helpful assistant that extracts person information.",
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="PersonInfo",
                         schema=test_schema,
@@ -465,19 +464,14 @@ trigger:
                 expected_system_message = json.dumps(
                     [
                         {
-                            "role": "system",
-                            "parts": [
-                                {
-                                    "type": "text",
-                                    "content": "You are a helpful assistant that extracts person information.",
-                                },
-                                {"type": "response_schema", "content": json.dumps(test_schema)},
-                            ],
-                        }
+                            "type": "text",
+                            "content": "You are a helpful assistant that extracts person information.",
+                        },
+                        {"type": "response_schema", "content": json.dumps(test_schema)},
                     ]
                 )
             else:
-                expected_system_message = json.dumps([{"role": "system"}])
+                expected_system_message = json.dumps([{"type": "text"}, {"type": "response_schema"}])
             expected_attributes.append((GEN_AI_SYSTEM_MESSAGE, expected_system_message))
 
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
@@ -489,8 +483,6 @@ trigger:
             assert len(events) == 1
             instruction_event = events[0]
             assert instruction_event.name == GEN_AI_SYSTEM_INSTRUCTION_EVENT
-
-            import json
 
             event_content = json.loads(instruction_event.attributes[GEN_AI_EVENT_CONTENT])
             assert isinstance(event_content, list)
@@ -504,7 +496,12 @@ trigger:
                 assert schema_obj["type"] == "object"
                 assert "name" in schema_obj["properties"]
             else:
-                assert len(event_content) == 0
+                # Type indicators without content when content recording disabled
+                assert len(event_content) == 2
+                assert event_content[0]["type"] == "text"
+                assert "content" not in event_content[0]
+                assert event_content[1]["type"] == "response_schema"
+                assert "content" not in event_content[1]
         else:
             # Validate attribute
             attribute_value = None
@@ -516,20 +513,21 @@ trigger:
 
             system_message = json.loads(attribute_value)
             assert isinstance(system_message, list)
-            assert len(system_message) == 1
-            assert system_message[0]["role"] == "system"
 
             if content_recording_enabled:
-                assert "parts" in system_message[0]
-                parts = system_message[0]["parts"]
-                assert len(parts) == 2
-                assert parts[0]["type"] == "text"
-                assert "helpful assistant" in parts[0]["content"]
-                assert parts[1]["type"] == "response_schema"
-                schema_obj = json.loads(parts[1]["content"])
+                assert len(system_message) == 2
+                assert system_message[0]["type"] == "text"
+                assert "helpful assistant" in system_message[0]["content"]
+                assert system_message[1]["type"] == "response_schema"
+                schema_obj = json.loads(system_message[1]["content"])
                 assert schema_obj["type"] == "object"
             else:
-                assert "parts" not in system_message[0]
+                # When content recording disabled, type indicators without content
+                assert len(system_message) == 2
+                assert system_message[0]["type"] == "text"
+                assert "content" not in system_message[0]
+                assert system_message[1]["type"] == "response_schema"
+                assert "content" not in system_message[1]
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
@@ -609,7 +607,7 @@ trigger:
             agent_definition = PromptAgentDefinition(
                 model=model,
                 # No instructions provided
-                text=PromptAgentDefinitionText(
+                text=PromptAgentDefinitionTextOptions(
                     format=TextResponseFormatJsonSchema(
                         name="Result",
                         schema=test_schema,
@@ -647,11 +645,9 @@ trigger:
             from azure.ai.projects.telemetry._utils import GEN_AI_SYSTEM_MESSAGE
 
             if content_recording_enabled:
-                expected_system_message = json.dumps(
-                    [{"role": "system", "parts": [{"type": "response_schema", "content": json.dumps(test_schema)}]}]
-                )
+                expected_system_message = json.dumps([{"type": "response_schema", "content": json.dumps(test_schema)}])
             else:
-                expected_system_message = json.dumps([{"role": "system"}])
+                expected_system_message = json.dumps([{"type": "response_schema"}])
             expected_attributes.append((GEN_AI_SYSTEM_MESSAGE, expected_system_message))
 
         attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
@@ -664,8 +660,6 @@ trigger:
             instruction_event = events[0]
             assert instruction_event.name == GEN_AI_SYSTEM_INSTRUCTION_EVENT
 
-            import json
-
             event_content = json.loads(instruction_event.attributes[GEN_AI_EVENT_CONTENT])
             assert isinstance(event_content, list)
 
@@ -676,7 +670,10 @@ trigger:
                 assert schema_obj["type"] == "object"
                 assert "result" in schema_obj["properties"]
             else:
-                assert len(event_content) == 0
+                # Type indicator without content when content recording disabled
+                assert len(event_content) == 1
+                assert event_content[0]["type"] == "response_schema"
+                assert "content" not in event_content[0]
         else:
             # Validate attribute
             attribute_value = None
@@ -688,19 +685,18 @@ trigger:
 
             system_message = json.loads(attribute_value)
             assert isinstance(system_message, list)
-            assert len(system_message) == 1
-            assert system_message[0]["role"] == "system"
 
             if content_recording_enabled:
-                assert "parts" in system_message[0]
-                parts = system_message[0]["parts"]
-                assert len(parts) == 1  # Only schema
-                assert parts[0]["type"] == "response_schema"
-                schema_obj = json.loads(parts[0]["content"])
+                assert len(system_message) == 1  # Only schema
+                assert system_message[0]["type"] == "response_schema"
+                schema_obj = json.loads(system_message[0]["content"])
                 assert schema_obj["type"] == "object"
                 assert "result" in schema_obj["properties"]
             else:
-                assert "parts" not in system_message[0]
+                # When content recording disabled, type indicator without content
+                assert len(system_message) == 1
+                assert system_message[0]["type"] == "response_schema"
+                assert "content" not in system_message[0]
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
