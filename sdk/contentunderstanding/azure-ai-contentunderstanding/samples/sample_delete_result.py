@@ -40,8 +40,8 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     DocumentContent,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -65,13 +65,13 @@ def main() -> None:
     # Step 1: Analyze and wait for completion
     analyze_operation = client.begin_analyze(
         analyzer_id="prebuilt-invoice",
-        inputs=[AnalyzeInput(url=document_url)],
+        inputs=[AnalysisInput(url=document_url)],
     )
 
     # Get the operation ID - this is needed to delete the result later
     operation_id = analyze_operation.operation_id
     print(f"Operation ID: {operation_id}")
-    result: AnalyzeResult = analyze_operation.result()
+    result: AnalysisResult = analyze_operation.result()
     print("Analysis completed successfully!")
 
     # Display some sample results

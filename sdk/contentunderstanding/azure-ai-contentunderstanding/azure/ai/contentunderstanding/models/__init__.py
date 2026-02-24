@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     ArrayField,
     AudioVisualContent,
     AudioVisualContentSegment,
@@ -91,8 +91,8 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "AnalyzeInput",
-    "AnalyzeResult",
+    "AnalysisInput",
+    "AnalysisResult",
     "ArrayField",
     "AudioVisualContent",
     "AudioVisualContentSegment",

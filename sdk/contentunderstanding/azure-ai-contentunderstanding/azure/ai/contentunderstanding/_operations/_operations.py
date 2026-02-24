@@ -100,7 +100,7 @@ def build_content_understanding_analyze_binary_request(  # pylint: disable=name-
     analyzer_id: str,
     *,
     string_encoding: str,
-    input_range: Optional[str] = None,
+    content_range: Optional[str] = None,
     processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
     **kwargs: Any,
 ) -> HttpRequest:
@@ -125,8 +125,8 @@ def build_content_understanding_analyze_binary_request(  # pylint: disable=name-
     _params["stringEncoding"] = _SERIALIZER.query(
         "string_encoding", string_encoding, "str"
     )
-    if input_range is not None:
-        _params["range"] = _SERIALIZER.query("input_range", input_range, "str")
+    if content_range is not None:
+        _params["range"] = _SERIALIZER.query("content_range", content_range, "str")
     if processing_location is not None:
         _params["processingLocation"] = _SERIALIZER.query(
             "processing_location", processing_location, "str"
@@ -564,7 +564,7 @@ class _ContentUnderstandingClientOperationsMixin(
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         string_encoding: str,
-        inputs: list[_models.AnalyzeInput] = _Unset,
+        inputs: list[_models.AnalysisInput] = _Unset,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         model_deployments: Optional[dict[str, str]] = None,
         **kwargs: Any,
@@ -654,12 +654,12 @@ class _ContentUnderstandingClientOperationsMixin(
         analyzer_id: str,
         *,
         string_encoding: str,
-        inputs: list[_models.AnalyzeInput],
+        inputs: list[_models.AnalysisInput],
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         model_deployments: Optional[dict[str, str]] = None,
         **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> LROPoller[_models.AnalysisResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -670,7 +670,7 @@ class _ContentUnderstandingClientOperationsMixin(
         :paramtype string_encoding: str
         :keyword inputs: Inputs to analyze.  Currently, only pro mode supports multiple inputs.
          Required.
-        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
@@ -689,9 +689,9 @@ class _ContentUnderstandingClientOperationsMixin(
          Example: { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
          "myTextEmbedding3LargeDeployment" }. Default value is None.
         :paramtype model_deployments: dict[str, str]
-        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+        :return: An instance of LROPoller that returns AnalysisResult. The AnalysisResult is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -705,7 +705,7 @@ class _ContentUnderstandingClientOperationsMixin(
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> LROPoller[_models.AnalysisResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -722,9 +722,9 @@ class _ContentUnderstandingClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+        :return: An instance of LROPoller that returns AnalysisResult. The AnalysisResult is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -738,7 +738,7 @@ class _ContentUnderstandingClientOperationsMixin(
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: str = "application/json",
         **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> LROPoller[_models.AnalysisResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -755,9 +755,9 @@ class _ContentUnderstandingClientOperationsMixin(
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+        :return: An instance of LROPoller that returns AnalysisResult. The AnalysisResult is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -768,11 +768,11 @@ class _ContentUnderstandingClientOperationsMixin(
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         string_encoding: str,
-        inputs: list[_models.AnalyzeInput] = _Unset,
+        inputs: list[_models.AnalysisInput] = _Unset,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         model_deployments: Optional[dict[str, str]] = None,
         **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> LROPoller[_models.AnalysisResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -785,7 +785,7 @@ class _ContentUnderstandingClientOperationsMixin(
         :paramtype string_encoding: str
         :keyword inputs: Inputs to analyze.  Currently, only pro mode supports multiple inputs.
          Required.
-        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
@@ -801,9 +801,9 @@ class _ContentUnderstandingClientOperationsMixin(
          Example: { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
          "myTextEmbedding3LargeDeployment" }. Default value is None.
         :paramtype model_deployments: dict[str, str]
-        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+        :return: An instance of LROPoller that returns AnalysisResult. The AnalysisResult is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -812,7 +812,7 @@ class _ContentUnderstandingClientOperationsMixin(
         content_type: Optional[str] = kwargs.pop(
             "content_type", _headers.pop("Content-Type", None)
         )
-        cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnalysisResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -844,7 +844,7 @@ class _ContentUnderstandingClientOperationsMixin(
             )
 
             deserialized = _deserialize(
-                _models.AnalyzeResult, response.json().get("result", {})
+                _models.AnalysisResult, response.json().get("result", {})
             )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -868,13 +868,13 @@ class _ContentUnderstandingClientOperationsMixin(
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.AnalyzeResult].from_continuation_token(
+            return LROPoller[_models.AnalysisResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.AnalyzeResult](
+        return LROPoller[_models.AnalysisResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -884,7 +884,7 @@ class _ContentUnderstandingClientOperationsMixin(
         binary_input: bytes,
         *,
         string_encoding: str,
-        input_range: Optional[str] = None,
+        content_range: Optional[str] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
     ) -> Iterator[bytes]:
@@ -907,7 +907,7 @@ class _ContentUnderstandingClientOperationsMixin(
         _request = build_content_understanding_analyze_binary_request(
             analyzer_id=analyzer_id,
             string_encoding=string_encoding,
-            input_range=input_range,
+            content_range=content_range,
             processing_location=processing_location,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -963,10 +963,10 @@ class _ContentUnderstandingClientOperationsMixin(
         binary_input: bytes,
         *,
         string_encoding: str,
-        input_range: Optional[str] = None,
+        content_range: Optional[str] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
-    ) -> LROPoller[_models.AnalyzeResult]:
+    ) -> LROPoller[_models.AnalysisResult]:
         """Extract content and fields from input.
 
         :param analyzer_id: The unique identifier of the analyzer. Required.
@@ -977,23 +977,23 @@ class _ContentUnderstandingClientOperationsMixin(
            Possible values are 'codePoint', 'utf16', and ``utf8``.  Default is ``codePoint``.").
          Required.
         :paramtype string_encoding: str
-        :keyword input_range: Range of the input to analyze (ex. ``1-3,5,9-``).  Document content uses
-         1-based page numbers, while audio visual content uses integer milliseconds. Default value is
-         None.
-        :paramtype input_range: str
+        :keyword content_range: Range of the input to analyze (ex. ``1-3,5,9-``).  Document content
+         uses 1-based page numbers, while audio visual content uses integer milliseconds. Default value
+         is None.
+        :paramtype content_range: str
         :keyword processing_location: The location where the data may be processed.  Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
-        :return: An instance of LROPoller that returns AnalyzeResult. The AnalyzeResult is compatible
+        :return: An instance of LROPoller that returns AnalysisResult. The AnalysisResult is compatible
          with MutableMapping
-        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
         content_type: str = kwargs.pop("content_type")
-        cls: ClsType[_models.AnalyzeResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnalysisResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -1002,7 +1002,7 @@ class _ContentUnderstandingClientOperationsMixin(
                 analyzer_id=analyzer_id,
                 binary_input=binary_input,
                 string_encoding=string_encoding,
-                input_range=input_range,
+                content_range=content_range,
                 processing_location=processing_location,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
@@ -1024,7 +1024,7 @@ class _ContentUnderstandingClientOperationsMixin(
             )
 
             deserialized = _deserialize(
-                _models.AnalyzeResult, response.json().get("result", {})
+                _models.AnalysisResult, response.json().get("result", {})
             )
             if cls:
                 return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1048,13 +1048,13 @@ class _ContentUnderstandingClientOperationsMixin(
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.AnalyzeResult].from_continuation_token(
+            return LROPoller[_models.AnalysisResult].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.AnalyzeResult](
+        return LROPoller[_models.AnalysisResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 

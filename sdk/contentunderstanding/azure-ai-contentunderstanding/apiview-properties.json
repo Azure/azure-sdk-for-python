@@ -1,8 +1,8 @@
 {
     "CrossLanguagePackageId": "ContentUnderstanding",
     "CrossLanguageDefinitionId": {
-        "azure.ai.contentunderstanding.models.AnalyzeInput": "ContentUnderstanding.AnalyzeInput",
-        "azure.ai.contentunderstanding.models.AnalyzeResult": "ContentUnderstanding.AnalyzeResult",
+        "azure.ai.contentunderstanding.models.AnalysisInput": "ContentUnderstanding.AnalyzeInput",
+        "azure.ai.contentunderstanding.models.AnalysisResult": "ContentUnderstanding.AnalyzeResult",
         "azure.ai.contentunderstanding.models.ContentField": "ContentUnderstanding.ContentField",
         "azure.ai.contentunderstanding.models.ArrayField": "ContentUnderstanding.ArrayField",
         "azure.ai.contentunderstanding.models.MediaContent": "ContentUnderstanding.MediaContent",

@@ -20,7 +20,7 @@ DESCRIPTION:
     inputs across all modalities. This sample focuses on prebuilt RAG analyzers (the prebuilt-*Search
     analyzers, such as prebuilt-documentSearch) with URL inputs.
 
-    Important: For URL inputs, use begin_analyze() with AnalyzeInput objects that wrap the URL.
+    Important: For URL inputs, use begin_analyze() with AnalysisInput objects that wrap the URL.
     For binary data (local files), use begin_analyze_binary() instead. This sample demonstrates
     begin_analyze() with URL inputs.
 
@@ -45,8 +45,8 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     AudioVisualContent,
     DocumentContent,
     MediaContent,
@@ -76,9 +76,9 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-documentSearch",
-        inputs=[AnalyzeInput(url=document_url)],
+        inputs=[AnalysisInput(url=document_url)],
     )
-    result: AnalyzeResult = poller.result()
+    result: AnalysisResult = poller.result()
 
     # Extract markdown content
     print("\nMarkdown:")
@@ -110,7 +110,7 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-videoSearch",
-        inputs=[AnalyzeInput(url=video_url)],
+        inputs=[AnalysisInput(url=video_url)],
     )
     result = poller.result()
 
@@ -147,7 +147,7 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-audioSearch",
-        inputs=[AnalyzeInput(url=audio_url)],
+        inputs=[AnalysisInput(url=audio_url)],
     )
     result = poller.result()
 
@@ -182,7 +182,7 @@ def main() -> None:
 
     poller = client.begin_analyze(
         analyzer_id="prebuilt-imageSearch",
-        inputs=[AnalyzeInput(url=image_url)],
+        inputs=[AnalysisInput(url=image_url)],
     )
     result = poller.result()
 

@@ -60,8 +60,8 @@ import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
 from azure.ai.contentunderstanding.models import (
-    AnalyzeInput,
-    AnalyzeResult,
+    AnalysisInput,
+    AnalysisResult,
     DocumentContent,
     ContentField,
     ArrayField,
@@ -88,9 +88,9 @@ async def main() -> None:
 
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice",
-            inputs=[AnalyzeInput(url=invoice_url)],
+            inputs=[AnalysisInput(url=invoice_url)],
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         # [END analyze_invoice]
 
         # [START extract_invoice_fields]

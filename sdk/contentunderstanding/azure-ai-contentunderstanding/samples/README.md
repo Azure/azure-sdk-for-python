@@ -241,7 +241,7 @@ result = poller.result()
 
 **Access markdown content:**
 ```python
-result: AnalyzeResult = poller.result()
+result: AnalysisResult = poller.result()
 content = result.contents[0]
 print(content.markdown)
 ```

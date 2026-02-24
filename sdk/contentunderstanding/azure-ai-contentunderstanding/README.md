@@ -301,7 +301,7 @@ The SDK provides `LROPoller` types that handle polling automatically when using 
 ### Main classes
 
 * **`ContentUnderstandingClient`** - The main client for analyzing content, as well as creating, managing, and configuring analyzers
-* **`AnalyzeResult`** - Contains the structured results of an analysis operation, including content elements, markdown, and metadata
+* **`AnalysisResult`** - Contains the structured results of an analysis operation, including content elements, markdown, and metadata
 
 ### Thread safety
 
@@ -383,7 +383,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, MediaContent, DocumentContent, MediaContentKind
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, MediaContent, DocumentContent, MediaContentKind
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -400,9 +400,9 @@ async def analyze_document():
         # Analyze document using prebuilt-documentSearch
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-documentSearch", 
-            inputs=[AnalyzeInput(url=file_url)]
+            inputs=[AnalysisInput(url=file_url)]
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         
         # Extract markdown content
         content: MediaContent = result.contents[0]
@@ -430,7 +430,7 @@ import asyncio
 import os
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput, AnalyzeResult, DocumentContent
+from azure.ai.contentunderstanding.models import AnalysisInput, AnalysisResult, DocumentContent
 from azure.core.credentials import AzureKeyCredential
 from azure.identity.aio import DefaultAzureCredential
 
@@ -452,9 +452,9 @@ async def analyze_invoice():
         # Analyze invoice using prebuilt-invoice analyzer
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice", 
-            inputs=[AnalyzeInput(url=file_url)]
+            inputs=[AnalysisInput(url=file_url)]
         )
-        result: AnalyzeResult = await poller.result()
+        result: AnalysisResult = await poller.result()
         
         # Extract invoice fields
         content: DocumentContent = result.contents[0]  # type: ignore

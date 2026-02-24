@@ -14,7 +14,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from testpreparer_async import ContentUnderstandingClientTestBaseAsync, ContentUnderstandingPreparer
 from azure.ai.contentunderstanding.models import ContentAnalyzer
 from azure.ai.contentunderstanding.aio import ContentUnderstandingClient
-from azure.ai.contentunderstanding.models import AnalyzeInput
+from azure.ai.contentunderstanding.models import AnalysisInput
 from test_helpers import (
     generate_analyzer_id,
     new_simple_content_analyzer_object,
@@ -611,7 +611,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin analysis operation with URL
             analysis_poller = await client.begin_analyze(
-                analyzer_id=analyzer_id, inputs=[AnalyzeInput(url=invoice_url)]
+                analyzer_id=analyzer_id, inputs=[AnalysisInput(url=invoice_url)]
             )
             assert_poller_properties(analysis_poller, "Analysis poller")
 
@@ -725,7 +725,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
 
             # Begin video analysis operation using URL
             analysis_poller = await client.begin_analyze(
-                analyzer_id=analyzer_id, inputs=[AnalyzeInput(url=video_file_url)]
+                analyzer_id=analyzer_id, inputs=[AnalysisInput(url=video_file_url)]
             )
 
             # Wait for analysis completion first
@@ -1216,7 +1216,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         print("\nStarting analysis operation...")
         poller = await client.begin_analyze(
             analyzer_id="prebuilt-invoice",
-            inputs=[AnalyzeInput(url=document_url)],
+            inputs=[AnalysisInput(url=document_url)],
         )
 
         # Wait for completion

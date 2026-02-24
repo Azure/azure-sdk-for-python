@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AnalyzeInput(_Model):
+class AnalysisInput(_Model):
     """Additional input to analyze.
 
     :ivar url: The URL of the input to analyze.  Only one of url or data should be specified.
@@ -37,9 +37,9 @@ class AnalyzeInput(_Model):
     :vartype name: str
     :ivar mime_type: The MIME type of the input content.  Ex. application/pdf, image/jpeg, etc.
     :vartype mime_type: str
-    :ivar input_range: Range of the input to analyze (ex. ``1-3,5,9-``).  Document content uses
+    :ivar content_range: Range of the input to analyze (ex. ``1-3,5,9-``).  Document content uses
      1-based page numbers, while audio visual content uses integer milliseconds.
-    :vartype input_range: str
+    :vartype content_range: str
     """
 
     url: Optional[str] = rest_field(
@@ -59,7 +59,7 @@ class AnalyzeInput(_Model):
         name="mimeType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The MIME type of the input content.  Ex. application/pdf, image/jpeg, etc."""
-    input_range: Optional[str] = rest_field(
+    content_range: Optional[str] = rest_field(
         name="range", visibility=["read", "create", "update", "delete", "query"]
     )
     """Range of the input to analyze (ex. ``1-3,5,9-``).  Document content uses 1-based page numbers,
@@ -73,7 +73,7 @@ class AnalyzeInput(_Model):
         data: Optional[bytes] = None,
         name: Optional[str] = None,
         mime_type: Optional[str] = None,
-        input_range: Optional[str] = None,
+        content_range: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -87,7 +87,7 @@ class AnalyzeInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnalyzeResult(_Model):
+class AnalysisResult(_Model):
     """Analyze operation result.
 
     :ivar analyzer_id: The unique identifier of the analyzer.
@@ -703,7 +703,7 @@ class ContentAnalyzerAnalyzeOperationStatus(_Model):
     :ivar error: Error object that describes the error when status is "Failed".
     :vartype error: ~azure.core.ODataV4Format
     :ivar result: The result of the operation.
-    :vartype result: ~azure.ai.contentunderstanding.models.AnalyzeResult
+    :vartype result: ~azure.ai.contentunderstanding.models.AnalysisResult
     :ivar usage: Usage details of the analyze operation.
     :vartype usage: ~azure.ai.contentunderstanding.models.UsageDetails
     """
@@ -719,7 +719,7 @@ class ContentAnalyzerAnalyzeOperationStatus(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Error object that describes the error when status is \"Failed\"."""
-    result: Optional["_models.AnalyzeResult"] = rest_field(
+    result: Optional["_models.AnalysisResult"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The result of the operation."""
@@ -735,7 +735,7 @@ class ContentAnalyzerAnalyzeOperationStatus(_Model):
         id: str,  # pylint: disable=redefined-builtin
         status: Union[str, "_models.OperationState"],
         error: Optional[ODataV4Format] = None,
-        result: Optional["_models.AnalyzeResult"] = None,
+        result: Optional["_models.AnalysisResult"] = None,
         usage: Optional["_models.UsageDetails"] = None,
     ) -> None: ...
 

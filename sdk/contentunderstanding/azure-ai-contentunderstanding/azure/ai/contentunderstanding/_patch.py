@@ -51,12 +51,12 @@ class ContentUnderstandingClient(GeneratedClient):
         self,
         analyzer_id: str,
         *,
-        inputs: list[_models.AnalyzeInput],
+        inputs: list[_models.AnalysisInput],
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
     ) -> (
-        "AnalyzeLROPoller[_models.AnalyzeResult]"  # pyright: ignore[reportInvalidTypeArguments]
+        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
     ):
         """Extract content and fields from input.
 
@@ -64,7 +64,7 @@ class ContentUnderstandingClient(GeneratedClient):
         :type analyzer_id: str
         :keyword inputs: Inputs to analyze. Currently, only pro mode supports multiple inputs.
          Required.
-        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
         :keyword model_deployments: Override default mapping of model names to deployments.
          Ex. { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
          "myTextEmbedding3LargeDeployment" }. Default value is None.
@@ -72,9 +72,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :keyword processing_location: The location where the data may be processed. Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
-        :return: An instance of AnalyzeLROPoller that returns AnalyzeResult. The AnalyzeResult is
+        :return: An instance of AnalyzeLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping. The poller includes an .operation_id property.
-        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. note::
@@ -93,7 +93,7 @@ class ContentUnderstandingClient(GeneratedClient):
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> (
-        "AnalyzeLROPoller[_models.AnalyzeResult]"  # pyright: ignore[reportInvalidTypeArguments]
+        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
     ):
         """Extract content and fields from input.
 
@@ -107,9 +107,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AnalyzeLROPoller that returns AnalyzeResult. The AnalyzeResult is
+        :return: An instance of AnalyzeLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping. The poller includes an .operation_id property.
-        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. note::
@@ -128,7 +128,7 @@ class ContentUnderstandingClient(GeneratedClient):
         content_type: str = "application/json",
         **kwargs: Any,
     ) -> (
-        "AnalyzeLROPoller[_models.AnalyzeResult]"  # pyright: ignore[reportInvalidTypeArguments]
+        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
     ):
         """Extract content and fields from input.
 
@@ -142,9 +142,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AnalyzeLROPoller that returns AnalyzeResult. The AnalyzeResult is
+        :return: An instance of AnalyzeLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping. The poller includes an .operation_id property.
-        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. note::
@@ -159,13 +159,13 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        inputs: Optional[list[_models.AnalyzeInput]] = None,
+        inputs: Optional[list[_models.AnalysisInput]] = None,
         model_deployments: Optional[dict[str, str]] = None,
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         content_type: Optional[str] = None,
         **kwargs: Any,
     ) -> (
-        "AnalyzeLROPoller[_models.AnalyzeResult]"  # pyright: ignore[reportInvalidTypeArguments]
+        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
     ):
         """Extract content and fields from input.
 
@@ -175,7 +175,7 @@ class ContentUnderstandingClient(GeneratedClient):
         :type body: JSON or IO[bytes]
         :keyword inputs: Inputs to analyze. Currently, only pro mode supports multiple inputs.
          Default value is None.
-        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalyzeInput]
+        :paramtype inputs: list[~azure.ai.contentunderstanding.models.AnalysisInput]
         :keyword model_deployments: Override default mapping of model names to deployments.
          Ex. { "gpt-4.1": "myGpt41Deployment", "text-embedding-3-large":
          "myTextEmbedding3LargeDeployment" }. Default value is None.
@@ -185,9 +185,9 @@ class ContentUnderstandingClient(GeneratedClient):
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
         :keyword content_type: Body Parameter content-type. Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AnalyzeLROPoller that returns AnalyzeResult. The AnalyzeResult is
+        :return: An instance of AnalyzeLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping. The poller includes an .operation_id property.
-        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. note::
@@ -233,12 +233,12 @@ class ContentUnderstandingClient(GeneratedClient):
         analyzer_id: str,
         binary_input: bytes,
         *,
-        input_range: Optional[str] = None,
+        content_range: Optional[str] = None,
         content_type: str = "application/octet-stream",
         processing_location: Optional[Union[str, _models.ProcessingLocation]] = None,
         **kwargs: Any,
     ) -> (
-        "AnalyzeLROPoller[_models.AnalyzeResult]"  # pyright: ignore[reportInvalidTypeArguments]
+        "AnalyzeLROPoller[_models.AnalysisResult]"  # pyright: ignore[reportInvalidTypeArguments]
     ):
         """Extract content and fields from input.
 
@@ -246,18 +246,18 @@ class ContentUnderstandingClient(GeneratedClient):
         :type analyzer_id: str
         :param binary_input: The binary content of the document to analyze. Required.
         :type binary_input: bytes
-        :keyword input_range: Range of the input to analyze (ex. ``1-3,5,9-``). Document content uses
+        :keyword content_range: Range of the input to analyze (ex. ``1-3,5,9-``). Document content uses
          1-based page numbers, while audio visual content uses integer milliseconds. Default value is None.
-        :paramtype input_range: str
+        :paramtype content_range: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/octet-stream".
         :paramtype content_type: str
         :keyword processing_location: The location where the data may be processed. Defaults to
          global. Known values are: "geography", "dataZone", and "global". Default value is None.
         :paramtype processing_location: str or ~azure.ai.contentunderstanding.models.ProcessingLocation
-        :return: An instance of AnalyzeLROPoller that returns AnalyzeResult. The AnalyzeResult is
+        :return: An instance of AnalyzeLROPoller that returns AnalysisResult. The AnalysisResult is
          compatible with MutableMapping. The poller includes an .operation_id property.
-        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalyzeResult]
+        :rtype: ~azure.ai.contentunderstanding.models.AnalyzeLROPoller[~azure.ai.contentunderstanding.models.AnalysisResult]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. note::
@@ -271,7 +271,7 @@ class ContentUnderstandingClient(GeneratedClient):
             analyzer_id=analyzer_id,
             binary_input=binary_input,
             string_encoding="codePoint",
-            input_range=input_range,
+            content_range=content_range,
             content_type=content_type,
             processing_location=processing_location,
             **kwargs,
