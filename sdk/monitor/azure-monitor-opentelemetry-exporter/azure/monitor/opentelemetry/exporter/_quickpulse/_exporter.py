@@ -153,7 +153,6 @@ class _QuickpulseExporter(MetricExporter):
         # pylint: disable=R1702
         try:
             post_response = self._client.publish(  # type: ignore
-                endpoint=self._live_endpoint,
                 monitoring_data_points=data_points,
                 ikey=self._instrumentation_key,  # type: ignore
                 configuration_etag=configuration_etag,
@@ -230,7 +229,6 @@ class _QuickpulseExporter(MetricExporter):
         etag = _get_quickpulse_etag() or ""
         try:
             ping_response = self._client.is_subscribed(  # type: ignore
-                endpoint=self._live_endpoint,
                 monitoring_data_point=monitoring_data_point,
                 ikey=self._instrumentation_key,  # type: ignore
                 transmission_time=_ticks_since_dot_net_epoch(),

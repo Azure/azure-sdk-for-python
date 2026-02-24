@@ -14,13 +14,13 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Aggregation type."""
 
     AVG = "Avg"
-    """Average"""
+    """Average."""
     SUM = "Sum"
-    """Sum"""
+    """Sum."""
     MIN = "Min"
-    """Minimum"""
+    """Minimum."""
     MAX = "Max"
-    """Maximum"""
+    """Maximum."""
 
 
 class CollectionConfigurationErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

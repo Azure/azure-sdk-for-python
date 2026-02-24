@@ -28,9 +28,9 @@ class LiveMetricsClientConfiguration:  # pylint: disable=too-many-instance-attri
     :param credential: Credential used to authenticate requests to the service. Default value is
      None.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2024-04-01-preview". Note that overriding this default value may result in unsupported
-     behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2024-04-01-preview" and None. Default value is "2024-04-01-preview". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

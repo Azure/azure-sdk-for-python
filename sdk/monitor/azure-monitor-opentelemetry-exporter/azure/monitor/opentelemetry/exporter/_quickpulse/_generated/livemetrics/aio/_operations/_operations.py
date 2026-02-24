@@ -204,7 +204,6 @@ class _LiveMetricsClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
     async def is_subscribed(
         self,
         monitoring_data_point: Optional[Union[_models.MonitoringDataPoint, JSON, IO[bytes]]] = None,
@@ -295,7 +294,7 @@ class _LiveMetricsClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -331,10 +330,13 @@ class _LiveMetricsClientOperationsMixin(
             "str", response.headers.get("x-ms-qps-service-endpoint-redirect-v2")
         )
 
+        deserialized = None
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.CollectionConfigurationInfo, response.json())
+            text = response.text()
+            if text:
+                deserialized = _deserialize(_models.CollectionConfigurationInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -449,7 +451,6 @@ class _LiveMetricsClientOperationsMixin(
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace_async
     async def publish(
         self,
         monitoring_data_points: Optional[Union[list[_models.MonitoringDataPoint], list[JSON], IO[bytes]]] = None,
@@ -518,7 +519,7 @@ class _LiveMetricsClientOperationsMixin(
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
@@ -548,10 +549,13 @@ class _LiveMetricsClientOperationsMixin(
             "str", response.headers.get("x-ms-qps-configuration-etag")
         )
 
+        deserialized = None
         if _stream:
             deserialized = response.iter_bytes()
         else:
-            deserialized = _deserialize(_models.CollectionConfigurationInfo, response.json())
+            text = response.text()
+            if text:
+                deserialized = _deserialize(_models.CollectionConfigurationInfo, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
