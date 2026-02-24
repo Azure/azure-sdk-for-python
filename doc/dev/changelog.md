@@ -94,7 +94,6 @@ To check whether all modified packages have a corresponding change description (
 npx chronus verify
 ```
 
-This is also enforced automatically in CI on pull requests. If a package is modified without a matching change file, the PR check will fail.
 
 If your changes don't need a changelog entry (e.g., pure documentation or test-only changes unrelated to package behavior), you can add an `internal` change kind entry to satisfy the requirement without bumping the version.
 
