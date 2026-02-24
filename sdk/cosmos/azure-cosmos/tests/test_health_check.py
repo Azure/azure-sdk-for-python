@@ -155,5 +155,68 @@ class TestHealthCheck:
             db_acc.ConsistencyPolicy = {"defaultConsistencyLevel": "Session"}
             return db_acc
 
+
+    def test_force_refresh_on_startup_with_none_should_fetch_database_account(self, setup):
+        """Verifies that calling force_refresh_on_startup(None) fetches the database account
+        instead of crashing with AttributeError on NoneType._WritableLocations.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
+        mock_get_db_account = self.MockGetDatabaseAccount(REGIONS)
+        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = mock_get_db_account
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            gem = client.client_connection._global_endpoint_manager
+
+            # Simulate the startup state
+            gem.startup = True
+            gem.refresh_needed = True
+
+            # This should NOT crash - it should fetch the database account
+            gem.force_refresh_on_startup(None)
+
+            # Verify the location cache was properly populated
+            read_contexts = gem.location_cache.read_regional_routing_contexts
+            assert len(read_contexts) > 0, "Location cache should have read endpoints after startup refresh"
+
+        finally:
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+    def test_force_refresh_on_startup_with_valid_account_uses_provided_account(self, setup):
+        """Verifies that when a valid database account is provided to force_refresh_on_startup,
+        it uses that account directly without making another network call.
+        """
+        self.original_getDatabaseAccountStub = _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub
+        call_counter = {'count': 0}
+
+        def counting_mock(self_gem, endpoint, **kwargs):
+            call_counter['count'] += 1
+            return self.MockGetDatabaseAccount(REGIONS)(endpoint)
+
+        _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = counting_mock
+
+        try:
+            client = CosmosClient(self.host, self.masterKey, preferred_locations=REGIONS)
+            gem = client.client_connection._global_endpoint_manager
+
+            # Get a valid database account first
+            db_account = gem._GetDatabaseAccount()
+            initial_call_count = call_counter['count']
+
+            # Reset startup state
+            gem.startup = True
+            gem.refresh_needed = True
+
+            # Call with valid account - should NOT make another network call
+            gem.force_refresh_on_startup(db_account)
+
+            # Since we provided a valid account, no additional GetDatabaseAccount call should be made
+            assert call_counter['count'] == initial_call_count, \
+                "Should not call _GetDatabaseAccount when valid account is provided"
+
+        finally:
+            _global_endpoint_manager._GlobalEndpointManager._GetDatabaseAccountStub = self.original_getDatabaseAccountStub
+
+
 if __name__ == '__main__':
     unittest.main()

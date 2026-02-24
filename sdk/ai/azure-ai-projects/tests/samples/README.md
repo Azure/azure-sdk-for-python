@@ -9,6 +9,25 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 **VS Code tip (record a single sample):** Open the **Testing** tab, expand the pytest tree to find the specific sample test case (for example, one parameterized case for a particular `sample_path`), then right-click it and choose **Run Test** (or **Debug Test**). Make sure your `.env` (or your test run environment) includes `AZURE_TEST_RUN_LIVE=true` and `AZURE_SKIP_LIVE_RECORDING=false` so that run captures a new recording for just that sample.
 
+## Sample test logging
+
+Optionally enable logging to capture sample execution results in log files (useful for monitoring and alerting):
+
+```bash
+# In .env - uncomment to enable logging
+SAMPLE_TEST_ERROR_LOG=<sample_filename>_errors_<timestamp>.log
+SAMPLE_TEST_FAILED_LOG=<sample_filename>_failed_<timestamp>.log
+SAMPLE_TEST_PASSED_LOG=<sample_filename>_success_<timestamp>.log
+```
+
+Log types:
+
+- **`SAMPLE_TEST_ERROR_LOG`**: Sample crashed with an exception during execution
+- **`SAMPLE_TEST_FAILED_LOG`**: Sample ran successfully but LLM validation failed (incorrect output)
+- **`SAMPLE_TEST_PASSED_LOG`**: Sample ran successfully and LLM validation passed (correct output)
+
+Logs are written to the system's temp directory with the specified filename format. Each log includes the sample path, status/error details, exception traceback (for errors), and all captured print statements.
+
 ## Sync example
 
 ```python
@@ -187,4 +206,37 @@ Notes:
   - If omitted, the id is auto-generated from the sample filename and env-var keys (for example, `sample_agent_computer_use-[COMPUTER_USE_MODEL_DEPLOYMENT_NAME]`).
   - If provided, it becomes the full parameter id for that variant (no filename prefix).
   - If the auto-generated id makes the recording file path too long (most commonly on Windows), the recording file may fail to generate; set a short `test_id` (and keep it unique across all parametrized cases).
-- In VS Code’s **Testing** tab, these show up as additional parameterized cases for the same test, using the parameter id.
+- In VS Code's **Testing** tab, these show up as additional parameterized cases for the same test, using the parameter id.
+
+## Allowing LLM validation failures
+
+LLM validation may produce false alarms when it doesn't understand sample output well enough, incorrectly flagging correct samples as failed. To keep the CI pipeline green while monitoring these validation issues, you can specify samples that are allowed to pass despite LLM validation failures.
+
+Define an allowlist at the top of your test file:
+
+```python
+# Samples that are allowed to pass even when LLM validation fails
+ALLOWED_LLM_VALIDATION_FAILURES = {
+    "sample_agent_basic.py",
+    "sample_workflow_multi_agent.py",
+}
+```
+
+Pass the allowlist to the executor:
+
+```python
+executor = SyncSampleExecutor(
+    self,
+    sample_path,
+    allowed_llm_validation_failures=ALLOWED_LLM_VALIDATION_FAILURES,
+    **kwargs,
+)
+```
+
+Behavior:
+
+- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated (if `SAMPLE_TEST_FAILED_LOG` is configured in `.env`).
+- **Samples not in the allowlist:** Fail the test when LLM validation fails (existing behavior).
+- **All samples:** Execution errors (exceptions) always fail the test, regardless of the allowlist.
+
+This allows you to dismiss false alarms from LLM validation while keeping the CI pipeline green. Failed reports are still generated for monitoring purposes.

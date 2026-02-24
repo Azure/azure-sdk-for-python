@@ -10,7 +10,6 @@
 
 #### Other Changes
 * Added tests for multi-language support for full text search. See [PR 44254](https://github.com/Azure/azure-sdk-for-python/pull/44254)
-* Added cosmos specific attributes to operation level spans for OpenTelemetry. See [PR 45343](https://github.com/Azure/azure-sdk-for-python/pull/45343)
 
 
 ### 4.15.0b2 (2025-12-16)

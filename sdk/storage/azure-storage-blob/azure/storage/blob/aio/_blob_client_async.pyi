@@ -158,6 +158,7 @@ class BlobClient(  # type: ignore[misc]
         timeout: Optional[int] = None,
         content_settings: Optional[ContentSettings] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         standard_blob_tier: Optional[StandardBlobTier] = None,
         source_authorization: Optional[str] = None,
@@ -272,6 +273,8 @@ class BlobClient(  # type: ignore[misc]
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
+        access_tier_if_modified_since: Optional[datetime] = None,
+        access_tier_if_unmodified_since: Optional[datetime] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> None: ...
@@ -464,7 +467,7 @@ class BlobClient(  # type: ignore[misc]
     async def stage_block(
         self,
         block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
         validate_content: Optional[bool] = None,
@@ -486,6 +489,7 @@ class BlobClient(  # type: ignore[misc]
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
@@ -689,6 +693,7 @@ class BlobClient(  # type: ignore[misc]
         match_condition: Optional[MatchConditions] = None,
         if_tags_match_condition: Optional[str] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,
@@ -717,7 +722,7 @@ class BlobClient(  # type: ignore[misc]
     @distributed_trace_async
     async def append_block(
         self,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         *,
         validate_content: Optional[bool] = None,
@@ -756,6 +761,7 @@ class BlobClient(  # type: ignore[misc]
         source_etag: Optional[str] = None,
         source_match_condition: Optional[MatchConditions] = None,
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
+        source_cpk: Optional[CustomerProvidedEncryptionKey] = None,
         encryption_scope: Optional[str] = None,
         source_authorization: Optional[str] = None,
         source_token_intent: Optional[Literal["backup"]] = None,

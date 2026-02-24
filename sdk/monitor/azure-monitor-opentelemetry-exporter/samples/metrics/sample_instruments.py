@@ -26,6 +26,7 @@ metrics.set_meter_provider(meter_provider)
 meter = metrics.get_meter_provider().get_meter("sample")
 
 
+# pylint: disable=unused-argument
 # Callback functions for observable instruments
 def observable_counter_func(options: CallbackOptions) -> Iterable[Observation]:
     yield Observation(1, {})

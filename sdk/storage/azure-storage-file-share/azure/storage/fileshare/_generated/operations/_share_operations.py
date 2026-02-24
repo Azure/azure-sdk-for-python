@@ -38,6 +38,7 @@ _SERIALIZER.client_side_validation = False
 def build_create_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     quota: Optional[int] = None,
@@ -58,7 +59,6 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -124,6 +124,7 @@ def build_create_request(
 def build_get_properties_request(
     url: str,
     *,
+    version: str,
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
@@ -134,7 +135,6 @@ def build_get_properties_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -166,6 +166,7 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
+    version: str,
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
@@ -177,7 +178,6 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -211,6 +211,7 @@ def build_delete_request(
 def build_acquire_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
@@ -225,7 +226,6 @@ def build_acquire_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -264,6 +264,7 @@ def build_release_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -276,7 +277,6 @@ def build_release_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -312,6 +312,7 @@ def build_change_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
@@ -325,7 +326,6 @@ def build_change_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -363,6 +363,7 @@ def build_renew_lease_request(
     url: str,
     *,
     lease_id: str,
+    version: str,
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -375,7 +376,6 @@ def build_renew_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -410,6 +410,7 @@ def build_renew_lease_request(
 def build_break_lease_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     break_period: Optional[int] = None,
     lease_id: Optional[str] = None,
@@ -424,7 +425,6 @@ def build_break_lease_request(
     comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -462,6 +462,7 @@ def build_break_lease_request(
 def build_create_snapshot_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -472,7 +473,6 @@ def build_create_snapshot_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -503,6 +503,7 @@ def build_create_snapshot_request(
 def build_create_permission_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
@@ -513,7 +514,6 @@ def build_create_permission_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -545,6 +545,7 @@ def build_get_permission_request(
     url: str,
     *,
     file_permission_key: str,
+    version: str,
     file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
     timeout: Optional[int] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -555,7 +556,6 @@ def build_get_permission_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["filepermission"] = kwargs.pop("comp", _params.pop("comp", "filepermission"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -589,6 +589,7 @@ def build_get_permission_request(
 def build_set_properties_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     quota: Optional[int] = None,
     access_tier: Optional[Union[str, _models.ShareAccessTier]] = None,
@@ -609,7 +610,6 @@ def build_set_properties_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -674,6 +674,7 @@ def build_set_properties_request(
 def build_set_metadata_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     metadata: Optional[dict[str, str]] = None,
     lease_id: Optional[str] = None,
@@ -685,7 +686,6 @@ def build_set_metadata_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -718,6 +718,7 @@ def build_set_metadata_request(
 def build_get_access_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -728,7 +729,6 @@ def build_get_access_policy_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -759,6 +759,7 @@ def build_get_access_policy_request(
 def build_set_access_policy_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     content: Any = None,
@@ -771,7 +772,6 @@ def build_set_access_policy_request(
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -804,6 +804,7 @@ def build_set_access_policy_request(
 def build_get_statistics_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
@@ -814,7 +815,6 @@ def build_get_statistics_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -845,6 +845,7 @@ def build_get_statistics_request(
 def build_restore_request(
     url: str,
     *,
+    version: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     deleted_share_name: Optional[str] = None,
@@ -857,7 +858,6 @@ def build_restore_request(
 
     restype: Literal["share"] = kwargs.pop("restype", _params.pop("restype", "share"))
     comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2026-02-06"] = kwargs.pop("version", _headers.pop("x-ms-version", "2026-02-06"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -911,7 +911,7 @@ class ShareOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    def create(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         metadata: Optional[dict[str, str]] = None,
@@ -997,6 +997,7 @@ class ShareOperations:
 
         _request = build_create_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             quota=quota,
@@ -1012,7 +1013,6 @@ class ShareOperations:
             enable_smb_directory_lease=enable_smb_directory_lease,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1101,12 +1101,12 @@ class ShareOperations:
 
         _request = build_get_properties_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1244,13 +1244,13 @@ class ShareOperations:
 
         _request = build_delete_request(
             url=self._config.url,
+            version=self._config.version,
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             delete_snapshots=delete_snapshots,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1340,6 +1340,7 @@ class ShareOperations:
 
         _request = build_acquire_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
@@ -1349,7 +1350,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1433,6 +1433,7 @@ class ShareOperations:
         _request = build_release_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
@@ -1440,7 +1441,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1528,6 +1528,7 @@ class ShareOperations:
         _request = build_change_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             proposed_lease_id=proposed_lease_id,
             sharesnapshot=sharesnapshot,
@@ -1536,7 +1537,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1620,6 +1620,7 @@ class ShareOperations:
         _request = build_renew_lease_request(
             url=self._config.url,
             lease_id=lease_id,
+            version=self._config.version,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
             request_id_parameter=request_id_parameter,
@@ -1627,7 +1628,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1723,6 +1723,7 @@ class ShareOperations:
 
         _request = build_break_lease_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             lease_id=_lease_id,
@@ -1732,7 +1733,6 @@ class ShareOperations:
             comp=comp,
             action=action,
             restype=restype,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1803,12 +1803,12 @@ class ShareOperations:
 
         _request = build_create_snapshot_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -1936,12 +1936,12 @@ class ShareOperations:
 
         _request = build_create_permission_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -2021,12 +2021,12 @@ class ShareOperations:
         _request = build_get_permission_request(
             url=self._config.url,
             file_permission_key=file_permission_key,
+            version=self._config.version,
             file_permission_format=file_permission_format,
             timeout=timeout,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2060,7 +2060,7 @@ class ShareOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def set_properties(  # pylint: disable=inconsistent-return-statements
+    def set_properties(  # pylint: disable=inconsistent-return-statements,too-many-locals
         self,
         timeout: Optional[int] = None,
         quota: Optional[int] = None,
@@ -2146,6 +2146,7 @@ class ShareOperations:
 
         _request = build_set_properties_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             quota=quota,
             access_tier=access_tier,
@@ -2161,7 +2162,6 @@ class ShareOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2259,13 +2259,13 @@ class ShareOperations:
 
         _request = build_set_metadata_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2337,12 +2337,12 @@ class ShareOperations:
 
         _request = build_get_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2430,13 +2430,13 @@ class ShareOperations:
 
         _request = build_set_access_policy_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2509,12 +2509,12 @@ class ShareOperations:
 
         _request = build_get_statistics_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )
@@ -2596,6 +2596,7 @@ class ShareOperations:
 
         _request = build_restore_request(
             url=self._config.url,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_share_name=deleted_share_name,
@@ -2603,7 +2604,6 @@ class ShareOperations:
             file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
-            version=self._config.version,
             headers=_headers,
             params=_params,
         )

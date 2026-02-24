@@ -58,3 +58,6 @@ exclude = [
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]
+
+[tool.azure-sdk-conda]
+in_bundle = false

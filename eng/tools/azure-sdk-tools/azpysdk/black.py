@@ -40,6 +40,8 @@ class black(Check):
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
 
@@ -79,7 +81,9 @@ class black(Check):
 
                 if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
                     if in_ci():
-                        logger.info(f"The package {package_name} needs reformat. Run `black` locally to reformat.")
+                        logger.info(
+                            f"The package {package_name} needs reformat. Run `azpysdk black .` locally from the package root to reformat."
+                        )
                         results.append(1)
                     else:
                         logger.info(f"The package {package_name} was reformatted.")

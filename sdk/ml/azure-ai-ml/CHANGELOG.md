@@ -6,6 +6,8 @@
 
 ### Bugs Fixed
 
+- Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
+
 ### Other Changes
 
 

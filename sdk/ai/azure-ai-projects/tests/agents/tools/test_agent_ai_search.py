@@ -10,7 +10,7 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    AzureAISearchAgentTool,
+    AzureAISearchTool,
     AzureAISearchToolResource,
     AISearchIndexResource,
     AzureAISearchQueryType,
@@ -20,6 +20,9 @@ from azure.ai.projects.models import (
 # https://arxiv.org/pdf/2508.03680
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentAISearch(TestBase):
 
     # Test questions with expected answers
@@ -60,7 +63,7 @@ class TestAgentAISearch(TestBase):
         significantly faster (~3x) and provides the same coverage.
         See test_agent_ai_search_async.py::test_agent_ai_search_question_answering_async_parallel
 
-        This test verifies that an agent can be created with AzureAISearchAgentTool,
+        This test verifies that an agent can be created with AzureAISearchTool,
         use it to search indexed content, and provide accurate answers to questions
         based on the search results.
 
@@ -112,7 +115,7 @@ class TestAgentAISearch(TestBase):
                 Respond with only 'True' or 'False' based on what you find in the search results.
                 If you cannot find clear evidence in the search results, answer 'False'.""",
                     tools=[
-                        AzureAISearchAgentTool(
+                        AzureAISearchTool(
                             azure_ai_search=AzureAISearchToolResource(
                                 indexes=[
                                     AISearchIndexResource(
@@ -148,7 +151,7 @@ class TestAgentAISearch(TestBase):
                     stream=True,
                     tool_choice="required",
                     input=f"Answer this question with only 'True' or 'False': {question}",
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 for event in stream_response:

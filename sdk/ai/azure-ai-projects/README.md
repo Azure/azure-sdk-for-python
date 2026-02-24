@@ -3,36 +3,38 @@
 The AI Projects client library (in preview) is part of the Microsoft Foundry SDK, and provides easy access to
 resources in your Microsoft Foundry Project. Use it to:
 
-* **Create and run Agents** using methods on methods on the `.agents` client property.
+* **Create and run Agents** using methods on the `.agents` client property.
 * **Enhance Agents with specialized tools**:
-  * Agent Memory Search
-  * Agent-to-Agent (A2A)
+  * Agent-to-Agent (A2A) (Preview)
   * Azure AI Search
-  * Bing Custom Search
+  * Azure Functions
+  * Bing Custom Search (Preview)
   * Bing Grounding
-  * Browser Automation
+  * Browser Automation (Preview)
   * Code Interpreter
-  * Computer Use
+  * Computer Use (Preview)
   * File Search
   * Function Tool
   * Image Generation
-  * Microsoft Fabric
+  * Memory Search (Preview)
+  * Microsoft Fabric (Preview)
+  * Microsoft SharePoint (Preview)
   * Model Context Protocol (MCP)
   * OpenAPI
-  * SharePoint
   * Web Search
-* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evals and FineTuning operations with your Agent.
-* **Manage memory stores** for Agent conversations, using the `.memory_stores` operations.
-* **Explore additional evaluation tools** to assess the performance of your generative AI application, using the `.evaluation_rules`,
-`.evaluation_taxonomies`, `.evaluators`, `.insights`, and `.schedules` operations.
-* **Run Red Team scans** to identify risks associated with your generative AI application, using the ".red_teams" operations.
+  * Web Search (Preview)
+* **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
+* **Manage memory stores (preview)** for Agent conversations, using the `.beta.memory_stores` operations.
+* **Explore additional evaluation tools (some in preview)** to assess the performance of your generative AI application, using the `.evaluation_rules`,
+`.beta.evaluation_taxonomies`, `.beta.evaluators`, `.beta.insights`, and `.beta.schedules` operations.
+* **Run Red Team scans (preview)** to identify risks associated with your generative AI application, using the `.beta.red_teams` operations.
 * **Fine tune** AI Models on your data.
 * **Enumerate AI Models** deployed to your Foundry Project using the `.deployments` operations.
 * **Enumerate connected Azure resources** in your Foundry project using the `.connections` operations.
 * **Upload documents and create Datasets** to reference them using the `.datasets` operations.
 * **Create and enumerate Search Indexes** using methods the `.indexes` operations.
 
-The client library uses version `2025-11-15-preview` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-2025-11-15-preview).
+The client library uses version `v1` of the AI Foundry [data plane REST APIs](https://aka.ms/azsdk/azure-ai-projects-v2/api-reference-v1).
 
 [Product documentation](https://aka.ms/azsdk/azure-ai-projects-v2/product-doc)
 | [Samples][samples]
@@ -52,9 +54,9 @@ To report an issue with the client library, or request additional features, plea
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/ai-studio/how-to/create-projects).
-* The project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
+* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project overview page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
 * An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
-  * An appropriate role assignment. see [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-ai-foundry). Role assigned can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
+  * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/ai-foundry/concepts/rbac-foundry?view=foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
 
@@ -62,12 +64,6 @@ To report an issue with the client library, or request additional features, plea
 
 ```bash
 pip install --pre azure-ai-projects
-```
-
-Note that the packages [openai](https://pypi.org/project/openai) and [azure-identity](https://pypi.org/project/azure-identity) also need to be installed if you intend to call `get_openai_client()`:
-
-```bash
-pip install openai azure-identity
 ```
 
 ## Key concepts
@@ -115,9 +111,7 @@ async with (
 
 Your Microsoft Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client from the [openai](https://pypi.org/project/openai/) package, and execute an example multi-turn "Responses" calls.
 
-The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, As shown in the "Models + endpoints" tab, under the "Name" column.
-
-See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
+The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
 <!-- SNIPPET:sample_responses_basic.responses -->
 
@@ -139,11 +133,13 @@ with project_client.get_openai_client() as openai_client:
 
 <!-- END SNIPPET -->
 
+See the "responses" folder in the [package samples][samples] for additional samples, including streaming responses.
+
 ### Performing Agent operations
 
-The `.agents` property on the `AIProjectsClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
+The `.agents` property on the `AIProjectClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
 
-The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project, as shown in the "Models + endpoints" tab, under the "Name" column.
+The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
 See the "agents" folder in the [package samples][samples] for an extensive set of samples, including streaming, tool usage and memory store usage.
 
@@ -167,8 +163,7 @@ with project_client.get_openai_client() as openai_client:
 
     response = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -180,8 +175,7 @@ with project_client.get_openai_client() as openai_client:
 
     response = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
@@ -208,7 +202,34 @@ These tools work immediately without requiring external connections.
 
 Write and run Python code in a sandboxed environment, process files and work with diverse data formats. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-code-interpreter)
 
+Basic tool declaration (no input files):
+
 <!-- SNIPPET:sample_agent_code_interpreter.tool_declaration -->
+
+```python
+tool = CodeInterpreterTool()
+```
+
+<!-- END SNIPPET -->
+
+See the basic sample in file `\agents\tools\sample_agent_code_interpreter.py` in the [Samples][samples] folder.
+
+After calling `responses.create()`, you can extract the code behind the scene from
+the `code_interpreter_call` output item:
+
+<!-- SNIPPET:sample_agent_code_interpreter.code_output_extraction -->
+
+```python
+code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
+print(f"Code Interpreter code:")
+print(code)
+```
+
+<!-- END SNIPPET -->
+
+If you want to upload an input file and download generated output files:
+
+<!-- SNIPPET:sample_agent_code_interpreter_with_files.tool_declaration -->
 
 ```python
 # Load the CSV file to be processed
@@ -218,14 +239,14 @@ asset_file_path = os.path.abspath(
 
 # Upload the CSV file for the code interpreter
 file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
-tool = CodeInterpreterTool(container=CodeInterpreterToolAuto(file_ids=[file.id]))
+tool = CodeInterpreterTool(container=CodeInterpreterContainerAuto(file_ids=[file.id]))
 ```
 
 <!-- END SNIPPET -->
 
 *After calling `responses.create()`, check for generated files in response annotations (type `container_file_citation`) and download them using `openai_client.containers.files.content.retrieve()`.*
 
-See the full sample in file `\agents\tools\sample_agent_code_interpreter.py` in the [Samples][samples] folder.
+See full sample file `\agents\tools\sample_agent_code_interpreter_with_files.py` in the [Samples][samples] folder.
 
 **File Search**
 
@@ -261,8 +282,8 @@ Generate images based on text prompts with customizable resolution, quality, and
 <!-- SNIPPET:sample_agent_image_generation.tool_declaration -->
 
 ```python
-tool = ImageGenTool(  # type: ignore[call-overload]
-    model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
+tool = ImageGenTool(
+    model=image_generation_model,  # Model such as "gpt-image-1"
     quality="low",
     size="1024x1024",
 )
@@ -288,11 +309,24 @@ if image_data and image_data[0]:
 
 See the full sample in file `\agents\tools\sample_agent_image_generation.py` in the [Samples][samples] folder.
 
-**Web Search**
+**Web Search / Web Search (Preview)**
 
-Perform general web searches to retrieve current information from the internet. [OpenAI Documentation](https://platform.openai.com/docs/guides/tools-web-search)
+Discover up-to-date web content with the GA Web Search tool or try the Web Search Preview tool for the latest enhancements. Guidance on when to use each option is in the documentation: https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-overview?view=foundry#determine-the-best-tool-for-your-use-cases.
+
+Warning:
+Web Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
 
 <!-- SNIPPET:sample_agent_web_search.tool_declaration -->
+
+```python
+tool = WebSearchTool(user_location=WebSearchApproximateLocation(country="GB", city="London", region="London"))
+```
+
+<!-- END SNIPPET -->
+
+See the full sample in file `\agents\tools\sample_agent_web_search.py` in the [Samples][samples] folder.
+
+<!-- SNIPPET:sample_agent_web_search_preview.tool_declaration -->
 
 ```python
 tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city="London", region="London"))
@@ -300,9 +334,26 @@ tool = WebSearchPreviewTool(user_location=ApproximateLocation(country="GB", city
 
 <!-- END SNIPPET -->
 
-See the full sample in file `\agents\tools\sample_agent_web_search.py` in the [Samples][samples] folder.
+See the full sample in file `\agents\tools\sample_agent_web_search_preview.py` in the [Samples][samples] folder.
 
-**Computer Use**
+Use the GA Web Search tool with a Bing Custom Search connection to scope results to your custom search instance:
+
+<!-- SNIPPET:sample_agent_web_search_with_custom_search.tool_declaration -->
+
+```python
+tool = WebSearchTool(
+    custom_search_configuration=WebSearchConfiguration(
+        project_connection_id=os.environ["BING_CUSTOM_SEARCH_PROJECT_CONNECTION_ID"],
+        instance_name=os.environ["BING_CUSTOM_SEARCH_INSTANCE_NAME"],
+    )
+)
+```
+
+<!-- END SNIPPET -->
+
+See the full sample in file `\agents\tools\sample_agent_web_search_with_custom_search.py` in the [Samples][samples] folder.
+
+**Computer Use (Preview)**
 
 Enable agents to interact directly with computer systems for task automation and system operations:
 
@@ -346,9 +397,9 @@ Call external APIs defined by OpenAPI specifications without additional client-s
 
 ```python
 with open(weather_asset_file_path, "r") as f:
-    openapi_weather = jsonref.loads(f.read())
+    openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
-tool = OpenApiAgentTool(
+tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
         name="get_weather",
         spec=openapi_weather,
@@ -393,7 +444,46 @@ tool = FunctionTool(
 
 See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the [Samples][samples] folder.
 
-* **Memory Search Tool**
+**Azure Functions**
+
+Integrate Azure Functions with agents to extend capabilities via serverless compute. Functions are invoked through Azure Storage Queue triggers, allowing asynchronous execution of custom logic.
+
+<!-- SNIPPET:sample_agent_azure_function.tool_declaration -->
+
+```python
+tool = AzureFunctionTool(
+    azure_function=AzureFunctionDefinition(
+        input_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_INPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        output_binding=AzureFunctionBinding(
+            storage_queue=AzureFunctionStorageQueue(
+                queue_name=os.environ["STORAGE_OUTPUT_QUEUE_NAME"],
+                queue_service_endpoint=os.environ["STORAGE_QUEUE_SERVICE_ENDPOINT"],
+            )
+        ),
+        function=AzureFunctionDefinitionFunction(
+            name="queue_trigger",
+            description="Get weather for a given location",
+            parameters={
+                "type": "object",
+                "properties": {"location": {"type": "string", "description": "location to determine weather for"}},
+            },
+        ),
+    )
+)
+```
+
+<!-- END SNIPPET -->
+
+*After calling `responses.create()`, the agent enqueues function arguments to the input queue. Your Azure Function processes the request and returns results via the output queue.*
+
+See the full sample in file `\agents\tools\sample_agent_azure_function.py` and the Azure Function implementation in `\agents\tools\get_weather_func_app.py` in the [Samples][samples] folder.
+
+**Memory Search Tool (Preview)**
 
   The Memory Store Tool adds Memory to an Agent, allowing the Agent's AI model to search for past information related to the current user prompt.
 
@@ -403,7 +493,7 @@ See the full sample in file `\agents\tools\sample_agent_function_tool.py` in the
   # You can also use "{{$userId}}" to take the oid of the request authentication header
   scope = "user_123"
 
-  tool = MemorySearchTool(
+  tool = MemorySearchPreviewTool(
       memory_store_name=memory_store.name,
       scope=scope,
       update_delay=1,  # Wait 1 second of inactivity before updating memories
@@ -427,7 +517,7 @@ Integrate with Azure AI Search indexes for powerful knowledge retrieval and sema
 <!-- SNIPPET:sample_agent_ai_search.tool_declaration -->
 
 ```python
-tool = AzureAISearchAgentTool(
+tool = AzureAISearchTool(
     azure_ai_search=AzureAISearchToolResource(
         indexes=[
             AISearchIndexResource(
@@ -446,12 +536,14 @@ See the full sample in file `\agents\tools\sample_agent_ai_search.py` in the [Sa
 
 **Bing Grounding**
 
+Warning: Grounding with Bing Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/bing-tools).
+
 Ground agent responses with real-time web search results from Bing to provide up-to-date information:
 
 <!-- SNIPPET:sample_agent_bing_grounding.tool_declaration -->
 
 ```python
-tool = BingGroundingAgentTool(
+tool = BingGroundingTool(
     bing_grounding=BingGroundingSearchToolParameters(
         search_configurations=[
             BingGroundingSearchConfiguration(project_connection_id=os.environ["BING_PROJECT_CONNECTION_ID"])
@@ -464,14 +556,16 @@ tool = BingGroundingAgentTool(
 
 See the full sample in file `\agents\tools\sample_agent_bing_grounding.py` in the [Samples][samples] folder.
 
-**Bing Custom Search**
+**Bing Custom Search (Preview)**
+
+Warning: Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms: [terms of use](https://www.microsoft.com/bing/apis/grounding-legal-enterprise) and [privacy statement](https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409). Customer data will flow outside the Azure compliance boundary. Learn more [here](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/web-search).
 
 Use custom-configured Bing search instances for domain-specific or filtered web search results:
 
 <!-- SNIPPET:sample_agent_bing_custom_search.tool_declaration -->
 
 ```python
-tool = BingCustomSearchAgentTool(
+tool = BingCustomSearchPreviewTool(
     bing_custom_search_preview=BingCustomSearchToolParameters(
         search_configurations=[
             BingCustomSearchConfiguration(
@@ -487,14 +581,14 @@ tool = BingCustomSearchAgentTool(
 
 See the full sample in file `\agents\tools\sample_agent_bing_custom_search.py` in the [Samples][samples] folder.
 
-**Microsoft Fabric**
+**Microsoft Fabric (Preview)**
 
 Connect to and query Microsoft Fabric:
 
 <!-- SNIPPET:sample_agent_fabric.tool_declaration -->
 
 ```python
-tool = MicrosoftFabricAgentTool(
+tool = MicrosoftFabricPreviewTool(
     fabric_dataagent_preview=FabricDataAgentToolParameters(
         project_connections=[
             ToolProjectConnection(project_connection_id=os.environ["FABRIC_PROJECT_CONNECTION_ID"])
@@ -507,14 +601,14 @@ tool = MicrosoftFabricAgentTool(
 
 See the full sample in file `\agents\tools\sample_agent_fabric.py` in the [Samples][samples] folder.
 
-**SharePoint**
+**Microsoft SharePoint (Preview)**
 
 Access and search SharePoint documents, lists, and sites for enterprise knowledge integration:
 
 <!-- SNIPPET:sample_agent_sharepoint.tool_declaration -->
 
 ```python
-tool = SharepointAgentTool(
+tool = SharepointPreviewTool(
     sharepoint_grounding_preview=SharepointGroundingToolParameters(
         project_connections=[
             ToolProjectConnection(project_connection_id=os.environ["SHAREPOINT_PROJECT_CONNECTION_ID"])
@@ -527,14 +621,14 @@ tool = SharepointAgentTool(
 
 See the full sample in file `\agents\tools\sample_agent_sharepoint.py` in the [Samples][samples] folder.
 
-**Browser Automation**
+**Browser Automation (Preview)**
 
 Automate browser interactions for web scraping, testing, and interaction with web applications:
 
 <!-- SNIPPET:sample_agent_browser_automation.tool_declaration -->
 
 ```python
-tool = BrowserAutomationAgentTool(
+tool = BrowserAutomationPreviewTool(
     browser_automation_preview=BrowserAutomationToolParameters(
         connection=BrowserAutomationToolConnectionParameters(
             project_connection_id=os.environ["BROWSER_AUTOMATION_PROJECT_CONNECTION_ID"],
@@ -567,14 +661,14 @@ tool = MCPTool(
 
 See the full sample in file `\agents\tools\sample_agent_mcp_with_project_connection.py` in the [Samples][samples] folder.
 
-**Agent-to-Agent (A2A)**
+**Agent-to-Agent (A2A) (Preview)**
 
 Enable multi-agent collaboration where agents can communicate and delegate tasks to other specialized agents:
 
 <!-- SNIPPET:sample_agent_to_agent.tool_declaration -->
 
 ```python
-tool = A2ATool(
+tool = A2APreviewTool(
     project_connection_id=os.environ["A2A_PROJECT_CONNECTION_ID"],
 )
 # If the connection is missing target, we need to set the A2A endpoint URL.
@@ -593,10 +687,10 @@ Call external APIs defined by OpenAPI specifications using project connection au
 <!-- SNIPPET:sample_agent_openapi_with_project_connection.tool_declaration-->
 
 ```python
-with open(tripadvisor_asset_file_path, "r") as f:
-    openapi_tripadvisor = jsonref.loads(f.read())
+with open(tripadvisor_asset_file_path, "r", encoding="utf-8") as f:
+    openapi_tripadvisor = cast(dict[str, Any], jsonref.loads(f.read()))
 
-tool = OpenApiAgentTool(
+tool = OpenApiTool(
     openapi=OpenApiFunctionDefinition(
         name="tripadvisor",
         spec=openapi_tripadvisor,
@@ -936,7 +1030,7 @@ fine_tuning_job = openai_client.fine_tuning.jobs.create(
         "trainingType": "GlobalStandard"
     },  # Recommended approach to set trainingType. Omitting this field may lead to unsupported behavior.
     # Preferred trainingtype is GlobalStandard.  Note:  Global training offers cost savings , but copies data and weights outside the current resource region.
-    # Learn more - https://azure.microsoft.com/en-us/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/en-us/explore/global-infrastructure/data-residency/
+    # Learn more - https://azure.microsoft.com/pricing/details/cognitive-services/openai-service/ and https://azure.microsoft.com/explore/global-infrastructure/data-residency/
 )
 print(fine_tuning_job)
 ```
@@ -945,7 +1039,19 @@ print(fine_tuning_job)
 
 ## Tracing
 
-**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+### Experimental Feature Gate
+
+**Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. To use it, you must explicitly opt in by setting the environment variable:
+
+```bash
+AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true
+```
+
+This environment variable must be set before calling `AIProjectInstrumentor().instrument()`. If the environment variable is not set or is set to any value other than `true` (case-insensitive), tracing instrumentation will not be enabled and a warning will be logged.
+
+Only enable this feature after reviewing your requirements and understanding that the tracing behavior may change in future versions.
+
+### Getting Started with Tracing
 
 You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
 
@@ -954,7 +1060,7 @@ You can add an Application Insights Azure resource to your Microsoft Foundry pro
 Make sure to install OpenTelemetry and the Azure SDK tracing plugin via
 
 ```bash
-pip install "azure-ai-projects>=2.0.0b1" azure-identity opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
+pip install "azure-ai-projects>=2.0.0b4" opentelemetry-sdk azure-core-tracing-opentelemetry azure-monitor-opentelemetry
 ```
 
 You will also need an exporter to send telemetry to your observability backend. You can print traces to the console or use a local viewer such as [Aspire Dashboard](https://learn.microsoft.com/dotnet/aspire/fundamentals/dashboard/standalone?tabs=bash).
@@ -966,6 +1072,8 @@ pip install opentelemetry-exporter-otlp
 ```
 
 ### How to enable tracing
+
+**Remember:** Before enabling tracing, ensure you have set the `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` environment variable as described in the [Experimental Feature Gate](#experimental-feature-gate) section.
 
 Here is a code sample that shows how to enable Azure Monitor tracing:
 
@@ -996,7 +1104,7 @@ See the full sample in file `\agents\telemetry\sample_agent_basic_with_azure_mon
 
 **Note:** In order to view the traces in the Microsoft Foundry portal, the agent ID should be passed in as part of the response generation request.
 
-In addition, you might find it helpful to see the tracing logs in the console. You can achieve this with the following code:
+In addition, you might find it helpful to see the tracing logs in the console. Remember to set `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` before running the following code:
 
 <!-- SNIPPET:sample_agent_basic_with_console_tracing.setup_console_tracing -->
 
@@ -1017,11 +1125,53 @@ AIProjectInstrumentor().instrument()
 
 See the full sample in file `\agents\telemetry\sample_agent_basic_with_console_tracing.py` in the [Samples][samples] folder.
 
+### Enabling trace context propagation
+
+Trace context propagation allows client-side spans generated by the Projects SDK to be correlated with server-side spans from Azure OpenAI and other Azure services. When enabled, the SDK automatically injects W3C Trace Context headers (`traceparent` and `tracestate`) into HTTP requests made by OpenAI clients obtained via `get_openai_client()`.
+
+This feature ensures that all operations within a distributed trace share the same trace ID, providing end-to-end visibility across your application and Azure services in your observability backend (such as Azure Monitor).
+
+To enable trace context propagation, set the `AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION` environment variable to `true`:
+
+If no value is provided for the `enable_trace_context_propagation` parameter with the AIProjectInstrumentor.instrument()` call and the environment variable is not set, trace context propagation defaults to `false` (opt-in).
+
+**Important Security and Privacy Considerations:**
+
+- **Trace IDs**: When trace context propagation is enabled, trace IDs are sent to Azure OpenAI and other external services.
+- **Request Correlation**: Trace IDs allow Azure services to correlate requests from the same session or user across multiple API calls, which may have privacy implications depending on your use case.
+- **Opt-in by Design**: This feature is disabled by default to give you explicit control over when trace context is propagated to external services.
+
+Only enable trace context propagation after carefully reviewing your observability, privacy and security requirements.
+
+#### Controlling baggage propagation
+
+When trace context propagation is enabled, you can separately control whether the baggage header is included. By default, only `traceparent` and `tracestate` headers are propagated. To also include the `baggage` header, set the `AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE` environment variable to `true`:
+
+If no value is provided for the `enable_baggage_propagation` parameter with the `AIProjectInstrumentor.instrument()` call and the environment variable is not set, the value defaults to `false` and baggage is not included.
+
+**Why is baggage propagation separate?**
+
+The baggage header can contain arbitrary key-value pairs added anywhere in your application's trace context. Unlike trace IDs (which are randomly generated identifiers), baggage may contain:
+
+- User identifiers or session information
+- Authentication tokens or credentials
+- Business-specific data or metadata
+- Personally identifiable information (PII)
+
+Baggage is automatically propagated through your entire application's call chain, meaning data added in one part of your application will be included in requests to Azure OpenAI unless explicitly controlled.
+
+**Important Security Considerations:**
+
+- **Review Baggage Contents**: Before enabling baggage propagation, audit what data your application (and any third-party libraries) adds to OpenTelemetry baggage.
+- **Sensitive Data Risk**: Baggage is sent to Azure OpenAI and may be logged or processed by Microsoft services. Never add sensitive information to baggage when baggage propagation is enabled.
+- **Opt-in by Design**: Baggage propagation is disabled by default (even when trace context propagation is enabled) to prevent accidental exposure of sensitive data.
+- **Minimal Propagation**: `traceparent` and `tracestate` headers are generally sufficient for distributed tracing. Only enable baggage propagation if your specific observability requirements demand it.
+
 ### Enabling content recording
 
 Content recording controls whether message contents and tool call related details, such as parameters and return values, are captured with the traces. This data may include sensitive user information.
 
-To enable content recording, set the `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable to `true`. If the environment variable is not set, content recording defaults to `false`.
+To enable content recording, set the `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` environment variable to `true`. If the environment variable is not set  and no value is provided with the `AIProjectInstrumentor().instrument()` call for the content recording parameter, content recording defaults to `false`.
 
 **Important:** The environment variable only controls content recording for built-in traces. When you use custom tracing decorators on your own functions, all parameters and return values are always traced.
 
@@ -1128,7 +1278,15 @@ Operation returned an invalid status 'Unauthorized'
 
 ### Logging
 
-The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The SDK logs HTTP request and response details, which may be useful in troubleshooting. To log to stdout, add the following at the top of your Python script:
+The client uses the standard [Python logging library](https://docs.python.org/3/library/logging.html). The logs include HTTP request and response headers and body, which are often useful when troubleshooting or reporting an issue to Microsoft.
+
+#### Default console logging
+
+To turn on client console logging define the environment variable `AZURE_AI_PROJECTS_CONSOLE_LOGGING=true` before running your Python script. Authentication bearer tokens are automatically redacted from the log. Your log may contain other sensitive information, so be sure to remove it before sharing the log with others.
+
+#### Customizing your log
+
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format and destination. To log to `stdout`, add the following at the top of your Python script:
 
 ```python
 import sys

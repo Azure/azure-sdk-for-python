@@ -73,6 +73,8 @@ class pyright(Check):
         results: List[int] = []
 
         for parsed in targeted:
+            if os.getcwd() != parsed.folder:
+                os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
 

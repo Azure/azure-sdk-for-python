@@ -6,7 +6,7 @@ import unittest
 from unittest import mock
 
 from azure.monitor.opentelemetry.exporter._constants import (
-    _APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW,
+    _APPLICATIONINSIGHTS_SDKSTATS_DISABLED,
 )
 from azure.monitor.opentelemetry.exporter.statsbeat.customer._state import (
     get_customer_stats_manager,
@@ -23,7 +23,7 @@ class TestCustomerSdkStats(unittest.TestCase):
     def setUp(self):
         """Set up test environment and ensure customer SDKStats is enabled."""
         # Enable customer SDK stats for testing
-        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW] = "true"
+        os.environ[_APPLICATIONINSIGHTS_SDKSTATS_DISABLED] = "false"
 
         # Reset the customer stats manager for each test
         manager = get_customer_stats_manager()
@@ -32,7 +32,7 @@ class TestCustomerSdkStats(unittest.TestCase):
     def tearDown(self):
         """Clean up test environment."""
         # Clean up environment variables
-        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_ENABLED_PREVIEW, None)
+        os.environ.pop(_APPLICATIONINSIGHTS_SDKSTATS_DISABLED, None)
 
         # Shutdown customer stats
         manager = get_customer_stats_manager()

@@ -89,6 +89,7 @@ jobs:
         export SCRIPT_PATH=$script_path
         export BOT_TOKEN=$(azuresdk-github-pat)
         export GIT_TOKEN=$(Yuchao-GitToken)
+        export TRIGGERED_PIPELINE_LINK="$(System.CollectionUri)$(System.TeamProject)/_build/results?buildId=$(Build.BuildId)"
         export PYTHON_TAG=$(PYTHON_TAG)
         export DEBUG_SDK_BRANCH=$(DEBUG_SDK_BRANCH)
         export TARGET_DATE=$(TARGET_DATE)
@@ -96,7 +97,7 @@ jobs:
         export ISSUE_OWNER=$(ISSUE_OWNER)
 
         # install azure-sdk-tools
-        python -m pip install $root_path/eng/tools/azure-sdk-tools[build,ghtools,sdkgenerator]
+        python -m pip install $root_path/eng/tools/azure-sdk-tools[ghtools,sdkgenerator]
 
         # install requirements
         python -m pip install -r $script_path/requirement.txt

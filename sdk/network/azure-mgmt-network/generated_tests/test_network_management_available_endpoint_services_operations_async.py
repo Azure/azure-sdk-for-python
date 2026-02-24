@@ -24,7 +24,7 @@ class TestNetworkManagementAvailableEndpointServicesOperationsAsync(AzureMgmtRec
     async def test_available_endpoint_services_list(self, resource_group):
         response = self.client.available_endpoint_services.list(
             location="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

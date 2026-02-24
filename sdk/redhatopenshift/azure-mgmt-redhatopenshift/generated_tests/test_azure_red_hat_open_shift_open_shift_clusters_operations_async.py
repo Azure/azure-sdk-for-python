@@ -21,9 +21,9 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_open_shift_clusters_list(self, resource_group):
         response = self.client.open_shift_clusters.list(
-            api_version="2023-11-22",
+            api_version="2025-07-25",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_open_shift_clusters_list_by_resource_group(self, resource_group):
         response = self.client.open_shift_clusters.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-11-22",
+            api_version="2025-07-25",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_open_shift_clusters_get(self, resource_group):
         response = await self.client.open_shift_clusters.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-11-22",
+            api_version="2025-07-25",
         )
 
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_open_shift_clusters_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.open_shift_clusters.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -65,12 +65,19 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
                     "clusterProfile": {
                         "domain": "str",
                         "fipsValidatedModules": "str",
+                        "oidcIssuer": "str",
                         "pullSecret": "str",
                         "resourceGroupId": "str",
                         "version": "str",
                     },
                     "consoleProfile": {"url": "str"},
                     "id": "str",
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "ingressProfiles": [{"ip": "str", "name": "str", "visibility": "str"}],
                     "masterProfile": {
                         "diskEncryptionSetId": "str",
@@ -88,6 +95,12 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
                         "podCidr": "str",
                         "preconfiguredNSG": "str",
                         "serviceCidr": "str",
+                    },
+                    "platformWorkloadIdentityProfile": {
+                        "platformWorkloadIdentities": {
+                            "str": {"clientId": "str", "objectId": "str", "resourceId": "str"}
+                        },
+                        "upgradeableTo": "str",
                     },
                     "provisioningState": "str",
                     "servicePrincipalProfile": {"clientId": "str", "clientSecret": "str"},
@@ -124,7 +137,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
                         }
                     ],
                 },
-                api_version="2023-11-22",
+                api_version="2025-07-25",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -133,12 +146,12 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_open_shift_clusters_begin_delete(self, resource_group):
         response = await (
             await self.client.open_shift_clusters.begin_delete(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2023-11-22",
+                api_version="2025-07-25",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -147,7 +160,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_update(self, resource_group):
+    async def test_open_shift_clusters_begin_update(self, resource_group):
         response = await (
             await self.client.open_shift_clusters.begin_update(
                 resource_group_name=resource_group.name,
@@ -157,11 +170,18 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
                     "clusterProfile": {
                         "domain": "str",
                         "fipsValidatedModules": "str",
+                        "oidcIssuer": "str",
                         "pullSecret": "str",
                         "resourceGroupId": "str",
                         "version": "str",
                     },
                     "consoleProfile": {"url": "str"},
+                    "identity": {
+                        "type": "str",
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
                     "ingressProfiles": [{"ip": "str", "name": "str", "visibility": "str"}],
                     "masterProfile": {
                         "diskEncryptionSetId": "str",
@@ -179,16 +199,14 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
                         "preconfiguredNSG": "str",
                         "serviceCidr": "str",
                     },
+                    "platformWorkloadIdentityProfile": {
+                        "platformWorkloadIdentities": {
+                            "str": {"clientId": "str", "objectId": "str", "resourceId": "str"}
+                        },
+                        "upgradeableTo": "str",
+                    },
                     "provisioningState": "str",
                     "servicePrincipalProfile": {"clientId": "str", "clientSecret": "str"},
-                    "systemData": {
-                        "createdAt": "2020-02-20 00:00:00",
-                        "createdBy": "str",
-                        "createdByType": "str",
-                        "lastModifiedAt": "2020-02-20 00:00:00",
-                        "lastModifiedBy": "str",
-                        "lastModifiedByType": "str",
-                    },
                     "tags": {"str": "str"},
                     "workerProfiles": [
                         {
@@ -213,7 +231,7 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
                         }
                     ],
                 },
-                api_version="2023-11-22",
+                api_version="2025-07-25",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -222,11 +240,11 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_admin_credentials(self, resource_group):
+    async def test_open_shift_clusters_list_admin_credentials(self, resource_group):
         response = await self.client.open_shift_clusters.list_admin_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-11-22",
+            api_version="2025-07-25",
         )
 
         # please add some check logic here by yourself
@@ -234,11 +252,11 @@ class TestAzureRedHatOpenShiftOpenShiftClustersOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_credentials(self, resource_group):
+    async def test_open_shift_clusters_list_credentials(self, resource_group):
         response = await self.client.open_shift_clusters.list_credentials(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2023-11-22",
+            api_version="2025-07-25",
         )
 
         # please add some check logic here by yourself

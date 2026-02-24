@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import datetime
+from importlib.metadata import version
 import locale
 from os import environ
 from os.path import isdir
@@ -23,6 +24,7 @@ from azure.monitor.opentelemetry.exporter._generated.models import (
     TelemetryItem,
 )
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+from azure.monitor.opentelemetry.exporter._connection_string_parser import ConnectionStringParser
 from azure.monitor.opentelemetry.exporter._constants import (
     _AKS_ARM_NAMESPACE_ID,
     _DEFAULT_AAD_SCOPE,
@@ -38,19 +40,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _RP_Names,
 )
 
-opentelemetry_version = ""
-
 # Workaround for missing version file
-try:
-    from importlib.metadata import version
-
-    opentelemetry_version = version("opentelemetry-sdk")
-except ImportError:
-    # Temporary workaround for <Py3.8
-    # importlib-metadata causing issues in CI
-    import pkg_resources  # type: ignore
-
-    opentelemetry_version = pkg_resources.get_distribution("opentelemetry-sdk").version
+opentelemetry_version = version("opentelemetry-sdk")
 
 
 # Azure App Service
@@ -362,21 +353,20 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    max_length = 64 * 1024
-    truncated_properties: Dict[str, str] = {}
+    filtered_properties: Dict[str, str] = {}
     if not properties:
-        return truncated_properties
+        return filtered_properties
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:
             if not filter(key, val):
                 continue
-        # Apply truncation rules
-        # Max key length is 150, value is 64 * 1024
+        # Apply filtering rules
+        # Max key length is 150
         if not key or len(key) > 150 or val is None:
             continue
-        truncated_properties[key] = str(val)[:max_length]
-    return truncated_properties
+        filtered_properties[key] = str(val)
+    return filtered_properties
 
 
 def _get_auth_policy(credential, default_auth_policy, aad_audience=None):
@@ -438,3 +428,8 @@ def get_compute_type():
 
 def _get_sha256_hash(input_str: str) -> str:
     return hashlib.sha256(input_str.encode("utf-8")).hexdigest()
+
+
+def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
+    parsed_connection_string = ConnectionStringParser(connection_string)
+    return parsed_connection_string.application_id

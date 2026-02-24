@@ -1,5 +1,5 @@
 import functools
-import pytest
+from typing import cast, List
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
 from azure.ai.language.conversations import ConversationAnalysisClient, AnalyzeConversationLROPoller
@@ -18,11 +18,10 @@ from azure.ai.language.conversations.models import (
     ConversationalPiiResult,
     ConversationPiiItemResult,
     NamedEntity,
-    InputWarning,
     ConversationError,
     AnalyzeConversationOperationAction,
+    InputWarning,
 )
-from typing import cast, List
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -48,7 +47,7 @@ class TestConversations(AzureRecordedTestCase):
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy
-    def test_conversation_pii(self, conversations_endpoint, conversations_key):
+    def test_conversation_pii(self, conversations_endpoint, conversations_key): # pylint: disable=too-many-statements
         client = self.create_client(conversations_endpoint, conversations_key)
 
         entities_detected: List[NamedEntity] = []
@@ -106,7 +105,7 @@ class TestConversationsCase(TestConversations):
             print(f"Display Name: {d.get('display_name')}")
 
         # ---- Iterate pages and action results --------------------------------
-        for actions_page in paged_actions:
+        for actions_page in paged_actions: # pylint: disable=too-many-nested-blocks
             print(
                 f"Completed: {actions_page.completed}, "
                 f"In Progress: {actions_page.in_progress}, "
