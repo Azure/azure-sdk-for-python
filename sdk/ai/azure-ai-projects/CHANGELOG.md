@@ -19,7 +19,7 @@ the remaining methods `.agents.create_version()` and `.agents.create_version_fro
   * Rename class `AzureAISearchAgentTool` to `AzureAISearchTool`.
   * Rename class `AzureFunctionAgentTool` to `AzureFunctionTool`.
   * Rename class `BingGroundingAgentTool` to `BingGroundingTool`.
-  * Rename class `OpenApiAgentTool` to OpenApiTool`.
+  * Rename class `OpenApiAgentTool` to `OpenApiTool`.
 * To align with OpenAI naming conventions, use "PreviewTool" suffix for class names describing Azure tools in preview:
   * Rename class `A2ATool` to `A2APreviewTool`.
   * Rename class `BingCustomSearchAgentTool` to `BingCustomSearchPreviewTool`.
@@ -42,7 +42,7 @@ need to set an additional input argument `foundry_features=FoundryFeaturesOptInK
 `project_client.memory_stores.create()` has changed to `project_client.beta.memory_stores.create()`.
 Similarly for the operation sets: `evaluators`, `insights`, `evaluation_taxonomies`, `schedules` and `red_teams`.
 * The method `begin_update_memories()` in Memory Stores operation now accept optional `items` of type `List[dict[str, Any]]`
-instead  of `List[ItemParam]`. Similarly for `items` in method `search_memories()`. As a result around 100 classes
+instead of `List[ItemParam]`. Similarly for `items` in method `search_memories()`. As a result around 100 classes
 that are derived from `ItemParam` were removed as they are no longer used by the client library.
 * Tracing instrumentation, is an experimental preview feature, now requires explicitly opt in by setting the environment variable:
 `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true`
