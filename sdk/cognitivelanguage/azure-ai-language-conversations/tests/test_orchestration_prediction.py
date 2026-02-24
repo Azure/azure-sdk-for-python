@@ -1,4 +1,6 @@
 import functools
+from typing import cast
+
 import pytest
 
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader, recorded_by_proxy
@@ -14,7 +16,6 @@ from azure.ai.language.conversations.models import (
     QuestionAnsweringTargetIntentResult,
     ConversationActionResult,
 )
-from typing import cast
 
 from azure.core.credentials import AzureKeyCredential
 
@@ -36,7 +37,7 @@ class TestConversations(AzureRecordedTestCase):
 
     ...
 
-
+@pytest.mark.playback_test_only
 class TestConversationsCase(TestConversations):
     @ConversationsPreparer()
     @recorded_by_proxy

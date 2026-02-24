@@ -186,8 +186,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service='blob', credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
         self._configure_encryption(kwargs)
 
     def __enter__(self) -> Self:
@@ -427,6 +426,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -450,8 +453,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :return: Blob-updated property Dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_blob_from_url_options(
             source_url=source_url,
             metadata=metadata,
@@ -473,7 +477,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
+        :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
             either BlockBlob, PageBlob or AppendBlob. The default value is BlockBlob.
         :param int length:
@@ -934,6 +938,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
             .. versionadded:: 12.4.0
 
+        :keyword ~datetime.datetime access_tier_if_modified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the access-tier has been modified since the specified date/time.
+        :keyword ~datetime.datetime access_tier_if_unmodified_since:
+            A DateTime value. Azure expects the date value passed in to be UTC.
+            If timezone is included, any non-UTC datetimes will be converted to UTC.
+            If a date is passed in without timezone info, it is assumed to be UTC.
+            Specify this header to perform the operation only if
+            the access-tier has been modified since the specified date/time.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -956,7 +972,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             snapshot=self.snapshot,
             version_id=get_version_id(self.version_id, kwargs),
             delete_snapshots=delete_snapshots,
-            **kwargs)
+            **kwargs
+        )
         try:
             self._client.blob.delete(**options)
         except HttpResponseError as error:
@@ -1976,7 +1993,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     @distributed_trace
     def stage_block(
         self, block_id: str,
-        data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]:
@@ -1986,8 +2003,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
              The string should be less than or equal to 64 bytes in size.
              For a given blob, the block_id must be the same size for each block.
         :param data: The blob data.
-        :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-        :param int length: Size of the block.
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
+        :param int length:
+            Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
+            length is not provided and cannot be determined, all data will be read into memory.
         :keyword bool validate_content:
             If true, calculates an MD5 hash for each chunk of the blob. The storage
             service checks the hash of the content that has arrived with the hash
@@ -2071,6 +2090,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -2100,8 +2123,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :return: Blob property dict.
         :rtype: dict[str, Any]
         """
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _stage_block_from_url_options(
             block_id=block_id,
             source_url=source_url,
@@ -2989,6 +3013,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -3020,8 +3048,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _upload_pages_from_url_options(
             source_url=source_url,
             offset=offset,
@@ -3114,17 +3143,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
 
     @distributed_trace
     def append_block(
-        self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+        self, data: Union[bytes, Iterable[bytes], IO[bytes]],
         length: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime, int]]:
         """Commits a new block of data to the end of the existing append blob.
 
         :param data:
-            Content of the block. This can be bytes, text, an iterable or a file-like object.
-        :type data: bytes or str or Iterable
+            Content of the block.
+        :type data: Union[bytes, Iterable[bytes], IO[bytes]]
         :param int length:
-            Size of the block in bytes.
+            Size of the block. Optional if the length of data can be determined. For Iterable and IO, if the
+            length is not provided and cannot be determined, all data will be read into memory.
         :keyword bool validate_content:
             If true, calculates an MD5 hash of the block content. The storage
             service checks the hash of the content that has arrived
@@ -3290,6 +3320,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             Use of customer-provided keys must be done over HTTPS.
             As the encryption key itself is provided in the request,
             a secure connection must be established to transfer the key.
+        :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey source_cpk:
+            Specifies the source encryption key to use to decrypt
+            the source data provided in the request.
+            Use of customer-provided keys must be done over HTTPS.
         :keyword str encryption_scope:
             A predefined encryption scope used to encrypt the data on the service. An encryption
             scope can be created using the Management API and referenced here by name. If a default
@@ -3321,8 +3355,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
-        if kwargs.get('cpk') and self.scheme.lower() != 'https':
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+        if self.scheme.lower() != 'https':
+            if kwargs.get('cpk') or kwargs.get('source_cpk'):
+                raise ValueError("Customer provided encryption key must be used over HTTPS.")
         options = _append_block_from_url_options(
             copy_source_url=copy_source_url,
             source_offset=source_offset,

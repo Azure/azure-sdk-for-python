@@ -27,7 +27,7 @@ OPTIONAL ENV VARS:
 # [START text_authoring_delete_deployment_async]
 import os
 import asyncio
-from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.textanalytics.authoring.aio import TextAuthoringClient
 

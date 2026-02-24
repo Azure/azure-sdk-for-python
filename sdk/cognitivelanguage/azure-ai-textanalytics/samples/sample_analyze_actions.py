@@ -31,7 +31,6 @@ NOTE:
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -40,7 +39,6 @@ from azure.ai.textanalytics.models import (
     KeyPhraseLROTask,
     EntityRecognitionOperationResult,
     KeyPhraseExtractionOperationResult,
-    EntityTag,
 )
 
 
@@ -108,12 +106,6 @@ def sample_analyze():
                         print(f"    Type: {entity.type}")
                     if hasattr(entity, "subcategory") and entity.subcategory:
                         print(f"    Subcategory: {entity.subcategory}")
-                    if hasattr(entity, "tags") and entity.tags:
-                        print("    Tags:")
-                        for tag in entity.tags:
-                            if isinstance(tag, EntityTag):
-                                print(f"        TagName: {tag.name}")
-                                print(f"        TagConfidenceScore: {tag.confidence_score}")
                     print(f"    Confidence score: {entity.confidence_score}")
                     print()
             for err in action_result.results.errors:

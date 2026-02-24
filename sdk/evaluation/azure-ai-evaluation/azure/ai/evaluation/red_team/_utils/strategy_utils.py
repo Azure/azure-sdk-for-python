@@ -6,7 +6,9 @@ import random
 from typing import Dict, List, Union, Optional, Any, Callable, cast
 import logging
 
-from azure.ai.evaluation.simulator._model_tools._generated_rai_client import GeneratedRAIClient
+from azure.ai.evaluation.simulator._model_tools._generated_rai_client import (
+    GeneratedRAIClient,
+)
 from .._attack_strategy import AttackStrategy
 from pyrit.prompt_converter import (
     PromptConverter,
@@ -18,7 +20,7 @@ from pyrit.prompt_converter import (
     BinaryConverter,
     CaesarConverter,
     CharacterSpaceConverter,
-    CharSwapGenerator,
+    CharSwapConverter,
     DiacriticConverter,
     FlipConverter,
     LeetspeakConverter,
@@ -35,8 +37,10 @@ from ._rai_service_target import AzureRAIServiceTarget
 from .._default_converter import _DefaultConverter
 from pyrit.prompt_target import OpenAIChatTarget, PromptChatTarget
 from .._callback_chat_target import _CallbackChatTarget
-from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration, OpenAIModelConfiguration
-
+from azure.ai.evaluation._model_configurations import (
+    AzureOpenAIModelConfiguration,
+    OpenAIModelConfiguration,
+)
 
 # Azure OpenAI uses cognitive services scope for AAD authentication
 AZURE_OPENAI_SCOPE = "https://cognitiveservices.azure.com/.default"
@@ -65,7 +69,9 @@ def _create_token_provider(credential: Any) -> Callable[[], str]:
 
 
 def create_tense_converter(
-    generated_rai_client: GeneratedRAIClient, is_one_dp_project: bool, logger: logging.Logger
+    generated_rai_client: GeneratedRAIClient,
+    is_one_dp_project: bool,
+    logger: logging.Logger,
 ) -> TenseConverter:
     """Factory function for creating TenseConverter with proper dependencies."""
     converter_target = AzureRAIServiceTarget(
@@ -97,7 +103,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
         AttackStrategy.Binary: BinaryConverter(),
         AttackStrategy.Caesar: CaesarConverter(caesar_offset=1),
         AttackStrategy.CharacterSpace: CharacterSpaceConverter(),
-        AttackStrategy.CharSwap: CharSwapGenerator(),
+        AttackStrategy.CharSwap: CharSwapConverter(),
         AttackStrategy.Diacritic: DiacriticConverter(),
         AttackStrategy.Flip: FlipConverter(),
         AttackStrategy.Leetspeak: LeetspeakConverter(),
@@ -141,12 +147,22 @@ def get_converter_for_strategy(
 
 
 def get_chat_target(
-    target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    target: Union[
+        PromptChatTarget,
+        Callable,
+        AzureOpenAIModelConfiguration,
+        OpenAIModelConfiguration,
+    ],
+    credential: Optional[Any] = None,
 ) -> PromptChatTarget:
     """Convert various target types to a PromptChatTarget.
 
     :param target: The target to convert
     :type target: Union[PromptChatTarget, Callable, AzureOpenAIModelConfiguration, OpenAIModelConfiguration]
+    :param credential: Optional credential object with get_token method for AAD authentication.
+        Used as a fallback when target doesn't have an api_key or credential field. This is useful
+        in ACA environments where DefaultAzureCredential is not available.
+    :type credential: Optional[Any]
     :return: A PromptChatTarget instance
     :rtype: PromptChatTarget
     """
@@ -154,6 +170,9 @@ def get_chat_target(
 
     # Helper function for message conversion
     def _message_to_dict(message):
+        # Handle both dict and object formats
+        if isinstance(message, dict):
+            return message
         return {
             "role": message.role,
             "content": message.content,
@@ -166,41 +185,37 @@ def get_chat_target(
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
             api_key = target.get("api_key", None)
-            credential = target.get("credential", None)
-            api_version = target.get("api_version", "2024-06-01")
-
+            # Check for credential in target dict or use passed credential parameter
+            target_credential = target.get("credential", None) or credential
             if api_key:
                 # Use API key authentication
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=api_key,
-                    api_version=api_version,
                 )
-            elif credential:
+            elif target_credential:
                 # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
-                token_provider = _create_token_provider(credential)
+                token_provider = _create_token_provider(target_credential)
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
-                    api_key=token_provider,  # Callable that returns tokens
-                    api_version=api_version,
+                    api_key=token_provider,  # PyRIT accepts callable that returns token
                 )
             else:
-                # Fall back to DefaultAzureCredential via PyRIT's use_aad_auth
-                # This works in local dev environments where DefaultAzureCredential has access
+                # Fall back to DefaultAzureCredential via PyRIT's auth helpers
+                from pyrit.auth import get_azure_openai_auth
+
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
-                    use_aad_auth=True,
-                    api_version=api_version,
+                    api_key=get_azure_openai_auth(target["azure_endpoint"]),
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
-                api_version=target.get("api_version", "2024-06-01"),
             )
     else:
         # Target is callable
@@ -252,7 +267,12 @@ def get_chat_target(
                     "context": {},
                 }
                 messages_list.append(formatted_response)  # type: ignore
-                return {"messages": messages_list, "stream": stream, "session_state": session_state, "context": {}}
+                return {
+                    "messages": messages_list,
+                    "stream": stream,
+                    "session_state": session_state,
+                    "context": {},
+                }
 
             chat_target = _CallbackChatTarget(callback=callback_target)  # type: ignore
 

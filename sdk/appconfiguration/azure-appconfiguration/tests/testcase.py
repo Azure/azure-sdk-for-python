@@ -4,6 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+)
 from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
@@ -13,12 +19,6 @@ from azure.appconfiguration import (
     ConfigurationSnapshot,
 )
 from azure.core.exceptions import ResourceExistsError
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-)
 
 
 class AppConfigTestCase(AzureRecordedTestCase):

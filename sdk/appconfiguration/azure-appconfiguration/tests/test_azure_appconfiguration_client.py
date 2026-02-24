@@ -3,12 +3,25 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 import copy
 import json
 import re
 import time
 from datetime import datetime, timezone
+from uuid import uuid4
+import pytest
+from testcase import AppConfigTestCase
+from consts import (
+    KEY,
+    LABEL,
+    TEST_VALUE,
+    TEST_CONTENT_TYPE,
+    LABEL_RESERVED_CHARS,
+    PAGE_SIZE,
+    KEY_UUID,
+)
+from preparers import app_config_decorator
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     AzureError,
@@ -17,7 +30,6 @@ from azure.core.exceptions import (
     ResourceExistsError,
     HttpResponseError,
 )
-from azure.core.rest import HttpRequest
 from azure.appconfiguration import (
     ResourceReadOnlyError,
     AzureAppConfigurationClient,
@@ -29,22 +41,9 @@ from azure.appconfiguration import (
     FILTER_TARGETING,
     FILTER_TIME_WINDOW,
 )
-from testcase import AppConfigTestCase
-from consts import (
-    KEY,
-    LABEL,
-    TEST_VALUE,
-    TEST_CONTENT_TYPE,
-    LABEL_RESERVED_CHARS,
-    PAGE_SIZE,
-    KEY_UUID,
-)
-from uuid import uuid4
-from preparers import app_config_decorator
-from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 
-class TestAppConfigurationClient(AppConfigTestCase):
+class TestAppConfigurationClient(AppConfigTestCase):  # pylint: disable=too-many-public-methods
     # method: add_configuration_setting
     @app_config_decorator
     @recorded_by_proxy
@@ -240,9 +239,8 @@ class TestAppConfigurationClient(AppConfigTestCase):
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("MyKey", "MyLabel1", label_filter="MyLabel2")
-        assert (
-            str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("None", key_filter="MyKey")
@@ -252,9 +250,9 @@ class TestAppConfigurationClient(AppConfigTestCase):
         )
         with pytest.raises(TypeError) as ex:
             self.client.list_configuration_settings("None", "None", label_filter="MyLabel")
-        assert (
-            str(ex.value)
-            == "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument 'label_filter'"
+        assert str(ex.value) == (
+            "AzureAppConfigurationClient.list_configuration_settings() got multiple values for argument"
+            " 'label_filter'"
         )
 
         self.tear_down()
@@ -1130,65 +1128,64 @@ class TestAppConfigurationClient(AppConfigTestCase):
     def test_monitor_configuration_settings_by_page_etag(self, appconfiguration_connection_string):
         # response header <x-ms-content-sha256> and <x-ms-date> are missing in python38.
         set_custom_default_matcher(compare_bodies=False, excluded_headers="x-ms-content-sha256,x-ms-date")
-        with AzureAppConfigurationClient.from_connection_string(appconfiguration_connection_string) as client:
-            self.client = client
-            # prepare 200 configuration settings
-            for i in range(200):
-                self.client.set_configuration_setting(
-                    ConfigurationSetting(
-                        key=f"sample_key_{str(i)}",
-                        label=f"sample_label_{str(i)}",
-                    )
-                )
-            # there will have 2 pages while listing, there are 100 configuration settings per page.
-
-            # get page etags
-            match_conditions = []
-            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page()
-            for _ in iterator:
-                etag = iterator.etag
-                match_conditions.append(etag)
-
-            # monitor page updates without changes - only changed pages will be yielded
-            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(match_conditions=match_conditions)
-            changed_pages = list(iterator)
-
-            # No pages should be yielded since nothing changed
-            assert len(changed_pages) == 0
-
-            # do some changes
+        self.set_up(appconfiguration_connection_string)
+        # prepare 200 configuration settings
+        for i in range(200):
             self.client.set_configuration_setting(
                 ConfigurationSetting(
-                    key="sample_key_201",
-                    label="sample_label_202",
+                    key=f"sample_key_{str(i)}",
+                    label=f"sample_label_{str(i)}",
                 )
             )
-            # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+        # there will have 2 pages while listing, there are 100 configuration settings per page.
 
-            # get page etags after updates
-            new_match_conditions = []
-            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page()
-            for _ in iterator:
-                etag = iterator.etag
-                new_match_conditions.append(etag)
+        # get page etags
+        match_conditions = []
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page()
+        for _ in iterator:
+            etag = iterator.etag
+            match_conditions.append(etag)
 
-            assert match_conditions[0] == new_match_conditions[0]
-            assert match_conditions[1] != new_match_conditions[1]
-            assert match_conditions[2] != new_match_conditions[2]
-            assert len(new_match_conditions) == 3
+        # monitor page updates without changes - only changed pages will be yielded
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page(match_conditions=match_conditions)
+        changed_pages = list(iterator)
 
-            # monitor pages after updates - only changed pages will be yielded
-            items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
-            iterator = items.by_page(match_conditions=new_match_conditions)
-            changed_pages = list(iterator)
-            # Should yield 0 pages
-            assert len(changed_pages) == 0
+        # No pages should be yielded since nothing changed
+        assert len(changed_pages) == 0
 
-            # clean up
-            self.tear_down()
+        # do some changes
+        self.client.set_configuration_setting(
+            ConfigurationSetting(
+                key="sample_key_201",
+                label="sample_label_202",
+            )
+        )
+        # now we have three pages, 100 settings in first two pages and 1 setting in the last page
+
+        # get page etags after updates
+        new_match_conditions = []
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page()
+        for _ in iterator:
+            etag = iterator.etag
+            new_match_conditions.append(etag)
+
+        assert match_conditions[0] == new_match_conditions[0]
+        assert match_conditions[1] != new_match_conditions[1]
+        assert match_conditions[2] != new_match_conditions[2]
+        assert len(new_match_conditions) == 3
+
+        # monitor pages after updates - only changed pages will be yielded
+        items = self.client.list_configuration_settings(key_filter="sample_key_*", label_filter="sample_label_*")
+        iterator = items.by_page(match_conditions=new_match_conditions)
+        changed_pages = list(iterator)
+        # Should yield 0 pages
+        assert len(changed_pages) == 0
+
+        # clean up
+        self.tear_down()
 
     @app_config_decorator
     @recorded_by_proxy
@@ -1221,7 +1218,7 @@ class TestAppConfigurationClientUnitTest:
         with pytest.raises(TypeError):
             _ = FeatureFlagConfigurationSetting("blah", value="blah")
         with pytest.raises(TypeError):
-            _ = SecretReferenceConfigurationSetting("blah", value="blah")
+            _ = SecretReferenceConfigurationSetting("blah", value="blah")  # pylint: disable=no-value-for-parameter
 
     def test_mock_policies(self):
         from azure.core.pipeline.transport import HttpResponse, HttpTransport
@@ -1248,7 +1245,8 @@ class TestAppConfigurationClientUnitTest:
                 response.status_code = 429
                 return response
 
-        def new_method(self, request):
+        @staticmethod
+        def new_method(request):
             request.http_request.headers["Authorization"] = str(uuid4())
 
         from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy

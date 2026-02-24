@@ -17,6 +17,7 @@ DESCRIPTION:
     - get_credential(): get credential of the ContainerRegistryClient
     It is not a file expected to run independently.
 """
+
 import json
 import os
 from io import BytesIO
@@ -68,7 +69,10 @@ def _import_images(endpoint, repository, tags):
         }
         for tag in tags:
             client.set_manifest(
-                repository, docker_manifest, tag=tag, media_type="application/vnd.docker.distribution.manifest.v2+json"
+                repository,
+                docker_manifest,
+                tag=tag,
+                media_type="application/vnd.docker.distribution.manifest.v2+json",
             )
 
 

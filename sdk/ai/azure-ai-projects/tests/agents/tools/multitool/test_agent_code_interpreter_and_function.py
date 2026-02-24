@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: Code Interpreter + Function Tool
 
@@ -15,10 +17,18 @@ All tests use the same tool combination but different inputs and workflows.
 import json
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, CodeInterpreterTool, CodeInterpreterToolAuto, FunctionTool
+from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    CodeInterpreterTool,
+    CodeInterpreterContainerAuto,
+    FunctionTool,
+)
 from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentCodeInterpreterAndFunction(TestBase):
     """Tests for agents using Code Interpreter + Function Tool combination."""
 
@@ -62,7 +72,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a calculator assistant. Use code interpreter to perform calculations, then ALWAYS save the result using the save_result function.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                     func_tool,
                 ],
             ),
@@ -74,7 +84,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         # 17^4 = 83521 - not something easily computed mentally
         response = openai_client.responses.create(
             input="Calculate 17 to the power of 4 using code, then save the result.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         self.validate_response(response)
         print("✓ Code Interpreter + Function Tool works!")
@@ -124,7 +134,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
                 model=model,
                 instructions="You are a data analyst. Use code interpreter to generate and analyze data, then ALWAYS create a report using the generate_report function with the exact statistics you computed.",
                 tools=[
-                    CodeInterpreterTool(container=CodeInterpreterToolAuto()),
+                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
                     report_function,
                 ],
             ),
@@ -135,7 +145,7 @@ class TestAgentCodeInterpreterAndFunction(TestBase):
         # Request data generation and report - use a fixed seed for reproducibility in verification
         response = openai_client.responses.create(
             input="Using Python with random.seed(42), generate exactly 10 random integers between 1 and 100, calculate their average, and create a report with the results.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         self.validate_response(response)

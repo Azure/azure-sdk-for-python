@@ -85,8 +85,8 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         props = blob.get_blob_properties()
         while props.copy.status == 'pending':
             count = count + 1
-            if count > 10:
-                self.fail('Timed out waiting for async copy to complete.')
+            if count > 15:
+                pytest.fail('Timed out waiting for async copy to complete.')
             self.sleep(6)
             props = blob.get_blob_properties()
         return props

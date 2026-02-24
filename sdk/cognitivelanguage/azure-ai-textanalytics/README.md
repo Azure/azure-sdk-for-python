@@ -69,7 +69,7 @@ from azure.ai.textanalytics import TextAnalysisClient
 endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 key = os.environ["AZURE_TEXT_KEY"]
 
-text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
+text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key)) # pylint:disable=unused-variable
 ```
 
 <!-- END SNIPPET -->
@@ -126,7 +126,7 @@ from azure.ai.textanalytics import TextAnalysisClient
 endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 key = os.environ["AZURE_TEXT_KEY"]
 
-text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key))
+text_client = TextAnalysisClient(endpoint, AzureKeyCredential(key)) # pylint:disable=unused-variable
 ```
 
 <!-- END SNIPPET -->
@@ -164,7 +164,7 @@ from azure.identity import DefaultAzureCredential
 endpoint = os.environ["AZURE_TEXT_ENDPOINT"]
 credential = DefaultAzureCredential()
 
-text_client = TextAnalysisClient(endpoint, credential=credential)
+text_client = TextAnalysisClient(endpoint, credential=credential) # pylint:disable=unused-variable
 ```
 
 <!-- END SNIPPET -->
@@ -803,19 +803,12 @@ def sample_analyze_healthcare_entities():
                         print(f"  Offset: {entity.offset}")
                         print(f"  Length: {entity.length}")
                         print(f"  Confidence score: {entity.confidence_score}")
-                        if entity.links:
-                            for link in entity.links:
-                                print(f"    Link ID: {link.id}")
-                                print(f"    Data source: {link.data_source}")
                         print()
 
                     # Relations
                     print("Relations:")
                     for relation in doc.relations or []:
                         print(f"  Relation type: {relation.relation_type}")
-                        for rel_entity in relation.entities or []:
-                            print(f"    Role: {rel_entity.role}")
-                            print(f"    Ref: {rel_entity.ref}")
                         print()
             else:
                 # Other action kinds, if present
@@ -824,8 +817,8 @@ def sample_analyze_healthcare_entities():
                         f"\n[Non-healthcare action] name={op_result.task_name}, "
                         f"status={op_result.status}, kind={op_result.kind}"
                     )
-                except Exception:
-                    print("\n[Non-healthcare action present]")
+                except (AttributeError, TypeError) as e:
+                    print(f"\n[Non-healthcare action present] Error: {e}")
 ```
 
 <!-- END SNIPPET -->
@@ -854,7 +847,6 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 import os
 
 from azure.identity import DefaultAzureCredential
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -863,7 +855,6 @@ from azure.ai.textanalytics.models import (
     KeyPhraseLROTask,
     EntityRecognitionOperationResult,
     KeyPhraseExtractionOperationResult,
-    EntityTag,
 )
 
 
@@ -931,12 +922,6 @@ def sample_analyze():
                         print(f"    Type: {entity.type}")
                     if hasattr(entity, "subcategory") and entity.subcategory:
                         print(f"    Subcategory: {entity.subcategory}")
-                    if hasattr(entity, "tags") and entity.tags:
-                        print("    Tags:")
-                        for tag in entity.tags:
-                            if isinstance(tag, EntityTag):
-                                print(f"        TagName: {tag.name}")
-                                print(f"        TagConfidenceScore: {tag.confidence_score}")
                     print(f"    Confidence score: {entity.confidence_score}")
                     print()
             for err in action_result.results.errors:

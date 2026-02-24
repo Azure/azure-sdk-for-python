@@ -265,3 +265,95 @@ def test_invalid_changelog_no_log_for_arm_sdk_with_version(monkeypatch, temp_arm
     assert (
         log_level is None
     ), "Expected no error log for invalid changelog content in ARM SDK when version is explicitly provided"
+
+
+def test_duplicate_version_section_removed(temp_package):
+    """When re-generating an SDK, the changelog may end up with duplicate version sections.
+    The update_version_main should detect and remove the duplicate. (GitHub issue #12425)"""
+    pkg = temp_package
+    (pkg / "_version.py").write_text('VERSION = "1.1.0b2"\n')
+
+    # Simulate re-generation: changelog has a new section (with placeholder version)
+    # followed by an existing section with the same content and version.
+    changelog_content = (
+        "# Release History\n"
+        "\n"
+        "## 0.0.0 (UnReleased)\n"
+        "\n"
+        "### Features Added\n"
+        "\n"
+        "  - Model `Client` added parameter `setting` in method `__init__`\n"
+        "\n"
+        "### Breaking Changes\n"
+        "\n"
+        "  - Model `StorageProperties` deleted property `iops`\n"
+        "\n"
+        "## 1.1.0b2 (2025-10-08)\n"
+        "\n"
+        "### Features Added\n"
+        "\n"
+        "  - Model `Client` added parameter `setting` in method `__init__`\n"
+        "\n"
+        "### Breaking Changes\n"
+        "\n"
+        "  - Model `StorageProperties` deleted property `iops`\n"
+        "\n"
+        "## 1.1.0b1 (2025-09-01)\n"
+        "\n"
+        "### Other Changes\n"
+        "\n"
+        "  - Initial version\n"
+    )
+    (pkg / "CHANGELOG.md").write_text(changelog_content)
+
+    package_result = {
+        "version": "1.1.0b2",
+        "tagIsStable": False,
+        "targetReleaseDate": "2025-10-08",
+        "changelog": {"content": "### Features Added\n\n  - Model `Client` added parameter `setting`"},
+    }
+    update_version_main(pkg, package_result=package_result)
+
+    result = (pkg / "CHANGELOG.md").read_text()
+    # The duplicate '## 1.1.0b2' section should be removed
+    assert result.count("## 1.1.0b2") == 1, f"Expected exactly one '## 1.1.0b2' section, got:\n{result}"
+    # The older version section should still be present
+    assert "## 1.1.0b1 (2025-09-01)" in result
+    assert "  - Initial version" in result
+
+
+def test_no_duplicate_version_left_intact(temp_package):
+    """When there is no duplicate, the changelog should remain unchanged aside from the version line update."""
+    pkg = temp_package
+    (pkg / "_version.py").write_text('VERSION = "1.0.0b1"\n')
+
+    changelog_content = (
+        "# Release History\n"
+        "\n"
+        "## 0.0.0 (UnReleased)\n"
+        "\n"
+        "### Features Added\n"
+        "\n"
+        "  - New feature\n"
+        "\n"
+        "## 1.0.0b1 (2025-09-01)\n"
+        "\n"
+        "### Other Changes\n"
+        "\n"
+        "  - Initial version\n"
+    )
+    (pkg / "CHANGELOG.md").write_text(changelog_content)
+
+    package_result = {
+        "version": "1.0.0b1",
+        "tagIsStable": False,
+        "targetReleaseDate": "2025-10-08",
+        "changelog": {"content": "### Features Added\n\n  - New feature"},
+    }
+    update_version_main(pkg, package_result=package_result)
+
+    result = (pkg / "CHANGELOG.md").read_text()
+    # Version should be updated to b2
+    assert "## 1.0.0b2" in result
+    # Old b1 section should still exist (it's a different version, not a duplicate)
+    assert "## 1.0.0b1 (2025-09-01)" in result

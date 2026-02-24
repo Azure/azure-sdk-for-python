@@ -139,6 +139,7 @@ class Conversation(TypedDict):
 
 class EvaluationResult(TypedDict):
     metrics: Dict
+    oai_eval_run_ids: NotRequired[List[Dict[str, str]]]
     studio_url: NotRequired[str]
     rows: List[Dict]
     _evaluation_results_list: List[Dict]

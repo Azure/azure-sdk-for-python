@@ -24,7 +24,7 @@
 #
 # --------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Type, cast, MutableMapping
+from typing import Optional, TYPE_CHECKING, Type, MutableMapping
 from types import TracebackType
 
 import logging
@@ -34,7 +34,9 @@ import aiohttp.client_exceptions  # pylint: disable=networking-import-outside-az
 
 from ...exceptions import (
     ServiceRequestError,
+    ServiceRequestTimeoutError,
     ServiceResponseError,
+    ServiceResponseTimeoutError,
 )
 from .._base_async import AsyncHttpTransport, _handle_non_stream_rest_response
 from .._base import _create_connection_config
@@ -51,6 +53,15 @@ if TYPE_CHECKING:
 # Matching requests, because why not?
 CONTENT_CHUNK_SIZE = 10 * 1024
 _LOGGER = logging.getLogger(__name__)
+
+try:
+    # ConnectionTimeoutError was only introduced in aiohttp 3.10 so we want to keep this
+    # backwards compatible. If client is using aiohttp <3.10, the behaviour will safely
+    # fall back to treating a TimeoutError as a ServiceResponseError (that wont be retried).
+    from aiohttp.client_exceptions import ConnectionTimeoutError
+except ImportError:
+
+    class ConnectionTimeoutError(Exception): ...  # type: ignore[no-redef]
 
 
 class AioHttpTransport(AsyncHttpTransport):
@@ -71,6 +82,7 @@ class AioHttpTransport(AsyncHttpTransport):
             raise ValueError("session_owner cannot be False if no session is provided")
         self.connection_config = _create_connection_config(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
+        self._has_been_opened = False
 
     async def __aenter__(self):
         await self.open()
@@ -86,23 +98,31 @@ class AioHttpTransport(AsyncHttpTransport):
 
     async def open(self):
         """Opens the connection."""
-        if not self.session and self._session_owner:
-            jar = aiohttp.DummyCookieJar()
-            clientsession_kwargs = {
-                "trust_env": self._use_env_settings,
-                "cookie_jar": jar,
-                "auto_decompress": False,
-            }
-            self.session = aiohttp.ClientSession(**clientsession_kwargs)
-        # pyright has trouble to understand that self.session is not None, since we raised at worst in the init
-        self.session = cast(aiohttp.ClientSession, self.session)
+        if self._has_been_opened and not self.session:
+            raise ValueError(
+                "HTTP transport has already been closed. "
+                "You may check if you're calling a function outside of the `async with` of your client creation, "
+                "or if you called `await close()` on your client already."
+            )
+        if not self.session:
+            if self._session_owner:
+                jar = aiohttp.DummyCookieJar()
+                clientsession_kwargs = {
+                    "trust_env": self._use_env_settings,
+                    "cookie_jar": jar,
+                    "auto_decompress": False,
+                }
+                self.session = aiohttp.ClientSession(**clientsession_kwargs)
+            else:
+                raise ValueError("session_owner cannot be False and no session is available")
+
+        self._has_been_opened = True
         await self.session.__aenter__()
 
     async def close(self):
         """Closes the connection."""
         if self._session_owner and self.session:
             await self.session.close()
-            self._session_owner = False
             self.session = None
 
     def _build_ssl_config(self, cert, verify):
@@ -221,11 +241,16 @@ class AioHttpTransport(AsyncHttpTransport):
             )
             if not stream:
                 await _handle_non_stream_rest_response(response)
-
+        except AttributeError as err:
+            if self.session is None:
+                raise ValueError("No session available for request.") from err
+            raise
         except aiohttp.client_exceptions.ClientResponseError as err:
             raise ServiceResponseError(err, error=err) from err
+        except ConnectionTimeoutError as err:
+            raise ServiceRequestTimeoutError(err, error=err) from err
         except asyncio.TimeoutError as err:
-            raise ServiceResponseError(err, error=err) from err
+            raise ServiceResponseTimeoutError(err, error=err) from err
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         return response

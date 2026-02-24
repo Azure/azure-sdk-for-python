@@ -41,13 +41,16 @@ Respond with true if:
 Always respond with `reason` indicating the reason for the response."""
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestSamplesEvaluations(AzureRecordedTestCase):
     """
     Tests for evaluation samples.
 
-    Included samples (25):
+    Included samples (28):
 
-    Main evaluation samples (10):
+    Main evaluation samples (13):
     - sample_agent_evaluation.py
     - sample_model_evaluation.py
     - sample_agent_response_evaluation.py
@@ -58,6 +61,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     - sample_eval_catalog_prompt_based_evaluators.py
     - sample_evaluation_compare_insight.py
     - sample_redteam_evaluations.py
+    - sample_evaluations_graders.py (OpenAI graders: label_model, text_similarity, string_check, score_model)
+    - sample_evaluations_ai_assisted.py (AI-assisted evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU)
+    - sample_evaluation_cluster_insight.py (cluster insights generation)
 
     Agentic evaluator samples (15):
     - sample_coherence.py
@@ -81,11 +87,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
     Blob Storage / Dataset Upload (incompatible with test proxy playback):
     - sample_evaluations_builtin_with_dataset_id.py: Uploads data to Azure Blob Storage
       before creating the evaluation.
-    - sample_evaluations_ai_assisted.py: Creates a Dataset with file upload.
-    - sample_evaluations_graders.py: Creates a Dataset with file upload.
     - sample_evaluations_score_model_grader_with_image.py: Uses image data which may
       involve file upload.
-    - sample_evaluation_cluster_insight.py: Creates a Dataset with file upload.
 
     Authentication incompatibility (mock credentials don't work):
     - sample_evaluations_builtin_with_inline_data_oai.py: Uses OpenAI client directly with
@@ -120,6 +123,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_evaluation_compare_insight.py",
                 "sample_agent_response_evaluation_with_function_tool.py",
                 "sample_redteam_evaluations.py",
+                "sample_evaluations_graders.py",
+                "sample_evaluations_ai_assisted.py",
+                "sample_evaluation_cluster_insight.py",
             ],
         ),
     )

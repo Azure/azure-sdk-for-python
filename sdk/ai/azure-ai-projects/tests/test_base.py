@@ -24,13 +24,10 @@ from azure.ai.projects.models import (
     DeploymentType,
     Index,
     IndexType,
-    ItemContentType,
-    ItemResource,
-    ItemType,
     ModelDeployment,
-    ResponsesMessageRole,
 )
 from openai.types.responses import Response
+from openai.types.conversations import ConversationItem
 from azure.ai.projects.models._models import AgentDetails, AgentVersionDetails
 from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.ai.projects import AIProjectClient as AIProjectClient
@@ -45,15 +42,21 @@ servicePreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
     azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="gpt-4o",
-    image_generation_model_deployment_name="gpt-image-1-mini",
+    azure_ai_model_deployment_name="sanitized-gpt-agent",
+    image_generation_model_deployment_name="sanitized-gpt-image",
     container_app_resource_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/00000/providers/Microsoft.App/containerApps/00000",
     container_ingress_subdomain_suffix="00000",
     bing_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-connection",
     ai_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-ai-search-connection",
+    bing_custom_search_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-bing-custom-search-connection",
+    fabric_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-fabric-connection",
+    openapi_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-openapi-connection",
+    a2a_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-a2a-connection",
     ai_search_index_name="sanitized-index-name",
     mcp_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-mcp-connection",
+    browser_automation_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-browser-automation-connection",
     sharepoint_project_connection_id="/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/sanitized-resource-group/providers/Microsoft.CognitiveServices/accounts/sanitized-account/projects/sanitized-project/connections/sanitized-sharepoint-connection",
+    bing_custom_search_instance_name="sanitized-bing-custom-search-instance",
     completed_oai_model_sft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_rft_fine_tuning_job_id="sanitized-ftjob-id",
     completed_oai_model_dpo_fine_tuning_job_id="sanitized-ftjob-id",
@@ -67,7 +70,7 @@ servicePreparer = functools.partial(
     fabric_user_input="List all customers!",
     a2a_user_input="What can the secondary agent do?",
     bing_custom_user_input="Tell me more about foundry agent service",
-    memory_store_chat_model_deployment_name="gpt-4.1-mini",
+    memory_store_chat_model_deployment_name="sanitized-gpt-memory",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
@@ -80,6 +83,15 @@ RFT_JOB_TYPE: Final[str] = "rft"
 STANDARD_TRAINING_TYPE: Final[str] = "Standard"
 GLOBAL_STANDARD_TRAINING_TYPE: Final[str] = "GlobalStandard"
 DEVELOPER_TIER_TRAINING_TYPE: Final[str] = "developerTier"
+
+# Method type constants
+SUPERVISED_METHOD_TYPE: Final[str] = "supervised"
+DPO_METHOD_TYPE: Final[str] = "dpo"
+REINFORCEMENT_METHOD_TYPE: Final[str] = "reinforcement"
+
+# Model type constants
+OPENAI_MODEL_TYPE: Final[str] = "openai"
+OSS_MODEL_TYPE: Final[str] = "oss"
 
 
 def patched_open_crlf_to_lf(*args, **kwargs):
@@ -542,17 +554,17 @@ class TestBase(AzureRecordedTestCase):
 
     def _validate_conversation_item(
         self,
-        item: ItemResource,
+        item: ConversationItem,
         *,
-        expected_type: Optional[ItemType] = None,
+        expected_type: Optional[str] = None,
         expected_id: Optional[str] = None,
-        expected_role: Optional[ResponsesMessageRole] = None,
-        expected_content_type: Optional[ItemContentType] = None,
+        expected_role: Optional[str] = None,
+        expected_content_type: Optional[str] = None,
         expected_content_text: Optional[str] = None,
     ) -> None:
         assert item
 
-        # From ItemResource:
+        # From ConversationItem:
         if expected_type:
             assert item.type == expected_type
         else:
@@ -563,7 +575,7 @@ class TestBase(AzureRecordedTestCase):
             assert item.id
 
         # From ResponsesMessageItemResource:
-        if expected_type == ItemType.MESSAGE:
+        if expected_type == "message":
             assert item.status == "completed"
             if expected_role:
                 assert item.role == expected_role
@@ -579,7 +591,7 @@ class TestBase(AzureRecordedTestCase):
             if expected_content_text:
                 assert item.content[0].text == expected_content_text
         print(
-            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == ItemType.MESSAGE else 'N/A'})"
+            f"Conversation item validated (id: {item.id}, type: {item.type}, role: {item.role if item.type == 'message' else 'N/A'})"
         )
 
     @classmethod

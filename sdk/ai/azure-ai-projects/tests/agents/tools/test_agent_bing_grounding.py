@@ -10,12 +10,15 @@ from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    BingGroundingAgentTool,
+    BingGroundingTool,
     BingGroundingSearchToolParameters,
     BingGroundingSearchConfiguration,
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentBingGrounding(TestBase):
 
     @servicePreparer()
@@ -27,7 +30,7 @@ class TestAgentBingGrounding(TestBase):
         """
         Test agent with Bing grounding capabilities.
 
-        This test verifies that an agent can be created with BingGroundingAgentTool,
+        This test verifies that an agent can be created with BingGroundingTool,
         use it to search the web for current information, and provide responses with
         URL citations.
 
@@ -69,7 +72,7 @@ class TestAgentBingGrounding(TestBase):
                     model=model,
                     instructions="You are a helpful assistant.",
                     tools=[
-                        BingGroundingAgentTool(
+                        BingGroundingTool(
                             bing_grounding=BingGroundingSearchToolParameters(
                                 search_configurations=[
                                     BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
@@ -90,7 +93,7 @@ class TestAgentBingGrounding(TestBase):
                 stream=True,
                 tool_choice="required",
                 input="What is the current weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             for event in stream_response:
@@ -165,7 +168,7 @@ class TestAgentBingGrounding(TestBase):
                     model=model,
                     instructions="You are a helpful assistant that provides current information.",
                     tools=[
-                        BingGroundingAgentTool(
+                        BingGroundingTool(
                             bing_grounding=BingGroundingSearchToolParameters(
                                 search_configurations=[
                                     BingGroundingSearchConfiguration(project_connection_id=bing_connection_id)
@@ -193,7 +196,7 @@ class TestAgentBingGrounding(TestBase):
                     stream=True,
                     tool_choice="required",
                     input=query,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 for event in stream_response:

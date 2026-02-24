@@ -4,14 +4,16 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import PowerShellPreparer
 import functools
 import inspect
+from devtools_testutils import PowerShellPreparer
 
 AppConfigPreparer = functools.partial(
     PowerShellPreparer,
     "appconfiguration",
-    appconfiguration_connection_string="Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=",
+    appconfiguration_connection_string="""
+    Endpoint=https://fake_app_config.azconfig-test.io;Id=0-l4-s0:h5htBaY5Z1LwFz50bIQv;Secret=lamefakesecretlamefakesecretlamefakesecrett=
+    """,
     appconfiguration_endpoint_string="https://fake_app_config.azconfig-test.io",
 )
 

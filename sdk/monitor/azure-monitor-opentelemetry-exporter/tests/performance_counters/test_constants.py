@@ -150,7 +150,8 @@ class TestPerformanceCounterConstants(unittest.TestCase):
 
     def test_quickpulse_perf_counters_unique_otel(self):
         """Test that all Quickpulse and Performance Counters metric names are unique."""
-        # Note that the breeze names of Performance Counters and Quickpulse may overlap as they are sent to different endpoints
+        # Note that the breeze names of Performance Counters and Quickpulse may overlap as they are sent
+        # to different endpoints
         for perf_counter_otel in _PERFORMANCE_COUNTER_METRIC_NAME_MAPPINGS:
             self.assertNotIn(perf_counter_otel, _QUICKPULSE_METRIC_NAME_MAPPINGS)
 

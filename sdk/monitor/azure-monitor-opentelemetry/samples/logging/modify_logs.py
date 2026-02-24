@@ -6,10 +6,10 @@
 
 import logging
 from logging import getLogger
+from opentelemetry import trace
+from opentelemetry.sdk._logs import LogRecordProcessor, ReadWriteLogRecord
 from azure.monitor.opentelemetry import configure_azure_monitor
 from azure.monitor.opentelemetry.exporter._generated.models import ContextTagKeys
-from opentelemetry import trace
-from opentelemetry.sdk._logs import LogRecordProcessor, ReadableLogRecord
 
 logger = getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -18,12 +18,12 @@ logger.setLevel(logging.INFO)
 class LogRecordEnrichingProcessor(LogRecordProcessor):
     """Enriches log records with operation name from the current span context."""
 
-    def on_emit(self, readable_log_record: ReadableLogRecord) -> None:
+    def on_emit(self, log_record: ReadWriteLogRecord) -> None:
         current_span = trace.get_current_span()
         if current_span and getattr(current_span, "name", None):
-            if readable_log_record.log_record.attributes is None:
-                readable_log_record.log_record.attributes = {}
-            readable_log_record.log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] = current_span.name
+            if log_record.log_record.attributes is None:
+                log_record.log_record.attributes = {}
+            log_record.log_record.attributes[ContextTagKeys.AI_OPERATION_NAME] = current_span.name  # type: ignore[attr-defined, index]
 
     def shutdown(self) -> None:
         pass

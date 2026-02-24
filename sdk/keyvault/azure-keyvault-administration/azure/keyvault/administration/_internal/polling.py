@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class KeyVaultBackupClientPolling(OperationResourcePolling):
     def __init__(self) -> None:
         self._polling_url = ""
-        super(KeyVaultBackupClientPolling, self).__init__(operation_location_header="azure-asyncoperation")
+        super().__init__(operation_location_header="azure-asyncoperation")
 
     def get_polling_url(self) -> str:
         return self._polling_url
@@ -34,4 +34,13 @@ class KeyVaultBackupClientPolling(OperationResourcePolling):
 
 class KeyVaultBackupClientPollingMethod(LROBasePolling):
     def get_continuation_token(self) -> str:
+        """
+        Get a continuation token to resume the polling later.
+        
+        :return: A continuation token.
+        :rtype: str
+        """
+        # Because of the operation structure, we need to use a "continuation token" that is just the status URL.
+        # This URL can then be used to fetch the status of the operation when resuming, at which point a genuine
+        # continuation token will be created from the response and provided to Core.
         return base64.b64encode(self._operation.get_polling_url().encode()).decode("ascii")

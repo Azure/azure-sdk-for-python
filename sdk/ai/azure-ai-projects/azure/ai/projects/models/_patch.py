@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -259,7 +260,7 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         cls,
         polling_method: AsyncPollingMethod[MemoryStoreUpdateCompletedResult],
         continuation_token: str,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> "AsyncUpdateMemoriesLROPoller":
         """Create a poller from a continuation token.
 

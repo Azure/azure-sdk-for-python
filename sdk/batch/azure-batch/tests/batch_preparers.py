@@ -92,12 +92,10 @@ class AccountPreparer(AzureMgmtPreparer):
             self.client = self.create_mgmt_client(azure.mgmt.batch.BatchManagementClient, base_url=AZURE_ARM_ENDPOINT)
 
             if self.existing_account_name:
-                self.resource = self.client.batch_account.get(
-                    self.existing_resource_group, self.existing_account_name
-                )
-                #keys = self.client.batch_account.get_keys(
+                self.resource = self.client.batch_account.get(self.existing_resource_group, self.existing_account_name)
+                # keys = self.client.batch_account.get_keys(
                 #    self.existing_resource_group, self.existing_account_name
-                #)
+                # )
                 # credentials = AzureNamedKeyCredential(keys.account_name, keys.primary)
 
                 return {self.parameter_name: self.resource}
@@ -195,7 +193,7 @@ class PoolPreparer(AzureMgmtPreparer):
     def create_resource(self, name, **kwargs):
 
         if self.pool_name:
-                name = self.pool_name
+            name = self.pool_name
 
         if self.is_live:
 
