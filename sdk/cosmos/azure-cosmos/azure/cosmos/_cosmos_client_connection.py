@@ -71,6 +71,7 @@ from ._read_items_helper import ReadItemsHelperSync
 from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider, routing_range
+from ._query_advisor import get_query_advice_info
 from ._inference_service import _InferenceService
 from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
@@ -3376,6 +3377,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = last_response_headers[INDEX_METRICS_HEADER]
             last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+            query_advice_raw = last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+            last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
         if response_hook:
             response_hook(last_response_headers, result)
 

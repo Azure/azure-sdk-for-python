@@ -56,6 +56,7 @@ from .._routing import routing_range
 from ..documents import ConnectionPolicy, DatabaseAccount
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict, CosmosList
+from .._query_advisor import get_query_advice_info
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from .. import _runtime_constants as runtime_constants
@@ -3176,6 +3177,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
             index_metrics_raw = self.last_response_headers[INDEX_METRICS_HEADER]
             self.last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if self.last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+            query_advice_raw = self.last_response_headers[http_constants.HttpHeaders.QueryAdvice]
+            self.last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
         if response_hook:
             response_hook(self.last_response_headers, result)
 
