@@ -84,7 +84,7 @@ class pylint(Check):
             # install pylint
             try:
                 if args.next:
-                    # use latest version of pylint
+                    # use latest version of pylint; PyGithub is needed for vnext issue management
                     install_into_venv(executable, ["pylint", f"PyGithub=={PYGITHUB_VERSION}"], package_dir)
                 else:
                     install_into_venv(executable, [f"pylint=={PYLINT_VERSION}"], package_dir)
@@ -214,13 +214,27 @@ class pylint(Check):
                         results.append(e.returncode)
 
             if args.next and in_ci() and any(result > 0 for result in results):
-                from gh_tools.vnext_issue_creator import create_vnext_issue
-
-                create_vnext_issue(package_dir, "pylint")
+                try:
+                    check_call(
+                        [
+                            executable,
+                            "-c",
+                            f"from gh_tools.vnext_issue_creator import create_vnext_issue; create_vnext_issue('{package_dir}', 'pylint')",
+                        ]
+                    )
+                except CalledProcessError as e:
+                    logger.warning(f"Failed to create vnext issue for {package_name}: {e}")
 
             if args.next and in_ci():
-                from gh_tools.vnext_issue_creator import close_vnext_issue
-
-                close_vnext_issue(package_name, "pylint")
+                try:
+                    check_call(
+                        [
+                            executable,
+                            "-c",
+                            f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'pylint')",
+                        ]
+                    )
+                except CalledProcessError as e:
+                    logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
 
         return max(results) if results else 0
