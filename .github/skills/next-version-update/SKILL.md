@@ -58,7 +58,7 @@ Also verify via GitHub issues: the vnext issue creator creates/closes issues per
 
 ### 2. Read Current Next Versions
 
-Read the current next-* versions from `doc/analyze_check_versions.md` or directly from `eng/tox/tox.ini`:
+Read the current next-* versions from `doc/analyze_check_versions.md`:
 
 ```bash
 grep -E "pylint_version|mypy_version|pyright_version" eng/tox/tox.ini
