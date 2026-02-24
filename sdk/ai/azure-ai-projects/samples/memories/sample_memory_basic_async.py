@@ -42,6 +42,7 @@ from azure.ai.projects.models import (
     MemoryStoreDefaultOptions,
     MemorySearchOptions,
 )
+from openai.types.responses import EasyInputMessageParam
 
 load_dotenv()
 
@@ -86,15 +87,12 @@ async def main() -> None:
         scope = "user_123"
 
         # Add a memory to the memory store
-        user_message = {
-            "role": "user",
-            "content": "I prefer dark roast coffee and usually drink it in the morning",
-            "type": "message",
-        }
+        #user_message = EasyInputMessageParam(role="user", content="I prefer dark roast coffee and usually drink it in the morning", type="message")
         update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            items=[user_message],  # Pass conversation items that you want to add to memory
+            #items=[user_message],  # Pass conversation items that you want to add to memory
+            items="I prefer dark roast coffee and usually drink it in the morning",  # Pass conversation items that you want to add to memory
             update_delay=0,  # Trigger update immediately without waiting for inactivity
         )
 

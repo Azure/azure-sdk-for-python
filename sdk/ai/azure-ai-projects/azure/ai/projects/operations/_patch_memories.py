@@ -11,6 +11,7 @@ from typing import Union, Optional, Any, List, overload, IO, cast, Literal
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import NoPolling
 from azure.core.utils import case_insensitive_dict
+from openai.types.responses import ResponseInputParam
 from .. import models as _models
 from ..models import (
     FoundryFeaturesOptInKeys,
@@ -35,7 +36,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[dict[str, Any]]] = None,
+        items: Optional[Union[str, ResponseInputParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -133,7 +134,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[dict[str, Any]]] = None,
+        items: Optional[Union[str, ResponseInputParam]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any,
@@ -171,6 +172,13 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
 
+        items_dict: Optional[List[dict[str, Any]]] = None
+        if items is not None and isinstance(items, str):
+            items_dict = [{"role": "user", "type": "message", "content": items}]
+        else:
+            # TODO: serialize items of type ResponseInputParam
+            items_dict = []
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -185,7 +193,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 name=name,
                 body=body,
                 scope=scope,
-                items=items,
+                items=items_dict,
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
                 content_type=content_type,
