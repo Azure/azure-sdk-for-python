@@ -280,6 +280,23 @@ class ResultProcessor:
                                                                 else None
                                                             ),
                                                         }
+                                        elif "attack_success" in conv_data:
+                                            # Foundry path: RAIServiceScorer already evaluated during
+                                            # attack execution. Use scorer results from the JSONL.
+                                            attack_success = conv_data["attack_success"]
+                                            score_data = conv_data.get("score", {})
+                                            if score_data and isinstance(score_data, dict):
+                                                score_metadata = score_data.get("metadata", {})
+                                                raw_score = score_metadata.get("raw_score")
+                                                if raw_score is not None:
+                                                    from azure.ai.evaluation._common.utils import (
+                                                        get_harm_severity_level,
+                                                    )
+
+                                                    risk_assessment[risk_category] = {
+                                                        "severity_label": get_harm_severity_level(raw_score),
+                                                        "reason": score_data.get("rationale", ""),
+                                                    }
 
                                         # Add to tracking arrays for statistical analysis
                                         converters.append(strategy_name)
