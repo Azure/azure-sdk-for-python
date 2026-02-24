@@ -46,7 +46,7 @@ gh --version
 
 ### 1. Verify Next-Version CI Is Passing
 
-Before promoting, confirm the next-* weekly analyze jobs have passed for the `http-client-python` (corehttp) service and other core packages. These jobs run in the weekly analyze pipeline.
+Before promoting, confirm the next-* weekly analyze jobs have passed for the `http-client-python` (in Microsoft/TypeSpec repo) service and other core (azure-sdk-for-python azure-core/corehttp/azure-mgmt-core) packages. 
 
 Check the Azure DevOps pipeline named **"python - corehttp - tests-weekly"** or similar weekly analyze pipelines. All three of the following jobs must pass (or only have pre-existing failures that are tracked):
 
