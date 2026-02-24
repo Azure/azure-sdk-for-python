@@ -51,7 +51,7 @@ class ResourceManagementClient:
     :vartype resource_groups: azure.mgmt.resource.resources.operations.ResourceGroupsOperations
     :ivar tags: TagsOperations operations
     :vartype tags: azure.mgmt.resource.resources.operations.TagsOperations
-    :ivar batch_operations: BatchOperations operations (2025-08-01-preview)  
+    :ivar batch_operations: BatchOperations operations (2025-08-01-preview)
     :vartype batch_operations: azure.mgmt.resource.resources.operations.BatchOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential

@@ -142,7 +142,7 @@ __all__ = [
     "ZoneMapping",
     # Batch operation models (2025-08-01-preview)
     "BatchRequest",
-    "BatchRequests", 
+    "BatchRequests",
     "BatchResponse",
     "BatchResponseStatus",
     "BatchProvisioningState",
