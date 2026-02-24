@@ -139,7 +139,11 @@ def _default_disable_tracing(configurations):
 
 
 def _default_connection_string(configurations):
-    configurations.setdefault(CONNECTION_STRING_ARG, environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING", ""))
+    if CONNECTION_STRING_ARG in configurations:
+        return
+    env_connection_string = environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    if env_connection_string is not None:
+        configurations[CONNECTION_STRING_ARG] = env_connection_string
 
 
 def _default_logger_name(configurations):
