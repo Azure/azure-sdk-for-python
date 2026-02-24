@@ -16,6 +16,7 @@ from test_samples_helpers import (
     agent_tools_instructions,
     memories_instructions,
     agents_instructions,
+    resource_management_instructions,
     get_sample_environment_variables_map,
 )
 
@@ -86,6 +87,88 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agents_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "connections",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_connections_samples(self, sample_path: str, **kwargs) -> None:
+        kwargs = kwargs.copy()
+        kwargs["connection_name"] = str(kwargs.get("mcp_project_connection_id")).split("/")[-1]
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async(
+            instructions=resource_management_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "files",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_files_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async(
+            instructions=resource_management_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "deployments",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_deployments_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async(
+            instructions=resource_management_instructions,
+            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            model=kwargs["azure_ai_model_deployment_name"],
+        )
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "datasets",
+            samples_to_skip=[],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
+        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async(
+            instructions=resource_management_instructions,
             project_endpoint=kwargs["azure_ai_project_endpoint"],
             model=kwargs["azure_ai_model_deployment_name"],
         )

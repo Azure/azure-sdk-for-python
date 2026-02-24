@@ -169,9 +169,18 @@ def add_sanitizers(test_proxy, sanitized_values):
     # Sanitize API key from service response (this includes Application Insights connection string)
     add_body_key_sanitizer(json_path="credentials.key", value="sanitized-api-key")
 
+    # Sanitize GitHub personal access tokens that may appear in connection credentials
+    add_general_regex_sanitizer(regex=r"github_pat_[A-Za-z0-9_]+", value="sanitized-github-pat")
+
     # Sanitize SAS URI from Datasets get credential response
-    add_body_key_sanitizer(json_path="blobReference.credential.sasUri", value="sanitized-sas-uri")
-    add_body_key_sanitizer(json_path="blobReferenceForConsumption.credential.sasUri", value="sanitized-sas-uri")
+    add_body_key_sanitizer(
+        json_path="blobReference.credential.sasUri",
+        value="https://sanitized.blob.core.windows.net/sanitized-container?sv=Sanitized&sr=c&sig=Sanitized",
+    )
+    add_body_key_sanitizer(
+        json_path="blobReferenceForConsumption.credential.sasUri",
+        value="https://sanitized.blob.core.windows.net/sanitized-container?sv=Sanitized&sr=c&sig=Sanitized",
+    )
 
     add_body_key_sanitizer(
         json_path="$..project_connection_id",
