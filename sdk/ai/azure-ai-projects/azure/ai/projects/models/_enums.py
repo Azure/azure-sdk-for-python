@@ -10,6 +10,17 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgentDefinitionFeatureKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Feature opt-in keys for agent definition operations supporting container, hosted, and workflow
+    agents.
+    """
+
+    HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
+    """HOSTED_AGENTS_V1_PREVIEW."""
+    WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
+    """WORKFLOW_AGENTS_V1_PREVIEW."""
+
+
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 
@@ -17,8 +28,6 @@ class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PROMPT."""
     HOSTED = "hosted"
     """HOSTED."""
-    CONTAINER_APP = "container_app"
-    """CONTAINER_APP."""
     WORKFLOW = "workflow"
     """WORKFLOW."""
 
@@ -336,8 +345,6 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of FoundryFeaturesOptInKeys."""
 
-    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
-    """CONTAINER_AGENTS_V1_PREVIEW."""
     HOSTED_AGENTS_V1_PREVIEW = "HostedAgents=V1Preview"
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"

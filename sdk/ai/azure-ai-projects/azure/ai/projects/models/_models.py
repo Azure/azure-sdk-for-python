@@ -285,10 +285,9 @@ class AgentDefinition(_Model):
     """AgentDefinition.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ContainerAppAgentDefinition, HostedAgentDefinition, PromptAgentDefinition,
-    WorkflowAgentDefinition
+    HostedAgentDefinition, PromptAgentDefinition, WorkflowAgentDefinition
 
-    :ivar kind: Required. Known values are: "prompt", "hosted", "container_app", and "workflow".
+    :ivar kind: Required. Known values are: "prompt", "hosted", and "workflow".
     :vartype kind: str or ~azure.ai.projects.models.AgentKind
     :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
     :vartype rai_config: ~azure.ai.projects.models.RaiConfig
@@ -296,7 +295,7 @@ class AgentDefinition(_Model):
 
     __mapping__: dict[str, _Model] = {}
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"prompt\", \"hosted\", \"container_app\", and \"workflow\"."""
+    """Required. Known values are: \"prompt\", \"hosted\", and \"workflow\"."""
     rai_config: Optional["_models.RaiConfig"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Configuration for Responsible AI (RAI) content filtering and safety features."""
 
@@ -2488,61 +2487,6 @@ class Connection(_Model):
     """The credentials used by the connection. Required."""
     metadata: dict[str, str] = rest_field(visibility=["read"])
     """Metadata of the connection. Required."""
-
-
-class ContainerAppAgentDefinition(AgentDefinition, discriminator="container_app"):
-    """The container app agent definition.
-
-    :ivar rai_config: Configuration for Responsible AI (RAI) content filtering and safety features.
-    :vartype rai_config: ~azure.ai.projects.models.RaiConfig
-    :ivar kind: Required. CONTAINER_APP.
-    :vartype kind: str or ~azure.ai.projects.models.CONTAINER_APP
-    :ivar container_protocol_versions: The protocols that the agent supports for ingress
-     communication of the containers. Required.
-    :vartype container_protocol_versions: list[~azure.ai.projects.models.ProtocolVersionRecord]
-    :ivar container_app_resource_id: The resource ID of the Azure Container App that hosts this
-     agent. Not mutable across versions. Required.
-    :vartype container_app_resource_id: str
-    :ivar ingress_subdomain_suffix: The suffix to apply to the app subdomain when sending ingress
-     to the agent. This can be a label (e.g., '---current'), a specific revision (e.g.,
-     '--0000001'), or empty to use the default endpoint for the container app. Required.
-    :vartype ingress_subdomain_suffix: str
-    """
-
-    kind: Literal[AgentKind.CONTAINER_APP] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. CONTAINER_APP."""
-    container_protocol_versions: list["_models.ProtocolVersionRecord"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The protocols that the agent supports for ingress communication of the containers. Required."""
-    container_app_resource_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource ID of the Azure Container App that hosts this agent. Not mutable across versions.
-     Required."""
-    ingress_subdomain_suffix: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The suffix to apply to the app subdomain when sending ingress to the agent. This can be a label
-     (e.g., '---current'), a specific revision (e.g., '--0000001'), or empty to use the default
-     endpoint for the container app. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        container_protocol_versions: list["_models.ProtocolVersionRecord"],
-        container_app_resource_id: str,
-        ingress_subdomain_suffix: str,
-        rai_config: Optional["_models.RaiConfig"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = AgentKind.CONTAINER_APP  # type: ignore
 
 
 class EvaluationRuleAction(_Model):
