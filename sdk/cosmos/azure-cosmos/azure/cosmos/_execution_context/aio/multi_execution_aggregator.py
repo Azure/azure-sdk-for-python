@@ -21,8 +21,13 @@
 
 """Internal class for multi execution context aggregator implementation in the Azure Cosmos database service.
 """
+import asyncio
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio import document_producer, _queue_async_helper
+from azure.cosmos._execution_context.aio._concurrent_helpers import (
+    _resolve_max_degree,
+    concurrent_peek_producers,
+)
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
 
@@ -81,6 +86,10 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
             self._document_producer_comparator = document_producer._PartitionKeyRangeDocumentProducerComparator()
 
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
+
+        # Parallelization settings
+        self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
+        self._max_buffered_item_count = options.get("maxBufferedItemCount", 0)
 
     async def __anext__(self):
         """Returns the next result
@@ -179,20 +188,39 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):
                 self._createTargetPartitionQueryExecutionContext(partitionTargetRange)
             )
 
-        for targetQueryExContext in targetPartitionQueryExecutionContextList:
-            try:
-                # TODO: we can also use more_itertools.peekable to be more python friendly
-                await targetQueryExContext.peek()
-                # if there are matching results in the target ex range add it to the priority queue
+        effective_concurrency = _resolve_max_degree(
+            self._max_degree_of_parallelism, len(targetPartitionQueryExecutionContextList)
+        )
 
-                await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
+        if effective_concurrency > 0 and len(targetPartitionQueryExecutionContextList) > 1:
+            # Parallel initialization: peek all producers concurrently
+            semaphore = asyncio.Semaphore(effective_concurrency)
+            peeked_producers, gone_errors = await concurrent_peek_producers(
+                targetPartitionQueryExecutionContextList, semaphore
+            )
 
-            except exceptions.CosmosHttpResponseError as e:
-                if exceptions._partition_range_is_gone(e):
-                    # repairing document producer context on partition split
-                    await self._repair_document_producer()
-                else:
-                    raise
+            if gone_errors:
+                # At least one partition range was gone — repair and retry serially
+                await self._repair_document_producer()
+            else:
+                for producer in peeked_producers:
+                    await self._orderByPQ.push_async(producer, self._document_producer_comparator)
+        else:
+            # Serial initialization (original behavior)
+            for targetQueryExContext in targetPartitionQueryExecutionContextList:
+                try:
+                    # TODO: we can also use more_itertools.peekable to be more python friendly
+                    await targetQueryExContext.peek()
+                    # if there are matching results in the target ex range add it to the priority queue
 
-            except StopAsyncIteration:
-                continue
+                    await self._orderByPQ.push_async(targetQueryExContext, self._document_producer_comparator)
+
+                except exceptions.CosmosHttpResponseError as e:
+                    if exceptions._partition_range_is_gone(e):
+                        # repairing document producer context on partition split
+                        await self._repair_document_producer()
+                    else:
+                        raise
+
+                except StopAsyncIteration:
+                    continue

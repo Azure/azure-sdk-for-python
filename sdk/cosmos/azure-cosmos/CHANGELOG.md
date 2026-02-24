@@ -1,5 +1,22 @@
 ## Release History
 
+### 4.16.0 (Unreleased)
+
+#### Features Added
+* Added `max_degree_of_parallelism` and `max_buffered_item_count` kwargs to async `query_items` to enable
+  concurrent cross-partition query execution. When `max_degree_of_parallelism` is set to a positive value,
+  document producers for different partition key ranges are initialized and drained concurrently using
+  `asyncio` tasks bounded by a semaphore. This can significantly reduce wall-clock query latency at the
+  cost of higher instantaneous RU/s consumption. Defaults to `0` (serial execution) for backward
+  compatibility, matching the .NET and Java SDK defaults.
+  Supported values:
+  - `0`: Serial execution (current behavior, default).
+  - `> 0`: Use that many concurrent partition requests.
+  - `-1`: System automatically decides based on partition count and CPU count.
+  Parallelization is applied to all three async aggregator types: `_MultiExecutionContextAggregator`
+  (ORDER BY / cross-partition), `_NonStreamingOrderByContextAggregator` (vector search), and
+  `_HybridSearchContextAggregator` (hybrid/full-text search).
+
 ### 4.15.0 (2026-02-11)
 
 #### Features Added
