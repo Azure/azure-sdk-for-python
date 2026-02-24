@@ -245,7 +245,7 @@ gh pr create \
 
 ### 13. Update azure-sdk-tools Repository (Separate PR)
 
-For a pylint **major version** bump, create a separate PR in the [azure-sdk-tools](https://github.com/Azure/azure-sdk-tools) repository:
+For a pylint **version** bump, create a separate PR in the [azure-sdk-tools](https://github.com/Azure/azure-sdk-tools) repository:
 
 1. Clone azure-sdk-tools and create a feature branch:
    ```bash
