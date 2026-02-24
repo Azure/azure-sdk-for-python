@@ -41,7 +41,6 @@ class BatchRequest:
         headers: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.content = content
         self.dependent_on = dependent_on
         self.headers = headers
@@ -61,7 +60,6 @@ class BatchRequests:
     """
 
     def __init__(self, *, requests: List["BatchRequest"], **kwargs):
-        super().__init__(**kwargs)
         self.requests = requests
 
 
@@ -87,7 +85,6 @@ class BatchResponse:
         name: Optional[str] = None,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.content = content
         self.headers = headers
         self.http_status_code = http_status_code
@@ -119,7 +116,6 @@ class BatchResponseStatus:
         total_requests_count: Optional[int] = None,
         **kwargs
     ):
-        super().__init__(**kwargs)
         self.completed_requests_count = completed_requests_count
         self.failed_requests_count = failed_requests_count
         self.provisioning_state = provisioning_state
