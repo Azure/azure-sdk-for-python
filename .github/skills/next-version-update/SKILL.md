@@ -54,7 +54,7 @@ Check the Azure DevOps pipeline named **"python - corehttp - tests-weekly"** or 
 - **Run MyPy Next** (uses `next-mypy` tox env)
 - **Run Pyright Next** (uses `next-pyright` tox env)
 
-Also verify via GitHub issues: the vnext issue creator creates/closes issues per-package. Check that there are no open `next-pylint`, `next-mypy`, or `next-pyright` issues for the `http-client-python` packages.
+Also verify via GitHub issues: the vnext issue creator creates/closes issues per-package. Check that there are no open `next-pylint`, `next-mypy`, or `next-pyright` issues for the core packages.
 
 ### 2. Read Current Next Versions
 
