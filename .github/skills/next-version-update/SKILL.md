@@ -161,7 +161,7 @@ PYRIGHT_VERSION = "{OLD_NEXT_PYRIGHT_VERSION}"
 
 ### 8. Update `pylintrc` Files
 
-When pylint's **major version** changes (e.g., 3.x → 4.x), the root `pylintrc` and `eng/pylintrc` may need to be updated to disable new warnings or enable newly-available rules.
+When pylint's **version** changes, the root `pylintrc` and `eng/pylintrc` may need to be updated to disable new warnings or enable newly-available rules.
 
 **For a major version bump:**
 
