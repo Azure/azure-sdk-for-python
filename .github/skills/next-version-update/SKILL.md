@@ -24,8 +24,9 @@ Files updated in **azure-sdk-tools** (separate PR):
 - `tools/apiview/parsers/python/apistubgen/pylintrc` – pylintrc for apiview stub generator
 - `tools/apiview/parsers/python/apistubgen/requirements.txt` – pylint version pin for apiview stub generator
 
-Files updated in **Microsoft/TypeSpec** (separate PR):
+Files updated in **Microsoft/TypeSpec** (separate PR, for any pylint/mypy/pyright version update):
 - `packages/compiler/package.json` or emitter-specific `package.json` – pyright version pin used by the TypeSpec compiler and emitters
+- Any Python-based tooling configuration files that reference pylint or mypy versions
 
 ## Prerequisites
 
@@ -278,7 +279,7 @@ For a pylint **version** bump, create a separate PR in the [azure-sdk-tools](htt
 
 ### 14. Update Microsoft/TypeSpec Repository (Separate PR)
 
-When a **pyright version** is promoted, create a separate PR in the [Microsoft/TypeSpec](https://github.com/microsoft/typespec) repository to keep the pyright version aligned.
+For **any** next-* version update (pylint, mypy, or pyright), create a separate PR in the [Microsoft/TypeSpec](https://github.com/microsoft/typespec) repository to keep the tool versions aligned. TypeSpec uses pyright for type-checking its TypeScript packages and may reference pylint/mypy in Python-based tooling.
 
 > **Before starting:** Read the TypeSpec contribution guidelines at https://github.com/microsoft/typespec/blob/main/CONTRIBUTING.md. Key requirements include signing the Microsoft CLA, running `rush update` after dependency changes, and ensuring `rush build` passes.
 
@@ -293,17 +294,34 @@ When a **pyright version** is promoted, create a separate PR in the [Microsoft/T
    npm install -g @microsoft/rush
    ```
 
-3. Create a feature branch:
+3. Create a feature branch that names all tools being updated:
    ```bash
-   git checkout -b bump-pyright-{OLD_NEXT_PYRIGHT_VERSION}
+   # Example for all three tools:
+   git checkout -b bump-tool-versions-pylint-{OLD_NEXT_PYLINT_VERSION}-mypy-{OLD_NEXT_MYPY_VERSION}-pyright-{OLD_NEXT_PYRIGHT_VERSION}
    ```
 
-4. Find all `package.json` files that pin pyright and update them to the new version:
+4. Find all files that reference the tool versions and update them:
+
+   **For pyright** (used across the TypeScript monorepo):
    ```bash
-   # Find packages that reference pyright
+   # Find package.json files that pin pyright
    grep -r "\"pyright\"" --include="package.json" . | grep -v node_modules
    ```
    Update each occurrence from `{OLD_PYRIGHT_VERSION}` → `{OLD_NEXT_PYRIGHT_VERSION}`.
+
+   **For pylint** (used in any Python tooling):
+   ```bash
+   # Find requirements files or pyproject.toml files that pin pylint
+   grep -r "pylint==" --include="*.txt" --include="*.toml" --include="*.cfg" . | grep -v node_modules
+   ```
+   Update each occurrence from `{OLD_PYLINT_VERSION}` → `{OLD_NEXT_PYLINT_VERSION}`.
+
+   **For mypy** (used in any Python tooling):
+   ```bash
+   # Find requirements files or pyproject.toml files that pin mypy
+   grep -r "mypy==" --include="*.txt" --include="*.toml" --include="*.cfg" . | grep -v node_modules
+   ```
+   Update each occurrence from `{OLD_MYPY_VERSION}` → `{OLD_NEXT_MYPY_VERSION}`.
 
 5. Run Rush update to regenerate the lockfile:
    ```bash
@@ -315,7 +333,7 @@ When a **pyright version** is promoted, create a separate PR in the [Microsoft/T
    rush build
    ```
 
-7. Run the type-checking checks to confirm there are no new pyright errors:
+7. Run the type-checking and lint checks to confirm there are no new errors:
    ```bash
    rush check-format
    rush lint
@@ -324,24 +342,27 @@ When a **pyright version** is promoted, create a separate PR in the [Microsoft/T
 8. Commit and push the changes:
    ```bash
    git add .
-   git commit -m "bump pyright to {OLD_NEXT_PYRIGHT_VERSION}"
-   git push -u origin bump-pyright-{OLD_NEXT_PYRIGHT_VERSION}
+   git commit -m "bump tool versions: pylint {OLD_NEXT_PYLINT_VERSION}, mypy {OLD_NEXT_MYPY_VERSION}, pyright {OLD_NEXT_PYRIGHT_VERSION}"
+   git push -u origin bump-tool-versions-pylint-{OLD_NEXT_PYLINT_VERSION}-mypy-{OLD_NEXT_MYPY_VERSION}-pyright-{OLD_NEXT_PYRIGHT_VERSION}
    ```
 
 9. Create the pull request, following the TypeSpec PR template:
    ```bash
    gh pr create \
      --repo microsoft/typespec \
-     --title "bump pyright to {OLD_NEXT_PYRIGHT_VERSION}" \
-     --body "Updates the pinned pyright version from {OLD_PYRIGHT_VERSION} to {OLD_NEXT_PYRIGHT_VERSION} across the monorepo.
+     --title "bump tool versions: pylint {OLD_NEXT_PYLINT_VERSION}, mypy {OLD_NEXT_MYPY_VERSION}, pyright {OLD_NEXT_PYRIGHT_VERSION}" \
+     --body "Updates the pinned tool versions across the repo:
+   - pylint: {OLD_PYLINT_VERSION} → {OLD_NEXT_PYLINT_VERSION}
+   - mypy: {OLD_MYPY_VERSION} → {OLD_NEXT_MYPY_VERSION}
+   - pyright: {OLD_PYRIGHT_VERSION} → {OLD_NEXT_PYRIGHT_VERSION}
 
    ## Checklist
    - [ ] I have signed the Microsoft CLA
    - [ ] \`rush update\` has been run
    - [ ] \`rush build\` passes
-   - [ ] No new type errors introduced"
+   - [ ] No new type or lint errors introduced"
    ```
 
-10. Monitor the PR CI and address any new pyright errors that surface in TypeSpec packages.
+10. Monitor the PR CI and address any new errors that surface in TypeSpec packages.
 
-> **Note:** If the TypeSpec team already tracks pyright upgrades independently, check existing issues or PRs in the repo (search for `pyright` in open PRs) before opening a duplicate.
+> **Note:** If only some tools are pinned in the TypeSpec repo (e.g., TypeSpec may only pin pyright and not pylint/mypy), skip the steps for tools that are not referenced. Check existing issues or PRs (search for `pylint`, `mypy`, `pyright` in open PRs) before opening duplicates.
