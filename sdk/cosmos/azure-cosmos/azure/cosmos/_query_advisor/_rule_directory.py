@@ -7,60 +7,69 @@
 """Rule directory singleton for loading and accessing query advice rules."""
 
 import json
-import os
+from importlib.resources import files
 from typing import Any, Dict, Optional
 
 
 class RuleDirectory:
     """Singleton for loading and accessing query advice rules.
-    
+
     The rule directory lazy-loads the query_advice_rules.json file
     and provides access to rule messages and URL prefix.
+    Uses importlib.resources so it works correctly in all packaging
+    scenarios including zip-safe wheels.
     """
-    
+
     _instance: Optional["RuleDirectory"] = None
-    
+
     def __new__(cls) -> "RuleDirectory":
         if cls._instance is None:
             cls._instance = super().__new__(cls)
-            cls._instance._initialized = False
         return cls._instance
-    
+
     def __init__(self) -> None:
-        if self._initialized:
+        # Guard so the singleton body only runs once.
+        if getattr(self, "_initialized", False):
             return
-            
-        self._initialized = True
+
+        self._initialized: bool = True
         self._rules: Dict[str, Dict[str, Any]] = {}
         self._url_prefix: str = ""
         self._load_rules()
-    
+
     def _load_rules(self) -> None:
-        """Load rules from the JSON file."""
+        """Load rules from the bundled JSON resource."""
         try:
-            rules_file = os.path.join(os.path.dirname(__file__), "query_advice_rules.json")
-            with open(rules_file, "r", encoding="utf-8") as f:
-                data = json.load(f)
-                self._url_prefix = data.get("url_prefix", "")
-                self._rules = data.get("rules", {})
-        except (IOError, json.JSONDecodeError):
-            # If we can't load rules, use empty defaults
-            self._url_prefix = "https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/queryadvisor/"
+            resource_text = (
+                files(__package__)
+                .joinpath("query_advice_rules.json")
+                .read_text(encoding="utf-8")
+            )
+            data = json.loads(resource_text)
+            self._url_prefix = data.get("url_prefix", "")
+            self._rules = data.get("rules", {})
+        except Exception:  # pylint: disable=broad-except
+            # Silently fall back to empty rules so query execution
+            # is never blocked by an inability to load advice text.
+            self._url_prefix = (
+                "https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/query/queryadvisor/"
+            )
             self._rules = {}
-    
+
     @property
     def url_prefix(self) -> str:
-        """Get the URL prefix for documentation links."""
+        """Get the URL prefix for documentation links.
+
+        :rtype: str
+        """
         return self._url_prefix
-    
+
     def get_rule_message(self, rule_id: str) -> Optional[str]:
         """Get the message for a given rule ID.
-        
-        Args:
-            rule_id: The rule identifier (e.g., "QA1000")
-            
-        Returns:
-            The rule message, or None if the rule is not found
+
+        :param str rule_id: The rule identifier (e.g., ``QA1000``).
+        :returns: The rule message, or ``None`` if the rule is not found.
+        :rtype: str or None
         """
         rule = self._rules.get(rule_id)
         if rule:

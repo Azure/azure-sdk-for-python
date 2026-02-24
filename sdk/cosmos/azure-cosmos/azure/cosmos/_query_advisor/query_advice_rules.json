@@ -3,7 +3,7 @@
   "rules": {
     "QA1000": {
       "name": "PartialArrayContains",
-      "description": "Query uses ARRAY_CONTAINS with the the third argument set to true.",
+      "description": "Query uses ARRAY_CONTAINS with the third argument set to true.",
       "message": "Instead of ARRAY_CONTAINS, consider using EXISTS with a subquery, which may improve performance."
     },
     "QA1001": {

@@ -71,6 +71,9 @@ setup(
     ],
     zip_safe=False,
     packages=find_packages(exclude=exclude_packages),
+    package_data={
+        "azure.cosmos._query_advisor": ["query_advice_rules.json"],
+    },
     python_requires=">=3.9",
     install_requires=[
         "azure-core>=1.30.0",
