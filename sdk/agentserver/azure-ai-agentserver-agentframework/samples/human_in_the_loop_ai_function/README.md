@@ -22,7 +22,7 @@ AZURE_OPENAI_CHAT_DEPLOYMENT_NAME=<deployment-name>
 
 ## Thread persistence
 
-The sample uses `JsonLocalFileAgentThreadRepository` for `AgentThread` persistence, creating a JSON file per conversation ID under the sample directory. An in-memory alternative, `InMemoryAgentThreadRepository`, lives in the `azure.ai.agentserver.agentframework.persistence` module.
+The sample uses `JsonLocalFileAgentThreadRepository` for `AgentSession` persistence, creating a JSON file per conversation ID under the sample directory. An in-memory alternative, `InMemoryAgentThreadRepository`, lives in the `azure.ai.agentserver.agentframework.persistence` module.
 
 To store thread messages elsewhere, inherit from `SerializedAgentThreadRepository` and override the following methods:
 

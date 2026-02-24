@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterable, AsyncIterator, Callable
-from typing import TypeVar, Optional, Tuple
+from typing import Optional, Tuple, TypeVar
 
 TSource = TypeVar("TSource")
 TKey = TypeVar("TKey")
@@ -76,7 +76,7 @@ async def chunk_by_key(
     while has_pending:
         current_key = pending_key
 
-        async def inner() -> AsyncIterator[TSource]:
+        async def inner(current_key=current_key) -> AsyncIterator[TSource]:
             nonlocal pending, pending_key, has_pending
 
             # First element of the group

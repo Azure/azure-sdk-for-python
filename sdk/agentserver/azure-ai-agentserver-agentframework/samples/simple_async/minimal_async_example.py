@@ -22,7 +22,7 @@ def get_weather(
 
 
 async def main() -> None:
-    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
+    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).as_agent(
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )

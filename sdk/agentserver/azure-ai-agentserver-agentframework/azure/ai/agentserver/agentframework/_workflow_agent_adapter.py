@@ -10,10 +10,7 @@ from typing import (
     Union,
 )
 
-from agent_framework import Workflow, CheckpointStorage, WorkflowAgent, WorkflowCheckpoint
-from agent_framework._workflows import get_checkpoint_summary
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
+from agent_framework import CheckpointStorage, Workflow, WorkflowAgent, WorkflowCheckpoint
 
 from azure.ai.agentserver.core import AgentRunContext
 from azure.ai.agentserver.core.logger import get_logger
@@ -22,9 +19,11 @@ from azure.ai.agentserver.core.models import (
     ResponseStreamEvent,
 )
 from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
 from ._agent_framework import AgentFrameworkAgent
-from .models.agent_framework_input_converters import AgentFrameworkInputConverter
+from .models.agent_framework_input_converters import transform_input
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
@@ -69,8 +68,8 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
                 if checkpoint_storage:
                     selected_checkpoint = await self._get_latest_checkpoint(checkpoint_storage)
             if selected_checkpoint:
-                summary = get_checkpoint_summary(selected_checkpoint)
-                if summary.status == "completed":
+                checkpoint_status = self._checkpoint_status(selected_checkpoint)
+                if checkpoint_status == "completed":
                     logger.warning(
                         "Selected checkpoint %s is completed. Will not resume from it.",
                         selected_checkpoint.checkpoint_id,
@@ -80,21 +79,18 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
                     await self._load_checkpoint(agent, selected_checkpoint, checkpoint_storage)
                     logger.info("Loaded checkpoint with ID: %s", selected_checkpoint.checkpoint_id)
 
-            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
-            message = await input_converter.transform_input(
-                request_input,
-                agent_thread=agent_thread,
-                checkpoint=selected_checkpoint)
+            message = transform_input(request_input)
             logger.debug("Transformed input message type: %s", type(message))
 
             # Use split converters
             if context.stream:
                 return self._run_streaming_updates(
                     context=context,
-                    run_stream=lambda: agent.run_stream(
+                    stream_runner=lambda: agent.run(
                         message,
-                        thread=agent_thread,
+                        session=agent_thread,
                         checkpoint_storage=checkpoint_storage,
+                        stream=True,
                     ),
                     agent_thread=agent_thread,
                 )
@@ -103,7 +99,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             logger.info("Running WorkflowAgent in non-streaming mode")
             result = await agent.run(
                 message,
-                thread=agent_thread,
+                session=agent_thread,
                 checkpoint_storage=checkpoint_storage)
             logger.debug("WorkflowAgent run completed, result type: %s", type(result))
 
@@ -128,6 +124,17 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
 
     def _build_agent(self) -> WorkflowAgent:
         return self._workflow_factory().as_agent()
+
+
+    def _checkpoint_status(self, checkpoint: WorkflowCheckpoint) -> Optional[str]:
+        status = getattr(checkpoint, "status", None)
+        if status:
+            return status
+        metadata = getattr(checkpoint, "metadata", None)
+        if isinstance(metadata, dict):
+            value = metadata.get("status")
+            return str(value) if value is not None else None
+        return None
 
     async def _get_latest_checkpoint(self,
                 checkpoint_storage: CheckpointStorage) -> Optional[Any]:

@@ -4,25 +4,16 @@
 Workflow Agent with Foundry Managed Checkpoints
 
 This sample demonstrates how to use FoundryCheckpointRepository with
-a WorkflowBuilder agent to persist workflow checkpoints in Azure AI Foundry.
-
-Foundry managed checkpoints enable workflow state to be persisted across
-requests, allowing workflows to be paused, resumed, and replayed.
-
-Prerequisites:
-    - Set AZURE_AI_PROJECT_ENDPOINT to your Azure AI Foundry project endpoint
-      e.g. "https://<resource>.services.ai.azure.com/api/projects/<project-id>"
-    - Azure credentials configured (e.g. az login)
+an Agent Framework workflow to persist workflow checkpoints in Azure AI Foundry.
 """
 
 import asyncio
 import os
 
-from dotenv import load_dotenv
-
-from agent_framework import ChatAgent, WorkflowBuilder
-from agent_framework.azure import AzureAIAgentClient
+from agent_framework import SupportsAgentRun, WorkflowBuilder
+from agent_framework_azure_ai import AzureAIAgentClient
 from azure.identity.aio import AzureCliCredential
+from dotenv import load_dotenv
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 from azure.ai.agentserver.agentframework.persistence import FoundryCheckpointRepository
@@ -30,9 +21,9 @@ from azure.ai.agentserver.agentframework.persistence import FoundryCheckpointRep
 load_dotenv()
 
 
-def create_writer_agent(client: AzureAIAgentClient) -> ChatAgent:
+def create_writer_agent(client: AzureAIAgentClient) -> SupportsAgentRun:
     """Create a writer agent that generates content."""
-    return client.create_agent(
+    return client.as_agent(
         name="Writer",
         instructions=(
             "You are an excellent content writer. "
@@ -41,9 +32,9 @@ def create_writer_agent(client: AzureAIAgentClient) -> ChatAgent:
     )
 
 
-def create_reviewer_agent(client: AzureAIAgentClient) -> ChatAgent:
+def create_reviewer_agent(client: AzureAIAgentClient) -> SupportsAgentRun:
     """Create a reviewer agent that provides feedback."""
-    return client.create_agent(
+    return client.as_agent(
         name="Reviewer",
         instructions=(
             "You are an excellent content reviewer. "
@@ -54,28 +45,20 @@ def create_reviewer_agent(client: AzureAIAgentClient) -> ChatAgent:
 
 
 async def main() -> None:
-    """Run the workflow agent with Foundry managed checkpoints."""
     project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
 
-    async with AzureCliCredential() as cred, AzureAIAgentClient(credential=cred) as client:
-        builder = (
-            WorkflowBuilder()
-            .register_agent(lambda: create_writer_agent(client), name="writer")
-            .register_agent(lambda: create_reviewer_agent(client), name="reviewer", output_response=True)
-            .set_start_executor("writer")
-            .add_edge("writer", "reviewer")
-        )
+    async with AzureCliCredential() as cred, AzureAIAgentClient(async_credential=cred) as client:
+        writer = create_writer_agent(client)
+        reviewer = create_reviewer_agent(client)
+        workflow = WorkflowBuilder(start_executor=writer).add_edge(writer, reviewer).build()
 
-        # Use FoundryCheckpointRepository for Azure AI Foundry managed storage.
-        # This persists workflow checkpoints remotely, enabling pause/resume
-        # across requests and server restarts.
         checkpoint_repository = FoundryCheckpointRepository(
             project_endpoint=project_endpoint,
             credential=cred,
         )
 
         await from_agent_framework(
-            builder,
+            workflow,
             checkpoint_repository=checkpoint_repository,
         ).run_async()
 

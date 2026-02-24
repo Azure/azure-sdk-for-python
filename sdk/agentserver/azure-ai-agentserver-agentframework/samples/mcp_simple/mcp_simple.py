@@ -16,9 +16,9 @@ load_dotenv()
 
 
 async def main() -> None:
-    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
+    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).as_agent(
         instructions="You are a helpful assistant that answers Microsoft documentation questions.",
-        tools=MCPStreamableHTTPTool(name=MCP_TOOL_NAME, url=MCP_TOOL_URL),
+        tools=[MCPStreamableHTTPTool(name=MCP_TOOL_NAME, url=MCP_TOOL_URL)],  # type: ignore[list-item]
     )
 
     async with agent:

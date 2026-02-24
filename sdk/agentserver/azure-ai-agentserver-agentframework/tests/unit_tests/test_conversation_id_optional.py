@@ -4,7 +4,7 @@
 from unittest.mock import Mock
 
 import pytest
-from agent_framework import AgentThread, InMemoryCheckpointStorage
+from agent_framework import AgentSession, InMemoryCheckpointStorage
 
 from azure.ai.agentserver.agentframework.persistence.agent_thread_repository import (
     InMemoryAgentThreadRepository,
@@ -18,7 +18,7 @@ from azure.ai.agentserver.agentframework.persistence.checkpoint_repository impor
 @pytest.mark.asyncio
 async def test_inmemory_thread_repository_ignores_missing_conversation_id() -> None:
     repo = InMemoryAgentThreadRepository()
-    thread = Mock(spec=AgentThread)
+    thread = Mock(spec=AgentSession)
 
     await repo.set(None, thread)
     assert await repo.get(None) is None

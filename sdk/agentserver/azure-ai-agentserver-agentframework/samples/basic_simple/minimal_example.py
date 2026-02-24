@@ -6,10 +6,10 @@ from typing import Annotated
 from agent_framework.azure import AzureOpenAIChatClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
-load_dotenv()
 
 from azure.ai.agentserver.agentframework import from_agent_framework
 
+load_dotenv()
 
 
 def get_weather(
@@ -21,7 +21,7 @@ def get_weather(
 
 
 def main() -> None:
-    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).create_agent(
+    agent = AzureOpenAIChatClient(credential=DefaultAzureCredential()).as_agent(
         instructions="You are a helpful weather agent.",
         tools=get_weather,
     )

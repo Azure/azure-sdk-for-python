@@ -6,22 +6,15 @@ import json
 from typing import Any, Mapping, Optional
 from uuid import uuid4
 
-from agent_framework import ChatMessage, FunctionCallContent, FunctionResultContent
-from agent_framework._types import (
-    DataContent,
-    HostedFileContent,
-    TextContent,
-    TextReasoningContent,
-    UriContent,
-)
+from agent_framework import Content, Message
 from openai.types.conversations import ConversationItem
 
 from azure.ai.agentserver.core.logger import get_logger
 
 logger = get_logger()
 
-class ConversationItemConverter:
 
+class ConversationItemConverter:
     _ROLE_MAP = {
         "assistant": "assistant",
         "system": "system",
@@ -63,15 +56,8 @@ class ConversationItemConverter:
         "error",
     )
 
-    def to_chat_message(self, item: ConversationItem) -> Optional[ChatMessage]:
-        """
-        Convert a ConversationItem from the Conversations API to a ChatMessage.
-
-        :param item: The ConversationItem from the Conversations API.
-        :type item: ConversationItem
-        :return: The converted ChatMessage, or None if conversion is not possible.
-        :rtype: Optional[ChatMessage]
-        """
+    def to_chat_message(self, item: ConversationItem) -> Optional[Message]:
+        """Convert a ConversationItem from the Conversations API to an AF Message."""
         if item is None:
             return None
 
@@ -89,7 +75,7 @@ class ConversationItemConverter:
         logger.debug("Unsupported conversation item type: %s", item_type)
         return None
 
-    def _convert_message_item(self, item: Any) -> Optional[ChatMessage]:
+    def _convert_message_item(self, item: Any) -> Optional[Message]:
         role_value = self._ROLE_MAP.get(str(getattr(item, "role", "user")).lower(), "user")
         raw_contents = getattr(item, "content", None) or []
 
@@ -103,9 +89,9 @@ class ConversationItemConverter:
         if not converted_contents:
             return None
 
-        return ChatMessage(role=role_value, contents=converted_contents)
+        return Message(role=role_value, contents=converted_contents)
 
-    def _convert_tool_call_item(self, item: Any) -> Optional[ChatMessage]:
+    def _convert_tool_call_item(self, item: Any) -> Optional[Message]:
         data = self._model_dump(item)
         if not data:
             return None
@@ -116,14 +102,14 @@ class ConversationItemConverter:
         arguments = self._extract_call_arguments(data)
         normalized_arguments = self._normalize_arguments(arguments)
 
-        content = FunctionCallContent(
+        content = self._content_from_function_call(
             call_id=call_id,
             name=name,
             arguments=normalized_arguments,
         )
-        return ChatMessage(role="assistant", contents=[content])
+        return Message(role="assistant", contents=[content])
 
-    def _convert_tool_result_item(self, item: Any) -> Optional[ChatMessage]:
+    def _convert_tool_result_item(self, item: Any) -> Optional[Message]:
         data = self._model_dump(item)
         if not data:
             return None
@@ -133,19 +119,19 @@ class ConversationItemConverter:
         if result_payload is None:
             return None
 
-        content = FunctionResultContent(call_id=call_id, result=result_payload)
-        return ChatMessage(role="tool", contents=[content])
+        content = self._content_from_function_result(call_id=call_id, result=result_payload)
+        return Message(role="tool", contents=[content])
 
-    def _convert_reasoning_item(self, item: Any) -> Optional[ChatMessage]:
+    def _convert_reasoning_item(self, item: Any) -> Optional[Message]:
         data = self._model_dump(item)
         summaries = data.get("summary", []) or []
         content_items = data.get("content", []) or []
 
-        reasoning_contents: list[TextReasoningContent] = []
+        reasoning_contents: list[Any] = []
         for content in content_items:
             text = content.get("text") if isinstance(content, Mapping) else None
             if text:
-                reasoning_contents.append(TextReasoningContent(text=text))
+                reasoning_contents.append(self._content_from_text_reasoning(text))
 
         summary_text = " \n".join(
             summary.get("text")
@@ -161,7 +147,7 @@ class ConversationItemConverter:
             kwargs["text"] = summary_text
         if reasoning_contents:
             kwargs["contents"] = reasoning_contents
-        return ChatMessage(role="assistant", **kwargs)
+        return Message(role="assistant", **kwargs)
 
     def _convert_message_content(self, content: Any) -> Optional[Any]:
         content_type = str(getattr(content, "type", "")).lower()
@@ -169,36 +155,43 @@ class ConversationItemConverter:
         if content_type in {"input_text", "output_text", "text", "summary_text"}:
             text_value = getattr(content, "text", None)
             if text_value:
-                return TextContent(text=text_value)
+                return self._content_from_text(text_value)
 
         if content_type == "reasoning_text":
             text_value = getattr(content, "text", None)
             if text_value:
-                return TextReasoningContent(text=text_value)
+                return self._content_from_text_reasoning(text_value)
 
         if content_type == "refusal":
             refusal_text = getattr(content, "refusal", None)
             if refusal_text:
-                return TextContent(text=refusal_text)
-
-        if content_type in {"input_image", "computer_screenshot"}:
-            file_id = getattr(content, "file_id", None)
-            image_url = getattr(content, "image_url", None)
-            if file_id:
-                return HostedFileContent(file_id=file_id)
-            if image_url:
-                return UriContent(uri=image_url, media_type="image/*")
-
-        if content_type == "input_file":
-            file_id = getattr(content, "file_id", None)
-            if file_id:
-                return HostedFileContent(file_id=file_id)
-            file_url = getattr(content, "file_url", None)
-            file_data = getattr(content, "file_data", None)
-            if file_url or file_data:
-                return DataContent(uri=file_url, data=file_data, media_type="application/octet-stream")
+                return self._content_from_text(refusal_text)
 
         return None
+
+    def _content_from_text(self, text: str) -> Any:
+        factory = getattr(Content, "from_text", None)
+        if callable(factory):
+            return factory(text=text)
+        return Content(type="text", text=text)
+
+    def _content_from_text_reasoning(self, text: str) -> Any:
+        factory = getattr(Content, "from_text_reasoning", None)
+        if callable(factory):
+            return factory(text=text)
+        return Content(type="text_reasoning", text=text)
+
+    def _content_from_function_call(self, call_id: str, name: str, arguments: Any) -> Any:
+        factory = getattr(Content, "from_function_call", None)
+        if callable(factory):
+            return factory(call_id=call_id, name=name, arguments=arguments)
+        return Content(type="function_call", call_id=call_id, name=name, arguments=arguments)
+
+    def _content_from_function_result(self, call_id: str, result: Any) -> Any:
+        factory = getattr(Content, "from_function_result", None)
+        if callable(factory):
+            return factory(call_id=call_id, result=result)
+        return Content(type="function_result", call_id=call_id, result=result)
 
     def _extract_call_arguments(self, data: Mapping[str, Any]) -> Any:
         if data.get("arguments") not in (None, ""):

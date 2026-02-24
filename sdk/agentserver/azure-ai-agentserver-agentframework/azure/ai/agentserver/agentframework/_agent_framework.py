@@ -5,10 +5,9 @@
 from __future__ import annotations
 
 import os
-from typing import Any, AsyncGenerator, Optional, TYPE_CHECKING, Union, Callable
+from typing import TYPE_CHECKING, Any, AsyncGenerator, Callable, Optional, Union
 
-from agent_framework import AgentProtocol, AgentThread, WorkflowAgent
-from agent_framework.azure import AzureAIClient  # pylint: disable=no-name-in-module
+from agent_framework import AgentSession, SupportsAgentRun, WorkflowAgent
 from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
@@ -23,8 +22,8 @@ from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:
 
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
-from .persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
 from .persistence import AgentThreadRepository
+from .persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -36,12 +35,12 @@ class AgentFrameworkAgent(FoundryCBAgent):
     """
     Adapter class for integrating Agent Framework agents with the FoundryCB agent interface.
 
-    This class wraps an Agent Framework `AgentProtocol` instance and provides a unified interface
+    This class wraps an Agent Framework `SupportsAgentRun` instance and provides a unified interface
     for running agents in both streaming and non-streaming modes. It handles input and output
     conversion between the Agent Framework and the expected formats for FoundryCB agents.
 
     Parameters:
-        agent (AgentProtocol): An instance of an Agent Framework agent to be adapted.
+        agent (SupportsAgentRun): An instance of an Agent Framework agent to be adapted.
 
     Usage:
         - Instantiate with an Agent Framework agent.
@@ -54,7 +53,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
                  thread_repository: Optional[AgentThreadRepository] = None,
                  project_endpoint: Optional[str] = None,
                  **kwargs) -> None:
-        """Initialize the AgentFrameworkAgent with an AgentProtocol.
+        """Initialize the AgentFrameworkAgent with a SupportsAgentRun-compatible agent adapter.
 
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
@@ -149,6 +148,8 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
     def _setup_tracing_with_azure_ai_client(self, project_endpoint: str):
         async def setup_async():
+            from agent_framework.azure import AzureAIClient  # pylint: disable=import-outside-toplevel,no-name-in-module
+
             async with AzureAIClient(
                 project_endpoint=project_endpoint,
                 async_credential=self.credentials,
@@ -180,17 +181,17 @@ class AgentFrameworkAgent(FoundryCBAgent):
     async def _load_agent_thread(
         self,
         context: AgentRunContext,
-        agent: Union[AgentProtocol, WorkflowAgent],
-    ) -> Optional[AgentThread]:
-        """Load the agent thread for a given conversation ID.
+        agent: Union[SupportsAgentRun, WorkflowAgent],
+    ) -> Optional[AgentSession]:
+        """Load the agent session for a given conversation ID.
 
         :param context: The agent run context.
         :type context: AgentRunContext
         :param agent: The agent instance.
-        :type agent: AgentProtocol | WorkflowAgent
+        :type agent: SupportsAgentRun | WorkflowAgent
 
-        :return: The loaded AgentThread if available, None otherwise.
-        :rtype: Optional[AgentThread]
+        :return: The loaded AgentSession if available, None otherwise.
+        :rtype: Optional[AgentSession]
         """
         if self._thread_repository and context.conversation_id:
             conversation_id = context.conversation_id
@@ -198,16 +199,16 @@ class AgentFrameworkAgent(FoundryCBAgent):
             if agent_thread:
                 logger.info(f"Loaded agent thread for conversation: {conversation_id}")
                 return agent_thread
-            return agent.get_new_thread()
+            return agent.create_session()
         return None
 
-    async def _save_agent_thread(self, context: AgentRunContext, agent_thread: AgentThread) -> None:
-        """Save the agent thread for a given conversation ID.
+    async def _save_agent_thread(self, context: AgentRunContext, agent_thread: AgentSession) -> None:
+        """Save the agent session for a given conversation ID.
 
         :param context: The agent run context.
         :type context: AgentRunContext
-        :param agent_thread: The agent thread to save.
-        :type agent_thread: AgentThread
+        :param agent_thread: The agent session to save.
+        :type agent_thread: AgentSession
 
         :return: None
         :rtype: None
@@ -219,18 +220,18 @@ class AgentFrameworkAgent(FoundryCBAgent):
     def _run_streaming_updates(
         self,
         context: AgentRunContext,
-        run_stream: Callable[[], AsyncGenerator[Any, None]],
-        agent_thread: Optional[AgentThread] = None,
+        stream_runner: Callable[[], AsyncGenerator[Any, None]],
+        agent_thread: Optional[AgentSession] = None,
     ) -> AsyncGenerator[ResponseStreamEvent, Any]:
         """
         Execute a streaming run with shared OAuth/error handling.
         
         :param context: The agent run context.
         :type context: AgentRunContext
-        :param run_stream: A callable that invokes the agent in stream mode
-        :type run_stream: Callable[[], AsyncGenerator[Any, None]]
+        :param stream_runner: A callable that invokes the agent in stream mode
+        :type stream_runner: Callable[[], AsyncGenerator[Any, None]]
         :param agent_thread: The agent thread to use during streaming updates.
-        :type agent_thread: Optional[AgentThread]
+        :type agent_thread: Optional[AgentSession]
 
         :return: An async generator yielding streaming events.
         :rtype: AsyncGenerator[ResponseStreamEvent, Any]
@@ -245,7 +246,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
             try:
                 update_count = 0
                 try:
-                    updates = run_stream()
+                    updates = stream_runner()
                     async for event in streaming_converter.convert(updates):
                         update_count += 1
                         yield event

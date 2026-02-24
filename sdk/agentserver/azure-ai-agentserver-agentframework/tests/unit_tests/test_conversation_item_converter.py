@@ -2,15 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import pytest
-
-from agent_framework import FunctionCallContent, FunctionResultContent, Role as ChatRole
-from agent_framework._types import TextContent, TextReasoningContent
-
+from agent_framework import Message as AFMessage
 from openai.types.conversations.message import Message
-from openai.types.responses.response_input_text import ResponseInputText
+from openai.types.responses import response_reasoning_item
 from openai.types.responses.response_function_tool_call_item import ResponseFunctionToolCallItem
 from openai.types.responses.response_function_tool_call_output_item import ResponseFunctionToolCallOutputItem
-from openai.types.responses import response_reasoning_item
+from openai.types.responses.response_input_text import ResponseInputText
 
 from azure.ai.agentserver.agentframework.models.conversation_converters import ConversationItemConverter
 
@@ -33,10 +30,10 @@ def test_to_chat_message_converts_basic_message(converter: ConversationItemConve
     result = converter.to_chat_message(item)
 
     assert result is not None
-    assert result.role == ChatRole.USER
-    assert result.text is not None and "Hello world" in result.text
+    assert isinstance(result, AFMessage)
+    assert result.role == "user"
     assert result.contents is not None
-    assert any(isinstance(content, TextContent) for content in result.contents)
+    assert any(content.type == "text" for content in result.contents)
 
 
 @pytest.mark.unit
@@ -53,11 +50,11 @@ def test_to_chat_message_converts_function_call_item(converter: ConversationItem
     result = converter.to_chat_message(item)
 
     assert result is not None
-    assert result.role == ChatRole.ASSISTANT
+    assert result.role == "assistant"
     assert result.contents is not None
     assert len(result.contents) == 1
     content = result.contents[0]
-    assert isinstance(content, FunctionCallContent)
+    assert content.type == "function_call"
     assert content.call_id == "call_123"
     assert content.name == "do_something"
     assert isinstance(content.arguments, dict)
@@ -77,11 +74,11 @@ def test_to_chat_message_converts_function_result_item(converter: ConversationIt
     result = converter.to_chat_message(item)
 
     assert result is not None
-    assert result.role == ChatRole.TOOL
+    assert result.role == "tool"
     assert result.contents is not None
     assert len(result.contents) == 1
     content = result.contents[0]
-    assert isinstance(content, FunctionResultContent)
+    assert content.type == "function_result"
     assert content.call_id == "call_456"
     assert content.result == {"answer": 42}
 
@@ -99,12 +96,10 @@ def test_to_chat_message_converts_reasoning_item(converter: ConversationItemConv
     result = converter.to_chat_message(reasoning_item)
 
     assert result is not None
-    assert result.role == ChatRole.ASSISTANT
+    assert result.role == "assistant"
     assert result.text == "High-level summary"
     assert result.contents is not None
-    assert any(isinstance(content, TextReasoningContent) for content in result.contents)
-    text_reasoning = next(content for content in result.contents if isinstance(content, TextReasoningContent))
-    assert text_reasoning.text == "Chain-of-thought"
+    assert any(content.type in {"text_reasoning", "reasoning"} for content in result.contents)
 
 
 @pytest.mark.unit

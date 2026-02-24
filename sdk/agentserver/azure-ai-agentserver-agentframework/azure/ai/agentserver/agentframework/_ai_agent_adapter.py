@@ -6,29 +6,29 @@ from __future__ import annotations
 
 from typing import Any, AsyncGenerator, Optional, Union
 
-from agent_framework import AgentProtocol
-from azure.core.credentials import TokenCredential
-from azure.core.credentials_async import AsyncTokenCredential
+from agent_framework import SupportsAgentRun
 
 from azure.ai.agentserver.core import AgentRunContext
-from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.agentserver.core.models import (
     Response as OpenAIResponse,
     ResponseStreamEvent,
 )
+from azure.ai.agentserver.core.tools import OAuthConsentRequiredError
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
-from .models.agent_framework_input_converters import AgentFrameworkInputConverter
+from ._agent_framework import AgentFrameworkAgent
+from .models.agent_framework_input_converters import transform_input
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from ._agent_framework import AgentFrameworkAgent
 from .persistence import AgentThreadRepository
 
 logger = get_logger()
 
 class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
-    def __init__(self, agent: AgentProtocol,
+    def __init__(self, agent: SupportsAgentRun,
                  credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
                  thread_repository: Optional[AgentThreadRepository] = None,
                  *,
@@ -49,10 +49,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
 
             agent_thread = await self._load_agent_thread(context, self._agent)
 
-            input_converter = AgentFrameworkInputConverter(hitl_helper=self._hitl_helper)
-            message = await input_converter.transform_input(
-                request_input,
-                agent_thread=agent_thread)
+            message = transform_input(request_input)
             logger.debug("Transformed input message type: %s", type(message))
 
             # Attach per-request context to the agent instance so tools can access it
@@ -68,9 +65,10 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             if context.stream:
                 return self._run_streaming_updates(
                     context=context,
-                    run_stream=lambda: self._agent.run_stream(
+                    stream_runner=lambda: self._agent.run(
                         message,
-                        thread=agent_thread,
+                        session=agent_thread,
+                        stream=True,
                     ),
                     agent_thread=agent_thread,
                 )
@@ -79,7 +77,7 @@ class AgentFrameworkAIAgentAdapter(AgentFrameworkAgent):
             logger.info("Running agent in non-streaming mode")
             result = await self._agent.run(
                 message,
-                thread=agent_thread)
+                session=agent_thread)
             logger.debug("Agent run completed, result type: %s", type(result))
             await self._save_agent_thread(context, agent_thread)
 

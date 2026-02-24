@@ -22,10 +22,10 @@ keywords = ["azure", "azure sdk"]
 
 dependencies = [
     "azure-ai-agentserver-core==1.0.0b14",
-    "agent-framework-azure-ai>=1.0.0b251112,<=1.0.0b260107",
-    "agent-framework-core>=1.0.0b251112,<=1.0.0b260107",
+    "agent-framework-azure-ai==1.0.0rc1",
+    "agent-framework-core==1.0.0rc1",
     "opentelemetry-exporter-otlp-proto-grpc>=1.36.0,<=1.39.0",
-    "opentelemetry-semantic-conventions-ai==0.4.13", # imported by af, will remove after af fixed breaking change
+    "opentelemetry-semantic-conventions-ai==0.4.13",
     "azure-ai-projects==2.0.0b3"
 ]
 

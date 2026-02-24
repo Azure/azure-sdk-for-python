@@ -1,18 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from abc import ABC, abstractmethod
 import json
 import os
+from abc import ABC, abstractmethod
 from typing import Any, Optional, Union
 
-from agent_framework import AgentThread, AgentProtocol, WorkflowAgent
+from agent_framework import AgentSession, SupportsAgentRun, WorkflowAgent
 
 
 class AgentThreadRepository(ABC):
     """
-    AgentThread repository to manage saved thread messages of agent threads and workflows.
-    
+    Repository to manage persisted agent session state for conversations and workflows.
+
     :meta private:
     """
 
@@ -20,48 +20,49 @@ class AgentThreadRepository(ABC):
     async def get(
         self,
         conversation_id: Optional[str],
-        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
-    ) -> Optional[AgentThread]:
+        agent: Optional[Union[SupportsAgentRun, WorkflowAgent]] = None,
+    ) -> Optional[AgentSession]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param agent: The agent instance. If provided, it can be used to deserialize the thread.
-        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
+        :type agent: Optional[Union[SupportsAgentRun, WorkflowAgent]]
 
-        :return: The saved AgentThread if available, None otherwise.
-        :rtype: Optional[AgentThread]
+        :return: The saved AgentSession if available, None otherwise.
+        :rtype: Optional[AgentSession]
         """
 
     @abstractmethod
-    async def set(self, conversation_id: Optional[str], thread: AgentThread) -> None:
+    async def set(self, conversation_id: Optional[str], thread: AgentSession) -> None:
         """Save the thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param thread: The thread to save.
-        :type thread: AgentThread
+        :type thread: AgentSession
         """
 
 
 class InMemoryAgentThreadRepository(AgentThreadRepository):
     """In-memory implementation of AgentThreadRepository."""
+
     def __init__(self) -> None:
-        self._inventory: dict[str, AgentThread] = {}
+        self._inventory: dict[str, AgentSession] = {}
 
     async def get(
         self,
         conversation_id: Optional[str],
-        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
-    ) -> Optional[AgentThread]:
+        agent: Optional[Union[SupportsAgentRun, WorkflowAgent]] = None,
+    ) -> Optional[AgentSession]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param agent: The agent instance. It will be used for in-memory repository for interface consistency.
-        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
-        :return: The saved AgentThread if available, None otherwise.
-        :rtype: Optional[AgentThread]
+        :type agent: Optional[Union[SupportsAgentRun, WorkflowAgent]]
+        :return: The saved AgentSession if available, None otherwise.
+        :rtype: Optional[AgentSession]
         """
         if not conversation_id:
             return None
@@ -69,13 +70,13 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
             return self._inventory[conversation_id]
         return None
 
-    async def set(self, conversation_id: Optional[str], thread: AgentThread) -> None:
+    async def set(self, conversation_id: Optional[str], thread: AgentSession) -> None:
         """Save the thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param thread: The thread to save.
-        :type thread: AgentThread
+        :type thread: AgentSession
         """
         if not conversation_id or not thread:
             return
@@ -83,48 +84,49 @@ class InMemoryAgentThreadRepository(AgentThreadRepository):
 
 
 class SerializedAgentThreadRepository(AgentThreadRepository):
-    """Implementation of AgentThreadRepository with AgentThread serialization."""
-    def __init__(self, agent: AgentProtocol) -> None:
+    """Implementation of AgentThreadRepository with AgentSession serialization."""
+
+    def __init__(self, agent: SupportsAgentRun) -> None:
         """
         Initialize the repository with the given agent.
 
         :param agent: The agent instance.
-        :type agent: AgentProtocol
+        :type agent: SupportsAgentRun
         """
         self._agent = agent
 
     async def get(
         self,
         conversation_id: Optional[str],
-        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
-    ) -> Optional[AgentThread]:
+        agent: Optional[Union[SupportsAgentRun, WorkflowAgent]] = None,
+    ) -> Optional[AgentSession]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param agent: The agent instance. If provided, it can be used to deserialize the thread.
                       Otherwise, the repository's agent will be used.
-        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
+        :type agent: Optional[Union[SupportsAgentRun, WorkflowAgent]]
 
-        :return: The saved AgentThread if available, None otherwise.
-        :rtype: Optional[AgentThread]
+        :return: The saved AgentSession if available, None otherwise.
+        :rtype: Optional[AgentSession]
         """
         if not conversation_id:
             return None
         serialized_thread = await self.read_from_storage(conversation_id)
         if serialized_thread:
             agent_to_use = agent or self._agent
-            thread = await agent_to_use.deserialize_thread(serialized_thread)
+            thread = await agent_to_use.deserialize_session(serialized_thread)
             return thread
         return None
 
-    async def set(self, conversation_id: Optional[str], thread: AgentThread) -> None:
+    async def set(self, conversation_id: Optional[str], thread: AgentSession) -> None:
         """Save the thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param thread: The thread to save.
-        :type thread: AgentThread
+        :type thread: AgentSession
         """
         if not conversation_id:
             return
@@ -157,7 +159,8 @@ class SerializedAgentThreadRepository(AgentThreadRepository):
 
 class JsonLocalFileAgentThreadRepository(SerializedAgentThreadRepository):
     """Json based implementation of AgentThreadRepository using local file storage."""
-    def __init__(self, agent: AgentProtocol, storage_path: str) -> None:
+
+    def __init__(self, agent: SupportsAgentRun, storage_path: str) -> None:
         super().__init__(agent)
         self._storage_path = storage_path
         os.makedirs(self._storage_path, exist_ok=True)

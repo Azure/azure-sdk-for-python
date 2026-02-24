@@ -4,34 +4,39 @@
 # pylint: disable=docstring-should-be-keyword
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from typing import Callable, Optional, Union, overload
+from typing import TYPE_CHECKING, Callable, Optional, Union, overload
 
-from agent_framework import AgentProtocol, BaseAgent, Workflow, WorkflowBuilder
-from azure.core.credentials_async import AsyncTokenCredential
+from agent_framework import BaseAgent, SupportsAgentRun, Workflow, WorkflowBuilder
+
+from azure.ai.agentserver.core.application import (  # pylint: disable=import-error,no-name-in-module
+    PackageMetadata,
+    set_current_app,
+)
 from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
-from azure.ai.agentserver.core.application import PackageMetadata, set_current_app  # pylint: disable=import-error,no-name-in-module
-
-from ._version import VERSION
-from ._agent_framework import AgentFrameworkAgent
-from ._ai_agent_adapter import AgentFrameworkAIAgentAdapter
-from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
 from ._foundry_tools import FoundryToolsChatMiddleware
+from ._version import VERSION
 from .persistence import AgentThreadRepository, CheckpointRepository
+
+if TYPE_CHECKING:
+    from ._agent_framework import AgentFrameworkAgent
+    from ._ai_agent_adapter import AgentFrameworkAIAgentAdapter
+    from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
 
 
 @overload
 def from_agent_framework(
-        agent: Union[BaseAgent, AgentProtocol],
+        agent: Union[BaseAgent, SupportsAgentRun],
         /,
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
         thread_repository: Optional[AgentThreadRepository]=None
     ) -> "AgentFrameworkAIAgentAdapter":
     """
-    Create an Agent Framework AI Agent Adapter from an AgentProtocol or BaseAgent.
+    Create an Agent Framework AI Agent Adapter from a SupportsAgentRun or BaseAgent.
 
     :param agent: The agent to adapt.
-    :type agent: Union[BaseAgent, AgentProtocol]
+    :type agent: Union[BaseAgent, SupportsAgentRun]
     :param credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
     :param thread_repository: Optional thread repository for agent thread management.
@@ -75,19 +80,19 @@ def from_agent_framework(
     ...
 
 def from_agent_framework(
-    agent_or_workflow: Union[BaseAgent, AgentProtocol, WorkflowBuilder, Callable[[], Workflow]],
+    agent_or_workflow: Union[BaseAgent, SupportsAgentRun, WorkflowBuilder, Callable[[], Workflow]],
     /,
     credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
     thread_repository: Optional[AgentThreadRepository] = None,
     checkpoint_repository: Optional[CheckpointRepository] = None,
 ) -> "AgentFrameworkAgent":
     """
-    Create an Agent Framework Adapter from either an AgentProtocol/BaseAgent or a
+    Create an Agent Framework Adapter from either a SupportsAgentRun/BaseAgent or a
     WorkflowAgent.
     One of agent or workflow must be provided.
 
     :param agent_or_workflow: The agent to adapt.
-    :type agent_or_workflow: Optional[Union[BaseAgent, AgentProtocol]]
+    :type agent_or_workflow: Optional[Union[BaseAgent, SupportsAgentRun]]
     :param credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
     :param thread_repository: Optional thread repository for agent thread management.
@@ -103,6 +108,8 @@ def from_agent_framework(
     """
 
     if isinstance(agent_or_workflow, WorkflowBuilder):
+        from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
+
         return AgentFrameworkWorkflowAdapter(
             workflow_factory=agent_or_workflow.build,
             credentials=credentials,
@@ -110,6 +117,8 @@ def from_agent_framework(
             checkpoint_repository=checkpoint_repository,
         )
     if isinstance(agent_or_workflow, Callable):  # type: ignore
+        from ._workflow_agent_adapter import AgentFrameworkWorkflowAdapter
+
         return AgentFrameworkWorkflowAdapter(
             workflow_factory=agent_or_workflow,
             credentials=credentials,
@@ -118,12 +127,14 @@ def from_agent_framework(
         )
     # raise TypeError("workflow must be a WorkflowBuilder or callable returning a Workflow")
 
-    if isinstance(agent_or_workflow, (AgentProtocol, BaseAgent)):
+    if isinstance(agent_or_workflow, (SupportsAgentRun, BaseAgent)):
+        from ._ai_agent_adapter import AgentFrameworkAIAgentAdapter
+
         return AgentFrameworkAIAgentAdapter(agent_or_workflow,
                                             credentials=credentials,
                                             thread_repository=thread_repository)
     raise TypeError("You must provide one of the instances of type "
-                    "[AgentProtocol, BaseAgent, WorkflowBuilder or callable returning a Workflow]")
+                    "[SupportsAgentRun, BaseAgent, WorkflowBuilder or callable returning a Workflow]")
 
 
 __all__ = [

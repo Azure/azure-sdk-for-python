@@ -1,13 +1,16 @@
 import importlib
+
+# Load _foundry_tools module directly without triggering parent __init__ which has heavy deps
+import importlib.util
 import inspect
+import sys
+from pathlib import Path
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import AsyncMock
 
-from typing import Any
-
 import pytest
-from agent_framework import AIFunction, ChatOptions
-from pydantic import Field, create_model
+from agent_framework import ChatOptions, FunctionTool
 
 # Import schema models directly from client._models to avoid heavy azure.identity import
 # chain triggered by azure.ai.agentserver.core.__init__.py
@@ -19,13 +22,16 @@ from azure.ai.agentserver.core.tools.client._models import (
 	SchemaProperty,
 	SchemaType,
 )
+from pydantic import Field, create_model
 
-# Load _foundry_tools module directly without triggering parent __init__ which has heavy deps
-import importlib.util
-import sys
-from pathlib import Path
-
-foundry_tools_path = Path(__file__).parent.parent.parent / "azure" / "ai" / "agentserver" / "agentframework" / "_foundry_tools.py"
+foundry_tools_path = (
+    Path(__file__).parent.parent.parent
+    / "azure"
+    / "ai"
+    / "agentserver"
+    / "agentframework"
+    / "_foundry_tools.py"
+)
 spec = importlib.util.spec_from_file_location("_foundry_tools", foundry_tools_path)
 foundry_tools_module = importlib.util.module_from_spec(spec)
 sys.modules["_foundry_tools"] = foundry_tools_module
@@ -93,7 +99,7 @@ async def test_to_aifunction_builds_pydantic_model_and_invokes(monkeypatch: pyte
 
 	client = FoundryToolClient(tools=[])
 	ai_func = client._to_aifunction(resolved_tool)
-	assert isinstance(ai_func, AIFunction)
+	assert isinstance(ai_func, FunctionTool)
 	assert ai_func.name == "echo"
 	assert ai_func.description == "Echo tool"
 
@@ -135,7 +141,7 @@ async def test_list_tools_uses_catalog_and_converts(monkeypatch: pytest.MonkeyPa
 	assert args[0] == list(allowed)
 
 	assert len(functions) == 1
-	assert isinstance(functions[0], AIFunction)
+	assert isinstance(functions[0], FunctionTool)
 	assert functions[0].name == "allowed_tool"
 
 
@@ -148,7 +154,7 @@ async def test_middleware_process_creates_chat_options_when_missing(monkeypatch:
 		return kwargs
 
 	DummyInput = create_model("DummyInput")
-	injected = [AIFunction(name="t", description="d", func=dummy_tool, input_model=DummyInput)]
+	injected = [FunctionTool(name="t", description="d", func=dummy_tool, input_model=DummyInput)]
 	monkeypatch.setattr(middleware._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
 
 	context = SimpleNamespace(chat_options=None)
@@ -156,9 +162,9 @@ async def test_middleware_process_creates_chat_options_when_missing(monkeypatch:
 
 	await middleware.process(context, next_fn)
 
-	assert isinstance(context.chat_options, ChatOptions)
-	assert context.chat_options.tools == injected
-	next_fn.assert_awaited_once_with(context)
+	assert isinstance(context.chat_options, dict)
+	assert context.chat_options.get("tools") == injected
+	next_fn.assert_awaited_once_with()
 
 
 @pytest.mark.unit
@@ -170,19 +176,19 @@ async def test_middleware_process_appends_to_existing_chat_options(monkeypatch: 
 		return kwargs
 
 	DummyInput = create_model("DummyInput")
-	injected = [AIFunction(name="t2", description="d2", func=dummy_tool, input_model=DummyInput)]
+	injected = [FunctionTool(name="t2", description="d2", func=dummy_tool, input_model=DummyInput)]
 	monkeypatch.setattr(middleware._foundry_tool_client, "list_tools", AsyncMock(return_value=injected))
 
 	# Existing ChatOptions with no tools should become injected
 	context = SimpleNamespace(chat_options=ChatOptions())
 	next_fn = AsyncMock()
 	await middleware.process(context, next_fn)
-	assert context.chat_options.tools == injected
+	assert context.chat_options.get("tools") == injected
 
 	# Existing ChatOptions with tools should be appended
-	existing = [AIFunction(name="t1", description="d1", func=dummy_tool, input_model=DummyInput)]
+	existing = [FunctionTool(name="t1", description="d1", func=dummy_tool, input_model=DummyInput)]
 	context = SimpleNamespace(chat_options=ChatOptions(tools=existing))
 	next_fn = AsyncMock()
 	await middleware.process(context, next_fn)
-	assert context.chat_options.tools == existing + injected
+	assert context.chat_options.get("tools") == existing + injected
 	assert next_fn.await_count == 1

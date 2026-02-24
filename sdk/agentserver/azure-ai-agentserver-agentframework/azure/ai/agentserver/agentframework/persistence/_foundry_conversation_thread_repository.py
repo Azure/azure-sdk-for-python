@@ -3,24 +3,28 @@
 # ---------------------------------------------------------
 from typing import Optional, Union
 
-from agent_framework import AgentThread, AgentProtocol, WorkflowAgent
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.credentials import TokenCredential
-from azure.ai.projects.aio import AIProjectClient
+from agent_framework import AgentSession, SupportsAgentRun, WorkflowAgent
 
 from azure.ai.agentserver.core.logger import get_logger
+from azure.ai.projects.aio import AIProjectClient
+from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 
-from .agent_thread_repository import AgentThreadRepository
 from ._foundry_conversation_message_store import FoundryConversationMessageStore
+from .agent_thread_repository import AgentThreadRepository
 
 logger = get_logger()
 
+
 class FoundryConversationThreadRepository(AgentThreadRepository):
     """A Foundry Conversation implementation of AgentThreadRepository."""
-    def __init__(self,
-                 agent: Optional[Union[AgentProtocol, WorkflowAgent]],
-                 project_endpoint: str,
-                 credential: Union[TokenCredential, AsyncTokenCredential]) -> None:
+
+    def __init__(
+        self,
+        agent: Optional[Union[SupportsAgentRun, WorkflowAgent]],
+        project_endpoint: str,
+        credential: Union[TokenCredential, AsyncTokenCredential],
+    ) -> None:
         self._agent = agent
         if not project_endpoint or not credential:
             raise ValueError(
@@ -28,21 +32,21 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
                 "FoundryConversationThreadRepository."
             )
         self._client = AIProjectClient(project_endpoint, credential)
-        self._inventory: dict[str, AgentThread] = {}
+        self._inventory: dict[str, AgentSession] = {}
 
     async def get(
         self,
         conversation_id: Optional[str],
-        agent: Optional[Union[AgentProtocol, WorkflowAgent]] = None,
-    ) -> Optional[AgentThread]:
+        agent: Optional[Union[SupportsAgentRun, WorkflowAgent]] = None,
+    ) -> Optional[AgentSession]:
         """Retrieve the saved thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param agent: The agent instance. It will be used for in-memory repository for interface consistency.
-        :type agent: Optional[Union[AgentProtocol, WorkflowAgent]]
-        :return: The saved AgentThread if available, None otherwise.
-        :rtype: Optional[AgentThread]
+        :type agent: Optional[Union[SupportsAgentRun, WorkflowAgent]]
+        :return: The saved AgentSession if available, None otherwise.
+        :rtype: Optional[AgentSession]
         """
         if not conversation_id:
             return None
@@ -54,22 +58,20 @@ class FoundryConversationThreadRepository(AgentThreadRepository):
         self._inventory[conversation_id] = FoundryConversationThread(message_store=message_store)
         return self._inventory[conversation_id]
 
-    async def set(self,
-            conversation_id: Optional[str],
-            thread: AgentThread) -> None:
+    async def set(self, conversation_id: Optional[str], thread: AgentSession) -> None:
         """Save the thread for a given conversation ID.
 
         :param conversation_id: The conversation ID.
         :type conversation_id: Optional[str]
         :param thread: The thread to save.
-        :type thread: AgentThread
+        :type thread: AgentSession
         """
         if not conversation_id:
-            raise ValueError("conversation_id is required to save an AgentThread.")
+            raise ValueError("conversation_id is required to save an AgentSession.")
         self._inventory[conversation_id] = thread
 
 
-class FoundryConversationThread(AgentThread):
+class FoundryConversationThread(AgentSession):
     @property
     def service_thread_id(self) -> str | None:
         return self._service_thread_id
