@@ -1,6 +1,13 @@
 # Release History
 
 
+## 1.0.0b14 (2026-02-24)
+
+### Other Changes
+
+- Pin opentelemetry-semantic-conventions-ai==0.4.13.
+
+
 ## 1.0.0b13 (2026-02-20)
 
 ### Other Changes
