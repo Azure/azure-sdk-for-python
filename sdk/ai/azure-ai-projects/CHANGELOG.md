@@ -1,5 +1,7 @@
 # Release History
 
+## 2.0.0b5 (Unreleased)
+
 ## 2.0.0b4 (2026-02-24)
 
 This is the first release that uses the Generally Available (GA) version "v1" of the Foundry REST APIs.
