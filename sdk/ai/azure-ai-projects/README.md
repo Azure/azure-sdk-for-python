@@ -1039,7 +1039,19 @@ print(fine_tuning_job)
 
 ## Tracing
 
-**Note:** Tracing functionality is in preliminary preview and is subject to change. Spans, attributes, and events may be modified in future versions.
+### Experimental Feature Gate
+
+**Important:** GenAI tracing instrumentation is an experimental preview feature. Spans, attributes, and events may be modified in future versions. To use it, you must explicitly opt in by setting the environment variable:
+
+```bash
+AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true
+```
+
+This environment variable must be set before calling `AIProjectInstrumentor().instrument()`. If the environment variable is not set or is set to any value other than `true` (case-insensitive), tracing instrumentation will not be enabled and a warning will be logged.
+
+Only enable this feature after reviewing your requirements and understanding that the tracing behavior may change in future versions.
+
+### Getting Started with Tracing
 
 You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your AI Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
 
@@ -1060,6 +1072,8 @@ pip install opentelemetry-exporter-otlp
 ```
 
 ### How to enable tracing
+
+**Remember:** Before enabling tracing, ensure you have set the `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` environment variable as described in the [Experimental Feature Gate](#experimental-feature-gate) section.
 
 Here is a code sample that shows how to enable Azure Monitor tracing:
 
@@ -1090,7 +1104,7 @@ See the full sample in file `\agents\telemetry\sample_agent_basic_with_azure_mon
 
 **Note:** In order to view the traces in the Microsoft Foundry portal, the agent ID should be passed in as part of the response generation request.
 
-In addition, you might find it helpful to see the tracing logs in the console. You can achieve this with the following code:
+In addition, you might find it helpful to see the tracing logs in the console. Remember to set `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` before running the following code:
 
 <!-- SNIPPET:sample_agent_basic_with_console_tracing.setup_console_tracing -->
 

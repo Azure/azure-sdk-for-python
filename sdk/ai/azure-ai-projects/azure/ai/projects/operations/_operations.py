@@ -7426,7 +7426,7 @@ class BetaMemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
@@ -7441,8 +7441,11 @@ class BetaMemoryStoresOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword items: A list of queries you would like to use in the search, each one represented as
+         a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
+         ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
+         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :paramtype items: list[dict[str, any]]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -7496,7 +7499,7 @@ class BetaMemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any
@@ -7510,8 +7513,11 @@ class BetaMemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: Items for which to search for relevant memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword items: A list of queries you would like to use in the search, each one represented as
+         a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
+         ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
+         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :paramtype items: list[dict[str, any]]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -7606,7 +7612,7 @@ class BetaMemoryStoresOperations:
         *,
         foundry_features: Literal[FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW],
         scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -7692,7 +7698,7 @@ class BetaMemoryStoresOperations:
         *,
         scope: str,
         content_type: str = "application/json",
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -7713,7 +7719,7 @@ class BetaMemoryStoresOperations:
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         scope: str = _Unset,
-        items: Optional[List[_models.InputItem]] = None,
+        items: Optional[List[dict[str, Any]]] = None,
         previous_update_id: Optional[str] = None,
         update_delay: Optional[int] = None,
         **kwargs: Any
@@ -7727,8 +7733,11 @@ class BetaMemoryStoresOperations:
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: Conversation items from which to extract memories. Default value is None.
-        :paramtype items: list[~azure.ai.projects.models.InputItem]
+        :keyword items: A list of message items you would like to store in memory, each one represented
+         as a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
+         ``message``). Each message is identical to OpenAI's EasyInputMessageParam. For example:
+         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :paramtype items: list[dict[str, any]]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
