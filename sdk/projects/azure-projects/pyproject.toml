@@ -1,11 +1,85 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-projects"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Projects Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.8"
+keywords = [
+    "azure",
+    "azure sdk",
+    "azure projects",
+]
+dependencies = [
+    "typing-extensions>=4.5",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.2",
+    "azure-core>=1.31.0",
+    "azure-identity>=1.20",
+    "azure-appconfiguration-provider>=2.0.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.optional-dependencies]
+mcp = [
+    "mcp>=1.6",
+    "makefun>=1.15",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 mypy = true
 type_check_samples = true
 verifytypes = true
-# TODO: Get pyright passing
 pyright = false
 pylint = true
 black = true
 sphinx = true
-# absolute_cov = true
-# absolute_cov_percent = 80.00
+
+[tool.setuptools.dynamic.version]
+attr = "azure.projects._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+]
+
+[tool.setuptools.package-data]
+"azure.projects" = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false

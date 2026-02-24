@@ -1,6 +1,77 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-synapse-managedprivateendpoints"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Synapse Managed Private Endpoints Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.6"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "msrest>=0.6.21",
+    "azure-common~=1.1",
+    "azure-core>=1.20.0,<2.0.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 pyright = false
 ci_enabled = false
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.synapse.managedprivateendpoints._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.synapse",
+]
+
+[packaging]
+package_name = "azure-synapse-managedprivateendpoints"
+package_nspkg = "azure-synapse-nspkg"
+package_pprint_name = "Synapse Managed Private Endpoints"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+need_azurecore = true
+auto_update = false

@@ -1,0 +1,69 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-media-videoanalyzer-edge"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Azure Video Analyzer Edge SDK Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.6"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "msrest>=0.6.21",
+    "azure-core<2.0.0,>=1.2.2",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/videoanalyzer/azure-media-videoanalyzer-edge"
+
+[tool.setuptools.dynamic.version]
+attr = "azure.media.videoanalyzeredge._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "samples",
+    "tests",
+    "azure",
+    "azure.media",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+is_arm = false
+need_msrestazure = false
+auto_update = false

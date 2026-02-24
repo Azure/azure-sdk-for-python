@@ -1,6 +1,78 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-mgmt-customproviders"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Custom Providers Management Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.7"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "msrest>=0.7.1",
+    "azure-common~=1.1",
+    "azure-mgmt-core>=1.3.2,<2.0.0",
+    "typing-extensions>=4.3.0; python_version<'3.8.0'",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 breaking = false
 mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.mgmt.customproviders._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.mgmt",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-mgmt-customproviders"
+package_pprint_name = "Custom Providers Management"
+package_doc_id = ""
+is_stable = false
+title = "Customproviders"

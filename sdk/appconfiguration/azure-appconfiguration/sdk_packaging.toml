@@ -1,9 +1,0 @@
-[packaging]
-package_name = "azure-data-appconfiguration"
-package_nspkg = "azure-data-nspkg"
-package_pprint_name = "App Configuration Data"
-package_doc_id = ""
-is_stable = false
-is_arm = false
-need_msrestazure = false
-auto_update = false

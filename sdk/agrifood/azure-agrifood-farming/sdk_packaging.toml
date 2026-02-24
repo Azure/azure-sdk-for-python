@@ -1,9 +1,0 @@
-[packaging]
-auto_update = false
-package_name = "azure-agrifood-Farming"
-package_pprint_name = "Azure AgriFood Farming"
-is_stable = false
-is_arm = false
-
-# Package owners should uncomment and set this doc id.
-# package_doc_id = "agrifood-farming"

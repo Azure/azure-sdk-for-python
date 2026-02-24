@@ -153,14 +153,11 @@ def generate_packaging_and_ci_files(package_path: Path):
 
     package_name = package_path.name
     if "azure-mgmt-" in package_name:
-        # if codegen generate pyproject.toml instead of setup.py, we delete existing setup.py
+        # delete setup.py if pyproject.toml exists (packages now use pyproject.toml)
         setup_py = package_path / "setup.py"
-        if setup_py.exists():
-            _LOGGER.info(f"delete {setup_py} since codegen generate pyproject.toml")
-            with open(pyproject_toml, "rb") as f:
-                pyproject_content = toml.load(f)
-            if pyproject_content.get("project"):
-                setup_py.unlink()
+        if setup_py.exists() and pyproject_toml.exists():
+            _LOGGER.info(f"delete {setup_py} since packages now use pyproject.toml")
+            setup_py.unlink()
 
         call_build_config(package_name, str(package_path.parent))
     else:

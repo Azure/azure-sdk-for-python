@@ -1,3 +1,56 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-monitor-opentelemetry"
+authors = [
+    { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
+]
+description = "Microsoft Azure Monitor Opentelemetry Distro Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.8"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "azure-core<2.0.0,>=1.28.0",
+    "azure-core-tracing-opentelemetry~=1.0.0b11",
+    "azure-monitor-opentelemetry-exporter~=1.0.0b47",
+    "opentelemetry-sdk==1.39",
+    "opentelemetry-instrumentation-django==0.60b0",
+    "opentelemetry-instrumentation-fastapi==0.60b0",
+    "opentelemetry-instrumentation-flask==0.60b0",
+    "opentelemetry-instrumentation-psycopg2==0.60b0",
+    "opentelemetry-instrumentation-requests==0.60b0",
+    "opentelemetry-instrumentation-urllib==0.60b0",
+    "opentelemetry-instrumentation-urllib3==0.60b0",
+    "opentelemetry-resource-detector-azure<1.0.0,>=0.1.5",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-opentelemetry"
+
 [tool.azure-sdk-build]
 pyright = false
 pylint = true
@@ -6,3 +59,28 @@ black = true
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.monitor.opentelemetry._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "samples",
+    "azure",
+    "azure.monitor",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false

@@ -1,6 +1,82 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-mgmt-costmanagement"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Cost Management Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+requires-python = ">=3.7"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "isodate<1.0.0,>=0.6.1",
+    "azure-common~=1.1",
+    "azure-mgmt-core>=1.3.2,<2.0.0",
+    "typing-extensions>=4.3.0; python_version<'3.8.0'",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 breaking = false
 mypy = false
 pyright = false
 type_check_samples = false
 verifytypes = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.mgmt.costmanagement._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.mgmt",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-mgmt-costmanagement"
+package_nspkg = "azure-mgmt-nspkg"
+package_pprint_name = "Cost Management"
+package_doc_id = ""
+is_stable = true
+is_arm = true
+title = "CostManagementClient"
+no_sub = true

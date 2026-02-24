@@ -1,2 +1,84 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-iot-deviceprovisioning"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure IoT Device Provisioning Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.7"
+keywords = [
+    "azure",
+    "azure sdk",
+    "iot",
+    "dps",
+    "device",
+    "provisioning",
+]
+dependencies = [
+    "azure-core<2.0.0,>=1.24.0",
+    "isodate<1.0.0,>=0.6.1",
+    "typing-extensions>=4.3.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.optional-dependencies]
+aio = [
+    "azure-core[aio]<2.0.0,>=1.24.0",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 pylint = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.iot.deviceprovisioning._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.iot",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-iot-deviceprovisioning"
+package_pprint_name = "IoT Device Provisioning Client"
+package_doc_id = "iot"
+is_stable = true
+is_arm = false
+sample_link = ""
+title = "DeviceProvisioningClient"

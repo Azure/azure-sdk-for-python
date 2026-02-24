@@ -1,5 +1,84 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-ai-textanalytics"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Text Analytics Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.8"
+keywords = [
+    "azure",
+    "azure sdk",
+    "text analytics",
+    "cognitive services",
+    "natural language processing",
+]
+dependencies = [
+    "azure-core>=1.27.0",
+    "azure-common>=1.1",
+    "isodate>=0.6.1",
+    "typing-extensions>=4.0.1",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 pyright = false
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.ai.textanalytics._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.package-data]
+"azure.ai.textanalytics" = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-ai-textanalytics"
+package_nspkg = "azure-ai-nspkg"
+package_pprint_name = "Azure Text Analytics"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false
+auto_update = false

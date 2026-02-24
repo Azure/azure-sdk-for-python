@@ -1,0 +1,71 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-ai-inference"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure AI Inference Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 7 - Inactive",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.8"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "isodate>=0.6.1",
+    "azure-core>=1.30.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.optional-dependencies]
+opentelemetry = [
+    "azure-core-tracing-opentelemetry",
+]
+prompts = [
+    "pyyaml",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference"
+
+[tool.setuptools.dynamic.version]
+attr = "azure.ai.inference._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.package-data]
+"azure.ai.inference" = [
+    "py.typed",
+]

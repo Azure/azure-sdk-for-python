@@ -1,2 +1,82 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-cognitiveservices-personalizer"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Personalizer Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 7 - Inactive",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 2",
+    "Programming Language :: Python :: 2.7",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+]
+requires-python = ">=3.9"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "msrest>=0.6.21",
+    "azure-common~=1.1",
+    "azure-mgmt-core>=1.2.0,<2.0.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.optional-dependencies]
+":python_version<'3.0'" = [
+    "azure-cognitiveservices-nspkg",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 pylint = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.cognitiveservices.personalizer.version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.cognitiveservices",
+]
+
+[tool.setuptools.package-data]
+pytyped = [
+    "py.typed",
+]
+
+[packaging]
+package_name = "azure-cognitiveservices-personalizer"
+package_nspkg = "azure-cognitiveservices-nspkg"
+package_pprint_name = "Personalizer"
+package_doc_id = ""
+is_stable = false
+is_arm = false
+need_msrestazure = false

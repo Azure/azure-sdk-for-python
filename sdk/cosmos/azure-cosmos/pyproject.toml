@@ -1,3 +1,48 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-cosmos"
+authors = [
+    { name = "Microsoft Corporation", email = "askdocdb@microsoft.com" },
+]
+description = "Microsoft Azure Cosmos Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.9"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "azure-core>=1.30.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [tool.azure-sdk-build]
 mypy = true
 pyright = false
@@ -5,3 +50,16 @@ pylint = true
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.cosmos._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+    "CHANGELOG.md",
+]
+content-type = "text/markdown"
+
+[packaging]
+auto_update = false

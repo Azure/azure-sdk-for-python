@@ -1,6 +1,73 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-developer-loadtesting"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Azure Developer Loadtesting Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.8"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "isodate>=0.6.1",
+    "azure-core>=1.30.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
+
 [tool.azure-sdk-build]
 pylint = false
 pyright = false
 
 [tool.azure-sdk-conda]
 in_bundle = false
+
+[tool.setuptools.dynamic.version]
+attr = "azure.developer.loadtesting._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.developer",
+]
+
+[tool.setuptools.package-data]
+"azure.developer.loadtesting" = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false

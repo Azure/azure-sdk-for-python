@@ -1,3 +1,46 @@
+[build-system]
+requires = [
+    "setuptools>=77.0.3",
+    "wheel",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-communication-jobrouter"
+authors = [
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+description = "Microsoft Communication JobRouter Client Library for Python"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+requires-python = ">=3.9"
+keywords = [
+    "azure",
+    "azure sdk",
+]
+dependencies = [
+    "isodate>=0.6.1",
+    "azure-core>=1.30.0",
+    "typing-extensions>=4.6.0",
+]
+dynamic = [
+    "version",
+    "readme",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk"
+
 [tool.azure-sdk-build]
 pyright = false
 sphinx = false
@@ -5,3 +48,32 @@ sphinx = false
 [tool.azure-sdk-conda]
 in_bundle = true
 bundle_name = "azure-communication"
+
+[tool.setuptools.dynamic.version]
+attr = "azure.communication.jobrouter._version.VERSION"
+
+[tool.setuptools.dynamic.readme]
+file = [
+    "README.md",
+]
+content-type = "text/markdown"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests",
+    "azure",
+    "azure.communication",
+]
+
+[tool.setuptools.package-data]
+"azure.communication.jobrouter" = [
+    "py.typed",
+]
+
+[packaging]
+auto_update = false
+package_name = "azure-communication-jobrouter"
+package_pprint_name = "Communication JobRouter"
+package_doc_id = "communication-jobrouter"
+is_stable = false
+is_arm = false
