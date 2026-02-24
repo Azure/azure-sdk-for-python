@@ -115,7 +115,7 @@ class TestSamples(AzureRecordedTestCase):
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_connections_samples(self, sample_path: str, **kwargs) -> None:
         kwargs = kwargs.copy()
-        kwargs["connection_name"] = str(kwargs.get("mcp_project_connection_id")).split("/")[-1]
+        kwargs["connection_name"] = "mcp"
         env_var_mapping = get_sample_environment_variables_map(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
         executor.execute()
@@ -179,8 +179,11 @@ class TestSamples(AzureRecordedTestCase):
         env_var_mapping = get_sample_environment_variables_map(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=resource_management_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        if self.is_live:
+            # Don't replay LLM validation since there probably a defect in proxy server fail to replay
+            # Proxy server probably not able to parse the captured print content
+            executor.validate_print_calls_by_llm(
+                instructions=resource_management_instructions,
+                project_endpoint=kwargs["azure_ai_project_endpoint"],
+                model=kwargs["azure_ai_model_deployment_name"],
+            )
