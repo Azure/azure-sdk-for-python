@@ -193,18 +193,6 @@ class RetentionPolicy(GeneratedRetentionPolicy):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
     @classmethod
-    def _deserialize(cls, data, exist_discriminators):
-        """Override to handle internal deserialization from the generated layer.
-
-        When the generated layer deserializes nested XML/dict data, it calls
-        cls._deserialize(data, []) which would normally call cls(data) — but our
-        __init__ expects (enabled, days) kwargs, not raw data. Route through the
-        generated parent to parse the raw data, then convert via _from_generated.
-        """
-        generated = GeneratedRetentionPolicy(data)
-        return cls._from_generated(generated)
-
-    @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return cls()
