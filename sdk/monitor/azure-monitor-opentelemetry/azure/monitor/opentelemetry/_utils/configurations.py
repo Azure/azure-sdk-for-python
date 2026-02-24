@@ -40,6 +40,7 @@ from azure.monitor.opentelemetry._constants import (
     _FULLY_SUPPORTED_INSTRUMENTED_LIBRARIES,
     _PREVIEW_INSTRUMENTED_LIBRARIES,
     BROWSER_SDK_LOADER_CONFIG_ARG,
+    CONNECTION_STRING_ARG,
     DISABLE_LOGGING_ARG,
     DISABLE_METRICS_ARG,
     DISABLE_TRACING_ARG,
@@ -95,6 +96,7 @@ def _get_configurations(**kwargs) -> Dict[str, ConfigurationValue]:
     _default_disable_logging(configurations)
     _default_disable_metrics(configurations)
     _default_disable_tracing(configurations)
+    _default_connection_string(configurations)
     _default_logger_name(configurations)
     _default_logging_formatter(configurations)
     _default_resource(configurations)
@@ -134,6 +136,10 @@ def _default_disable_tracing(configurations):
         if environ[OTEL_TRACES_EXPORTER].lower().strip() == "none":
             default = True
     configurations[DISABLE_TRACING_ARG] = default
+
+
+def _default_connection_string(configurations):
+    configurations.setdefault(CONNECTION_STRING_ARG, environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING", ""))
 
 
 def _default_logger_name(configurations):

@@ -4,8 +4,9 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from azure.monitor.opentelemetry._browser_sdk_loader._config import BrowserSDKConfig
 from azure.monitor.opentelemetry._constants import BROWSER_SDK_LOADER_CONFIG_ARG
@@ -92,6 +93,30 @@ class TestBrowserSDKIntegration(unittest.TestCase):
 
         # Should not call setup_snippet_injection when disabled
         mock_setup_snippet.assert_not_called()
+
+    @patch("azure.monitor.opentelemetry._configure.setup_snippet_injection")
+    def test_configure_azure_monitor_uses_env_connection_string_for_browser_loader(self, mock_setup_snippet):
+        """Test browser SDK loader falls back to env connection string when not passed in kwargs."""
+        from azure.monitor.opentelemetry._configure import _setup_browser_sdk_loader
+        from azure.monitor.opentelemetry._utils.configurations import _get_configurations
+
+        env_connection_string = (
+            "InstrumentationKey=12345678-1234-1234-1234-123456789012;"
+            "IngestionEndpoint=https://test.in.applicationinsights.azure.com/"
+        )
+
+        with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": env_connection_string}, clear=False):
+            configurations = _get_configurations(
+                browser_sdk_loader_config={
+                    "enabled": True,
+                }
+            )
+            _setup_browser_sdk_loader(configurations)
+
+        mock_setup_snippet.assert_called_once()
+        call_args = mock_setup_snippet.call_args[0][0]
+        self.assertIsInstance(call_args, BrowserSDKConfig)
+        self.assertEqual(call_args.connection_string, env_connection_string)
 
     def test_browser_sdk_config_from_dict_conversion(self):
         """Test conversion of dictionary to BrowserSDKConfig."""

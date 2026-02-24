@@ -441,8 +441,9 @@ def _setup_browser_sdk_loader(configurations: Dict[str, ConfigurationValue]):
             return
 
         # Get connection string (use browser SDK config first, then main config)
-        connection_string = browser_sdk_loader_config.get("connection_string") or cast(
-            str, configurations.get("connection_string", "")
+        connection_string = (
+            browser_sdk_loader_config.get("connection_string")
+            or cast(str, configurations.get("connection_string", ""))
         )
         if not connection_string or not isinstance(connection_string, str):
             _logger.debug("No valid connection string - skipping browser SDK loader setup")
