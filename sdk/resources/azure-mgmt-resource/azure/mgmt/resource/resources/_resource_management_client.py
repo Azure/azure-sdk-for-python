@@ -27,6 +27,7 @@ from .operations import (
     ResourceGroupsOperations,
     ResourcesOperations,
     TagsOperations,
+    BatchOperations,
 )
 
 if TYPE_CHECKING:
@@ -50,6 +51,8 @@ class ResourceManagementClient:
     :vartype resource_groups: azure.mgmt.resource.resources.operations.ResourceGroupsOperations
     :ivar tags: TagsOperations operations
     :vartype tags: azure.mgmt.resource.resources.operations.TagsOperations
+    :ivar batch_operations: BatchOperations operations (2025-08-01-preview)  
+    :vartype batch_operations: azure.mgmt.resource.resources.operations.BatchOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The Microsoft Azure subscription ID. Required.
@@ -120,6 +123,7 @@ class ResourceManagementClient:
         self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.batch_operations = BatchOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

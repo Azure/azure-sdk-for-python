@@ -18,6 +18,7 @@ from ._operations import ProviderResourceTypesOperations  # type: ignore
 from ._operations import ResourcesOperations  # type: ignore
 from ._operations import ResourceGroupsOperations  # type: ignore
 from ._operations import TagsOperations  # type: ignore
+from ._batch_operations import BatchOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -30,6 +31,7 @@ __all__ = [
     "ResourcesOperations",
     "ResourceGroupsOperations",
     "TagsOperations",
+    "BatchOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

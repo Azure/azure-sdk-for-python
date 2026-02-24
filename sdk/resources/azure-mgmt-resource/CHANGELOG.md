@@ -1,5 +1,22 @@
 # Release History
 
+## 25.1.0b1 (TBD)
+
+### Features Added
+
+  - Added support for ARM Batch Operations API (2025-08-01-preview)
+  - New `BatchOperations` operation group with the following methods:
+    - `begin_invoke_at_subscription_scope()` - Execute batch requests at subscription scope
+    - `begin_invoke_at_resource_group_scope()` - Execute batch requests at resource group scope
+  - New models for batch operations:
+    - `BatchRequest` - Individual request specification within a batch
+    - `BatchRequests` - Container for multiple batch requests
+    - `BatchResponse` - Individual response from a batch request
+    - `BatchResponseStatus` - Overall batch operation status and results
+    - `BatchProvisioningState` - Enum for batch operation states
+  - Batch operations support Long Running Operations (LRO) with proper polling
+  - Both synchronous and asynchronous execution patterns supported
+
 ## 25.0.0 (2026-02-04)
 
 ### Breaking Changes
