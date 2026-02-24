@@ -192,7 +192,7 @@ MyPy | {OLD_NEXT_MYPY_VERSION} | {NEW_NEXT_MYPY_VERSION} | {TARGET_DATE} |
 Pyright | {OLD_NEXT_PYRIGHT_VERSION} | {NEW_NEXT_PYRIGHT_VERSION} | {TARGET_DATE} |
 ```
 
-The `{TARGET_DATE}` should be approximately 8 weeks from today (the date when the next-* versions would be merged if CI passes).
+The `{TARGET_DATE}` should be approximately 12 weeks from today (the date when the next-* versions would be merged if CI passes).
 
 If there is no newer version available yet, use `N/A` for both **Next Version** and **Next Version Merge Date**.
 
