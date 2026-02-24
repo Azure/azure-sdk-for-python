@@ -1432,7 +1432,11 @@ class RedTeam:
 
                 # Process and return results
                 return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
-            except Exception:
+            except Exception as e:
+                self.logger.error(
+                    f"Red team scan execution failed for run {getattr(eval_run, 'id', 'unknown')}: {str(e)}",
+                    exc_info=True,
+                )
                 # Ensure the run status is updated to Failed if an upload was started
                 if not skip_upload and self.mlflow_integration is not None:
                     self.mlflow_integration.update_run_status(eval_run, "Failed")
