@@ -175,6 +175,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return self._not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self._threshold,
+                has_details=True,
             )
 
         # Preprocess messages if they are lists
@@ -237,7 +238,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         }
 
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **prompty_input)
-        llm_output = prompty_output_dict["llm_output"]
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             flagged = llm_output.get("flagged", False)
@@ -249,6 +250,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             return {
                 f"{self._result_key}": score,
                 f"{self._result_key}_result": score_result,
+                f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_reason": reasoning,
                 f"{self._result_key}_details": llm_output.get("details", ""),
                 f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),

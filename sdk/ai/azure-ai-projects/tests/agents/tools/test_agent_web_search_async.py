@@ -5,12 +5,16 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, WebSearchPreviewTool, ApproximateLocation
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentWebSearchAsync(TestBase):
 
     @servicePreparer()
@@ -46,7 +50,7 @@ class TestAgentWebSearchAsync(TestBase):
 
             response = await openai_client.responses.create(
                 input="What is the current weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response)

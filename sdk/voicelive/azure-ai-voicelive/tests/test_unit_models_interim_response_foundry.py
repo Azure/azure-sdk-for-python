@@ -52,7 +52,9 @@ class TestStaticInterimResponseConfig:
     def test_static_interim_response_with_triggers(self):
         """Test StaticInterimResponseConfig with triggers."""
         config = StaticInterimResponseConfig(
-            triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL], latency_threshold_ms=2000, texts=["Please wait..."]
+            triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL],
+            latency_threshold_ms=2000,
+            texts=["Please wait..."],
         )
 
         assert config.type == InterimResponseConfigType.STATIC_INTERIM_RESPONSE
@@ -251,7 +253,9 @@ class TestIntegrationScenarios:
 
     def test_session_with_interim_response_and_reasoning(self):
         """Test complete session with interim response config and reasoning effort."""
-        interim = LlmInterimResponseConfig(triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL], model="gpt-4o-mini")
+        interim = LlmInterimResponseConfig(
+            triggers=[InterimResponseTrigger.LATENCY, InterimResponseTrigger.TOOL], model="gpt-4o-mini"
+        )
         session = RequestSession(
             model="gpt-4o-realtime-preview",
             reasoning_effort=ReasoningEffort.MEDIUM,
@@ -292,7 +296,10 @@ class TestSerialization:
     def test_llm_interim_response_serialization(self):
         """Test LlmInterimResponseConfig serialization."""
         config = LlmInterimResponseConfig(
-            triggers=[InterimResponseTrigger.TOOL], model="gpt-4o-mini", instructions="Be brief", max_completion_tokens=50
+            triggers=[InterimResponseTrigger.TOOL],
+            model="gpt-4o-mini",
+            instructions="Be brief",
+            max_completion_tokens=50,
         )
 
         data = dict(config)
