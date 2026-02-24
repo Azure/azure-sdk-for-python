@@ -41,7 +41,7 @@ need to set an additional input argument `foundry_features=FoundryFeaturesOptInK
 * Operation sets that are still in preview now have the ".beta" subclient in their call path. So for example
 `project_client.memory_stores.create()` has changed to `project_client.beta.memory_stores.create()`.
 Similarly for the operation sets: `evaluators`, `insights`, `evaluation_taxonomies`, `schedules` and `red_teams`.
-* The method `begin_update_memories()` in Memory Stores operation now accept optional `items` of type `List[dict[str, Any]`
+* The method `begin_update_memories()` in Memory Stores operation now accept optional `items` of type `List[dict[str, Any]]`
 instead  of `List[ItemParam]`. Similarly for `items` in method `search_memories()`. As a result around 100 classes
 that are derived from `ItemParam` were removed as they are no longer used by the client library.
 * Tracing instrumentation, is an experimental preview feature, now requires explicitly opt in by setting the environment variable:
