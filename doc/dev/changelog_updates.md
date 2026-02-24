@@ -109,7 +109,7 @@ npx chronus status
 
 Packages in this repository that use `pyproject.toml` (instead of or alongside `setup.py`) are fully supported by Chronus. The `pyproject.toml` is used for package metadata, while the `CHANGELOG.md` in the package directory remains the canonical user-facing changelog.
 
-Chronus reads the package version from the Python package metadata and writes changelog entries into the `CHANGELOG.md` file during the release process. You do not need to manually edit `CHANGELOG.md` for your changes — Chronus handles this when the release is prepared.
+Chronus reads the package version from the Python package metadata and writes changelog entries into the `CHANGELOG.md` file with `npx chronus changelog`. You do not need to manually edit `CHANGELOG.md` for your changes.
 
 ## Further Reading
 
