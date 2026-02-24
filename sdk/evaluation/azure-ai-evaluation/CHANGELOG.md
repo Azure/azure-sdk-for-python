@@ -1,6 +1,12 @@
 # Release History
 
-## 1.15.1 (Unreleased)
+## 1.15.2 (2026-02-23)
+
+### Bugs Fixed
+
+- Batch Eval fix per row use case.
+
+## 1.15.1 (2026-02-19)
 
 ### Bugs Fixed
 
