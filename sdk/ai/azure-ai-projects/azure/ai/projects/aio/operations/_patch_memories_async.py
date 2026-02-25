@@ -7,11 +7,11 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, List, overload, IO, cast, Literal
+from typing import Union, Optional, Any, overload, IO, cast, Literal
+from openai.types.responses import ResponseInputParam
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
-from openai.types.responses import ResponseInputParam
 from ... import models as _models
 from ...models import (
     FoundryFeaturesOptInKeys,

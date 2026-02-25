@@ -8,10 +8,10 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import Union, Optional, Any, List, overload, IO, cast, Literal
+from openai.types.responses import ResponseInputParam
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.polling import NoPolling
 from azure.core.utils import case_insensitive_dict
-from openai.types.responses import ResponseInputParam
 from .. import models as _models
 from ..models import (
     FoundryFeaturesOptInKeys,
@@ -30,7 +30,13 @@ from .._utils.model_base import _deserialize, _serialize
 def _serialize_response_input_items(
     items: Optional[Union[str, ResponseInputParam]],
 ) -> Optional[List[dict[str, Any]]]:
-    """Serialize OpenAI response input items to the payload shape expected by memory APIs."""
+    """Serialize OpenAI response input items to the payload shape expected by memory APIs.
+
+    :param items: The items to serialize. Can be a plain string or an OpenAI ResponseInputParam.
+    :type items: Optional[Union[str, openai.types.responses.ResponseInputParam]]
+    :return: A list of serialized item dictionaries, or None if items is None.
+    :rtype: Optional[List[dict[str, Any]]]
+    """
 
     if items is None:
         return None
