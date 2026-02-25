@@ -5,6 +5,7 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport
@@ -12,6 +13,9 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentMCPAsync(TestBase):
 
     # To run only this test:
@@ -59,7 +63,7 @@ class TestAgentMCPAsync(TestBase):
             response = await openai_client.responses.create(
                 conversation=conversation.id,
                 input="Please summarize the Azure REST API specifications Readme",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -97,7 +101,7 @@ class TestAgentMCPAsync(TestBase):
             response = await openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")

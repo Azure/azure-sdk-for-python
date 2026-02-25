@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-07-28-preview",
+  "apiVersions": {
+    "Microsoft.ManagedOps": "2025-07-28-preview"
+  },
+  "commit": "98e82285689a90ad69d8f289ea0794d2c88eca5f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/managedoperations/ManagedOps.Management",
+  "emitterVersion": "0.60.1"
+}

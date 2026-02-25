@@ -100,7 +100,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self.threshold = threshold
 
         # Initialize input validator
-        self._validator = ToolCallsValidator(error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR)
+        self._validator = ToolCallsValidator(
+            error_target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+            check_for_unsupported_tools=True,
+        )
 
         super().__init__(
             model_config=model_config,
@@ -212,6 +215,24 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
+        # Import helper functions from base class module
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
+        # Check for intermediate response
+        if _is_intermediate_response(eval_input.get("response")):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self.threshold,
+                has_details=True,
+            )
+
+        # Preprocess messages if they are lists
+        if isinstance(eval_input.get("response"), list):
+            eval_input["response"] = _preprocess_messages(eval_input["response"])
+
         if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to the Tool Call Accuracy evaluator."),
@@ -221,9 +242,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
             )
 
+        if isinstance(eval_input.get("query"), list):
+            eval_input["query"] = _preprocess_messages(eval_input["query"])
+
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -262,10 +286,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         else:
             raise EvaluationException(
-                message="Tool call accuracy evaluator returned invalid output.",
+                message="Evaluator returned invalid output.",
                 blame=ErrorBlame.SYSTEM_ERROR,
                 category=ErrorCategory.FAILED_EXECUTION,
-                target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
+                target=ErrorTarget.EVALUATE,
             )
 
     async def _real_call(self, **kwargs):
@@ -283,7 +307,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
+            return self._not_applicable_result(eval_input.get("error_message"), self.threshold, has_details=True)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

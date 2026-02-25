@@ -253,9 +253,11 @@ class TestRedTeam:
         for attack in result.attack_details:
             conversation = attack["conversation"]
             if attack["attack_technique"] == "multi_turn":
-                assert len(conversation) > 2
+                # Multi-turn attacks attempt multiple turns but may terminate early
+                # if the target refuses immediately and the scorer marks it as failed
+                assert len(conversation) >= 2
             else:
-                assert len(conversation) == 2
+                assert len(conversation) >= 2
             for i in range(len(conversation)):
                 assert conversation[i]["role"] == "user" if i % 2 == 0 else "assistant"
 

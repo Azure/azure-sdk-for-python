@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -93,7 +93,7 @@ def main() -> None:
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
         )
 
-        taxonomy = project_client.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
         taxonomy_path = os.path.join(tempfile.gettempdir(), f"taxonomy_{agent_name}.json")
         with open(taxonomy_path, "w") as f:
             f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))

@@ -16,6 +16,9 @@ from azure.ai.projects.models import (
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentCodeInterpreter(TestBase):
 
     @servicePreparer()
@@ -67,7 +70,7 @@ class TestAgentCodeInterpreter(TestBase):
 
             response = openai_client.responses.create(
                 input="Calculate this using Python: First, find the sum of cubes from 1 to 50 (1³ + 2³ + ... + 50³). Then add 12 factorial divided by 8 factorial (12!/8!). What is the final result?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 
@@ -168,7 +171,7 @@ class TestAgentCodeInterpreter(TestBase):
 
             response = openai_client.responses.create(
                 input="Create a bar chart showing operating profit by sector from the uploaded CSV file. Save it as a PNG file.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
             self.validate_response(response)
 

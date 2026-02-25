@@ -7,6 +7,12 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix io counters import issue in performance counters
+  ([#45286](https://github.com/Azure/azure-sdk-for-python/pull/45286))
+- Remove custom properties truncation
+  ([#45118](https://github.com/Azure/azure-sdk-for-python/pull/45118))
+- Fix fallback logic when connection string is provided only via environment variable
+  ([#45252](https://github.com/Azure/azure-sdk-for-python/pull/45252))
 
 ### Other Changes
 

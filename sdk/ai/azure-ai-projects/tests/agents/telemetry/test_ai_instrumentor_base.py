@@ -17,6 +17,7 @@ from memory_trace_exporter import MemoryTraceExporter
 from test_base import TestBase
 
 CONTENT_TRACING_ENV_VARIABLE = "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"
+EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE = "AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING"
 
 
 # We test different ways to create a thread & message, to cover all tracing code paths
@@ -31,6 +32,9 @@ class MessageCreationMode(IntEnum):
     )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAiAgentsInstrumentorBase(TestBase):
     """The utility methods, used by AI Instrumentor test."""
 
@@ -49,10 +53,12 @@ class TestAiAgentsInstrumentorBase(TestBase):
         self.cleanup()
 
     def setup_telemetry(self):
-        trace._TRACER_PROVIDER = TracerProvider()
+        os.environ[EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE] = "true"
+        tracer_provider = TracerProvider()
+        trace._TRACER_PROVIDER = tracer_provider
         self.exporter = MemoryTraceExporter()
         span_processor = SimpleSpanProcessor(self.exporter)
-        trace.get_tracer_provider().add_span_processor(span_processor)
+        tracer_provider.add_span_processor(span_processor)
         AIProjectInstrumentor().instrument()
 
     def cleanup(self):
@@ -60,6 +66,7 @@ class TestAiAgentsInstrumentorBase(TestBase):
         AIProjectInstrumentor().uninstrument()
         trace._TRACER_PROVIDER = None
         os.environ.pop(CONTENT_TRACING_ENV_VARIABLE, None)
+        os.environ.pop(EXPERIMENTAL_ENABLE_GENAI_TRACING_ENV_VARIABLE, None)
 
     def _check_spans(
         self,

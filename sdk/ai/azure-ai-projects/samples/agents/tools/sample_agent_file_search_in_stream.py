@@ -15,7 +15,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -89,7 +89,7 @@ with (
                 "content": "Tell me about Contoso products and their features in detail. Please search through the available documentation.",
             },
         ],
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print("Processing streaming file search results...\n")
@@ -117,7 +117,7 @@ with (
         input=[
             {"role": "user", "content": "Tell me about Smart Eyewear and its features."},
         ],
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     print("Processing follow-up streaming response...\n")

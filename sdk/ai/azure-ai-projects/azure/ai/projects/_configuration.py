@@ -23,21 +23,21 @@ class AIProjectClientConfiguration:  # pylint: disable=too-many-instance-attribu
     attributes.
 
     :param endpoint: Foundry Project endpoint in the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}".
-     If you only have one Project in your Foundry Hub, or to target the default Project
-     in your Hub, use the form
-     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project". Required.
+     "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
+     only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
+     the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
+     Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-15-preview". Note that overriding this default value may result in unsupported
+    :keyword api_version: The API version to use for this operation. Known values are "v1" and
+     None. Default value is "v1". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-11-15-preview")
+        api_version: str = kwargs.pop("api_version", "v1")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

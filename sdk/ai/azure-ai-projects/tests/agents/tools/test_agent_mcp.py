@@ -13,6 +13,9 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentMCP(TestBase):
 
     # To run only this test:
@@ -87,7 +90,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input="Please summarize the Azure REST API specifications Readme",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -125,7 +128,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")
@@ -230,7 +233,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input="What is my username in Github profile?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Initial response completed")
@@ -268,7 +271,7 @@ class TestAgentMCP(TestBase):
             response = openai_client.responses.create(
                 conversation=conversation.id,
                 input=input_list,
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             self.validate_response(response, print_message="Final response completed")

@@ -132,7 +132,7 @@ def _urljoin(base_url: str, stub_url: str) -> str:
     # https://docs.python.org/3/library/collections.html?highlight=namedtuple#collections.namedtuple
     if stub_url_path:
         parsed_base_url = parsed_base_url._replace(
-            path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path,
+            path=parsed_base_url.path.rstrip("/") + "/" + stub_url_path.lstrip("/"),
         )
     if stub_url_query:
         query_params = [stub_url_query]
@@ -662,7 +662,6 @@ class PipelineClientBase:
         if url:
             parsed = urlparse(url)
             if not parsed.scheme or not parsed.netloc:
-                url = url.lstrip("/")
                 try:
                     base = self._base_url.format(**kwargs).rstrip("/")
                 except KeyError as key:

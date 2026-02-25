@@ -29,6 +29,9 @@ global_meter_provider = MeterProvider(metric_readers=[global_metric_reader])
 metrics.set_meter_provider(global_meter_provider)
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentorMetrics(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor metrics functionality with real endpoints."""
 

@@ -1,10 +1,19 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
 
 """
+WARNING:
+Grounding with Bing Custom Search tool uses Grounding with Bing, which has additional costs and terms.
+    Terms of use:
+        https://www.microsoft.com/bing/apis/grounding-legal-enterprise
+    Privacy statement:
+        https://go.microsoft.com/fwlink/?LinkId=521839&clcid=0x409
+    Customer data will flow outside the Azure compliance boundary.
+    Learn more:
+        https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/bing-tools
+
 DESCRIPTION:
     This sample demonstrates how to create an AI agent with Bing Custom Search capabilities
     using the BingCustomSearchPreviewTool and synchronous Azure AI Projects client. The agent can search
@@ -15,7 +24,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -79,7 +88,7 @@ with (
     stream_response = openai_client.responses.create(
         stream=True,
         input=user_input,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:

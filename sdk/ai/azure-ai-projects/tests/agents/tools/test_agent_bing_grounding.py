@@ -16,6 +16,9 @@ from azure.ai.projects.models import (
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentBingGrounding(TestBase):
 
     @servicePreparer()
@@ -90,7 +93,7 @@ class TestAgentBingGrounding(TestBase):
                 stream=True,
                 tool_choice="required",
                 input="What is the current weather in Seattle?",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             for event in stream_response:
@@ -193,7 +196,7 @@ class TestAgentBingGrounding(TestBase):
                     stream=True,
                     tool_choice="required",
                     input=query,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 for event in stream_response:

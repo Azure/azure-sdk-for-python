@@ -30,6 +30,9 @@ settings.tracing_implementation = "OpenTelemetry"
 _utils._span_impl_type = settings.tracing_implementation()
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
     """Tests for ResponsesInstrumentor with browser automation agents."""
 
@@ -98,7 +101,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 assert response.output is not None
@@ -233,7 +236,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=False,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
 
                 self.exporter.force_flush()
@@ -356,7 +359,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
                 for _ in stream:
                     pass
@@ -482,7 +485,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
                           news stories and provide a summary of the most recent one.
                           """,
                     stream=True,
-                    extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                    extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
                 )
                 for _ in stream:
                     pass

@@ -9,7 +9,7 @@ import threading
 
 import psutil
 
-from opentelemetry.sdk._logs import ReadableLogRecord
+from opentelemetry.sdk._logs import ReadWriteLogRecord
 from opentelemetry.sdk.metrics import MeterProvider, Meter
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import ReadableSpan
@@ -214,43 +214,43 @@ class _QuickpulseManager(metaclass=Singleton):
         if not self._meter:
             raise ValueError("Meter must be initialized before creating instruments")
 
-        self._request_duration = self._meter.create_histogram(
+        self._request_duration = self._meter.create_histogram(  # type: ignore
             _REQUEST_DURATION_NAME[0], "ms", "live metrics avg request duration in ms"
         )
-        self._dependency_duration = self._meter.create_histogram(
+        self._dependency_duration = self._meter.create_histogram(  # type: ignore
             _DEPENDENCY_DURATION_NAME[0], "ms", "live metrics avg dependency duration in ms"
         )
         # We use a counter to represent rates per second because collection
         # interval is one second so we simply need the number of requests
         # within the collection interval
-        self._request_rate_counter = self._meter.create_counter(
+        self._request_rate_counter = self._meter.create_counter(  # type: ignore
             _REQUEST_RATE_NAME[0], "req/sec", "live metrics request rate per second"
         )
-        self._request_failed_rate_counter = self._meter.create_counter(
+        self._request_failed_rate_counter = self._meter.create_counter(  # type: ignore
             _REQUEST_FAILURE_RATE_NAME[0], "req/sec", "live metrics request failed rate per second"
         )
-        self._dependency_rate_counter = self._meter.create_counter(
+        self._dependency_rate_counter = self._meter.create_counter(  # type: ignore
             _DEPENDENCY_RATE_NAME[0], "dep/sec", "live metrics dependency rate per second"
         )
-        self._dependency_failure_rate_counter = self._meter.create_counter(
+        self._dependency_failure_rate_counter = self._meter.create_counter(  # type: ignore
             _DEPENDENCY_FAILURE_RATE_NAME[0], "dep/sec", "live metrics dependency failure rate per second"
         )
-        self._exception_rate_counter = self._meter.create_counter(
+        self._exception_rate_counter = self._meter.create_counter(  # type: ignore
             _EXCEPTION_RATE_NAME[0], "exc/sec", "live metrics exception rate per second"
         )
-        self._process_memory_gauge_old = self._meter.create_observable_gauge(
+        self._process_memory_gauge_old = self._meter.create_observable_gauge(  # type: ignore
             _COMMITTED_BYTES_NAME[0],
             [_get_process_memory],
         )
-        self._process_memory_gauge = self._meter.create_observable_gauge(
+        self._process_memory_gauge = self._meter.create_observable_gauge(  # type: ignore
             _PROCESS_PHYSICAL_BYTES_NAME[0],
             [_get_process_memory],
         )
-        self._process_time_gauge_old = self._meter.create_observable_gauge(
+        self._process_time_gauge_old = self._meter.create_observable_gauge(  # type: ignore
             _PROCESSOR_TIME_NAME[0],
             [_get_process_time_normalized_old],
         )
-        self._process_time_gauge = self._meter.create_observable_gauge(
+        self._process_time_gauge = self._meter.create_observable_gauge(  # type: ignore
             _PROCESS_TIME_NORMALIZED_NAME[0],
             [_get_process_time_normalized],
         )
@@ -354,7 +354,7 @@ class _QuickpulseManager(metaclass=Singleton):
         except Exception as e:  # pylint: disable=broad-except
             _logger.exception("Exception occurred while recording span: %s", e)  # pylint: disable=C4769
 
-    def _record_log_record(self, readable_log_record: ReadableLogRecord) -> None:
+    def _record_log_record(self, read_write_log_record: ReadWriteLogRecord) -> None:
         # Only record if in post state and manager is initialized
         if not (_is_post_state() and self.is_initialized()):
             return
@@ -365,9 +365,9 @@ class _QuickpulseManager(metaclass=Singleton):
             return
 
         try:
-            if readable_log_record.log_record:
+            if read_write_log_record.log_record:
                 exc_type = None
-                log_record = readable_log_record.log_record
+                log_record = read_write_log_record.log_record
                 if log_record.attributes:
                     exc_type = log_record.attributes.get(SpanAttributes.EXCEPTION_TYPE)
                     exc_message = log_record.attributes.get(SpanAttributes.EXCEPTION_MESSAGE)

@@ -15,14 +15,16 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv azure-monitor-opentelemetry
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv azure-monitor-opentelemetry
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
+       disabled by default.
+    4) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
@@ -72,7 +74,7 @@ with (
 
             response = openai_client.responses.create(
                 conversation=conversation.id,
-                extra_body={"agent": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "id": agent.id, "type": "agent_reference"}},
                 input="What is the size of France in square miles?",
             )
             print(f"Response output: {response.output_text}")

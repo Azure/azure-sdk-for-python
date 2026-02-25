@@ -7,10 +7,17 @@
 import os
 import sys
 import re
+import logging
+import importlib
 import pytest
 import inspect
 import importlib.util
 import functools
+import traceback
+import tempfile
+from datetime import datetime
+from contextlib import contextmanager
+
 
 from dataclasses import dataclass, field
 from typing import overload, Union, Optional
@@ -173,12 +180,14 @@ class BaseSampleExecutor:
         sample_path: str,
         *,
         env_var_mapping: dict[str, str] = {},
+        allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
         self._original_print = print
+        self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
 
         # Prepare environment variables
         self.env_vars = {}
@@ -219,6 +228,190 @@ class BaseSampleExecutor:
         self.print_calls.append(" ".join(str(arg) for arg in args))
         self._original_print(*args, **kwargs)
 
+    @contextmanager
+    def _capture_debug_logs(self):
+        """Capture logger DEBUG output into the same array used for print capture."""
+
+        bearer_token_pattern = re.compile(r"(?i)(Bearer\s+)([^\s\"',;]+)")
+
+        def _sanitize_log_message(message: str) -> str:
+            return bearer_token_pattern.sub(r"\1<REDACTED>", message)
+
+        class _PrintCaptureLogHandler(logging.Handler):
+            def __init__(self, sink: list[str]):
+                super().__init__(level=logging.DEBUG)
+                self._sink = sink
+                self._included_logger_prefixes = (
+                    "azure",
+                    "msrest",
+                    "openai",
+                    "httpx",
+                )
+
+            def emit(self, record: logging.LogRecord) -> None:
+                if not any(record.name.startswith(prefix) for prefix in self._included_logger_prefixes):
+                    return
+                try:
+                    message = self.format(record)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    message = record.getMessage()
+                self._sink.append(_sanitize_log_message(message))
+
+        root_logger = logging.getLogger()
+        previous_root_level = root_logger.level
+
+        target_loggers = [
+            "azure",
+            "azure.core",
+            "azure.core.pipeline.policies.http_logging_policy",
+            "msrest",
+            "msrest.http_logger",
+            "httpx",
+            "openai",
+        ]
+
+        previous_logger_levels: dict[str, int] = {}
+        for logger_name in target_loggers:
+            logger_instance = logging.getLogger(logger_name)
+            previous_logger_levels[logger_name] = logger_instance.level
+            logger_instance.setLevel(logging.DEBUG)
+
+        patched_is_enabled_for = []
+        for module_name in ["msrest.http_logger", "azure.core.pipeline.policies._universal"]:
+            try:
+                module = importlib.import_module(module_name)
+                module_logger = getattr(module, "_LOGGER", None)
+                if module_logger and hasattr(module_logger, "isEnabledFor"):
+                    original_is_enabled_for = module_logger.isEnabledFor
+
+                    def _always_true(_level, _logger=module_logger):
+                        return True
+
+                    module_logger.isEnabledFor = _always_true
+                    patched_is_enabled_for.append((module_logger, original_is_enabled_for))
+            except Exception:  # pylint: disable=broad-exception-caught
+                continue
+
+        capture_handler = _PrintCaptureLogHandler(self.print_calls)
+        capture_handler.setFormatter(logging.Formatter("[%(name)s] %(message)s"))
+
+        root_logger.setLevel(logging.DEBUG)
+        root_logger.addHandler(capture_handler)
+
+        try:
+            yield
+        finally:
+            root_logger.removeHandler(capture_handler)
+            root_logger.setLevel(previous_root_level)
+
+            for logger_name, logger_level in previous_logger_levels.items():
+                logging.getLogger(logger_name).setLevel(logger_level)
+
+            for module_logger, original_is_enabled_for in patched_is_enabled_for:
+                module_logger.isEnabledFor = original_is_enabled_for
+
+    def _get_log_file_path(self, log_env_var: str) -> Optional[str]:
+        """Get and prepare log file path based on environment variable.
+
+        Args:
+            log_env_var: Environment variable name to check for log format
+
+        Returns:
+            Path to the log file (cleaned up and ready to write), or None if logging is disabled
+        """
+        # Only create logs in live mode
+        if not _is_live_mode():
+            return None
+
+        # Only log if environment variable is set
+        log_format = os.environ.get(log_env_var)
+        if not log_format:
+            return None
+
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        sample_filename = os.path.basename(self.sample_path).replace(".py", "")
+
+        # Replace placeholders in the format template
+        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
+        log_file = os.path.join(tempfile.gettempdir(), log_filename)
+
+        # Remove existing file if present to ensure clean overwrite
+        if os.path.exists(log_file):
+            os.remove(log_file)
+
+        return log_file
+
+    def _write_error_log(self, reason: str, exception_info: str) -> Optional[str]:
+        """Write captured print statements to a log file for execution errors.
+
+        Args:
+            reason: Description of the exception
+            exception_info: Traceback or exception details to include in log
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_ERROR_LOG")
+        if not log_file:
+            return None
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Execution Error:\n{reason}\n\n")
+            f.write("Exception Details:\n")
+            f.write("=" * 80 + "\n")
+            f.write(exception_info)
+            f.write("\n" + "=" * 80 + "\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
+    def _write_failed_log(self, reason: str) -> Optional[str]:
+        """Write captured print statements to a log file for validation failures.
+
+        Args:
+            reason: Description of why validation failed
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_FAILED_LOG")
+        if not log_file:
+            return None
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Validation Failed: {reason}\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
+    def _write_passed_log(self, reason: str = "Validation passed") -> Optional[str]:
+        """Write captured print statements to a log file for validation passes.
+
+        Args:
+            reason: Description of successful validation
+
+        Returns:
+            Path to the created log file, or None if logging is disabled
+        """
+        log_file = self._get_log_file_path("SAMPLE_TEST_PASSED_LOG")
+        if not log_file:
+            return None
+
+        with open(log_file, "w", encoding="utf-8") as f:
+            f.write(f"Sample: {self.sample_path}\n")
+            f.write(f"Validation Passed: {reason}\n\n")
+            f.write("Print Statements:\n")
+            f.write("=" * 80 + "\n")
+            for i, print_call in enumerate(self.print_calls, 1):
+                f.write(f"{i}. {print_call}\n")
+        return log_file
+
     def _get_validation_request_params(self, instructions: str, model: str = "gpt-4o") -> dict:
         """Get common parameters for validation request."""
         return {
@@ -240,23 +433,26 @@ class BaseSampleExecutor:
 
     def _assert_validation_result(self, test_report: dict) -> None:
         """Assert validation result and print reason."""
-        if not test_report["correct"]:
-            # Write print statements to log file in temp folder for debugging
-            import tempfile
-            from datetime import datetime
+        sample_filename = os.path.basename(self.sample_path)
+        is_allowed_to_fail = sample_filename in self.allowed_llm_validation_failures
 
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            log_file = os.path.join(tempfile.gettempdir(), f"sample_validation_error_{timestamp}.log")
-            with open(log_file, "w", encoding="utf-8") as f:
-                f.write(f"Sample: {self.sample_path}\n")
-                f.write(f"Validation Error: {test_report['reason']}\n\n")
-                f.write("Print Statements:\n")
-                f.write("=" * 80 + "\n")
-                for i, print_call in enumerate(self.print_calls, 1):
-                    f.write(f"{i}. {print_call}\n")
-            print(f"\nValidation failed! Print statements logged to: {log_file}")
-        assert test_report["correct"], f"Error is identified: {test_report['reason']}"
-        print(f"Reason: {test_report['reason']}")
+        if not test_report["correct"]:
+            log_file = self._write_failed_log(test_report["reason"])
+            if log_file:
+                print(f"\nValidation failed! Print statements logged to: {log_file}")
+
+            if is_allowed_to_fail:
+                print(
+                    f"\nWARNING: '{sample_filename}' is in allowed_llm_validation_failures - test passing despite validation failure"
+                )
+                print(f"Reason: {test_report['reason']}")
+            else:
+                assert False, f"Error is identified: {test_report['reason']}"
+        else:
+            log_file = self._write_passed_log(test_report["reason"])
+            if log_file:
+                print(f"\nValidation passed! Print statements logged to: {log_file}")
+            print(f"Reason: {test_report['reason']}")
 
 
 class SamplePathPasser:
@@ -280,8 +476,22 @@ class SamplePathPasser:
 class SyncSampleExecutor(BaseSampleExecutor):
     """Synchronous sample executor that only uses sync credentials."""
 
-    def __init__(self, test_instance, sample_path: str, *, env_var_mapping: dict[str, str] = {}, **kwargs):
-        super().__init__(test_instance, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+    def __init__(
+        self,
+        test_instance,
+        sample_path: str,
+        *,
+        env_var_mapping: dict[str, str] = {},
+        allowed_llm_validation_failures: Optional[set[str]] = None,
+        **kwargs,
+    ):
+        super().__init__(
+            test_instance,
+            sample_path,
+            env_var_mapping=env_var_mapping,
+            allowed_llm_validation_failures=allowed_llm_validation_failures,
+            **kwargs,
+        )
         self.tokenCredential: Optional[TokenCredential | FakeTokenCredential] = None
 
     def _get_mock_credential(self):
@@ -308,26 +518,38 @@ class SyncSampleExecutor(BaseSampleExecutor):
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
         ):
+            mp.setenv("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "true")
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
 
             with (
+                self._capture_debug_logs(),
                 mock.patch("builtins.print", side_effect=self._capture_print),
                 mock.patch("builtins.open", side_effect=patched_open_fn),
             ):
-                self.spec.loader.exec_module(self.module)
-                # In playback mode, patch time functions on the module:
-                # - time.sleep: avoid waiting for polling loops (instant)
-                # - time.time: return fixed value for deterministic request bodies
-                # Must be done after exec_module so the module's 'time' reference can be patched.
-                if not is_live() and hasattr(self.module, "time"):
-                    self.module.time.sleep = lambda _: None
-                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-                # Call main() if it exists (samples wrap their code in main())
-                if hasattr(self.module, "main") and callable(self.module.main):
-                    self.module.main()
+                try:
+                    self.spec.loader.exec_module(self.module)
+                    # In playback mode, patch time functions on the module:
+                    # - time.sleep: avoid waiting for polling loops (instant)
+                    # - time.time: return fixed value for deterministic request bodies
+                    # Must be done after exec_module so the module's 'time' reference can be patched.
+                    if not is_live() and hasattr(self.module, "time"):
+                        self.module.time.sleep = lambda _: None
+                        self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                    # Call main() if it exists (samples wrap their code in main())
+                    if hasattr(self.module, "main") and callable(self.module.main):
+                        self.module.main()
+                except Exception as e:
+                    # Log print statements with exception details before re-raising
+                    exception_info = traceback.format_exc()
+                    log_file = self._write_error_log(
+                        reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info
+                    )
+                    if log_file:
+                        print(f"\nSample execution failed! Print statements logged to: {log_file}")
+                    raise
 
     def validate_print_calls_by_llm(
         self,
@@ -348,20 +570,51 @@ class SyncSampleExecutor(BaseSampleExecutor):
         )
         with (
             AIProjectClient(
-                endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential)
+                endpoint=endpoint, credential=cast(TokenCredential, self.tokenCredential), logging_enable=True
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            response = openai_client.responses.create(**self._get_validation_request_params(instructions, model=model))
-            test_report = json.loads(response.output_text)
+            response = None
+            try:
+                response = openai_client.responses.create(
+                    **self._get_validation_request_params(instructions, model=model)
+                )
+                test_report = json.loads(response.output_text)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                response_output_text = None
+                try:
+                    response_output_text = response.output_text if response is not None else None
+                except Exception:  # pylint: disable=broad-exception-caught
+                    response_output_text = None
+
+                reason = f"LLM validation request/parsing failed: {type(e).__name__}: {str(e)}"
+                if response_output_text:
+                    reason += f". Raw output_text: {response_output_text}"
+
+                test_report = {"correct": False, "reason": reason}
+
             self._assert_validation_result(test_report)
 
 
 class AsyncSampleExecutor(BaseSampleExecutor):
     """Asynchronous sample executor that uses async credentials."""
 
-    def __init__(self, test_instance, sample_path: str, *, env_var_mapping: dict[str, str] = {}, **kwargs):
-        super().__init__(test_instance, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+    def __init__(
+        self,
+        test_instance,
+        sample_path: str,
+        *,
+        env_var_mapping: dict[str, str] = {},
+        allowed_llm_validation_failures: Optional[set[str]] = None,
+        **kwargs,
+    ):
+        super().__init__(
+            test_instance,
+            sample_path,
+            env_var_mapping=env_var_mapping,
+            allowed_llm_validation_failures=allowed_llm_validation_failures,
+            **kwargs,
+        )
         self.tokenCredential: Optional[AsyncTokenCredential | AsyncFakeCredential] = None
 
     def _get_mock_credential(self):
@@ -387,24 +640,34 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         with (
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
+            self._capture_debug_logs(),
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_fn),
         ):
+            mp.setenv("AZURE_AI_PROJECTS_CONSOLE_LOGGING", "true")
             for var_name, var_value in self.env_vars.items():
                 mp.setenv(var_name, var_value)
             if self.spec.loader is None:
                 raise ImportError(f"Could not load module {self.spec.name} from {self.sample_path}")
-            self.spec.loader.exec_module(self.module)
-            # In playback mode, patch time functions on the module:
-            # - time.sleep: avoid waiting for polling loops (instant)
-            # - time.time: return fixed value for deterministic request bodies
-            # Must be done after exec_module so the module's 'time' reference can be patched.
-            if not is_live() and hasattr(self.module, "time"):
-                self.module.time.sleep = lambda _: None
-                self.module.time.time = lambda: PLAYBACK_TIMESTAMP
-            # Call main() if it exists (samples wrap their code in main())
-            if hasattr(self.module, "main") and callable(self.module.main):
-                await self.module.main()
+            try:
+                self.spec.loader.exec_module(self.module)
+                # In playback mode, patch time functions on the module:
+                # - time.sleep: avoid waiting for polling loops (instant)
+                # - time.time: return fixed value for deterministic request bodies
+                # Must be done after exec_module so the module's 'time' reference can be patched.
+                if not is_live() and hasattr(self.module, "time"):
+                    self.module.time.sleep = lambda _: None
+                    self.module.time.time = lambda: PLAYBACK_TIMESTAMP
+                # Call main() if it exists (samples wrap their code in main())
+                if hasattr(self.module, "main") and callable(self.module.main):
+                    await self.module.main()  # type: ignore[misc]
+            except Exception as e:
+                # Log print statements with exception details before re-raising
+                exception_info = traceback.format_exc()
+                log_file = self._write_error_log(reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info)
+                if log_file:
+                    print(f"\nSample execution failed! Print statements logged to: {log_file}")
+                raise
 
     async def validate_print_calls_by_llm_async(
         self,
@@ -425,14 +688,29 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         )
         async with (
             AsyncAIProjectClient(
-                endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential)
+                endpoint=endpoint, credential=cast(AsyncTokenCredential, self.tokenCredential), logging_enable=True
             ) as project_client,
             project_client.get_openai_client() as openai_client,
         ):
-            response = await openai_client.responses.create(
-                **self._get_validation_request_params(instructions, model=model)
-            )
-            test_report = json.loads(response.output_text)
+            response = None
+            try:
+                response = await openai_client.responses.create(
+                    **self._get_validation_request_params(instructions, model=model)
+                )
+                test_report = json.loads(response.output_text)
+            except Exception as e:  # pylint: disable=broad-exception-caught
+                response_output_text = None
+                try:
+                    response_output_text = response.output_text if response is not None else None
+                except Exception:  # pylint: disable=broad-exception-caught
+                    response_output_text = None
+
+                reason = f"LLM validation request/parsing failed: {type(e).__name__}: {str(e)}"
+                if response_output_text:
+                    reason += f". Raw output_text: {response_output_text}"
+
+                test_report = {"correct": False, "reason": reason}
+
             self._assert_validation_result(test_report)
 
 

@@ -6,11 +6,15 @@
 # cSpell:disable
 
 import os
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
 from azure.ai.projects.models import PromptAgentDefinition, FileSearchTool
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentFileSearchStream(TestBase):
 
     @servicePreparer()
@@ -90,7 +94,7 @@ class TestAgentFileSearchStream(TestBase):
             stream_response = openai_client.responses.create(
                 stream=True,
                 input="What products are mentioned in the document? Please provide a brief summary.",
-                extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             )
 
             # Collect streamed response

@@ -20,6 +20,9 @@ data_file1 = os.path.join(data_folder, "data_file1.txt")
 data_file2 = os.path.join(data_folder, "data_file2.txt")
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestDatasets(TestBase):
 
     # To run this test, use the following command in the \sdk\ai\azure-ai-projects folder:

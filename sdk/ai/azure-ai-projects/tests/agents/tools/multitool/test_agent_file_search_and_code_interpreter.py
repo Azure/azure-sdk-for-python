@@ -5,6 +5,8 @@
 # ------------------------------------
 # cSpell:disable
 
+import pytest
+
 """
 Multi-Tool Tests: File Search + Code Interpreter
 
@@ -23,6 +25,9 @@ from azure.ai.projects.models import (
 )
 
 
+@pytest.mark.skip(
+    reason="Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema"
+)
 class TestAgentFileSearchAndCodeInterpreter(TestBase):
     """Tests for agents using File Search + Code Interpreter combination."""
 
@@ -98,7 +103,7 @@ End of sensor log.
         # Request that requires both tools: find data AND calculate
         response = openai_client.responses.create(
             input="Find the sensor readings file and use code to calculate the average temperature. Show me the result.",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         self.validate_response(response)
         assert len(response.output_text) > 20
@@ -168,7 +173,7 @@ def fibonacci(n):
         # Request that requires both tools: find code AND execute it
         response = openai_client.responses.create(
             input="Find the fibonacci code file and run it to calculate fibonacci(15). What is the result?",
-            extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         response_text = response.output_text

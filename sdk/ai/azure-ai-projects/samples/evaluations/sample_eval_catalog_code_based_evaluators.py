@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -52,7 +52,7 @@ with (
 ):
 
     print("Creating a single evaluator version - Code based (json style)")
-    code_evaluator = project_client.evaluators.create_version(
+    code_evaluator = project_client.beta.evaluators.create_version(
         name="my_custom_evaluator_code",
         evaluator_version={
             "name": "my_custom_evaluator_code",
@@ -199,7 +199,7 @@ with (
         print("Waiting for evaluation run to complete...")
 
     print("Deleting the created evaluator version")
-    project_client.evaluators.delete_version(
+    project_client.beta.evaluators.delete_version(
         name=code_evaluator.name,
         version=code_evaluator.version,
     )

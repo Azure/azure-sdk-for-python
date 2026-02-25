@@ -15,12 +15,12 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project.
-    2) CONNECTION_NAME - Required. The name of the Azure Storage Account connection to use for uploading files.
+     2) CONNECTION_NAME - Optional. The name of the Azure Storage Account connection to use for uploading files.
     3) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     4) DATASET_VERSION_1 - Optional. The first version of the Dataset to create and use in this sample.
     5) DATASET_VERSION_2 - Optional. The second version of the Dataset to create and use in this sample.
@@ -33,7 +33,7 @@ import re
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from azure.ai.projects.models import DatasetVersion
+from azure.ai.projects.models import DatasetVersion, ConnectionType
 
 load_dotenv()
 
@@ -46,7 +46,7 @@ data_file = os.path.join(data_folder, "data_file1.txt")
 async def main() -> None:
 
     endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-    connection_name = os.environ["CONNECTION_NAME"]
+    connection_name = os.environ.get("CONNECTION_NAME")
     dataset_name = os.environ.get("DATASET_NAME", "dataset-test")
     dataset_version_1 = os.environ.get("DATASET_VERSION_1", "1.0")
     dataset_version_2 = os.environ.get("DATASET_VERSION_2", "2.0")
@@ -55,6 +55,18 @@ async def main() -> None:
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
+
+        if not connection_name:
+            try:
+                connection_name = (
+                    await project_client.connections.get_default(ConnectionType.AZURE_STORAGE_ACCOUNT)
+                ).name
+            except Exception as e:
+                raise ValueError(
+                    "Unable to resolve a default Azure Storage connection from this project endpoint. "
+                    "Use a project endpoint configured with an Azure Storage account connection, "
+                    "or set CONNECTION_NAME explicitly."
+                ) from e
 
         print(
             f"Upload a single file and create a new Dataset `{dataset_name}`, version `{dataset_version_1}`, to reference the file."

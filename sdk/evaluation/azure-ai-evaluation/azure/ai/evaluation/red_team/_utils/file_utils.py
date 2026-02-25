@@ -47,7 +47,11 @@ class FileManager:
         return abs_path
 
     def generate_unique_filename(
-        self, prefix: str = "", suffix: str = "", extension: str = "", use_timestamp: bool = False
+        self,
+        prefix: str = "",
+        suffix: str = "",
+        extension: str = "",
+        use_timestamp: bool = False,
     ) -> str:
         """Generate a unique filename.
 
@@ -105,7 +109,13 @@ class FileManager:
             return os.path.join(scan_dir, filename)
         return scan_dir
 
-    def write_json(self, data: Any, filepath: Union[str, os.PathLike], indent: int = 2, ensure_dir: bool = True) -> str:
+    def write_json(
+        self,
+        data: Any,
+        filepath: Union[str, os.PathLike],
+        indent: int = 2,
+        ensure_dir: bool = True,
+    ) -> str:
         """Write data to JSON file.
 
         :param data: Data to write
@@ -177,7 +187,12 @@ class FileManager:
                 self.logger.error(f"Failed to read JSONL from {abs_path}: {str(e)}")
             raise
 
-    def write_jsonl(self, data: List[Dict], filepath: Union[str, os.PathLike], ensure_dir: bool = True) -> str:
+    def write_jsonl(
+        self,
+        data: List[Dict],
+        filepath: Union[str, os.PathLike],
+        ensure_dir: bool = True,
+    ) -> str:
         """Write data to JSONL file.
 
         :param data: List of dictionaries to write

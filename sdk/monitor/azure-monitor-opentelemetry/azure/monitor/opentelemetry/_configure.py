@@ -237,9 +237,9 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         if enable_performance_counters_config:
             pclp = _PerformanceCountersLogRecordProcessor()
             logger_provider.add_log_record_processor(pclp)
-        log_exporter = AzureMonitorLogExporter(**configurations)
+        log_record_exporter = AzureMonitorLogExporter(**configurations)
         log_record_processor = _AzureBatchLogRecordProcessor(
-            log_exporter,
+            log_record_exporter,
             {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
         )
         logger_provider.add_log_record_processor(log_record_processor)

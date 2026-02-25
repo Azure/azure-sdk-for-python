@@ -20,7 +20,7 @@ from pyrit.prompt_converter import (
     BinaryConverter,
     CaesarConverter,
     CharacterSpaceConverter,
-    CharSwapGenerator,
+    CharSwapConverter,
     DiacriticConverter,
     FlipConverter,
     LeetspeakConverter,
@@ -103,7 +103,7 @@ def strategy_converter_map() -> Dict[Any, Union[PromptConverter, List[PromptConv
         AttackStrategy.Binary: BinaryConverter(),
         AttackStrategy.Caesar: CaesarConverter(caesar_offset=1),
         AttackStrategy.CharacterSpace: CharacterSpaceConverter(),
-        AttackStrategy.CharSwap: CharSwapGenerator(),
+        AttackStrategy.CharSwap: CharSwapConverter(),
         AttackStrategy.Diacritic: DiacriticConverter(),
         AttackStrategy.Flip: FlipConverter(),
         AttackStrategy.Leetspeak: LeetspeakConverter(),
@@ -170,6 +170,9 @@ def get_chat_target(
 
     # Helper function for message conversion
     def _message_to_dict(message):
+        # Handle both dict and object formats
+        if isinstance(message, dict):
+            return message
         return {
             "role": message.role,
             "content": message.content,
@@ -182,7 +185,6 @@ def get_chat_target(
     if not isinstance(target, Callable):
         if "azure_deployment" in target and "azure_endpoint" in target:  # Azure OpenAI
             api_key = target.get("api_key", None)
-            api_version = target.get("api_version", "2024-06-01")
             # Check for credential in target dict or use passed credential parameter
             target_credential = target.get("credential", None) or credential
             if api_key:
@@ -191,7 +193,6 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=api_key,
-                    api_version=api_version,
                 )
             elif target_credential:
                 # Use explicit TokenCredential for AAD auth (e.g., in ACA environments)
@@ -200,23 +201,21 @@ def get_chat_target(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
                     api_key=token_provider,  # PyRIT accepts callable that returns token
-                    api_version=api_version,
                 )
             else:
-                # Fall back to DefaultAzureCredential via PyRIT's use_aad_auth
-                # This works in local dev environments where DefaultAzureCredential has access
+                # Fall back to DefaultAzureCredential via PyRIT's auth helpers
+                from pyrit.auth import get_azure_openai_auth
+
                 chat_target = OpenAIChatTarget(
                     model_name=target["azure_deployment"],
                     endpoint=target["azure_endpoint"],
-                    use_aad_auth=True,
-                    api_version=api_version,
+                    api_key=get_azure_openai_auth(target["azure_endpoint"]),
                 )
         else:  # OpenAI
             chat_target = OpenAIChatTarget(
                 model_name=target["model"],
                 endpoint=target.get("base_url", None),
                 api_key=target["api_key"],
-                api_version=target.get("api_version", "2024-06-01"),
             )
     else:
         # Target is callable

@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import datetime
+import time
 import logging
 from typing import (
     Any,
@@ -27,12 +28,15 @@ from ._key_vault._secret_provider import SecretProvider
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
     FEATURE_FLAG_KEY,
+    DEFAULT_STARTUP_TIMEOUT,
+    SNAPSHOT_REF_CONTENT_TYPE,
 )
 from ._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,
+    _get_startup_backoff,
 )
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper as ConfigurationClient
 from ._user_agent import USER_AGENT
@@ -59,6 +63,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
+    startup_timeout: int = DEFAULT_STARTUP_TIMEOUT,
     **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
@@ -103,6 +108,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
     configurations before they are added to the provider.
     :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
+    :keyword startup_timeout: The amount of time in seconds allowed to load data from Azure App Configuration on
+     startup. The default value is 100 seconds.
+    :paramtype startup_timeout: int
     """
 
 
@@ -123,6 +131,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     feature_flag_enabled: bool = False,
     feature_flag_selectors: Optional[List[SettingSelector]] = None,
     feature_flag_refresh_enabled: bool = False,
+    startup_timeout: int = DEFAULT_STARTUP_TIMEOUT,
     **kwargs,
 ) -> "AzureAppConfigurationProvider":
     """
@@ -169,6 +178,9 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :keyword configuration_mapper: Optional function to map configuration settings. Enables transformation of
     configurations before they are added to the provider.
     :paramtype configuration_mapper: Optional[Callable[[ConfigurationSetting], None]]
+    :keyword startup_timeout: The amount of time in seconds allowed to load data from Azure App Configuration on
+     startup. The default value is 100 seconds.
+    :paramtype startup_timeout: int
     """
 
 
@@ -183,6 +195,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
         params["endpoint"],
         params["credential"],
         uses_key_vault=params["uses_key_vault"],
+        startup_timeout=params["startup_timeout"],
         **params["kwargs"],
     )
     kwargs = sdk_allowed_kwargs(params["kwargs"])
@@ -232,6 +245,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
         min_backoff: int = min(kwargs.pop("min_backoff", 30), interval)
         max_backoff: int = min(kwargs.pop("max_backoff", 600), interval)
+
+        self._startup_timeout: int = kwargs.pop("startup_timeout", DEFAULT_STARTUP_TIMEOUT)
 
         self._replica_client_manager = ConfigurationClientManager(
             connection_string=kwargs.pop("connection_string"),
@@ -299,7 +314,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             if settings_refreshed:
                 # Configuration Settings have been refreshed
-                processed_settings = self._process_configurations(configuration_settings)
+                processed_settings = self._process_configurations(configuration_settings, client)
 
             processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
@@ -362,15 +377,46 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             self._refresh_lock.release()
 
     def _load_all(self, **kwargs: Any) -> None:
+        startup_start_time = datetime.datetime.now()
+        exponential_backoff_attempts = 0
+        startup_exceptions: List[Exception] = []
+
+        while True:
+            # Try to initialize from all available clients
+            if self._try_initialize(startup_exceptions, **kwargs):
+                return  # Successfully loaded
+
+            # Calculate delay before next retry attempt
+            elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
+            delay, is_exponential_backoff = _get_startup_backoff(elapsed_seconds, exponential_backoff_attempts)
+
+            if is_exponential_backoff:
+                exponential_backoff_attempts += 1
+
+            # Check if delay would exceed remaining timeout
+            remaining_timeout = self._startup_timeout - elapsed_seconds
+            if delay > remaining_timeout:
+                raise TimeoutError(
+                    "The provider timed out while attempting to load.",
+                    startup_exceptions,
+                )
+
+            if delay > 0:
+                time.sleep(delay)
+
+    def _try_initialize(self, startup_exceptions: List[Exception], **kwargs: Any) -> bool:
+        """
+        Try to initialize the provider from all available clients.
+
+        :param startup_exceptions: List to collect exceptions from failed attempts.
+        :type startup_exceptions: List[Exception]
+        :return: True if initialization succeeded, False otherwise.
+        :rtype: bool
+        """
         self._replica_client_manager.refresh_clients()
         self._replica_client_manager.find_active_clients()
         is_failover_request = False
         replica_count = self._replica_client_manager.get_client_count() - 1
-
-        error_message = """
-        Failed to load configuration settings. No Azure App Configuration stores successfully loaded from.
-        """
-        exception: Exception = RuntimeError(error_message)
 
         while client := self._replica_client_manager.get_next_active_client():
             headers = self._update_correlation_context_header(
@@ -383,7 +429,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             try:
                 configuration_settings = client.load_configuration_settings(self._selects, headers=headers, **kwargs)
                 watched_settings = self._update_watched_settings(configuration_settings)
-                processed_settings = self._process_configurations(configuration_settings)
+                processed_settings = self._process_configurations(configuration_settings, client)
 
                 if self._feature_flag_enabled:
                     feature_flags: List[FeatureFlagConfigurationSetting] = client.load_feature_flags(
@@ -414,35 +460,79 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 with self._update_lock:
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
-                return
+                return True
             except AzureError as e:
-                exception = e
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
                 self._replica_client_manager.backoff(client)
                 is_failover_request = True
-        raise exception
 
-    def _process_configurations(self, configuration_settings: List[ConfigurationSetting]) -> Dict[str, Any]:
+                startup_exceptions.append(e)
+
+        return False
+
+    def _expand_snapshot_references(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> List[ConfigurationSetting]:
+        """
+        Expands snapshot references in configuration settings to their actual settings.
+
+        :param configuration_settings: List of configuration settings that may contain snapshot references.
+        :type configuration_settings: List[~azure.appconfiguration.ConfigurationSetting]
+        :param client: The configuration client used to resolve snapshot references.
+        :type client: ~azure.appconfiguration.provider.ConfigurationClient
+        :return: List of configuration settings with snapshot references expanded.
+        :rtype: List[~azure.appconfiguration.ConfigurationSetting]
+        """
+        expanded_settings: List[ConfigurationSetting] = []
+
+        for setting in configuration_settings:
+            if SNAPSHOT_REF_CONTENT_TYPE == setting.content_type:
+                # Check if this is a snapshot reference
+
+                # Track snapshot reference usage for telemetry
+                self._tracing_context.uses_snapshot_reference = True
+                try:
+                    # Resolve the snapshot reference to actual settings
+                    expanded_settings.extend(client.resolve_snapshot_reference(setting))
+                except AzureError as e:
+                    logger.warning(
+                        "Failed to resolve snapshot reference for key '%s' (label: '%s'): %s",
+                        setting.key,
+                        setting.label,
+                        str(e),
+                    )
+                    raise e
+            else:
+                expanded_settings.append(setting)
+
+        return expanded_settings
+
+    def _process_configurations(
+        self, configuration_settings: List[ConfigurationSetting], client: ConfigurationClient
+    ) -> Dict[str, Any]:
+        # Snapshot references must be expanded in place to support override by key ordering.
+        expanded_settings = self._expand_snapshot_references(configuration_settings, client)
+
         # configuration_settings can contain duplicate keys, but they are in priority order, i.e. later settings take
         # precedence. Only process the settings with the highest priority (i.e. the last one in the list).
-        unique_settings = self._deduplicate_settings(configuration_settings)
+        unique_settings = self._deduplicate_settings(expanded_settings)
 
         configuration_settings_processed = {}
         feature_flags_processed = []
-        for settings in unique_settings.values():
+        for setting in unique_settings:
             if self._configuration_mapper:
                 # If a map function is provided, use it to process the configuration setting
-                self._configuration_mapper(settings)
-            if isinstance(settings, FeatureFlagConfigurationSetting):
+                self._configuration_mapper(setting)
+            if isinstance(setting, FeatureFlagConfigurationSetting):
                 # Feature flags are not processed like other settings
-                feature_flag_value = self._process_feature_flag(settings)
+                feature_flag_value = self._process_feature_flag(setting)
                 feature_flags_processed.append(feature_flag_value)
 
                 if self._feature_flag_refresh_enabled:
-                    self._watched_feature_flags[(settings.key, settings.label)] = settings.etag
+                    self._watched_feature_flags[(setting.key, setting.label)] = setting.etag
             else:
-                key = self._process_key_name(settings)
-                value = self._process_key_value(settings)
+                key = self._process_key_name(setting)
+                value = self._process_key_value(setting)
                 configuration_settings_processed[key] = value
         return configuration_settings_processed
 

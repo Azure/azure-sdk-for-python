@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -68,13 +68,35 @@ with (
 
     user_input = os.environ.get("FABRIC_USER_INPUT") or input("Enter your question: \n")
 
-    response = openai_client.responses.create(
+    stream_response = openai_client.responses.create(
         tool_choice="required",
+        stream=True,
         input=user_input,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
-    print(f"Response output: {response.output_text}")
+    for event in stream_response:
+        if event.type == "response.created":
+            print(f"Follow-up response created with ID: {event.response.id}")
+        elif event.type == "response.output_text.delta":
+            print(f"Delta: {event.delta}")
+        elif event.type == "response.text.done":
+            print(f"\nFollow-up response done!")
+        elif event.type == "response.output_item.done":
+            if event.item.type == "message":
+                item = event.item
+                if item.content[-1].type == "output_text":
+                    text_content = item.content[-1]
+                    for annotation in text_content.annotations:
+                        if annotation.type == "url_citation":
+                            print(
+                                f"URL Citation: {annotation.url}, "
+                                f"Start index: {annotation.start_index}, "
+                                f"End index: {annotation.end_index}"
+                            )
+        elif event.type == "response.completed":
+            print(f"\nFollow-up completed!")
+            print(f"Full response: {event.response.output_text}")
 
     print("\nCleaning up...")
     project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)

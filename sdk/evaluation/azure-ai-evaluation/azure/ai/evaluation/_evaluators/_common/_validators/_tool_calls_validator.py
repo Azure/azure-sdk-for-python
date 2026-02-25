@@ -18,8 +18,14 @@ class ToolCallsValidator(ToolDefinitionsValidator):
 
     optional_tool_definitions = False
 
-    def __init__(self, error_target: ErrorTarget, requires_query: bool = True, optional_tool_definitions: bool = False):
-        super().__init__(error_target, requires_query, optional_tool_definitions)
+    def __init__(
+        self,
+        error_target: ErrorTarget,
+        requires_query: bool = True,
+        optional_tool_definitions: bool = False,
+        check_for_unsupported_tools: bool = False,
+    ):
+        super().__init__(error_target, requires_query, optional_tool_definitions, check_for_unsupported_tools)
 
     def _validate_tool_calls(self, tool_calls) -> Optional[EvaluationException]:
         """Validate tool calls input."""

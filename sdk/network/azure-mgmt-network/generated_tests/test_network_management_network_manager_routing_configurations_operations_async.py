@@ -25,7 +25,7 @@ class TestNetworkManagementNetworkManagerRoutingConfigurationsOperationsAsync(Az
         response = self.client.network_manager_routing_configurations.list(
             resource_group_name=resource_group.name,
             network_manager_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestNetworkManagementNetworkManagerRoutingConfigurationsOperationsAsync(Az
             resource_group_name=resource_group.name,
             network_manager_name="str",
             configuration_name="str",
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -69,7 +69,7 @@ class TestNetworkManagementNetworkManagerRoutingConfigurationsOperationsAsync(Az
                 },
                 "type": "str",
             },
-            api_version="2025-03-01",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestNetworkManagementNetworkManagerRoutingConfigurationsOperationsAsync(Az
                 resource_group_name=resource_group.name,
                 network_manager_name="str",
                 configuration_name="str",
-                api_version="2025-03-01",
+                api_version="2025-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -21,7 +21,7 @@ class TestManagementGroupsAPIHierarchySettingsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_hierarchy_settings_list(self, resource_group):
         response = await self.client.hierarchy_settings.list(
             group_id="str",
             api_version="2021-04-01",
@@ -32,7 +32,7 @@ class TestManagementGroupsAPIHierarchySettingsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_hierarchy_settings_get(self, resource_group):
         response = await self.client.hierarchy_settings.get(
             group_id="str",
             api_version="2021-04-01",
@@ -43,7 +43,7 @@ class TestManagementGroupsAPIHierarchySettingsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_create_or_update(self, resource_group):
+    async def test_hierarchy_settings_create_or_update(self, resource_group):
         response = await self.client.hierarchy_settings.create_or_update(
             group_id="str",
             create_tenant_settings_request={
@@ -58,7 +58,7 @@ class TestManagementGroupsAPIHierarchySettingsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_hierarchy_settings_update(self, resource_group):
         response = await self.client.hierarchy_settings.update(
             group_id="str",
             create_tenant_settings_request={
@@ -73,7 +73,7 @@ class TestManagementGroupsAPIHierarchySettingsOperationsAsync(AzureMgmtRecordedT
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_delete(self, resource_group):
+    async def test_hierarchy_settings_delete(self, resource_group):
         response = await self.client.hierarchy_settings.delete(
             group_id="str",
             api_version="2021-04-01",

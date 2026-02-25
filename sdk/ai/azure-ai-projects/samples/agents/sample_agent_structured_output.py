@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -22,7 +21,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv pydantic
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv pydantic
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -37,7 +36,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     PromptAgentDefinition,
-    PromptAgentDefinitionText,
+    PromptAgentDefinitionTextOptions,
     TextResponseFormatJsonSchema,
 )
 from pydantic import BaseModel, Field
@@ -64,7 +63,7 @@ with (
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
             model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
-            text=PromptAgentDefinitionText(
+            text=PromptAgentDefinitionTextOptions(
                 format=TextResponseFormatJsonSchema(name="CalendarEvent", schema=CalendarEvent.model_json_schema())
             ),
             instructions="""
@@ -88,8 +87,7 @@ with (
 
     response = openai_client.responses.create(
         conversation=conversation.id,
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
-        input="",
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response output: {response.output_text}")
 
