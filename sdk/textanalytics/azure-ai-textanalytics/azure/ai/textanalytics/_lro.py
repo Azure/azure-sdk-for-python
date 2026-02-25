@@ -255,10 +255,9 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
         return self._current_body.display_name
 
     def get_continuation_token(self) -> str:
-        import pickle
         self._initial_response.context.options["doc_id_order"] = self._doc_id_order
         self._initial_response.context.options["show_stats"] = self._show_stats
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+        return super().get_continuation_token()
 
 
 class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType_co]):
@@ -444,11 +443,10 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         ].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self) -> str:
-        import pickle
         self._initial_response.context.options["doc_id_order"] = self._doc_id_order
         self._initial_response.context.options["task_id_order"] = self._task_id_order
         self._initial_response.context.options["show_stats"] = self._show_stats
-        return base64.b64encode(pickle.dumps(self._initial_response)).decode('ascii')
+        return super().get_continuation_token()
 
 
 class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
