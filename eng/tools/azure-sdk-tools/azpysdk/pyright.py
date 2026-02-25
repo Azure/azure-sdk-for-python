@@ -145,7 +145,7 @@ class pyright(Check):
                 if (
                     args.next
                     and in_ci()
-                    and is_check_enabled(args.target_package, "pyright")
+                    and is_check_enabled(package_dir, "pyright")
                     and not is_typing_ignored(package_name)
                 ):
                     try:
