@@ -63,7 +63,7 @@ def _serialize_response_input_items(
 
 class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
-# A message or list of messages to store in memory. When using a list, each item needs to correspond to a dictionary with `role`, `content` and `type` properties (with type equals `message`). For example: {\"role\": \"user\", \"type\": \"message\", \"content\": \"my user message\"}"
+    # A message or list of messages to store in memory. When using a list, each item needs to correspond to a dictionary with `role`, `content` and `type` properties (with type equals `message`). For example: {\"role\": \"user\", \"type\": \"message\", \"content\": \"my user message\"}"
     @overload
     def search_memories(
         self,
@@ -86,7 +86,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword items: A message or list of messages used to extract relevant memories. When using a
          list, each item needs to correspond to a dictionary with `role`, `content` and `type`
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
-         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
         :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
@@ -153,7 +153,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword items: A message or list of messages used to extract relevant memories. When using a
          list, each item needs to correspond to a dictionary with `role`, `content` and `type`
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
-         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
         :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
@@ -200,7 +200,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword items: A message or list of messages you would like to store in memory. When using a
          list, each item needs to correspond to a dictionary with `role`, `content` and `type`
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
-         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
         :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
@@ -298,7 +298,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword items: A message or list of messages you would like to store in memory. When using a
          list, each item needs to correspond to a dictionary with `role`, `content` and `type`
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
-         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Only messages with `type` equals `message` are currently processed. Others are ignored.
          Default value is None.
         :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
