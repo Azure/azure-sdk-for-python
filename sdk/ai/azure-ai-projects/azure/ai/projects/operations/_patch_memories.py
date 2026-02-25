@@ -75,16 +75,57 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any,
     ) -> _models.MemoryStoreSearchResult: ...
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+            Required.
+        :paramtype scope: str
+        :keyword items: A list of queries you would like to use in the search, each one represented as
+            a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
+            ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
+            {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
+        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
+            memory search from where the last operation left off. Default value is None.
+        :paramtype previous_search_id: str
+        :keyword options: Memory search options. Default value is None.
+        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @overload
     def search_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Required.
+        :type body: JSON
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @overload
     def search_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def search_memories(
