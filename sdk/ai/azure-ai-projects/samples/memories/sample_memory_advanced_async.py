@@ -88,15 +88,9 @@ async def main() -> None:
         scope = "user_123"
 
         # Extract memories from messages and add them to the memory store
-        # user_message = EasyInputMessageParam(
-        #     role="user",
-        #     content="I prefer dark roast coffee and usually drink it in the morning",
-        #     type="message",
-        # )
         update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            # items=[user_message],  # Pass conversation items that you want to add to memory
             items="I prefer dark roast coffee and usually drink it in the morning",  # Pass conversation items that you want to add to memory
             update_delay=300,  # Keep default inactivity delay before starting update
         )
@@ -105,11 +99,9 @@ async def main() -> None:
         )
 
         # Extend the previous update with another update and more messages
-        # new_message = EasyInputMessageParam(role="user", content="I also like cappuccinos in the afternoon", type="message")
         new_update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            # items=[new_message],
             items="I also like cappuccinos in the afternoon",
             previous_update_id=update_poller.update_id,  # Extend from previous update ID
             update_delay=0,  # Trigger update immediately without waiting for inactivity
@@ -133,11 +125,9 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        # query_message = EasyInputMessageParam(role="user", content="What are my morning coffee preferences?", type="message")
         search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
-            # items=[query_message],
             items="What are my morning coffee preferences?",
             options=MemorySearchOptions(max_memories=5),
         )
