@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-import base64
 import functools
 import json
 import datetime
