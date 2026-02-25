@@ -41,7 +41,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         previous_search_id: Optional[str] = None,
         options: Optional[_models.MemorySearchOptions] = None,
         **kwargs: Any,
-    ) -> _models.MemoryStoreSearchResult: ...
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
@@ -67,7 +67,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
     @overload
     async def search_memories(
         self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult: ...
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
@@ -82,7 +82,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
     @overload
     async def search_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.MemoryStoreSearchResult: ...
+    ) -> _models.MemoryStoreSearchResult:
         """Search for relevant memories from a memory store based on conversation context.
 
         :param name: The name of the memory store to search. Required.
