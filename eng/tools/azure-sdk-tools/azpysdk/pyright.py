@@ -161,17 +161,17 @@ class pyright(Check):
 
                 print("See https://aka.ms/python/typing-guide for information.\n\n")
                 results.append(1)
-
-            if args.next and in_ci() and not is_typing_ignored(package_name):
-                try:
-                    check_call(
-                        [
-                            executable,
-                            "-c",
-                            f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'pyright')",
-                        ]
-                    )
-                except CalledProcessError as e:
-                    logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
+            else:
+                if args.next and in_ci() and not is_typing_ignored(package_name):
+                    try:
+                        check_call(
+                            [
+                                executable,
+                                "-c",
+                                f"from gh_tools.vnext_issue_creator import close_vnext_issue; close_vnext_issue('{package_name}', 'pyright')",
+                            ]
+                        )
+                    except CalledProcessError as e:
+                        logger.warning(f"Failed to close vnext issue for {package_name}: {e}")
 
         return max(results) if results else 0

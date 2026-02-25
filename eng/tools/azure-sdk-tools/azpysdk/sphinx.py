@@ -291,22 +291,20 @@ class sphinx(Check):
             # run apidoc
             output_dir = os.path.join(staging_directory, f"{UNZIPPPED_DIR_NAME}/{DOCGEN_DIR_NAME}")
             if is_mgmt_package(package_name):
-                results.append(self.mgmt_apidoc(output_dir, package_dir, executable))
+                apidoc_result = self.mgmt_apidoc(output_dir, package_dir, executable)
             else:
-                results.append(self.sphinx_apidoc(staging_directory, parsed.namespace, executable))
+                apidoc_result = self.sphinx_apidoc(staging_directory, parsed.namespace, executable)
+            results.append(apidoc_result)
 
             # build
             # Only data-plane libraries run strict sphinx at the moment
             fail_on_warning = not is_mgmt_package(package_name)
-            results.append(
-                # doc_folder = source
-                # site_folder  = output
-                self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
-            )
+            build_result = self.sphinx_build(package_dir, doc_folder, site_folder, fail_on_warning, executable)
+            results.append(build_result)
 
             if in_ci() or args.in_ci:
                 move_output_and_compress(site_folder, package_dir, package_name)
-                if in_analyze_weekly():
+                if in_analyze_weekly() and apidoc_result == 0 and build_result == 0:
                     try:
                         check_call(
                             [

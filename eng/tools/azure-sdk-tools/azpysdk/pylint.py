@@ -53,6 +53,7 @@ class pylint(Check):
             package_name = parsed.name
             executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
             logger.info(f"Processing {package_name} for pylint check")
+            package_failed = False
 
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
@@ -139,6 +140,7 @@ class pylint(Check):
                     )
                 )
                 results.append(e.returncode)
+                package_failed = True
 
             # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
             if args.next:
@@ -178,6 +180,7 @@ class pylint(Check):
                             )
                         )
                         results.append(e.returncode)
+                        package_failed = True
 
                 # Run samples with samples_pylintrc
                 if os.path.exists(samples_dir):
@@ -212,8 +215,9 @@ class pylint(Check):
                             )
                         )
                         results.append(e.returncode)
+                        package_failed = True
 
-            if args.next and in_ci() and any(result > 0 for result in results):
+            if args.next and in_ci() and package_failed:
                 try:
                     check_call(
                         [
@@ -225,7 +229,7 @@ class pylint(Check):
                 except CalledProcessError as e:
                     logger.warning(f"Failed to create vnext issue for {package_name}: {e}")
 
-            if args.next and in_ci():
+            if args.next and in_ci() and not package_failed:
                 try:
                     check_call(
                         [
