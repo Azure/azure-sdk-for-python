@@ -88,18 +88,11 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None:
-            if isinstance(items, str):
-                items_dict = [{"role": "user", "type": "message", "content": items}]
-            else:
-                items_dict = _serialize_response_input_items(items)
-
         return await super()._search_memories(
             name=name,
             body=body,
             scope=scope,
-            items=items_dict,
+            items=_serialize_response_input_items(items),
             previous_search_id=previous_search_id,
             options=options,
             **kwargs,
@@ -248,13 +241,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
 
-        items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None:
-            if isinstance(items, str):
-                items_dict = [{"role": "user", "type": "message", "content": items}]
-            else:
-                items_dict = _serialize_response_input_items(items)
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -269,7 +255,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 name=name,
                 body=body,
                 scope=scope,
-                items=items_dict,
+                items=_serialize_response_input_items(items),
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
                 content_type=content_type,

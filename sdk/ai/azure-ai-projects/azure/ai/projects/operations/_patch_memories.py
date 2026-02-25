@@ -27,8 +27,16 @@ from .._validation import api_version_validation
 from .._utils.model_base import _deserialize, _serialize
 
 
-def _serialize_response_input_items(items: ResponseInputParam) -> List[dict[str, Any]]:
+def _serialize_response_input_items(
+    items: Optional[Union[str, ResponseInputParam]],
+) -> Optional[List[dict[str, Any]]]:
     """Serialize OpenAI response input items to the payload shape expected by memory APIs."""
+
+    if items is None:
+        return None
+
+    if isinstance(items, str):
+        return [{"role": "user", "type": "message", "content": items}]
 
     if hasattr(items, "model_dump"):
         items = cast(Any, items).model_dump()
@@ -36,26 +44,23 @@ def _serialize_response_input_items(items: ResponseInputParam) -> List[dict[str,
         items = cast(Any, items).as_dict()
 
     if isinstance(items, dict):
-        serialized_item = _serialize(items)
+        items = [items]
+
+    if not isinstance(items, list):
+        raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
+
+    serialized_items: List[dict[str, Any]] = []
+    for item in items:
+        if hasattr(item, "model_dump"):
+            item = cast(Any, item).model_dump()
+        elif hasattr(item, "as_dict"):
+            item = cast(Any, item).as_dict()
+
+        serialized_item = _serialize(item)
         if not isinstance(serialized_item, dict):
             raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
-        return [serialized_item]
-
-    if isinstance(items, list):
-        serialized_items: List[dict[str, Any]] = []
-        for item in items:
-            if hasattr(item, "model_dump"):
-                item = cast(Any, item).model_dump()
-            elif hasattr(item, "as_dict"):
-                item = cast(Any, item).as_dict()
-
-            serialized_item = _serialize(item)
-            if not isinstance(serialized_item, dict):
-                raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
-            serialized_items.append(serialized_item)
-        return serialized_items
-
-    raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
+        serialized_items.append(serialized_item)
+    return serialized_items
 
 
 class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
@@ -118,20 +123,11 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-
-        items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None:
-            if isinstance(items, str):
-                items_dict = [{"role": "user", "type": "message", "content": items}]
-            else:
-                items_dict = _serialize_response_input_items(items)
-
-
         return super()._search_memories(
             name=name,
             body=body,
             scope=scope,
-            items=items_dict,
+            items=_serialize_response_input_items(items),
             previous_search_id=previous_search_id,
             options=options,
             **kwargs,
@@ -280,13 +276,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
         )
 
-        items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None:
-            if isinstance(items, str):
-                items_dict = [{"role": "user", "type": "message", "content": items}]
-            else:
-                items_dict = _serialize_response_input_items(items)
-
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -301,7 +290,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 name=name,
                 body=body,
                 scope=scope,
-                items=items_dict,
+                items=_serialize_response_input_items(items),
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
                 content_type=content_type,
