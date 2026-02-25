@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class AzureMachineLearningWorkspaces(object):
     """AzureMachineLearningWorkspaces.
 
@@ -52,9 +53,12 @@ class AzureMachineLearningWorkspaces(object):
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.async_operations = AsyncOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.registry_management_non_workspace = RegistryManagementNonWorkspaceOperations(self._client, self._config, self._serialize, self._deserialize)
-
+        self.async_operations = AsyncOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.registry_management_non_workspace = RegistryManagementNonWorkspaceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(
         self,
