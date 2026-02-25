@@ -90,7 +90,6 @@ import os
 import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import List, Optional
 
 from dotenv import load_dotenv
 from azure.ai.contentunderstanding import ContentUnderstandingClient
@@ -101,7 +100,6 @@ from azure.ai.contentunderstanding.models import (
     ContentFieldSchema,
     ContentFieldType,
     GenerationMethod,
-    KnowledgeSource,
     LabeledDataKnowledgeSource,
 )
 from azure.core.credentials import AzureKeyCredential
@@ -110,10 +108,18 @@ from azure.identity import DefaultAzureCredential
 load_dotenv()
 
 
-def build_receipt_field_schema() -> ContentFieldSchema:
-    """Builds a ContentFieldSchema for receipt extraction
-    with MerchantName, Items (array of Quantity / Name / Price), and TotalPrice.
-    """
+def main() -> None:
+    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+    key = os.getenv("CONTENTUNDERSTANDING_KEY")
+    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
+
+    client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
+
+    # [START create_analyzer_with_labels]
+    analyzer_id = f"receipt_analyzer_{int(time.time())}"
+
+    # Step 1: Build the receipt field schema
+    # Define an item definition for the array field (each item has Quantity, Name, Price)
     item_definition = ContentFieldDefinition(
         type=ContentFieldType.OBJECT,
         method=GenerationMethod.EXTRACT,
@@ -137,7 +143,7 @@ def build_receipt_field_schema() -> ContentFieldSchema:
         },
     )
 
-    return ContentFieldSchema(
+    field_schema = ContentFieldSchema(
         name="receipt_schema",
         description="Schema for receipt extraction with items",
         fields={
@@ -160,101 +166,9 @@ def build_receipt_field_schema() -> ContentFieldSchema:
         },
     )
 
-
-def upload_training_data(
-    storage_account_name: str,
-    container_name: str,
-    credential: DefaultAzureCredential,
-    local_directory: str,
-    prefix: Optional[str] = None,
-) -> None:
-    """Uploads local training data files (images, .labels.json, .result.json) to an
-    Azure Blob container. Existing blobs with the same name are overwritten.
-
-    :param storage_account_name: Storage account name.
-    :param container_name: Container name (created if it does not exist).
-    :param credential: Credential with write access to the container.
-    :param local_directory: Local folder containing the label files.
-    :param prefix: Optional blob prefix (virtual folder) to prepend, e.g. "training_samples/".
-    """
-    from azure.storage.blob import BlobServiceClient
-    from azure.core.exceptions import ResourceExistsError
-
-    container_client = BlobServiceClient(
-        account_url=f"https://{storage_account_name}.blob.core.windows.net",
-        credential=credential,
-    ).get_container_client(container_name)
-
-    try:
-        container_client.create_container()
-    except ResourceExistsError:
-        pass  # Container already exists
-
-    local_path = Path(local_directory)
-    for file_path in local_path.iterdir():
-        if file_path.is_file() and file_path.name != "README.md":
-            blob_name = (
-                file_path.name
-                if not prefix
-                else prefix.rstrip("/") + "/" + file_path.name
-            )
-            print(f"Uploading {file_path.name} -> {blob_name}")
-            with open(file_path, "rb") as data:
-                container_client.upload_blob(name=blob_name, data=data, overwrite=True)
-
-
-def generate_user_delegation_sas_url(
-    storage_account_name: str,
-    container_name: str,
-    credential: DefaultAzureCredential,
-) -> str:
-    """Generates a User Delegation SAS URL (Read + List) for an Azure Blob container.
-    Uses TokenCredential so no storage account key is needed.
-    """
-    from azure.storage.blob import (
-        BlobServiceClient,
-        ContainerSasPermissions,
-        generate_container_sas,
-    )
-
-    blob_service_client = BlobServiceClient(
-        account_url=f"https://{storage_account_name}.blob.core.windows.net",
-        credential=credential,
-    )
-
-    user_delegation_key = blob_service_client.get_user_delegation_key(
-        key_start_time=datetime.now(timezone.utc),
-        key_expiry_time=datetime.now(timezone.utc) + timedelta(hours=1),
-    )
-
-    sas_token = generate_container_sas(
-        account_name=storage_account_name,
-        container_name=container_name,
-        user_delegation_key=user_delegation_key,
-        permission=ContainerSasPermissions(read=True, list=True),
-        expiry=datetime.now(timezone.utc) + timedelta(hours=1),
-    )
-
-    return f"https://{storage_account_name}.blob.core.windows.net/{container_name}?{sas_token}"
-
-
-def main() -> None:
-    endpoint = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
-    key = os.getenv("CONTENTUNDERSTANDING_KEY")
-    credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
-
-    client = ContentUnderstandingClient(endpoint=endpoint, credential=credential)
-
-    # [START create_analyzer_with_labels]
-    analyzer_id = f"receipt_analyzer_{int(time.time())}"
-
-    # Step 1: Build the receipt field schema
-    field_schema = build_receipt_field_schema()
-
     # Step 2: Resolve training data SAS URL
     # You can either provide a pre-generated SAS URL (Option A) or let the sample
     # upload local label files and generate one automatically (Option B).
-    # See Sample16_CreateAnalyzerWithLabels.md for manual upload instructions.
     # Option A: use a pre-generated SAS URL with Read + List permissions
     training_data_sas_url = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_SAS_URL")
 
@@ -263,20 +177,52 @@ def main() -> None:
         storage_account = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_STORAGE_ACCOUNT")
         container = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_CONTAINER")
         if storage_account and container:
-            azure_credential = DefaultAzureCredential()
-            local_label_dir = os.path.join(
-                os.path.dirname(__file__), "sample_files", "training_samples"
-            )
-            prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
-            upload_training_data(storage_account, container, azure_credential, local_label_dir, prefix)
-            training_data_sas_url = generate_user_delegation_sas_url(
-                storage_account, container, azure_credential
-            )
+            from azure.core.exceptions import ResourceExistsError
+            from azure.storage.blob import BlobServiceClient, ContainerSasPermissions, generate_container_sas
 
-    training_data_prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
+            azure_credential = DefaultAzureCredential()
+
+            # Upload local training files to the blob container
+            container_client = BlobServiceClient(
+                account_url=f"https://{storage_account}.blob.core.windows.net",
+                credential=azure_credential,
+            ).get_container_client(container)
+
+            try:
+                container_client.create_container()
+            except ResourceExistsError:
+                pass  # Container already exists
+
+            local_label_dir = Path(os.path.join(os.path.dirname(__file__), "sample_files", "training_samples"))
+            prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
+            for file_path in local_label_dir.iterdir():
+                if file_path.is_file() and file_path.name != "README.md":
+                    blob_name = file_path.name if not prefix else prefix.rstrip("/") + "/" + file_path.name
+                    print(f"Uploading {file_path.name} -> {blob_name}")
+                    with open(file_path, "rb") as data:
+                        container_client.upload_blob(name=blob_name, data=data, overwrite=True)
+
+            # Generate a User Delegation SAS URL (Read + List) for the container
+            blob_service_client = BlobServiceClient(
+                account_url=f"https://{storage_account}.blob.core.windows.net",
+                credential=azure_credential,
+            )
+            user_delegation_key = blob_service_client.get_user_delegation_key(
+                key_start_time=datetime.now(timezone.utc),
+                key_expiry_time=datetime.now(timezone.utc) + timedelta(hours=1),
+            )
+            sas_token = generate_container_sas(
+                account_name=storage_account,
+                container_name=container,
+                user_delegation_key=user_delegation_key,
+                permission=ContainerSasPermissions(read=True, list=True),
+                expiry=datetime.now(timezone.utc) + timedelta(hours=1),
+            )
+            training_data_sas_url = f"https://{storage_account}.blob.core.windows.net/{container}?{sas_token}"
 
     # Step 3: Create knowledge source from labeled data (if available)
-    knowledge_sources: List[KnowledgeSource] = []
+    training_data_prefix = os.getenv("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX")
+    knowledge_sources = []
     if training_data_sas_url:
         labeled_source = LabeledDataKnowledgeSource(
             container_url=training_data_sas_url,
@@ -296,8 +242,10 @@ def main() -> None:
             "completion": "gpt-4.1",
             "embedding": "text-embedding-3-large",
         },
-        knowledge_sources=knowledge_sources if knowledge_sources else None,
+        knowledge_sources=[],
     )
+    for source in knowledge_sources:
+        custom_analyzer.knowledge_sources.append(source)
 
     poller = client.begin_create_analyzer(
         analyzer_id=analyzer_id,
