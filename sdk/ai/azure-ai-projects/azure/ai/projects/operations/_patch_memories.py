@@ -24,7 +24,38 @@ from ..models import (
 )
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
-from .._utils.model_base import _deserialize
+from .._utils.model_base import _deserialize, _serialize
+
+
+def _serialize_response_input_items(items: ResponseInputParam) -> List[dict[str, Any]]:
+    """Serialize OpenAI response input items to the payload shape expected by memory APIs."""
+
+    if hasattr(items, "model_dump"):
+        items = cast(Any, items).model_dump()
+    elif hasattr(items, "as_dict"):
+        items = cast(Any, items).as_dict()
+
+    if isinstance(items, dict):
+        serialized_item = _serialize(items)
+        if not isinstance(serialized_item, dict):
+            raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
+        return [serialized_item]
+
+    if isinstance(items, list):
+        serialized_items: List[dict[str, Any]] = []
+        for item in items:
+            if hasattr(item, "model_dump"):
+                item = cast(Any, item).model_dump()
+            elif hasattr(item, "as_dict"):
+                item = cast(Any, item).as_dict()
+
+            serialized_item = _serialize(item)
+            if not isinstance(serialized_item, dict):
+                raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
+            serialized_items.append(serialized_item)
+        return serialized_items
+
+    raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
 
 
 class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
@@ -93,8 +124,8 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             if isinstance(items, str):
                 items_dict = [{"role": "user", "type": "message", "content": items}]
             else:
-                # TODO: serialize items of type ResponseInputParam
-                items_dict = []
+                items_dict = _serialize_response_input_items(items)
+
 
         return super()._search_memories(
             name=name,
@@ -250,11 +281,11 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         )
 
         items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None and isinstance(items, str):
-            items_dict = [{"role": "user", "type": "message", "content": items}]
-        else:
-            # TODO: serialize items of type ResponseInputParam
-            items_dict = []
+        if items is not None:
+            if isinstance(items, str):
+                items_dict = [{"role": "user", "type": "message", "content": items}]
+            else:
+                items_dict = _serialize_response_input_items(items)
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}

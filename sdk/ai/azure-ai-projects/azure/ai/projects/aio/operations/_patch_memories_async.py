@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, List, overload, IO, cast, Literal
+from typing import Union, Optional, Any, List, overload, IO, Literal
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
@@ -23,6 +23,7 @@ from ...models import (
     AsyncUpdateMemoriesLROPollingMethod,
 )
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
+from ...operations._patch_memories import _serialize_response_input_items
 from ..._validation import api_version_validation
 from ..._utils.model_base import _deserialize
 
@@ -92,8 +93,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             if isinstance(items, str):
                 items_dict = [{"role": "user", "type": "message", "content": items}]
             else:
-                # TODO: serialize items of type ResponseInputParam
-                items_dict = []
+                items_dict = _serialize_response_input_items(items)
 
         return await super()._search_memories(
             name=name,
@@ -249,11 +249,11 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         )
 
         items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None and isinstance(items, str):
-            items_dict = [{"role": "user", "type": "message", "content": items}]
-        else:
-            # TODO: serialize items of type ResponseInputParam
-            items_dict = []
+        if items is not None:
+            if isinstance(items, str):
+                items_dict = [{"role": "user", "type": "message", "content": items}]
+            else:
+                items_dict = _serialize_response_input_items(items)
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
