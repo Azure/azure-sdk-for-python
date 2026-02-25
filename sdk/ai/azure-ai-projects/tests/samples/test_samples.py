@@ -74,6 +74,7 @@ class TestSamples(AzureRecordedTestCase):
     @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_memory_samples -s
     def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)

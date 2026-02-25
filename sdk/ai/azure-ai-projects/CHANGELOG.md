@@ -4,7 +4,13 @@
 
 ### Features Added
 
+* The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
+was change from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`. The class `ResponseInputParam`
+can be imported using `from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
+can still pass in `List[dict[str, Any]`.
+
 ### Breaking Changes
+
 
 ### Bugs Fixed
 

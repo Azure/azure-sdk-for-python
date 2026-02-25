@@ -61,6 +61,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    # To run this test: pytest tests/samples/test_samples_async.py::TestSamplesAsync::test_memory_samples -s
     async def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_var_mapping = get_sample_environment_variables_map(kwargs)
         executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)

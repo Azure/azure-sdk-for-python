@@ -86,15 +86,10 @@ async def main() -> None:
         scope = "user_123"
 
         # Add a memory to the memory store
-        user_message = {
-            "role": "user",
-            "content": "I prefer dark roast coffee and usually drink it in the morning",
-            "type": "message",
-        }
         update_poller = await project_client.beta.memory_stores.begin_update_memories(
             name=memory_store.name,
             scope=scope,
-            items=[user_message],  # Pass conversation items that you want to add to memory
+            items="I prefer dark roast coffee and usually drink it in the morning",  # Pass conversation items that you want to add to memory
             update_delay=0,  # Trigger update immediately without waiting for inactivity
         )
 
@@ -107,11 +102,10 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = {"role": "user", "content": "What are my coffee preferences?", "type": "message"}
         search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
-            items=[query_message],
+            items="What are my coffee preferences?",
             options=MemorySearchOptions(max_memories=5),
         )
         print(f"Found {len(search_response.memories)} memories")

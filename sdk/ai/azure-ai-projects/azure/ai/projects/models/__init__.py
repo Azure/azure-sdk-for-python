@@ -64,7 +64,6 @@ from ._models import (  # type: ignore
     CompoundFilter,
     ComputerUsePreviewTool,
     Connection,
-    ContainerAppAgentDefinition,
     ContinuousEvaluationRuleAction,
     CosmosDBIndex,
     CronTrigger,
@@ -216,6 +215,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AgentDefinitionFeatureKeys,
     AgentKind,
     AgentObjectType,
     AgentProtocol,
@@ -319,7 +319,6 @@ __all__ = [
     "CompoundFilter",
     "ComputerUsePreviewTool",
     "Connection",
-    "ContainerAppAgentDefinition",
     "ContinuousEvaluationRuleAction",
     "CosmosDBIndex",
     "CronTrigger",
@@ -468,6 +467,7 @@ __all__ = [
     "WebSearchToolFilters",
     "WeeklyRecurrenceSchedule",
     "WorkflowAgentDefinition",
+    "AgentDefinitionFeatureKeys",
     "AgentKind",
     "AgentObjectType",
     "AgentProtocol",
