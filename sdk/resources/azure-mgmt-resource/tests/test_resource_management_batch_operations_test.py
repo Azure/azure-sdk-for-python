@@ -9,7 +9,6 @@ from azure.mgmt.resource.resources.models import (
     BatchRequests,
     BatchResponse,
     BatchResponseStatus,
-    BatchProvisioningState,
 )
 
 
@@ -22,26 +21,26 @@ def test_batch_integration():
     assert BatchRequests is not None
     assert BatchResponse is not None
     assert BatchResponseStatus is not None
-    assert BatchProvisioningState is not None
 
-    # Test creating batch models
+    # Test creating batch models (using correct property names from TypeSpec)
     batch_request = BatchRequest(
-        content={"test": "data"},
         http_method="POST",
-        name="test-batch-request",
-        uri=(
+        relative_url=(
             "/subscriptions/test-sub-id/resourceGroups/test-rg/"
             "providers/Microsoft.Compute/virtualMachines"
         ),
+        name="test-batch-request",
+        body={"test": "data"},
     )
 
     batch_requests = BatchRequests(requests=[batch_request])
     assert batch_requests.requests[0] is batch_request
 
-    # Test enum values
-    assert BatchProvisioningState.SUCCEEDED == "Succeeded"
-    assert BatchProvisioningState.FAILED == "Failed"
-    assert BatchProvisioningState.RUNNING == "Running"
+    # Test enum values (using correct enum from TypeSpec)
+    assert BatchResponseStatus.SUCCEEDED == "Succeeded"
+    assert BatchResponseStatus.FAILED == "Failed"
+    assert BatchResponseStatus.VALIDATION_FAILED == "ValidationFailed"
+    assert BatchResponseStatus.SKIPPED == "Skipped"
 
 
 def test_sdk_structure():

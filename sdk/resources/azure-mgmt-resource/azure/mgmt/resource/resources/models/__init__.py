@@ -77,13 +77,13 @@ from ._resource_management_client_enums import (  # type: ignore
     TagsPatchOperation,
 )
 
-# Import batch models for ARM batch operations (2025-08-01-preview)
+# Import batch models for ARM batch operations (2025-04-01)
 from ._batch_models import (  # type: ignore
     BatchRequest,
     BatchRequests,
     BatchResponse,
+    BatchResponseItem,
     BatchResponseStatus,
-    BatchProvisioningState,
 )
 
 from ._patch import __all__ as _patch_all
@@ -140,12 +140,12 @@ __all__ = [
     "TagsPatchResource",
     "TagsResource",
     "ZoneMapping",
-    # Batch operation models (2025-08-01-preview)
+    # Batch operation models (2025-04-01)
     "BatchRequest",
     "BatchRequests",
     "BatchResponse",
+    "BatchResponseItem", 
     "BatchResponseStatus",
-    "BatchProvisioningState",
     "AliasPathAttributes",
     "AliasPathTokenType",
     "AliasPatternType",

@@ -13,77 +13,69 @@ if TYPE_CHECKING:
 
 
 class BatchRequest(_serialization.Model):
-    """The specification for one request that will be part of a larger batch.
+    """Batch request definition.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar content: The content of the HTTP request. Required.
-    :vartype content: any
-    :ivar dependent_on: Other requests in the batch that this request depends on. Optional.
-    :vartype dependent_on: list[str]
-    :ivar headers: The HTTP headers for the request. Optional.
-    :vartype headers: dict[str, str]
-    :ivar http_method: The HTTP method of the request, such as GET, PUT, POST, or DELETE.
-     Required.
+    :ivar http_method: The HTTP method for the request. Required.
     :vartype http_method: str
-    :ivar name: A unique name for the request, which can be used to reference it from other
-     requests in the batch. Required.
+    :ivar relative_url: The relative URL for the request. Required.
+    :vartype relative_url: str
+    :ivar name: Optional name to identify this request within the batch. Optional.
     :vartype name: str
-    :ivar uri: The URI of the request (without the hostname). This is often the path portion of
-     the URI. Required.
-    :vartype uri: str
+    :ivar body: The request body (for PUT/PATCH/POST operations). Optional.
+    :vartype body: any
+    :ivar headers: Request headers. Optional.
+    :vartype headers: dict[str, str]
+    :ivar depends_on: List of request names that this request depends on. Optional.
+    :vartype depends_on: list[str]
     """
 
     _attribute_map = {
-        "content": {"key": "content", "type": "object"},
-        "dependent_on": {"key": "dependentOn", "type": "[str]"},
-        "headers": {"key": "headers", "type": "{str}"},
         "http_method": {"key": "httpMethod", "type": "str"},
+        "relative_url": {"key": "relativeUrl", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "uri": {"key": "uri", "type": "str"},
+        "body": {"key": "body", "type": "object"},
+        "headers": {"key": "headers", "type": "{str}"},
+        "depends_on": {"key": "dependsOn", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        content: Any,
         http_method: str,
-        name: str,
-        uri: str,
-        dependent_on: Optional[List[str]] = None,
+        relative_url: str,
+        name: Optional[str] = None,
+        body: Optional[Any] = None,
         headers: Optional[Dict[str, str]] = None,
+        depends_on: Optional[List[str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword content: The content of the HTTP request. Required.
-        :paramtype content: any
-        :keyword http_method: The HTTP method of the request, such as GET, PUT, POST, or DELETE. Required.
+        :keyword http_method: The HTTP method for the request. Required.
         :paramtype http_method: str
-        :keyword name: A unique name for the request, which can be used to reference it from other requests in the batch. Required.
+        :keyword relative_url: The relative URL for the request. Required.
+        :paramtype relative_url: str
+        :keyword name: Optional name to identify this request within the batch. Optional.
         :paramtype name: str
-        :keyword uri: The URI of the request (without the hostname). This is often the path portion of the URI. Required.
-        :paramtype uri: str
-        :keyword dependent_on: Other requests in the batch that this request depends on. Optional.
-        :paramtype dependent_on: list[str]
-        :keyword headers: The HTTP headers for the request. Optional.
+        :keyword body: The request body (for PUT/PATCH/POST operations). Optional.
+        :paramtype body: any
+        :keyword headers: Request headers. Optional.
         :paramtype headers: dict[str, str]
+        :keyword depends_on: List of request names that this request depends on. Optional.
+        :paramtype depends_on: list[str]
         """
         super().__init__(**kwargs)
-        self.content = content
-        self.dependent_on = dependent_on
-        self.headers = headers
         self.http_method = http_method
+        self.relative_url = relative_url
         self.name = name
-        self.uri = uri
+        self.body = body
+        self.headers = headers
+        self.depends_on = depends_on
 
 
 class BatchRequests(_serialization.Model):
-    """The batch API entity definition.
+    """Collection of batch requests.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar requests: Specifications for all of the requests that will be invoked as part of the
-     batch. Required.
+    :ivar requests: The batch requests to execute. Required.
     :vartype requests: list[~azure.mgmt.resource.models.BatchRequest]
     """
 
@@ -93,129 +85,100 @@ class BatchRequests(_serialization.Model):
 
     def __init__(self, *, requests: List["_models.BatchRequest"], **kwargs: Any) -> None:
         """
-        :keyword requests: Specifications for all of the requests that will be invoked as part of the batch. Required.
+        :keyword requests: The batch requests to execute. Required.
         :paramtype requests: list[~azure.mgmt.resource.models.BatchRequest]
         """
         super().__init__(**kwargs)
         self.requests = requests
 
 
-class BatchResponse(_serialization.Model):
-    """An individual response from a request that was invoked as part of a batch.
+class BatchResponseItem(_serialization.Model):
+    """Individual response within a batch response.
 
-    :ivar content: The content of the HTTP response.
-    :vartype content: any
-    :ivar headers: The HTTP response headers.
-    :vartype headers: dict[str, str]
-    :ivar http_status_code: The HTTP status code returned for the individual request.
-    :vartype http_status_code: int
-    :ivar name: The name of the request.
+    :ivar name: The name of the request (if provided in the batch request). Optional.
     :vartype name: str
+    :ivar status_code: The HTTP status code of the response. Required.
+    :vartype status_code: int
+    :ivar status: The status of the batch response item. Required.
+    :vartype status: str or ~azure.mgmt.resource.models.BatchResponseStatus
+    :ivar body: The response body. Optional.
+    :vartype body: any
+    :ivar headers: Response headers. Optional.
+    :vartype headers: dict[str, str]
     """
 
     _attribute_map = {
-        "content": {"key": "content", "type": "object"},
-        "headers": {"key": "headers", "type": "{str}"},
-        "http_status_code": {"key": "httpStatusCode", "type": "int"},
         "name": {"key": "name", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "int"},
+        "status": {"key": "status", "type": "str"},
+        "body": {"key": "body", "type": "object"},
+        "headers": {"key": "headers", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        content: Optional[Any] = None,
-        headers: Optional[Dict[str, str]] = None,
-        http_status_code: Optional[int] = None,
+        status_code: int,
+        status: Union[str, "BatchResponseStatus"],
         name: Optional[str] = None,
+        body: Optional[Any] = None,
+        headers: Optional[Dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword content: The content of the HTTP response.
-        :paramtype content: any
-        :keyword headers: The HTTP response headers.
-        :paramtype headers: dict[str, str]
-        :keyword http_status_code: The HTTP status code returned for the individual request.
-        :paramtype http_status_code: int
-        :keyword name: The name of the request.
+        :keyword status_code: The HTTP status code of the response. Required.
+        :paramtype status_code: int
+        :keyword status: The status of the batch response item. Required.
+        :paramtype status: str or ~azure.mgmt.resource.models.BatchResponseStatus
+        :keyword name: The name of the request (if provided in the batch request). Optional.
         :paramtype name: str
+        :keyword body: The response body. Optional.
+        :paramtype body: any
+        :keyword headers: Response headers. Optional.
+        :paramtype headers: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.content = content
-        self.headers = headers
-        self.http_status_code = http_status_code
         self.name = name
+        self.status_code = status_code
+        self.status = status
+        self.body = body
+        self.headers = headers
 
 
-class BatchResponseStatus(_serialization.Model):
-    """Batch API operation response.
+class BatchResponse(_serialization.Model):
+    """Batch operation response.
 
-    :ivar completed_requests_count: The number of requests that have been completed.
-    :vartype completed_requests_count: int
-    :ivar failed_requests_count: The number of requests that have failed.
-    :vartype failed_requests_count: int
-    :ivar provisioning_state: The provisioning state of the batch operation.
-    :vartype provisioning_state: str or ~azure.mgmt.resource.models.ProvisioningState
-    :ivar responses: The individual responses for each request in the batch.
-    :vartype responses: list[~azure.mgmt.resource.models.BatchResponse]
-    :ivar total_requests_count: The total number of requests submitted in the batch.
-    :vartype total_requests_count: int
+    :ivar responses: Individual responses within the batch. Required.
+    :vartype responses: list[~azure.mgmt.resource.models.BatchResponseItem]
     """
 
     _attribute_map = {
-        "completed_requests_count": {"key": "completedRequestsCount", "type": "int"},
-        "failed_requests_count": {"key": "failedRequestsCount", "type": "int"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "responses": {"key": "responses", "type": "[BatchResponse]"},
-        "total_requests_count": {"key": "totalRequestsCount", "type": "int"},
+        "responses": {"key": "responses", "type": "[BatchResponseItem]"},
     }
 
-    def __init__(
-        self,
-        *,
-        completed_requests_count: Optional[int] = None,
-        failed_requests_count: Optional[int] = None,
-        provisioning_state: Optional[str] = None,
-        responses: Optional[List["_models.BatchResponse"]] = None,
-        total_requests_count: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, responses: List["_models.BatchResponseItem"], **kwargs: Any) -> None:
         """
-        :keyword completed_requests_count: The number of requests that have been completed.
-        :paramtype completed_requests_count: int
-        :keyword failed_requests_count: The number of requests that have failed.
-        :paramtype failed_requests_count: int
-        :keyword provisioning_state: The provisioning state of the batch operation.
-        :paramtype provisioning_state: str or ~azure.mgmt.resource.models.ProvisioningState
-        :keyword responses: The individual responses for each request in the batch.
-        :paramtype responses: list[~azure.mgmt.resource.models.BatchResponse]
-        :keyword total_requests_count: The total number of requests submitted in the batch.
-        :paramtype total_requests_count: int
+        :keyword responses: Individual responses within the batch. Required.
+        :paramtype responses: list[~azure.mgmt.resource.models.BatchResponseItem]
         """
         super().__init__(**kwargs)
-        self.completed_requests_count = completed_requests_count
-        self.failed_requests_count = failed_requests_count
-        self.provisioning_state = provisioning_state
         self.responses = responses
-        self.total_requests_count = total_requests_count
 
 
-class BatchProvisioningState(str, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state for batch operations.
+class BatchResponseStatus(str, metaclass=CaseInsensitiveEnumMeta):
+    """Batch response status enumeration.
 
-    :cvar ACCEPTED: Batch request has been accepted.
-    :vartype ACCEPTED: str
-    :cvar CANCELED: Batch processing was canceled.
-    :vartype CANCELED: str
-    :cvar FAILED: Batch processing failed.
-    :vartype FAILED: str
-    :cvar RUNNING: Batch processing is ongoing.
-    :vartype RUNNING: str
-    :cvar SUCCEEDED: Batch processing succeeded.
+    :cvar SUCCEEDED: The request succeeded.
     :vartype SUCCEEDED: str
+    :cvar FAILED: The request failed.
+    :vartype FAILED: str
+    :cvar VALIDATION_FAILED: The request was processed but failed validation.
+    :vartype VALIDATION_FAILED: str
+    :cvar SKIPPED: The request was skipped due to dependency failure.
+    :vartype SKIPPED: str
     """
 
-    ACCEPTED = "Accepted"
-    CANCELED = "Canceled"
-    FAILED = "Failed"
-    RUNNING = "Running"
     SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    VALIDATION_FAILED = "ValidationFailed"
+    SKIPPED = "Skipped"
