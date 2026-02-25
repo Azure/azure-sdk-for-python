@@ -34,7 +34,7 @@ from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Te
 from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
 
 from azure.ai.ml import MLClient, load_component, load_job
-from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
+from azure.ai.ml._restclient.registry_discovery import RegistryDiscoveryClient as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils._asset_utils import IgnoreFile
 from azure.ai.ml._utils.utils import hash_dict
@@ -239,7 +239,7 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
 
 @pytest.fixture
 def mock_aml_services_2022_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_10_01")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
@@ -299,7 +299,7 @@ def mock_aml_services_2023_08_01_preview(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_10_01")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
@@ -334,7 +334,7 @@ def mock_registry_discovery_client(mock_credential: DefaultAzureCredential) -> S
 
 @pytest.fixture
 def mock_aml_services_2022_05_01(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_05_01")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
