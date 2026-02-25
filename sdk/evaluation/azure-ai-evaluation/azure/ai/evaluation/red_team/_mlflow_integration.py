@@ -366,6 +366,8 @@ class MLflowIntegration:
                                 self.logger.debug(f"Logged metric: {risk_category}_{key} = {value}")
 
             if self._one_dp_project:
+                run_id = getattr(eval_run, "id", "unknown")
+                run_display_name = getattr(eval_run, "display_name", None) or "unknown"
                 # Step 1: Upload evaluation results (blob upload + version create)
                 evaluation_result_id = None
                 try:
@@ -379,7 +381,10 @@ class MLflowIntegration:
                     )
                     evaluation_result_id = create_evaluation_result_response.id
                 except Exception as e:
-                    self.logger.error(f"Failed to create evaluation result: {str(e)}")
+                    self.logger.error(
+                        f"Failed to create evaluation result for run {run_id} ({run_display_name}): {str(e)}",
+                        exc_info=True,
+                    )
 
                 # Step 2: Always update the run status, even if result upload failed
                 outputs = None
@@ -399,7 +404,10 @@ class MLflowIntegration:
                     )
                     self.logger.debug(f"Updated UploadRun: {update_run_response.id}")
                 except Exception as e:
-                    self.logger.error(f"Failed to update red team run status: {str(e)}")
+                    self.logger.error(
+                        f"Failed to update red team run status for run {run_id}: {str(e)}",
+                        exc_info=True,
+                    )
             else:
                 # Log the entire directory to MLFlow
                 try:
@@ -431,19 +439,23 @@ class MLflowIntegration:
         """
         if not self._one_dp_project:
             return
+        run_id = getattr(eval_run, "id", "unknown")
+        run_display_name = getattr(eval_run, "display_name", None)
         try:
             self.generated_rai_client._evaluation_onedp_client.update_red_team_run(
                 name=eval_run.id,
                 red_team=RedTeamUpload(
                     id=eval_run.id,
-                    display_name=getattr(eval_run, "display_name", None)
-                    or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
+                    display_name=run_display_name or f"redteam-agent-{datetime.now().strftime('%Y%m%d-%H%M%S')}",
                     status=status,
                 ),
             )
-            self.logger.info(f"Updated red team run status to '{status}'")
+            self.logger.info(f"Updated red team run {run_id} status to '{status}'")
         except Exception as e:
-            self.logger.error(f"Failed to update red team run status to '{status}': {str(e)}")
+            self.logger.error(
+                f"Failed to update red team run {run_id} status to '{status}': {str(e)}",
+                exc_info=True,
+            )
 
     def _build_instance_results_payload(
         self,
