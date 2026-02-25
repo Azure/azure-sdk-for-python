@@ -63,6 +63,7 @@ def _serialize_response_input_items(
 
 class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
+# A message or list of messages to store in memory. When using a list, each item needs to correspond to a dictionary with `role`, `content` and `type` properties (with type equals `message`). For example: {\"role\": \"user\", \"type\": \"message\", \"content\": \"my user message\"}"
     @overload
     def search_memories(
         self,
@@ -80,15 +81,16 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :param name: The name of the memory store to search. Required.
         :type name: str
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
-            Required.
+         Required.
         :paramtype scope: str
-        :keyword items: A list of queries you would like to use in the search, each one represented as
-            a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-            ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
-            {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :keyword items: A message or list of messages used to extract relevant memories. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Default value is None.
         :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
-            memory search from where the last operation left off. Default value is None.
+         memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
         :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
@@ -148,10 +150,11 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: A list of queries you would like to use in the search, each one represented as
-         a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-         ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
-         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :keyword items: A message or list of messages used to extract relevant memories. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Default value is None.
         :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
@@ -194,11 +197,12 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword items: A list of message items you would like to store in memory, each one represented
-         as a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-         ``message``). Each message is identical to OpenAI's EasyInputMessageParam. For example:
-         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
-        :paramtype items: list[dict[str, any]]
+        :keyword items: A message or list of messages you would like to store in memory. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
@@ -291,11 +295,12 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword items: A list of message items you would like to store in memory, each one represented
-         as a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
-         ``message``). Each message is identical to OpenAI's EasyInputMessageParam. For example:
-         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
-        :paramtype items: list[dict[str, any]]
+        :keyword items: A message or list of messages you would like to store in memory. When using a
+         list, each item needs to correspond to a dictionary with `role`, `content` and `type`
+         keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
+         Only messages with `type` equals `message` are currently processed. Others are ignored. 
+         Default value is None.
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_update_id: The unique ID of the previous update request, enabling incremental
          memory updates from where the last operation left off. Default value is None.
         :paramtype previous_update_id: str
