@@ -48,7 +48,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
     ) -> _models.MemoryStoreSearchResult: ...
 
     @overload
-    def _search_memories(
+    def search_memories(
         self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.MemoryStoreSearchResult: ...
 
@@ -77,7 +77,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
          ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
          {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
-        :paramtype items: list[dict[str, any]]
+        :paramtype items: Union[str, openai.types.responses.ResponseInputParam]
         :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
          memory search from where the last operation left off. Default value is None.
         :paramtype previous_search_id: str
@@ -89,11 +89,12 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         """
 
         items_dict: Optional[List[dict[str, Any]]] = None
-        if items is not None and isinstance(items, str):
-            items_dict = [{"role": "user", "type": "message", "content": items}]
-        else:
-            # TODO: serialize items of type ResponseInputParam
-            items_dict = []
+        if items is not None:
+            if isinstance(items, str):
+                items_dict = [{"role": "user", "type": "message", "content": items}]
+            else:
+                # TODO: serialize items of type ResponseInputParam
+                items_dict = []
 
         return super()._search_memories(
             name=name,
