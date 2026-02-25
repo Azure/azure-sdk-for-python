@@ -9,7 +9,8 @@ import pytest
 import yaml
 
 from azure.ai.ml import MLClient, load_component
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion as ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import _deserialize
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
@@ -88,11 +89,41 @@ def load_component_entity_from_yaml(
     return internal_component
 
 
+import re
+
+
+def _snake_to_camel(name):
+    """Convert snake_case to camelCase."""
+    parts = name.split("_")
+    return parts[0] + "".join(w.capitalize() for w in parts[1:])
+
+
+def _convert_keys_to_camel(data, skip_values_for=None):
+    """Recursively convert dict keys from snake_case to camelCase.
+    Keys inside skip_values_for entries are left as-is (e.g. component_spec content is user-defined).
+    """
+    if skip_values_for is None:
+        skip_values_for = {"componentSpec", "component_spec"}
+    if isinstance(data, dict):
+        result = {}
+        for k, v in data.items():
+            camel_key = _snake_to_camel(k)
+            if camel_key in skip_values_for or k in skip_values_for:
+                result[camel_key] = v
+            else:
+                result[camel_key] = _convert_keys_to_camel(v, skip_values_for)
+        return result
+    if isinstance(data, list):
+        return [_convert_keys_to_camel(item, skip_values_for) for item in data]
+    return data
+
+
 def load_component_entity_from_rest_json(path) -> Component:
     """Rest component json -> rest component object -> component entity"""
     with open(path, "r") as f:
         target = yaml.safe_load(f)
-    rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(target)))
+    target = _convert_keys_to_camel(target)
+    rest_obj = _deserialize(ComponentVersionData, json.loads(json.dumps(target)))
     internal_component = Component._from_rest_object(rest_obj)
     return internal_component
 

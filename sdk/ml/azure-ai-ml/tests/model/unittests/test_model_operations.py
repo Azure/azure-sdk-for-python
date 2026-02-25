@@ -5,11 +5,11 @@ from unittest.mock import Mock, patch
 import pytest
 
 from azure.ai.ml import load_model
-from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
-    ModelContainerData,
-    ModelContainerDetails,
-    ModelVersionData,
-    ModelVersionDetails,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ModelContainer as ModelContainerData,
+    ModelContainerProperties as ModelContainerDetails,
+    ModelVersion as ModelVersionData,
+    ModelVersionProperties as ModelVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model

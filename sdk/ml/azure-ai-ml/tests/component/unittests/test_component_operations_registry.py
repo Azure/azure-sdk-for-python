@@ -3,11 +3,11 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    ComponentContainerData,
-    ComponentContainerDetails,
-    ComponentVersionData,
-    ComponentVersionDetails,
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    ComponentContainer as ComponentContainerData,
+    ComponentContainerProperties as ComponentContainerDetails,
+    ComponentVersion as ComponentVersionData,
+    ComponentVersionProperties as ComponentVersionDetails,
 )
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty

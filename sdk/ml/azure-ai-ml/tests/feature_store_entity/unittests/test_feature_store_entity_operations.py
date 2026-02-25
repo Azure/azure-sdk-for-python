@@ -4,7 +4,7 @@ from unittest.mock import Mock, patch
 import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
-from azure.ai.ml._restclient.v2023_10_01.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FeaturestoreEntityContainer,
     FeaturestoreEntityContainerProperties,
     FeaturestoreEntityVersion,
