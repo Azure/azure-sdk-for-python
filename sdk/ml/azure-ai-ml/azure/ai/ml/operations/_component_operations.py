@@ -86,7 +86,7 @@ class ComponentOperations(_ScopeDependentOperations):
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: The service client for API operations.
     :type service_client: Union[
-        ~azure.ai.ml._restclient.v2022_10_01.AzureMachineLearningWorkspaces,
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient,
         ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview.AzureMachineLearningWorkspaces]
     :param all_operations: The container for all available operations.
     :type all_operations: ~azure.ai.ml._scope_dependent_operations.OperationsContainer

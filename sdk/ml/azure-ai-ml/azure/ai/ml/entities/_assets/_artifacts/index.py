@@ -87,7 +87,7 @@ class Index(Artifact):
             path=index_rest_object.storage_uri,
             # pylint: disable-next=protected-access
             creation_context=SystemData._from_rest_object(
-                RestSystemData.from_dict(index_rest_object.system_data.as_dict())
+                index_rest_object.system_data
             ),
         )
 

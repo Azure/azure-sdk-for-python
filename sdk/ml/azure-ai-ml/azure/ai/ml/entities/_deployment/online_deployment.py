@@ -165,6 +165,28 @@ class OnlineDeployment(Deployment):
         """
         return self._provisioning_state
 
+    @staticmethod
+    def _model_to_dict(obj):
+        """Serialize a model to dict, handling both msrest and TypeSpec models."""
+        if obj is None:
+            return None
+        if hasattr(obj, "_is_model"):
+            # TypeSpec model
+            return obj.as_dict()
+        if hasattr(obj, "_attribute_map"):
+            # msrest model - serialize manually to avoid failures with nested TypeSpec objects
+            result = {}
+            for key, desc in obj._attribute_map.items():
+                value = getattr(obj, key, None)
+                if value is not None:
+                    result[desc["key"]] = OnlineDeployment._model_to_dict(value)
+            return result
+        if isinstance(obj, list):
+            return [OnlineDeployment._model_to_dict(item) for item in obj]
+        if isinstance(obj, dict):
+            return {k: OnlineDeployment._model_to_dict(v) for k, v in obj.items()}
+        return obj
+
     def _generate_dependencies(self) -> Tuple:
         """Convert dependencies into ARM id or REST wrapper.
 
@@ -457,8 +479,8 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         return {
             self._arm_type: {
                 ArmConstants.NAME: self.name,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "K8SOnlineDeployment"),
-                ArmConstants.SKU: self._serialize.body(sku, "Sku"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._model_to_dict(properties),
+                ArmConstants.SKU: self._model_to_dict(sku),
                 ArmConstants.TAGS: tags,
             }
         }
@@ -670,8 +692,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
         return {
             self._arm_type: {
                 ArmConstants.NAME: self.name,
-                ArmConstants.PROPERTIES_PARAMETER_NAME: self._serialize.body(properties, "ManagedOnlineDeployment"),
-                ArmConstants.SKU: self._serialize.body(sku, "Sku"),
+                ArmConstants.PROPERTIES_PARAMETER_NAME: self._model_to_dict(properties),
+                ArmConstants.SKU: self._model_to_dict(sku),
                 ArmConstants.TAGS: tags,
             }
         }

@@ -18,7 +18,7 @@ from azure.ai.ml._restclient.runhistory.models import Run, RunDetails, TypedAsse
 from azure.ai.ml._restclient.v2022_02_01_preview.models import DataType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobType as RestJobType
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ModelType
-from azure.ai.ml._restclient.v2022_10_01.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils.utils import create_requests_pipeline_with_retry, download_text_from_url
 from azure.ai.ml.constants._common import GitProperties

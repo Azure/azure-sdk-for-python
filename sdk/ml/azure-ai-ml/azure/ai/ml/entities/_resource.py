@@ -11,7 +11,7 @@ from typing import IO, Any, AnyStr, Dict, List, Optional, Tuple, Union, cast
 
 from msrest import Serializer
 
-from azure.ai.ml._restclient.v2022_10_01 import models
+from azure.ai.ml._restclient.arm_ml_service import models
 from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
 from azure.ai.ml._utils.utils import dump_yaml
 
