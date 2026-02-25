@@ -3,9 +3,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from __future__ import annotations
+
 import json
 import os
-from typing import Any, Mapping
+from typing import Any, Mapping, Optional
 
 from devtools_testutils import add_general_string_sanitizer
 
@@ -91,7 +93,7 @@ def _get_env_vars_from_fine_tuning_bindings(
     return model_name, training_file_path, validation_file_path
 
 
-def _parse_fine_tuning_bindings(bindings: Any) -> Mapping[str, Any] | None:
+def _parse_fine_tuning_bindings(bindings: Any) -> Optional[Mapping[str, Any]]:
     if isinstance(bindings, str):
         bindings = bindings.strip()
         if not bindings:
