@@ -27,7 +27,7 @@ from .._validation import api_version_validation
 from .._utils.model_base import _deserialize, _serialize
 
 
-def _serialize_response_input_items(
+def _serialize_memory_input_items(
     items: Optional[Union[str, ResponseInputParam]],
 ) -> Optional[List[dict[str, Any]]]:
     """Serialize OpenAI response input items to the payload shape expected by memory APIs.
@@ -94,6 +94,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :paramtype previous_search_id: str
         :keyword options: Memory search options. Default value is None.
         :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -109,6 +112,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :type name: str
         :param body: Required.
         :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -124,6 +130,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :type name: str
         :param body: Required.
         :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -169,7 +178,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             name=name,
             body=body,
             scope=scope,
-            items=_serialize_response_input_items(items),
+            items=_serialize_memory_input_items(items),
             previous_search_id=previous_search_id,
             options=options,
             **kwargs,
@@ -194,9 +203,6 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
         :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
          Required.
         :paramtype scope: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
         :keyword items: A message or list of messages you would like to store in memory. When using a
          list, each item needs to correspond to a dictionary with `role`, `content` and `type`
          keys. For example: {"role": "user", "type": "message", "content": "my user message"}.
@@ -212,6 +218,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
          Set to 0 to immediately trigger the update without delay.
          Defaults to 300 (5 minutes). Default value is None.
         :paramtype update_delay: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of UpdateMemoriesLROPoller that returns MemoryStoreUpdateCompletedResult. The
          MemoryStoreUpdateCompletedResult is compatible with MutableMapping
         :rtype:
@@ -334,7 +343,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 name=name,
                 body=body,
                 scope=scope,
-                items=_serialize_response_input_items(items),
+                items=_serialize_memory_input_items(items),
                 previous_update_id=previous_update_id,
                 update_delay=update_delay,
                 content_type=content_type,
