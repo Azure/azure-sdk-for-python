@@ -11,6 +11,8 @@ can still pass in `List[dict[str, Any]`.
 
 ### Breaking Changes
 
+* Class `CodeInterpreterContainerAuto` was renamed to `AutoCodeInterpreterToolParam`, and has a new
+optional property `network_policy` of type `ContainerNetworkPolicyParam`.
 
 ### Bugs Fixed
 
