@@ -1432,7 +1432,11 @@ class RedTeam:
 
                 # Process and return results
                 return await self._finalize_results(skip_upload, skip_evals, eval_run, output_path, scan_name)
-            except Exception:
+            except Exception as e:
+                self.logger.error(
+                    f"Red team scan execution failed for run {getattr(eval_run, 'id', 'unknown')}: {str(e)}",
+                    exc_info=True,
+                )
                 # Ensure the run status is updated to Failed if an upload was started
                 if not skip_upload and self.mlflow_integration is not None:
                     self.mlflow_integration.update_run_status(eval_run, "Failed")
@@ -1785,7 +1789,10 @@ class RedTeam:
                 objectives_by_risk=objectives_by_risk,
             )
 
-            # Update red_team_info with Foundry results
+            # Update red_team_info with Foundry results.
+            # The RAIServiceScorer already evaluated each response during attack
+            # execution, so results (attack_success, score) are in the JSONL.
+            # No need for a second evaluation_processor.evaluate() call.
             for strategy_name, risk_data in foundry_results.items():
                 if strategy_name not in self.red_team_info:
                     self.red_team_info[strategy_name] = {}
@@ -1805,47 +1812,8 @@ class RedTeam:
                         "asr": result_data.get("asr", 0.0),
                     }
 
-                    # Run evaluation if not skipping and we have a data file
-                    if not skip_evals and data_file and os.path.exists(data_file):
-                        progress_bar.set_postfix({"current": f"evaluating {risk_value}"})
-                        try:
-                            # Find the risk category enum from value
-                            risk_category_enum = next(
-                                (rc for rc in self.risk_categories if rc.value == risk_value),
-                                None,
-                            )
-                            if risk_category_enum and self.evaluation_processor:
-                                # Find matching strategy for evaluation
-                                all_strategies = foundry_strategies + special_strategies
-                                strategy_for_eval = next(
-                                    (s for s in all_strategies if get_strategy_name(s) == strategy_name),
-                                    AttackStrategy.Baseline,  # Fallback
-                                )
-
-                                await self.evaluation_processor.evaluate(
-                                    scan_name=None,
-                                    risk_category=risk_category_enum,
-                                    strategy=strategy_for_eval,
-                                    _skip_evals=False,
-                                    data_path=data_file,
-                                    output_path=None,
-                                    red_team_info=self.red_team_info,
-                                )
-                        except Exception as eval_error:
-                            self.logger.warning(f"Evaluation error for {strategy_name}/{risk_value}: {str(eval_error)}")
-                            # Don't fail the whole execution for eval errors
-                            tqdm.write(f"⚠️ Evaluation warning for {strategy_name}/{risk_value}: {str(eval_error)}")
-
                     self.completed_tasks += 1
                     progress_bar.update(1)
-
-            # Handle Baseline strategy separately if present
-            if AttackStrategy.Baseline in special_strategies:
-                await self._handle_baseline_with_foundry_results(
-                    objectives_by_risk=objectives_by_risk,
-                    progress_bar=progress_bar,
-                    skip_evals=skip_evals,
-                )
 
             self.logger.info("Foundry-based attack execution completed")
 
