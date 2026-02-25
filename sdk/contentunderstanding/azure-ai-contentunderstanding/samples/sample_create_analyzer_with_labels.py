@@ -310,7 +310,7 @@ def main() -> None:
     print(f"  Description: {result.description}")
     print(f"  Base analyzer: {result.base_analyzer_id}")
     print(f"  Fields: {len(result.field_schema.fields) if result.field_schema and result.field_schema.fields else 0}")
-    print(f"  Knowledge srcs: {len(result.knowledge_sources) if result.knowledge_sources else 0}")
+    print(f"  Knowledge sources: {len(result.knowledge_sources) if result.knowledge_sources else 0}")
     # [END create_analyzer_with_labels]
 
     # Clean up - delete the analyzer
