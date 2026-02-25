@@ -185,7 +185,7 @@ class TestSamples(AzureRecordedTestCase):
             # Don't replay LLM validation since there probably a defect in proxy server fail to replay
             # Proxy server probably not able to parse the captured print content
             executor.validate_print_calls_by_llm(
-                instructions=fine_tuning_instructions,
+                instructions=resource_management_instructions,
                 project_endpoint=kwargs["azure_ai_project_endpoint"],
                 model=kwargs["azure_ai_model_deployment_name"],
             )
