@@ -327,6 +327,7 @@ The samples demonstrate:
 * **Custom Analyzers** - Create custom analyzers with field schemas for specialized extraction needs
 * **Document Classification** - Create and use classifiers to categorize documents
 * **Analyzer Management** - Get, list, update, copy, and delete analyzers
+* **Labeled Training Data** - Create custom analyzers with labeled training data from Azure Blob Storage for improved extraction accuracy
 * **Result Management** - Retrieve result files from video analysis and delete analysis results
 
 See the [samples README][sample_readme] for introductions of samples and the [samples directory][python_cu_samples] for complete examples. 

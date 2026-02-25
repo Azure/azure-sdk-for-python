@@ -21,6 +21,9 @@ from devtools_testutils import (
 
 load_dotenv()
 
+# Sanitized placeholder for blob storage container SAS URLs in test recordings
+SANITIZED_CONTAINER_SAS_URL = "https://sanitized.blob.core.windows.net/container?sv=sanitized-sas-token"
+
 
 @pytest.fixture(scope="session", autouse=True)
 def start_proxy(test_proxy):
@@ -145,6 +148,35 @@ def add_sanitizers(test_proxy):
     if target_region and target_region != "placeholder-target-region":
         add_general_string_sanitizer(target=target_region, value="placeholder-target-region")
 
+    # Sanitize blob storage URLs and SAS tokens for labeled training data tests
+    # This ensures that real storage account names, container names, and SAS tokens
+    # are not recorded in test recordings.
+    #
+    # 1. Sanitize the storage account hostname in blob URLs (covers URIs, headers, and bodies)
+    #    e.g. https://mystorageaccount.blob.core.windows.net -> https://sanitized.blob.core.windows.net
+    add_general_regex_sanitizer(
+        regex=r"https://[a-zA-Z0-9\-]+\.blob\.core\.windows\.net",
+        value="https://sanitized.blob.core.windows.net",
+    )
+
+    # 2. Sanitize SAS tokens in query strings (everything after ?sv= or ?sp= in a blob URL)
+    #    SAS tokens contain sensitive signing info; replace the query string with a fake token
+    add_general_regex_sanitizer(
+        regex=r"(?<=\.blob\.core\.windows\.net/[^?\s]{1,200})\?[^\s\"']+",
+        value="?sv=sanitized-sas-token",
+    )
+
+    # 3. Sanitize the containerUrl field in JSON request/response bodies
+    add_body_key_sanitizer(
+        json_path="$..containerUrl",
+        value=SANITIZED_CONTAINER_SAS_URL,
+    )
+
+    # 4. Sanitize training data prefix (may reveal internal folder structure)
+    training_prefix = os.environ.get("CONTENTUNDERSTANDING_TRAINING_DATA_PREFIX", "")
+    if training_prefix and training_prefix not in ("", "training_samples/"):
+        add_general_string_sanitizer(target=training_prefix, value="training_samples/")
+
     # Sanitize dynamic analyzer IDs in URLs only
     # Note: We don't sanitize analyzer IDs in response bodies because tests using variables
     # (like test_sample_grant_copy_auth) need the actual IDs to match the variables.
@@ -160,4 +192,8 @@ def add_sanitizers(test_proxy):
     add_uri_regex_sanitizer(
         regex=r"/analyzers/test_analyzer_[a-f0-9]+",
         value="/analyzers/test_analyzer_0000000000000000",
+    )
+    add_uri_regex_sanitizer(
+        regex=r"/analyzers/test_receipt_analyzer_[a-f0-9]+",
+        value="/analyzers/test_receipt_analyzer_0000000000000000",
     )
