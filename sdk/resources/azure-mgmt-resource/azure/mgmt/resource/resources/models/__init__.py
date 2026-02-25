@@ -19,6 +19,11 @@ from ._models_py3 import (  # type: ignore
     AliasPathMetadata,
     AliasPattern,
     ApiProfile,
+    BatchRequest,
+    BatchRequests,
+    BatchResponse,
+    BatchResponseItem,
+    BatchResponseStatus,
     ErrorAdditionalInfo,
     ErrorResponse,
     ExportTemplateRequest,
@@ -77,15 +82,6 @@ from ._resource_management_client_enums import (  # type: ignore
     TagsPatchOperation,
 )
 
-# Import batch models for ARM batch operations (2025-04-01)
-from ._batch_models import (  # type: ignore
-    BatchRequest,
-    BatchRequests,
-    BatchResponse,
-    BatchResponseItem,
-    BatchResponseStatus,
-)
-
 from ._patch import __all__ as _patch_all
 from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
@@ -96,6 +92,11 @@ __all__ = [
     "AliasPathMetadata",
     "AliasPattern",
     "ApiProfile",
+    "BatchRequest",
+    "BatchRequests",
+    "BatchResponse",
+    "BatchResponseItem",
+    "BatchResponseStatus",
     "ErrorAdditionalInfo",
     "ErrorResponse",
     "ExportTemplateRequest",
@@ -140,12 +141,6 @@ __all__ = [
     "TagsPatchResource",
     "TagsResource",
     "ZoneMapping",
-    # Batch operation models (2025-04-01)
-    "BatchRequest",
-    "BatchRequests",
-    "BatchResponse",
-    "BatchResponseItem", 
-    "BatchResponseStatus",
     "AliasPathAttributes",
     "AliasPathTokenType",
     "AliasPatternType",
