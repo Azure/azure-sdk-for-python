@@ -105,11 +105,12 @@ async def main() -> None:
             )
 
         # Retrieve memories from the memory store
-        query_message = {"role": "user", "content": "What are my coffee preferences?", "type": "message"}
+        # query_message = EasyInputMessageParam(role="user", content="What are my coffee preferences?", type="message")
         search_response = await project_client.beta.memory_stores.search_memories(
             name=memory_store.name,
             scope=scope,
-            items=[query_message],
+            # items=[query_message],
+            items="What are my coffee preferences?",
             options=MemorySearchOptions(max_memories=5),
         )
         print(f"Found {len(search_response.memories)} memories")

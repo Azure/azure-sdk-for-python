@@ -30,6 +30,81 @@ from ..._utils.model_base import _deserialize
 class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
     @overload
+    async def search_memories(
+        self,
+        name: str,
+        *,
+        scope: str,
+        content_type: str = "application/json",
+        items: Optional[Union[str, ResponseInputParam]] = None,
+        previous_search_id: Optional[str] = None,
+        options: Optional[_models.MemorySearchOptions] = None,
+        **kwargs: Any,
+    ) -> _models.MemoryStoreSearchResult: ...
+
+    @overload
+    async def search_memories(
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult: ...
+
+    @overload
+    async def search_memories(
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MemoryStoreSearchResult: ...
+
+    @distributed_trace_async
+    async def search_memories(
+        self,
+        name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        scope: str = _Unset,
+        items: Optional[Union[str, ResponseInputParam]] = None,
+        previous_search_id: Optional[str] = None,
+        options: Optional[_models.MemorySearchOptions] = None,
+        **kwargs: Any,
+    ) -> _models.MemoryStoreSearchResult:
+        """Search for relevant memories from a memory store based on conversation context.
+
+        :param name: The name of the memory store to search. Required.
+        :type name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword scope: The namespace that logically groups and isolates memories, such as a user ID.
+         Required.
+        :paramtype scope: str
+        :keyword items: A list of queries you would like to use in the search, each one represented as
+         a dictionary, with ``role``, ``content`` and ``type`` properties (with type equals
+         ``message``). Each query is a message identical to OpenAI's EasyInputMessageParam. For example:
+         {"role": "user", "type": "message", "content": "my user message"}. Default value is None.
+        :paramtype items: list[dict[str, any]]
+        :keyword previous_search_id: The unique ID of the previous search request, enabling incremental
+         memory search from where the last operation left off. Default value is None.
+        :paramtype previous_search_id: str
+        :keyword options: Memory search options. Default value is None.
+        :paramtype options: ~azure.ai.projects.models.MemorySearchOptions
+        :return: MemoryStoreSearchResult. The MemoryStoreSearchResult is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        items_dict: Optional[List[dict[str, Any]]] = None
+        if items is not None and isinstance(items, str):
+            items_dict = [{"role": "user", "type": "message", "content": items}]
+        else:
+            # TODO: serialize items of type ResponseInputParam
+            items_dict = []
+
+        return await super()._search_memories(
+            name=name,
+            body=body,
+            scope=scope,
+            items=items_dict,
+            previous_search_id=previous_search_id,
+            options=options,
+            **kwargs,
+        )
+
+    @overload
     async def begin_update_memories(
         self,
         name: str,
