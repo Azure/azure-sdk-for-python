@@ -21,7 +21,7 @@ from azure.ai.projects.models import (
     PromptAgentDefinition,
     FileSearchTool,
     CodeInterpreterTool,
-    CodeInterpreterContainerAuto,
+    AutoCodeInterpreterToolParam,
 )
 
 
@@ -93,7 +93,7 @@ End of sensor log.
                 instructions="You are a data analyst. Use file search to find data files, then use code interpreter to perform calculations on the data.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                 ],
             ),
             description="Agent with File Search and Code Interpreter.",
@@ -163,7 +163,7 @@ def fibonacci(n):
                 instructions="You are a code analyst. Use file search to find code files, then use code interpreter to execute and test the code.",
                 tools=[
                     FileSearchTool(vector_store_ids=[vector_store.id]),
-                    CodeInterpreterTool(container=CodeInterpreterContainerAuto()),
+                    CodeInterpreterTool(container=AutoCodeInterpreterToolParam()),
                 ],
             ),
             description="Agent for code analysis and execution.",
