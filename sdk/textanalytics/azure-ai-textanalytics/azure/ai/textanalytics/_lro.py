@@ -255,8 +255,11 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(  # pylint: disable=all
         return self._current_body.display_name
 
     def get_continuation_token(self) -> str:
-        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
-        self._initial_response.context.options["show_stats"] = self._show_stats
+        if self._initial_response.context is not None:
+            self._initial_response.context["deserialized_data"] = {
+                "show_stats": self._show_stats,
+                "doc_id_order": self._doc_id_order,
+            }
         return super().get_continuation_token()
 
 
@@ -316,10 +319,10 @@ class AnalyzeHealthcareEntitiesLROPoller(LROPoller[PollingReturnType_co]):
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
+        deserialized_data = getattr(initial_response, "context", {}).get("deserialized_data") or {}
+        show_stats = deserialized_data.get("show_stats")
         polling_method._lro_algorithms = [  # pylint: disable=protected-access
-            TextAnalyticsOperationResourcePolling(
-                show_stats=initial_response.context.options["show_stats"]
-            )
+            TextAnalyticsOperationResourcePolling(show_stats=show_stats)
         ]
         return cls(
             client,
@@ -443,9 +446,12 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         ].split("/jobs/")[1].split("?")[0]
 
     def get_continuation_token(self) -> str:
-        self._initial_response.context.options["doc_id_order"] = self._doc_id_order
-        self._initial_response.context.options["task_id_order"] = self._task_id_order
-        self._initial_response.context.options["show_stats"] = self._show_stats
+        if self._initial_response.context is not None:
+            self._initial_response.context["deserialized_data"] = {
+                "show_stats": self._show_stats,
+                "doc_id_order": self._doc_id_order,
+                "task_id_order": self._task_id_order,
+            }
         return super().get_continuation_token()
 
 
@@ -513,10 +519,10 @@ class AnalyzeActionsLROPoller(LROPoller[PollingReturnType_co]):
         client, initial_response, deserialization_callback = polling_method.from_continuation_token(
             continuation_token, **kwargs
         )
+        deserialized_data = getattr(initial_response, "context", {}).get("deserialized_data") or {}
+        show_stats = deserialized_data.get("show_stats")
         polling_method._lro_algorithms = [  # pylint: disable=protected-access
-            TextAnalyticsOperationResourcePolling(
-                show_stats=initial_response.context.options["show_stats"]
-            )
+            TextAnalyticsOperationResourcePolling(show_stats=show_stats)
         ]
         return cls(
             client,
