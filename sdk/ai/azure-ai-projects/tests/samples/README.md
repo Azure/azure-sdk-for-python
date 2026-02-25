@@ -148,14 +148,14 @@ servicePreparer = functools.partial(
 
 ## Optional test environment variables mapping
 
-If you need to remap the environment variable names provided by your fixtures to the names the sample expects, pass a dictionary via the `env_var_mapping` kwarg on the sample executors. When your fixtures already supply the sample-ready names, you can omit `env_var_mapping`.
+If you need to remap the values provided by your fixtures to the environment-variable names the sample expects, build an `env_vars` dictionary and pass it to the sample executors. When your fixtures already supply sample-ready names/values, you can omit `env_vars`.
 
 ```python
-env_var_mapping = {
-    "AZURE_AI_PROJECT_ENDPOINT": "TEST_AZURE_AI_PROJECT_ENDPOINT",
-    "AZURE_AI_MODEL_DEPLOYMENT_NAME": "TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME",
+env_vars = {
+    "AZURE_AI_PROJECT_ENDPOINT": kwargs["TEST_AZURE_AI_PROJECT_ENDPOINT"],
+    "AZURE_AI_MODEL_DEPLOYMENT_NAME": kwargs["TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME"],
 }
-executor = SyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
 ```
 
 ## Optional environment variables

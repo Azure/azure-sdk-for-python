@@ -113,10 +113,10 @@ resource-management behavior.
 Always include `reason` with a concise explanation tied to the observed print output."""
 
 
-def get_sample_environment_variables_map(env_kwargs: Mapping[str, Any]) -> dict[str, str]:
+def get_sample_env_vars(env_kwargs: Mapping[str, Any]) -> dict[str, str]:
     # Map sample env-var names (uppercase) to the original kwargs key names so executors can pop them.
     mapping: dict[str, str] = {}
     for key in env_kwargs.keys():
         if isinstance(key, str):
-            mapping[key.upper()] = key
+            mapping[key.upper()] = env_kwargs[key]
     return mapping
