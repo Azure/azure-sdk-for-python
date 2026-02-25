@@ -6,38 +6,40 @@
 
 """
 DESCRIPTION:
-    This sample demonstrates how to create an AI agent with image generation capabilities
-    using the ImageGenTool and synchronous Azure AI Projects client. The agent can generate
+    This sample demonstrates how to create an AI Agent with image generation capabilities
+    using the ImageGenTool and synchronous Azure AI Projects client. The Agent can generate
     images based on text prompts and save them to files.
 
     The sample shows:
-    - Creating an agent with ImageGenTool configured for image generation
+    - Creating an Agent with ImageGenTool configured for image generation
     - Making requests to generate images from text prompts
     - Extracting base64-encoded image data from the response
     - Decoding and saving the generated image to a local file
     - Proper cleanup of created resources
+
+    For more information on Image Generations and what models are supported, see:
+    https://learn.microsoft.com/azure/ai-foundry/agents/how-to/tools/image-generation?pivots=python
 
 USAGE:
     python sample_agent_image_generation.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b1" python-dotenv
+    pip install "azure-ai-projects>=2.0.0b4" python-dotenv
 
     Set these environment variables with your own values:
     1) AZURE_AI_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) AZURE_AI_MODEL_DEPLOYMENT_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
-       used by the agent for understanding and responding to prompts. This is NOT the image generation model.
-    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g., gpt-image-1-mini)
+       used by the Agent for understanding and responding to prompts. This is NOT the image generation model.
+    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
        used by the ImageGenTool.
 
     NOTE:
-    - Image generation requires a separate "gpt-image-1-mini" deployment which is specified when constructing
+    - Image generation requires a separate (e.g. gpt-image-1) deployment which is specified when constructing
       the `ImageGenTool`, as well as providing it in the `x-ms-oai-image-generation-deployment` header when
       calling `.responses.create`.
-    - AZURE_AI_MODEL_DEPLOYMENT_NAME should be set to your chat model (e.g., gpt-4o), NOT "gpt-image-1-mini".
-    - The generated image will be saved as "microsoft.png" in the OS temporary directory.
+    - The generated image will be saved as "happy-dogs.png" in the OS temporary directory.
 """
 
 import base64
@@ -61,8 +63,8 @@ with (
     image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
 
     # [START tool_declaration]
-    tool = ImageGenTool(  # type: ignore[call-overload]
-        model=image_generation_model,  # Model such as "gpt-image-1-mini"  # type: ignore
+    tool = ImageGenTool(
+        model=image_generation_model,  # Model such as "gpt-image-1"
         quality="low",
         size="1024x1024",
     )
@@ -84,7 +86,7 @@ with (
         extra_headers={
             "x-ms-oai-image-generation-deployment": image_generation_model
         },  # this is required at the moment for image generation
-        extra_body={"agent": {"name": agent.name, "type": "agent_reference"}},
+        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response created: {response.id}")
 

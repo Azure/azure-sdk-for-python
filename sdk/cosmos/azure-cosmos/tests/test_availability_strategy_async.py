@@ -6,7 +6,7 @@ import os
 import re
 import unittest
 import uuid
-from typing import Optional, Any
+from typing import Optional, Any, Union
 
 import pytest
 import pytest_asyncio
@@ -15,7 +15,7 @@ from azure.core.exceptions import ServiceResponseError
 import test_config
 from _fault_injection_transport_async import FaultInjectionTransportAsync
 from azure.cosmos import _location_cache
-from azure.cosmos._availability_strategy_config import _validate_hedging_strategy
+from azure.cosmos._availability_strategy_config import _validate_request_hedging_strategy
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -23,7 +23,6 @@ from azure.cosmos.http_constants import ResourceType
 
 #cspell:ignore PPAF, ppaf
 
-_Unset: Any = object()
 class MockHandler(logging.Handler):
     def __init__(self):
         super(MockHandler, self).__init__()
@@ -104,13 +103,13 @@ async def _perform_read_operation(
         created_doc,
         expected_uris,
         excluded_uris,
-        availability_strategy: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
         excluded_locations: Optional[list[str]] = None,
         **kwargs):
     excluded_locations = [] if excluded_locations is None else excluded_locations
 
     """Execute different types of read operations"""
-    if availability_strategy is not _Unset:
+    if availability_strategy is not None:
         kwargs['availability_strategy'] = availability_strategy
 
     if operation == READ:
@@ -161,12 +160,12 @@ async def _perform_write_operation(
         expected_uris,
         excluded_uris,
         retry_write=False,
-        availability_strategy: Optional[dict[str, Any]] = _Unset,
+        availability_strategy: Optional[Union[bool, dict[str, Any]]] = None,
         excluded_locations: Optional[list[str]] = None,
         **kwargs):
     """Execute different types of write operations"""
     excluded_locations = [] if excluded_locations is None else excluded_locations
-    if availability_strategy is not _Unset:
+    if availability_strategy is not None:
         kwargs['availability_strategy'] = availability_strategy
 
     if operation == CREATE:
@@ -356,22 +355,22 @@ class TestAsyncAvailabilityStrategy:
         (100, -1, "threshold_steps_ms must be positive"),
         (100, 0, "threshold_steps_ms must be positive")
     ])
-    def test_invalid_thresholds(self, threshold_ms, threshold_steps_ms, error_message):
+    def test_invalid_thresholds_async(self, threshold_ms, threshold_steps_ms, error_message):
         """Test that creating strategy with non-positive thresholds raises ValueError when enabled"""
         with pytest.raises(ValueError, match=error_message):
             config = {'threshold_ms': threshold_ms,
                       'threshold_steps_ms': threshold_steps_ms}
-            _validate_hedging_strategy(config)
+            _validate_request_hedging_strategy(config)
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
         (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
+        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),
         ({'threshold_ms':150, 'threshold_steps_ms':50},
          {'threshold_ms':150, 'threshold_steps_ms':50})
     ])
-    async def test_availability_strategy_in_steady_state(
+    async def test_availability_strategy_in_steady_state_async(
             self,
             operation,
             client_availability_strategy,
@@ -416,10 +415,10 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
         (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'threshold_ms':150, 'threshold_steps_ms':50}, _Unset),
+        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),
         ({'threshold_ms':700, 'threshold_steps_ms':50}, {'threshold_ms':150, 'threshold_steps_ms':50})
     ])
-    async def test_client_availability_strategy_failover(
+    async def test_client_availability_strategy_failover_async(
             self,
             operation,
             client_availability_strategy,
@@ -478,7 +477,7 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("status_code, sub_status_code", NON_TRANSIENT_STATUS_CODES)
-    async def test_non_transient_errors_from_failed_over_region(self, operation, status_code: int, sub_status_code: Optional[int], setup):
+    async def test_non_transient_errors_from_failed_over_region_async(self, operation, status_code: int, sub_status_code: Optional[int], setup):
         """Test that operations non-transient errors from failed over region will be returned as the final result"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -549,7 +548,7 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_transient_error_from_failed_over_region(self, operation, setup):
+    async def test_transient_error_from_failed_over_region_async(self, operation, setup):
         """Test non-CosmosHttpResponseError exceptions from second region will be treated as transient failure,
         the result from first result will be used as the final result"""
 
@@ -622,9 +621,9 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_request_level_disabled_override_client_policy(self, operation, setup):
-        """Test that request-level disabled policy overrides client-level enabled policy"""
-        # Setup client with enabled hedging policy
+    async def test_request_level_disabled_override_client_strategy_async(self, operation, setup):
+        """Test that request-level disabled strategy overrides client-level enabled strategy"""
+        # Setup client with enabled hedging strategy
         client_strategy = {'threshold_ms':100, 'threshold_steps_ms':50}
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
@@ -660,9 +659,9 @@ class TestAsyncAvailabilityStrategy:
         # Test should fail with error from the first region
         with pytest.raises(CosmosHttpResponseError) as exc_info:
             if operation in [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED]:
-                await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, availability_strategy=None)
+                await _perform_read_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, availability_strategy=False)
             else:
-                await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy=None)
+                await _perform_write_operation(operation, setup_with_transport['col'], doc, expected_uris, excluded_uris, retry_write=True, availability_strategy=False)
 
         # Verify error code
         assert exc_info.value.status_code == 400
@@ -672,7 +671,7 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_request_level_enabled_override_client_disabled(self, operation, setup):
+    async def test_request_level_enabled_override_client_disabled_async(self, operation, setup):
         """Test that request-level enabled policy overrides client-level disabled policy"""
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
         failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
@@ -717,7 +716,7 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_no_cross_region_request_with_retry_write_disabled(self, operation, setup):
+    async def test_no_cross_region_request_with_retry_write_disabled_async(self, operation, setup):
         """Test that no cross region hedging occurs when retry_write is disabled for write operations"""
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
@@ -769,7 +768,7 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_no_cross_region_request_with_exclude_regions(self, operation, setup):
+    async def test_no_cross_region_request_with_exclude_regions_async(self, operation, setup):
         """Test that even with request-level CrossRegionHedgingStrategy overrides, there will be no cross region hedging due to excluded regions"""
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
@@ -833,7 +832,7 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_per_partition_circular_breaker_with_cancelled_first_future(self, operation, setup):
+    async def test_per_partition_circular_breaker_with_cancelled_first_future_async(self, operation, setup):
         # QUERY, READ_ALL are not included because currently they are not targeting to a specific pkRange
         os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
         os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"] = "5"
@@ -932,7 +931,7 @@ class TestAsyncAvailabilityStrategy:
         await self._clean_up_container(setup['client_without_fault'], setup_with_fault_injection['db'].id, setup_with_fault_injection['col'].id)
 
     @pytest.mark.asyncio
-    async def test_max_concurrency(self, setup):
+    async def test_max_concurrency_async(self, setup):
         """Test availability_strategy_max_concurrency will be effective"""
 
         uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
@@ -977,7 +976,7 @@ class TestAsyncAvailabilityStrategy:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation",[READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
-    async def test_default_availability_strategy_with_ppaf_enabled(
+    async def test_default_availability_strategy_with_ppaf_enabled_async(
             self,
             operation,
             setup):

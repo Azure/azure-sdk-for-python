@@ -90,7 +90,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
-            threshold=1,
+            threshold=threshold,
             credential=credential,
             **kwargs,
         )
@@ -219,7 +219,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Call the LLM to evaluate
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
-        llm_output = prompty_output_dict.get("llm_output", {})
+        llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
 
         if isinstance(llm_output, dict):
             score = llm_output.get("score", None)
@@ -280,7 +280,7 @@ class _ToolSelectionEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
-            return self._not_applicable_result(eval_input.get("error_message"), 1)
+            return self._not_applicable_result(eval_input.get("error_message"), 1, has_details=True)
 
         result = await self._do_eval(eval_input)
 
