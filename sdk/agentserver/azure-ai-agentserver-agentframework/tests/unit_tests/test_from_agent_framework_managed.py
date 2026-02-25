@@ -29,7 +29,7 @@ class _StubWorkflowAdapter:
         self,
         workflow_factory,
         credentials=None,
-        thread_repository=None,
+        session_repository=None,
         checkpoint_repository=None,
         **kwargs,
     ):

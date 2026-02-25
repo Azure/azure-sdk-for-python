@@ -20,7 +20,7 @@
 
 ### Bugs Fixed
 
-- Mitigate AgentThread management for AzureAIClient agents.
+- Mitigate AgentSession management for AzureAIClient agents.
 
 
 ## 1.0.0b11 (2026-02-10)
@@ -44,7 +44,7 @@
 ### Features Added
 
 - Integrated with Foundry Tools
-- Add persistence for agent thread and checkpoint
+- Add persistence for agent session and checkpoint
 - Fixed WorkflowAgent concurrency issue
 - Support Human-in-the-Loop
 

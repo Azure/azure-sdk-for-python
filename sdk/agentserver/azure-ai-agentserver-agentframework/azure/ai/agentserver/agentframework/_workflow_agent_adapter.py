@@ -27,7 +27,7 @@ from .models.agent_framework_input_converters import transform_input
 from .models.agent_framework_output_non_streaming_converter import (
     AgentFrameworkOutputNonStreamingConverter,
 )
-from .persistence import AgentThreadRepository, CheckpointRepository
+from .persistence import AgentSessionRepository, CheckpointRepository
 
 logger = get_logger()
 
@@ -37,13 +37,13 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
         self,
         workflow_factory: Callable[[], Workflow],
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
-        thread_repository: Optional[AgentThreadRepository] = None,
+        session_repository: Optional[AgentSessionRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
         *,
         project_endpoint: Optional[str] = None,
         **kwargs,
     ) -> None:
-        super().__init__(credentials, thread_repository, project_endpoint=project_endpoint, **kwargs)
+        super().__init__(credentials, session_repository, project_endpoint=project_endpoint, **kwargs)
         self._workflow_factory = workflow_factory
         self._checkpoint_repository = checkpoint_repository
 
@@ -59,7 +59,7 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
             logger.info("Starting WorkflowAgent agent_run with stream=%s", context.stream)
             request_input = context.request.get("input")
 
-            agent_thread = await self._load_agent_thread(context, agent)
+            agent_session = await self._load_agent_session(context, agent)
 
             checkpoint_storage = None
             selected_checkpoint = None
@@ -88,22 +88,22 @@ class AgentFrameworkWorkflowAdapter(AgentFrameworkAgent):
                     context=context,
                     stream_runner=lambda: agent.run(
                         message,
-                        session=agent_thread,
+                        session=agent_session,
                         checkpoint_storage=checkpoint_storage,
                         stream=True,
                     ),
-                    agent_thread=agent_thread,
+                    agent_session=agent_session,
                 )
 
             # Non-streaming path
             logger.info("Running WorkflowAgent in non-streaming mode")
             result = await agent.run(
                 message,
-                session=agent_thread,
+                session=agent_session,
                 checkpoint_storage=checkpoint_storage)
             logger.debug("WorkflowAgent run completed, result type: %s", type(result))
 
-            await self._save_agent_thread(context, agent_thread)
+            await self._save_agent_session(context, agent_session)
 
             non_streaming_converter = AgentFrameworkOutputNonStreamingConverter(context, hitl_helper=self._hitl_helper)
             transformed_result = non_streaming_converter.transform_output_for_response(result)

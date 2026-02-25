@@ -7,7 +7,7 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING, Any, AsyncGenerator, Callable, Optional, Union
 
-from agent_framework import AgentSession, SupportsAgentRun, WorkflowAgent
+from agent_framework import AgentSession, SupportsAgentRun
 from opentelemetry import trace
 
 from azure.ai.agentserver.core import AgentRunContext, FoundryCBAgent
@@ -22,8 +22,9 @@ from azure.ai.agentserver.core.tools import OAuthConsentRequiredError  # pylint:
 
 from .models.agent_framework_output_streaming_converter import AgentFrameworkOutputStreamingConverter
 from .models.human_in_the_loop_helper import HumanInTheLoopHelper
-from .persistence import AgentThreadRepository
-from .persistence._foundry_conversation_thread_repository import FoundryConversationThreadRepository
+from .persistence import AgentSessionRepository
+from .persistence._foundry_conversation_message_store import FoundryConversationMessageStore
+from .persistence._foundry_conversation_session_repository import FoundryConversationSessionRepository
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -50,24 +51,26 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
     def __init__(self,
                  credentials: "Optional[AsyncTokenCredential]" = None,
-                 thread_repository: Optional[AgentThreadRepository] = None,
+                 session_repository: Optional[AgentSessionRepository] = None,
                  project_endpoint: Optional[str] = None,
                  **kwargs) -> None:
         """Initialize the AgentFrameworkAgent with a SupportsAgentRun-compatible agent adapter.
 
         :param credentials: Azure credentials for authentication.
         :type credentials: Optional[AsyncTokenCredential]
-        :param thread_repository: An optional AgentThreadRepository instance for managing thread messages.
-        :type thread_repository: Optional[AgentThreadRepository]
+        :param session_repository: An optional AgentSessionRepository instance for managing session messages.
+        :type session_repository: Optional[AgentSessionRepository]
         :param project_endpoint: The endpoint of the Azure AI Project.
         :type project_endpoint: Optional[str]
         """
         super().__init__(credentials=credentials, **kwargs)  # pylint: disable=unexpected-keyword-arg
         project_endpoint = get_project_endpoint(logger=logger) or project_endpoint
-        if not thread_repository and project_endpoint and self.credentials:
-            logger.warning("No thread repository provided. FoundryConversationThreadRepository will be used.")
-            thread_repository = self._create_foundry_conversation_thread_repository(project_endpoint, self.credentials)
-        self._thread_repository = thread_repository
+        if not session_repository and project_endpoint and self.credentials:
+            logger.warning("No session repository provided. FoundryConversationSessionRepository will be used.")
+            session_repository = self._create_foundry_conversation_session_repository(
+                project_endpoint, self.credentials
+            )
+        self._session_repository = session_repository
         self._hitl_helper = HumanInTheLoopHelper()
 
     def init_tracing(self):
@@ -178,50 +181,51 @@ class AgentFrameworkAgent(FoundryCBAgent):
     ]:
         raise NotImplementedError("This method is implemented in the base class.")
 
-    async def _load_agent_thread(
+    async def _load_agent_session(
         self,
         context: AgentRunContext,
-        agent: Union[SupportsAgentRun, WorkflowAgent],
+        agent: SupportsAgentRun,
     ) -> Optional[AgentSession]:
         """Load the agent session for a given conversation ID.
 
         :param context: The agent run context.
         :type context: AgentRunContext
         :param agent: The agent instance.
-        :type agent: SupportsAgentRun | WorkflowAgent
+        :type agent: SupportsAgentRun
 
         :return: The loaded AgentSession if available, None otherwise.
         :rtype: Optional[AgentSession]
         """
-        if self._thread_repository and context.conversation_id:
+        if self._session_repository and context.conversation_id:
+            self._ensure_foundry_history_provider(agent)
             conversation_id = context.conversation_id
-            agent_thread = await self._thread_repository.get(conversation_id, agent=agent)
-            if agent_thread:
-                logger.info(f"Loaded agent thread for conversation: {conversation_id}")
-                return agent_thread
+            agent_session = await self._session_repository.get(conversation_id)
+            if agent_session:
+                logger.info(f"Loaded agent session for conversation: {conversation_id}")
+                return agent_session
             return agent.create_session()
         return None
 
-    async def _save_agent_thread(self, context: AgentRunContext, agent_thread: AgentSession) -> None:
+    async def _save_agent_session(self, context: AgentRunContext, agent_session: AgentSession) -> None:
         """Save the agent session for a given conversation ID.
 
         :param context: The agent run context.
         :type context: AgentRunContext
-        :param agent_thread: The agent session to save.
-        :type agent_thread: AgentSession
+        :param agent_session: The agent session to save.
+        :type agent_session: AgentSession
 
         :return: None
         :rtype: None
         """
-        if agent_thread and self._thread_repository and (conversation_id := context.conversation_id):
-            await self._thread_repository.set(conversation_id, agent_thread)
-            logger.info(f"Saved agent thread for conversation: {conversation_id}")
+        if agent_session and self._session_repository and (conversation_id := context.conversation_id):
+            await self._session_repository.set(conversation_id, agent_session)
+            logger.info(f"Saved agent session for conversation: {conversation_id}")
 
     def _run_streaming_updates(
         self,
         context: AgentRunContext,
         stream_runner: Callable[[], AsyncGenerator[Any, None]],
-        agent_thread: Optional[AgentSession] = None,
+        agent_session: Optional[AgentSession] = None,
     ) -> AsyncGenerator[ResponseStreamEvent, Any]:
         """
         Execute a streaming run with shared OAuth/error handling.
@@ -230,8 +234,8 @@ class AgentFrameworkAgent(FoundryCBAgent):
         :type context: AgentRunContext
         :param stream_runner: A callable that invokes the agent in stream mode
         :type stream_runner: Callable[[], AsyncGenerator[Any, None]]
-        :param agent_thread: The agent thread to use during streaming updates.
-        :type agent_thread: Optional[AgentSession]
+        :param agent_session: The agent session to use during streaming updates.
+        :type agent_session: Optional[AgentSession]
 
         :return: An async generator yielding streaming events.
         :rtype: AsyncGenerator[ResponseStreamEvent, Any]
@@ -251,7 +255,7 @@ class AgentFrameworkAgent(FoundryCBAgent):
                         update_count += 1
                         yield event
 
-                    await self._save_agent_thread(context, agent_thread)
+                    await self._save_agent_session(context, agent_session)
                     logger.info("Streaming completed with %d updates", update_count)
                 except OAuthConsentRequiredError as e:
                     logger.info("OAuth consent required during streaming updates")
@@ -291,23 +295,39 @@ class AgentFrameworkAgent(FoundryCBAgent):
 
         return stream_updates()
 
-    def _create_foundry_conversation_thread_repository(
+    def _create_foundry_conversation_session_repository(
         self,
         project_endpoint: str,
         credential: AsyncTokenCredential,
-    ) -> FoundryConversationThreadRepository:
-        """Helper method to create a FoundryConversationThreadRepository instance.
+    ) -> FoundryConversationSessionRepository:
+        """Helper method to create a FoundryConversationSessionRepository instance.
 
         :param project_endpoint: The endpoint of the Azure AI Project.
         :type project_endpoint: str
         :param credential: The credential for authenticating with the Azure AI Project.
         :type credential: AsyncTokenCredential
 
-        :return: An instance of FoundryConversationThreadRepository.
-        :rtype: FoundryConversationThreadRepository
+        :return: An instance of FoundryConversationSessionRepository.
+        :rtype: FoundryConversationSessionRepository
         """
-        return FoundryConversationThreadRepository(
-            agent=None,  # Agent will be provided during get/set calls
+        return FoundryConversationSessionRepository(
             project_endpoint=project_endpoint,
             credential=credential,
         )
+
+    def _ensure_foundry_history_provider(self, agent: SupportsAgentRun) -> None:
+        if not isinstance(self._session_repository, FoundryConversationSessionRepository):
+            return
+
+        context_providers = getattr(agent, "context_providers", None)
+        if not isinstance(context_providers, list):
+            logger.warning(
+                "Agent does not expose mutable context_providers; "
+                "FoundryConversationMessageStore was not attached."
+            )
+            return
+
+        if any(isinstance(provider, FoundryConversationMessageStore) for provider in context_providers):
+            return
+
+        context_providers.append(self._session_repository.history_provider)

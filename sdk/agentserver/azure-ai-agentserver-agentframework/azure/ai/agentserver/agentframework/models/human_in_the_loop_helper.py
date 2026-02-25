@@ -15,7 +15,7 @@ logger = get_logger()
 class HumanInTheLoopHelper:
     def get_pending_hitl_request(
         self,
-        thread_messages: List[Message] = None,
+        session_messages: List[Message] = None,
         checkpoint: Optional[WorkflowCheckpoint] = None,
     ) -> dict[str, Union[WorkflowEvent, Any]]:
         res: dict[str, Union[WorkflowEvent, Any]] = {}
@@ -31,10 +31,10 @@ class HumanInTheLoopHelper:
                         res[call_id] = request_obj
                 return res
 
-        if not thread_messages:
+        if not session_messages:
             return res
 
-        for message in thread_messages:
+        for message in session_messages:
             for content in message.contents:
                 if (
                     getattr(content, "type", None) == "function_approval_request"
@@ -118,14 +118,14 @@ class HumanInTheLoopHelper:
             response_result = response_type.convert_from_payload(input.get("output", ""))
         logger.info("response_result %s", response_result)
 
-        response_content = self._content_from_function_result(
+        response_content = Content.from_function_result(
             call_id=request_id,
             result=response_result,
         )
         return Message(role="tool", contents=[response_content])
 
-    def remove_hitl_content_from_thread(self, thread_messages: List[Message]) -> List[Message]:
-        """Remove HITL function call contents and related results from a conversation thread."""
+    def remove_hitl_content_from_session(self, session_messages: List[Message]) -> List[Message]:
+        """Remove HITL function call contents and related results from a conversation session."""
         filtered_messages: list[Message] = []
 
         prev_function_call = None
@@ -133,7 +133,7 @@ class HumanInTheLoopHelper:
         prev_function_output = None
         pending_tool_message: Optional[Message] = None
 
-        for message in thread_messages:
+        for message in session_messages:
             filtered_contents: list[Any] = []
             for content in message.contents:
                 if content.type == "function_result":
@@ -222,9 +222,3 @@ class HumanInTheLoopHelper:
         if isinstance(data, dict):
             return data.get("response_type", None)
         return getattr(data, "response_type", None) if data is not None else None
-
-    def _content_from_function_result(self, call_id: str, result: Any) -> Any:
-        factory = getattr(Content, "from_function_result", None)
-        if callable(factory):
-            return factory(call_id=call_id, result=result)
-        return Content(type="function_result", call_id=call_id, result=result)

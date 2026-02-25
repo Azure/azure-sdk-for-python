@@ -8,7 +8,7 @@ from agent_framework.azure import AzureOpenAIChatClient
 from dotenv import load_dotenv
 
 from azure.ai.agentserver.agentframework import from_agent_framework
-from azure.ai.agentserver.agentframework.persistence.agent_thread_repository import JsonLocalFileAgentThreadRepository
+from azure.ai.agentserver.agentframework.persistence.agent_session_repository import JsonLocalFileAgentSessionRepository
 
 """
 Tool Approvals with Sessions
@@ -39,8 +39,8 @@ def build_agent() -> ChatAgent:
 
 async def main() -> None:
     agent = build_agent()
-    thread_repository = JsonLocalFileAgentThreadRepository(agent=agent, storage_path="./thread_storage")
-    await from_agent_framework(agent, thread_repository=thread_repository).run_async()
+    session_repository = JsonLocalFileAgentSessionRepository(storage_path="./session_storage")
+    await from_agent_framework(agent, session_repository=session_repository).run_async()
 
 
 if __name__ == "__main__":

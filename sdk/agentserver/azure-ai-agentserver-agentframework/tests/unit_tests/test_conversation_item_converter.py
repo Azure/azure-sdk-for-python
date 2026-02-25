@@ -9,16 +9,11 @@ from openai.types.responses.response_function_tool_call_item import ResponseFunc
 from openai.types.responses.response_function_tool_call_output_item import ResponseFunctionToolCallOutputItem
 from openai.types.responses.response_input_text import ResponseInputText
 
-from azure.ai.agentserver.agentframework.models.conversation_converters import ConversationItemConverter
-
-
-@pytest.fixture()
-def converter() -> ConversationItemConverter:
-    return ConversationItemConverter()
+from azure.ai.agentserver.agentframework.models.conversation_converters import to_chat_message
 
 
 @pytest.mark.unit
-def test_to_chat_message_converts_basic_message(converter: ConversationItemConverter) -> None:
+def test_to_chat_message_converts_basic_message() -> None:
     item = Message(
         id="msg_1",
         role="user",
@@ -27,7 +22,7 @@ def test_to_chat_message_converts_basic_message(converter: ConversationItemConve
         content=[ResponseInputText(text="Hello world", type="input_text")],
     )
 
-    result = converter.to_chat_message(item)
+    result = to_chat_message(item)
 
     assert result is not None
     assert isinstance(result, AFMessage)
@@ -37,7 +32,7 @@ def test_to_chat_message_converts_basic_message(converter: ConversationItemConve
 
 
 @pytest.mark.unit
-def test_to_chat_message_converts_function_call_item(converter: ConversationItemConverter) -> None:
+def test_to_chat_message_converts_function_call_item() -> None:
     item = ResponseFunctionToolCallItem(
         id="call_item_1",
         type="function_call",
@@ -47,7 +42,7 @@ def test_to_chat_message_converts_function_call_item(converter: ConversationItem
         arguments='{"foo": "bar"}',
     )
 
-    result = converter.to_chat_message(item)
+    result = to_chat_message(item)
 
     assert result is not None
     assert result.role == "assistant"
@@ -62,7 +57,7 @@ def test_to_chat_message_converts_function_call_item(converter: ConversationItem
 
 
 @pytest.mark.unit
-def test_to_chat_message_converts_function_result_item(converter: ConversationItemConverter) -> None:
+def test_to_chat_message_converts_function_result_item() -> None:
     item = ResponseFunctionToolCallOutputItem(
         id="call_output_1",
         type="function_call_output",
@@ -71,7 +66,7 @@ def test_to_chat_message_converts_function_result_item(converter: ConversationIt
         output='{"answer": 42}',
     )
 
-    result = converter.to_chat_message(item)
+    result = to_chat_message(item)
 
     assert result is not None
     assert result.role == "tool"
@@ -84,7 +79,7 @@ def test_to_chat_message_converts_function_result_item(converter: ConversationIt
 
 
 @pytest.mark.unit
-def test_to_chat_message_converts_reasoning_item(converter: ConversationItemConverter) -> None:
+def test_to_chat_message_converts_reasoning_item() -> None:
     reasoning_item = response_reasoning_item.ResponseReasoningItem(
         id="reasoning_1",
         type="reasoning",
@@ -93,7 +88,7 @@ def test_to_chat_message_converts_reasoning_item(converter: ConversationItemConv
         content=[response_reasoning_item.Content(text="Chain-of-thought", type="reasoning_text")],
     )
 
-    result = converter.to_chat_message(reasoning_item)
+    result = to_chat_message(reasoning_item)
 
     assert result is not None
     assert result.role == "assistant"
@@ -103,8 +98,8 @@ def test_to_chat_message_converts_reasoning_item(converter: ConversationItemConv
 
 
 @pytest.mark.unit
-def test_to_chat_message_returns_none_for_unsupported_items(converter: ConversationItemConverter) -> None:
+def test_to_chat_message_returns_none_for_unsupported_items() -> None:
     class UnsupportedItem:
         type = "unsupported"
 
-    assert converter.to_chat_message(UnsupportedItem()) is None
+    assert to_chat_message(UnsupportedItem()) is None

@@ -15,17 +15,11 @@ def helper() -> HumanInTheLoopHelper:
 
 
 def _function_call(call_id: str, name: str, arguments: str):
-    factory = getattr(Content, "from_function_call", None)
-    if callable(factory):
-        return factory(call_id=call_id, name=name, arguments=arguments)
-    return Content(type="function_call", call_id=call_id, name=name, arguments=arguments)
+    return Content.from_function_call(call_id=call_id, name=name, arguments=arguments)
 
 
 def _function_result(call_id: str, result):
-    factory = getattr(Content, "from_function_result", None)
-    if callable(factory):
-        return factory(call_id=call_id, result=result)
-    return Content(type="function_result", call_id=call_id, result=result)
+    return Content.from_function_result(call_id=call_id, result=result)
 
 
 @pytest.mark.unit
@@ -36,14 +30,14 @@ def test_remove_hitl_messages_keeps_latest_function_result(helper: HumanInTheLoo
     final_result = _function_result("tool-1", {"total": 42})
     follow_up_content = Content.from_text("work resumed")
 
-    thread_messages = [
+    session_messages = [
         Message(role="assistant", contents=[real_call, hitl_call]),
         Message(role="tool", contents=[feedback_result]),
         Message(role="tool", contents=[final_result]),
         Message(role="assistant", contents=[follow_up_content]),
     ]
 
-    filtered = helper.remove_hitl_content_from_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_session(session_messages)
 
     assert len(filtered) == 3
     assert filtered[0].role == "assistant"
@@ -63,13 +57,13 @@ def test_remove_hitl_messages_keeps_the_function_result(helper: HumanInTheLoopHe
     final_result = _function_result("tool-1", {"total": 42})
     follow_up_content = Content.from_text("work resumed")
 
-    thread_messages = [
+    session_messages = [
         Message(role="assistant", contents=[real_call, hitl_call]),
         Message(role="tool", contents=[final_result]),
         Message(role="assistant", contents=[follow_up_content]),
     ]
 
-    filtered = helper.remove_hitl_content_from_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_session(session_messages)
 
     assert len(filtered) == 3
     assert filtered[0].role == "assistant"
@@ -88,13 +82,13 @@ def test_remove_hitl_messages_skips_orphaned_hitl_results(helper: HumanInTheLoop
     orphan_result = _function_result("hitl-2", "ignored")
     user_update = Content.from_text("ready")
 
-    thread_messages = [
+    session_messages = [
         Message(role="assistant", contents=[hitl_call]),
         Message(role="tool", contents=[orphan_result]),
         Message(role="user", contents=[user_update]),
     ]
 
-    filtered = helper.remove_hitl_content_from_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_session(session_messages)
 
     assert len(filtered) == 1
     assert len(filtered[0].contents) == 1
@@ -106,12 +100,12 @@ def test_remove_hitl_messages_preserves_regular_tool_cycle(helper: HumanInTheLoo
     real_call = _function_call("tool-3", "lookup", "{}")
     result_content = _function_result("tool-3", "done")
 
-    thread_messages = [
+    session_messages = [
         Message(role="assistant", contents=[real_call]),
         Message(role="tool", contents=[result_content]),
     ]
 
-    filtered = helper.remove_hitl_content_from_thread(thread_messages)
+    filtered = helper.remove_hitl_content_from_session(session_messages)
 
     assert len(filtered) == 2
     assert len(filtered[0].contents) == 1

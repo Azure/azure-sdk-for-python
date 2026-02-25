@@ -17,7 +17,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 
 from ._foundry_tools import FoundryToolsChatMiddleware
 from ._version import VERSION
-from .persistence import AgentThreadRepository, CheckpointRepository
+from .persistence import AgentSessionRepository, CheckpointRepository
 
 if TYPE_CHECKING:
     from ._agent_framework import AgentFrameworkAgent
@@ -30,7 +30,7 @@ def from_agent_framework(
         agent: Union[BaseAgent, SupportsAgentRun],
         /,
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
-        thread_repository: Optional[AgentThreadRepository]=None
+        session_repository: Optional[AgentSessionRepository]=None
     ) -> "AgentFrameworkAIAgentAdapter":
     """
     Create an Agent Framework AI Agent Adapter from a SupportsAgentRun or BaseAgent.
@@ -39,8 +39,8 @@ def from_agent_framework(
     :type agent: Union[BaseAgent, SupportsAgentRun]
     :param credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
-    :param thread_repository: Optional thread repository for agent thread management.
-    :type thread_repository: Optional[AgentThreadRepository]
+    :param session_repository: Optional session repository for agent session management.
+    :type session_repository: Optional[AgentSessionRepository]
 
     :return: An instance of AgentFrameworkAIAgentAdapter.
     :rtype: AgentFrameworkAIAgentAdapter
@@ -52,7 +52,7 @@ def from_agent_framework(
         workflow: Union[WorkflowBuilder, Callable[[], Workflow]],
         /,
         credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
-        thread_repository: Optional[AgentThreadRepository] = None,
+        session_repository: Optional[AgentSessionRepository] = None,
         checkpoint_repository: Optional[CheckpointRepository] = None,
     ) -> "AgentFrameworkWorkflowAdapter":
     """
@@ -68,8 +68,8 @@ def from_agent_framework(
     :type workflow: Union[WorkflowBuilder, Callable[[], Workflow]]
     :param credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
-    :param thread_repository: Optional thread repository for agent thread management.
-    :type thread_repository: Optional[AgentThreadRepository]
+    :param session_repository: Optional session repository for agent session management.
+    :type session_repository: Optional[AgentSessionRepository]
     :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
         Use ``InMemoryCheckpointRepository``, ``FileCheckpointRepository``, or
         ``FoundryCheckpointRepository`` for Azure AI Foundry managed storage.
@@ -83,7 +83,7 @@ def from_agent_framework(
     agent_or_workflow: Union[BaseAgent, SupportsAgentRun, WorkflowBuilder, Callable[[], Workflow]],
     /,
     credentials: Optional[Union[AsyncTokenCredential, TokenCredential]] = None,
-    thread_repository: Optional[AgentThreadRepository] = None,
+    session_repository: Optional[AgentSessionRepository] = None,
     checkpoint_repository: Optional[CheckpointRepository] = None,
 ) -> "AgentFrameworkAgent":
     """
@@ -95,8 +95,8 @@ def from_agent_framework(
     :type agent_or_workflow: Optional[Union[BaseAgent, SupportsAgentRun]]
     :param credentials: Optional asynchronous token credential for authentication.
     :type credentials: Optional[Union[AsyncTokenCredential, TokenCredential]]
-    :param thread_repository: Optional thread repository for agent thread management.
-    :type thread_repository: Optional[AgentThreadRepository]
+    :param session_repository: Optional session repository for agent session management.
+    :type session_repository: Optional[AgentSessionRepository]
     :param checkpoint_repository: Optional checkpoint repository for workflow checkpointing.
         Use ``InMemoryCheckpointRepository``, ``FileCheckpointRepository``, or
         ``FoundryCheckpointRepository`` for Azure AI Foundry managed storage.
@@ -113,7 +113,7 @@ def from_agent_framework(
         return AgentFrameworkWorkflowAdapter(
             workflow_factory=agent_or_workflow.build,
             credentials=credentials,
-            thread_repository=thread_repository,
+            session_repository=session_repository,
             checkpoint_repository=checkpoint_repository,
         )
     if isinstance(agent_or_workflow, Callable):  # type: ignore
@@ -122,7 +122,7 @@ def from_agent_framework(
         return AgentFrameworkWorkflowAdapter(
             workflow_factory=agent_or_workflow,
             credentials=credentials,
-            thread_repository=thread_repository,
+            session_repository=session_repository,
             checkpoint_repository=checkpoint_repository,
         )
     # raise TypeError("workflow must be a WorkflowBuilder or callable returning a Workflow")
@@ -132,7 +132,7 @@ def from_agent_framework(
 
         return AgentFrameworkAIAgentAdapter(agent_or_workflow,
                                             credentials=credentials,
-                                            thread_repository=thread_repository)
+                                            session_repository=session_repository)
     raise TypeError("You must provide one of the instances of type "
                     "[SupportsAgentRun, BaseAgent, WorkflowBuilder or callable returning a Workflow]")
 

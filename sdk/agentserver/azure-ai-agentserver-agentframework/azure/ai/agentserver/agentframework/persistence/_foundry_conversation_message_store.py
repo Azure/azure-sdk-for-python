@@ -1,112 +1,90 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from collections.abc import MutableMapping, Sequence
-from typing import Any, List, Optional
+from collections.abc import Sequence
+from typing import Any, Optional
 
-from agent_framework import Message
+from agent_framework import BaseHistoryProvider, Message
 
 from azure.ai.agentserver.core.logger import get_logger
 from azure.ai.projects import AIProjectClient
 
-from ..models.conversation_converters import ConversationItemConverter
+from ..models.conversation_converters import to_chat_message
 from ..models.human_in_the_loop_helper import HumanInTheLoopHelper
 
 logger = get_logger()
 
 
-class FoundryConversationMessageStore:
-    """Message store that reads messages from Azure AI Foundry Conversations API.
+class FoundryConversationMessageStore(BaseHistoryProvider):
+    """History provider that reads Foundry conversation history and stores in session state."""
 
-    This message store fetches messages from the Foundry Conversations API and converts them
-    to Agent Framework ``Message`` objects. Messages added via add_messages() are cached
-    locally but not persisted back to the API.
-
-    :param conversation_id: The conversation ID to fetch messages from.
-    :type conversation_id: str
-    :param project_client: The Azure AI Project client used to retrieve conversation history.
-    :type project_client: AIProjectClient
-    """
+    DEFAULT_SOURCE_ID = "foundry_conversation"
 
     def __init__(
         self,
-        conversation_id: str,
         project_client: AIProjectClient,
+        source_id: Optional[str] = None,
     ) -> None:
-        self._conversation_id = conversation_id
+        super().__init__(source_id=source_id or self.DEFAULT_SOURCE_ID)
         self._project_client = project_client
-        self._retrieved_messages: list[Message] = []
-        self._cached_messages: list[Message] = []
+        self._hitl_helper = HumanInTheLoopHelper()
 
-    async def list_messages(self) -> list[Message]:
-        """Get all messages from the conversation, including cached messages."""
-        return self._retrieved_messages + self._cached_messages
-
-    async def add_messages(self, messages: Sequence[Message]) -> None:
-        """Add messages to the local cache."""
-        self._cached_messages.extend(messages)
-
-    @classmethod
-    async def deserialize(  # pylint: disable=unused-argument
-        cls,
-        serialized_store_state: MutableMapping[str, Any],
-        *,
-        project_client: Optional[AIProjectClient] = None,
-        **kwargs: Any,
-    ) -> "FoundryConversationMessageStore":
-        conversation_id = serialized_store_state.get("conversation_id")
-        if not conversation_id:
-            raise ValueError("conversation_id is required in serialized state")
-
-        store = cls(
-            conversation_id=conversation_id,
-            project_client=project_client,
-        )
-
-        await store.update_from_state(serialized_store_state)
-        return store
-
-    async def update_from_state(  # pylint: disable=unused-argument
+    async def get_messages(
         self,
-        serialized_store_state: MutableMapping[str, Any],
+        session_id: Optional[str],
+        *,
+        state: Optional[dict[str, Any]] = None,
+        **kwargs: Any,
+    ) -> list[Message]:
+        if state is None:
+            return []
+
+        conversation_id = self._resolve_conversation_id(session_id, state)
+        if not conversation_id:
+            return list(state.get("messages", []))
+
+        if "retrieved_messages" not in state:
+            history_messages = await self._get_conversation_history(conversation_id)
+            state["retrieved_messages"] = self._hitl_helper.remove_hitl_content_from_session(history_messages or [])
+        retrieved_messages = state.get("retrieved_messages", [])
+        cached_messages = state.get("messages", [])
+        return [*retrieved_messages, *cached_messages]
+
+    async def save_messages(
+        self,
+        session_id: Optional[str],
+        messages: Sequence[Message],
+        *,
+        state: Optional[dict[str, Any]] = None,
         **kwargs: Any,
     ) -> None:
-        if not serialized_store_state:
+        if state is None:
             return
 
-        cached_messages_data = serialized_store_state.get("messages", [])
-        self._cached_messages = []
-        for msg_data in cached_messages_data:
-            if isinstance(msg_data, dict):
-                self._cached_messages.append(Message.from_dict(msg_data))
-            elif isinstance(msg_data, Message):
-                self._cached_messages.append(msg_data)
-        await self.retrieve_messages()
+        conversation_id = self._resolve_conversation_id(session_id, state)
+        if conversation_id:
+            state["conversation_id"] = conversation_id
+        existing_messages = state.get("messages", [])
+        state["messages"] = [*existing_messages, *messages]
 
-    async def serialize(self, **kwargs: Any) -> dict[str, Any]:  # pylint: disable=unused-argument
-        return {
-            "conversation_id": self._conversation_id,
-            "messages": [msg.to_dict() for msg in self._cached_messages],
-        }
+    @staticmethod
+    def _resolve_conversation_id(session_id: Optional[str], state: dict[str, Any]) -> Optional[str]:
+        conversation_id = state.get("conversation_id")
+        if isinstance(conversation_id, str) and conversation_id:
+            return conversation_id
+        return session_id
 
-    async def retrieve_messages(self) -> None:
-        history_messages = await self._get_conversation_history()
-        filtered_messages = HumanInTheLoopHelper().remove_hitl_content_from_thread(history_messages or [])
-        self._retrieved_messages = filtered_messages
-
-    async def _get_conversation_history(self) -> List[Message]:
+    async def _get_conversation_history(self, conversation_id: str) -> list[Message]:
         if not self._project_client:
             logger.error("AIProjectClient is not configured; cannot load conversation history.")
             return []
 
         try:
-            converter = ConversationItemConverter()
             async with self._project_client.get_openai_client() as openai_client:
-                raw_items = await openai_client.conversations.items.list(self._conversation_id)
+                raw_items = await openai_client.conversations.items.list(conversation_id)
                 retrieved_messages: list[Message] = []
 
                 if raw_items is None:
-                    self._retrieved_messages = []
                     return []
 
                 iter_pages = getattr(raw_items, "iter_pages", None)
@@ -114,19 +92,19 @@ class FoundryConversationMessageStore:
                     async for page in iter_pages():
                         items = getattr(page, "data", None) or []
                         for item in items:
-                            chat_message = converter.to_chat_message(item)
+                            chat_message = to_chat_message(item)
                             if chat_message:
                                 retrieved_messages.append(chat_message)
                 logger.info(
                     "Retrieved %s messages for conversation %s from Foundry.",
                     len(retrieved_messages),
-                    self._conversation_id,
+                    conversation_id,
                 )
                 return retrieved_messages[::-1]
         except Exception as exc:  # pylint: disable=broad-except
             logger.exception(
                 "Failed to get conversation history for %s: %s",
-                self._conversation_id,
+                conversation_id,
                 exc,
             )
             return []
