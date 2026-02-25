@@ -114,9 +114,10 @@ Always include `reason` with a concise explanation tied to the observed print ou
 
 
 def get_sample_env_vars(env_kwargs: Mapping[str, Any]) -> dict[str, str]:
-    # Map sample env-var names (uppercase) to the original kwargs key names so executors can pop them.
+    # Map sample env-var names (uppercase) to string values only.
+    # Non-string values are filtered out to maintain type safety.
     mapping: dict[str, str] = {}
-    for key in env_kwargs.keys():
-        if isinstance(key, str):
-            mapping[key.upper()] = env_kwargs[key]
+    for key, value in env_kwargs.items():
+        if isinstance(key, str) and isinstance(value, str):
+            mapping[key.upper()] = value
     return mapping

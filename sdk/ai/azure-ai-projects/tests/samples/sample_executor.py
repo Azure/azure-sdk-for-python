@@ -477,10 +477,12 @@ class SyncSampleExecutor(BaseSampleExecutor):
         test_instance,
         sample_path: str,
         *,
-        env_vars: dict[str, str] = {},
+        env_vars: Optional[dict[str, str]] = None,
         allowed_llm_validation_failures: Optional[set[str]] = None,
         **kwargs,
     ):
+        if env_vars is None:
+            env_vars = {}
         super().__init__(
             test_instance,
             sample_path,
