@@ -38,16 +38,8 @@ def _serialize_response_input_items(
     if isinstance(items, str):
         return [{"role": "user", "type": "message", "content": items}]
 
-    if hasattr(items, "model_dump"):
-        items = cast(Any, items).model_dump()
-    elif hasattr(items, "as_dict"):
-        items = cast(Any, items).as_dict()
-
-    if isinstance(items, dict):
-        items = [items]
-
     if not isinstance(items, list):
-        raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
+        raise TypeError("items must serialize to a list of dictionaries.")
 
     serialized_items: List[dict[str, Any]] = []
     for item in items:
@@ -58,7 +50,7 @@ def _serialize_response_input_items(
 
         serialized_item = _serialize(item)
         if not isinstance(serialized_item, dict):
-            raise TypeError("items must serialize to a dictionary or a list of dictionaries.")
+            raise TypeError("items must serialize to a dictionary .")
         serialized_items.append(serialized_item)
     return serialized_items
 

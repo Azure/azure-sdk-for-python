@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Union, Optional, Any, List, overload, IO, Literal
+from typing import Union, Optional, Any, List, overload, IO, cast, Literal
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.polling import AsyncNoPolling
 from azure.core.utils import case_insensitive_dict
