@@ -1,14 +1,9 @@
 # Release History
 
-## 5.3.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.3.1 (2026-02-25)
 
 ### Bugs Fixed
-
-### Other Changes
+- Fixed an unsafe continuation token implementation.
 
 ## 5.3.0 (2023-06-15)
 
