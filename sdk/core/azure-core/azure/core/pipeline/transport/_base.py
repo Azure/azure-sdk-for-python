@@ -668,6 +668,11 @@ class PipelineClientBase:
                     err_msg = "The value provided for the url part {} was incorrect, and resulted in an invalid url"
                     raise ValueError(err_msg.format(key.args[0])) from key
 
+                # Only strip trailing slash from base when stub has a path component.
+                # For query-string-only stubs (e.g. "?key=val"), preserve any trailing
+                # slash so it appears before the query string in the final URL.
+                if url.split("?", 1)[0]:
+                    base = base.rstrip("/")
                 url = _urljoin(base, url)
         else:
             url = self._base_url.format(**kwargs)
