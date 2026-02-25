@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling
@@ -25,7 +31,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar, Union
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -503,6 +510,7 @@ def build_create_or_update_request_initial(
         **kwargs
     )
 
+
 # fmt: on
 class ModelsOperations(object):
     """ModelsOperations operations.
@@ -534,7 +542,7 @@ class ModelsOperations(object):
         workspace_name,  # type: str
         body,  # type: "_models.Model"
         auto_version=True,  # type: Optional[bool]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.Model"
         """register.
@@ -554,24 +562,24 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Model"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
-            _json = self._serialize.body(body, 'Model')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
-            _json = self._serialize.body(body, 'Model')
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
+            _json = self._serialize.body(body, "Model")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
+            _json = self._serialize.body(body, "Model")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_register_request(
@@ -582,7 +590,7 @@ class ModelsOperations(object):
             json=_json,
             content=_content,
             auto_version=auto_version,
-            template_url=self.register.metadata['url'],
+            template_url=self.register.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -594,15 +602,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Model', pipeline_response)
+        deserialized = self._deserialize("Model", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    register.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models'}  # type: ignore
-
+    register.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -626,7 +633,7 @@ class ModelsOperations(object):
         latest_version_only=False,  # type: Optional[bool]
         feed=None,  # type: Optional[str]
         list_view_type=None,  # type: Optional[Union[str, "_models.ListViewType"]]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.ModelPagedResponse"
         """list.
@@ -674,13 +681,10 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelPagedResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelPagedResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelPagedResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_list_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
@@ -701,7 +705,7 @@ class ModelsOperations(object):
             latest_version_only=latest_version_only,
             feed=feed,
             list_view_type=list_view_type,
-            template_url=self.list.metadata['url'],
+            template_url=self.list.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -713,15 +717,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ModelPagedResponse', pipeline_response)
+        deserialized = self._deserialize("ModelPagedResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models'}  # type: ignore
-
+    list.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models"}  # type: ignore
 
     @distributed_trace
     def create_unregistered_input_model(
@@ -730,7 +733,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body,  # type: "_models.CreateUnregisteredInputModelDto"
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.Model"
         """create_unregistered_input_model.
@@ -748,24 +751,24 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Model"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
-            _json = self._serialize.body(body, 'CreateUnregisteredInputModelDto')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
-            _json = self._serialize.body(body, 'CreateUnregisteredInputModelDto')
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
+            _json = self._serialize.body(body, "CreateUnregisteredInputModelDto")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
+            _json = self._serialize.body(body, "CreateUnregisteredInputModelDto")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_create_unregistered_input_model_request(
@@ -775,7 +778,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_unregistered_input_model.metadata['url'],
+            template_url=self.create_unregistered_input_model.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -787,15 +790,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Model', pipeline_response)
+        deserialized = self._deserialize("Model", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_unregistered_input_model.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredInput'}  # type: ignore
-
+    create_unregistered_input_model.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredInput"}  # type: ignore
 
     @distributed_trace
     def create_unregistered_output_model(
@@ -804,7 +806,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body,  # type: "_models.CreateUnregisteredOutputModelDto"
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.Model"
         """create_unregistered_output_model.
@@ -822,24 +824,24 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Model"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
-            _json = self._serialize.body(body, 'CreateUnregisteredOutputModelDto')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
-            _json = self._serialize.body(body, 'CreateUnregisteredOutputModelDto')
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
+            _json = self._serialize.body(body, "CreateUnregisteredOutputModelDto")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
+            _json = self._serialize.body(body, "CreateUnregisteredOutputModelDto")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_create_unregistered_output_model_request(
@@ -849,7 +851,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.create_unregistered_output_model.metadata['url'],
+            template_url=self.create_unregistered_output_model.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -861,21 +863,20 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Model', pipeline_response)
+        deserialized = self._deserialize("Model", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_unregistered_output_model.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredOutput'}  # type: ignore
-
+    create_unregistered_output_model.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/createUnregisteredOutput"}  # type: ignore
 
     # this method is only used for model create/update with system metadata
     @distributed_trace
     def begin_create_or_update_model_with_system_metadata(
         self,
-        subscription_id, # type: str
+        subscription_id,  # type: str
         name,  # type: str
         version,  # type: str
         resource_group_name,  # type: str
@@ -943,12 +944,8 @@ class ModelsOperations(object):
         response_headers["x-ms-async-operation-timeout"] = self._deserialize(
             "duration", response.headers.get("x-ms-async-operation-timeout")
         )
-        response_headers["Location"] = self._deserialize(
-            "str", response.headers.get("Location")
-        )
-        response_headers["Retry-After"] = self._deserialize(
-            "int", response.headers.get("Retry-After")
-        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         cls = kwargs.pop("cls", None)
 
@@ -966,9 +963,7 @@ class ModelsOperations(object):
         else:
             polling_method = polling
 
-        return LROPoller(
-            self._client, pipeline_response, get_long_running_output, polling_method
-        )
+        return LROPoller(self._client, pipeline_response, get_long_running_output, polling_method)
 
     begin_create_or_update_model_with_system_metadata.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}/versions/{version}"}  # type: ignore
 
@@ -979,7 +974,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body=None,  # type: Optional["_models.BatchGetResolvedUrisDto"]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.BatchModelPathResponseDto"
         """batch_get_resolved_uris.
@@ -997,26 +992,26 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchModelPathResponseDto
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchModelPathResponseDto"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchModelPathResponseDto"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'BatchGetResolvedUrisDto')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
+                _json = self._serialize.body(body, "BatchGetResolvedUrisDto")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'BatchGetResolvedUrisDto')
+                _json = self._serialize.body(body, "BatchGetResolvedUrisDto")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_batch_get_resolved_uris_request(
@@ -1026,7 +1021,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.batch_get_resolved_uris.metadata['url'],
+            template_url=self.batch_get_resolved_uris.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1038,15 +1033,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchModelPathResponseDto', pipeline_response)
+        deserialized = self._deserialize("BatchModelPathResponseDto", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_get_resolved_uris.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/batchGetResolvedUris'}  # type: ignore
-
+    batch_get_resolved_uris.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/batchGetResolvedUris"}  # type: ignore
 
     @distributed_trace
     def query_by_id(
@@ -1056,7 +1050,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         include_deployment_settings=False,  # type: Optional[bool]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.Model"
         """query_by_id.
@@ -1076,20 +1070,17 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Model"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_query_by_id_request(
             id=id,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             include_deployment_settings=include_deployment_settings,
-            template_url=self.query_by_id.metadata['url'],
+            template_url=self.query_by_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1101,15 +1092,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Model', pipeline_response)
+        deserialized = self._deserialize("Model", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    query_by_id.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}'}  # type: ignore
-
+    query_by_id.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}"}  # type: ignore
 
     @distributed_trace
     def delete(
@@ -1118,7 +1108,7 @@ class ModelsOperations(object):
         subscription_id,  # type: str
         resource_group_name,  # type: str
         workspace_name,  # type: str
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> None
         """delete.
@@ -1136,19 +1126,16 @@ class ModelsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_request(
             id=id,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1163,8 +1150,7 @@ class ModelsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}'}  # type: ignore
-
+    delete.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}"}  # type: ignore
 
     @distributed_trace
     def patch(
@@ -1174,7 +1160,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body,  # type: List["_models.Operation"]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.Model"
         """patch.
@@ -1194,24 +1180,24 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.Model
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Model"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Model"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
-            _json = self._serialize.body(body, '[Operation]')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
-            _json = self._serialize.body(body, '[Operation]')
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
+            _json = self._serialize.body(body, "[Operation]")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
+            _json = self._serialize.body(body, "[Operation]")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_patch_request(
@@ -1222,7 +1208,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.patch.metadata['url'],
+            template_url=self.patch.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1234,15 +1220,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Model', pipeline_response)
+        deserialized = self._deserialize("Model", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    patch.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}'}  # type: ignore
-
+    patch.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{id}"}  # type: ignore
 
     @distributed_trace
     def list_query_post(
@@ -1251,7 +1236,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body=None,  # type: Optional["_models.ListModelsRequest"]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.ModelListModelsRequestPagedResponse"
         """list_query_post.
@@ -1269,26 +1254,26 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelListModelsRequestPagedResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelListModelsRequestPagedResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelListModelsRequestPagedResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'ListModelsRequest')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
+                _json = self._serialize.body(body, "ListModelsRequest")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'ListModelsRequest')
+                _json = self._serialize.body(body, "ListModelsRequest")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_list_query_post_request(
@@ -1298,7 +1283,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.list_query_post.metadata['url'],
+            template_url=self.list_query_post.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1310,15 +1295,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ModelListModelsRequestPagedResponse', pipeline_response)
+        deserialized = self._deserialize("ModelListModelsRequestPagedResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list_query_post.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/list'}  # type: ignore
-
+    list_query_post.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/list"}  # type: ignore
 
     @distributed_trace
     def batch_query(
@@ -1327,7 +1311,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body=None,  # type: Optional["_models.ModelBatchDto"]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> "_models.ModelBatchResponseDto"
         """batch_query.
@@ -1345,26 +1329,26 @@ class ModelsOperations(object):
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelBatchResponseDto
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelBatchResponseDto"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ModelBatchResponseDto"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'ModelBatchDto')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
+                _json = self._serialize.body(body, "ModelBatchDto")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'ModelBatchDto')
+                _json = self._serialize.body(body, "ModelBatchDto")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_batch_query_request(
@@ -1374,7 +1358,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.batch_query.metadata['url'],
+            template_url=self.batch_query.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1386,15 +1370,14 @@ class ModelsOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ModelBatchResponseDto', pipeline_response)
+        deserialized = self._deserialize("ModelBatchResponseDto", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_query.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/querybatch'}  # type: ignore
-
+    batch_query.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/querybatch"}  # type: ignore
 
     @distributed_trace
     def deployment_settings(
@@ -1403,7 +1386,7 @@ class ModelsOperations(object):
         resource_group_name,  # type: str
         workspace_name,  # type: str
         body=None,  # type: Optional["_models.ModelSettingsIdentifiers"]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> None
         """deployment_settings.
@@ -1421,26 +1404,26 @@ class ModelsOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json-patch+json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json-patch+json")  # type: Optional[str]
 
         _json = None
         _content = None
-        if content_type.split(";")[0] in ['application/json', 'text/json']:
+        if content_type.split(";")[0] in ["application/json", "text/json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'ModelSettingsIdentifiers')
-        elif content_type.split(";")[0] in ['application/json-patch+json', 'application/*+json']:
+                _json = self._serialize.body(body, "ModelSettingsIdentifiers")
+        elif content_type.split(";")[0] in ["application/json-patch+json", "application/*+json"]:
             if body is not None:
-                _json = self._serialize.body(body, 'ModelSettingsIdentifiers')
+                _json = self._serialize.body(body, "ModelSettingsIdentifiers")
         else:
             raise ValueError(
                 "The content_type '{}' is not one of the allowed values: "
-                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(content_type)
+                "['application/json-patch+json', 'application/json', 'text/json', 'application/*+json']".format(
+                    content_type
+                )
             )
 
         request = build_deployment_settings_request(
@@ -1450,7 +1433,7 @@ class ModelsOperations(object):
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.deployment_settings.metadata['url'],
+            template_url=self.deployment_settings.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -1465,5 +1448,4 @@ class ModelsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    deployment_settings.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/deploymentSettings'}  # type: ignore
-
+    deployment_settings.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/deploymentSettings"}  # type: ignore

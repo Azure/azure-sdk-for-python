@@ -10,7 +10,13 @@ from typing import TYPE_CHECKING
 
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -24,7 +30,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -146,6 +153,7 @@ def build_get_active_request(
         **kwargs
     )
 
+
 # fmt: on
 class SpansOperations(object):
     """SpansOperations operations.
@@ -197,16 +205,14 @@ class SpansOperations(object):
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'RunStatusSpans')
+            _json = self._serialize.body(body, "RunStatusSpans")
         else:
             _json = None
 
@@ -217,15 +223,13 @@ class SpansOperations(object):
             run_id=run_id,
             content_type=content_type,
             json=_json,
-            template_url=self.post.metadata['url'],
+            template_url=self.post.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
         pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -237,8 +241,7 @@ class SpansOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    post.metadata = {'url': "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/spans"}  # type: ignore
-
+    post.metadata = {"url": "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/spans"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -270,27 +273,26 @@ class SpansOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedSpanDefinition1List]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedSpanDefinition1List"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedSpanDefinition1List"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     run_id=run_id,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -315,9 +317,7 @@ class SpansOperations(object):
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -328,11 +328,9 @@ class SpansOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/spans"}  # type: ignore
+    list.metadata = {"url": "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/spans"}  # type: ignore
 
     @distributed_trace
     def get_active(
@@ -364,27 +362,26 @@ class SpansOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedSpanDefinition1List]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedSpanDefinition1List"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedSpanDefinition1List"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_active_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
                     run_id=run_id,
                     continuation_token_parameter=continuation_token_parameter,
-                    template_url=self.get_active.metadata['url'],
+                    template_url=self.get_active.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_get_active_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -409,9 +406,7 @@ class SpansOperations(object):
             request = prepare_request(next_link)
 
             pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -422,8 +417,6 @@ class SpansOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_active.metadata = {'url': "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/spans/active"}  # type: ignore
+    get_active.metadata = {"url": "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/spans/active"}  # type: ignore

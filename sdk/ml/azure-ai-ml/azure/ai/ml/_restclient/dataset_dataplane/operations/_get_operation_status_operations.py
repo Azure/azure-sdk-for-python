@@ -9,7 +9,13 @@ import functools
 from typing import TYPE_CHECKING
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
@@ -25,7 +31,8 @@ from .._vendor import _convert_request, _format_url_section
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from typing import Any, Callable, Dict, Generic, Optional, TypeVar, Union
-    T = TypeVar('T')
+
+    T = TypeVar("T")
     ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
@@ -63,6 +70,7 @@ def build_get_dataset_operation_status_request_initial(
         **kwargs
     )
 
+
 # fmt: on
 class GetOperationStatusOperations(object):
     """GetOperationStatusOperations operations.
@@ -95,19 +103,18 @@ class GetOperationStatusOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.LongRunningOperationResponse1LongRunningOperationResponseObject"]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.LongRunningOperationResponse1LongRunningOperationResponseObject"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType[Optional["_models.LongRunningOperationResponse1LongRunningOperationResponseObject"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_dataset_operation_status_request_initial(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             operation_id=operation_id,
-            template_url=self._get_dataset_operation_status_initial.metadata['url'],
+            template_url=self._get_dataset_operation_status_initial.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -122,19 +129,19 @@ class GetOperationStatusOperations(object):
         deserialized = None
         response_headers = {}
         if response.status_code == 200:
-            deserialized = self._deserialize('LongRunningOperationResponse1LongRunningOperationResponseObject', pipeline_response)
+            deserialized = self._deserialize(
+                "LongRunningOperationResponse1LongRunningOperationResponseObject", pipeline_response
+            )
 
         if response.status_code == 202:
-            response_headers['Location']=self._deserialize('str', response.headers.get('Location'))
-            
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
-    _get_dataset_operation_status_initial.metadata = {'url': '/dataset/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/operations/{operationId}'}  # type: ignore
-
+    _get_dataset_operation_status_initial.metadata = {"url": "/dataset/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/operations/{operationId}"}  # type: ignore
 
     @distributed_trace
     def begin_get_dataset_operation_status(
@@ -170,43 +177,46 @@ class GetOperationStatusOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.LongRunningOperationResponse1LongRunningOperationResponseObject]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.LongRunningOperationResponse1LongRunningOperationResponseObject"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, azure.core.polling.PollingMethod]
+        cls = kwargs.pop(
+            "cls", None
+        )  # type: ClsType["_models.LongRunningOperationResponse1LongRunningOperationResponseObject"]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._get_dataset_operation_status_initial(
                 subscription_id=subscription_id,
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 operation_id=operation_id,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = self._deserialize('LongRunningOperationResponse1LongRunningOperationResponseObject', pipeline_response)
+            deserialized = self._deserialize(
+                "LongRunningOperationResponse1LongRunningOperationResponseObject", pipeline_response
+            )
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method = ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+        elif polling is False:
+            polling_method = NoPolling()
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         else:
             return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_get_dataset_operation_status.metadata = {'url': '/dataset/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/operations/{operationId}'}  # type: ignore
+    begin_get_dataset_operation_status.metadata = {"url": "/dataset/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/operations/{operationId}"}  # type: ignore

@@ -10,7 +10,13 @@ from typing import Any, AsyncIterable, Callable, Dict, Generic, Optional, TypeVa
 import warnings
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,9 +26,23 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._data_version_operations import build_batch_get_resolved_uris_request, build_create_request, build_create_unregistered_input_data_request, build_create_unregistered_output_data_request, build_delete_request, build_exists_request, build_get_by_asset_id_request, build_get_request, build_list_request, build_modify_request, build_registered_existing_data_request
-T = TypeVar('T')
+from ...operations._data_version_operations import (
+    build_batch_get_resolved_uris_request,
+    build_create_request,
+    build_create_unregistered_input_data_request,
+    build_create_unregistered_output_data_request,
+    build_delete_request,
+    build_exists_request,
+    build_get_by_asset_id_request,
+    build_get_request,
+    build_list_request,
+    build_modify_request,
+    build_registered_existing_data_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class DataVersionOperations:
     """DataVersionOperations async operations.
@@ -73,16 +93,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataVersionEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DataVersion')
+            _json = self._serialize.body(body, "DataVersion")
         else:
             _json = None
 
@@ -93,7 +111,7 @@ class DataVersionOperations:
             name=name,
             content_type=content_type,
             json=_json,
-            template_url=self.create.metadata['url'],
+            template_url=self.create.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -106,15 +124,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataVersionEntity', pipeline_response)
+        deserialized = self._deserialize("DataVersionEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions'}  # type: ignore
-
+    create.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions"}  # type: ignore
 
     @distributed_trace
     def list(
@@ -148,14 +165,13 @@ class DataVersionOperations:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.machinelearningservices.models.PaginatedDataVersionEntityList]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.PaginatedDataVersionEntityList"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.PaginatedDataVersionEntityList"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -163,13 +179,13 @@ class DataVersionOperations:
                     name=name,
                     order_by=order_by,
                     top=top,
-                    template_url=self.list.metadata['url'],
+                    template_url=self.list.metadata["url"],
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
+
                 request = build_list_request(
                     subscription_id=subscription_id,
                     resource_group_name=resource_group_name,
@@ -204,11 +220,9 @@ class DataVersionOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions'}  # type: ignore
+    list.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions"}  # type: ignore
 
     @distributed_trace_async
     async def get(
@@ -237,20 +251,17 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataVersionEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_get_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
             version=version,
-            template_url=self.get.metadata['url'],
+            template_url=self.get.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -263,15 +274,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataVersionEntity', pipeline_response)
+        deserialized = self._deserialize("DataVersionEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}'}  # type: ignore
-
+    get.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def modify(
@@ -303,16 +313,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataVersionEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DataVersionMutable')
+            _json = self._serialize.body(body, "DataVersionMutable")
         else:
             _json = None
 
@@ -324,7 +332,7 @@ class DataVersionOperations:
             version=version,
             content_type=content_type,
             json=_json,
-            template_url=self.modify.metadata['url'],
+            template_url=self.modify.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -337,15 +345,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataVersionEntity', pipeline_response)
+        deserialized = self._deserialize("DataVersionEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    modify.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}'}  # type: ignore
-
+    modify.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def delete(
@@ -374,20 +381,17 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.HttpResponseMessage
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.HttpResponseMessage"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.HttpResponseMessage"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_delete_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
             version=version,
-            template_url=self.delete.metadata['url'],
+            template_url=self.delete.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -400,15 +404,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('HttpResponseMessage', pipeline_response)
+        deserialized = self._deserialize("HttpResponseMessage", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    delete.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}'}  # type: ignore
-
+    delete.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}"}  # type: ignore
 
     @distributed_trace_async
     async def exists(
@@ -437,20 +440,17 @@ class DataVersionOperations:
         :rtype: bool
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[bool]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[bool]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_exists_request(
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             name=name,
             version=version,
-            template_url=self.exists.metadata['url'],
+            template_url=self.exists.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -463,15 +463,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('bool', pipeline_response)
+        deserialized = self._deserialize("bool", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    exists.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}/exists'}  # type: ignore
-
+    exists.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/{name}/versions/{version}/exists"}  # type: ignore
 
     @distributed_trace_async
     async def get_by_asset_id(
@@ -497,16 +496,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataVersionEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataVersionEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataVersionEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'AssetId')
+            _json = self._serialize.body(body, "AssetId")
         else:
             _json = None
 
@@ -516,7 +513,7 @@ class DataVersionOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.get_by_asset_id.metadata['url'],
+            template_url=self.get_by_asset_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -529,15 +526,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataVersionEntity', pipeline_response)
+        deserialized = self._deserialize("DataVersionEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_by_asset_id.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/getByAssetId'}  # type: ignore
-
+    get_by_asset_id.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/getByAssetId"}  # type: ignore
 
     @distributed_trace_async
     async def create_unregistered_input_data(
@@ -563,16 +559,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataContainerEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainerEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataContainerEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'CreateUnregisteredInputData')
+            _json = self._serialize.body(body, "CreateUnregisteredInputData")
         else:
             _json = None
 
@@ -582,7 +576,7 @@ class DataVersionOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.create_unregistered_input_data.metadata['url'],
+            template_url=self.create_unregistered_input_data.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -595,15 +589,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataContainerEntity', pipeline_response)
+        deserialized = self._deserialize("DataContainerEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_unregistered_input_data.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/createUnregisteredInput'}  # type: ignore
-
+    create_unregistered_input_data.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/createUnregisteredInput"}  # type: ignore
 
     @distributed_trace_async
     async def create_unregistered_output_data(
@@ -629,16 +622,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataContainerEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainerEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataContainerEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'CreateUnregisteredOutputData')
+            _json = self._serialize.body(body, "CreateUnregisteredOutputData")
         else:
             _json = None
 
@@ -648,7 +639,7 @@ class DataVersionOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.create_unregistered_output_data.metadata['url'],
+            template_url=self.create_unregistered_output_data.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -661,15 +652,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataContainerEntity', pipeline_response)
+        deserialized = self._deserialize("DataContainerEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    create_unregistered_output_data.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/createUnregisteredOutput'}  # type: ignore
-
+    create_unregistered_output_data.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/createUnregisteredOutput"}  # type: ignore
 
     @distributed_trace_async
     async def registered_existing_data(
@@ -695,16 +685,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataContainerEntity
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataContainerEntity"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataContainerEntity"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'RegisterExistingData')
+            _json = self._serialize.body(body, "RegisterExistingData")
         else:
             _json = None
 
@@ -714,7 +702,7 @@ class DataVersionOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.registered_existing_data.metadata['url'],
+            template_url=self.registered_existing_data.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -727,15 +715,14 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataContainerEntity', pipeline_response)
+        deserialized = self._deserialize("DataContainerEntity", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    registered_existing_data.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/registerExisting'}  # type: ignore
-
+    registered_existing_data.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/registerExisting"}  # type: ignore
 
     @distributed_trace_async
     async def batch_get_resolved_uris(
@@ -761,16 +748,14 @@ class DataVersionOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.BatchDataUriResponse
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.BatchDataUriResponse"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.BatchDataUriResponse"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'BatchGetResolvedURIs')
+            _json = self._serialize.body(body, "BatchGetResolvedURIs")
         else:
             _json = None
 
@@ -780,7 +765,7 @@ class DataVersionOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.batch_get_resolved_uris.metadata['url'],
+            template_url=self.batch_get_resolved_uris.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -793,12 +778,11 @@ class DataVersionOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('BatchDataUriResponse', pipeline_response)
+        deserialized = self._deserialize("BatchDataUriResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    batch_get_resolved_uris.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/batchGetResolvedUris'}  # type: ignore
-
+    batch_get_resolved_uris.metadata = {"url": "/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/batchGetResolvedUris"}  # type: ignore

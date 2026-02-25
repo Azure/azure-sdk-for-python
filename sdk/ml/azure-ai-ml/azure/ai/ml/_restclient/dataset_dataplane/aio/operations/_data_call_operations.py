@@ -9,7 +9,13 @@ import functools
 from typing import Any, Callable, Dict, Generic, List, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -18,9 +24,15 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._data_call_operations import build_get_preview_for_ml_table_request, build_get_quick_profile_for_ml_table_request, build_get_schema_for_ml_table_request
-T = TypeVar('T')
+from ...operations._data_call_operations import (
+    build_get_preview_for_ml_table_request,
+    build_get_quick_profile_for_ml_table_request,
+    build_get_schema_for_ml_table_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class DataCallOperations:
     """DataCallOperations async operations.
@@ -68,16 +80,14 @@ class DataCallOperations:
         :rtype: list[~azure.mgmt.machinelearningservices.models.ColumnDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.ColumnDefinition"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[List["_models.ColumnDefinition"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DataCallRequest')
+            _json = self._serialize.body(body, "DataCallRequest")
         else:
             _json = None
 
@@ -87,7 +97,7 @@ class DataCallOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.get_schema_for_ml_table.metadata['url'],
+            template_url=self.get_schema_for_ml_table.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -100,15 +110,14 @@ class DataCallOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('[ColumnDefinition]', pipeline_response)
+        deserialized = self._deserialize("[ColumnDefinition]", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_schema_for_ml_table.metadata = {'url': '/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/schema'}  # type: ignore
-
+    get_schema_for_ml_table.metadata = {"url": "/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/schema"}  # type: ignore
 
     @distributed_trace_async
     async def get_preview_for_ml_table(
@@ -134,16 +143,14 @@ class DataCallOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.DataViewSetResult
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.DataViewSetResult"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.DataViewSetResult"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DataCallRequest')
+            _json = self._serialize.body(body, "DataCallRequest")
         else:
             _json = None
 
@@ -153,7 +160,7 @@ class DataCallOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.get_preview_for_ml_table.metadata['url'],
+            template_url=self.get_preview_for_ml_table.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -166,15 +173,14 @@ class DataCallOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('DataViewSetResult', pipeline_response)
+        deserialized = self._deserialize("DataViewSetResult", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_preview_for_ml_table.metadata = {'url': '/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/preview'}  # type: ignore
-
+    get_preview_for_ml_table.metadata = {"url": "/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/preview"}  # type: ignore
 
     @distributed_trace_async
     async def get_quick_profile_for_ml_table(
@@ -200,16 +206,14 @@ class DataCallOperations:
         :rtype: list[~azure.mgmt.machinelearningservices.models.ProfileResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[List["_models.ProfileResult"]]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType[List["_models.ProfileResult"]]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
         if body is not None:
-            _json = self._serialize.body(body, 'DataCallRequest')
+            _json = self._serialize.body(body, "DataCallRequest")
         else:
             _json = None
 
@@ -219,7 +223,7 @@ class DataCallOperations:
             workspace_name=workspace_name,
             content_type=content_type,
             json=_json,
-            template_url=self.get_quick_profile_for_ml_table.metadata['url'],
+            template_url=self.get_quick_profile_for_ml_table.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -232,12 +236,11 @@ class DataCallOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('[ProfileResult]', pipeline_response)
+        deserialized = self._deserialize("[ProfileResult]", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_quick_profile_for_ml_table.metadata = {'url': '/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/quickprofile'}  # type: ignore
-
+    get_quick_profile_for_ml_table.metadata = {"url": "/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/quickprofile"}  # type: ignore

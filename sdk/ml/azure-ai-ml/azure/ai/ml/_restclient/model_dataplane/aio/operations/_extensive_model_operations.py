@@ -9,7 +9,13 @@ import functools
 from typing import Any, Callable, Dict, Generic, Optional, TypeVar
 import warnings
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -19,8 +25,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._extensive_model_operations import build_query_by_id_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ExtensiveModelOperations:
     """ExtensiveModelOperations async operations.
@@ -46,12 +54,7 @@ class ExtensiveModelOperations:
 
     @distributed_trace_async
     async def query_by_id(
-        self,
-        id: str,
-        subscription_id: str,
-        resource_group_name: str,
-        workspace_name: str,
-        **kwargs: Any
+        self, id: str, subscription_id: str, resource_group_name: str, workspace_name: str, **kwargs: Any
     ) -> "_models.ExtensiveModel":
         """query_by_id.
 
@@ -68,19 +71,16 @@ class ExtensiveModelOperations:
         :rtype: ~azure.mgmt.machinelearningservices.models.ExtensiveModel
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.ExtensiveModel"]
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}))
+        cls = kwargs.pop("cls", None)  # type: ClsType["_models.ExtensiveModel"]
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}))
 
-        
         request = build_query_by_id_request(
             id=id,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            template_url=self.query_by_id.metadata['url'],
+            template_url=self.query_by_id.metadata["url"],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -92,12 +92,11 @@ class ExtensiveModelOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('ExtensiveModel', pipeline_response)
+        deserialized = self._deserialize("ExtensiveModel", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    query_by_id.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/extensiveModels/{id}'}  # type: ignore
-
+    query_by_id.metadata = {"url": "/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/extensiveModels/{id}"}  # type: ignore

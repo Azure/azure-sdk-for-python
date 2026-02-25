@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from azure.core.rest import HttpRequest, HttpResponse
 
+
 class AzureMachineLearningWorkspaces(object):
     """AzureMachineLearningWorkspaces.
 
@@ -59,7 +60,6 @@ class AzureMachineLearningWorkspaces(object):
         self.extensive_model = ExtensiveModelOperations(self._client, self._config, self._serialize, self._deserialize)
         self.migration = MigrationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.models = ModelsOperations(self._client, self._config, self._serialize, self._deserialize)
-
 
     def _send_request(
         self,
