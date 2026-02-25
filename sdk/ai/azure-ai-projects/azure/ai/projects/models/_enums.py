@@ -195,6 +195,24 @@ class ContainerMemoryLimit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_64GB."""
 
 
+class ContainerNetworkPolicyParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerNetworkPolicyParamType."""
+
+    DISABLED = "disabled"
+    """DISABLED."""
+    ALLOWLIST = "allowlist"
+    """ALLOWLIST."""
+
+
+class ContainerSkillType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ContainerSkillType."""
+
+    SKILL_REFERENCE = "skill_reference"
+    """SKILL_REFERENCE."""
+    INLINE = "inline"
+    """INLINE."""
+
+
 class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The credential type used by the connection."""
 
@@ -361,6 +379,17 @@ class FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
 
 
+class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of FunctionShellToolParamEnvironmentType."""
+
+    CONTAINER_AUTO = "container_auto"
+    """CONTAINER_AUTO."""
+    LOCAL = "local"
+    """LOCAL."""
+    CONTAINER_REFERENCE = "container_reference"
+    """CONTAINER_REFERENCE."""
+
+
 class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of GrammarSyntax1."""
 
@@ -368,6 +397,17 @@ class GrammarSyntax1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """LARK."""
     REGEX = "regex"
     """REGEX."""
+
+
+class ImageGenActionEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ImageGenActionEnum."""
+
+    GENERATE = "generate"
+    """GENERATE."""
+    EDIT = "edit"
+    """EDIT."""
+    AUTO = "auto"
+    """AUTO."""
 
 
 class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -383,8 +423,9 @@ class IndexType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class InputFidelity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control how much effort the model will exert to match the style and features, especially facial
-    features, of input images. This parameter is only supported for ``gpt-image-1``. Unsupported
-    for ``gpt-image-1-mini``. Supports ``high`` and ``low``. Defaults to ``low``.
+    features, of input images. This parameter is only supported for ``gpt-image-1`` and
+    ``gpt-image-1.5`` and later models, unsupported for ``gpt-image-1-mini``. Supports ``high`` and
+    ``low``. Defaults to ``low``.
     """
 
     HIGH = "high"

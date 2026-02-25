@@ -15,6 +15,8 @@ from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import (
     AgentKind,
     AgentObjectType,
+    ContainerNetworkPolicyParamType,
+    ContainerSkillType,
     CredentialType,
     CustomToolParamFormatType,
     DatasetType,
@@ -22,6 +24,7 @@ from ._enums import (
     EvaluationRuleActionType,
     EvaluationTaxonomyInputType,
     EvaluatorDefinitionType,
+    FunctionShellToolParamEnvironmentType,
     IndexType,
     InsightType,
     MemoryItemKind,
@@ -850,6 +853,52 @@ class ApproximateLocation(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type: Literal["approximate"] = "approximate"
+
+
+class AutoCodeInterpreterToolParam(_Model):
+    """CodeInterpreterToolAuto.
+
+    :ivar type: Always ``auto``. Required. Default value is "auto".
+    :vartype type: str
+    :ivar file_ids: An optional list of uploaded files to make available to your code.
+    :vartype file_ids: list[str]
+    :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
+    :vartype memory_limit: str or ~azure.ai.projects.models.ContainerMemoryLimit
+    :ivar network_policy:
+    :vartype network_policy: ~azure.ai.projects.models.ContainerNetworkPolicyParam
+    """
+
+    type: Literal["auto"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Always ``auto``. Required. Default value is \"auto\"."""
+    file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional list of uploaded files to make available to your code."""
+    memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"1g\", \"4g\", \"16g\", and \"64g\"."""
+    network_policy: Optional["_models.ContainerNetworkPolicyParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_ids: Optional[list[str]] = None,
+        memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = None,
+        network_policy: Optional["_models.ContainerNetworkPolicyParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["auto"] = "auto"
 
 
 class Target(_Model):
@@ -2212,46 +2261,6 @@ class CodeBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="code"):
         self.type = EvaluatorDefinitionType.CODE  # type: ignore
 
 
-class CodeInterpreterContainerAuto(_Model):
-    """CodeInterpreterToolAuto.
-
-    :ivar type: Always ``auto``. Required. Default value is "auto".
-    :vartype type: str
-    :ivar file_ids: An optional list of uploaded files to make available to your code.
-    :vartype file_ids: list[str]
-    :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
-    :vartype memory_limit: str or ~azure.ai.projects.models.ContainerMemoryLimit
-    """
-
-    type: Literal["auto"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Always ``auto``. Required. Default value is \"auto\"."""
-    file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An optional list of uploaded files to make available to your code."""
-    memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Known values are: \"1g\", \"4g\", \"16g\", and \"64g\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        file_ids: Optional[list[str]] = None,
-        memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type: Literal["auto"] = "auto"
-
-
 class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
     """Code interpreter.
 
@@ -2261,25 +2270,25 @@ class CodeInterpreterTool(Tool, discriminator="code_interpreter"):
     :ivar container: The code interpreter container. Can be a container ID or an object that
      specifies uploaded file IDs to make available to your code, along with an optional
      ``memory_limit`` setting. If not provided, the service assumes auto. Is either a str type or a
-     CodeInterpreterContainerAuto type.
-    :vartype container: str or ~azure.ai.projects.models.CodeInterpreterContainerAuto
+     AutoCodeInterpreterToolParam type.
+    :vartype container: str or ~azure.ai.projects.models.AutoCodeInterpreterToolParam
     """
 
     type: Literal[ToolType.CODE_INTERPRETER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the code interpreter tool. Always ``code_interpreter``. Required. CODE_INTERPRETER."""
-    container: Optional[Union[str, "_models.CodeInterpreterContainerAuto"]] = rest_field(
+    container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The code interpreter container. Can be a container ID or an object that specifies uploaded file
      IDs to make available to your code, along with an optional ``memory_limit`` setting. If not
-     provided, the service assumes auto. Is either a str type or a CodeInterpreterContainerAuto
+     provided, the service assumes auto. Is either a str type or a AutoCodeInterpreterToolParam
      type."""
 
     @overload
     def __init__(
         self,
         *,
-        container: Optional[Union[str, "_models.CodeInterpreterContainerAuto"]] = None,
+        container: Optional[Union[str, "_models.AutoCodeInterpreterToolParam"]] = None,
     ) -> None: ...
 
     @overload
@@ -2313,8 +2322,7 @@ class ComparisonFilter(_Model):
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
     :ivar value: The value to compare against the attribute key; supports string, number, or
-     boolean types. Required. Is one of the following types: str, int, bool,
-     ["_types.ComparisonFilterValueItems"]
+     boolean types. Required. Is one of the following types: str, int, bool, [Union[str, int]]
     :vartype value: str or int or bool or list[str or int]
     """
 
@@ -2335,12 +2343,11 @@ class ComparisonFilter(_Model):
         Literal[\"ne\"], Literal[\"gt\"], Literal[\"gte\"], Literal[\"lt\"], Literal[\"lte\"]"""
     key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The key to compare against the value. Required."""
-    value: Union[str, int, bool, list["_types.ComparisonFilterValueItems"]] = rest_field(
+    value: Union[str, int, bool, list[Union[str, int]]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The value to compare against the attribute key; supports string, number, or boolean types.
-     Required. Is one of the following types: str, int, bool,
-     [\"_types.ComparisonFilterValueItems\"]"""
+     Required. Is one of the following types: str, int, bool, [Union[str, int]]"""
 
     @overload
     def __init__(
@@ -2348,7 +2355,7 @@ class ComparisonFilter(_Model):
         *,
         type: Literal["eq", "ne", "gt", "gte", "lt", "lte"],
         key: str,
-        value: Union[str, int, bool, list["_types.ComparisonFilterValueItems"]],
+        value: Union[str, int, bool, list[Union[str, int]]],
     ) -> None: ...
 
     @overload
@@ -2487,6 +2494,264 @@ class Connection(_Model):
     """The credentials used by the connection. Required."""
     metadata: dict[str, str] = rest_field(visibility=["read"])
     """Metadata of the connection. Required."""
+
+
+class FunctionShellToolParamEnvironment(_Model):
+    """FunctionShellToolParamEnvironment.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContainerAutoParam, FunctionShellToolParamEnvironmentContainerReferenceParam,
+    FunctionShellToolParamEnvironmentLocalEnvironmentParam
+
+    :ivar type: Required. Known values are: "container_auto", "local", and "container_reference".
+    :vartype type: str or ~azure.ai.projects.models.FunctionShellToolParamEnvironmentType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"container_auto\", \"local\", and \"container_reference\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerAutoParam(FunctionShellToolParamEnvironment, discriminator="container_auto"):
+    """ContainerAutoParam.
+
+    :ivar type: Automatically creates a container for this request. Required. CONTAINER_AUTO.
+    :vartype type: str or ~azure.ai.projects.models.CONTAINER_AUTO
+    :ivar file_ids: An optional list of uploaded files to make available to your code.
+    :vartype file_ids: list[str]
+    :ivar memory_limit: Known values are: "1g", "4g", "16g", and "64g".
+    :vartype memory_limit: str or ~azure.ai.projects.models.ContainerMemoryLimit
+    :ivar skills: An optional list of skills referenced by id or inline data.
+    :vartype skills: list[~azure.ai.projects.models.ContainerSkill]
+    :ivar network_policy:
+    :vartype network_policy: ~azure.ai.projects.models.ContainerNetworkPolicyParam
+    """
+
+    type: Literal[FunctionShellToolParamEnvironmentType.CONTAINER_AUTO] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Automatically creates a container for this request. Required. CONTAINER_AUTO."""
+    file_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """An optional list of uploaded files to make available to your code."""
+    memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Known values are: \"1g\", \"4g\", \"16g\", and \"64g\"."""
+    skills: Optional[list["_models.ContainerSkill"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional list of skills referenced by id or inline data."""
+    network_policy: Optional["_models.ContainerNetworkPolicyParam"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        file_ids: Optional[list[str]] = None,
+        memory_limit: Optional[Union[str, "_models.ContainerMemoryLimit"]] = None,
+        skills: Optional[list["_models.ContainerSkill"]] = None,
+        network_policy: Optional["_models.ContainerNetworkPolicyParam"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = FunctionShellToolParamEnvironmentType.CONTAINER_AUTO  # type: ignore
+
+
+class ContainerNetworkPolicyParam(_Model):
+    """Network access policy for the container.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContainerNetworkPolicyAllowlistParam, ContainerNetworkPolicyDisabledParam
+
+    :ivar type: Required. Known values are: "disabled" and "allowlist".
+    :vartype type: str or ~azure.ai.projects.models.ContainerNetworkPolicyParamType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"disabled\" and \"allowlist\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerNetworkPolicyAllowlistParam(ContainerNetworkPolicyParam, discriminator="allowlist"):
+    """ContainerNetworkPolicyAllowlistParam.
+
+    :ivar type: Allow outbound network access only to specified domains. Always ``allowlist``.
+     Required. ALLOWLIST.
+    :vartype type: str or ~azure.ai.projects.models.ALLOWLIST
+    :ivar allowed_domains: A list of allowed domains when type is ``allowlist``. Required.
+    :vartype allowed_domains: list[str]
+    :ivar domain_secrets: Optional domain-scoped secrets for allowlisted domains.
+    :vartype domain_secrets:
+     list[~azure.ai.projects.models.ContainerNetworkPolicyDomainSecretParam]
+    """
+
+    type: Literal[ContainerNetworkPolicyParamType.ALLOWLIST] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Allow outbound network access only to specified domains. Always ``allowlist``. Required.
+     ALLOWLIST."""
+    allowed_domains: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A list of allowed domains when type is ``allowlist``. Required."""
+    domain_secrets: Optional[list["_models.ContainerNetworkPolicyDomainSecretParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional domain-scoped secrets for allowlisted domains."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        allowed_domains: list[str],
+        domain_secrets: Optional[list["_models.ContainerNetworkPolicyDomainSecretParam"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ContainerNetworkPolicyParamType.ALLOWLIST  # type: ignore
+
+
+class ContainerNetworkPolicyDisabledParam(ContainerNetworkPolicyParam, discriminator="disabled"):
+    """ContainerNetworkPolicyDisabledParam.
+
+    :ivar type: Disable outbound network access. Always ``disabled``. Required. DISABLED.
+    :vartype type: str or ~azure.ai.projects.models.DISABLED
+    """
+
+    type: Literal[ContainerNetworkPolicyParamType.DISABLED] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Disable outbound network access. Always ``disabled``. Required. DISABLED."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ContainerNetworkPolicyParamType.DISABLED  # type: ignore
+
+
+class ContainerNetworkPolicyDomainSecretParam(_Model):
+    """ContainerNetworkPolicyDomainSecretParam.
+
+    :ivar domain: The domain associated with the secret. Required.
+    :vartype domain: str
+    :ivar name: The name of the secret to inject for the domain. Required.
+    :vartype name: str
+    :ivar value: The secret value to inject for the domain. Required.
+    :vartype value: str
+    """
+
+    domain: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The domain associated with the secret. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the secret to inject for the domain. Required."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The secret value to inject for the domain. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        domain: str,
+        name: str,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ContainerSkill(_Model):
+    """ContainerSkill.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    InlineSkillParam, SkillReferenceParam
+
+    :ivar type: Required. Known values are: "skill_reference" and "inline".
+    :vartype type: str or ~azure.ai.projects.models.ContainerSkillType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"skill_reference\" and \"inline\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class EvaluationRuleAction(_Model):
@@ -4361,14 +4626,21 @@ class FunctionShellToolParam(Tool, discriminator="shell"):
 
     :ivar type: The type of the shell tool. Always ``shell``. Required. SHELL.
     :vartype type: str or ~azure.ai.projects.models.SHELL
+    :ivar environment:
+    :vartype environment: ~azure.ai.projects.models.FunctionShellToolParamEnvironment
     """
 
     type: Literal[ToolType.SHELL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the shell tool. Always ``shell``. Required. SHELL."""
+    environment: Optional["_models.FunctionShellToolParamEnvironment"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
 
     @overload
     def __init__(
         self,
+        *,
+        environment: Optional["_models.FunctionShellToolParamEnvironment"] = None,
     ) -> None: ...
 
     @overload
@@ -4381,6 +4653,79 @@ class FunctionShellToolParam(Tool, discriminator="shell"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.SHELL  # type: ignore
+
+
+class FunctionShellToolParamEnvironmentContainerReferenceParam(
+    FunctionShellToolParamEnvironment, discriminator="container_reference"
+):  # pylint: disable=name-too-long
+    """FunctionShellToolParamEnvironmentContainerReferenceParam.
+
+    :ivar type: References a container created with the /v1/containers endpoint. Required.
+     CONTAINER_REFERENCE.
+    :vartype type: str or ~azure.ai.projects.models.CONTAINER_REFERENCE
+    :ivar container_id: The ID of the referenced container. Required.
+    :vartype container_id: str
+    """
+
+    type: Literal[FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """References a container created with the /v1/containers endpoint. Required. CONTAINER_REFERENCE."""
+    container_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the referenced container. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = FunctionShellToolParamEnvironmentType.CONTAINER_REFERENCE  # type: ignore
+
+
+class FunctionShellToolParamEnvironmentLocalEnvironmentParam(
+    FunctionShellToolParamEnvironment, discriminator="local"
+):  # pylint: disable=name-too-long
+    """FunctionShellToolParamEnvironmentLocalEnvironmentParam.
+
+    :ivar type: Use a local computer environment. Required. LOCAL.
+    :vartype type: str or ~azure.ai.projects.models.LOCAL
+    :ivar skills: An optional list of skills.
+    :vartype skills: list[~azure.ai.projects.models.LocalSkillParam]
+    """
+
+    type: Literal[FunctionShellToolParamEnvironmentType.LOCAL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Use a local computer environment. Required. LOCAL."""
+    skills: Optional[list["_models.LocalSkillParam"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An optional list of skills."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skills: Optional[list["_models.LocalSkillParam"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = FunctionShellToolParamEnvironmentType.LOCAL  # type: ignore
 
 
 class FunctionTool(Tool, discriminator="function"):
@@ -4598,8 +4943,8 @@ class ImageGenTool(Tool, discriminator="image_generation"):
      IMAGE_GENERATION.
     :vartype type: str or ~azure.ai.projects.models.IMAGE_GENERATION
     :ivar model: Is one of the following types: Literal["gpt-image-1"],
-     Literal["gpt-image-1-mini"], str
-    :vartype model: str or str or str
+     Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str
+    :vartype model: str or str or str or str
     :ivar quality: The quality of the generated image. One of ``low``, ``medium``, ``high``, or
      ``auto``. Default: ``auto``. Is one of the following types: Literal["low"], Literal["medium"],
      Literal["high"], Literal["auto"]
@@ -4629,14 +4974,18 @@ class ImageGenTool(Tool, discriminator="image_generation"):
     :ivar partial_images: Number of partial images to generate in streaming mode, from 0 (default
      value) to 3.
     :vartype partial_images: int
+    :ivar action: Whether to generate a new image or edit an existing image. Default: ``auto``.
+     Known values are: "generate", "edit", and "auto".
+    :vartype action: str or ~azure.ai.projects.models.ImageGenActionEnum
     """
 
     type: Literal[ToolType.IMAGE_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the image generation tool. Always ``image_generation``. Required. IMAGE_GENERATION."""
-    model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], str]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]] = (
+        rest_field(visibility=["read", "create", "update", "delete", "query"])
     )
-    """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"], str"""
+    """Is one of the following types: Literal[\"gpt-image-1\"], Literal[\"gpt-image-1-mini\"],
+     Literal[\"gpt-image-1.5\"], str"""
     quality: Optional[Literal["low", "medium", "high", "auto"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4678,12 +5027,19 @@ class ImageGenTool(Tool, discriminator="image_generation"):
      (string, optional)."""
     partial_images: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of partial images to generate in streaming mode, from 0 (default value) to 3."""
+    action: Optional[Union[str, "_models.ImageGenActionEnum"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to generate a new image or edit an existing image. Default: ``auto``. Known values are:
+     \"generate\", \"edit\", and \"auto\"."""
 
     @overload
     def __init__(
         self,
         *,
-        model: Optional[Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], str]] = None,
+        model: Optional[
+            Union[Literal["gpt-image-1"], Literal["gpt-image-1-mini"], Literal["gpt-image-1.5"], str]
+        ] = None,
         quality: Optional[Literal["low", "medium", "high", "auto"]] = None,
         size: Optional[Literal["1024x1024", "1024x1536", "1536x1024", "auto"]] = None,
         output_format: Optional[Literal["png", "webp", "jpeg"]] = None,
@@ -4693,6 +5049,7 @@ class ImageGenTool(Tool, discriminator="image_generation"):
         input_fidelity: Optional[Union[str, "_models.InputFidelity"]] = None,
         input_image_mask: Optional["_models.ImageGenToolInputImageMask"] = None,
         partial_images: Optional[int] = None,
+        action: Optional[Union[str, "_models.ImageGenActionEnum"]] = None,
     ) -> None: ...
 
     @overload
@@ -4736,6 +5093,90 @@ class ImageGenToolInputImageMask(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class InlineSkillParam(ContainerSkill, discriminator="inline"):
+    """InlineSkillParam.
+
+    :ivar type: Defines an inline skill for this request. Required. INLINE.
+    :vartype type: str or ~azure.ai.projects.models.INLINE
+    :ivar name: The name of the skill. Required.
+    :vartype name: str
+    :ivar description: The description of the skill. Required.
+    :vartype description: str
+    :ivar source: Inline skill payload. Required.
+    :vartype source: ~azure.ai.projects.models.InlineSkillSourceParam
+    """
+
+    type: Literal[ContainerSkillType.INLINE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Defines an inline skill for this request. Required. INLINE."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the skill. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the skill. Required."""
+    source: "_models.InlineSkillSourceParam" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Inline skill payload. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str,
+        source: "_models.InlineSkillSourceParam",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ContainerSkillType.INLINE  # type: ignore
+
+
+class InlineSkillSourceParam(_Model):
+    """Inline skill payload.
+
+    :ivar type: The type of the inline skill source. Must be ``base64``. Required. Default value is
+     "base64".
+    :vartype type: str
+    :ivar media_type: The media type of the inline skill payload. Must be ``application/zip``.
+     Required. Default value is "application/zip".
+    :vartype media_type: str
+    :ivar data: Base64-encoded skill zip bundle. Required.
+    :vartype data: str
+    """
+
+    type: Literal["base64"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the inline skill source. Must be ``base64``. Required. Default value is \"base64\"."""
+    media_type: Literal["application/zip"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The media type of the inline skill payload. Must be ``application/zip``. Required. Default
+     value is \"application/zip\"."""
+    data: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Base64-encoded skill zip bundle. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type: Literal["base64"] = "base64"
+        self.media_type: Literal["application/zip"] = "application/zip"
 
 
 class Insight(_Model):
@@ -5045,6 +5486,44 @@ class LocalShellToolParam(Tool, discriminator="local_shell"):
         self.type = ToolType.LOCAL_SHELL  # type: ignore
 
 
+class LocalSkillParam(_Model):
+    """LocalSkillParam.
+
+    :ivar name: The name of the skill. Required.
+    :vartype name: str
+    :ivar description: The description of the skill. Required.
+    :vartype description: str
+    :ivar path: The path to the directory containing the skill. Required.
+    :vartype path: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the skill. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the skill. Required."""
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path to the directory containing the skill. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        description: str,
+        path: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedAzureAISearchIndex(Index, discriminator="ManagedAzureSearch"):
     """Managed Azure AI Search Index Definition.
 
@@ -5102,8 +5581,7 @@ class MCPTool(Tool, discriminator="mcp"):
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
      ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
-     <https://platform.openai.com/docs/guides/tools-remote-mcp#connectors>`_. Currently supported
-     ``connector_id`` values are:
+     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -5157,8 +5635,7 @@ class MCPTool(Tool, discriminator="mcp"):
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
       ``connector_id`` must be provided. Learn more about service connectors `here
-      <https://platform.openai.com/docs/guides/tools-remote-mcp#connectors>`_. Currently supported
-      ``connector_id`` values are:
+      </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
       * Gmail: `connector_gmail`
@@ -7340,6 +7817,44 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
         self.type = ToolType.SHAREPOINT_GROUNDING_PREVIEW  # type: ignore
 
 
+class SkillReferenceParam(ContainerSkill, discriminator="skill_reference"):
+    """SkillReferenceParam.
+
+    :ivar type: References a skill created with the /v1/skills endpoint. Required. SKILL_REFERENCE.
+    :vartype type: str or ~azure.ai.projects.models.SKILL_REFERENCE
+    :ivar skill_id: The ID of the referenced skill. Required.
+    :vartype skill_id: str
+    :ivar version: Optional skill version. Use a positive integer or 'latest'. Omit for default.
+    :vartype version: str
+    """
+
+    type: Literal[ContainerSkillType.SKILL_REFERENCE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """References a skill created with the /v1/skills endpoint. Required. SKILL_REFERENCE."""
+    skill_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the referenced skill. Required."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional skill version. Use a positive integer or 'latest'. Omit for default."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skill_id: str,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ContainerSkillType.SKILL_REFERENCE  # type: ignore
+
+
 class ToolChoiceParam(_Model):
     """How the model should select which tool (or tools) to use when generating a response. See the
     ``tools`` parameter to see how to specify which tools the model can call.
@@ -7637,12 +8152,11 @@ class TaxonomySubCategory(_Model):
 class TextResponseFormatConfiguration(_Model):
     """An object specifying the format that the model must output. Configuring ``{ "type":
     "json_schema" }`` enables Structured Outputs, which ensures the model will match your supplied
-    JSON schema. Learn more in the `Structured Outputs guide
-    <https://platform.openai.com/docs/guides/structured-outputs>`_. The default format is ``{
-    "type": "text" }`` with no additional options. *Not recommended for gpt-4o and newer models:**
-    Setting to ``{ "type": "json_object" }`` enables the older JSON mode, which ensures the message
-    the model generates is valid JSON. Using ``json_schema`` is preferred for models that support
-    it.
+    JSON schema. Learn more in the `Structured Outputs guide </docs/guides/structured-outputs>`_.
+    The default format is ``{ "type": "text" }`` with no additional options. *Not recommended for
+    gpt-4o and newer models:** Setting to ``{ "type": "json_object" }`` enables the older JSON
+    mode, which ensures the message the model generates is valid JSON. Using ``json_schema`` is
+    preferred for models that support it.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     TextResponseFormatConfigurationResponseFormatJsonObject, TextResponseFormatJsonSchema,
@@ -8222,6 +8736,9 @@ class UserProfileMemoryItem(MemoryItem, discriminator="user_profile"):
 class WebSearchApproximateLocation(_Model):
     """Web search approximate location.
 
+    :ivar type: The type of location approximation. Always ``approximate``. Required. Default value
+     is "approximate".
+    :vartype type: str
     :ivar country:
     :vartype country: str
     :ivar region:
@@ -8230,18 +8747,15 @@ class WebSearchApproximateLocation(_Model):
     :vartype city: str
     :ivar timezone:
     :vartype timezone: str
-    :ivar type: The type of location approximation. Always ``approximate``. Required. Default value
-     is "approximate".
-    :vartype type: str
     """
 
+    type: Literal["approximate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of location approximation. Always ``approximate``. Required. Default value is
+     \"approximate\"."""
     country: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     region: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     city: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     timezone: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    type: Literal["approximate"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of location approximation. Always ``approximate``. Required. Default value is
-     \"approximate\"."""
 
     @overload
     def __init__(
