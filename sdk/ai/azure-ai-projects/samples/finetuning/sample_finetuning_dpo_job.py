@@ -28,17 +28,14 @@ import os
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from pathlib import Path
+from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "gpt-4o-mini")
-script_dir = Path(__file__).parent
-training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "dpo_training_set.jsonl"))
-validation_file_path = os.environ.get(
-    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "dpo_validation_set.jsonl")
-)
+training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "dpo_training_set.jsonl")
+validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "dpo_validation_set.jsonl")
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,

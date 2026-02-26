@@ -14,10 +14,10 @@ from sample_executor import (
 )
 from test_samples_helpers import (
     agent_tools_instructions,
+    get_sample_env_vars,
     memories_instructions,
     agents_instructions,
     resource_management_instructions,
-    get_sample_environment_variables_map,
 )
 
 
@@ -37,11 +37,11 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
+        env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(
             self,
             sample_path,
-            env_var_mapping=env_var_mapping,
+            env_vars=env_vars,
             **kwargs,
         )
         await executor.execute_async()
@@ -62,8 +62,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_memory_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=memories_instructions,
@@ -82,8 +82,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_agents_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agents_instructions,
@@ -104,8 +104,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     async def test_connections_samples(self, sample_path: str, **kwargs) -> None:
         kwargs = kwargs.copy()
         kwargs["connection_name"] = "mcp"
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=resource_management_instructions,
@@ -124,8 +124,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_files_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=resource_management_instructions,
@@ -144,8 +144,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_deployments_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=resource_management_instructions,
@@ -164,8 +164,8 @@ class TestSamplesAsync(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     async def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
-        env_var_mapping = get_sample_environment_variables_map(kwargs)
-        executor = AsyncSampleExecutor(self, sample_path, env_var_mapping=env_var_mapping, **kwargs)
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         if self.is_live:
             # Don't replay LLM validation since there probably a defect in proxy server fail to replay

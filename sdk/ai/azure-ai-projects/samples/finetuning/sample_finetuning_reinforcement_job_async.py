@@ -29,17 +29,14 @@ import os
 from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
-from pathlib import Path
+from fine_tuning_sample_helper import resolve_data_file_path
 
 load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_name = os.environ.get("MODEL_NAME", "o4-mini")
-script_dir = Path(__file__).parent
-training_file_path = os.environ.get("TRAINING_FILE_PATH", os.path.join(script_dir, "data", "rft_training_set.jsonl"))
-validation_file_path = os.environ.get(
-    "VALIDATION_FILE_PATH", os.path.join(script_dir, "data", "rft_validation_set.jsonl")
-)
+training_file_path = resolve_data_file_path(__file__, "TRAINING_FILE_PATH", "rft_training_set.jsonl")
+validation_file_path = resolve_data_file_path(__file__, "VALIDATION_FILE_PATH", "rft_validation_set.jsonl")
 
 
 async def main():

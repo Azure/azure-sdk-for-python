@@ -74,6 +74,16 @@ servicePreparer = functools.partial(
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
 )
 
+fineTuningServicePreparer = functools.partial(
+    EnvironmentVariableLoader,
+    "",
+    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    azure_ai_model_deployment_name="sanitized-model-deployment-name",
+    azure_ai_projects_azure_subscription_id="00000000-0000-0000-0000-000000000000",
+    azure_ai_projects_azure_resource_group="sanitized-resource-group",
+    azure_ai_projects_azure_aoai_account="sanitized-aoai-account",
+)
+
 # Fine-tuning job type constants
 SFT_JOB_TYPE: Final[str] = "sft"
 DPO_JOB_TYPE: Final[str] = "dpo"
